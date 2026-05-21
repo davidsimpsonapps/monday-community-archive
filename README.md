@@ -1,6 +1,6 @@
 # monday-community-archive
 
-This is a stattic mirror of an archive of the original community.monday.com.
+This is a static mirror of an archive of the original community.monday.com.
 
 The original community was replaced in April 2026 with a new version based on a different stack. The content was mainly archived if not deemed relevant to the current community managers. There was however some good knowledge in there, so having a static version of this which is searchable is a useful resource.
 
