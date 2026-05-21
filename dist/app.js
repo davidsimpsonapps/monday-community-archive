@@ -181,10 +181,22 @@ function parseHash() {
     return Number.isFinite(id) ? { type: "category", id } : { type: "home" };
   }
   if (seg[0] === "t" && seg[1] != null) {
-    const last = seg[seg.length - 1];
-    const id = Number(last);
-    if (Number.isFinite(id)) {
-      return { type: "topic", id };
+    // #/t/12345        → topic id only
+    // #/t/12345/2      → topic id + post number (from rewritten community URLs)
+    // #/t/slug/12345   → legacy slug + id share URL
+    const second = Number(seg[1]);
+    if (Number.isFinite(second) && !Number.isNaN(second)) {
+      const postNumber = seg[2] != null ? Number(seg[2]) : null;
+      return {
+        type: "topic",
+        id: second,
+        postNumber: Number.isFinite(postNumber) && postNumber > 0 ? postNumber : null,
+      };
+    }
+    // seg[1] is a slug — last numeric segment is the topic id
+    if (seg.length >= 3) {
+      const id = Number(seg[seg.length - 1]);
+      if (Number.isFinite(id)) return { type: "topic", id, postNumber: null };
     }
     if (seg.length === 2) {
       return {
@@ -251,7 +263,7 @@ async function applyRoute(route) {
     return;
   }
   if (route.type === "topic") {
-    await openTopic(route.id);
+    await openTopic(route.id, null, route.postNumber ?? null);
     return;
   }
   if (route.type === "search") {
@@ -504,7 +516,7 @@ function renderTopicBreadcrumbs(topicTitle, categoryId) {
   nav.appendChild(ol);
 }
 
-async function openTopic(id, prefetched = null) {
+async function openTopic(id, prefetched = null, scrollToPost = null) {
   showPanel("topic");
   hideTopicShareActions();
   const loading = $("topic-loading");
@@ -557,12 +569,26 @@ async function openTopic(id, prefetched = null) {
       const art = document.createElement("article");
       const isSolved = p.id === t.solvedPostId;
       if (isSolved) art.classList.add("post--accepted");
+      art.dataset.postNumber = p.postNumber;
       const badge = isSolved
         ? `<span class="badge badge--solved" role="status">Accepted answer</span>`
         : "";
       art.innerHTML = `<div class="post-head">${badge}<span>${esc(p.author)}</span><time datetime="${esc(p.createdAt)}">${esc(new Date(p.createdAt).toLocaleString())}</time></div><div class="cooked">${p.cookedHtml}</div>`;
       postsEl.appendChild(art);
     });
+
+    // Scroll to specific post if requested (e.g. from a /#/t/92034/2 link)
+    if (scrollToPost != null) {
+      const target = postsEl.querySelector(`[data-post-number="${scrollToPost}"]`);
+      if (target) {
+        // Small delay lets the browser finish painting before scrolling
+        requestAnimationFrame(() => {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          target.classList.add("post--highlighted");
+          setTimeout(() => target.classList.remove("post--highlighted"), 2000);
+        });
+      }
+    }
   } catch (err) {
     console.error(err);
     hideTopicShareActions();
