@@ -78,7 +78,10 @@ let categoryPaging = { offset: 0, total: 0, loading: false };
 let archiveMeta = null;
 
 // ── Lunr search state ─────────────────────────────────────────────────────────
-let searchIndex = null;   // lunr.Index instance, loaded on first search
+// The index is built in-browser from search-docs.json on first search.
+// search-index.json is NOT used — at 41MB it exceeds static host limits.
+// Building from 12MB search-docs.json takes ~1-2s and is then cached in memory.
+let searchIndex = null;   // lunr.Index instance, built on first search
 let searchDocs  = null;   // id → doc store object
 let searchReady = false;
 let searchLoading = false;
@@ -96,15 +99,30 @@ async function ensureSearchIndex() {
   }
   searchLoading = true;
   try {
-    const [rawIdx, rawDocs] = await Promise.all([
-      fetch("/api/search-index.json").then(r => r.json()),
-      fetch("/api/search-docs.json").then(r => r.json()),
-    ]);
-    searchIndex = lunr.Index.load(rawIdx);
-    searchDocs  = rawDocs;
+    // Load the doc store (titles, excerpts, authors, metadata)
+    searchDocs = await fetch("/api/search-docs.json").then(r => r.json());
+
+    // Build the Lunr index in-browser from the doc store
+    // This takes ~1-2s for 24k docs — happens once per session
+    searchIndex = lunr(function () {
+      this.ref("id");
+      this.field("title",   { boost: 10 });
+      this.field("excerpt", { boost: 3  });
+      this.field("author",  { boost: 5  });
+
+      Object.values(searchDocs).forEach(doc => {
+        this.add({
+          id:      String(doc.id),
+          title:   doc.title   || "",
+          excerpt: doc.excerpt || "",
+          author:  doc.author  || "",
+        });
+      });
+    });
+
     searchReady = true;
   } catch (err) {
-    console.error("Failed to load search index:", err);
+    console.error("Failed to build search index:", err);
     searchReady = false;
   } finally {
     searchLoading = false;
@@ -618,7 +636,7 @@ async function runSearch(q) {
   empty.classList.add("hidden");
   meta.classList.remove("hidden");
   if (heading) heading.textContent = `Results for \u201c${q}\u201d`;
-  meta.textContent = "Loading search index…";
+  meta.textContent = searchReady ? "Searching…" : "Building search index…";
   setLoadingVisible(loading, true);
 
   try {

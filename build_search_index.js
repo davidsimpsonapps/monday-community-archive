@@ -76,14 +76,14 @@ for (let i = 0; i < files.length; i++) {
   docStore[id] = {
     id:          topic.id,
     title,
-    excerpt:     excerpt.slice(0, 180),
+    excerpt:     excerpt.slice(0, 100),   // trimmed from 180 to save space
     categoryId:  topic.categoryId,
     postsCount:  topic.postsCount,
-    likeCount:   topic.likeCount,
-    solvedPostId: topic.solvedPostId,
-    lastPostedAt: topic.lastPostedAt,
-    slug:        topic.slug,
-    author:      topic.posts?.[0]?.author || "",  // original poster for display
+    likeCount:   topic.likeCount || 0,
+    solvedPostId: topic.solvedPostId || null,
+    lastPostedAt: topic.lastPostedAt || null,
+    slug:        topic.slug || null,
+    author:      topic.posts?.[0]?.author || "",
   };
 }
 
