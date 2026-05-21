@@ -11,7 +11,12 @@ The original community was replaced in April 2026 with a new version based on a 
 
 ```bash
 sh ./serve.sh
-# then open http://localhost:8080/
 ```
 
+then open http://localhost:8080/
 
+## Hosted by CloudFlare
+
+Using pages for the frontend, and r2 for `/api/*`
+
+https://monday-community-archive.pages.dev/
