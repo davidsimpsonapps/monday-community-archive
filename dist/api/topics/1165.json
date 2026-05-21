@@ -1,0 +1,81 @@
+{
+  "id": 1165,
+  "title": "Internal Server Error when changing/creating column values",
+  "slug": "internal-server-error-when-changing-creating-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2019-08-01T12:35:22.890Z",
+  "lastPostedAt": "2019-10-12T19:00:00.292Z",
+  "postsCount": 9,
+  "excerpt": "Hi. \nI am trying to update a column value using the following query: \nmutation {change_column_value (board_id: #######, item_id: #######, column_id: \\&quot;text\\&quot;, value: \\&quot;hello\\&quot;) {name}} \nAnd creating a new item with given&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 9074,
+  "posts": [
+    {
+      "id": 3252,
+      "postNumber": 1,
+      "createdAt": "2019-08-01T12:35:22.969Z",
+      "author": "michael.latar (Michael Latar)",
+      "cookedHtml": "<p>Hi.<br />\nI am trying to update a column value using the following query:</p>\n<p><code>mutation {change_column_value (board_id: #######, item_id: #######, column_id: \\\"text\\\", value: \\\"hello\\\") {name}}</code></p>\n<p>And creating a new item with given values using the following query:</p>\n<p><code>mutation {create_item (board_id: ########, item_name: \\\"New Item\\\", column_values: \\\"{\\\\\\'text\\\\\\': \\\\\\'hello\\\\\\'}\\\") {id}}</code></p>\n<p>However I get <strong>Internal Server Error (500)</strong>.<br />\nWhat is the problem with these queries?</p>\n<p>Note:</p>\n<ol>\n<li>A column with the id ‘text’ <em>does</em> exist in the board</li>\n<li>I have no problem creating an item with empty column_values (just {}), nor any problem in reading board contents.</li>\n<li>The stringified JSON (the arg of column_values) is generated automatically by str(dict).</li>\n</ol>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 3275,
+      "postNumber": 2,
+      "createdAt": "2019-08-02T15:00:53.758Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Michael!</p>\n<p>Can you share the code you’re using to make the query? I’d love to know exactly the data you’re sending to our server so we can troubleshoot.</p>\n<p>Cheers,<br />\nDipro</p>"
+    },
+    {
+      "id": 3313,
+      "postNumber": 3,
+      "createdAt": "2019-08-05T07:35:39.104Z",
+      "author": "michael.latar (Michael Latar)",
+      "cookedHtml": "<p>I implement the API request in Python. Please see the attached code.</p>\n<pre><code>MONDAY_TOKEN = 'XXXXXXXXXXXX'\n\ninput_dict = {\"text\": \"Hello\"}\nempty_dict = {}\n\nquery = \"mutation {create_item (board_id: 284526560, item_name: \\\"New Item\\\",\ncolumn_values: \\\"%s\\\") {id}}\" % str(input_dict)\npayload = json.dumps({\"query\": query})\n\nr = requests.post(\"https://api.monday.com/v2/\",\n                  headers={'Content-Type': 'application/json',\n                           'Authorization': MONDAY_TOKEN},\n                  data=payload)\n</code></pre>\n<p>Where if I use str(input_dict) I get the 500 Internal Sever Error, and if I use str(empty_dict) the item is added successfully. The id of the text column is ‘text’. Using ‘Text’ (its label) as key does not change the outcomes.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 3908,
+      "postNumber": 4,
+      "createdAt": "2019-08-06T12:21:14.582Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Michael!</p>\n<p>Ah, I see the issue. When you pass <code>input_dict</code> as a string, it doesn’t escape the inner quotes, resulting in a malformed query string.</p>\n<p>Instead of trying to manipulate your query string to include column values, I’d suggest passing them as variables.</p>\n<p>Try something like this:</p>\n<pre><code>req_data = {\"query\" : \"mutation($name: String!, $columns: JSON!)\\\n    \t\t\t\t{create_item(item_name:$name, board_id:xxxx, column_values:$columns) \\\n    \t\t\t\t{name id column_values {id value}}}\",\n                    # send columns as a variable to prevent string manipulation\n    \t\t\"variables\" : {\"name\" : name, \"columns\" : json.dumps(column_data)}} \nr = requests.post(url=monday_url, json=req_data, headers=headers)\n</code></pre>\n<p>Let me know if that works for you! <img src=\"https://emoji.discourse-cdn.com/apple/sunny.png?v=9\" title=\":sunny:\" class=\"emoji\" alt=\":sunny:\" /></p>"
+    },
+    {
+      "id": 6916,
+      "postNumber": 5,
+      "createdAt": "2019-10-09T11:22:33.677Z",
+      "author": "M65D85 (Madushan)",
+      "cookedHtml": "<p>Is there a way to update columns of a new item together with the creation of the item? I know that after creating the item name you can then get the item id and mutate the rest of the columns, but is there a way to directly update the respective columns? Say when making a post request through a contact form with the name and email fields along with the name? name being item_name in this case</p>"
+    },
+    {
+      "id": 6919,
+      "postNumber": 6,
+      "createdAt": "2019-10-09T11:45:52.522Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/m65d85\">@M65D85</a> – yes indeed! You can pass a JSON string of column values in the “column_values”  parameter to update an items columns upon creation.</p>\n<p>Check out this post for some examples in cURL: <a href=\"https://community.monday.com/t/curl-examples-for-api-v2/1077\" class=\"inline-onebox\">cURL Examples for API v2 :)</a></p>\n<p>Cheers,<br />\nDipro</p>"
+    },
+    {
+      "id": 6923,
+      "postNumber": 7,
+      "createdAt": "2019-10-09T12:01:26.575Z",
+      "author": "M65D85 (Madushan)",
+      "cookedHtml": "<p>So may you please see if this is correct:</p>\n<p>$token = ‘[ token ]’;</p>\n<p>$url = ‘<a href=\"https://user.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://user.monday.com/v2/</a>’;</p>\n<p>$query=’ mutation { create_item (board_id: 341727670, item_name: “someone”, column_id: “{“first_name5”: \"test text \"}” ) { text } } ’ ; HOW DO I ADD MULTIPLE COLUMNS HERE? note the first_name is the id of the column does it go that way or is there another way to do this?</p>\n<p>$headers = [‘Content-Type: application/json’, ‘User-Agent: [whatpresents] GraphQL Client’, ‘Authorization:’ . $token]; $data = <span class=\"mention\">@file_get_contents</span>($url, false, stream_context_create([ ‘http’ =&gt; [ ‘method’ =&gt; ‘POST’, ‘header’ =&gt; $headers, ‘content’ =&gt; json_encode([‘query’ =&gt; $query]), ] ]));<br />\n$tempContents = json_decode($data, true);</p>\n<p>And is this header section correct?</p>\n<p>Thanks for your help! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 6931,
+      "postNumber": 8,
+      "createdAt": "2019-10-09T13:51:01.435Z",
+      "author": "M65D85 (Madushan)",
+      "cookedHtml": "<p>please your help is much needed!</p>"
+    },
+    {
+      "id": 7023,
+      "postNumber": 9,
+      "createdAt": "2019-10-12T19:00:00.292Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>This topic was automatically closed after 3 days. New replies are no longer allowed.</p>"
+    }
+  ]
+}

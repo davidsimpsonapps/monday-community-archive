@@ -1,0 +1,79 @@
+{
+  "id": 16691,
+  "title": "OAuth for int recipes",
+  "slug": "oauth-for-int-recipes",
+  "categoryId": 58,
+  "tagIds": [],
+  "createdAt": "2021-02-08T09:17:57.052Z",
+  "lastPostedAt": "2021-03-01T20:52:08.068Z",
+  "postsCount": 8,
+  "excerpt": "Hi @dipro \nthanks for the explanation, it helped me to understand it better. \nInstallation link works fine, but when I remove response_type=install from authorization url, I can get the authorization from a specific user&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1470,
+  "posts": [
+    {
+      "id": 40001,
+      "postNumber": 1,
+      "createdAt": "2021-02-08T09:17:57.052Z",
+      "author": "lubos.husivarga (Lubos Husivarga)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>thanks for the explanation, it helped me to understand it better.</p>\n<p>Installation link works fine, but when I remove <strong>response_type=install</strong> from authorization url, I can get the authorization from a specific user (monday perform oauth callback to my site) and token works. But there is no state in oauth callback coming from monday and therefore we don’t know which account id and user id was authorizing our request. URL looks like this:<br />\n<code>https://auth.monday.com/oauth2/authorize?client_id=662bffd00af626513cbf55f02ae36470</code></p>\n<p>When monday users authorize our app when opening integration recipe, it works fine. What I am trying to achieve is to authorize our app from monday user before he comes to the integration recipe, because we need to prepare a template before customers use it in the recipe.</p>\n<p>Is there such option?</p>\n<p>Thanks,<br />\nLubos</p>"
+    },
+    {
+      "id": 41794,
+      "postNumber": 2,
+      "createdAt": "2021-02-23T17:19:13.756Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/lubos.husivarga\">@lubos.husivarga</a>!</p>\n<p>It sounds like what you’re trying to do is to have some other sort of authorization screen prior to the user heads to the integration center to add one of your app recipes-- is that right?</p>\n<p>You can also accomplish this when a user goes to the apps marketplace to install your app. This way, they are also redirected to the OAuth confirmation page if that makes sense.</p>\n<p>Are you still dealing with this issue?</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41795,
+      "postNumber": 3,
+      "createdAt": "2021-02-23T17:19:16.358Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 41819,
+      "postNumber": 4,
+      "createdAt": "2021-02-23T20:55:05.875Z",
+      "author": "lubos.husivarga (Lubos Husivarga)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>!</p>\n<p>Exactly, I need authorization screen before users heads to the integration center to add a recipe.</p>\n<p>This is the issue I can’t accomplish this with app installation, because Install from marketplace does not trigger OAuth callback. The screen looks exactly the same as authorization screen and only visual difference is the blue button: <strong>Install</strong> vs. <strong>Authorize</strong>.</p>\n<p>The installation only informs admin about required permissions by the app and admin actually allows users to use the app, but no authorization is granted during the installation.</p>\n<p>I can trigger the authorization request from our external site with url mentioned in my post above, but OAuth callback from monday does not contain <strong>state</strong> parameter as it does when the OAuth callback is triggered from integration recipe directly from monday.</p>\n<p>So my concern is about missing <strong>state</strong> parameter holding account and user ID when the authorization is triggered from external authorization URL vs. internal integration recipe authorization request. We get the <strong>code</strong> parameter, so we can retrieve API token and it works, but we don’t know which user authorized it.</p>\n<p>Hope it makes sense, please let me know!</p>\n<p>Thanks,<br />\nLubos</p>"
+    },
+    {
+      "id": 41900,
+      "postNumber": 5,
+      "createdAt": "2021-02-24T14:11:58.702Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Ahh okay! I see what you’re saying.</p>\n<p>Sorry for my misunderstanding earlier-- you are indeed correct in that the OAuth flow can only be triggered once a user has navigated into the integration center to set up one of your recipes.</p>\n<p>When you say “prepare a template before customers use it in the recipe,” what template are you referring to? To the recipe template?</p>\n<p>If so, why couldn’t the user select the necessary areas in the integration itself when setting it up? I don’t believe you’re able to set up a “template” recipe.</p>"
+    },
+    {
+      "id": 41903,
+      "postNumber": 6,
+      "createdAt": "2021-02-24T14:45:05.188Z",
+      "author": "lubos.husivarga (Lubos Husivarga)",
+      "cookedHtml": "<p>We are doing automated document creation, so user needs to create document template first. This is because in integration recipe he needs to select the document template to be able to complete the sentence and add it to the board. I realized this chicken &amp; egg dilemma when I was creating a video guide.</p>\n<p>I had to navigate user to integration recipes first to get API access and abandon the recipe creation. Then to create template, connect it with board (API access required) and select monday columns which will be printed into document. And then again into integration recipes to create recipe with document template created.</p>\n<p>I have solved it with external authorization link so customer can authorize our app from our web where he is able to create template. Then he goes back to monday and setup the recipe. Because of missing account and user ID from first authorization he has to authorize our app again in this step.</p>\n<p>Here’s the video: <a href=\"https://www.youtube.com/watch?v=_KBrDccyyf0\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Automated PDF document creation for monday.com with Eledo - YouTube</a></p>\n<p>It works, but I would like to avoid second authorization request for better customer experience. The second authorization request is of course cut out of the video guide, but it’s required in reality.</p>\n<p>Thanks,<br />\nLubos</p>"
+    },
+    {
+      "id": 41993,
+      "postNumber": 7,
+      "createdAt": "2021-02-24T22:28:48.219Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Ahh okay, that makes a lot of sense!</p>\n<p>That is quite a cool app, I can definitely see how useful it would be. So you would almost be changing the integration recipe offered based off of what a user has selected in their board template, right?</p>\n<p>While this isn’t a possibility currently, I would be more than happy to pass this along as feedback for our team’s consideration!</p>"
+    },
+    {
+      "id": 43004,
+      "postNumber": 8,
+      "createdAt": "2021-03-01T20:07:14.254Z",
+      "author": "lubos.husivarga (Lubos Husivarga)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/helen\">@Helen</a>!</p>\n<p>I will be looking forward to updates!</p>\n<p>And yes and no. The only difference would be the existence of document template in integration recipe template chooser, when the integration recipe is configured after the template is created. It’s all about the user experience <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 43012,
+      "postNumber": 9,
+      "createdAt": "2021-03-01T20:52:08.068Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Absolutely! I can understand that.</p>\n<p>Hopefully we come out with something to support this soon.</p>"
+    }
+  ]
+}

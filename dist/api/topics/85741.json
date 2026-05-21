@@ -1,0 +1,55 @@
+{
+  "id": 85741,
+  "title": "What's the proper way to handle budget exhaustion in integrations?",
+  "slug": "whats-the-proper-way-to-handle-budget-exhaustion-in-integrations",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    351
+  ],
+  "createdAt": "2024-05-02T14:07:05.408Z",
+  "lastPostedAt": "2024-05-03T15:03:11.622Z",
+  "postsCount": 4,
+  "excerpt": "{\n   errors: [\n    &#39;Complexity budget exhausted, query cost 100001 budget remaining 99951 out of 5000000 reset in 50 seconds&#39;\n   ],\n   error_code: &#39;ComplexityException&#39;,\n   status_code: 429,\n   account_id: 20288401\n}\n\nWh&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 124,
+  "posts": [
+    {
+      "id": 181904,
+      "postNumber": 1,
+      "createdAt": "2024-05-02T14:07:05.490Z",
+      "author": "ianhunter373 (IH)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">{\n   errors: [\n    'Complexity budget exhausted, query cost 100001 budget remaining 99951 out of 5000000 reset in 50 seconds'\n   ],\n   error_code: 'ComplexityException',\n   status_code: 429,\n   account_id: 20288401\n}\n</code></pre>\n<p>When this occurs is it best to just return a 400 failed message for the integration, since the shortLivedToken only lasts 30 seconds?</p>"
+    },
+    {
+      "id": 181929,
+      "postNumber": 2,
+      "createdAt": "2024-05-02T15:23:39.951Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>shortLivedTokens now last <a href=\"https://developer.monday.com/apps/docs/integration-authorization#seamless-authentication\" rel=\"noopener nofollow ugc\">5 minutes</a>. It had been changed.</p>\n<p>That said, you can return a 429 and it will retry automatically in a minute from initial send. You can start your action out with a query for available capacity and know how much you’re going to use and proceed if there is enough or cancel if there is not.</p>\n<p>You could also write code on your side to track this in memory so multiple requests subtract on your side their predicted amount, tally up used as they run, and then adjust in memory when complete.</p>\n<p>You can also queue it for completion later, but that will mean you must return “success” for the action even though it may fail in the future.</p>"
+    },
+    {
+      "id": 182090,
+      "postNumber": 3,
+      "createdAt": "2024-05-03T14:58:31.291Z",
+      "author": "ianhunter373 (IH)",
+      "cookedHtml": "<p>What’s the proper return response to send if the user’s gone over say their subscription’s op_count? 500?</p>"
+    },
+    {
+      "id": 182091,
+      "postNumber": 4,
+      "createdAt": "2024-05-03T15:03:11.622Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>402 is a possible option, and then use the error handling <a href=\"https://developer.monday.com/apps/docs/error-handling\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Error handling</a> to supply a message to that effect.</p>\n<p>Also if you hadn’t seen: <a href=\"https://developer.monday.com/api-reference/reference/app-subscription-operations\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">App subscription operations</a> exists now, but it doesn’t stop events from sending, nor can you manually reset it yet. Nor does it have a built in UI for the user. So at this point its just as easy to track it within my code using whatever DB I want.</p>"
+    },
+    {
+      "id": 182200,
+      "postNumber": 5,
+      "createdAt": "2024-05-05T09:33:29.880Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

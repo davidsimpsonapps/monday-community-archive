@@ -1,0 +1,63 @@
+{
+  "id": 47499,
+  "title": "Duplicate group not creating all items",
+  "slug": "duplicate-group-not-creating-all-items",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    115,
+    351
+  ],
+  "createdAt": "2022-12-16T13:15:56.202Z",
+  "lastPostedAt": "2022-12-22T08:16:05.211Z",
+  "postsCount": 6,
+  "excerpt": "Hi, \nI’m currently trying to duplicate a group with 34 items through the graphQL API. So far so good, the API is easy to use &amp; the request schema helps a lot. \nI encounter the following problem: \nI successfully duplicate&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 893,
+  "posts": [
+    {
+      "id": 107570,
+      "postNumber": 1,
+      "createdAt": "2022-12-16T13:15:56.290Z",
+      "author": "guidou4 (GuillaumeDoucet)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m currently trying to duplicate a group with 34 items through the graphQL API. So far so good, the API is easy to use &amp; the request schema helps a lot.</p>\n<p>I encounter the following problem:</p>\n<p>I successfully duplicate a group with the following mutation query:<br />\nmutation {<br />\nduplicate_group (board_id: ${boardId}, group_id: ${groupId}, add_to_top: true) {<br />\nid<br />\n}<br />\n}</p>\n<p>The group is duplicated in monday &amp; visible. However, not all items of the group are present in the duplicated group. The number varies. Sometimes I get 15/34, other times I get 18/34…</p>\n<p>I suspect this might be because my whole custom action exceeds the query complexity limit (it performs more than 1 query). But, I would expect in this case that monday returns a status code 429, this is not the case.</p>\n<p>Anybody knows why my item are not all created ?</p>\n<p>Thanks in advance!</p>"
+    },
+    {
+      "id": 107580,
+      "postNumber": 2,
+      "createdAt": "2022-12-16T14:21:59.744Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>The size of the group does not change the duplication cost – so you don’t have to worry about that. As long as you’re under your complexity budget and not making more than 40 calls a minute, you’re fine.</p>\n<p>This might be either a temporary problem or a board-level issue. Try the following steps and let us know what you find:</p>\n<ol>\n<li>\n<p><strong>Do the items appear eventually?</strong> Sometimes when you duplicate a board or group it can take a few minutes for the operation to finish. Shouldn’t take too long though (if you’re waiting 10 mins or more, something’s wrong).</p>\n</li>\n<li>\n<p><strong>Have you been able to duplicate this group before?</strong></p>\n</li>\n<li>\n<p><strong>Can you duplicate other groups successfully?</strong> Try to duplicate groups on other boards and see if they suffer the same problem. If they don’t, then the problem is scoped to that one group or board.</p>\n</li>\n<li>\n<p><strong>Can you successfully duplicate the group via the web platform?</strong> If the issue is reproducible in the web, then it’s an issue with that group.</p>\n</li>\n</ol>\n<p>Send us the results of this investigation and we’ll take it from there!</p>"
+    },
+    {
+      "id": 107673,
+      "postNumber": 3,
+      "createdAt": "2022-12-18T06:28:38.176Z",
+      "author": "guidou4 (GuillaumeDoucet)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a> ,</p>\n<p>Thanks for the quick answer. I followed your diagnostic steps, and here are the results:</p>\n<ol>\n<li>\n<p>No the item do not appear eventually, I waited over night, without success.</p>\n</li>\n<li>\n<p>Yes I’ve duplicated this group before, but through the web interface.</p>\n</li>\n<li>\n<p>Seems like duplicating other group for my specific use case causes the same problem…</p>\n</li>\n<li>\n<p>Through the web interface, the duplicate group action works flawlessly.</p>\n</li>\n</ol>\n<p>I investigated some more and I have another hypothesis on what is happening, but first let me provide some context on my use case. My custom action does the following:</p>\n<ul>\n<li>When triggered, it creates a board from a template</li>\n<li>Then it gets the number value of a number column of the trigger item</li>\n<li>Then it gets all group in freshly created board and filter for the group with provided ‘name’ in receipe</li>\n<li>Then it duplicates this group N times, where N is the number value of the trigger item.</li>\n</ul>\n<p>Since the duplicated group is from a board that is created <em>ms</em> before, could it be that the create board operation has not completed yet ? or maybe the create board operation has not finished creating all items ?</p>"
+    },
+    {
+      "id": 107675,
+      "postNumber": 4,
+      "createdAt": "2022-12-18T08:54:45.280Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/guidou4\">@guidou4</a>,</p>\n<p>Thank you for that explanation. I think your hypothesis might be correct.</p>\n<p>Can you test if it is? You can do so by adding some timeouts here and there to give monday some time to create the groups completely before you try to duplicate them. I would try (for testing purposes) adding 90 seconds between steps, to see what happens. You can then play with that number as needed.</p>\n<p>Please let us know what you find!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 108075,
+      "postNumber": 5,
+      "createdAt": "2022-12-22T06:24:19.824Z",
+      "author": "guidou4 (GuillaumeDoucet)",
+      "cookedHtml": "<p>Hi,</p>\n<p>Yes this was the problem! Although it works for debugging, the final solution is not to add waits between steps.</p>\n<p>I think I will query the API every X period of time (with maybe a backoff strategy) (ex: 10, 30, 60 sec) until all items are created, then I will trigger my duplicate group.</p>\n<p>thanks all for the help.</p>"
+    },
+    {
+      "id": 108086,
+      "postNumber": 6,
+      "createdAt": "2022-12-22T08:16:05.211Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Sounds like a plan <a class=\"mention\" href=\"/u/guidou4\">@guidou4</a>!</p>\n<p>Let us know if you need anything else <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

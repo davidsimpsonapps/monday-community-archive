@@ -1,0 +1,82 @@
+{
+  "id": 8882,
+  "title": "How to get the value of a column in a custom integration?",
+  "slug": "how-to-get-the-value-of-a-column-in-a-custom-integration",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-07-11T06:05:09.280Z",
+  "lastPostedAt": "2021-02-25T14:24:15.360Z",
+  "postsCount": 9,
+  "excerpt": "Hi :wave: \nI’m trying to use a column value in a receipt instead of column id. \nIn the receipt, {site name,siteNameId} will return the id of the column selected by the user. \nHow can I get the value of the column selecte&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 1740,
+  "posts": [
+    {
+      "id": 22289,
+      "postNumber": 1,
+      "createdAt": "2020-07-11T06:05:09.338Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Hi <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /><br />\nI’m trying to use a column value in a receipt instead of column id.<br />\nIn the receipt, {site name,siteNameId} will return the id of the column selected by the user.<br />\nHow can I get the value of the column selected by the user instead of having the column ID?<br />\nIs there a real documentation somewhere with all this stuff?</p>"
+    },
+    {
+      "id": 22295,
+      "postNumber": 2,
+      "createdAt": "2020-07-11T08:30:07.508Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jeromeskiply\">@jeromeskiply</a></p>\n<p>There is a columnValue available in the recipe builder, e.g.</p>\n<blockquote>\n<p>When {status, columnId} changes to {something, columnValue}</p>\n</blockquote>\n<p>in this case you configure which columnId the columnValue takes it’s values from. Is this what you are looking for or do you want to get the value of the column in the action. If the latter, then you can do that in your custom action and code it in your backend.</p>\n<p>Hope this answers your question</p>"
+    },
+    {
+      "id": 22299,
+      "postNumber": 3,
+      "createdAt": "2020-07-11T08:36:48.898Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Thanks for your help <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>. On the trigger side, it is ok.<br />\nI’m trying to retrieve the value of the column selected by the user in the action to send it to my endpoint.<br />\nI have a column with id “siteId”, and when the user change the value of an other column (status), I need to send the value of the column with id “siteId”. I could send the itemId to my app, and then make an api request to find the value of siteId, but it could be much more straight forward to send it directly… I saw a “general value” field in the custom action form, so I was wondering if there was a way to do that.</p>"
+    },
+    {
+      "id": 22301,
+      "postNumber": 4,
+      "createdAt": "2020-07-11T08:54:53.493Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>OK, understood.</p>\n<p>I did not tested this yet but I don’t think you can use the columnValue in your action builder. When you<br />\nendpoint is called (by the trigger) you can retrieve the value of a column / item by calling the monday API from your endpoint. I use something like this to do that in my endpoint</p>\n<blockquote>\n<p>const dates = await mondayService.getColumnValues(token, itemId, [<br />\ncolumnIdStart,<br />\ncolumnIdEnd,<br />\n]);</p>\n</blockquote>\n<p>I get the columnId’s from the action in my endpoint and I use a service (getColumnValues) that call the API. This gives me the value of both dates columns in JSON format.</p>"
+    },
+    {
+      "id": 22302,
+      "postNumber": 5,
+      "createdAt": "2020-07-11T08:56:20.829Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Yes, I was doing the same until now. Thanks for your feedback.</p>"
+    },
+    {
+      "id": 22442,
+      "postNumber": 6,
+      "createdAt": "2020-07-13T13:07:24.033Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> do you confirm that we can’t get directly the value of the columns in the action? What is the purpose of the “General value” in the custom action fields type?</p>"
+    },
+    {
+      "id": 22446,
+      "postNumber": 7,
+      "createdAt": "2020-07-13T13:26:06.722Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Today I got it working with a Status column and a StatusColumnValue in the action part of the builder. However, the Status column should be in the recipe sentence. I tried trigger output as the source of the Status column (as it is also in my trigger) but in that case you can’t select the StatusColumnValue.</p>\n<p>Hope that helps</p>"
+    },
+    {
+      "id": 22808,
+      "postNumber": 8,
+      "createdAt": "2020-07-16T09:46:53.360Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Jerome,</p>\n<p>Unless the column ID you’re looking for is configured in the recipe sentence, it won’t be passed to your action. This is because the integration’s context is a board (not a specific column).</p>\n<p>In this case, your action should call the API to get the value of the column, and then do whatever application logic you’re looking to achieve.</p>\n<p>I hear what you’re saying though, and will pass on the feedback to our apps team!</p>"
+    },
+    {
+      "id": 42260,
+      "postNumber": 9,
+      "createdAt": "2021-02-25T14:24:15.360Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

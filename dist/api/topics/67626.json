@@ -1,0 +1,188 @@
+{
+  "id": 67626,
+  "title": "How to extract data using graph ql",
+  "slug": "how-to-extract-data-using-graph-ql",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2023-10-04T01:38:43.730Z",
+  "lastPostedAt": "2023-10-11T05:28:39.204Z",
+  "postsCount": 24,
+  "excerpt": "Hi I need to extract BoardID name,itemID name and date created and date updated \n{“query”:&quot;{ boards{ id name columns { title id type } groups { title id } items { id name group {  id }  column_values {  id  text  value }&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 901,
+  "posts": [
+    {
+      "id": 146729,
+      "postNumber": 1,
+      "createdAt": "2023-10-04T01:38:43.798Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>Hi I need to extract BoardID name,itemID name and date created and date updated</p>\n<p>{“query”:\"{ boards{ id name columns { title id type } groups { title id } items { id name group {  id }  column_values {  id  text  value }}}} \"}</p>\n<p>i use like above but i can find date column how to extract date with respet to item</p>"
+    },
+    {
+      "id": 146766,
+      "postNumber": 2,
+      "createdAt": "2023-10-04T08:18:28.588Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/channa\">@Channa</a>,</p>\n<p>You can use a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    id\n    name\n    columns {\n      title\n      id\n      type\n    }\n    groups {\n      title\n      id\n    }\n    items_page(limit: 500) {\n      cursor\n      items {\n        created_at\n        updated_at\n        id\n        name\n        group {\n          id\n        }\n        column_values {\n          id\n          text\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146796,
+      "postNumber": 3,
+      "createdAt": "2023-10-04T09:31:24.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>Thank you <span class=\"mention\">@matis</span><br />\ni am using REST query<br />\nsample :{“query”:\"{ boards{ id name columns { title id type } groups { title id } items { id name group { id } column_values { id text value }}}} \"}</p>\n<p>is it possible to convert like above</p>"
+    },
+    {
+      "id": 146807,
+      "postNumber": 4,
+      "createdAt": "2023-10-04T10:21:20.593Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>If you are referring to the format, you just need to put everything in the same line like this:</p>\n<p><code>\"query\": \"{boards(ids: 1234567890) {id name columns {title id type } groups { title id } items_page(limit: 500) { cursor items { created_at updated_at id name group { id} column_values {  id text value} } } } }\"</code></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146885,
+      "postNumber": 5,
+      "createdAt": "2023-10-04T17:43:40.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>i tried query on postman dosnet bring results</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/f/4fc55bb395943e7e9a73f908cc30e0f8a75f0a8b.png\" title=\"image.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/f/4fc55bb395943e7e9a73f908cc30e0f8a75f0a8b_2_472x216.png\" alt=\"image.png\" width=\"472\" height=\"216\" /><div class=\"meta\"><span class=\"filename\">image.png</span><span class=\"informations\">2666×1220 257 KB</span></div></a></div><p></p>\n<p>could you suggest any changes to query</p>"
+    },
+    {
+      "id": 146913,
+      "postNumber": 6,
+      "createdAt": "2023-10-04T19:17:51.387Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>What <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> posted is the JSON body of the request built from from the contents of the QUERY and VARIABLES panes in Postman by Postman.</p>\n<p>What you want in the Postman QUERY pane is as follows:</p>\n<pre><code class=\"lang-auto\">query($boardIds: [ID!]){boards(ids: $boardId) {id name columns {title id type } groups { title id } items_page(limit: 500) { cursor items { created_at updated_at id name group { id} column_values { id text value} } } } }\n</code></pre>\n<p>Postman then puts that in the query key of the JSON it sends:</p>\n<pre><code class=\"lang-auto\">{\n   \"query\": \"query($boardIds: [ID!]){boards(ids: $boardId) {id name columns {title id type } groups { title id } items_page(limit: 500) { cursor items { created_at updated_at id name group { id} column_values { id text value} } } } }\",\n   \"variables\" : {\n       \"boardIds: [\"1234567890\"]\n   }\n}\n</code></pre>\n<p>In my example I’ve included the variables that you put in the right side of Postman - in this case for the boardID (which in a query is an array of IDs, which can be strings or numeric - i recommend standardizing on strings, since that is how they are returned in queries).</p>\n<p>Postman takes the query and variables panes, and turns them into the above JSON (each one of course being in its respective key). GraphQL queries are simple strings, and treated as a single string when being turned into JSON by Postman.</p>"
+    },
+    {
+      "id": 146926,
+      "postNumber": 7,
+      "createdAt": "2023-10-04T20:02:05.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>sorry for bothering you again</p>\n<p>i am seeing different error <strong>items-page</strong> not found<br />\nis my variable passing is correct?<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/a/7a06cb0a9d3611ab44fc2383e476daa2f7387fb7.png\" title=\"image.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/a/7a06cb0a9d3611ab44fc2383e476daa2f7387fb7_2_472x216.png\" alt=\"image.png\" width=\"472\" height=\"216\" /><div class=\"meta\"><span class=\"filename\">image.png</span><span class=\"informations\">2666×1220 359 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 146928,
+      "postNumber": 8,
+      "createdAt": "2023-10-04T20:15:21.084Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Have you forgotten to set a header <code>api-version: 2023-10</code>? While 2023-10 is live it, it is not the default version and must be specified with a header.</p>\n<p><code>items_page</code> only exists on 2023-10</p>"
+    },
+    {
+      "id": 146971,
+      "postNumber": 9,
+      "createdAt": "2023-10-05T01:20:05.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>Hi Cody,</p>\n<p>i added the version<br />\nam i passing variable correctly ? i never use graphql before<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/8/883df2c5ced623b8d75803aa1e487b113dc83e83.png\" title=\"image.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/8/883df2c5ced623b8d75803aa1e487b113dc83e83_2_472x235.png\" alt=\"image.png\" width=\"472\" height=\"235\" /><div class=\"meta\"><span class=\"filename\">image.png</span><span class=\"informations\">2666×1330 378 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 146980,
+      "postNumber": 10,
+      "createdAt": "2023-10-05T04:05:38.468Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/channa\">@Channa</a> I see you are passing “boardIds” in the variables, but in the body of the request you are using “boardId”. No “s” at the end.</p>\n<p>I hope that helps!</p>\n<p>By the way thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the help!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146992,
+      "postNumber": 11,
+      "createdAt": "2023-10-05T05:01:39.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>may be this query have some issues<br />\ndosent bring any data</p>\n<p>i tried both</p>"
+    },
+    {
+      "id": 147030,
+      "postNumber": 12,
+      "createdAt": "2023-10-05T08:56:41.602Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>You are using a user’s API token to make the HTTP request.</p>\n<p>You might be using the token of a user who does not have access to that board.</p>\n<p>Try this with a board in which the user whose API token is being used is a board owner. If you can see data, it is probably a permissions issue.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 147049,
+      "postNumber": 13,
+      "createdAt": "2023-10-05T09:57:24.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>i can execute the json, and i saw data also</p>"
+    },
+    {
+      "id": 147410,
+      "postNumber": 14,
+      "createdAt": "2023-10-08T06:13:36.793Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/channa\">@Channa</a>,</p>\n<p>You might see some data for things the user whose API token is being used has access to.</p>\n<p>Maybe the user has access to board A and not board B.</p>\n<p>In that case, via API you would see results for board A, but not for board A.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 147431,
+      "postNumber": 15,
+      "createdAt": "2023-10-08T08:14:22.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>that code you send works fine but i need it as graphQL query</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/f/afaa0d6ae2e95c7e10653422226aac5b1e04a4d9.png\" title=\"image.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/f/afaa0d6ae2e95c7e10653422226aac5b1e04a4d9_2_472x170.png\" alt=\"image.png\" width=\"472\" height=\"170\" /><div class=\"meta\"><span class=\"filename\">image.png</span><span class=\"informations\">2660×958 230 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 147432,
+      "postNumber": 16,
+      "createdAt": "2023-10-08T08:24:52.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>can you convert into graphql below json</p>\n<p>{<br />\nboards(ids: 1259091456) {<br />\nid<br />\nname<br />\ncolumns {<br />\ntitle<br />\nid<br />\ntype<br />\n}<br />\ngroups {<br />\ntitle<br />\nid<br />\n}<br />\nitems_page(limit: 500) {<br />\ncursor<br />\nitems {<br />\ncreated_at<br />\nupdated_at<br />\nid<br />\nname<br />\ngroup {<br />\nid<br />\n}<br />\ncolumn_values {<br />\nid<br />\ntext<br />\nvalue<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/f/afaa0d6ae2e95c7e10653422226aac5b1e04a4d9.png\" title=\"image.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/f/afaa0d6ae2e95c7e10653422226aac5b1e04a4d9_2_690x248.png\" alt=\"image.png\" width=\"690\" height=\"248\" /><div class=\"meta\"><span class=\"filename\">image.png</span><span class=\"informations\">2660×958 230 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 147435,
+      "postNumber": 17,
+      "createdAt": "2023-10-08T09:55:10.672Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/channa\">@Channa</a>,</p>\n<p>I am not sure I follow. What you sent is GraphQL.</p>"
+    },
+    {
+      "id": 147437,
+      "postNumber": 18,
+      "createdAt": "2023-10-08T11:09:43.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>I am able to execute the JSON which you shared with me in the first response</p>\n<p>same results i want with GraphQL query</p>"
+    },
+    {
+      "id": 147442,
+      "postNumber": 19,
+      "createdAt": "2023-10-08T12:07:58.458Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>you can just copy the string value of “query” from the JSON and you have the graphql string.</p>"
+    },
+    {
+      "id": 147465,
+      "postNumber": 20,
+      "createdAt": "2023-10-08T22:24:23.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>Yes it is not GraphQL i need same result as above JSON, in graphQL<br />\nThis Below is fetching data what i want i just need this JASON in graphQL<br />\n{<br />\nboards(ids: 1259091456) {<br />\nid<br />\nname<br />\ncolumns {<br />\ntitle<br />\nid<br />\ntype<br />\n}<br />\ngroups {<br />\ntitle<br />\nid<br />\n}<br />\nitems_page(limit: 500) {<br />\ncursor<br />\nitems {<br />\ncreated_at<br />\nupdated_at<br />\nid<br />\nname<br />\ngroup {<br />\nid<br />\n}<br />\ncolumn_values {<br />\nid<br />\ntext<br />\nvalue<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 147468,
+      "postNumber": 21,
+      "createdAt": "2023-10-08T23:40:52.878Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>A GraphQL request is JSON, a GraphQL query is a string. The JSON is the following structure:</p>\n<pre><code class=\"lang-auto\">{\n    \"query\": \"graphql query string\",\n}\n</code></pre>\n<p>Usually you create the JSON using code, there is no need to provide it directly. (this is javascript, but similar applies in any language).</p>\n<pre><code class=\"lang-auto\">//the GraphQL query string\nconst query = `{\n  boards(ids: 1259091456) {\n    id\n    name\n    columns {\n      title\n      id\n      type\n    }\n    groups {\n      title\n      id\n    }\n    items_page(limit: 500) {\n      cursor\n      items {\n        created_at\n        updated_at\n        id\n        name\n        group {\n          id\n        }\n        column_values {\n          id\n          text\n          value\n        }\n      }\n    }\n  }\n}`\n\nconst requestObject = { query };//creates the request object.\n\nconst requestBody = JSON.stringify(requestObject); //stringify the object to JSON.\n\n//or -- const requestBody = JSON.stringify({query});\n\n// if you are using the monday-sdk-js, it creates the JSON for you, just supply the query\n// string.\nconst response = await monday.api(query);\n</code></pre>\n<p>There isn’t a need for us to provide it as JSON. You provide the graphql query as a string in code - and create the JSON at run time. There is no need to type it out as JSON in advance.</p>"
+    },
+    {
+      "id": 147511,
+      "postNumber": 22,
+      "createdAt": "2023-10-09T08:46:49.928Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the explanation for <a class=\"mention\" href=\"/u/channa\">@Channa</a> !</p>"
+    },
+    {
+      "id": 147790,
+      "postNumber": 23,
+      "createdAt": "2023-10-11T02:14:02.000Z",
+      "author": "Channa (Channa)",
+      "cookedHtml": "<p>this query is extracting data in postman</p>\n<p>but when i use this query in REST<br />\ni get error<br />\nRestConnectorMasterTable:<br />\nSQL SELECT<br />\n“account_id”,<br />\n“__KEY_root”,<br />\n(SELECT<br />\n“message”,<br />\n“__FK_errors”<br />\nFROM “errors” FK “__FK_errors”)<br />\nFROM JSON (wrap on) “root” PK “__KEY_root”;</p>"
+    },
+    {
+      "id": 147807,
+      "postNumber": 24,
+      "createdAt": "2023-10-11T05:28:39.204Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/channa\">@Channa</a>,</p>\n<p>It is not clear to me what you are trying to do here.</p>\n<p>Looks like an SQL request.</p>\n<p>Our API works using GraphQL. You need to follow our documentation <a href=\"https://developer.monday.com/api-reference/docs\">here</a>.</p>\n<p>Here are lots of <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/collection/17637789-b18ebc66-bc27-49b5-a950-3dfa4bfb3a21\">Postman examples</a> on how to do it.</p>\n<p>If you are trying to use SQL in your query to our API, it will not work.</p>\n<p>Please follow the documentation and the examples.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

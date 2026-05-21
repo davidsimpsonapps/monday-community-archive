@@ -1,0 +1,89 @@
+{
+  "id": 74243,
+  "title": "Newbie pulling out hair - No query string was present",
+  "slug": "newbie-pulling-out-hair-no-query-string-was-present",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-05T12:59:32.827Z",
+  "lastPostedAt": "2024-05-24T05:06:09.054Z",
+  "postsCount": 8,
+  "excerpt": "I’ve been working with Monday for about a week now, and I swear this exact code was working a few days ago. But now the response I get is “No query string was present”. I checked and rechecked the api key, board id,  col&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 512,
+  "posts": [
+    {
+      "id": 160420,
+      "postNumber": 1,
+      "createdAt": "2024-01-05T12:59:32.898Z",
+      "author": "gabeo (Gabe O'Neill)",
+      "cookedHtml": "<p>I’ve been working with Monday for about a week now, and I swear this exact code was working a few days ago. But now the response I get is “No query string was present”. I checked and rechecked the api key, board id,  column ids, etc.</p>\n<pre><code>   $headers = [\n        \"Content-Type: application/json\",\n        \"Authorization: $apiKey\",\n        \"API-Version: 2023-10\" //brand new as of January 2024\n    ];\n\n    $url = \"https://api.monday.com/v2\";\n    $method = \"POST\";\n    $boardID = $boardID;\n    $query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id: ' . $boardID  . ', item_name:$myItemName, column_values:$columnVals) { id } }';\n\n    $vars = ['myItemName' =&gt; \"JOHN DOE\",\n             'columnVals' =&gt; json_encode([\n             'contact_phone' =&gt; $phone,\n             'countryShortName' =&gt; 'US', //an attempt to get the US flag to show up\n             'text0' =&gt; \"#DA\"\n        ])];\n\n    $ch = curl_init();\n\n    $je = json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]);\n    $jd = json_decode($je);\n\n    curl_setopt($ch, CURLOPT_URL, $url);\n    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);\n    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);\n    curl_setopt($ch, CURLOPT_POSTFIELDS, $je);\n    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n\n    $response = curl_exec($ch);\n</code></pre>\n<p>Any assistance would be GREATLY appreciated.</p>"
+    },
+    {
+      "id": 160447,
+      "postNumber": 2,
+      "createdAt": "2024-01-05T14:45:51.644Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>The short answer is “I don’t know”, but I’ve cleaned up the code so that it is a bit more readable and only has what’s needed there:</p>\n<pre><code class=\"lang-php\">&lt;?php\n$apiKey = \"************\"; // this is a secret\n$boardID = \"123456\"; // some board ID\n\n$headers = [\n  \"Content-Type: application/json\",\n  \"Authorization: $apiKey\",\n  \"API-Version: 2023-10\" // brand new as of January 2024\n];\n\n$query = '\n  mutation ($myItemName: String!, $columnVals: JSON!) { \n    create_item (\n      board_id: ' . $boardID  . ', \n      item_name: $myItemName, \n      column_values: $columnVals\n    ) \n\t{ \n      id \n    } \n  }\n';\n\n$vars = [\n  'myItemName' =&gt; \"JOHN DOE\",\n  'columnVals' =&gt; json_encode([\n    'contact_phone' =&gt; $phone,\n    'countryShortName' =&gt; 'US', //an attempt to get the US flag to show up\n    'text0' =&gt; \"#DA\"\n  ])\n];\n\n$ch = curl_init();\n\n$payload = json_encode([\n  'query' =&gt; $query, \n  'variables' =&gt; $vars\n]);\n\ncurl_setopt($ch, CURLOPT_URL, \"https://api.monday.com/v2\");\ncurl_setopt($ch, CURLOPT_CUSTOMREQUEST, \"POST\");\ncurl_setopt($ch, CURLOPT_HTTPHEADER, $headers);\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $payload);\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n\n$response = curl_exec($ch);\n\n\n</code></pre>"
+    },
+    {
+      "id": 160462,
+      "postNumber": 3,
+      "createdAt": "2024-01-05T15:49:16.267Z",
+      "author": "gabeo (Gabe O'Neill)",
+      "cookedHtml": "<p>Thank you David. I was just going by the examples I came across.</p>"
+    },
+    {
+      "id": 160483,
+      "postNumber": 4,
+      "createdAt": "2024-01-05T18:27:46.861Z",
+      "author": "gabeo (Gabe O'Neill)",
+      "cookedHtml": "<p>Figured it out. Silly issue. The APIkey was read from a database and it had a line feed at the end of it.  Message threw me off.</p>\n<p>Thanks David. I amusing your code structure.</p>"
+    },
+    {
+      "id": 160493,
+      "postNumber": 5,
+      "createdAt": "2024-01-05T19:21:18.564Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><strong>amusing</strong> or <strong>am using</strong>? <img src=\"https://emoji.discourse-cdn.com/apple/joy.png?v=12\" title=\":joy:\" class=\"emoji\" alt=\":joy:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 160747,
+      "postNumber": 6,
+      "createdAt": "2024-01-08T06:43:55.527Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> for the help!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 185135,
+      "postNumber": 7,
+      "createdAt": "2024-05-22T09:38:29.266Z",
+      "author": "prohairtie (Mickey Martin)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/gabeo/48/22224_2.png\" class=\"avatar\" /> Gabe O'Neill:</div>\n<blockquote>\n<p>Thank you David. I was just going by the exa</p>\n</blockquote>\n</aside>\n<p>Thank you for the help</p>"
+    },
+    {
+      "id": 185383,
+      "postNumber": 8,
+      "createdAt": "2024-05-23T06:58:05.131Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 185606,
+      "postNumber": 9,
+      "createdAt": "2024-05-24T05:06:09.054Z",
+      "author": "prohairtie (Mickey Martin)",
+      "cookedHtml": "<p>pulling out A hair ties (also called a ponytail holder, hair band, <a href=\"http://hairties.com/\" rel=\"noopener nofollow ugc\">hair elastic</a>, wrap around, gogo, or bobble) is an item used to fasten hair, particularly long hair, away from areas such as the face.</p>"
+    },
+    {
+      "id": 185725,
+      "postNumber": 10,
+      "createdAt": "2024-05-24T19:04:29.123Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

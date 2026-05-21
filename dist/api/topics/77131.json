@@ -1,0 +1,64 @@
+{
+  "id": 77131,
+  "title": "New `url` field on boards and items",
+  "slug": "new-url-field-on-boards-and-items",
+  "categoryId": 70,
+  "tagIds": [
+    22,
+    94,
+    107,
+    245,
+    458
+  ],
+  "createdAt": "2024-02-05T21:32:16.443Z",
+  "lastPostedAt": "2024-08-30T11:37:17.082Z",
+  "postsCount": 6,
+  "excerpt": "You can now return an item or board’s URL by querying the url field. This field is available on both boards and items objects in API versions 2024-04 and later. \nquery {\n  boards (ids: 1234567890) {\n    name\n    url\n  }\n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 167,
+  "posts": [
+    {
+      "id": 166008,
+      "postNumber": 1,
+      "createdAt": "2024-02-05T21:32:16.521Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>You can now return an item or board’s URL by querying the <code>url</code> field. This field is available on both <a href=\"https://developer.monday.com/api-reference/reference/boards#fields\"><code>boards</code></a> and <a href=\"https://developer.monday.com/api-reference/reference/items#fields\"><code>items</code></a> objects in API versions <a href=\"https://developer.monday.com/api-reference/docs/release-notes#2024-04\"><code>2024-04</code></a> and later.</p>\n<pre><code class=\"lang-graphql\">query {\n  boards (ids: 1234567890) {\n    name\n    url\n  }\n}\n</code></pre>\n<pre><code class=\"lang-graphql\">query {\n  items (ids: [1234567890, 9876543210, 2345678901]) {\n    name\n    url\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 199375,
+      "postNumber": 2,
+      "createdAt": "2024-08-29T14:01:09.138Z",
+      "author": "mcdemon (M.McD)",
+      "cookedHtml": "<p>I’m running into issues returning the URL value:<br />\nWhen I query with<br />\n{<br />\n“query”: “query { items (ids: [6983085934]) {parent_item{id} id name url }}”<br />\n}<br />\nin Postman, the URL value is returned as an element</p>\n<p>When I query passing this body in Powershell<br />\n$body = @\"<br />\n{<br />\n<code>\"query</code>\": <code>\"query { items (ids: [$childTickets]) {parent_item{id} id name url}}</code>\"<br />\n}<br />\n\"@<br />\n$childResponse = Invoke-RestMethod ‘<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>’ -Method ‘POST’ -Headers $headers -Body $body<br />\nI get<br />\n{<br />\n“errors”:  [<br />\n{<br />\n“message”:  “Field \\u0027url\\u0027 doesn\\u0027t exist on type \\u0027Item\\u0027”,<br />\n“locations”:  [<br />\n{<br />\n“line”:  1,<br />\n“column”:  82<br />\n}<br />\n],<br />\n“path”:  [<br />\n“query”,<br />\n“items”,<br />\n“url”<br />\n],<br />\n“extensions”:  {<br />\n“code”:  “undefinedField”,<br />\n“typeName”:  “Item”,<br />\n“fieldName”:  “url”<br />\n}<br />\n}<br />\n],<br />\n“account_id”:  XXXXXXXX<br />\n}</p>\n<p>Any idea how I can resolve this?</p>"
+    },
+    {
+      "id": 199391,
+      "postNumber": 3,
+      "createdAt": "2024-08-29T18:48:27.864Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>You’re probably using an old version of the API which doesn’t support url field.</p>"
+    },
+    {
+      "id": 199392,
+      "postNumber": 4,
+      "createdAt": "2024-08-29T19:00:51.000Z",
+      "author": "mcdemon (M.McD)",
+      "cookedHtml": "<p>I’m using version 2 of the API which lists URL as a field for items.</p>\n<p>Matthew McDermott</p>\n<p>Project Manager | Atlantic Data Security</p>\n<p>(203) 980-0652</p>\n<p><em>For Security Services please email or call directly at:</em></p>\n<p><em><a href=\"mailto:help@atlanticdatasecurity.com\">help@atlanticdatasecurity.com</a></em></p>\n<p><em>1-866-969-3969</em></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/0/6/0625baf15a821aa9debbe7c732ba7db1d581f32f.jpeg\" alt=\"signatureImage\" width=\"206\" height=\"53\" /><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/f/cf7aaa938eaffad37b1c7e4639c60fb3bde40762.jpeg\" alt=\"signatureImage\" width=\"69\" height=\"69\" /></p>\n<p><a href=\"http://www.atlanticdatasecurity.com/\" rel=\"noopener nofollow ugc\">www.atlanticdatasecurity.com</a></p>"
+    },
+    {
+      "id": 199398,
+      "postNumber": 5,
+      "createdAt": "2024-08-30T03:49:07.881Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>No. Not the version number in the URL. The version number set in the options eg “2024-04”.</p>\n<p>Also, try using the API playground first rather than jumping straight in with some powershell. In the API playground, you can swap the API versions and see whether you can get the same error for a particular version.</p>"
+    },
+    {
+      "id": 199430,
+      "postNumber": 6,
+      "createdAt": "2024-08-30T11:37:17.082Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Thanks for the answer <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>!</p>\n<p><a class=\"mention\" href=\"/u/mcdemon\">@mcdemon</a> I agree with David - this error makes me think you’re using an older version. Check out our versioning guide <a href=\"https://developer.monday.com/api-reference/docs/api-versioning\">here</a> for more info, and let us know if you have other questions!</p>\n<p>Best,<br />\nRachel</p>"
+    }
+  ]
+}

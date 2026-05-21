@@ -1,0 +1,47 @@
+{
+  "id": 120533,
+  "title": "How can you update the column_values in an item retrieved via a connect_boards column",
+  "slug": "how-can-you-update-the-column-values-in-an-item-retrieved-via-a-connect-boards-column",
+  "categoryId": 6,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2025-09-30T11:40:56.511Z",
+  "lastPostedAt": "2025-10-09T05:39:27.412Z",
+  "postsCount": 4,
+  "excerpt": "We are using CRM, and have an “Account” column on the “Deals” board that is a connect_board column type.  using the API, I want to update a column on the first linked_item (i.e. the Account for the deal) when that Accoun&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 18,
+  "posts": [
+    {
+      "id": 239476,
+      "postNumber": 1,
+      "createdAt": "2025-09-30T11:40:56.574Z",
+      "author": "pcotter (Paul Cotter)",
+      "cookedHtml": "<p>We are using CRM, and have an “Account” column on the “Deals” board that is a connect_board column type.  using the API, I want to update a column on the first linked_item (i.e. the Account for the deal) when that Account gets created in an external system.  I’m struggling to figure out how I structure the “columnValues” for this mutation, any suggestions?  If I could get the boardId for the linked item, then it would be easy, but since I access the item through the connected column, I don’t have a boardId to use - can I update the Account column through the linked_items, or do I need to do something else?</p>"
+    },
+    {
+      "id": 239748,
+      "postNumber": 2,
+      "createdAt": "2025-10-06T06:17:23.043Z",
+      "author": "Clarey (MondayMotivator)",
+      "cookedHtml": "<p>Hi Paul,</p>\n<p>I’m not an expert in this area so hopefully there’s is others who will support this one see something to test:  To update a column on the first linked item (the “Account” in your case) using the API, you need to follow a series of steps to retrieve the necessary information and perform the update. Here’s a step-by-step guide to help you with this process:</p>\n<h3><a name=\"p-239748-steps-to-update-a-column-on-the-first-linked-item-1\" class=\"anchor\" href=\"#p-239748-steps-to-update-a-column-on-the-first-linked-item-1\"></a><strong>Steps to Update a Column on the First Linked Item:</strong></h3>\n<ol>\n<li>\n<p><strong>Retrieve the Linked Item ID</strong>:</p>\n<ul>\n<li>\n<p>Use the API to query the “Deals” board and get the item ID for the deal you are interested in.</p>\n</li>\n<li>\n<p>Once you have the item ID for the deal, query the “connect_board” column to get the linked item IDs. This will give you the ID(s) of the “Account” items linked to the deal.</p>\n</li>\n</ul>\n<pre><code class=\"lang-auto\">graphql\n</code></pre>\n<pre><code class=\"lang-auto\">query {\n  items(ids: [DEAL_ITEM_ID]) {\n    column_values(ids: \"connect_board_column_id\") {\n      value\n    }\n  }\n}\n</code></pre>\n<p>Replace <strong><code>DEAL_ITEM_ID</code></strong> with the actual item ID of the deal and <strong><code>connect_board_column_id</code></strong> with the ID of your connect_board column.</p>\n</li>\n<li>\n<p><strong>Parse the Linked Item ID</strong>:</p>\n<ul>\n<li>The response will include JSON data with the linked item IDs. Parse this JSON to extract the first linked item ID, which corresponds to the “Account.”</li>\n</ul>\n</li>\n<li>\n<p><strong>Find the Board ID for the Linked Item</strong>:</p>\n<ul>\n<li>Although you mentioned not having the board ID, you can usually infer it from your setup since the “Account” items are on a specific board. If you have access to the account board separately, you can use its ID directly.</li>\n</ul>\n</li>\n<li>\n<p><strong>Update the Column on the Linked Item</strong>:</p>\n<ul>\n<li>Use the <strong><code>change_column_value</code></strong> mutation to update the column on the linked item (the “Account”).</li>\n</ul>\n<pre><code class=\"lang-auto\">graphql\n</code></pre>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value(item_id: ACCOUNT_ITEM_ID, board_id: ACCOUNT_BOARD_ID, column_id: \"column_to_update\", value: \"new_value\") {\n    id\n  }\n}\n</code></pre>\n<p>Replace <strong><code>ACCOUNT_ITEM_ID</code></strong> with the ID of the linked account item, **<code>ACCOUNT_BOARD_ID</code>**with the ID of the board where the account resides, <strong><code>column_to_update</code></strong> with the ID of the column you wish to update, and <strong><code>new_value</code></strong> with the value you want to set.</p>\n</li>\n</ol>\n<p>Hopefully this should allow you to  update a column on the first linked item effectively using the API. If you encounter any specific issues or need further assistance, feel free to ask!</p>"
+    },
+    {
+      "id": 239890,
+      "postNumber": 3,
+      "createdAt": "2025-10-08T11:34:11.947Z",
+      "author": "pcotter (Paul Cotter)",
+      "cookedHtml": "<p>Thanks, that all tracks with what I already knew, but Step <span class=\"hashtag-raw\">#3</span> is the part that bothers me.</p>\n<p>It makes little sense (to me) that you have to step outside of the API context to gather some information (board_id) that enables me to update an item that I retrieved through the API.  In my specific use case, the item could have been created through a couple of different boards, so retrieving programmatically is much safer/more durable.  Is there a way to retrieve the definition of a board that could tell me the column schema, including the board_id that the column refers to?</p>"
+    },
+    {
+      "id": 239937,
+      "postNumber": 4,
+      "createdAt": "2025-10-09T05:39:27.412Z",
+      "author": "Clarey (MondayMotivator)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/p/e0b2c6/48.png\" class=\"avatar\" /> pcotter:</div>\n<blockquote>\n<p>It makes little sense (to me) that you have to step outside of the API context to gather some information (board_id) that enables me to update an item that I retrieved through the API. In my specific use case, the item could have been created through a couple of different boards, so retrieving programmatically is much safer/more durable. Is there a way to retrieve the definition of a board that could tell me the column schema, including the board_id that the column refers to?</p>\n</blockquote>\n</aside>\n<p>Hi Paul, I’m not exactly sure of the full scenario without more detail about your use case etc. If you want to have a call could review to see if I could support further?</p>"
+    }
+  ]
+}

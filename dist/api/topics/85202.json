@@ -1,0 +1,61 @@
+{
+  "id": 85202,
+  "title": "Can't search an item name through items_page_by_column_values query",
+  "slug": "cant-search-an-item-name-through-items-page-by-column-values-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-26T03:25:57.986Z",
+  "lastPostedAt": "2024-04-28T06:43:22.756Z",
+  "postsCount": 6,
+  "excerpt": "Hi, \nI want to search my board by item names using items_page_by_column_values Grapql query. When I run the following query it returns empty result even though the item is on the board as active. \n  items_page_by_column_&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 145,
+  "posts": [
+    {
+      "id": 180992,
+      "postNumber": 1,
+      "createdAt": "2024-04-26T03:25:58.085Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I want to search my board by item names using <code>items_page_by_column_values</code> Grapql query. When I run the following query it returns empty result even though the item is on the board as active.</p>\n<pre><code class=\"lang-auto\">  items_page_by_column_values(board_id:12345678, columns:[{column_id: \"name\", column_values: [\"Task\"]}]){\n    items{\n      id\n    }\n  }\n</code></pre>\n<p>Here is my board view:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/3/434d59d610dc3753514bd5869198a4004010b6b3.png\" title=\"Screenshot 2024-04-26 at 09.23.35\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/3/434d59d610dc3753514bd5869198a4004010b6b3_2_690x232.png\" alt=\"Screenshot 2024-04-26 at 09.23.35\" width=\"690\" height=\"232\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-04-26 at 09.23.35</span><span class=\"informations\">1248×420 27.4 KB</span></div></a></div><p></p>\n<p>As you see there are items including “Task” keyword but the api does not mange to find them.</p>\n<p>How can I retrieve my items searching by the item name leveraging the API?</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 180998,
+      "postNumber": 2,
+      "createdAt": "2024-04-26T04:53:39.001Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/apsimos\">@apsimos</a></p>\n<p>As far as I know the matches needs to be exact. What happens when your search for “Task 1”? Will that find your item?</p>"
+    },
+    {
+      "id": 181010,
+      "postNumber": 3,
+      "createdAt": "2024-04-26T06:21:15.251Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>Thanks for your reply. You are correct. It does exact match. But this is weird since I would like to filter my items with partial search.</p>\n<p>Is there a way to do it, should I download all items and doing the search manually?</p>\n<p>Best,</p>"
+    },
+    {
+      "id": 181015,
+      "postNumber": 4,
+      "createdAt": "2024-04-26T06:40:44.144Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I would use this query to get all items that contains “Task” in their name</p>\n<pre><code class=\"lang-auto\">query {\n        boards (ids: [12345678]) {\n          items_page (limit:100, query_params: {rules: [{column_id: \"name\", compare_value: [\"Task\"], operator: contains_text}]}) {\n            cursor\n            items {\n              id\n              name\n            }\n          }\n        }\n      }\n</code></pre>"
+    },
+    {
+      "id": 181018,
+      "postNumber": 5,
+      "createdAt": "2024-04-26T07:22:33.431Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>That is working like a charm. Thank you very much.</p>\n<p>Best</p>"
+    },
+    {
+      "id": 181209,
+      "postNumber": 6,
+      "createdAt": "2024-04-28T06:43:22.756Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for the help here!</p>"
+    }
+  ]
+}

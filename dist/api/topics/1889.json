@@ -1,0 +1,68 @@
+{
+  "id": 1889,
+  "title": "How to get all column_values fields? API v2",
+  "slug": "how-to-get-all-column-values-fields-api-v2",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94
+  ],
+  "createdAt": "2019-08-26T23:09:45.057Z",
+  "lastPostedAt": "2021-02-25T12:23:14.546Z",
+  "postsCount": 7,
+  "excerpt": "Hi. I want to get all data from all boards. Now I know how to get all boards and items ids, but what about columns? \nI try use this: \n\nquery { \nboards(ids:XXX) { \nid \nname \nitems(ids:XXX) { \nname \nid \ncreator { \nid \nname &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 5997,
+  "posts": [
+    {
+      "id": 4975,
+      "postNumber": 1,
+      "createdAt": "2019-08-26T23:09:45.146Z",
+      "author": "danetportal (Dmitriy Klimov)",
+      "cookedHtml": "<p>Hi. I want to get all data from all boards. Now I know how to get all boards and items ids, but what about columns?</p>\n<p>I try use this:</p>\n<blockquote>\n<p>query {<br />\nboards(ids:XXX) {<br />\nid<br />\nname<br />\nitems(ids:XXX) {<br />\nname<br />\nid<br />\ncreator {<br />\nid<br />\nname<br />\n}<br />\ncreated_at<br />\ncolumn_values {<br />\ntitle<br />\nvalue<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}</p>\n</blockquote>\n<p>This three fields, is everything what i found here:</p>\n<ul>\n<li>title</li>\n<li>value</li>\n<li>text</li>\n</ul>\n<p>And it looks like some of them contain null values. For example, some column values is collection of labels. And some values is calendar date.</p>\n<p>How do I get them all?</p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 4982,
+      "postNumber": 2,
+      "createdAt": "2019-08-27T03:58:12.886Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/danetportal\">@danetportal</a>,<br />\nYour query is correct. Null values may appear for columns values that are client side calculated, such as item id, creation log… for most column values the “text” field will display the actual value. For special columns like the formula and percentage columns there will be no value displayed.<br />\nCollections of labels should be by their ID’s in the “value” field and by their display name in the “text” field. Dates should works in both “text” and “value”.<br />\nAre there specific columns you’re not getting as expected?</p>"
+    },
+    {
+      "id": 5274,
+      "postNumber": 3,
+      "createdAt": "2019-09-02T00:48:44.109Z",
+      "author": "danetportal (Dmitriy Klimov)",
+      "cookedHtml": "<p>Ok. I got it.</p>\n<p>But now i have another issue.</p>\n<p>query {<br />\nboards{<br />\nid<br />\nname<br />\n}<br />\n}</p>\n<p>I have access to more than 50 boards in my profile, but on this request I get only 25 of them. Why is that?</p>\n<p>Also about API limitations - if I exceed them, will I just increase the query execution time or will it immediately break?</p>"
+    },
+    {
+      "id": 5276,
+      "postNumber": 4,
+      "createdAt": "2019-09-02T03:57:40.782Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>Our default limit is 25. You can override it using the limit parameter like so:</p>\n<pre><code>query {\n  boards (limit: 60) {\n    id\n    name\n  }\n}\n</code></pre>\n<p>If you will be using a high complexity query that the limit doesn’t work with you can also use our pagination mechanism like so:</p>\n<pre><code>query {\n  boards (limit: 20, page: 1) {\n    id\n    name\n  }\n}</code></pre>"
+    },
+    {
+      "id": 5302,
+      "postNumber": 5,
+      "createdAt": "2019-09-02T22:58:41.520Z",
+      "author": "danetportal (Dmitriy Klimov)",
+      "cookedHtml": "<p>Thank you very much for your help and assistance.</p>\n<p>What about</p>\n<blockquote>\n<p>Also about API limitations - if I exceed them, will I just increase the query execution time or will it immediately break?<br />\n?</p>\n</blockquote>\n<p>Also, we have a lot of data in the info boxes, but it looks like I can’t get it through the API?</p>\n<p>I try use<code>limit:100</code> to get all data, but will get response like:</p>\nmonday.com is having some technical issues\n<p>Can i somehow avoid this?</p>"
+    },
+    {
+      "id": 5340,
+      "postNumber": 6,
+      "createdAt": "2019-09-04T07:28:39.831Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<ol>\n<li>\n<p>If you exceed API limits then it will break and you will get a message letting you know the complexity of your query.</p>\n</li>\n<li>\n<p>Info boxes are not supported in API v2.</p>\n</li>\n<li>\n<p>if the limit 100 fails I would suggest using smaller limits with pagination like so:</p>\n<pre><code> query {\n   boards (limit: 20, page: 1) {\n     id\n     name\n   }\n }</code></pre>\n</li>\n</ol>"
+    },
+    {
+      "id": 42137,
+      "postNumber": 7,
+      "createdAt": "2021-02-25T12:23:14.546Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

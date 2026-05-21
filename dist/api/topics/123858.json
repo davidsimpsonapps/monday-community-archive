@@ -1,0 +1,42 @@
+{
+  "id": 123858,
+  "title": "Nested IF statements not functioning",
+  "slug": "nested-if-statements-not-functioning",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    22,
+    107,
+    108
+  ],
+  "createdAt": "2026-02-20T19:36:51.995Z",
+  "lastPostedAt": "2026-02-21T02:45:14.762Z",
+  "postsCount": 3,
+  "excerpt": "I am using nested IF statements tied to a checkbox to derive the value to be used in a sum for pipeline forecasting. In this case, the item is either being acquired or resold. \nHere is the formula. \nIF({Incl in Pipeline?&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 16,
+  "posts": [
+    {
+      "id": 246317,
+      "postNumber": 1,
+      "createdAt": "2026-02-20T19:36:52.091Z",
+      "author": "zapatero (Mike Shoemaker)",
+      "cookedHtml": "<p>I am using nested IF statements tied to a checkbox to derive the value to be used in a sum for pipeline forecasting. In this case, the item is either being acquired or resold.</p>\n<p>Here is the formula.</p>\n<p>IF({Incl in Pipeline?}, IF({Net Cash Proceeds} = “”, -1*{Total Cash to Acq}, {Net Cash Proceeds}),“”)</p>\n<p>The logic appears to work EXCEPT when the box is checked and the Net Cash Proceeds is null. In that scenario, it delivers a value of “0”. I can’t figure out what I’m doing wrong.</p>"
+    },
+    {
+      "id": 246338,
+      "postNumber": 2,
+      "createdAt": "2026-02-20T22:20:10.148Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/zapatero\">@zapatero</a><br />\nYou’re running into how monday handles empty Numbers fields. They’re often treated as 0, not truly blank, so this check:</p>\n<p>{Net Cash Proceeds} = “”</p>\n<p>may not behave as expected. That’s why you’re getting 0 instead of triggering the negative acquisition value.</p>\n<p>Try using ISBLANK instead:</p>\n<pre><code class=\"lang-auto\">IF(\n  {Incl in Pipeline?},\n  IF(\n    ISBLANK({Net Cash Proceeds}),\n    -1 * {Total Cash to Acq},\n    {Net Cash Proceeds}\n  ),\n  \"\"\n)\n</code></pre>\n<p>If you also want 0 to be treated like blank, use:</p>\n<pre><code class=\"lang-auto\">OR(ISBLANK({Net Cash Proceeds}), {Net Cash Proceeds} = 0)\n</code></pre>\n<p>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=15\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" /> <a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\" class=\"inline-onebox\">Calendly</a></p>"
+    },
+    {
+      "id": 246341,
+      "postNumber": 3,
+      "createdAt": "2026-02-21T02:45:14.762Z",
+      "author": "YOGESHP (Yogesh Pokale)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zapatero\">@zapatero</a>,</p>\n<p>Welcome to the community!</p>\n<p>The reason you’re seeing 0 is that monday sometimes evaluates an empty Numbers column as 0, so checking = “” doesn’t always behave as expected.</p>\n<p>If 0 is a legitimate value, meaning you only want the negative acquisition when the field is truly blank.</p>\n<p>Use this formula:</p>\n<p>IF(<br />\n{Incl in Pipeline?},<br />\nIF(<br />\nISBLANK({Net Cash Proceeds}),<br />\n-1 * {Total Cash to Acq},<br />\n{Net Cash Proceeds}<br />\n),<br />\n“”<br />\n)</p>\n<p>This will:</p>\n<ul>\n<li>Return Net Cash Proceeds (including 0 if entered intentionally)</li>\n<li>Return –1 × Total Cash to Acq only when Net Cash Proceeds is blank</li>\n<li>Return blank if the checkbox is unchecked</li>\n</ul>\n<p>If 0 should ALSO trigger the negative acquisition, meaning blank or zero should use Total Cash to Acq.</p>\n<p>Use this version instead:</p>\n<p>IF(<br />\n{Incl in Pipeline?},<br />\nIF(<br />\nOR(ISBLANK({Net Cash Proceeds}), {Net Cash Proceeds} = 0),<br />\n-1 * {Total Cash to Acq},<br />\n{Net Cash Proceeds}<br />\n),<br />\n“”<br />\n)</p>\n<p>Hope this help!!</p>"
+    }
+  ]
+}

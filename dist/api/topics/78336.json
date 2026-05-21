@@ -1,0 +1,39 @@
+{
+  "id": 78336,
+  "title": "IF function are incorrectly calculating number comparisons",
+  "slug": "if-function-are-incorrectly-calculating-number-comparisons",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-02-15T18:55:19.616Z",
+  "lastPostedAt": "2024-02-18T19:23:24.112Z",
+  "postsCount": 3,
+  "excerpt": "IF function is erroring out on number comparisons. \nSteps to reproduce: \n\nCreate two Number columns named “Total” and “Completed”\nCreate a Formula column with the following formula: \nIF(AND({Completed}&gt;=0, {Total}&gt;0), {C&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 409,
+  "posts": [
+    {
+      "id": 168185,
+      "postNumber": 1,
+      "createdAt": "2024-02-15T18:55:19.713Z",
+      "author": "ojak (OJ)",
+      "cookedHtml": "<p>IF function is erroring out on number comparisons.</p>\n<p><strong>Steps to reproduce:</strong></p>\n<ol>\n<li>Create two Number columns named “Total” and “Completed”</li>\n<li>Create a Formula column with the following formula:<br />\n<code>IF(AND({Completed}&gt;=0, {Total}&gt;0), {Completed} / {Total}, 0)</code></li>\n</ol>\n<p><strong>Expected Result:</strong></p>\n<ul>\n<li>If “Total” column is 0, less than 0, or empty, the formula column should result in a 0.</li>\n<li>If “Total” column is greater than 0, the formula column calculates (Completed/Total).</li>\n</ul>\n<p><strong>Actual Result:</strong></p>\n<ul>\n<li>If “Total” column is greater than or less than 0, the formula column calculates correctly <strong>- WORKS</strong></li>\n<li>If “Total” column is 0 or empty, the formula column will show an error icon <strong>- FAILS</strong></li>\n</ul>\n<p>My best guess is:</p>\n<ol>\n<li><em>Monday</em> has a compiler bug (i.e. order of operations error) where they’re evaluating each statement in the IF function regardless of whether or not the IF statement conditional logic has been met, and/or,</li>\n<li><em>Monday</em> has a perhaps incomplete/limited value casting implementation (e.g. they are not automatically casting empty field values to FALSE, or IF conditional evaluation errors are not being automatically cast to FALSE, etc)</li>\n</ol>\n<p>Or something else?</p>"
+    },
+    {
+      "id": 168224,
+      "postNumber": 2,
+      "createdAt": "2024-02-15T21:23:02.921Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi OJ,</p>\n<p>It is called an “eager” approach of the IF function. See the 2nd paragraph of <a href=\"https://blog.mdboosters.com/en/a-simple-way-to-handle-empty-columns-and-avoid-errors-in-your-formulas-in-monday-com\" rel=\"noopener nofollow ugc\">A Simple Way to Handle Empty Columns and Avoid Errors in your Formulas</a> for the full explanation.</p>\n<hr />\n<p><strong>Want to get rid of the formula column?</strong> and write formulas that support multiple lines, variables and can update various columns at once? Take a look at the Advanced Formula Booster at <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">https://mdboosters.com</a>*</p>"
+    },
+    {
+      "id": 168593,
+      "postNumber": 3,
+      "createdAt": "2024-02-18T19:23:24.112Z",
+      "author": "ojak (OJ)",
+      "cookedHtml": "<p>Yeah, that’s what my first-guess above was… and what I’m suggesting is that eager loading is a rather misguided algorithmic approach for a conditional function.  The whole point of a conditional is to be, well, conditional.  If I’m expected to have to handle process control within a scripted environment, well, that’s pretty lackluster, right?  Microsoft Excel, Google Sheets, Apple Numbers, etc – none of those spreadsheets do it that way because eager loading doesn’t <em>really</em> make sense within this context.</p>\n<p>Anyhow, sounds like I’m out-of-luck on this one… hope that <em>Monday</em> devs revisit the implementation here to make conditional functions a bit more sane / user-friendly.</p>"
+    }
+  ]
+}

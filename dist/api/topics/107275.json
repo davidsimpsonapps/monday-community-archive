@@ -1,0 +1,86 @@
+{
+  "id": 107275,
+  "title": "Formula display_value returns nothing in API v2025-01?",
+  "slug": "formula-display-value-returns-nothing-in-api-v2025-01",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    108,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2025-01-12T11:08:35.136Z",
+  "lastPostedAt": "2025-05-12T09:54:05.566Z",
+  "postsCount": 8,
+  "excerpt": "I have a query which works perfectly fine but as soon as I add Display_value to get the formula values, it returns null as results. the following is the query that gives me all the required data. \nquery { boards (ids: [$&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 70,
+  "posts": [
+    {
+      "id": 216874,
+      "postNumber": 1,
+      "createdAt": "2025-01-12T11:08:35.211Z",
+      "author": "haseeb1431 (haseeb1431@gmail.com)",
+      "cookedHtml": "<p>I have a query which works perfectly fine but as soon as I add Display_value to get the formula values, it returns null as results. the following is the query that gives me all the required data.</p>\n<pre><code class=\"lang-auto\">query { boards (ids: [$board_id]) { id name\n\nitems_page(limit:5){ \n  cursor \n  items {\n    id name \n    column_values{\n      id type value \n      ... on TextValue { text} \n      ... on DateValue { time date } \n      ...on LongTextValue { text value } \n      ... on NumbersValue {number id symbol direction}  \n      ... on FormulaValue { value  } \n      column{ title}\n\n}}} } }\"\n\n</code></pre>\n<p>However, I want to see display_value for formulas so as soon as I update the query to update Formula value, it starts to return nothing. It seem like a bug on the server side.</p>\n<pre><code class=\"lang-auto\">      ... on FormulaValue { display_value  } \n</code></pre>"
+    },
+    {
+      "id": 216949,
+      "postNumber": 2,
+      "createdAt": "2025-01-13T06:35:08.337Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/haseeb1431\">@haseeb1431</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Our team is aware of this issue and working on a fix that should be deployed this week <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Would you be able to please try this starting on Wednesday (15.01.2025)? It should be resolved by then. If you see this not working then, please mention me here!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 217753,
+      "postNumber": 3,
+      "createdAt": "2025-01-16T15:31:59.663Z",
+      "author": "haseeb1431 (haseeb1431@gmail.com)",
+      "cookedHtml": "<p>Thanks for fixing it and taking care of it. Now I am getting the following response.</p>\n<p>is there a limit to get the number of column with formula because otherwise query is working fine? We have around 100 columns</p>\n<pre><code class=\"lang-auto\">{\n    \"data\": {\n        \"boards\": [\n            null\n        ]\n    },\n    \"errors\": [\n        {\n            \"message\": \"Too many formula columns have been requested. Please reduce the number of columns.\",\n            \"path\": [\n                \"boards\",\n                0,\n                \"items_page\",\n                \"items\",\n                0,\n                \"column_values\",\n                12,\n                \"display_value\"\n            ],\n            \"extensions\": {\n                \"status_code\": 400,\n                \"code\": \"TOO_MANY_FORMULA_COLUMNS_REQUESTED\"\n            }\n        }\n    ],\n    \"extensions\": {\n        \"valueCompletion\": [\n            {\n                \"message\": \"Cannot return null for non-nullable field FormulaValue.display_value\",\n                \"path\": [\n                    \"boards\",\n                    0,\n                    \"items_page\",\n                    \"items\",\n                    0,\n                    \"column_values\",\n                    12\n                ]\n            },\n            {\n                \"message\": \"Cannot return null for non-nullable array element of type ColumnValue at index 12\",\n                \"path\": [\n                    \"boards\",\n                    0,\n                    \"items_page\",\n                    \"items\",\n                    0,\n                    \"column_values\",\n                    12\n                ]\n            },\n            {\n                \"message\": \"Cannot return null for non-nullable field Item.column_values\",\n                \"path\": [\n                    \"boards\",\n                    0,\n                    \"items_page\",\n                    \"items\",\n                    0,\n                    \"column_values\"\n                ]\n            },\n            {\n                \"message\": \"Cannot return null for non-nullable array element of type Item at index 0\",\n                \"path\": [\n                    \"boards\",\n                    0,\n                    \"items_page\",\n                    \"items\",\n                    0\n                ]\n            },\n            {\n                \"message\": \"Cannot return null for non-nullable field ItemsResponse.items\",\n                \"path\": [\n                    \"boards\",\n                    0,\n                    \"items_page\",\n                    \"items\"\n                ]\n            },\n            {\n                \"message\": \"Cannot return null for non-nullable field Board.items_page\",\n                \"path\": [\n                    \"boards\",\n                    0,\n                    \"items_page\"\n                ]\n            }\n        ]\n    }\n}\n</code></pre>\n<p>Also, may be I am not aware, but I am not sure if there is a way to filter columnValues and say give me first 50 columns and then give me rest of them.</p>"
+    },
+    {
+      "id": 217787,
+      "postNumber": 4,
+      "createdAt": "2025-01-16T17:57:29.069Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi  <a class=\"mention\" href=\"/u/haseeb1431\">@haseeb1431</a>,</p>\n<p>There is a <a href=\"https://developer.monday.com/api-reference/reference/formula#fields\" rel=\"noopener nofollow ugc\">limit of 5 formula columns per request</a>.</p>"
+    },
+    {
+      "id": 217971,
+      "postNumber": 5,
+      "createdAt": "2025-01-19T13:13:15.138Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 226488,
+      "postNumber": 6,
+      "createdAt": "2025-04-09T15:51:46.715Z",
+      "author": "richard.ekstrand (RickX)",
+      "cookedHtml": "<p>display_value is not returning values for formulas using API “2025-04”</p>"
+    },
+    {
+      "id": 226534,
+      "postNumber": 7,
+      "createdAt": "2025-04-09T18:55:31.525Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/richard.ekstrand\">@richard.ekstrand</a>,</p>\n<p>Can you send your query please? I ran the query below, and it successfully returned the formula in the <code>display_value</code> field.</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 123456) {\n    column_values {\n      ... on FormulaValue {\n        display_value\n      }\n    }\n  }\n}\n</code></pre>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 228990,
+      "postNumber": 8,
+      "createdAt": "2025-05-09T00:01:14.321Z",
+      "author": "jk193 (Jake K)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a><br />\nNot working still for me today. For example, this query:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids: [9105478229]) {\n    name\n    column_values {\n      id\n      column {\n        title\n      }\n      value\n    }\n  }\n}\n</code></pre>\n<p>should return a value of “5” but instead is null for the column with id “formula_mkqs51dt” and title “Length in Mins”. (It’s a column calculating number of minutes between two date/time cols)</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/a/8a5c35916fc76023248f817ee53399d9d8c2a9dc.png\" title=\"Screenshot 2025-05-08 at 11.01.35 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/a/8a5c35916fc76023248f817ee53399d9d8c2a9dc_2_690x362.png\" alt=\"Screenshot 2025-05-08 at 11.01.35 PM\" width=\"690\" height=\"362\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2025-05-08 at 11.01.35 PM</span><span class=\"informations\">1692×889 79.1 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 229199,
+      "postNumber": 9,
+      "createdAt": "2025-05-12T09:54:05.566Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jk193\">@jk193</a> try adding this bit?</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/rachelatmonday/48/14631_2.png\" class=\"avatar\" /> Rachel:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">      ... on FormulaValue {\n        display_value\n      }\n</code></pre>\n</blockquote>\n</aside>"
+    }
+  ]
+}

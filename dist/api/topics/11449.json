@@ -1,0 +1,72 @@
+{
+  "id": 11449,
+  "title": "API change today related to updating checkbox columns",
+  "slug": "api-change-today-related-to-updating-checkbox-columns",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-09-22T17:24:57.424Z",
+  "lastPostedAt": "2021-02-25T14:43:37.524Z",
+  "postsCount": 7,
+  "excerpt": "Hey there, \nLooks like there was an api change today or recently where providing true and not “true” for checkbox column “checked” property stopped working when using a boolean and not a string. If anybody else experienc&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2587,
+  "posts": [
+    {
+      "id": 29231,
+      "postNumber": 1,
+      "createdAt": "2020-09-22T17:24:57.496Z",
+      "author": "rbabayoff (Ronen Babayoff @ Easyapps)",
+      "cookedHtml": "<p>Hey there,</p>\n<p>Looks like there was an api change today or recently where providing true and not “true” for checkbox column “checked” property stopped working when using a boolean and not a string. If anybody else experienced the same issue, here the fix:</p>\n<pre><code class=\"lang-auto\">{ checked: \"true\" } // instead of { checked: true }\n</code></pre>\n<p>Cheers,<br />\nRonen<br />\n<a href=\"https://eazyform.app\" rel=\"noopener nofollow ugc\">Eazyform</a></p>"
+    },
+    {
+      "id": 29328,
+      "postNumber": 2,
+      "createdAt": "2020-09-23T13:06:13.426Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/rbabayoff\">@rbabayoff</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>That sounds quite odd!</p>\n<p>As far as I understand, you would always have to send the value you are trying to update as a JSON string, even if it is a boolean or a number. Can you clarify whether the way you were trying to update this previously had worked for you? It would also be really helpful if you could provide the exact query you were using before.</p>\n<p>I’ll also check on this with the team on my end to see if there had been any updates here.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 29329,
+      "postNumber": 3,
+      "createdAt": "2020-09-23T13:24:47.017Z",
+      "author": "rbabayoff (Ronen Babayoff @ Easyapps)",
+      "cookedHtml": "<p>Hey Alex,</p>\n<p>Yes, it worked for me before using a boolean. Since it’s an eazyform submission, the values are decided dynamically, so I don’t think the graphql mutation would help much, but here it is:</p>\n<pre><code class=\"lang-auto\">mutation CreateItem($boardId: Int!, $itemName: String!, $columnValues: JSON!) {\n  create_item(board_id: $boardId, item_name: $itemName, column_values: $columnValues) {\n    id\n  }\n}\n</code></pre>\n<p>If we’re already on the expected types subject, note that a graphql boards query returns the board id as a string and then when I’m trying to use the returned value in a mutation or another query as an input variable as you see above, the api complains that it’s a string and not a number. That is something that took me half a day to figure out in previous version of sdk, since I didn’t get errors back then.</p>\n<p>Ronen</p>"
+    },
+    {
+      "id": 29357,
+      "postNumber": 4,
+      "createdAt": "2020-09-23T18:51:55.923Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 29439,
+      "postNumber": 5,
+      "createdAt": "2020-09-24T10:31:04.862Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rbabayoff\">@rbabayoff</a></p>\n<p>Thank you for getting back to me on this!</p>\n<p>Turns out, there was, in fact, an update here that has should make using some of our queries that work with updating column values and sending column values in general easier. Now, you can use change_simple_column_value to send values as strings, and not as JSON. We’ve now also applied this logic to the change_multiple_column_values, create_item, and create_sub_item so they accept those “simple” values as well - we’re now working hard to update the documentation on our end. Seems like this is the reason the behavior changed for you just recently.</p>\n<p>What do you think?</p>\n<p>Thanks for letting me know about the board ID being a string - that definitely sounds a little odd. I’ll pass that as feedback to the team as well.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 29516,
+      "postNumber": 6,
+      "createdAt": "2020-09-25T03:42:29.650Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Awesome update <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>, finally an end to my annoying typos <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=9\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" /></p>"
+    },
+    {
+      "id": 29660,
+      "postNumber": 7,
+      "createdAt": "2020-09-27T11:07:15.544Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a></p>\n<p>Haha that’s EXACTLY what I thought too <img src=\"https://emoji.discourse-cdn.com/apple/heart.png?v=9\" title=\":heart:\" class=\"emoji\" alt=\":heart:\" /> We are definitely keen on making using our API a little easier, and more updates are coming your way. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42538,
+      "postNumber": 8,
+      "createdAt": "2021-02-25T14:43:37.524Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

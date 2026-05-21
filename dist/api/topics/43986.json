@@ -1,0 +1,32 @@
+{
+  "id": 43986,
+  "title": "Webhook not able to connect to a functioning API",
+  "slug": "webhook-not-able-to-connect-to-a-functioning-api",
+  "categoryId": 6,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-10-14T13:13:10.934Z",
+  "lastPostedAt": "2022-10-14T14:19:08.901Z",
+  "postsCount": 2,
+  "excerpt": "Hi all, \nI created a simple Express app running on my local network with functioning API endpoints that I’ve tested with multiple other tools. For some reason, when I try to connect my webhook to this app, I receive the &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1363,
+  "posts": [
+    {
+      "id": 100593,
+      "postNumber": 1,
+      "createdAt": "2022-10-14T13:13:11.012Z",
+      "author": "rjaeger (Ross Jaeger)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I created a simple Express app running on my local network with functioning API endpoints that I’ve tested with multiple other tools. For some reason, when I try to connect my webhook to this app, I receive the “Failed to communicate with the URL provided” error and I cannot figure out why.</p>\n<p>I’ve constructed my http POST exactly as it is shown on the <a href=\"https://support.monday.com/hc/en-us/articles/360003540679-Webhook-Integration-\" rel=\"noopener nofollow ugc\">Webhook integration support article</a>, but this has not helped.</p>\n<p>Here is the code for my express app (as I’ve mentioned, these endpoints work just fine with everything else):</p>\n<pre><code class=\"lang-auto\">const express = require('express');\nconst app = express();\nconst port = 2020;\n\napp.get('/', (req, res) =&gt; {\n    res.send(\"success\");\n})\n\napp.post('/', (req, res) =&gt; {\n    console.log(JSON.stringify(req.body, 0, 2));\n    res.status(200).send(req.body);\n})\n\napp.listen(port, () =&gt; {\n    console.log(`App listening on port ${port}`)\n})\n</code></pre>"
+    },
+    {
+      "id": 100601,
+      "postNumber": 2,
+      "createdAt": "2022-10-14T14:19:08.901Z",
+      "author": "rjaeger (Ross Jaeger)",
+      "cookedHtml": "<p>I figured this out- my problems were:</p>\n<ul>\n<li>\n<p>I was not tunneling my localhost app, this is required for the webhook to be able to interact with the application. Install ngrok, and then on the same port through which you’re running your application, run the command<br />\n<code>ngrok http {port}</code><br />\nngrok will then provide you with a forwarding URL, which is the url that you provide to the webhook as if it were your endpoint. In other words, <code>myapi.com/data</code> would be given to the webhook as <code> {ngrok forward url}/data</code></p>\n</li>\n<li>\n<p>I was not parsing the response as JSON, which prevented me from interacting with it at all. I fixed this by adding the following line of code to my Express app, which tells express to parse a request using JSON: <code>app.use(express.json()) </code></p>\n</li>\n</ul>"
+    }
+  ]
+}

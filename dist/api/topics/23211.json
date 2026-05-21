@@ -1,0 +1,61 @@
+{
+  "id": 23211,
+  "title": "Create item with numeric column value in Python",
+  "slug": "create-item-with-numeric-column-value-in-python",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-08-03T18:56:42.140Z",
+  "lastPostedAt": "2021-08-04T11:18:58.365Z",
+  "postsCount": 5,
+  "excerpt": "Hey there, I’m having some trouble creating an item with a numeric column value. No matter what formatting I try, I get an error that says I am using an incorrect data structure for that column. Code and error response i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1518,
+  "posts": [
+    {
+      "id": 59736,
+      "postNumber": 1,
+      "createdAt": "2021-08-03T18:56:42.258Z",
+      "author": "alex_abrahams (Alex Abrahams)",
+      "cookedHtml": "<p>Hey there, I’m having some trouble creating an item with a numeric column value. No matter what formatting I try, I get an error that says I am using an incorrect data structure for that column. Code and error response is below. Any tips appreciated!</p>\n<pre><code class=\"lang-auto\">query6 = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:BOARD_ID_HERE, item_name:$myItemName, column_values:$columnVals) { id } }'\nvars = {\n\t'myItemName' : 'Hello everyone!',\n\t'columnVals' : json.dumps({\n\t\t'numbers1' : {'value' : '25'}\n\n\t})\n}\ndata = {'query' : query6, 'variables' : vars}\n\nr = requests.post(url=apiUrl, json=data, headers=headers)\n</code></pre>\n<p>numbers1 is the ID of the column in question. I’ve also tried the following formats in place of that line:</p>\n<pre><code class=\"lang-auto\">'numbers1' : {'value' : \"25\"}\n'numbers1' : {'value' : 25}\n'numbers1' : {'value' : \"\\\"25\\\"\"}\n</code></pre>\n<p>Every time I get the same error:</p>\n<pre><code class=\"lang-auto\">{'error_code': 'ColumnValueException', 'status_code': 200, 'error_message': 'invalid value, please check our API documentation for the correct data structure for this column. https://monday.com/developers/v2#column-values-section', 'error_data': {'column_value': '{\"value\"=&gt;\"25\"}', 'column_type': 'NumericColumn'}}\n</code></pre>\n<p>I’ve checked the documentation and can’t find any examples in Python of a numeric value being supplied for the create_item action. Any help appreciated on how to format numeric values in the request variables!</p>"
+    },
+    {
+      "id": 59764,
+      "postNumber": 2,
+      "createdAt": "2021-08-04T04:20:33.763Z",
+      "author": "Shilpa (Shilpa N)",
+      "cookedHtml": "<p>Just the value would work<br />\n‘columnVals’: json.dumps({<br />\n“numbers1”: “42”<br />\n})</p>"
+    },
+    {
+      "id": 59807,
+      "postNumber": 3,
+      "createdAt": "2021-08-04T10:28:12.081Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 59808,
+      "postNumber": 4,
+      "createdAt": "2021-08-04T10:29:18.227Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alex_abrahams\">@alex_abrahams</a>,</p>\n<p>I agree with <a class=\"mention\" href=\"/u/shilpa\">@Shilpa</a>, if the only column values you’re looking to populate are numbers columns, you can absolutely just send the number directly, without the <code>value</code> portion.</p>\n<p>Try this out and let us know if you continue to experience errors.</p>"
+    },
+    {
+      "id": 59821,
+      "postNumber": 5,
+      "createdAt": "2021-08-04T11:18:58.365Z",
+      "author": "andrew.shatz (Andrew Shatz)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/alex_abrahams\">@alex_abrahams</a>,</p>\n<p>Have you looked at the <strong>moncli</strong> package perchance?  You can easily accomplish this using the following code below.</p>\n<pre><code class=\"lang-auto\">from moncli import client\n\nclient.api_key = \"YOUR_API_KEY\"\nitem = client.get_items(ids=[your_item_id])[0]\nnumber_value = item.get_column_values[\"TITLE_OR_ID_OF_YOUR_NUMERIC_COLUMN\"]\nnumber_value.number = your_number\nupdate_item = item.change_column_value(number_value)\n</code></pre>\n<p>If you are at all interested, please feel free to download the package using the following command.</p>\n<pre><code class=\"lang-auto\">$ pip3 install moncli\n</code></pre>\n<p>Please feel free to reach out if you have any questions.</p>\n<p>All the best and happy coding,</p>\n<p>Andrew</p>"
+    },
+    {
+      "id": 60450,
+      "postNumber": 6,
+      "createdAt": "2021-08-11T11:19:40.539Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

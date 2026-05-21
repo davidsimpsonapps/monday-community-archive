@@ -1,0 +1,69 @@
+{
+  "id": 78832,
+  "title": "Updated API & Sub Items",
+  "slug": "updated-api-sub-items",
+  "categoryId": 8,
+  "tagIds": [
+    187,
+    351,
+    406
+  ],
+  "createdAt": "2024-02-20T17:49:20.312Z",
+  "lastPostedAt": "2024-03-14T08:10:36.997Z",
+  "postsCount": 6,
+  "excerpt": "Hi there, \nI had finished a script that does the following \nretrieves active tenants, leases, and properties, and then iterates over the active leases to create or update main items and subitems in Monday.com. \nThis work&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 297,
+  "posts": [
+    {
+      "id": 169030,
+      "postNumber": 1,
+      "createdAt": "2024-02-20T17:49:20.405Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<p>Hi there,<br />\nI had finished a script that does the following<br />\nretrieves active tenants, leases, and properties, and then iterates over the active leases to create or update main items and subitems in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>.<br />\nThis worked great before the API update and I’m working at updating it to get it working again.<br />\nMy question is for Sub Items. I have this function for getting the ID of existing sub items<br />\ndef get_existing_subitem_id(parent_item_id, subitem_name):<br />\nquery = f’‘’<br />\n{{<br />\nitems(ids: {parent_item_id}) {{<br />\nsubitems {{<br />\nid<br />\nname<br />\n}}<br />\n}}<br />\n}}<br />\n‘’’</p>\n<pre><code>response = send_graphql_request(query, {})\nitems = response.get(\"data\", {}).get(\"items\", [])\n\nif items:\n    subitems = items[0].get(\"subitems\", [])\n    if subitems:\n        for item in subitems:\n            if item[\"name\"] == subitem_name:\n                return item[\"id\"]\n\nreturn None\n</code></pre>\n<p>how would I change this to work with the latest API version<br />\nI don’t think this is correct<br />\ndef get_existing_subitem_id(parent_item_id, subitem_name):<br />\nquery = f’‘’<br />\n{{<br />\nitems(ids: {parent_item_id}) {{<br />\nsubitems_page {{<br />\nitems {{<br />\nid<br />\nname<br />\n}}<br />\n}}<br />\n}}<br />\n}}<br />\n‘’’</p>\n<pre><code>response = send_graphql_request(query, {})\nitems = response.get(\"data\", {}).get(\"items\", [])\n\nif items:\n    subitems = items[0].get(\"subitems_page\", {}).get(\"items\", [])\n    if subitems:\n        for item in subitems:\n            if item[\"name\"] == subitem_name:\n                return item[\"id\"]\n\nreturn None\n</code></pre>"
+    },
+    {
+      "id": 170007,
+      "postNumber": 2,
+      "createdAt": "2024-02-26T14:37:42.010Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/casecrs\">@Casecrs</a>,</p>\n<p>What about something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 500) {\n      items {\n        subitems {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>You can also pass the item IDs of the items you are interested in.</p>\n<p>You can also get the board ID of the subitems board like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 500) {\n      items {\n        subitems {\n          board {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>And then use that board ID (of the subitems) to get the subitems’ data:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1122334455) {\n    items_page(limit: 500) {\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 170971,
+      "postNumber": 3,
+      "createdAt": "2024-03-01T17:10:25.968Z",
+      "author": "wriley (William Riley)",
+      "cookedHtml": "<p>Matias, the last query you put in response to this discussion was just what I was looking for, ideally though I would like to get the items of just one group from a board, is that possible?</p>"
+    },
+    {
+      "id": 171124,
+      "postNumber": 4,
+      "createdAt": "2024-03-03T12:34:09.662Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Just add groups to board, and put items_page inside group instead of board.</p>"
+    },
+    {
+      "id": 171914,
+      "postNumber": 5,
+      "createdAt": "2024-03-07T02:47:43.427Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 173080,
+      "postNumber": 6,
+      "createdAt": "2024-03-13T15:53:03.570Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<p>Thanks Matias, that got it working again.</p>"
+    },
+    {
+      "id": 173206,
+      "postNumber": 7,
+      "createdAt": "2024-03-14T08:10:36.997Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/casecrs\">@Casecrs</a> !!</p>"
+    }
+  ]
+}

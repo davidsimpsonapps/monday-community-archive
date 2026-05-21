@@ -1,0 +1,104 @@
+{
+  "id": 85329,
+  "title": "How to get the full api error list using monday js sdk?",
+  "slug": "how-to-get-the-full-api-error-list-using-monday-js-sdk",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    297,
+    351
+  ],
+  "createdAt": "2024-04-28T04:52:33.924Z",
+  "lastPostedAt": "2024-05-01T18:44:31.941Z",
+  "postsCount": 9,
+  "excerpt": "Hi, \nI am struggling to maintain api’s error messages using app sdk aka monday.api(query). \nI am developing a client side react application and I am using monday.api(query) to do http request. For success scenarios there&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 202,
+  "posts": [
+    {
+      "id": 181184,
+      "postNumber": 1,
+      "createdAt": "2024-04-28T04:52:34.017Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I am struggling to maintain api’s error messages using app sdk aka <strong>monday.api(query)</strong>.<br />\nI am developing a client side react application and I am using monday.api(query) to do http request. For success scenarios there is no problem I can get the payload. But for error scenarios such as rate limit problems I can’t get the full json payload which should contain status code, error code etc. When there is an error scenario it returns like the following:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/5/85fb46d333fe18445f89877f049986fe6e80edf8.png\" title=\"Screenshot 2024-04-28 at 10.33.30\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/5/85fb46d333fe18445f89877f049986fe6e80edf8_2_690x158.png\" alt=\"Screenshot 2024-04-28 at 10.33.30\" width=\"690\" height=\"158\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-04-28 at 10.33.30</span><span class=\"informations\">1190×274 25 KB</span></div></a></div><p></p>\n<p>As you see it only contains the message as string. And this is the returning actual payload from the server including all information that I need. I took the SS from Chrome’s developer tools.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/6/a6befa2bc4a1463a41360c178b91b69e072465fe.png\" title=\"Screenshot 2024-04-28 at 10.42.56\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/6/a6befa2bc4a1463a41360c178b91b69e072465fe_2_690x227.png\" alt=\"Screenshot 2024-04-28 at 10.42.56\" width=\"690\" height=\"227\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-04-28 at 10.42.56</span><span class=\"informations\">788×260 22.8 KB</span></div></a></div><p></p>\n<p>Here is my code:</p>\n<pre><code class=\"lang-auto\">    Monday.api('query goes here')\n        .then(success_fn, function (err) {\n            console.log(err.data)\n        })\n</code></pre>\n<p>My library versions. I assume I am using the latest versions.</p>\n<pre><code class=\"lang-auto\">├── @mondaycom/apps-cli@2.4.0\n├── @mondaycom/apps-sdk@3.0.2\n├── monday-sdk-js@0.5.5\n├── monday-ui-react-core@2.104.0\n</code></pre>\n<p>My api version is <strong>2024-07</strong>.</p>\n<p>My use case is just to retry the request in case of the fact that there is rate limit error. So I need <code>status_code</code> and <code>error_code</code> information. Parsing the raw string is not promising since it is subject to change and it is anti-pattern.</p>\n<p>So the question is how can I get the full error payload that is returning from the server using Monday SDK?</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 181469,
+      "postNumber": 2,
+      "createdAt": "2024-04-30T07:58:18.979Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Is there any progress on this? I need badly the full payload.</p>"
+    },
+    {
+      "id": 181494,
+      "postNumber": 3,
+      "createdAt": "2024-04-30T11:25:52.015Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/apsimos\">@apsimos</a>,</p>\n<p>In this case, this error message is shown with a 200 OK status. So I don’t think that information would be relevant to you.</p>\n<p>You can see that the errors object is in the response, and then you can look for the word “Complexity” in the error message. We should not change the message without previous notice. This is just a workaround I thought.</p>\n<p>Maybe someone else in the community is handling this in a different way, if so, please come join the topic!</p>"
+    },
+    {
+      "id": 181501,
+      "postNumber": 4,
+      "createdAt": "2024-04-30T11:44:43.994Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Thanks for your comment. Still I can not understand why is not the full error response is not shown in the error message? Parsing the raw error message is anti-pattern I guess.</p>\n<p>Best,</p>"
+    },
+    {
+      "id": 181604,
+      "postNumber": 5,
+      "createdAt": "2024-04-30T20:42:42.027Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I am handling it through parsing the message, that said, my primary method is not to hit the limits at all. But since I’m doing integration apps all the work is happening on my back end, its not distributed across many clients.</p>\n<p>I just track how much everything will consume and the current budget consumed and if something would exceed the budget I return a 429 and monday retries a minute later. This way I never have anything sitting in my back end waiting around. It also means I don’t have to queue things on my side and return a success to monday (when its not yet done) and create a false impression in the automation activity log. It continues to show in progress.</p>"
+    },
+    {
+      "id": 181626,
+      "postNumber": 6,
+      "createdAt": "2024-05-01T05:02:53.974Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>I got your point. But parsing the error message is not the desired way since it is subject to change. There has been error_code and status_code already in the response payload. I am struggling to understand why I can’t reach those through the SDK. This is the question. Returning these data from SDK is dead simple. No extra effort is required.</p>"
+    },
+    {
+      "id": 181657,
+      "postNumber": 7,
+      "createdAt": "2024-05-01T09:00:19.621Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>double-checking here <a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1714564799352939\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 181666,
+      "postNumber": 8,
+      "createdAt": "2024-05-01T09:22:55.707Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/apsimos\">@apsimos</a>,</p>\n<p>After checking with the team, I believe you could solve this by using the <a href=\"https://www.npmjs.com/package/@mondaydotcomorg/api\">Monday GraphQL JS SDK</a> which should get you the full data <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 181705,
+      "postNumber": 9,
+      "createdAt": "2024-05-01T11:15:24.623Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Because monday did not followed the graphql specification for many of its errors. I have been told its on the road map to rectify this. But I do not have specific details. In the meantime we have to work around those limitations. It is what it is.</p>"
+    },
+    {
+      "id": 181707,
+      "postNumber": 10,
+      "createdAt": "2024-05-01T11:21:31.372Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 181777,
+      "postNumber": 11,
+      "createdAt": "2024-05-01T18:44:31.941Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> and <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> unfortunately I am not able to use this SDK since it requires a private access token. My app is a client side application not a server side. I think I have to follow <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>’s recommendation.</p>"
+    },
+    {
+      "id": 181814,
+      "postNumber": 12,
+      "createdAt": "2024-05-02T05:24:42.571Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

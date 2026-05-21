@@ -1,0 +1,67 @@
+{
+  "id": 54250,
+  "title": "Custom Action not sending payload in req.body",
+  "slug": "custom-action-not-sending-payload-in-req-body",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    152,
+    208,
+    209,
+    249,
+    351
+  ],
+  "createdAt": "2023-03-20T22:58:08.310Z",
+  "lastPostedAt": "2023-03-22T05:22:37.446Z",
+  "postsCount": 6,
+  "excerpt": "Hello, \nI am attempting to build an integration service with a custom action that is resolved by a cloud hosted endpoint. Unfortunately, I am unable to retrieve the “payload” object in the request body, as it is outlined&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 835,
+  "posts": [
+    {
+      "id": 120438,
+      "postNumber": 1,
+      "createdAt": "2023-03-20T22:58:08.397Z",
+      "author": "JeffHalbert (Jeff)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I am attempting to build an integration service with a custom action that is resolved by a cloud hosted endpoint. Unfortunately, I am unable to retrieve the “payload” object in the request body, as it is outlined in the Custom Action documentation. Here is my current implementation:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/9/d9a3967098ca9afdc48aa1c34d31124e5b82dd00.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/9/d9a3967098ca9afdc48aa1c34d31124e5b82dd00_2_529x500.png\" alt=\"image\" width=\"529\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">753×711 24 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/1/410922d9a79b3ceb88b1b2da89bf7a41d824e16b.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/1/410922d9a79b3ceb88b1b2da89bf7a41d824e16b_2_690x104.png\" alt=\"image\" width=\"690\" height=\"104\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1256×191 17.3 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/3/d352ffb5064efc3d7215a41fc2a6a2b40c197478.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/3/d352ffb5064efc3d7215a41fc2a6a2b40c197478_2_690x133.png\" alt=\"image\" width=\"690\" height=\"133\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1486×288 18.6 KB</span>\n</div></a></div><p></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/3/d/3dfe41832ba2ee671a20e09366edc732841f785b.png\" alt=\"image\" width=\"577\" height=\"93\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/5/85dbe6e82e0371548e0c85bfb3ba2f086f60688f.png\" alt=\"image\" width=\"385\" height=\"301\" /></p>\n<p>And here is the result:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/0/6/060885b9d281ba848f8b6549a9253c6e05d65d34.png\" alt=\"image\" width=\"541\" height=\"98\" /></p>\n<p>What am I missing?</p>"
+    },
+    {
+      "id": 120502,
+      "postNumber": 2,
+      "createdAt": "2023-03-21T11:25:08.834Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/jeffhalbert\">@JeffHalbert</a>,</p>\n<p>I am not sure I understand where you are getting that. If you are talking about the run URL from your custom action, that should give you a payload like this one from req.body.payload:</p>\n<pre><code class=\"lang-auto\">{ \n  \"payload\": { //input fields are based on the input fields configuration of your action\n     \"inputFields\": { //fields structure depends on the type of the specific field\n        \"boardId\": 12345678,\n        \"itemId\": 12345678,\n        \"columnId\": 'text_1',\n        \"targetColumnId\": 'text_2',\n        \"transformationType\": { \n             \"title\": 'to lower case', \n             \"value\": 'TO_LOWER_CASE' \n         }\n      },\n      \"recipeId\": 123456, //unique ID of the recipe for your app. if multiple accounts are using the same recipe, the same recipe ID will be sent\n      \"integrationId\": 123456 //unique ID of the integration recipe added to your board\n  }\n}\n</code></pre>\n<p>And you should get a token from req.headers.authorization that will look something like:</p>\n<p><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjk3MTEwNTcsInVzZXJJZCI6MjM5NTA2MDAsImF1ZCI6Imh0dHBzOi8vasohisabhiuafsibjiuafsiguafs80yasfy89asf8y9g9usaf98hfs7s9af97asgf78asgf79sfgUiLCJpYXQiOjE2Nzk0MDUwMjZ9.ouG8fHZkO5qpSumOsODiuX2PA-hRUiqaLySTPXEmBkI</code> (this is not a real token, just in case)</p>"
+    },
+    {
+      "id": 120522,
+      "postNumber": 3,
+      "createdAt": "2023-03-21T13:09:50.213Z",
+      "author": "JeffHalbert (Jeff)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>I’m expecting the request.body to look like the example provided, but it looks like Monday is not sending one at all. When I attempt to deconstruct the request.body into the payload constant, it throws an error because the payload property does not exist. Actually, the request.body does not exist. When I console log the request.body, it returns undefined.</p>\n<p>I’m wondering if there is something I’ve done incorrectly in my implementation to have caused this. The session and shortLivedToken are coming through successfully.</p>"
+    },
+    {
+      "id": 120525,
+      "postNumber": 4,
+      "createdAt": "2023-03-21T13:35:00.901Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/jeffhalbert\">@JeffHalbert</a>,</p>\n<p>Can you please send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> and share a screen recording showing your <strong>entire</strong> app’s configuration page, including the whole configuration for your custom action, showing your code and showing us how you are triggering the action and the payload you get to your run URL? Please console.log the entire req so we can take a look into what you are receiving and please do not omit any of this information.</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 120537,
+      "postNumber": 5,
+      "createdAt": "2023-03-21T14:29:21.011Z",
+      "author": "JeffHalbert (Jeff)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>As suggested, I have sent a recording to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> showing the full application, code, and console.log of the entire request. Thank you for your quick response.</p>"
+    },
+    {
+      "id": 120684,
+      "postNumber": 6,
+      "createdAt": "2023-03-22T05:22:37.446Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/jeffhalbert\">@JeffHalbert</a>,</p>\n<p>Thank you for sending the information! We will take it from there <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": 122823,
+  "title": "VIBE Errors",
+  "slug": "vibe-errors",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    41,
+    344,
+    353,
+    487
+  ],
+  "createdAt": "2026-01-12T03:22:44.341Z",
+  "lastPostedAt": "2026-01-12T05:18:36.085Z",
+  "postsCount": 2,
+  "excerpt": "Hi everyone — I’m trying to sanity-check a possible pattern I ran into and see if anyone else has observed something similar. \nI may be seeing an issue related to how images are handled in Vibe, specifically when an imag&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 24,
+  "posts": [
+    {
+      "id": 243957,
+      "postNumber": 1,
+      "createdAt": "2026-01-12T03:22:44.429Z",
+      "author": "Bkostinsky (Brandon)",
+      "cookedHtml": "<p>Hi everyone — I’m trying to sanity-check a <strong>possible pattern</strong> I ran into and see if anyone else has observed something similar.</p>\n<p>I <em>may</em> be seeing an issue related to how images are handled in Vibe, specifically when an image is <strong>pasted directly into the chat</strong> versus uploaded using the normal image upload control. I’m not certain this is the root cause yet, but in my case it <em>seems</em> like pasted images behave differently and may trigger errors shortly afterward.</p>\n<p>I ran into this while working on two separate apps that are now behaving unexpectedly. The only common thread I can confidently point to is that, earlier in the session, I had pasted images into the chat rather than uploading them. Once I noticed that pattern and avoided pasting images, things appeared more stable — though I’m still investigating.</p>"
+    },
+    {
+      "id": 243962,
+      "postNumber": 2,
+      "createdAt": "2026-01-12T05:18:36.085Z",
+      "author": "maritn78uuujje (Martin David)",
+      "cookedHtml": "<p>That is a really sharp observation. While it might feel like a “sanity check” moment, you’re actually touching on a technical distinction in how web applications handle data buffers versus file objects.</p>\n<p>It is very common for “pasted” images and “uploaded” images to be processed through different code paths, which can lead to the instability you’re describing.</p>\n<h3><a name=\"p-243962-why-pasting-vs-uploading-matters-1\" class=\"anchor\" href=\"#p-243962-why-pasting-vs-uploading-matters-1\"></a>Why Pasting vs. Uploading Matters</h3>\n<p>When you use an <strong>upload control</strong>, the browser treats the image as a <code>File</code> object. This includes specific metadata (filename, extension, size) and is usually handled via a stable multipart form-data request.</p>\n<p>When you <strong>paste</strong>, the behavior changes:</p>\n<ul>\n<li>\n<p><strong>Base64 Bloating:</strong> Pasted images are often converted into Base64-encoded strings. These strings are roughly <strong>33% larger</strong> than the original binary data. If you paste a high-resolution screenshot, the resulting text string can be massive, potentially hitting payload limits or causing memory leaks in the browser session.</p>\n</li>\n<li>\n<p><strong>Missing Metadata:</strong> Pasted data often lacks a filename or a defined MIME type. If the backend “Vibe” logic expects a <code>photo.jpg</code> but receives a generic <code>blob</code>, it can cause “silent” failures or state corruption that doesn’t manifest until a few turns later.</p>\n</li>\n<li>\n<p><strong>DOM Pollution:</strong> In some chat interfaces, pasting an image inserts it into a content-editable div as an <code>&lt;img&gt;</code> tag with a data URI. This can “pollute” the chat history context that the model or the application is trying to track, leading to the unexpected behavior you saw in your apps.</p>\n</li>\n</ul>\n<h3><a name=\"p-243962-common-symptoms-of-paste-instability-2\" class=\"anchor\" href=\"#p-243962-common-symptoms-of-paste-instability-2\"></a>Common Symptoms of “Paste Instability”</h3>\n<p>If your experience matches these, you’re likely on the right track with your hypothesis:</p>\n<ol>\n<li>\n<p><strong>Increased Latency:</strong> The UI becomes sluggish immediately after the paste.</p>\n</li>\n<li>\n<p><strong>Context Loss:</strong> The app “forgets” previous instructions or behaves as if the session has timed out.</p>\n</li>\n<li>\n<p><strong>Network Errors:</strong> 413 (Payload Too Large) or 400 (Bad Request) errors appearing in the developer console.</p>\n</li>\n</ol>\n<hr />\n<h3><a name=\"p-243962-how-to-verify-3\" class=\"anchor\" href=\"#p-243962-how-to-verify-3\"></a>How to Verify</h3>\n<p>To confirm this is the root cause, you might want to try a quick test:</p>\n<ul>\n<li>\n<p><strong>The “Small Paste” Test:</strong> Try pasting a very small, low-res icon (under 10KB). If the app remains stable, the issue is likely <strong>payload size</strong> related to Base64 encoding.</p>\n</li>\n<li>\n<p><strong>The Console Check:</strong> Open your browser’s Developer Tools (F12) and watch the <strong>Network tab</strong> when you paste. Look for unusually large requests or red error lines that appear shortly after <a href=\"https://happyrewards.io/\" rel=\"noopener nofollow ugc\">* Happy Rewards</a></p>\n</li>\n</ul>"
+    }
+  ]
+}

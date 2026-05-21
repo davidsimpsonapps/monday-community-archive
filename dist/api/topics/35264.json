@@ -1,0 +1,93 @@
+{
+  "id": 35264,
+  "title": "Finding Related Items with Pulse IDs",
+  "slug": "finding-related-items-with-pulse-ids",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2022-04-26T12:00:08.565Z",
+  "lastPostedAt": "2022-05-27T06:17:08.739Z",
+  "postsCount": 11,
+  "excerpt": "Hello, I have two boards: Customers and Jobs \nCustomers includes all of my customers \nJobs includes all of the jobs we’re working \nJobs has a “Connect board” column that links to the Customers board. This column contains&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 2806,
+  "posts": [
+    {
+      "id": 84032,
+      "postNumber": 1,
+      "createdAt": "2022-04-26T12:00:08.654Z",
+      "author": "chadhutchins10 (Chad Hutchins)",
+      "cookedHtml": "<p>Hello, I have two boards: Customers and Jobs</p>\n<p>Customers includes all of my customers<br />\nJobs includes all of the jobs we’re working</p>\n<p>Jobs has a “Connect board” column that links to the Customers board. This column contains which Customer the Job is for.</p>\n<p>Customers can have many Jobs at any given time.</p>\n<p>What is the best way to pull the Jobs for a specific Customer?</p>\n<p>And can this be done in a single GraphQL query?</p>\n<p>I can find my customer like this (Ex. the customer name is Jill Mahomes):</p>\n<pre><code class=\"lang-auto\">query {\n    items_by_column_values (board_id: 123456789, column_id: \"name\", column_value: \"Jill Mahomes\") {\n        id\n        name,\n    \t\tcolumn_values {\n    \t\t  id,\n          value,\n          text\n    \t\t} \n    }\n}\n</code></pre>\n<p>The “link to projects” field looks like this:</p>\n<pre><code class=\"lang-auto\">          {\n            \"id\": \"link_to_projects\",\n            \"value\": \"{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":1308587615},{\\\"linkedPulseId\\\":1308587623}]}\",\n            \"text\": \"\"\n          }\n</code></pre>\n<p>How do I then use the linkedPulseIds to pull my related Jobs? Can this be done in a single query or do I need some scripting to dig into the JSON, grab the IDs, then run another query?</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 84077,
+      "postNumber": 2,
+      "createdAt": "2022-04-26T14:53:00.760Z",
+      "author": "timlittletech (Tim Little)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/chadhutchins10\">@chadhutchins10</a><br />\nI always iterate through the linked pulse ids to get the details of the jobs. I don’t know of a way to include the linked pulse id information in the graphql call.</p>\n<p>Sometimes I’ve had luck with adding mirror columns on the other board, if you just need 1 column. (it will come across as a different column, but this seems to be inconsistent from the API) so I almost always just end up iterating through the linked pulseIds.</p>\n<p>maybe someone else has a more efficient method, as I’m sure thats not the answer you were hoping for.</p>\n<p>Best.<br />\nTim</p>"
+    },
+    {
+      "id": 84085,
+      "postNumber": 3,
+      "createdAt": "2022-04-26T15:55:35.011Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/chadhutchins10\">@chadhutchins10</a></p>\n<p>Few things here:</p>\n<ul>\n<li>you can’t do this in one query, you need to get the linkedItemIds by decoding / parsing the JSON</li>\n<li>I see the item is linked to two items. items_by_column_values requires a single search string (not an array of search strings)</li>\n<li>items_by_column_values can only search in text or number columns, not the automatically generated pulseId column</li>\n</ul>"
+    },
+    {
+      "id": 84537,
+      "postNumber": 4,
+      "createdAt": "2022-04-29T16:40:00.900Z",
+      "author": "chadhutchins10 (Chad Hutchins)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/timlittletech\">@timlittletech</a> and <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>! This has been helpful. I was able to get it working with your help. Have a nice weekend!</p>"
+    },
+    {
+      "id": 84551,
+      "postNumber": 5,
+      "createdAt": "2022-04-29T19:52:08.598Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> I’ve noticed the Item ID column type, despite what the documentation says, can be be used to search for a pulse. While this is silly since you have to have the pulse id to start with - I use it in integromat/make to get a single item and specify the columns i want values for. Because for some reason, the get item column value module only gets one column value but there is no module to get multiple columns from an item by item id (pulse id).</p>"
+    },
+    {
+      "id": 84555,
+      "postNumber": 6,
+      "createdAt": "2022-04-29T22:23:38.795Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>\n<p>I like your creative solution to reading an items data.</p>\n<p>However, there is another way. Us the “Get an item” module:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/862857d28f0b7e3addf75045086285df70b7370e.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/862857d28f0b7e3addf75045086285df70b7370e_2_217x500.png\" alt=\"image\" width=\"217\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">713×1639 125 KB</span>\n</div></a></div><p></p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/TUX-HntHV3I\">Is the System Down or is it just me?</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 84556,
+      "postNumber": 7,
+      "createdAt": "2022-04-29T23:00:30.088Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>However the “get an item” module returns all columns. When I dont need all the columns - especially mirror columns, that is a lot of extra latency and query complexity. If I only need two or three columns, i can use the search.</p>\n<p>That said, I’m working on transitioning my work to AWS Lambda, so I can optimize the snot out of things with multiple operations in a single call (for example).</p>"
+    },
+    {
+      "id": 84569,
+      "postNumber": 9,
+      "createdAt": "2022-04-30T12:35:49.261Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><strong>Get an Item</strong> does not provide any ability to specify columns (in <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a> at least, which is replacing integromat and you can’t sign up for new integromat accounts), and always returns all columns in my experience.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/3facb034a4ccd149bd51b32d60d44a7a7c1721a8.png\" title=\"2022-04-30_10-29-13\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/3facb034a4ccd149bd51b32d60d44a7a7c1721a8_2_435x500.png\" alt=\"2022-04-30_10-29-13\" width=\"435\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">2022-04-30_10-29-13</span><span class=\"informations\">711×816 77.8 KB</span>\n</div></a></div><p></p>\n<p><strong>Search Items in the Board by Column Value</strong> does let you specify output columns.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/093e4e45f9c08a4a316b4422d747b1520ba3b77b.png\" title=\"2022-04-30_10-32-01\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/093e4e45f9c08a4a316b4422d747b1520ba3b77b_2_412x500.png\" alt=\"2022-04-30_10-32-01\" width=\"412\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">2022-04-30_10-32-01</span><span class=\"informations\">760×922 77.3 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 84573,
+      "postNumber": 10,
+      "createdAt": "2022-04-30T13:04:15.089Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>\n<p>You are correct.</p>"
+    },
+    {
+      "id": 84574,
+      "postNumber": 11,
+      "createdAt": "2022-04-30T13:10:09.180Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I have asked Make to enhance with a module that lets us get an item and specific columns though.</p>"
+    },
+    {
+      "id": 87023,
+      "postNumber": 12,
+      "createdAt": "2022-05-27T06:17:08.739Z",
+      "author": "peppinob (Giuseppe)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/chadhutchins10/48/11456_2.png\" class=\"avatar\" /> chadhutchins10:</div>\n<blockquote>\n<p>Hello, I have two boards: Customers and Jobs</p>\n<p>Customers includes all of my customers<br />\nJobs includes all of the jobs we’re working</p>\n<p>Jobs has a “Connect board” column that links to the Customers board. This column contains which Customer the Job is for.</p>\n<p>Customers can have many Jobs at any given time.</p>\n<p>What is the best way to pull the Jobs for a specific Customer?</p>\n</blockquote>\n</aside>\n<p>For future reference.</p>\n<p>If the link between the two boards is bidirectional:</p>\n<p>Instead of searching the Customer ID in the Job Board (search item in board by column value), you can get the the item of the desired Customer in Customer Board and read all related Job-IDs</p>"
+    }
+  ]
+}

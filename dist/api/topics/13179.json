@@ -1,0 +1,58 @@
+{
+  "id": 13179,
+  "title": "No Query String Present - Salesforce Apex Callout",
+  "slug": "no-query-string-present-salesforce-apex-callout",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-11-12T18:42:41.099Z",
+  "lastPostedAt": "2021-03-04T01:22:12.012Z",
+  "postsCount": 5,
+  "excerpt": "Hi Folks, \nI’m trying to connect to the monday.com api from Salesforce. \nI get an initial OK - 200 when authenticating but then receive: {“errors”:[{“message”:“No query string was present”}],“account_id”:2027725} in the &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2343,
+  "posts": [
+    {
+      "id": 33540,
+      "postNumber": 1,
+      "createdAt": "2020-11-12T18:42:41.210Z",
+      "author": "SiriDeva (Siri Deva Singh Khalsa)",
+      "cookedHtml": "<p>Hi Folks,</p>\n<p>I’m trying to connect to the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> api from Salesforce.</p>\n<p>I get an initial OK - 200 when authenticating but then receive: {“errors”:[{“message”:“No query string was present”}],“account_id”:2027725} in the response body.</p>\n<p>If I run the method</p>\n<p><code>req.SetHeader('Content-Type', 'application/json');</code></p>\n<p>I can’t even authenticate.</p>\n<p>Any ideas? See code below.</p>\n<p>public class mondayAPI{</p>\n<pre><code>public static httpResponse callout(){\n\n    String apiKey = 'my api key' here;\n\n    String query = '{ \"query\" : \"{boards(ids: 813785147)}}\" ';\n\n    //instantiate httpRequest\n\n    HttpRequest req = new HttpRequest();\n\n    //set http method and endoint for request instance\n\n    req.setMethod('POST');\n\n    req.setEndpoint('https://api.monday.com/v2');\n\n    //set body and header\n\n    req.setHeader('Authorization', apiKey);\n\n    req.setBody(query);\n\n    //instantiate the http\n\n    http h = new http();\n\n    //make the call out using the http.send() method\n\n    HttpResponse res = h.send(req);\n\n    Integer statusCode = res.getStatusCode();\n\n    String status = res.getStatus();\n\n    String body = res.getBody();\n\n    \n\n    System.debug('Request Body: ' + req.getBody());\n\n    System.debug(statusCode);\n\n    System.debug(status);\n\n    System.debug(body);\n\n    return res;\n\n}\n</code></pre>\n<p>}</p>"
+    },
+    {
+      "id": 33551,
+      "postNumber": 2,
+      "createdAt": "2020-11-12T20:42:56.591Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/sirideva\">@SiriDeva</a> - welcome to the community!</p>\n<p>That error suggests to me that the call is being made to the monday API, and it is being verified against the account. However it cannot find a query string. Could we try have the query string as one whole uninterrupted line item?</p>\n<p><code>String query = '{query : {boards(ids: 813785147)}} ';</code></p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 33552,
+      "postNumber": 3,
+      "createdAt": "2020-11-12T20:42:59.708Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 33603,
+      "postNumber": 4,
+      "createdAt": "2020-11-13T16:24:17.983Z",
+      "author": "SiriDeva (Siri Deva Singh Khalsa)",
+      "cookedHtml": "<p>Thanks for your response <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a>.</p>\n<p>I tried as you suggested and received the same error.</p>\n<p>I’ve pasted the log below.</p>\n<p>Appreciate your help!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6004d7d3b56b2b407ea4a1202d6daa502ebceada.png\" title=\"noQueryString_log\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/6/6004d7d3b56b2b407ea4a1202d6daa502ebceada.png\" alt=\"noQueryString_log\" width=\"554\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">noQueryString_log</span><span class=\"informations\">671×605 18.1 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 34427,
+      "postNumber": 5,
+      "createdAt": "2020-11-23T19:24:36.946Z",
+      "author": "SiriDeva (Siri Deva Singh Khalsa)",
+      "cookedHtml": "<p>I figured this out.</p>\n<p>I had two errors.</p>\n<p>The graphQL within my JSON request body was malformed.</p>\n<p>correct is:  <code>String query = '{ \"query\" : \"{boards(ids:413622857){id}}\" }';</code></p>\n<p>The content-type header needs to be set to json:</p>\n<p><code>req.setHeader('Content-Type', 'application/json');</code></p>"
+    },
+    {
+      "id": 43380,
+      "postNumber": 6,
+      "createdAt": "2021-03-04T01:22:12.012Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

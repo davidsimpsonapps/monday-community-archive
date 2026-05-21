@@ -1,0 +1,57 @@
+{
+  "id": 105978,
+  "title": "Identifying a single item - API (GraphQL, Retool)",
+  "slug": "identifying-a-single-item-api-graphql-retool",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-12-22T16:45:03.190Z",
+  "lastPostedAt": "2025-01-08T11:46:09.721Z",
+  "postsCount": 4,
+  "excerpt": "Hello, \nI’m having difficulty figuring out how to narrow down to a single item in a column of a Monday Board. The items are identified as 0, 1, 2 … but I’m unable to enter/identify it as such. \nex. entering {{ currentSou&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 24,
+  "posts": [
+    {
+      "id": 215039,
+      "postNumber": 1,
+      "createdAt": "2024-12-22T16:45:03.286Z",
+      "author": "hollyhazeldine (Holly)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’m having difficulty figuring out how to narrow down to a single item in a column of a Monday Board. The items are identified as 0, 1, 2 … but I’m unable to enter/identify it as such.<br />\nex. entering {{ currentSourceRow.boards.items_page.items.0.name }} returns null.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/3/030d5000a520d18127f99b3ee2683b02f896079f.png\" title=\"item\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/3/030d5000a520d18127f99b3ee2683b02f896079f_2_690x343.png\" alt=\"item\" width=\"690\" height=\"343\" /><div class=\"meta\"><span class=\"filename\">item</span><span class=\"informations\">2774×1382 265 KB</span></div></a></div><p></p>\n<p>I’m using the following GraphQL query (replacing actual Board ID #) to return data, that I’m attempting to display individual columns of a Monday board in a Retool app:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/3/838544eb221834b59c692a3738b2fd8aeb41d731.png\" title=\"Items\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/3/838544eb221834b59c692a3738b2fd8aeb41d731_2_517x500.png\" alt=\"Items\" width=\"517\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Items</span><span class=\"informations\">1236×1194 56.9 KB</span></div></a></div><p></p>\n<p>Please let me know if I can provide further information or context. Also, apologies if I’m not asking this with the best clarity - I’m very new to APIs in general.</p>"
+    },
+    {
+      "id": 215040,
+      "postNumber": 2,
+      "createdAt": "2024-12-22T16:45:24.826Z",
+      "author": "LeeatF (Lee-at )",
+      "cookedHtml": ""
+    },
+    {
+      "id": 215068,
+      "postNumber": 3,
+      "createdAt": "2024-12-23T05:39:13.415Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/hollyhazeldine\">@hollyhazeldine</a>,</p>\n<p>Using a query like that one will give you multiple items in the response if the board has more than one item:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/1/216fdd6584f3a81ec28d6f74beac4aa00a6ecc06.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/1/216fdd6584f3a81ec28d6f74beac4aa00a6ecc06_2_690x362.png\" alt=\"image\" width=\"690\" height=\"362\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1644×863 94.3 KB</span></div></a></div><p></p>\n<p>I am not sure what you other platform is doing exactly, but it does say “currentSourceRow” so I believe it might be selecting a specific item from the board before you access the fields.</p>\n<p>If you use the same query in your API Playground, do you see multiple items? If so, you will need to check the configuration on the other platform’s end.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 216203,
+      "postNumber": 4,
+      "createdAt": "2025-01-07T15:02:29.806Z",
+      "author": "hollyhazeldine (Holly)",
+      "cookedHtml": "<p>Thank you so much Matias, this is incredibly helpful!</p>\n<p>I do have a follow up question, now I’m attempting to create an item but I can only seem to identify one column of one type at a time (ex. text or long_text) and even if I specify multiple values, it replaces the first text column instead of moving onto the next text column. How can I differentiate/specify which column needs to be filled in based on the given value?</p>\n<p>Current (not working) query:<br />\nmutation {<br />\ncreate_item (board_id: 123456789, item_name: “{{ projectName.value }}”, column_values: “{\"name\": \"ready 3\", \"text\": \"{{ clientEmail.value}} \",\"long_text\": \"{{ projectDescription.value}} \",\"text\": \"{{ projectDeliverables.value}} \"}” ) {<br />\nid<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 216340,
+      "postNumber": 5,
+      "createdAt": "2025-01-08T11:46:09.721Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I am not sure I follow <a class=\"mention\" href=\"/u/hollyhazeldine\">@hollyhazeldine</a>,</p>\n<p>This is the syntax you can use for what you are trying to do:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(\n    board_id: 1234567890\n    item_name: \"My item\"\n    column_values: \"{\\\"text_mkm0kaam\\\":\\\"Some text\\\" ,\\\"long_text_mkm0akfe\\\":\\\"Text for the long text column\\\"}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>You don’t need to pass the name twice. And you need to use backslashes to escape outer quotes <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

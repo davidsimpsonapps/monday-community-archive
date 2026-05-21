@@ -1,0 +1,75 @@
+{
+  "id": 56595,
+  "title": "How can I use an App Template to create a new workspace with multiple boards through the API?",
+  "slug": "how-can-i-use-an-app-template-to-create-a-new-workspace-with-multiple-boards-through-the-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    101
+  ],
+  "createdAt": "2023-04-21T17:04:35.200Z",
+  "lastPostedAt": "2024-09-08T10:34:00.824Z",
+  "postsCount": 8,
+  "excerpt": "I have created an App Template that we use to create a set of 3 boards in our Workspaces. \nI’m trying to automate it using GraphQL in Postman. \nI have two questions: \n\nI don’t know what I have wrong with the variables de&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 642,
+  "posts": [
+    {
+      "id": 124953,
+      "postNumber": 1,
+      "createdAt": "2023-04-21T17:04:35.290Z",
+      "author": "Rolando (Rolando)",
+      "cookedHtml": "<p>I have created an App Template that we use to create a set of 3 boards in our Workspaces.<br />\nI’m trying to automate it using GraphQL in Postman.<br />\nI have two questions:</p>\n<ol>\n<li>I don’t know what I have wrong with the variables definitions that they are not working<br />\n{“v_client” : “{{env_vclient}}”,<br />\n“wp_id” : {{env_vwpid}}<br />\n}</li>\n</ol>\n<p>GraphQL Code in Postman:<br />\nmutation new_board($v_client: String!,$wp_id: Int){<br />\ncreate_board (board_name: $v_client, board_kind: private, template_id: 2518XXXXXX, workspace_id: $wp_id) {<br />\nid<br />\n}<br />\n}<br />\nDoes the API support App Templates? How can I use it with the API?</p>\n<ol>\n<li>I tried simplifying the request and use the ID of a single board of the template that I got from the URL, but it didn’t work. I get the error “The template ID given is not an account template”</li>\n</ol>\n<p>GraphQL code in Postman<br />\nmutation new_board{<br />\ncreate_board (board_name: “Sprints”, board_kind: private, template_id: 2518XXXXXX, workspace_id: 265YYYY) {<br />\nid<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 125246,
+      "postNumber": 2,
+      "createdAt": "2023-04-24T19:07:29.141Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rolando\">@Rolando</a>, <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Could you please let me know how you’re getting your template ID?</p>"
+    },
+    {
+      "id": 125661,
+      "postNumber": 3,
+      "createdAt": "2023-04-26T18:58:31.627Z",
+      "author": "Rolando (Rolando)",
+      "cookedHtml": "<p>Hello Alessandra…</p>\n<p>I tried two ways:</p>\n<ol>\n<li>\n<p>Enabled the Developer mode to see the App template ID in the preview page. I couldn’t find it this way. These are the steps that I followed:<br />\na. Enabled the developer mode from monday.labs<br />\nb. I simulated that I was going to use the App template to create a new set of boards in a workspace that I already have.<br />\nc. I look for the App Template and checked the preview page that there is no ID.</p>\n</li>\n<li>\n<p>Somewhere, I read that you could also open a workspace and board that you want and use the code in the URL (browser tab). That should be the ID of the board. These are the steps that I followed:<br />\na. I opened the workspace that the App template is based upon and one of its boards.<br />\nb. From the URL, I copied the ID at the end of it.<br />\nThis code didn’t work either.</p>\n</li>\n</ol>\n<p>I am also wondering if the API supports an App template or it’s only boards templates.</p>\n<p>Thanks in advance for your help on this,<br />\nRolando</p>"
+    },
+    {
+      "id": 126056,
+      "postNumber": 4,
+      "createdAt": "2023-05-01T06:53:05.352Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/rolando\">@Rolando</a> ,</p>\n<p>There is no API method to “duplicate an app” if that is what you are asking.</p>\n<p>To create a board from a template you have to:</p>\n<ol>\n<li>Go to your monday account and find your board on the left pane.</li>\n<li>Click on the 3 dots next to the name of the board.</li>\n<li>Save as a template</li>\n<li>In Postman use a mutation like this one:</li>\n</ol>\n<p>Query:</p>\n<pre><code class=\"lang-auto\">mutation new_board($v_client: String!,$wp_id: Int){\ncreate_board (board_name: $v_client, board_kind: private, template_id: 1234567890, workspace_id: $wp_id) {\nid\n}\n}\n</code></pre>\n<p>GraphQL variables:</p>\n<pre><code class=\"lang-auto\">{\n    \"v_client\": \"Some text\",\n    \"wp_id\": 12121212\n}\n</code></pre>\n<p>The template ID will be the ID of the board that you saved as a template.</p>\n<p>The workspace ID will be the ID of the workspace in which the new board will be created. If you go to your workspace, you should see it in your address bar. Example: <a href=\"https://matias.monday.com/workspaces/2011111\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>\n<p>If you pass workspace_id: null, the board will be created in the main workspace.</p>\n<p>Let me know if you have any questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 171126,
+      "postNumber": 5,
+      "createdAt": "2024-03-03T13:11:54.766Z",
+      "author": "JoeH (Joe Hardin)",
+      "cookedHtml": "<p>I have the same need as Rolando. My use case is that, while the new workspace template feature is cool, it’s problematic in that it doesnt maintain relationships between boards like an app template does. So I created the stuff we need in a workspace app template.</p>\n<p>In reading your response to his question, I’m a bit unclear as to whether monday supports this or not via API. When manually creating things from templates in the workspace the terminology is vague (it just says “create from template” not “create board from template”). Can you clarify?</p>"
+    },
+    {
+      "id": 171916,
+      "postNumber": 6,
+      "createdAt": "2024-03-07T02:49:12.753Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/joeh\">@JoeH</a>,</p>\n<p>I am not sure I follow the question. What are you trying to do via API exactly?</p>"
+    },
+    {
+      "id": 200389,
+      "postNumber": 7,
+      "createdAt": "2024-09-08T06:40:32.045Z",
+      "author": "JoeH (Joe Hardin)",
+      "cookedHtml": "<p>Sorry for the delay/ancient reply! Just realized i wasnt getting forum notifications.</p>\n<p>The need is to deploy an app template via the API, and after re-reading your response i can see that isn’t possible which is unfortunate.</p>\n<p>The reason this is needed and a normal ‘board template’ wont work is because we have a need to deploy multiple boards in a new workspace, and those boards are linked to each other (e.g. connected board and mirror columns). If I were to just deploy board templates via the API, the linkages wouldn’t get setup.</p>"
+    },
+    {
+      "id": 200477,
+      "postNumber": 8,
+      "createdAt": "2024-09-08T10:34:00.824Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/joeh\">@JoeH</a> , better late than never!</p>\n<p>Just in case, if you add all the connected boards in the same workspace and use that workspace as the template, then the connections and mirror columns will still be there when used in a different account <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

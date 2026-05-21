@@ -1,0 +1,82 @@
+{
+  "id": 66098,
+  "title": "Change multiple column values syntax",
+  "slug": "change-multiple-column-values-syntax",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-09-15T15:43:16.841Z",
+  "lastPostedAt": "2023-09-18T04:37:21.274Z",
+  "postsCount": 9,
+  "excerpt": "query = ’ mutation { change_multiple_column_values(item_id: 1234567890, board_id: 1234567890, column_values: {“text”: “New text” }) { id } } ’ \nkeeps returning \n{‘errors’: [{‘message’: ‘Parse error on “text” (STRING) at &hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 547,
+  "posts": [
+    {
+      "id": 143842,
+      "postNumber": 1,
+      "createdAt": "2023-09-15T15:43:16.919Z",
+      "author": "dog (dog )",
+      "cookedHtml": "<p>query = ’ mutation { change_multiple_column_values(item_id: 1234567890, board_id: 1234567890, column_values: {“text”: “New text” }) { id } } ’</p>\n<p>keeps returning</p>\n<p>{‘errors’: [{‘message’: ‘Parse error on “text” (STRING) at [1, 102]’, ‘locations’: [{‘line’: 1, ‘column’: 102}]}], ‘account_id’: 1234567890}</p>\n<p>I’m not sure where I’m going wrong although, any help would be appreciated</p>"
+    },
+    {
+      "id": 143843,
+      "postNumber": 2,
+      "createdAt": "2023-09-15T16:01:08.625Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/dog\">@dog</a></p>\n<p>You need to JSON stringify the column_values value. You can also do that with escaped double quotes, like this:</p>\n<pre><code class=\"lang-auto\">mutation { change_multiple_column_values(item_id: 1234567890, board_id: 1234567890, column_values: \"{\\\"text\\\": \\\"New text\\\"}\" ) { id } }\n</code></pre>\n<p>PS: if you post queries here, always use preformatted text as the forum will do all kind of nasty things with “double” quotes</p>"
+    },
+    {
+      "id": 143846,
+      "postNumber": 3,
+      "createdAt": "2023-09-15T16:22:13.032Z",
+      "author": "dog (dog )",
+      "cookedHtml": "<p>Hello,<br />\nI tested that solution, but it only worked for me once I tripled up on the backslashes. I don’t really understand why, I saw it in another forum post somewhere. Is there a good explanation as to why?</p>"
+    },
+    {
+      "id": 143850,
+      "postNumber": 4,
+      "createdAt": "2023-09-15T16:40:06.346Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>It depends in which environment you are working. The above works in the API Playground. Other environments might need more escaping. The eassiest way to build a JSON stringified string in JS is to use JSON.stringify()</p>"
+    },
+    {
+      "id": 143876,
+      "postNumber": 5,
+      "createdAt": "2023-09-15T18:11:02.396Z",
+      "author": "dog (dog )",
+      "cookedHtml": "<p>Thank you for your time so far,  I am lastly trying to place variables in this query however I am getting errors once again.</p>\n<pre><code class=\"lang-auto\">query = ' mutation ($totalServerCount: String!) { change_multiple_column_values(item_id: xxxxxxxx, board_id: xxxxxxxx, column_values:\"{\\\\\\\"text\\\\\\\": $totalServerCount, \\\\\\\"text5\\\\\\\": \\\\\\\"4\\\\\\\"}\") { id } } '\nvars = {\n    'totalServerCount' : str(totalServerCount),\n        }\ndata = {'query' : query, 'variables' : vars}\n\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request\nprint(r.json())\n\n</code></pre>\n<p>I assume it would be in this format as this is what I’ve done for other queries, however I am getting the error {‘error_message’: ‘809: unexpected token at '{“text”: $totalServerCount, “text5”: “4”}'’, ‘status_code’: 500}</p>"
+    },
+    {
+      "id": 143883,
+      "postNumber": 6,
+      "createdAt": "2023-09-15T18:44:29.747Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Is the content of $totalServerCount still escaping the double quotes?</p>\n<p>It is much easier to use a function to stringify a JSON and almost every language has some kind of function to do that. What language are you using?</p>"
+    },
+    {
+      "id": 143887,
+      "postNumber": 7,
+      "createdAt": "2023-09-15T18:48:18.908Z",
+      "author": "dog (dog )",
+      "cookedHtml": "<p>I am using Python, so would you recommend in vars defining the the column values and using json.dumps to convert it to JSON and then use something like column_values: $columnVars?</p>"
+    },
+    {
+      "id": 143889,
+      "postNumber": 8,
+      "createdAt": "2023-09-15T18:59:26.250Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Absolutely the best thing to do</p>"
+    },
+    {
+      "id": 143991,
+      "postNumber": 9,
+      "createdAt": "2023-09-18T04:37:21.274Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for your help as usual <img src=\"https://emoji.discourse-cdn.com/apple/crown.png?v=12\" title=\":crown:\" class=\"emoji\" alt=\":crown:\" width=\"20\" height=\"20\" /> !!!</p>\n<p><a class=\"mention\" href=\"/u/dog\">@dog</a> let us know if you need anything else!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

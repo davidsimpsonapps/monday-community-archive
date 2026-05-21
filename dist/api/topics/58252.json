@@ -1,0 +1,124 @@
+{
+  "id": 58252,
+  "title": "Duration calculation for Timeline column summary",
+  "slug": "duration-calculation-for-timeline-column-summary",
+  "categoryId": 6,
+  "tagIds": [
+    104,
+    115
+  ],
+  "createdAt": "2023-05-15T13:51:46.542Z",
+  "lastPostedAt": "2024-08-05T04:35:38.507Z",
+  "postsCount": 15,
+  "excerpt": "Hello everyone, \nIs there a way to get the duration in term of working days for a timeline of a group of items ? By default Monday.com calculate the sum of the duration of each items of the group, that makes no sense… In&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 9113,
+  "posts": [
+    {
+      "id": 128011,
+      "postNumber": 1,
+      "createdAt": "2023-05-15T13:51:46.699Z",
+      "author": "Sam59 (Samuel Leroy)",
+      "cookedHtml": "<p>Hello everyone,<br />\nIs there a way to get the duration in term of working days for a timeline of a group of items ? By default <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> calculate the sum of the duration of each items of the group, that makes no sense… In the example below I’m expecting to have the Duration for the Survey Specs group = 12 days (May 11 - May 26) - Note I’m hiding the WeekEnd instead of the sum of each group item duration…<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/2/32ef96e209251c0d6f8d383ab9336fee3499c19f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/3/2/32ef96e209251c0d6f8d383ab9336fee3499c19f_2_690x208.png\" alt=\"image\" width=\"690\" height=\"208\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1485×449 57.5 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 128160,
+      "postNumber": 2,
+      "createdAt": "2023-05-16T09:27:00.318Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Samuel,</p>\n<p>I do think what <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> is doing makes sense. It’s summarizing the results of a number column and really anything else would be unexpected behavior. It’s necessary to treat <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> as a database, even though it presents and like a spreadsheet and if that’s what you’re accustomed to, it can seem idiosyncratic.</p>\n<p>In order to get <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> to do what you’re looking for, you’d need to connect those items somehow, either as subitems of a parent item or as a connection to a summary item on another board. This will allow you to view those summaries as columns in a single item and thereby use them in formulas.</p>\n<p>Hopefully that puts you on the right track. Feel free to reach out if you need some more help.</p>"
+    },
+    {
+      "id": 128163,
+      "postNumber": 3,
+      "createdAt": "2023-05-16T10:13:22.174Z",
+      "author": "Sam59 (Samuel Leroy)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/franciselliott/48/17772_2.png\" class=\"avatar\" /> Francis Elliott:</div>\n<blockquote>\n<p>as a connection to a summary item on another board</p>\n</blockquote>\n</aside>\n<p>Hi Francis thanks for your detailed answer.<br />\nRegarding the suggestion to connect to a summary item on another board, I don’t think it works as - according to my knowledge - it seems not possible to connect “Group” item either as subitems of a parent item or as a connection to a summary item on another board…</p>"
+    },
+    {
+      "id": 128167,
+      "postNumber": 4,
+      "createdAt": "2023-05-16T10:37:04.519Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>To clarify:</p>\n<ol>\n<li>Create a separate board (let’s call it the summary board).</li>\n<li>Create a Connect Boards column on the summary board and connect it to your main board.</li>\n<li>Create an item on your summary board (let’s call it the summary item).</li>\n<li>On the Connect Boards column of your summary item, link all of the items you want to sum.</li>\n<li>Create a mirror column on your summary board.</li>\n<li>Connect the mirror column to your Connect Boards column.</li>\n<li>Specify the column you want to mirror (Timeline) and then choose how you want to display it.</li>\n<li>Create a formula column, which should be able to use the values from that mirror column.</li>\n</ol>\n<p>In other words, you are not connecting the group—you are connecting all of the <em>items</em> you want to summarize.</p>"
+    },
+    {
+      "id": 128342,
+      "postNumber": 5,
+      "createdAt": "2023-05-17T10:53:45.862Z",
+      "author": "Sam59 (Samuel Leroy)",
+      "cookedHtml": "<p>Thanks again for your help.<br />\nI tried your solution but there is an issue with the last step (8.). As there are multiple items linked in the Connect Boards column the Formula based on the associated mirror (Timeline) is not working. I tried to only linked 1 item in the Connect Boards column and in this case the formula worked. So, it seems that the formula based on values from a mirror column associated to multiple (Connect Board) items does not work in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a></p>"
+    },
+    {
+      "id": 128354,
+      "postNumber": 6,
+      "createdAt": "2023-05-17T11:35:23.183Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Wow… I got there but it was more complicated than I expected. For the record, I really think formulae should be able to read from mirrored Timeline summary column. The functionality is so basic and should be so simple to implement that it’s surprising it doesn’t exist. There’s really no reason for it not to be functional. Nevertheless, I have found a way to do it.</p>\n<p>Here’s the workaround:</p>\n<ol>\n<li>Create technical formula columns for the start and end date of the timelines on your main board in order to put those dates into YYYYMMDD ISO format:<br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/8/f81537642469164a61e4374ce2d7cee056da73de.png\" title=\"Screenshot 2023-05-17 at 10.19.45\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/8/f81537642469164a61e4374ce2d7cee056da73de_2_690x237.png\" alt=\"Screenshot 2023-05-17 at 10.19.45\" width=\"690\" height=\"237\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-05-17 at 10.19.45</span><span class=\"informations\">870×300 19 KB</span>\n</div></a></div>\n</li>\n</ol>\n<pre><code class=\"lang-auto\">FORMAT_DATE({Timeline#Start},\"YYYYMMDD\")\n</code></pre>\n<ol>\n<li>On the summary item, create the following columns (you can hide them all later… it’s also possible to combine them, but let’s keep them separate for this explanation, as it will simplify the logic)</li>\n</ol>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/b/eb4e6253c41bc2b0ad9a8f54bc7fcf74565f8e11.png\" title=\"Screenshot 2023-05-17 at 10.19.36\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/b/eb4e6253c41bc2b0ad9a8f54bc7fcf74565f8e11_2_690x97.png\" alt=\"Screenshot 2023-05-17 at 10.19.36\" width=\"690\" height=\"97\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-05-17 at 10.19.36</span><span class=\"informations\">1862×264 20 KB</span>\n</div></a></div><p></p>\n<p>So what’s happening here?<br />\n3. Configure the two mirror columns. One each to summarise the ISO formatted start and dates. This will work because the YYYYMMDD format increases with the date. We can then use the summary types of “Min” for start and “Max” for end to get the “Earliest Start” and “Latest End”</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/4/f477528bf110b5f76ac1c5a85b452c17a81b2682.png\" title=\"Screenshot 2023-05-17 at 10.26.42\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/4/f477528bf110b5f76ac1c5a85b452c17a81b2682_2_652x500.png\" alt=\"Screenshot 2023-05-17 at 10.26.42\" width=\"652\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-05-17 at 10.26.42</span><span class=\"informations\">994×762 61.7 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/e/4e10fe1c7e0e893f955f6ccd4020ffa4c59d9319.png\" title=\"Screenshot 2023-05-17 at 10.26.49\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/e/4e10fe1c7e0e893f955f6ccd4020ffa4c59d9319_2_690x421.png\" alt=\"Screenshot 2023-05-17 at 10.26.49\" width=\"690\" height=\"421\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-05-17 at 10.26.49</span><span class=\"informations\">808×494 38.2 KB</span>\n</div></a></div><p></p>\n<ol>\n<li>We need to remove the commas from the summary to get our “Start Date #” and “End Date #” columns, using this formula:</li>\n</ol>\n<p><code>SUBSTITUTE({Earliest Start},\",\",\"\")</code></p>\n<ol>\n<li>We can actually use these dates to calculate the workdays (it seems) using the formula <code>WORKDAYS({End Date #}, {Start Date #})</code>, although I’m a little suspicious there could be unexpected behavior. For good measure, it’s best to format them into a more universally accepted style, using the following formula (for the “Formatted” date columns:</li>\n</ol>\n<pre><code class=\"lang-auto\">CONCATENATE(\n    LEFT(\n        {Start Date #},\n        4\n    ),\n    \"-\",\n    RIGHT(\n        LEFT(\n            {Start Date #},\n            6\n        ),\n        2\n    ),\n    \"-\",\n    RIGHT(\n        {Start Date #},\n        2\n    )\n)\n</code></pre>\n<ol>\n<li>You can use and/or reformat these dates in any way you like. They should be correctly parsed by any of the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> formula functions, including WORKDAYS.</li>\n</ol>\n<p>Hopefully that’s all clear! As with many things in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>, getting to the end can be a process, but this is a functional solution. You can hide all the columns you don’t need to see once you’ve implemented this fully and all should work as expected.</p>"
+    },
+    {
+      "id": 129692,
+      "postNumber": 7,
+      "createdAt": "2023-05-29T07:19:38.278Z",
+      "author": "Joesoes (Johan Jönsson)",
+      "cookedHtml": "<p>Hi! I’m hijacking this thread, hope that’s OK.</p>\n<p>I have a similar use case. I’m using a separate board where I have what we call “seasons”, and every season have a column with a start and stop date.<br />\nThen we have our project board with projects where I want to select the starting season and ending season, I.e the start and stop date of the project is mirrored.</p>\n<p>However, I just can’t figure out how to make it work in a timeline view as it seems like it does not support separate columns for start and stop dates. Can I use a calculating column or something to get the needed timeline column in the timeline view?</p>"
+    },
+    {
+      "id": 129695,
+      "postNumber": 8,
+      "createdAt": "2023-05-29T08:32:32.461Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Johan,</p>\n<p>I think this is a fairly unique issue, so you’d have been fine to make a new post. However, let me try to help.</p>\n<p>If I understand correctly, it sounds like you want to do the following:</p>\n<ol>\n<li>Associate “Projects” with “Seasons”.</li>\n<li>Use that association to define the time range of a Project (i.e. source it from the Season).</li>\n<li>Use that range to populate the Timeline widget.</li>\n</ol>\n<p>The logical thing to do here would be to use the Timeline column for your Season items. Then link any Season associated to a Project via the same connection column.</p>\n<p>You should then be able to mirror an aggregated view of those timelines. That aggregate timeline can be used in a Timeline widget. Here are some related screenshots.</p>\n<p>Does that answer your question?</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/e/2e21f77d9d68db8644d0fafa334dc908bdc225d8.png\" alt=\"Screenshot 2023-05-29 at 07.29.56\" width=\"504\" height=\"436\" /><br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/b/e/bebf7369c5073ba5fb79d2fdefe3153bdb5fa1eb.png\" alt=\"Screenshot 2023-05-29 at 07.30.53\" width=\"610\" height=\"474\" /><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/6/d69f1e111c236c5f83b1b89c97b0ba350a9bdc0d.png\" title=\"Screenshot 2023-05-29 at 07.30.06\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/6/d69f1e111c236c5f83b1b89c97b0ba350a9bdc0d_2_690x124.png\" alt=\"Screenshot 2023-05-29 at 07.30.06\" width=\"690\" height=\"124\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-05-29 at 07.30.06</span><span class=\"informations\">1746×316 19.6 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 129705,
+      "postNumber": 9,
+      "createdAt": "2023-05-29T09:13:21.412Z",
+      "author": "Joesoes (Johan Jönsson)",
+      "cookedHtml": "<p>That did the trick, thanks! I just assumed that it wouldn’t manage to sort out the “earliest to latest” <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 131753,
+      "postNumber": 10,
+      "createdAt": "2023-06-16T14:13:42.781Z",
+      "author": "melimber (Maggie Limberty)",
+      "cookedHtml": "<p>I am having the same issue. when I hover over the Timeline summary (in Samuel Leroy’s case it is May 11-26) the 12 days will show to me, but I have to hover over it. So, that doesn’t really help.</p>\n<p>I think the ideal solution beyond all these separate worksheets and formulas is for <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> developers to add another option in the summary cell of choices. Right now, I can click on the word “sum” of the Duration Summary and choose min, max, count, etc. So, what I suggest is that there is an option to easily pull the 12 days that I can hover over on the Timeline Summary and pull that data into my Duration Summary cell? Especially if these two cells are connected. Can I suggest to make that one of the options in the choices to pick from other than “sum”.  Call it “timeline sum”</p>"
+    },
+    {
+      "id": 180860,
+      "postNumber": 11,
+      "createdAt": "2024-04-25T06:51:52.189Z",
+      "author": "Hcurtis (Henrietta Curtis)",
+      "cookedHtml": "<p>Hi Francis,</p>\n<p>Monday doesn’t allow automations and formulas to be run on mirrored timeline columns (as far as I’m aware) but this solution looks interesting and I wonder if it can be used as a workaround?</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 180926,
+      "postNumber": 12,
+      "createdAt": "2024-04-25T12:46:53.742Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>So it is possible to use Timelines in formulas. For automations, the start and end dates of Timelines work (in many cases) as Triggers, however there are no automations currently that can be input or modified via actions (Such as “set today” or “push”). That makes them limited.</p>\n<p>The issue that my post resolves is using <strong>mirrored date/timeline data in formulas</strong>.</p>\n<p>For example: You may have a high-level (let’s call it “Projects”) board that connects to a low-level (let’s call it “Tasks”) board. By mirroring a date (let’s call it “Due Date”) column from the Tasks board onto the Projects board, where you have a one-to-many relationship, you would end up with a summary of due dates. This is presented as a Timeline in the Projects board and gives you an approximation of the Project timeline, sourced directly from the task due dates—something obviously useful.</p>\n<p>The problem is that you cannot use the start and end dates of this column in automations <em>or</em> in formulas. My solution does not allow it to be used in automations (although there are other workarounds for that), however it does allow you to generate start and end dates that can be used in formulas.</p>"
+    },
+    {
+      "id": 181016,
+      "postNumber": 13,
+      "createdAt": "2024-04-26T06:49:54.730Z",
+      "author": "Hcurtis (Henrietta Curtis)",
+      "cookedHtml": "<p>Hi Elliott,</p>\n<p>Thank for your reply, apologies, I meant mirrored timeline columns (now edited the post).</p>\n<p>I have a high level (summary) board with mirrored items of projects on other (native) boards. I have mirrored the timeline column into the summary board. However, I can’t add automations (for example to notify me if the timeline has changed) and I can’t use it in a formula either.</p>\n<p>I have attempted to use some of your logic above to separate out the start and end dates on the native boards and mirror those instead, but I am having the same issue.</p>\n<p>What I am trying to do is:</p>\n<ol>\n<li>Track when timelines change on the summary board</li>\n<li>Specifically track if the end date of the timeline changes and by how much, and ideally I would be able to baseline the date somehow, and track against that</li>\n</ol>\n<p>Do you know if there is a workaround for that?</p>\n<p>Thanks in advance!</p>"
+    },
+    {
+      "id": 181037,
+      "postNumber": 14,
+      "createdAt": "2024-04-26T10:13:24.519Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>This is probably not possible with <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> automations. The reason being is that you would need to know which task is the start and end in the timeline. There would be too many possible exceptions and variations.</p>\n<p>For something like this, I would recommend using either an app (such as general caster or autoboost) or a third party tool such as Make or Zapier to do the same thing. A basic approach could be to make sure that you’re always syncing that start and and date to separate date columns, and then you could make use of <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>’s automations to trigger various automations based on that date column.</p>\n<p>Please feel free to contact me if you’d some help setting this up. It’s beyond the normal remit of what I’d expect a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> user to figure out for themselves.</p>"
+    },
+    {
+      "id": 196077,
+      "postNumber": 15,
+      "createdAt": "2024-08-05T04:35:38.507Z",
+      "author": "Benkazinik (Ben Kazinik)",
+      "cookedHtml": "<p>Want to learn more about how to create a proper project timeline and share it with your team? Here’s a great post we did on the <a href=\"https://monday.com/blog/project-management/project-timeline/\">simplest way to create a project timeline</a></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/9/0998c655a4e3a8a9d7f61536e882b029f8aecaaa.jpeg\" title=\"monday-project-timeline\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/9/0998c655a4e3a8a9d7f61536e882b029f8aecaaa_2_690x359.jpeg\" alt=\"monday-project-timeline\" width=\"690\" height=\"359\" /><div class=\"meta\"><span class=\"filename\">monday-project-timeline</span><span class=\"informations\">1600×834 161 KB</span></div></a></div><p></p>"
+    }
+  ]
+}

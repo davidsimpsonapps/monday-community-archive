@@ -1,0 +1,40 @@
+{
+  "id": 63306,
+  "title": "Search by item name support in new \"items_page_by_column_values\" function",
+  "slug": "search-by-item-name-support-in-new-items-page-by-column-values-function",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-08-09T03:58:31.388Z",
+  "lastPostedAt": "2023-08-11T11:09:33.156Z",
+  "postsCount": 2,
+  "excerpt": "Hi there, \nA question for what is a supported search parameter in the new “items_page_by_column_values” function \nI am currently trying to replicate a functionality I had in 2023-07 API: \n  items_by_column_values(\n    bo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 581,
+  "posts": [
+    {
+      "id": 138340,
+      "postNumber": 1,
+      "createdAt": "2023-08-09T03:58:31.587Z",
+      "author": "Adam.B (Adam)",
+      "cookedHtml": "<p>Hi there,<br />\nA question for what is a supported search parameter in the new “items_page_by_column_values” function</p>\n<p>I am currently trying to replicate a functionality I had in 2023-07 API:</p>\n<pre><code class=\"lang-auto\">  items_by_column_values(\n    board_id: BOARD_ID\n    column_id: \"name\"\n    column_value: \"SERIAL NUMBER\"\n  ) {\n    id\n    name\n    column_values {\n      title\n      text\n    }\n  }\n</code></pre>\n<p>With this query I could find get all the columns for a given an item name (serial number) on a board. Additionally the complexity value was 5000, so it returned fairly quickly. It also gave the text values for mirror columns I had on that board which linked to other serialized items which I needed.</p>\n<p>However, when I try to do this same thing with the new “items_page_by_column_values” function I tried:</p>\n<pre><code class=\"lang-auto\">{\n  items_page_by_column_values(\n    limit: 1\n    board_id: BOARD_ID\n    columns: [{column_id: \"name\", column_values: [\"SERIAL NUMBER\"]}]\n  ) {\n    items {\n      id\n      name\n    }\n  }\n</code></pre>\n<p>And got a “Column of type “Name” is not yet supported for this query” error. And when I tried “text” instead of “name” I got a “no columns found error”</p>\n<p>Am I messing up the syntax or is the functionality im looking for not going to work any more? Do I instead need to start querying the entire items page and then filter down to my specific item by a “compare_value” rule? That is considerably slower than my 2023-07 query and the complexity has been around 15000 to get the same information</p>"
+    },
+    {
+      "id": 138739,
+      "postNumber": 2,
+      "createdAt": "2023-08-11T11:09:33.156Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/adam.b\">@Adam.B</a> – good catch!</p>\n<p>I’ll take this with the team to see if we can support it. Will follow up on this thread with a solution next week.</p>\n<p>We’re aiming for the new query to completely replace the old one, so we want to support this – just a question of if the new mondayDB infrastructure will allow it!</p>\n<p>Thanks a lot for raising this with us.</p>\n<p><strong>EDIT</strong>: for those who are curious,  here’s how to achieve this with the <code>items_page</code> object!</p>\n<pre><code class=\"lang-graphql\">query {\n  boards (ids:123456) {\n    items_page (query_params: {rules: [{compare_value: \"SERIAL NUMBER\", column_id: \"name\", operator: any_of}]}) {\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 138751,
+      "postNumber": 3,
+      "createdAt": "2023-08-11T12:17:44.788Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Asked in slack here - <a href=\"https://monday.slack.com/archives/C018J3C259C/p1691763005937609\" class=\"inline-onebox\">Slack</a></p>"
+    }
+  ]
+}

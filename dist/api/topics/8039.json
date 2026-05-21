@@ -1,0 +1,51 @@
+{
+  "id": 8039,
+  "title": "Board ID as a variable in a query",
+  "slug": "board-id-as-a-variable-in-a-query",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-06-14T18:02:12.663Z",
+  "lastPostedAt": "2021-02-25T14:33:01.270Z",
+  "postsCount": 5,
+  "excerpt": "I am trying to use a variable in the API to query a board using Python. \nI want to use the variable to replace the board id. \nI can successfully do a mutation using a variable for the board id, but I can’t get the query &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 3962,
+  "posts": [
+    {
+      "id": 20104,
+      "postNumber": 1,
+      "createdAt": "2020-06-14T18:02:12.787Z",
+      "author": "MPW (Anthony Borghesi)",
+      "cookedHtml": "<p>I am trying to use a variable in the API to query a board using Python.<br />\nI want to use the variable to replace the board id.<br />\nI can successfully do a mutation using a variable for the board id, but I can’t get the query right.</p>\n<p>This one works:</p>\n<p>import requests<br />\nimport json</p>\n<p>apiKey = “**********************************************************”<br />\napiUrl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {“Authorization” : apiKey}</p>\n<p>query = ‘{boards (ids: 590638178) { name id description items { name column_values{title id type text } } } }’<br />\ndata = {‘query’ : query}<br />\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request</p>\n<p>print(r.json())</p>\n<p>Data returned:</p>\n<p>{‘data’: {‘boards’: [{‘name’: ‘M1-Weekly Schedule’, ‘id’: ‘**********’, ‘description’: ‘Board Owner: *******. Only **** can change data in Monday (dates etc). \\nView &amp; Comment Access: All Management &amp; Supervisors. \\n\\nFunction: MYOB Exo - <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> will only collect any new jobs “Pending Commencement” in MYOB Exo and place them in the “New Jobs” group. \\n\\nPhase 2 - Man Hours / Labour / Equipment Type’, ‘items’:…</p>\n<p>This doesn’t work:</p>\n<p>import requests<br />\nimport json</p>\n<p>apiKey = “**********************************************************”<br />\napiUrl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {“Authorization” : apiKey}</p>\n<p>board_id = 590638178</p>\n<p>query = ‘($myBoardID: Int!) {boards (ids: $myBoardID) { name id description items { name column_values{title id type text } } } }’<br />\nvars = {‘myBoardID’ : board_id}<br />\ndata = {‘query’ : query, ‘variables’ : vars}</p>\n<p>r = requests.post(url=apiUrl, json=data, headers=headers) # make request</p>\n<p>print(r.json())</p>\n<p>No data is returned:<br />\n{‘errors’: [{‘message’: ‘Parse error on “(” (LPAREN) at [1, 1]’, ‘locations’: [{‘line’: 1, ‘column’: 1}]}], ‘account_id’:…</p>\n<p>However, I can successfully use a variable for board ID in a mutation e.g.</p>\n<p>query = 'mutation ($myItemName: String!, $myBoardID: Int!, $columnVals: JSON!) { create_item (board_id:$myBoardID, …</p>"
+    },
+    {
+      "id": 20176,
+      "postNumber": 2,
+      "createdAt": "2020-06-15T15:38:34.047Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>If you’re sending a query with no variables, you can omit the “query” keyword from your request and it will work:</p>\n<p><code>{boards(limit:1){id name} }</code></p>\n<p>However, when you’re using variables, you will need to include the query keyword (since variables are arguments on the base “query” field. You will also need to send the board ID inside a list (or declare your variable as a list).</p>\n<p>Try this:</p>\n<pre><code class=\"lang-auto\">query = ‘query($myBoardID: Int!) {boards (ids: [$myBoardID]) { name id description items { name column_values{title id type text } } } }’</code></pre>"
+    },
+    {
+      "id": 20187,
+      "postNumber": 3,
+      "createdAt": "2020-06-15T17:32:00.514Z",
+      "author": "MPW (Anthony Borghesi)",
+      "cookedHtml": "<p>Hi Dipro,</p>\n<p>Thanks, that almost worked and it got me very close.<br />\nI also had to send the $myBoardID as a list:</p>\n<p>query = ‘query($myBoardID: Int!) {boards (ids: [$myBoardID]) { name id description …</p>\n<p>Thanks again.</p>"
+    },
+    {
+      "id": 20255,
+      "postNumber": 4,
+      "createdAt": "2020-06-16T11:57:57.031Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Great. I updated my solution in case anyone else has the same issue!</p>"
+    },
+    {
+      "id": 42472,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T14:33:01.270Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

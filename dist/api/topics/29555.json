@@ -1,0 +1,40 @@
+{
+  "id": 29555,
+  "title": "How do you get the linkedId value for use in a create_item mutation",
+  "slug": "how-do-you-get-the-linkedid-value-for-use-in-a-create-item-mutation",
+  "categoryId": 8,
+  "tagIds": [
+    20,
+    94
+  ],
+  "createdAt": "2022-01-08T22:48:27.036Z",
+  "lastPostedAt": "2022-01-09T02:00:10.854Z",
+  "postsCount": 3,
+  "excerpt": "I’m trying to figure out what the pulseId is and how I can query it via the API.  I am executing the create_item mutation programatically and I need to be able to get the pulseId without hardcoding it. I first assumed it&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1641,
+  "posts": [
+    {
+      "id": 73330,
+      "postNumber": 1,
+      "createdAt": "2022-01-08T22:48:27.128Z",
+      "author": "u0977428 (Rich)",
+      "cookedHtml": "<p>I’m trying to figure out what the <code>pulseId</code> is and how I can query it via the API.  I am executing the <code>create_item</code> mutation programatically and I need to be able to get the <code>pulseId</code> without hardcoding it. I first assumed it was the id of the item that column should link to, but that clearly isn’t correct. Below is the mutation query I’m running. It has been generated programatically.</p>\n<pre><code class=\"lang-auto\">mutation {\n    create_item(\n      item_name: \"HW1: Schematic\",\n      board_id: 1602164146,\n      group_id: \"new_group72163\",\n      column_values: \"{\\\"status0\\\":\\\"Low\\\",\\\"status\\\":\\\"Waiting for review\\\",\\\"date\\\":{\\\"date\\\":\\\"2022-01-22\\\",\\\"time\\\":\\\"06:59:59\\\"},\\\"numbers\\\":2,\\\"connect_boards\\\":{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":\\\"2088579761\\\"}]},\\\"text\\\":\\\"10352612\\\"}\"\n    ) {\n      id\n    }\n  }\n</code></pre>\n<p>The  pulseId value is generated from this query</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: 1602164112) {\n    items {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<p>Running the mutation results in an error</p>\n<pre><code class=\"lang-json\">{\n  \"error_code\": \"ColumnValueException\",\n  \"status_code\": 200,\n  \"error_message\": \"There are items that are not in the connected boards\",\n  \"error_data\": {}\n}\n</code></pre>\n<p>If I create an item by hand with the value in the linked column I want,  and running the query below, I am able to confirm that the pulseID is different.</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: 1602164146) {\n    items {\n      id\n      name,\n      column_values {\n        id,\n        value\n      }\n    }\n  }\n}\n\n</code></pre>\n<p>** Result of previous query **</p>\n<pre><code class=\"lang-json\">{\n                \"id\": \"connect_boards\",\n                \"value\": \"{\\\"changed_at\\\":\\\"2022-01-03T09:09:39.019Z\\\",\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":2088311736}]}\"\n              },\n</code></pre>\n<p>So what is the right way to get the <code>linkedId</code>?</p>"
+    },
+    {
+      "id": 73335,
+      "postNumber": 2,
+      "createdAt": "2022-01-09T02:00:10.854Z",
+      "author": "u0977428 (Rich)",
+      "cookedHtml": "<p>I worked it out. The wrong ID was a red herring, the item I selected manually was different from the one being chosen automatically. The real issue was that the ID was in quotes, thus being treated as a string and not a numbeer.</p>"
+    },
+    {
+      "id": 74025,
+      "postNumber": 3,
+      "createdAt": "2022-01-16T02:00:55.120Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

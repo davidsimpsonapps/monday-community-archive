@@ -1,0 +1,47 @@
+{
+  "id": 37026,
+  "title": "Add Linked Item to Connected Column Without Overwriting Existing Connected Items",
+  "slug": "add-linked-item-to-connected-column-without-overwriting-existing-connected-items",
+  "categoryId": 8,
+  "tagIds": [
+    20,
+    94
+  ],
+  "createdAt": "2022-05-30T21:06:26.049Z",
+  "lastPostedAt": "2022-06-10T17:23:33.595Z",
+  "postsCount": 4,
+  "excerpt": "Hello, I am attempting to build a custom integration that will search a Customers board for existing customers based on multiple columns. This is why I’m not using the built automation recipe for connecting items where c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1348,
+  "posts": [
+    {
+      "id": 87201,
+      "postNumber": 1,
+      "createdAt": "2022-05-30T21:06:26.127Z",
+      "author": "christian.lee (Christian Lee)",
+      "cookedHtml": "<p>Hello, I am attempting to build a custom integration that will search a Customers board for existing customers based on multiple columns. This is why I’m not using the built automation recipe for connecting items where columns match. For more details: I’m using phone number and email column to search multiple customer boards and if they match the intended functionality is that it will connect the customer to the quote.</p>\n<p>Issue I’m running into, is that when I do this I don’t know of a way to add a connected item without overwriting the existing ones.</p>\n<p>What I’m guessing is a way to do this:<br />\nQuery the existing connected column before mutation and appending the new item id to the existing list of item ids if there are any. Then mutate using this new list of item ids.</p>\n<p>What I’m hoping I can do:<br />\nI noticed that when I query a connected boards column I get the following response:</p>\n<pre><code class=\"lang-auto\">'{\"changed_at\":\"2022-05-30T23:33:26.358Z\",\"added_pulse\":[],\"linkedPulseIds\":[{\"linkedPulseId\":123456789}]}'\n</code></pre>\n<p>I’m hoping that the “added_pulse” can be mutated and I’m just not finding it in the documentation on how to do that?</p>\n<p>Currently when I mutate with this format it overwrites the existing linked items instead of appending:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:11111, board_id:22222, column_values: \"{\\\"connect_boards2\\\" : {\\\"item_ids\\\" : [12345, 23456, 34567]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>Any insight here is appreciated.</p>"
+    },
+    {
+      "id": 87679,
+      "postNumber": 2,
+      "createdAt": "2022-06-06T08:24:17.422Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/christian.lee\">@christian.lee</a>!</p>\n<p>I think you are on the right track here.</p>\n<p>Why would retrieving the IDs of the current connected items and then, adding those to the new item IDs in the mutation be an issue?</p>"
+    },
+    {
+      "id": 87695,
+      "postNumber": 3,
+      "createdAt": "2022-06-06T10:36:54.125Z",
+      "author": "christian.lee (Christian Lee)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nI wouldn’t say it is an issue, but it is an extra few layers of complexity. Much more efficient to just add the new item to the connected items, instead of running a whole query, then looping through existing connected items, while checking if I should append to that list or (if new connection is only one) just connect it. Rather than just a query to add the new connected item without overwriting and just receiving a response from the API with the new list of ids.</p>\n<p>With this all in mind I just wanted to make sure I wasn’t missing something in the documentation before adding that complexity to my integration. Extra operations means extra billing costs on external servers, and less API calls remaining per minute.</p>\n<p>Again not really an issue here, just wanted to make sure before going the route I was thinking <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 88254,
+      "postNumber": 4,
+      "createdAt": "2022-06-10T17:23:33.595Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/christian.lee\">@christian.lee</a>!</p>\n<p>I can confirm you are not missing something from the documentation and you have the right idea of how to achieve this. With that, I hear what you’re saying in regards to complexity, and I’m happy to pass this feedback on to our R&amp;D team for review. We are constantly looking for ways to improve our API.</p>\n<p>Let us know if you have any more questions as you build this integration. As always, we are here to help!</p>\n<p>Cheers,<br />\nAlessandra</p>"
+    }
+  ]
+}

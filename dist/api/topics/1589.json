@@ -1,0 +1,95 @@
+{
+  "id": 1589,
+  "title": "Curl example of a mutation with variables",
+  "slug": "curl-example-of-a-mutation-with-variables",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2019-08-08T16:52:20.454Z",
+  "lastPostedAt": "2021-02-25T12:23:02.747Z",
+  "postsCount": 11,
+  "excerpt": "I was successful using the “try it” feature of the api docs to perform a mutation using variables.  Now I’m trying to convert that syntax into a curl command.  Even when putting data in a file (then referencing with @fil&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 13082,
+  "posts": [
+    {
+      "id": 4162,
+      "postNumber": 1,
+      "createdAt": "2019-08-08T16:52:20.554Z",
+      "author": "lmatter (Larry Matter)",
+      "cookedHtml": "<p>I was successful using the “try it” feature of the api docs to perform a mutation using variables.  Now I’m trying to convert that syntax into a curl command.  Even when putting data in a file (then referencing with <span class=\"mention\">@filename</span>) in the curl command, the amount of escaping and quoting is driving me bonkers.  All I ever get is a “400 Bad Request” in the headers, nothing to indicate what’s invalid.   I’ve seen some sample updates with curl, but none with variables.</p>\n<p>Can someone post a working example please?<br />\nThanks!</p>"
+    },
+    {
+      "id": 4181,
+      "postNumber": 2,
+      "createdAt": "2019-08-08T19:12:09.276Z",
+      "author": "lmatter (Larry Matter)",
+      "cookedHtml": "<p>Sorry, more specifically what I’m looking for is a mutation create_item with column_values (using variables).  I can actually get a new item created, but the column_values are never set.</p>"
+    },
+    {
+      "id": 4214,
+      "postNumber": 3,
+      "createdAt": "2019-08-09T12:48:57.027Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/lmatter\">@lmatter</a>!</p>\n<p>I just played around with this, and you can use the following cURL command to populate an item with values from a variable. However, there is still a lot of escaping involved, since the column values need to be passed as a JSON string. Are you solely using cURL to call the API?</p>\n<pre><code>curl -X POST -H \"Content-Type:application/json\" -H \"Authorization:xxxxx\" 'https://api.monday.com/v2' \\\n-d '{\"query\" : \"mutation($name:String!, $columns:JSON!){create_item(item_name:$name, board_id:162169280, column_values:$columns){name}}\", \"variables\" : \"{\\\"name\\\" : \\\"This is a var\\\", \\\"columns\\\" : \\\"{\\\\\\\"status\\\\\\\" : {\\\\\\\"index\\\\\\\" : 4}}\\\"}\"}'</code></pre>"
+    },
+    {
+      "id": 4224,
+      "postNumber": 4,
+      "createdAt": "2019-08-09T15:58:49.775Z",
+      "author": "lmatter (Larry Matter)",
+      "cookedHtml": "<p>Thanks!  Actually, I just switched over to Postman, but I still need help getting my create-item to populate the column_values.  I’ll take a look at your example to see if it gets me further.  If you have a postman example that would be awesome!</p>"
+    },
+    {
+      "id": 4234,
+      "postNumber": 5,
+      "createdAt": "2019-08-09T17:48:04.701Z",
+      "author": "lmatter (Larry Matter)",
+      "cookedHtml": "<p>I replied to this thread as I’m now using postman:</p><aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/l/58956e/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/creating-an-item-with-columns-populated/1604\">Creating an item with columns populated</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span style=\"--category-badge-color:#00ca72;--category-badge-text-color:#FFFFFF\" class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    I’m utilising Postman to create a new item with populated columns, however I’ve hit a problem where the item is created, but the fields remain blank. \nThis is my syntax \nmutation { \ncreate_item ( \nboard_id: 283592949, \ngroup_id: “For Consideration”, \nitem_name: “New Suggestion”, \ncolumn_values:\" \n{ \n\\“Priority\\” : {\\“label\\” : \\“Low\\”}, \n\\“Your_Name\\”:\\“Hello world\\”, \n\\“Department\\” :\\“Hello world\\” \n}\" \n) { \nid \n} \n} \nIf I try \nmutation { \ncreate_item ( \nboard_id: 283592949, \ngroup_id: “For Co…\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 6461,
+      "postNumber": 6,
+      "createdAt": "2019-09-26T13:32:47.008Z",
+      "author": "djpsantos (Douglas Santos)",
+      "cookedHtml": "<p>I am having a similar issue, trying to create an item on a board and setting a person to be assigned to it. The item gets created but the name of the person never gets filled.</p>\n<p>This is my QL:<br />\nmutation {</p>\n<p>create_item (board_id: 248361481, group_id: “oa_generated”, item_name: “Test5”,column_values:\"{[{“id”:8203162,“kind”:“person”}]}\") {<br />\nid<br />\n}<br />\n}</p>\n<p>what am i missing</p>"
+    },
+    {
+      "id": 6667,
+      "postNumber": 7,
+      "createdAt": "2019-10-02T18:02:58.561Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/djpsantos\">@djpsantos</a>! <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>For the column values, you’ll need to pass a JSON object that uses column IDs for the keys and the values that you want to set for the values themselves. Something like this:</p>\n<p><code>\"column_values\" : {\"text1\" : \"This is text\", \"status1\" : {\"label\" : \"Done\"}}</code></p>\n<p>As for the person column, I’d suggest using the format described in our documentation <a href=\"https://monday.com/developers/v2#column-values-section-people\">here</a>.</p>\n<p>Let me know if that helps!</p>\n<p>Cheers,<br />\nDipro</p>"
+    },
+    {
+      "id": 7756,
+      "postNumber": 8,
+      "createdAt": "2019-10-31T22:54:26.000Z",
+      "author": "djpsantos (Douglas Santos)",
+      "cookedHtml": "<p>Dipro,</p>\n<p>So something like this ?</p>\n<p>mutation {</p>\n<p>create_item (board_id: 248361481, group_id: “oa_generated”, item_name: “Poland Threat Report &amp; Eastern Europe”,column_values:\"{[{“personsAndTeams”:[{“id”:8203162,“kind”:“person”}]}\")<br />\n{</p>\n<p>id</p>\n<p>}</p>\n<p>}</p>\n<p>I have tried it and i am having 500 internal server error.</p>\n<p>I checked the board_id, group_id and person id.</p>\n<p>Any pointers ?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 7783,
+      "postNumber": 9,
+      "createdAt": "2019-11-01T18:42:58.943Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/djpsantos\">@djpsantos</a> – are you getting this from cURL or in the testing environment?</p>\n<p>If it’s cURL, can you send the full cURL command (without your API key) so we can take a look?</p>"
+    },
+    {
+      "id": 8688,
+      "postNumber": 10,
+      "createdAt": "2019-11-25T18:22:55.632Z",
+      "author": "djpsantos (Douglas Santos)",
+      "cookedHtml": "<p>I am doing it from the QL interpreter on <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> website.<br />\nSomething like this :</p>\n<p>mutation {<br />\ncreate_item (board_id: 248361481, group_id: “oa_generated”, item_name: “Poland Threat Report &amp; Eastern Europe”,column_values:“{[{\"personsAndTeams\":[{\"id\":8203162,\"kind\":\"person\"}]}”) {<br />\nid<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 42082,
+      "postNumber": 11,
+      "createdAt": "2021-02-25T12:23:02.747Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

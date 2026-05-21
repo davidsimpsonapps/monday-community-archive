@@ -1,0 +1,62 @@
+{
+  "id": 67850,
+  "title": "API version 2023-10: column_values connected board item_id type does not accept String and returns Int",
+  "slug": "api-version-2023-10-column-values-connected-board-item-id-type-does-not-accept-string-and-returns-int",
+  "categoryId": 8,
+  "tagIds": [
+    20,
+    94,
+    351
+  ],
+  "createdAt": "2023-10-06T01:04:38.913Z",
+  "lastPostedAt": "2023-10-07T00:03:10.132Z",
+  "postsCount": 5,
+  "excerpt": "Hello, \nIn 2023-10 there is this change: “Type changed: All IDs now use the ID type, not Int.” \nThis page says: Migration guide - 2023-10 \n\nVersion 2023-10 has some type changes to improve the consistency of our GraphQL &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 294,
+  "posts": [
+    {
+      "id": 147200,
+      "postNumber": 1,
+      "createdAt": "2023-10-06T01:04:38.999Z",
+      "author": "MaximGlory (Greg)",
+      "cookedHtml": "<p>Hello,</p>\n<p>In 2023-10 there is this change: “Type changed: All IDs now use the <strong>ID</strong> type, not <strong>Int</strong>.”</p>\n<p>This page says: <a href=\"https://developer.monday.com/api-reference/docs/migrating-to-v-2023-10\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Migration guide - 2023-10</a></p>\n<blockquote>\n<p>Version 2023-10 has some <strong>type changes</strong> to improve the consistency of our GraphQL API.</p>\n<p>Specifically, we aligned our schema so <strong>all fields representing numerical IDs now use the <code>ID</code> type</strong>. As a return value, it’s expressed as a string. When used in an argument (input), it accepts either string or integer values.</p>\n<p>If your app is strongly typed, your code may throw an error when this type changes because your application will expect an integer but receive a string.</p>\n<p>To solve this, please review your API calls to check if you use any affected fields. Then, ensure your code accepts both integer and string values.</p>\n<blockquote>\n<p><em><strong>Note:</strong> Even though you could convert the strings to integers, we don’t recommend it, as the structure of these IDs may change in the future.</em></p>\n</blockquote>\n</blockquote>\n<p>The problem is that the column_values JSON string only accepts Int type and gives ColumnValueException if it is String:</p>\n<p><code>  \"column_values\": \"{\\\"connect_boards\\\":{\\\"item_ids\\\" : [\\\"123456789\\\"]}}\"</code></p>\n<p>response:</p>\n<pre><code class=\"lang-auto\">{\n  \"error_code\": \"ColumnValueException\",\n  \"status_code\": 200,\n  \"error_message\": \"There are items that are not in the connected boards\",\n  \"error_data\": {}\n}\n</code></pre>\n<p>It works only with Int type:</p>\n<p><code>  \"column_values\": \"{\\\"connect_boards\\\":{\\\"item_ids\\\" : [123456789]}}\"</code></p>\n<p>Also, it returns Int type when querying which was supposed to be a String:</p>\n<pre><code class=\"lang-auto\">              \"column_values\": [\n                {\n                  \"id\": \"connect_boards\",\n                  \"value\": \"{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":123456789}]}\"\n                }\n              ]\n</code></pre>\n<p>Maybe I’m missing something but this seems like a bug.</p>\n<p>Thanks<br />\nG</p>"
+    },
+    {
+      "id": 147237,
+      "postNumber": 2,
+      "createdAt": "2023-10-06T03:41:53.618Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Good catch.</p>\n<p>I’d recommend sending this to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> since that is the developer support email.</p>\n<p>Also this post may get more proper attention if posted in <a href=\"https://community.monday.com/c/developers/8\" class=\"inline-onebox\">monday Apps &amp; Developers - monday Community Forum</a>. You should be able to edit the post and change where its posted.</p>\n<p>I think they missed that connect boards columns use IDs in their value. That said, for querying check out the V2 style <a href=\"https://developer.monday.com/api-reference/docs/connect#column-values-v2\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Connect boards</a> for getting the value.</p>\n<pre><code class=\"lang-auto\">query {\n  complexity{query}\n  items(ids: \"123455688\") {\n\t\tcolumn_values(ids: \"link_to_board_2\") {\n      ... on BoardRelationValue {\n        linked_item_ids\n        linked_items {\n          id\n          board {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>which returns the follow that does include the item Ids as strings.</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"complexity\": {\n      \"query\": 12031\n    },\n    \"items\": [\n      {\n        \"column_values\": [\n          {\n            \"linked_item_ids\": [\n              \"5190172400\"\n            ],\n            \"linked_items\": [\n              {\n                \"id\": \"5190172400\",\n                \"board\": {\n                  \"id\": \"4456252030\"\n                }\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": 98765234\n}\n</code></pre>\n<p>the linked items is an array of items, so you can do full queries like you would items such as getting the board ID that item is on. Just remember you can only go 6 levels deep in a query total, and the deeper you go, the more likely your query complexity is to skyrocket. Sometimes its just more efficient to do multiple queries.</p>"
+    },
+    {
+      "id": 147296,
+      "postNumber": 3,
+      "createdAt": "2023-10-06T09:55:03.327Z",
+      "author": "MaximGlory (Greg)",
+      "cookedHtml": "<p>Thank you, Cody for your helpfulness!</p>\n<p>I have moved it to that forum now. I wanted to make sure I’m not missing something before bothering the developers directly.</p>\n<p>You are right with the V2 style, I didn’t really look closely into it yet. That looks OK as you said.</p>\n<p>I’m updating my code for 2023-10 and wanted to do a bare minimum of change. And my connected boards are small and static and read them once at startup.</p>\n<p>In any case this V1 method is not deprecated (yet) and will fail if they make the ID type alphanumeric in the future.</p>\n<p>Thanks<br />\nGreg</p>"
+    },
+    {
+      "id": 147318,
+      "postNumber": 4,
+      "createdAt": "2023-10-06T11:38:47.545Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You definitely could wrap all the IDs in a Number() before putting them into the column. I’m assuming you’re iterating a list of them (or its just one) so it should be trivial to force to numbers for the time being.</p>\n<p>I would not be shocked (and this is speculation only) if in a future API there is a special mutation for connecting items <code>connect_item_to_item(item_id: \"123213\", board_id: \"123213\", column: \"connect_boards\", connected_item: \"123213\"){}</code> because i believe connect board columns are going to become a representation of a deeper data structure (may already be) that connects items - rather than the actual connection.</p>"
+    },
+    {
+      "id": 147383,
+      "postNumber": 5,
+      "createdAt": "2023-10-07T00:03:10.132Z",
+      "author": "MaximGlory (Greg)",
+      "cookedHtml": "<p>Right, I made it work by using Int, that’s not a problem, it’s just a ticking bomb if the ID will contain letters later on.</p>"
+    },
+    {
+      "id": 147425,
+      "postNumber": 6,
+      "createdAt": "2023-10-08T06:47:09.483Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

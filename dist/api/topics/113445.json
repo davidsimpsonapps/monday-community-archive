@@ -1,0 +1,70 @@
+{
+  "id": 113445,
+  "title": "How to Set Up App-Level Webhook for change_column_value to Trigger Custom Action?",
+  "slug": "how-to-set-up-app-level-webhook-for-change-column-value-to-trigger-custom-action",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    208,
+    351
+  ],
+  "createdAt": "2025-04-22T04:34:45.354Z",
+  "lastPostedAt": "2025-04-29T07:58:51.584Z",
+  "postsCount": 7,
+  "excerpt": "Hi Dev Community, \nI’ve built a custom workflow trigger (“When Time Tracking stops…”) and action. My backend needs to activate the trigger’s specific webhookUrl (saved during subscribe) when a relevant Time Tracking colu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 31,
+  "posts": [
+    {
+      "id": 227472,
+      "postNumber": 1,
+      "createdAt": "2025-04-22T04:34:45.439Z",
+      "author": "ilai (ilaish)",
+      "cookedHtml": "<p>Hi Dev Community,</p>\n<p>I’ve built a custom workflow trigger (“When Time Tracking stops…”) and action. My backend needs to activate the trigger’s specific webhookUrl (saved during subscribe) when a relevant Time Tracking column stops.</p>\n<p>To detect this change, I understand I need an <strong>app-level webhook</strong> listening for change_column_value. <strong>How and where exactly in the Developer Center do I configure this app-level webhook subscription</strong> to send events to my backend endpoint (e.g., /monday/events)?</p>\n<p>Or maybe I’m wrong and it actually happens in a different way?</p>\n<p>In conclusion - how to correctly call a custom trigger from Monday and not from another application?</p>\n<p>Thanks for pointing me in the right direction!</p>"
+    },
+    {
+      "id": 227564,
+      "postNumber": 2,
+      "createdAt": "2025-04-22T14:14:30.198Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>There are two options here.</p>\n<ol>\n<li>the monday dev center offers builtin triggers. One of those is a “column change” trigger.</li>\n</ol>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/6/7644b28fdf0ce91c4a37e8f51460ad5542222718.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/6/7644b28fdf0ce91c4a37e8f51460ad5542222718_2_236x500.png\" alt=\"image\" width=\"236\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">288×610 20.4 KB</span></div></a></div><p></p>\n<ol>\n<li>you can create a custom trigger (with a subscribe and unsubscribe endpoint) and create a webhook through the API in the subscribe event. Don’t forget to delete the webhook in the unsubscribe event. You webhook endpoint can analyze the payload of the webhook and (in the app) you decide to post to the subscription URL, which will trigger monday to post to your action endpoint from your custom action.</li>\n</ol>"
+    },
+    {
+      "id": 227968,
+      "postNumber": 3,
+      "createdAt": "2025-04-28T05:15:18.937Z",
+      "author": "ilai (ilaish)",
+      "cookedHtml": "<p>Hi <a href=\"https://community.monday.com/t/how-to-set-up-app-level-webhook-for-change-column-value-to-trigger-custom-action/113445/2\">Bas de Bruin</a>,</p>\n<p>Thanks for outlining those two potential approaches! I have a follow-up concern about both:</p>\n<ol>\n<li>\n<p><strong>Regarding Option 1 (Using built-in “column changes” trigger):</strong> My main issue here is <strong>how to enforce that the user only selects a Time Tracking column</strong> in the recipe configuration? The standard trigger allows selecting any column type, which would break my custom action’s logic if the user chooses incorrectly. Is there a way within the recipe sentence or action input field definition to restrict the column picker to only show time_tracking columns when using this built-in trigger?</p>\n</li>\n<li>\n<p><strong>Regarding Option 2 (Creating a webhook via API during subscribe):</strong> Based on my experience, <strong>webhooks created via the create_webhook API mutation do seem to appear in the user’s board automation management interface</strong> (often looking like “When [event] happens, send a webhook”). While functionally this works for detection, <strong>it adds clutter to the user’s automation list</strong> , which I’d prefer to avoid for a cleaner user experience. My goal is for the user to only see the single, primary automation recipe they configured (“When Time Tracking stops…”).</p>\n</li>\n</ol>\n<p>Is there perhaps a third way, or a variation of Option 2, that allows my backend to listen for the change_specific_column_value (or similar) event <strong>without</strong> creating an entry visible in the user’s automation center? Or is the backend validation (checking column type in the action’s Run URL) the only practical way to handle the limitation of Option 1?</p>\n<p>Appreciate any further thoughts on achieving both specific column type detection and a clean user interface.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 227972,
+      "postNumber": 4,
+      "createdAt": "2025-04-28T05:54:13.224Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>If you go with a custom trigger, you can specify the type of column in the trigger like so:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/0/40819d5a3b173edfd7dd2a4d34d924eb7a1455b8.png\" title=\"Screenshot 2025-04-28 at 09.51.57|100%\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/0/40819d5a3b173edfd7dd2a4d34d924eb7a1455b8_2_326x500.png\" alt=\"Screenshot 2025-04-28 at 09.51.57|100%\" width=\"326\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2025-04-28 at 09.51.57|100%</span><span class=\"informations\">1958×3000 368 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 227997,
+      "postNumber": 5,
+      "createdAt": "2025-04-28T11:40:31.285Z",
+      "author": "ilai (ilaish)",
+      "cookedHtml": "<p>Thank you!<br />\nBut what trigger my app?<br />\nHow my app know that the the user changed the time tacking column?<br />\nShould I create a webhook via the API during the subscription process, considering that this action adds an automation to the Automation Center and causes load on the user interface (UI)?</p>"
+    },
+    {
+      "id": 228046,
+      "postNumber": 6,
+      "createdAt": "2025-04-28T17:39:14.016Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Read this:</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/279d6c49c26dd38347d668ffb26c0ba4637a6ce5.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/triggers-recipes\" target=\"_blank\" rel=\"noopener nofollow ugc\">Apps Framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/3/8325f1a28793fa1163d11e463033d572166f56c4.png\" class=\"thumbnail\" width=\"420\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/apps/docs/triggers-recipes\" target=\"_blank\" rel=\"noopener nofollow ugc\">Triggers</a></h3>\n\n  <p>Technical reference to build your own trigger blocks</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 228074,
+      "postNumber": 7,
+      "createdAt": "2025-04-29T07:58:51.584Z",
+      "author": "ilai (ilaish)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/c/7c45a1ca5d5cccb7da6a5a8726b8114f62b6ac4d.jpeg\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/c/7c45a1ca5d5cccb7da6a5a8726b8114f62b6ac4d_2_517x343.jpeg\" alt=\"image\" width=\"517\" height=\"343\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1788×1188 165 KB</span></div></a></div><br />\nIm asking, if my CRM system (green) is Monday.<br />\nhow do i set it? the Registers the webhook, set webhook when lead created?<br />\nDo i have to add a webhook to the board via API?<p></p>"
+    }
+  ]
+}

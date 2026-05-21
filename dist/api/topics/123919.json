@@ -1,0 +1,56 @@
+{
+  "id": 123919,
+  "title": "Formula to count number of days between Date field and end date of Timeline field",
+  "slug": "formula-to-count-number-of-days-between-date-field-and-end-date-of-timeline-field",
+  "categoryId": 6,
+  "tagIds": [
+    104,
+    108,
+    303,
+    351
+  ],
+  "createdAt": "2026-02-24T20:11:05.182Z",
+  "lastPostedAt": "2026-02-27T18:57:31.024Z",
+  "postsCount": 5,
+  "excerpt": "Hi all! My team uses a template that includes both a Date column (for Deadline) and a Timeline column. These columns can sometimes get out of sync—say, a timeline shifts out a few days, but the deadline is not updated to&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 37,
+  "posts": [
+    {
+      "id": 246470,
+      "postNumber": 1,
+      "createdAt": "2026-02-24T20:11:05.262Z",
+      "author": "robin.hogan (Robin Hogan)",
+      "cookedHtml": "<p>Hi all! My team uses a template that includes both a Date column (for Deadline) and a Timeline column. These columns can sometimes get out of sync—say, a timeline shifts out a few days, but the deadline is not updated to match—making it tricky to understand when tasks are behind or not.</p>\n<p>I’d like to add a formula that pulls the end date from the Timeline column and counts the number of days between that date and the Deadline. That way I can filter for any values not equal to 0 to focus on validation/cleanup.</p>\n<p><strong>The formula I’ve got:</strong> DAYS({Deadline}, {Timeline#end})</p>\n<p>But that’s not quite right, and it seems to return the number of days between Timeline <em>START</em> and Deadline. For example, for an item with Deadline = 2/27 and Timeline = 2/24 - 2/27, it’s returning 3. Any ideas?</p>"
+    },
+    {
+      "id": 246478,
+      "postNumber": 2,
+      "createdAt": "2026-02-24T20:25:40.756Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>You’re very close — the issue is just the order of the arguments in the <code>DAYS()</code> function.</p>\n<p>In monday, <code>DAYS(date1, date2)</code> calculates <strong>date1 minus date2</strong>. So when you write:</p>\n<p><code>DAYS({Deadline}, {Timeline#end})</code></p>\n<p>it’s effectively calculating Deadline minus Timeline end. If the timeline start is being interpreted instead, it’s usually because the end value isn’t being read the way you expect.</p>\n<p>To compare the Timeline <strong>end date</strong> to the Deadline and return 0 when they match, try flipping the order:</p>\n<pre><code class=\"lang-auto\">DAYS({Timeline#end}, {Deadline})\n</code></pre>\n<p>For your example:</p>\n<p>Timeline = 2/24–2/27</p>\n<p>Deadline = 2/27</p>\n<p>This should return <strong>0</strong>, which makes it easy to filter for anything not equal to 0.</p>\n<p>If you want to be extra safe and handle blanks, you could also use:</p>\n<pre><code class=\"lang-auto\">IF(AND({Deadline}, {Timeline}),\n   DAYS({Timeline#end}, {Deadline}),\n   \"\"\n)\n</code></pre>\n<p>That way the formula only calculates when both fields are filled.</p>\n<p>Once that’s in place, filtering for values not equal to 0 is a clean way to surface items that need validation.</p>\n<p>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:<br />\n<a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\">Calendly</a></p>"
+    },
+    {
+      "id": 246485,
+      "postNumber": 3,
+      "createdAt": "2026-02-25T03:35:30.019Z",
+      "author": "YOGESHP (Yogesh Pokale)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/robin.hogan\">@robin.hogan</a>, you can use the formula suggested by Dr. Sachar.</p>\n<p>Additionally, if you’re on the Pro or Enterprise plan, you can do this without a formula column or any manual updates by using a workflow.</p>\n<p>Workflow structure:</p>\n<ol>\n<li>\n<p>When column changes → Column: Timeline</p>\n</li>\n<li>\n<p>Set date → Column: Due Date (set it to the Timeline end date)</p>\n</li>\n</ol>\n<p>This way, whenever the Timeline changes, the Due Date automatically updates to match the end date. Hope this helps!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/2/c273ad94e23f9bb78ddda05b0d968e16ba000644.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/2/c273ad94e23f9bb78ddda05b0d968e16ba000644_2_690x340.png\" alt=\"image\" width=\"690\" height=\"340\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1350×666 40.4 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 246588,
+      "postNumber": 4,
+      "createdAt": "2026-02-27T12:20:17.282Z",
+      "author": "robin.hogan (Robin Hogan)",
+      "cookedHtml": "<p>Thanks for the suggestion! Unfortunately, that formulas you suggest are presenting the opposite value (ex: -2 vs. 2, 7 vs. -7).</p>\n<p>In the example I shared for a row with timeline = 2/24 - 2/27 and deadline = 2/27, the formula DAYS({Timeline#end}, {Deadline}) returns -3, while my original formula returned 3.</p>"
+    },
+    {
+      "id": 246604,
+      "postNumber": 5,
+      "createdAt": "2026-02-27T18:57:31.024Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Thanks for clarifying. The difference you’re seeing is just the sign — <code>DAYS()</code> returns a positive or negative value depending on the order of the dates.</p>\n<p>If your goal is simply to identify when the Timeline end and Deadline don’t match, regardless of direction, you can use:</p>\n<pre><code class=\"lang-auto\">ABS(DAYS({Deadline}, {Timeline#end}))\n</code></pre>\n<p>That will return <code>0</code> when both dates are the same and a positive number when they’re out of sync, which makes filtering straightforward.</p>\n<p>Also, in your example (2/24–2/27 timeline and 2/27 deadline), the result should be <code>0</code>. If you’re seeing <code>3</code> or <code>-3</code>, it’s worth double-checking that you selected the Timeline <strong>End</strong> value in the formula builder rather than the Timeline column itself, as that can sometimes reference the start date instead.</p>\n<p>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=15\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" /> <a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\">Calendly</a></p>"
+    }
+  ]
+}

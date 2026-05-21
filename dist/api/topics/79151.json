@@ -1,0 +1,53 @@
+{
+  "id": 79151,
+  "title": "Problem reading all items on a board and return values columns",
+  "slug": "problem-reading-all-items-on-a-board-and-return-values-columns",
+  "categoryId": 58,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-02-23T18:00:14.671Z",
+  "lastPostedAt": "2024-02-24T13:24:04.138Z",
+  "postsCount": 4,
+  "excerpt": "In the 2023-07 version: \nquery { boards(ids: 1234567890) { items { name column _ values { title text } } } }\n\nIn the 2023-10 version, however, all that remains is to return the information in the columns \nquery { boards(&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 118,
+  "posts": [
+    {
+      "id": 169659,
+      "postNumber": 1,
+      "createdAt": "2024-02-23T18:00:14.755Z",
+      "author": "LeonardoDSSilva (Leonardo Dos Santos Silva)",
+      "cookedHtml": "<p>In the 2023-07 version:</p>\n<pre><code class=\"lang-auto\">query { boards(ids: 1234567890) { items { name column _ values { title text } } } }\n</code></pre>\n<p>In the 2023-10 version, however, all that remains is to return the information in the columns</p>\n<pre><code class=\"lang-auto\">query { boards(ids: 1234567890) { items_page(limit:100) { cursor items { id name }}}}\n</code></pre>\n<p>Adding Column values ?</p>\n<blockquote>\n<p>This doesn’t work anymore but it’s still in the documentation<br />\n<a href=\"https://developer.monday.com/api-reference/reference/column-values-v2\" rel=\"noopener nofollow ugc\"> Column values</a><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/6/b62362a1b485efcd134020a5d7e8939bad17a6fe.png\" title=\"Column values\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/6/b62362a1b485efcd134020a5d7e8939bad17a6fe_2_690x107.png\" alt=\"Column values\" width=\"690\" height=\"107\" /><div class=\"meta\"><span class=\"filename\">Column values</span><span class=\"informations\">1305×203 15.4 KB</span></div></a></div><p></p>\n</blockquote>"
+    },
+    {
+      "id": 169695,
+      "postNumber": 2,
+      "createdAt": "2024-02-24T02:32:38.010Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>this appears to be a typo/error. Just user column_values like in the old version, they didn’t change the text used for that subquery.</p>\n<p>BUT there are many changes for column_values v2. notably that mirror columns (and connect board columns, and dependency columns do not return text values anymore and require to use the fragments inside column_values  (here is a snipped that shows the <code>... on MirrorValue</code> fragment inside the column_values. BoardRelationValue and DependencyValue are used for the others.</p>\n<pre><code class=\"lang-auto\">column_value {\n ... on MirrorValue {\n  display_value\n }\n}\n</code></pre>\n<p>As always your best bet is to play around in the playground to see how things work.</p>"
+    },
+    {
+      "id": 169727,
+      "postNumber": 3,
+      "createdAt": "2024-02-24T08:17:51.987Z",
+      "author": "LeonardoDSSilva (Leonardo Dos Santos Silva)",
+      "cookedHtml": "<p>I’m not sure what it would look like in version 2023-10</p>\n<pre><code class=\"lang-auto\">query { boards(ids: 1234567890) { items_page(limit:100) { cursor items { id name }}}}\n</code></pre>\n<p>How do I put Column values in the request, in version 2023-10</p>"
+    },
+    {
+      "id": 169741,
+      "postNumber": 4,
+      "createdAt": "2024-02-24T13:24:04.138Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Don’t look at documentation examples as a LIMIT of what’s possible, they are a STARTING POINT. GraphQL you just add in the stuff you want, its descriptive, not prescriptive. If you need something more, just add it in. Use the API playground to explore what’s permitted.</p>\n<p>Since column values are a part of an item, you would include it within items, items are part of boards so they go inside boards. (Though you can access items directly if you know the IDs). You just need items_page for items in a board (the assumption being you DON’T know any item IDs, there is no point using boards if you know item IDs)</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: \"1234567890\") {\n    items_page(limit: 100) {\n      cursor\n      items {\n        id\n        name\n        column_values(ids: [\"column_id1\", \"column_id2\"]) {\n          id\n          type\n          text\n          value\n          ... on MirrorValue {\n            display_value\n          }\n          ... on BoardRelationValue {\n            display_value\n          }\n          ... on DependencyValue {\n            display_value\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>You only need to include the GraphQL fragments if you’re getting those types AND you want the display_value (previously returned as text). But explore them, every type can return additional details you couldn’t get before.</p>\n<pre><code class=\"lang-auto\">... on NumbersValue {\n number\n}\n</code></pre>\n<p>Number now an actual number value, not a string.</p>"
+    },
+    {
+      "id": 170022,
+      "postNumber": 5,
+      "createdAt": "2024-02-26T15:09:34.405Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

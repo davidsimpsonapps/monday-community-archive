@@ -1,0 +1,33 @@
+{
+  "id": 113712,
+  "title": "How can I authenticate requests coming from my backend to monday.com?",
+  "slug": "how-can-i-authenticate-requests-coming-from-my-backend-to-monday-com",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2025-04-27T15:38:03.259Z",
+  "lastPostedAt": "2025-04-30T12:46:28.115Z",
+  "postsCount": 2,
+  "excerpt": "Lets say I have a webhook (server-side code) that gets called in response to an event. In this webhook I now want to call the Monday API and perform some operation e.g., reading/writing to a board. How do I authenticate &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 20,
+  "posts": [
+    {
+      "id": 227940,
+      "postNumber": 1,
+      "createdAt": "2025-04-27T15:38:03.340Z",
+      "author": "morpheus (morpheus)",
+      "cookedHtml": "<p>Lets say I have a webhook (server-side code) that gets called in response to an event. In this webhook I now want to call the Monday API and perform some operation e.g., reading/writing to a board. How do I authenticate my request? Reading <a href=\"https://developer.monday.com/apps/docs/choosing-auth\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Choosing an authentication method</a> it seems the only way is to use Method 2: Using OAuth to issue access tokens. however when i tried to implement this there are some issues i ran into which raise some doubts.</p>\n<ol>\n<li>First, i will need to store the oauth token on the backend. it can be done but i have never seen such pattern before where an app stores a user’s tokens in a database. The link does say:</li>\n</ol>\n<blockquote>\n<p>If your app needs to store a user’s API token or make API calls in the background, OAuth is a good option.</p>\n</blockquote>\n<ol>\n<li>\n<p>Second, within an account there can be thousands of users (taking worst case). Storing thousands of tokens raises some red flags in my mind.</p>\n</li>\n<li>\n<p>Above point is maybe explained by following:<br />\n<a href=\"https://support.monday.com/hc/en-us/articles/360014664060-The-monday-apps-marketplace\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/360014664060-The-monday-apps-marketplace</a></p>\n</li>\n</ol>\n<blockquote>\n<p><strong>Note:</strong> Installing apps can only be done by an <a href=\"https://support.monday.com/hc/en-us/articles/360002426920-What-is-an-admin-\" rel=\"noopener nofollow ugc\">admin</a> of the account.</p>\n</blockquote>\n<p>So when an admin installs an app, does it automatically become available to all users under that account? And I only need to store the admin’s OAuth token? that would explain it.</p>\n<p>what are the best practices here? is OAuath the right approach or are there alternatives? thanks.</p>"
+    },
+    {
+      "id": 228229,
+      "postNumber": 2,
+      "createdAt": "2025-04-30T12:46:28.115Z",
+      "author": "Ipeek (Isaac)",
+      "cookedHtml": "<p>Hey again Moprh!</p>\n<p>As I understand it and with the bit of testing I did on my app, <a href=\"https://monday.com/marketplace/listing/10000792/summarizeit-to-items\" rel=\"noopener nofollow ugc\">SummarizeIt to Items</a>, if you go the OAUTH route, the token can be used for an extended amount of time and arguably more importantly, it allows your back-end code to make <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API calls with that token.</p>\n<p>It’s going to come down to how your app works and what is needed. With the above, the user has to in app authenticate the use. If you’re wanting to go the more seemless route, do so.</p>\n<p>Using seemless, you get the token from the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> platform when the request comes in. It will contain the data in a JWT token about the user. You can use that token to make any further API calls as that user.</p>\n<p>In my app, we’re doing an iframe AI assistant, so we utilize the JWT and mondaySDK as mentioned in the following. But as you see, it’s noted that if your <strong>back-end</strong> needs to make api calls, you’ve gotta use the OAUTH option.</p>\n<p>We do pass that JWT to our back-end for decoding to look up usage and setting details etc… as the JWT contain user_id, account_id, is_admin etc… so some very useful data for your back-end to use for whatever you may need.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/9/693610794eb9f88649d83d8bf9037b967df35595.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/6/9/693610794eb9f88649d83d8bf9037b967df35595_2_690x411.png\" alt=\"image\" width=\"690\" height=\"411\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">850×507 46.2 KB</span></div></a></div><p></p>\n<p>Hope that helps!</p>"
+    }
+  ]
+}

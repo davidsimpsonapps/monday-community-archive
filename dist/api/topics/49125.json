@@ -1,0 +1,140 @@
+{
+  "id": 49125,
+  "title": "Cannot Create Group via GraphQL API",
+  "slug": "cannot-create-group-via-graphql-api",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    115,
+    351
+  ],
+  "createdAt": "2023-01-13T16:56:39.885Z",
+  "lastPostedAt": "2023-06-21T06:19:43.804Z",
+  "postsCount": 16,
+  "excerpt": "While exploring the GraphQL API, I have encountered a problem in making a group in a specific board: \nThe board query returns the board_id as an ID! , while the create_group expects the board_id as an Int! . \nWhen I try &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1817,
+  "posts": [
+    {
+      "id": 110508,
+      "postNumber": 1,
+      "createdAt": "2023-01-13T16:56:39.999Z",
+      "author": "RevivePhill (Phill)",
+      "cookedHtml": "<p>While exploring the GraphQL API, I have encountered a problem in making a group in a specific board:</p>\n<p>The board query returns the board_id as an ID! , while the create_group expects the board_id as an Int! .<br />\nWhen I try to send my board_id as an Int! , I get a message that my library cannot coerce the number to an Int! .<br />\nWhen I try to send my board_id as an ID!, I get a type mismatch message between my variable (ID!) and the board_id argument (Int!).</p>\n<p>How do I create a group in a specific board via the GraphQL API ?</p>"
+    },
+    {
+      "id": 110602,
+      "postNumber": 2,
+      "createdAt": "2023-01-15T06:53:40.554Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/revivephill\">@RevivePhill</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p><strong>GraphQL wise:</strong><br />\nYou can use a boards query:</p>\n<pre><code class=\"lang-auto\">{\n  boards(limit: 5) {\n    name\n    id\n  }\n}\n</code></pre>\n<p>Which will give you the ID as a string:</p>\n<pre><code class=\"lang-auto\">      {\n        \"name\": \"My board\",\n        \"id\": \"1234567890\"\n      }\n</code></pre>\n<p>You can then use a mutation like this one, passing the board ID that you got as a numeric value:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_group(board_id: 1234567890, group_name: \"My group\") {\n    id\n    title\n  }\n}\n</code></pre>\n<p><strong>Script wise when using variables:</strong><br />\nYou can take the ID you got as a string, turn it into a numeric value and pass the board ID as an Int!:<br />\n<code>mutation ($boardId: Int!) {...}</code></p>\n<p>Let me know if that helps!</p>\n<p>If it doesn’t, please send over you script so we can take a look!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 110786,
+      "postNumber": 3,
+      "createdAt": "2023-01-16T16:24:32.499Z",
+      "author": "RevivePhill (Phill)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> , thank you.</p>\n<p>What you have described is exactly what I am doing, but I did not realize the the ID is returned as a string instead of a numeric. I have made that change in my code, and the error is gone. Thank you for your guidance.</p>"
+    },
+    {
+      "id": 110856,
+      "postNumber": 4,
+      "createdAt": "2023-01-17T05:33:15.281Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/revivephill\">@RevivePhill</a>,</p>\n<p>Glad to help!</p>\n<p>Let us know if you need anything else <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 111651,
+      "postNumber": 5,
+      "createdAt": "2023-01-21T14:17:14.246Z",
+      "author": "RevivePhill (Phill)",
+      "cookedHtml": "<p>Following up on this, I’m running into the same problem again. I’ve changed how I’m using the python library (building queries dynamically instead of pre-written queries with variables), and it’s once again giving me the error:</p>\n<blockquote>\n<p>Int cannot represent non 32-bit signed integer value</p>\n</blockquote>\n<p>I have been able to track through some reports on the library itself, as well as the GraphQL specification documents, and have found that my library is correct, and that Monday’s implementation is <a href=\"https://spec.graphql.org/October2021/#sec-Int\" rel=\"noopener nofollow ugc\">out of spec</a>:</p>\n<blockquote>\n<p>The Int scalar type represents a signed 32-bit numeric non-fractional value.</p>\n</blockquote>\n<p>I’m going to raise a bug with my library’s maintainers as well, but I don’t think they’re going to make changes that are outside of the specification.</p>\n<p>What is the process for requesting a change on your side to bring Monday’s API back into specification?</p>"
+    },
+    {
+      "id": 111682,
+      "postNumber": 6,
+      "createdAt": "2023-01-22T06:33:02.112Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/revivephill\">@RevivePhill</a>,</p>\n<p>In this case, I believe the issue lies in your library or script.</p>\n<p>Our API works well with Python and we have multiple users using it regularly with this language and they are not encountering this issue.</p>\n<p>I would advise to contact the team that maintains your library as you said and check with them what can be done, because again, it appears that the issue is not coming from monday since it would probably be an issue for all Python users if it was.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 117912,
+      "postNumber": 7,
+      "createdAt": "2023-03-03T00:14:24.582Z",
+      "author": "moritz (Moritz)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>while I understand that it works with some implementations that are out of spec, too, “It works for me” isn’t a good answer for producing/requiring values that aren’t in-spec.</p>\n<p>We just ran into this too, and are now abandoning integrating monday in our workflow more fully.</p>\n<p>For reference, we were using: <a href=\"https://github.com/obmarg/cynic\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - obmarg/cynic: A bring your own types GraphQL client library for Rust</a></p>\n<p>Best,</p>\n<p>Moritz</p>"
+    },
+    {
+      "id": 118056,
+      "postNumber": 8,
+      "createdAt": "2023-03-05T05:29:06.368Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/moritz\">@moritz</a>,</p>\n<p>Thank you for bringing this into our attention as <a class=\"mention\" href=\"/u/revivephill\">@RevivePhill</a>.</p>\n<p>I do not know if this could be addressed anytime soon but I will share it with our team again so your feedback is taken into account <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 118057,
+      "postNumber": 9,
+      "createdAt": "2023-03-05T05:33:08.281Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/views/54957189/pulses/4087262343\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 129372,
+      "postNumber": 10,
+      "createdAt": "2023-05-24T18:54:19.822Z",
+      "author": "A-A-ron (Aaron)",
+      "cookedHtml": "<p>I’ve encountered this same issue.</p>\n<p>I’m using this query:</p>\n<pre><code class=\"lang-auto\">{\n  me {\n    name\n  }\n  boards(ids: [4531622611]) {\n    name\n    columns {\n      title\n      id\n      type\n    }\n    groups {\n      title\n      id\n    }\n    items {\n      name\n      group {\n        id\n      }\n      column_values {\n        id\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>And this library: <a href=\"https://pypi.org/project/gql/\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">gql · PyPI</a></p>\n<p>Which I chose because it was the most popular Python client (as measured by github stars).</p>\n<p>And I get this error from the lib when it parses the response:</p>\n<pre><code class=\"lang-auto\">graphql.error.graphql_error.GraphQLError: Int cannot represent non 32-bit signed integer value: 4531622611\nGraphQL request:7:16\n6 |\n7 |   boards(ids: [4531622611]) {\n  |                ^\n8 |     name\n</code></pre>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> , since you indicate that your API works well with Python, do you have any recommendations? Alternate libraries, workarounds?</p>"
+    },
+    {
+      "id": 129822,
+      "postNumber": 11,
+      "createdAt": "2023-05-30T11:34:05.870Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/a-a-ron\">@A-A-ron</a>,</p>\n<p>I am sorry for the late reply!</p>\n<p>Would you be able to please send an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so we can take a closer look from there?</p>\n<p>Looking forward to hearing from you via email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 130359,
+      "postNumber": 12,
+      "createdAt": "2023-06-05T11:17:54.966Z",
+      "author": "its-a-bee (Abby)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>I am also facing this issue. I’m using Postman to generate HTTP request snippets to integrate with MS Power Automate flows. This query worked fine, so I know my connection is working:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (limit:20) {\n    name\n    id\n  }\n}\n</code></pre>\n<p>This query gives me the Int data type error (Int cannot represent non 32-bit signed integer value):</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 36******00) {\n    name\n    state\n    id\n    permissions\n  }\n}\n</code></pre>\n<p>I’ve replaced some of my board’s ID with stars for privacy purposes, in the actual code, they are all numbers.</p>\n<p>Whatever solution is found, can it please be posted here?</p>\n<p>Thanks,<br />\nAbby</p>"
+    },
+    {
+      "id": 130616,
+      "postNumber": 13,
+      "createdAt": "2023-06-07T03:47:44.204Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/its-a-bee\">@its-a-bee</a>  and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Please send an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with the exact query you are using in Postman and the response you are getting and we will take a look into it over there <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Looking forward to hearing from you over email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 130646,
+      "postNumber": 14,
+      "createdAt": "2023-06-07T09:19:48.122Z",
+      "author": "its-a-bee (Abby)",
+      "cookedHtml": "<p>Matias,</p>\n<p>I’m still getting the error (“Int cannot represent non 32-bit signed integer value”) but I was able to get the query to work by setting Postman to use “No schema” instead of auto-fetching a schema. Not sure what’s going on, but it’s working so I’m not going to send an email to appsupport. Just wanted you to be aware of my fix.</p>"
+    },
+    {
+      "id": 130745,
+      "postNumber": 15,
+      "createdAt": "2023-06-08T07:13:26.430Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Thank you for sending that information over!</p>\n<p>I am glad you found that fix!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 132295,
+      "postNumber": 16,
+      "createdAt": "2023-06-21T01:53:40.492Z",
+      "author": "mcallarse (Baika Brown)",
+      "cookedHtml": "<p>I am getting this error directly in the Monday playground, using valid Ids from my board. Is Monday working on a fix for this?</p>"
+    },
+    {
+      "id": 132324,
+      "postNumber": 17,
+      "createdAt": "2023-06-21T06:19:43.804Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mcallarse\">@mcallarse</a></p>\n<p>If you are referring to the error where the IDs appear underlined in red, it is a visual error but you can still run the queries/mutations.</p>\n<p>Our team is aware and working on it.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

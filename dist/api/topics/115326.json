@@ -1,0 +1,27 @@
+{
+  "id": 115326,
+  "title": "How to to authorize API requests in fullstack apps",
+  "slug": "how-to-to-authorize-api-requests-in-fullstack-apps",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    482
+  ],
+  "createdAt": "2025-05-28T12:33:01.273Z",
+  "lastPostedAt": "2025-05-28T12:33:01.355Z",
+  "postsCount": 1,
+  "excerpt": "I’m building an app hosted on Monday Code.  The app is built using Sveltekit, and to test things out I’m building a simple item view that reads existing data for an item, and calls an external API with that data. \nI’m ha&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 17,
+  "posts": [
+    {
+      "id": 230745,
+      "postNumber": 1,
+      "createdAt": "2025-05-28T12:33:01.355Z",
+      "author": "jessereilly1 (Jesse)",
+      "cookedHtml": "<p>I’m building an app hosted on Monday Code.  The app is built using Sveltekit, and to test things out I’m building a simple item view that reads existing data for an item, and calls an external API with that data.</p>\n<p>I’m having trouble authorizing requests to the Monday API using <code>monday-sdk-js</code> in my development environment. I have a local development server running, and am tunnelling requests using Monday Apps SDK’s <code>mapps tunnel:create</code></p>\n<p>As I’m building an item view, my understanding is I need to get the user’s <code>sessionToken</code>, and decode it with my <code>clientSecret</code>. I’m able to decode the session token using <code>jwt.verify()</code>, but I’m not sure what to do with this information. I can’t use the decoded <code>client_id</code> to authorize API requests, and I can’t see any other data in the decoded JWT that would be useful here.</p>\n<p>Reading the docs, it looks like the monday JS SDK automatically handles authorization in purely client-side apps. But, as my requests are handled serverside, I’m not sure how to authenticate them.</p>\n<p>Sample code from my server endpoint:</p>\n<pre><code class=\"lang-auto\">// src/routes/my-endpoint/+page.server.ts\nimport mondaySdk from 'monday-sdk-js';\nimport { EnvironmentVariablesManager } from \"@mondaycom/apps-sdk\";\nimport { env } from '$env/dynamic/private'\nimport { error } from '@sveltejs/kit'\nimport jwt from \"jsonwebtoken\";\nimport type { PageServerLoad } from './$types'\n\nconst envManager = new EnvironmentVariablesManager();\nconst monday = mondaySdk()\n\nconst signingSecret = envManager.get('PRIVATE_MONDAY_SIGNING_SECRET') as string | null ?? env?.PRIVATE_MONDAY_SIGNING_SECRET;\nconst clientSecret = envManager.get('PRIVATE_MONDAY_CLIENT_SECRET') as string | null ?? env?.PRIVATE_MONDAY_CLIENT_SECRET;\n\nexport const load: PageServerLoad = async ({ request, url, cookies, locals, params,  }) =&gt; {\n\n    const sessionToken: string | null = url.searchParams.get('sessionToken')\n\n\n    if (!sessionToken || !clientSecret) {\n        console.log({sessionToken, clientSecret, message: 'no client secret or request token'})\n        error(401, 'No client secret or request token')\n    }\n\n    const jwtBody = jwt.verify(sessionToken, clientSecret)\n\n    const clientId = jwtBody?.dat?.client_id\n\n    const users = await monday.api(`query { users { id, name } }`, {\n        token: clientId\n    })\n    console.log(users)\n\n// Log result:\n// { errors: [ { message: 'Not authenticated', extensions: [Object] } ] }\n\n\n}\n\n</code></pre>"
+    }
+  ]
+}

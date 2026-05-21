@@ -1,0 +1,91 @@
+{
+  "id": 25949,
+  "title": "Creating an item using an HTTP request",
+  "slug": "creating-an-item-using-an-http-request",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2021-10-12T08:49:15.503Z",
+  "lastPostedAt": "2021-10-21T06:05:44.533Z",
+  "postsCount": 10,
+  "excerpt": "Hi I have this cURL request that I have been trying and failing to get it right, it gives me a 500 Error (Internal Error) \ncurl -X POST https://api.monday.com/v2 -H “Content-Type:application/json” -H “Authorization: XXXX&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 2584,
+  "posts": [
+    {
+      "id": 65846,
+      "postNumber": 1,
+      "createdAt": "2021-10-12T08:49:15.590Z",
+      "author": "mxolisi (Mxolisi Ngwenya)",
+      "cookedHtml": "<p>Hi I have this cURL request that I have been trying and failing to get it right, it gives me a 500 Error (Internal Error)</p>\n<p>curl -X POST <a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a> -H “Content-Type:application/json” -H “Authorization: XXXXXXXXXXXX” -d “{\"query\":\"mutation { \"create_item\" (\"item_name\": \"Testing from Curl\",\"board_id\": 1622487812, \"group_id\": \"emailed_items\") { id }}” -v</p>\n<p>I’m not sure why it won’t succeed because the GrahpQL query below works just fine:</p>\n<p>mutation {<br />\ncreate_item (<br />\nboard_id: 1622487812,<br />\ngroup_id: “emailed_items”,<br />\nitem_name: “Testing from GraphQl”)<br />\n{ id }<br />\n}</p>\n<p>Please help me and thanks in advance.</p>"
+    },
+    {
+      "id": 65848,
+      "postNumber": 3,
+      "createdAt": "2021-10-12T08:57:49.066Z",
+      "author": "mxolisi (Mxolisi Ngwenya)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> Thanks, will go through the documentation again.</p>"
+    },
+    {
+      "id": 65881,
+      "postNumber": 4,
+      "createdAt": "2021-10-12T11:29:50.728Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mxolisi\">@mxolisi</a></p>\n<p>That’s a great question! The issue is related to passing a string via cURL. Since you need to send your query as a JSON body, you will need to escape strings within the JSON so the server can read it correctly.</p>\n<p>This should work for you. Notice the added backslashes before the Item Name value:</p>\n<pre><code class=\"lang-auto\">curl --location --request POST 'https://api.monday.com/v2' \\\n--header 'Authorization: XXXXXX' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\"query\":\"mutation { create_item (board_id: 1622487812, item_name: \\\"Look at me! I'\\''m a ~Cool~ item from cURL\\\") { id } }\"}'\n</code></pre>\n<p>Here’s how it worked for me on my board:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/4e042e7c428aeb7fe67c285837de62484d9215ee.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/4e042e7c428aeb7fe67c285837de62484d9215ee_2_690x120.png\" alt=\"image\" width=\"690\" height=\"120\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1120×196 99.6 KB</span>\n</div></a></div><p></p>\n<p><a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> I’m afraid that in this case, the formatting is correct, as you are sending a JSON object.The “query” part of it is defining what you are sending to the server as an API query, although in other GraphQL implementations, this can use a different key.</p>\n<p>I hope this helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65981,
+      "postNumber": 5,
+      "createdAt": "2021-10-13T05:41:52.507Z",
+      "author": "mxolisi (Mxolisi Ngwenya)",
+      "cookedHtml": "<p>I don’t know if it’s a windows thing but I have been trying the curl as you have suggested but it’s still failing on my side, can you please check my curl and correct me if I have done it wrong?</p>\n<p>curl --location --request POST “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>” --header “Authorization: XXXXXXXX” --header “Content-Type: application/json” --data-raw “{\"query\":\"mutation { create_item (board_id: 1622487816,group_id: \"emailed_items\", item_name: \"Test from Curl\") { id } }\"}”</p>"
+    },
+    {
+      "id": 66015,
+      "postNumber": 6,
+      "createdAt": "2021-10-13T09:25:15.568Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mxolisi\">@mxolisi</a></p>\n<p>Thank you for following up!</p>\n<p>It seems like you still need to add backslashes (making your <code>\"</code> quotes look like <code>\\\"</code> instead) to the strings within the mutation. Here’s how the formatting should work:</p>\n<pre><code class=\"lang-auto\">curl --location --request POST \"https://api.monday.com/v2\" --header \"Authorization: XXXXXXXX\" --header \"Content-Type: application/json\" --data-raw \"{\"query\":\"mutation { create_item (board_id: 1622487816,group_id:\\\"emailed_items\\\", item_name: \\\"Test from Curl\\\") { id } }\"}\"\n\n</code></pre>\n<p>Can you let me know if that does the trick for you?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 66016,
+      "postNumber": 7,
+      "createdAt": "2021-10-13T09:40:25.588Z",
+      "author": "mxolisi (Mxolisi Ngwenya)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> , thanks again for replying, I’m working on a windows machine and this</p>\n<pre><code class=\"lang-auto\">curl --location --request POST \"https://api.monday.com/v2\" --header \"Authorization: XXXXXXXX\" --header \"Content-Type: application/json\" --data-raw \"{\"query\":\"mutation { create_item (board_id: 1622487816,group_id:\\\"emailed_items\\\", item_name: \\\"Test from Curl\\\") { id } }\"}\n</code></pre>\n<p>does not work as I need to add backslashes as you have mentioned.</p>\n<p>So after adding the backslashes it looks like this:</p>\n<pre><code class=\"lang-auto\">curl -X POST https://api.monday.com/v2 -H \"Authorization: XXXXXX\" -H \"Content-Type: application/json\" -d \"{\\\"query\\\":\\\"mutation { create_item (board_id: 1622487816,group_id:\\\"emailed_items\\\", item_name: \\\"Test from Curl\\\") { id } }\\\"}\" -v\n</code></pre>\n<p>When I submit it I get a 500 error</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5509fe37068de45a09047ff06f06a69d21099ae1.png\" alt=\"image\" width=\"618\" height=\"85\" /></p>"
+    },
+    {
+      "id": 66022,
+      "postNumber": 8,
+      "createdAt": "2021-10-13T10:52:15.486Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mxolisi\">@mxolisi</a></p>\n<p>Just to make sure we’re on the same page here, could you provide the error message you are seeing when sending the first request?</p>\n<p>The formatting of JSON in cURL should be exactly the same as in Postman, when sending RAW data as JSON. Here’s an example:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/32d1344a3377630c199643213395c6ded2e42792.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/32d1344a3377630c199643213395c6ded2e42792_2_690x353.png\" alt=\"image\" width=\"690\" height=\"353\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2188×1122 151 KB</span>\n</div></a></div><p></p>\n<p>In your second example, you’ve added backslashes around each quote. You only need those around the strings that are inside the JSON body of your mutation. This query <strong>will not work:</strong></p>\n<p><code>\"{\\\"query\\\":\\\"mutation { create_item (board_id: 1622487816,group_id:\\\"emailed_items\\\", item_name: \\\"Test from Curl\\\") { id } }\\\"}\"</code></p>\n<p>Sending the below should work:</p>\n<p><code>\"{\"query\":\"mutation { create_item (board_id:1622487816, group_id:\\\"emailed_items\\\", item_name:\\\"Test from Curl\\\") { id}} \"}\"</code></p>\n<p>Does that make sense? Let me know.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 66092,
+      "postNumber": 9,
+      "createdAt": "2021-10-14T03:13:07.528Z",
+      "author": "mxolisi (Mxolisi Ngwenya)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> , Thanks, your solution worked on power automate but I’m still failing on windows CMD.</p>\n<p>But I needed this for power automate, so thanks a lot, I will come and update after finding a solution for CMD.</p>\n<p><strong>Update</strong></p>\n<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a><br />\nHere is a curl that worked on my side:</p>\n<p>curl -X POST \"<a href=\"https://api.monday.com/v2%22\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2\"</a> -H “Authorization: XXXXXX” -H “Content-Type: application/json” -d “{\"query\": \"mutation { create_item (board_id: 1622487816, group_id: \\u0022emailed_items\\u0022, item_name: \\u0022new item\\u0022) { id }}\"}”</p>\n<p>The quotations inside the mutation query were added as codes.</p>"
+    },
+    {
+      "id": 66110,
+      "postNumber": 10,
+      "createdAt": "2021-10-14T06:04:51.670Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mxolisi\">@mxolisi</a></p>\n<p>Wow, thanks so much for sharing! I’ve never seen the quotes to be this kind of an issue, but your solution does make sense.</p>\n<p>Thanks so much for sharing your findings with us, that’s definitely something to keep in mind.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 66680,
+      "postNumber": 11,
+      "createdAt": "2021-10-21T06:05:44.533Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": 36728,
+  "title": "API complexity not adding up",
+  "slug": "api-complexity-not-adding-up",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-05-23T21:24:59.344Z",
+  "lastPostedAt": "2022-05-24T10:20:29.679Z",
+  "postsCount": 6,
+  "excerpt": "Query 1 \nQuery a board for its items without any column values. \nquery ($boardId: [Int]) {\n    boards(ids: $boardId) {\n        items {\n            id\n        }\n    }\n    complexity {\n        query\n    }\n}\n\ncomplexity: 10&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1048,
+  "posts": [
+    {
+      "id": 86673,
+      "postNumber": 1,
+      "createdAt": "2022-05-23T21:24:59.424Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Query 1<br />\nQuery a board for its items without any column values.</p>\n<pre><code class=\"lang-auto\">query ($boardId: [Int]) {\n    boards(ids: $boardId) {\n        items {\n            id\n        }\n    }\n    complexity {\n        query\n    }\n}\n</code></pre>\n<p>complexity: 1020</p>\n<hr />\n<p>Query 2<br />\nTaking the results of Query 1 Items array and passing it as $itemsIds</p>\n<pre><code class=\"lang-auto\">query ($itemIds: [Int], $columnId: [String]) {\n        items (ids: $itemIds) {\n            id\n            column_values(ids: $columnId) {\n                value\n            }\n        }\n        complexity {\n            query\n        }\n    }\n\n</code></pre>\n<p>Complexity 46</p>\n<hr />\n<p>Query 3<br />\nQuery board returning column values - this is a combination of 1 &amp; 2 above.</p>\n<pre><code class=\"lang-auto\">query ($boardId: [Int], $columnId: [String]) {\n    boards(ids: $boardId) {\n        items {\n            id\n            column_values(ids: $columnId) {\n                value\n            }\n        }\n    }\n    complexity {\n        query\n    }\n}\n</code></pre>\n<p>Complexity 12020</p>\n<hr />\n<p>By doing query 1 and passing the results to query 2, the cost is a combined total of 1066. By doing just query 3 - the cost is 12020 - 11.27X more complex, for what I think is the same number of objects handled.</p>\n<p>I realize the boards query to get items is expensive because its a search of item documents for that board ID (query 1). But once that’s done, the item documents are found and the column values retrieved from them. That’s second part is the same as what’s happening in Query 2 which cost 46, but now is 11000 more to get the column values vs 46. I could see a bit of an increase, but this is orders of magnitude more. Its seems like since getting the list of items from the board (all) is a search of the database and that has a cost multiplier - that multiplier is then being applied to the sub-queries to get the items themselves when it shouldn’t be.</p>"
+    },
+    {
+      "id": 86678,
+      "postNumber": 2,
+      "createdAt": "2022-05-23T21:58:57.851Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>\n<p>I think that querying items directly (without the board) is more costly for some reason.</p>\n<p>Try changing 3 to use the board as in 2.</p>"
+    },
+    {
+      "id": 86679,
+      "postNumber": 3,
+      "createdAt": "2022-05-23T22:24:45.860Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Query 3 is most expensive. Query 1+2 together is 1/10th yet gets the same data in two vs one query. And its not just a slight increase in complexity - its orders of magnitude.</p>\n<p>{note: i swapped 2 &amp; 3 from initial posting to make it more clear)</p>"
+    },
+    {
+      "id": 86707,
+      "postNumber": 4,
+      "createdAt": "2022-05-24T08:21:07.436Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>\n<p>Thanks for the clarification. I stand corrected. That’s very interesting.</p>\n<p>One note however: although the COMPLEXITY is not reduced by using the board in the query, there is an additional API limitation that comes into effect: <a href=\"https://api.developer.monday.com/changelog/additional-rate-limit-for-items-query\">Additional rate limit for items query (monday.com)</a></p>"
+    },
+    {
+      "id": 86724,
+      "postNumber": 5,
+      "createdAt": "2022-05-24T10:20:29.679Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There we go.</p>\n<p>Its default complexities, if you don’t specify a limit on a query that gets all items, it has a default of 1000. So that is what’s increasing the complexity - its calculated on the assumption of 1000 items.</p>\n<p>Would be nice if the query cost was calculated based on the number of actual items returned…</p>\n<pre><code class=\"lang-auto\">items (limit: #, page: #) {\n\n}\n</code></pre>"
+    },
+    {
+      "id": 87247,
+      "postNumber": 6,
+      "createdAt": "2022-05-31T10:20:37.324Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

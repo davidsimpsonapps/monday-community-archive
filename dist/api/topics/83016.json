@@ -1,0 +1,82 @@
+{
+  "id": 83016,
+  "title": "Testing / Mock App Life Cycle Events",
+  "slug": "testing-mock-app-life-cycle-events",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2024-04-04T01:45:04.744Z",
+  "lastPostedAt": "2024-04-20T10:53:28.147Z",
+  "postsCount": 8,
+  "excerpt": "As far as I have read in the documentation for the Apps Framework I cannot find an easy way to test the App Lifecycle Events listed here. \nI am aware of the mock subscription API call you can make in an account to set up&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 330,
+  "posts": [
+    {
+      "id": 176864,
+      "postNumber": 1,
+      "createdAt": "2024-04-04T01:45:04.842Z",
+      "author": "christian.lee (Christian Lee)",
+      "cookedHtml": "<p>As far as I have read in the documentation for the Apps Framework I cannot find an easy way to test the App Lifecycle Events listed <a href=\"https://developer.monday.com/apps/docs/webhooks#examples\" rel=\"noopener nofollow ugc\">here</a>.</p>\n<p>I am aware of the mock subscription API call you can make in an account to set up a mock subscription but how would I test these webhooks? I have set up the URL in my app configuration and setup an endpoint in my app to receive the webhooks. However when creating a mock subscription it doesn’t send anything to my endpoint. I have tested the endpoint otherwise and it is receiving other requests ok.</p>\n<p>Maybe there just isn’t a way to actual test these requests coming from monday without actually installing the app in another account? Is that the only solution?</p>\n<p>Any help is appreciated here!</p>"
+    },
+    {
+      "id": 177261,
+      "postNumber": 2,
+      "createdAt": "2024-04-07T08:58:30.279Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/christian.lee\">@christian.lee</a>,</p>\n<p>It is not possible to test all of the webhooks without having an app in the marketplace.</p>\n<p>But you can use some such as the install or uninstall webhooks (even installing/uninstalling in your own account).</p>\n<p>You can also check the format of the different payloads <a href=\"https://developer.monday.com/apps/docs/api-reference#webhooks\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 178305,
+      "postNumber": 3,
+      "createdAt": "2024-04-12T16:46:57.552Z",
+      "author": "christian.lee (Christian Lee)",
+      "cookedHtml": "<p>So there isn’t a way to test the app event webhooks prior to launching an app? That’s a bit unfortunate.</p>\n<p>I’ve prepped my app for the events, but there’s no way for me to know exactly how to access the object if I can’t test. Is there a way to test any of them at all? Just being able to test one of them would work.</p>\n<p>Ideally though, the app framework in the future would support some way to test these with mock calls via the playground similar to the setting up of the subscription to ensure apps are bug free when launching to the marketplace <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>EDIT:<br />\nI see the documentation of the format of the payloads, however how do I confirm where in the request that payload is? For example is it nested inside of another object? Is it inside of the req body as a payload? Is it just the body? This is the piece I’m missing.</p>"
+    },
+    {
+      "id": 178437,
+      "postNumber": 4,
+      "createdAt": "2024-04-14T10:30:49.324Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/christian.lee\">@christian.lee</a>,</p>\n<p>You can test the “install” webhook if you want. The response will have the same indentation as that payload <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 178675,
+      "postNumber": 5,
+      "createdAt": "2024-04-15T12:31:01.322Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Matias,</p>\n<p>In the past I wrote a test utility to generate events, but the problem is there is no good flowchart of the conditions in which each is generated, nor when values are “null” or not. (specifically around some of metadata outside the plan like the account_tier (free/trial is null for example))</p>\n<p>I’d love if monday would take it on to even release something we can call locally with command line for different events and payload values. I can help contribute.</p>\n<p>Or are other dev are open to starting our own open source repository to contribute without monday’s involvement until they get on board?</p>"
+    },
+    {
+      "id": 178859,
+      "postNumber": 6,
+      "createdAt": "2024-04-16T06:59:24.262Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>I will pass your feedback for the team in charge of the documentation to see if we can add some more examples and scenarios.</p>\n<p>Regarding your request, would you be able to please add it <a href=\"https://community.monday.com/c/developers/api-feature-requests/58/l/latest\">here</a>?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 179777,
+      "postNumber": 7,
+      "createdAt": "2024-04-19T12:30:30.089Z",
+      "author": "christian.lee (Christian Lee)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nFurther to my original point regarding these events.<br />\nFor an event like this where clearly the user wouldn’t have a valid subscription any longer: <strong>app_subscription_renewal_failed</strong><br />\nWould it be my apps responsibility to reject any requests that come in? Or, would monday stop sending requests in to my app’s url?<br />\nContext: I’m building an app with custom actions. So, would monday still send requests to my actions even if they don’t have a valid subscription? Or would I need to block the request and return an error message back to the user in this case?</p>"
+    },
+    {
+      "id": 179907,
+      "postNumber": 8,
+      "createdAt": "2024-04-20T10:53:28.147Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>If you don’t have a free plan, once a subscription expires (which there is a 45 day grace period for payment issues, just to be aware that you’ll get events on the plan for up to 45 days after the renewal date has passed if there is a payment failure) monday stops sending events. Or it downgrades them to the free plan.</p>"
+    },
+    {
+      "id": 179990,
+      "postNumber": 9,
+      "createdAt": "2024-04-21T09:17:13.250Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "id": 27092,
+  "title": "Can't get any data from items_by_column_values",
+  "slug": "cant-get-any-data-from-items-by-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2021-11-08T09:12:24.417Z",
+  "lastPostedAt": "2021-11-08T12:08:34.897Z",
+  "postsCount": 10,
+  "excerpt": "Hi :wave: \nI know it has to be something obvious, and that it’s my fault but for the life of me I can’t get items_by_column_values to return any items. I’m using the API explorer and this is my query: \n{\n  items_by_colum&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2052,
+  "posts": [
+    {
+      "id": 68119,
+      "postNumber": 1,
+      "createdAt": "2021-11-08T09:12:24.504Z",
+      "author": "gordan (Gordan)",
+      "cookedHtml": "<p>Hi <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /><br />\nI know it has to be something obvious, and that it’s my fault but for the life of me I can’t get items_by_column_values to return any items. I’m using the API explorer and this is my query:</p>\n<pre><code class=\"lang-auto\">{\n  items_by_column_values(board_id: 266640420, column_id: \"link3\", column_value: \"helpscout\", state: all, column_type: \"link\") {\n    id\n    name\n  }\n}\n</code></pre>\n<p>I’ve checked the board id, and column id and data a hundred times <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /> And that same query on <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> returns tens of items.</p>\n<p>Thank you!</p>\n<p>edit: just to be clear, I’m not getting any errors but an empty data set:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"items_by_column_values\": []\n  },\n  \"account_id\": 4243510\n}\n</code></pre>"
+    },
+    {
+      "id": 68122,
+      "postNumber": 2,
+      "createdAt": "2021-11-08T09:26:29.431Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/gordan\">@gordan</a></p>\n<p>Welcome to the community. What is the column type of column with the id “link3”? If that is a mirror column I am afraid you can’t do a items_by_column_values on a mirror column. Remember that the data does not “live” on that board but somewhere else. Just to make sure it is working as expected you can change the boardId and columnId to the board and column that is actually holding the data.</p>\n<p>Hope this does make sense.</p>"
+    },
+    {
+      "id": 68127,
+      "postNumber": 3,
+      "createdAt": "2021-11-08T09:47:55.230Z",
+      "author": "gordan (Gordan)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a><br />\nthank you for your super fast response</p>\n<p>it’s just a plain link column <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=10\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /> as plain as they get. Visible to everybody.</p>"
+    },
+    {
+      "id": 68129,
+      "postNumber": 4,
+      "createdAt": "2021-11-08T09:58:14.600Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>A link column as in?:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/0/0170b9673f19b6226bb74db7c18186c6e1f7f0e2.png\" alt=\"image\" width=\"269\" height=\"256\" /></p>\n<p>I am able to get the items with an items_by_column_values using the <strong>text to display</strong> part, not by using the <strong>web address</strong>. It looks like this is “by design”.</p>"
+    },
+    {
+      "id": 68132,
+      "postNumber": 5,
+      "createdAt": "2021-11-08T10:29:20.380Z",
+      "author": "gordan (Gordan)",
+      "cookedHtml": "<p>Correct that kind of link.<br />\nI made sure that web address and text to display are the same. Still no luck <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=10\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /></p>\n<p>If I use this<br />\n<code>{ boards (ids: 266640420 ) { items () { id state name column_values { id value } } } }</code></p>\n<p>I get the item I need as the first one and it has this for that link field:</p>\n<pre><code class=\"lang-auto\">   {\n                \"id\": \"link\",\n                \"value\": \"{\\\"url\\\":\\\"https://yehiweb.com/best-free-live-chat-plugins/\\\",\\\"text\\\":\\\"https://yehiweb.com/best-free-live-chat-plugins/\\\"}\"\n              },\n</code></pre>\n<p>but when I search for “yehiweb” I get nothing with  items_by_column_values <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=10\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /></p>"
+    },
+    {
+      "id": 68133,
+      "postNumber": 6,
+      "createdAt": "2021-11-08T10:31:31.374Z",
+      "author": "gordan (Gordan)",
+      "cookedHtml": "<p>I figured it out. It matches exactly full field value <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=10\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /><br />\nThat’s really not usefull. Are there any wildcards available like * or %?</p>"
+    },
+    {
+      "id": 68141,
+      "postNumber": 7,
+      "createdAt": "2021-11-08T11:20:23.998Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I wish it would support wildcards <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=10\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" />. The same is true for searching items by a text column, only full (case sensitive) matches are returned.</p>"
+    },
+    {
+      "id": 68145,
+      "postNumber": 8,
+      "createdAt": "2021-11-08T11:39:19.656Z",
+      "author": "gordan (Gordan)",
+      "cookedHtml": "<p>At least we got to the bottom of it <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /><br />\nThank you so much for your help!</p>"
+    },
+    {
+      "id": 68151,
+      "postNumber": 9,
+      "createdAt": "2021-11-08T12:08:34.897Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/gordan\">@gordan</a>,</p>\n<p>I’m afraid I can only confirm what <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> has mentioned here. Only cases when the value is an exact and case-sensitive match will be returned.</p>\n<p>I agree it would be a massive improvement to the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API to handle wildcards for this query, but in the meantime, I can only recommend querying for all results in the board, and then filtering through the data. Otherwise, if you are sending items to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> via API, you could include some tagging system by using Status columns, for example, to hold the source of the data.</p>\n<p>I hope this helps, and I’m glad Bas was able to shed more light on this.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 68799,
+      "postNumber": 10,
+      "createdAt": "2021-11-15T12:08:40.421Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": 55145,
+  "title": "Counting days using formula column",
+  "slug": "counting-days-using-formula-column",
+  "categoryId": 6,
+  "tagIds": [
+    108,
+    303
+  ],
+  "createdAt": "2023-03-31T14:36:11.158Z",
+  "lastPostedAt": "2023-03-31T18:13:14.728Z",
+  "postsCount": 4,
+  "excerpt": "Our team tracks the recruiting process using Monday.com. One of the metrics we want to track is how long an applicant is in progress. \nI am using the formula column currently to count the number of days between today and&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1470,
+  "posts": [
+    {
+      "id": 122247,
+      "postNumber": 1,
+      "createdAt": "2023-03-31T14:36:11.234Z",
+      "author": "kaylak (Kayla K)",
+      "cookedHtml": "<p>Our team tracks the recruiting process using <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>. One of the metrics we want to track is how long an applicant is in progress.</p>\n<p>I am using the formula column currently to count the number of days between today and the application date. This is working as expected, but the issue we are running into is once a candidate reaches a done phase, the counting continues so we do not have accurate historical data on candidate time in progress.</p>\n<p>The current work around we are using is creating another date column that needs to be filled out when the recruiting process is completed, but the issue with this workaround is we get an error in the cell until the end date is entered. This is an issue because we would like to see the days in progress for active applicants to bring to our attention if an applicant has been waiting longer than anticipated.</p>\n<p>Is it possible to stop counting based on a trigger in the formula column? For example, if status is Offer Extended, stop counting?</p>"
+    },
+    {
+      "id": 122250,
+      "postNumber": 2,
+      "createdAt": "2023-03-31T15:01:35.807Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kaylak\">@kaylak</a> - You could so something like this (I am not clear on the names of your columns but used {Application Date} and {Start Date}).  The first IF() statement checks to ensure the Application Date is filled in otherwise it will show an error.</p>\n<pre><code class=\"lang-auto\">IF({Application Date}&lt;&gt;\"\",IF({Status}=\"Done\",ROUND(DAYS({Start Date},{Application Date}),0),ROUND(DAYS(TODAY(),{Application Date}),0)),\"\")\n</code></pre>\n<p>Hope this helps!<br />\nMark</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/9/9d1d3e457f5459e3b7ca4dcf0f24b619c2e390a1.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://www.greenllamas.com\" target=\"_blank\" rel=\"noopener\">Green Llamas</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://www.greenllamas.com\" target=\"_blank\" rel=\"noopener\">monday.com + Green Llamas</a></h3>\n\n  <p>Green Llamas is here to help you make all your People and Projects Green.  Let us get your herds under control using the monday.com platform.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 122278,
+      "postNumber": 3,
+      "createdAt": "2023-03-31T17:59:17.824Z",
+      "author": "kaylak (Kayla K)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mark.anley\">@mark.anley</a>,</p>\n<p>Thanks so much for your response, this is exactly what I am looking to accomplish.<br />\nI do have one follow up question for you regarding the statuses.<br />\nOur statuses are:<br />\n-Application Review<br />\n-Interviews In Progress<br />\n-Offer Pending<br />\n-Offer Extended<br />\n-Offer Accepted<br />\n-Offer Declined/Unqualified</p>\n<p>The bottom 3 statuses are considered our “Done” statuses - is it possible to identify multiple statuses in the “If” statement?</p>"
+    },
+    {
+      "id": 122280,
+      "postNumber": 4,
+      "createdAt": "2023-03-31T18:13:14.728Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kaylak\">@kaylak</a> - no problem!  This should do it:</p>\n<pre><code class=\"lang-auto\">IF({Application Date}&lt;&gt;\"\",IF(OR({Status}=\"Offer Accepted\",{Status}=\"Offer Extended\",{Status}=\"Offer Declined/Unqualified\"),ROUND(DAYS({Start Date},{Application Date}),0),ROUND(DAYS(TODAY(),{Application Date}),0)),\"\")\n</code></pre>"
+    }
+  ]
+}

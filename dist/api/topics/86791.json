@@ -1,0 +1,49 @@
+{
+  "id": 86791,
+  "title": "Get a list of item views from the API",
+  "slug": "get-a-list-of-item-views-from-the-api",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    107,
+    208,
+    351
+  ],
+  "createdAt": "2024-05-13T16:50:20.425Z",
+  "lastPostedAt": "2024-05-14T16:08:07.875Z",
+  "postsCount": 3,
+  "excerpt": "I can easily get a list of (at least some of) the board views using the API: \n{\n  boards(ids: [&quot;12345&quot;]) {\n    name\n    views {\n      id\n      name\n      type\n    }\n  }\n}\n\nSo I’d presumed that I’d be able to get a list o&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 128,
+  "posts": [
+    {
+      "id": 183654,
+      "postNumber": 1,
+      "createdAt": "2024-05-13T16:50:20.504Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I can easily get a list of (at least some of) the board views using the API:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [\"12345\"]) {\n    name\n    views {\n      id\n      name\n      type\n    }\n  }\n}\n</code></pre>\n<p>So I’d presumed that I’d be able to get a list of the item views in a similar manner:</p>\n<pre><code class=\"lang-auto\">### THIS DOES NOT WORK:\n{\n  boards(ids: [\"12345\"]) {\n    name\n    item_views {\n      id\n      name\n      type\n    }\n  }\n}\n</code></pre>\n<p>As item views only have one <code>settings_str</code> object per board, then likely they would be best placed under boards rather than items.</p>\n<h3><a name=\"p-183654-ideal-structure-1\" class=\"anchor\" href=\"#p-183654-ideal-structure-1\"></a>Ideal structure…</h3>\n<p>I think that the ideal structure would be something along these lines:</p>\n<pre><code class=\"lang-auto\">### THIS IS AN EXAMPLE FOR FEATURE REQUEST PURPOSES\n{\n  boards(ids: [\"12345\"]) {\n    name\n    views {\n      id    # this is the `context.instanceId` from `monday.listen(\"context\", ...)` in a board view\n      name\n      type\n      app { # this would be the `context.app` from `monday.listen(\"context\", ...)` in a board view\n        ...\n      }\n    }\n    item_views {\n      id    # this would be the `context.instanceId` from `monday.listen(\"context\", ...)` in an item view\n      name\n      type\n      app { # this would be the `context.app` from `monday.listen(\"context\", ...)` in an item view\n        ...\n      }\n    }\n  }\n}\n</code></pre>\n<h2><a name=\"p-183654-for-this-request-2\" class=\"anchor\" href=\"#p-183654-for-this-request-2\"></a>For this request:</h2>\n<ul>\n<li>\n<p>Add <code>item_views</code> to <code>boards</code> not <code>items</code></p>\n<ul>\n<li>This allows us to easily build a storage string for an item view along the lines<pre><code class=\"lang-auto\">const key =`app:${appId}:board:${boardId}:item:${itemId}:instance:${instanceId}`\n</code></pre>\n</li>\n<li>This would meant that an automation could perform an action (say on item creation), then based on the <code>boardId</code>, <code>itemId</code> &amp; <code>instanceId</code> of the item view, it could save a configuration value to monday.storage using:<pre><code class=\"lang-auto\">monday.storage.setItem(key, someValue)\n</code></pre>\n…thus configuring a specific item view using only an automation.</li>\n</ul>\n</li>\n<li>\n<p>Add the <code>app</code> to both <code>boards.views</code> and <code>boards.item_views</code></p>\n<ul>\n<li>This means that you can filter by <code>app.id</code> or similar, so that our automation configuration could create a list of available item views based on a shared <code>app.id</code> for an automation and item view in same app</li>\n</ul>\n</li>\n</ul>\n<p>This is a use case for automations that customers are requesting from us <strong>now</strong>.</p>"
+    },
+    {
+      "id": 183821,
+      "postNumber": 2,
+      "createdAt": "2024-05-14T14:22:32.071Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>It’s not possible at the moment – generally our API around board views requires some work! Moving this to the feature requests section.</p>"
+    },
+    {
+      "id": 183837,
+      "postNumber": 3,
+      "createdAt": "2024-05-14T16:08:07.875Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/dipro\">@dipro</a>, I’ve fleshed this out a bit for a feature request.</p>"
+    },
+    {
+      "id": 184068,
+      "postNumber": 4,
+      "createdAt": "2024-05-15T10:01:06.357Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

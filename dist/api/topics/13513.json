@@ -1,0 +1,61 @@
+{
+  "id": 13513,
+  "title": "Usage of sessionToken on the backend",
+  "slug": "usage-of-sessiontoken-on-the-backend",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-11-22T10:13:56.411Z",
+  "lastPostedAt": "2020-11-29T10:08:32.516Z",
+  "postsCount": 6,
+  "excerpt": "Hello! \nThis is my first post here as I just started working on a Monday.com app. \nMy app is a board view. I was able to set up everything, and it works fine on the frontend. \nI have encountered a problem on the backend &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 2448,
+  "posts": [
+    {
+      "id": 34317,
+      "postNumber": 1,
+      "createdAt": "2020-11-22T10:13:56.498Z",
+      "author": "GTG (Grzegorz Tańczyk)",
+      "cookedHtml": "<p>Hello!</p>\n<p>This is my first post here as I just started working on a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> app.</p>\n<p>My app is a board view. I was able to set up everything, and it works fine on the frontend.<br />\nI have encountered a problem on the backend of my app. I’m able to successfully verify user sessionToken(obtained in the browser via <code>await monday.get(\"sessionToken\")</code>, sent to backend, verified on the backend with <code>jwt.verify(sessionToken, '...')</code>).</p>\n<p>Now I would like to make use of <code>monday.api</code> on the backend, and no matter if I’m using <code>monday.setToken</code> or passing <code>token</code> in <code>options</code> to <code>monday.api</code> - I’m getting “<code>Not Authenticated</code>” error.</p>\n<p>I assume I did not understand something, any help/suggestions are appreciated.</p>\n<p>Thanks!!</p>"
+    },
+    {
+      "id": 34513,
+      "postNumber": 2,
+      "createdAt": "2020-11-24T18:53:33.995Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/gtg\">@GTG</a> - welcome to the community!</p>\n<p>Could you let us know what query you’re trying to run, as well as what OAUTH permissions you’ve granted your app?</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 34517,
+      "postNumber": 3,
+      "createdAt": "2020-11-24T19:19:48.365Z",
+      "author": "GTG (Grzegorz Tańczyk)",
+      "cookedHtml": "<p>Thanks for response <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a>.</p>\n<p>This is my query:</p>\n<pre><code class=\"lang-auto\">query {\n      boards (ids: 873111956) {\n        id,\n        permissions,\n        name\n        views (ids: 13749058) {\n          id,\n          name\n          type\n        }\n      }\n    }\n</code></pre>\n<p>OAuth permissions:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/19ac81d04e326d29e224d64b8f0158a0731ad605.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/19ac81d04e326d29e224d64b8f0158a0731ad605_2_413x500.png\" alt=\"image\" width=\"413\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">588×711 54.4 KB</span></div></a></div><p></p>\n<p>The query works fine when I’m using it from my app view iframe.</p>\n<p>The node.js implementation is very simple:</p>\n<pre><code class=\"lang-auto\">  const mondayApi = mondaySdk();\n  mondayApi.setToken(sessionToken);\n  const res = await mondayApi.api(\n    `query {\n      boards (ids: ${boardId}) {\n        id,\n        permissions,\n        name\n        views (ids: ${boardViewId}) {\n          id,\n          name\n          type\n        }\n      }\n    }`,\n    { token: sessionToken }\n  );\n</code></pre>\n<p>sessionToken is 100% valid, or at least it passes the <code>jwt.verify</code> check.</p>"
+    },
+    {
+      "id": 34813,
+      "postNumber": 4,
+      "createdAt": "2020-11-28T21:02:27.923Z",
+      "author": "GTG (Grzegorz Tańczyk)",
+      "cookedHtml": "<p>Few days later I finally understood what was causing my problem <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /><br />\n<code>sessionToken</code> is useless for my case, I need api token, and it can be obtained through Oauth.<br />\nIn my case I need to do that for every user who is accessing my board view. This is rather not great UX <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I converted this observation into a feature request: <a href=\"https://community.monday.com/t/app-installed-webhook/13743\" class=\"inline-onebox\">App installed webhook</a></p>"
+    },
+    {
+      "id": 34826,
+      "postNumber": 5,
+      "createdAt": "2020-11-29T10:08:32.516Z",
+      "author": "PolishedGeek (Polished Geek | Platinum Partner)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/gtg\">@GTG</a> - Good point. This also impacts trying to use license keys for apps. We originally planned to use WHMCS licensing and billing for our app, but had to build Stripe integration because it would just be too cumbersome to ask every user of our app to enter a license key on every board. Hopefully we will see things like this centralized to the Admin App area eventually.</p>"
+    },
+    {
+      "id": 44250,
+      "postNumber": 6,
+      "createdAt": "2021-03-10T14:10:18.661Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

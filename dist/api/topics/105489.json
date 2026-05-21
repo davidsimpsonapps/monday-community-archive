@@ -1,0 +1,73 @@
+{
+  "id": 105489,
+  "title": "Client-Side File Uploads via v2 Endpoint Stopped Working",
+  "slug": "client-side-file-uploads-via-v2-endpoint-stopped-working",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    154,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-12-16T07:55:49.094Z",
+  "lastPostedAt": "2025-01-02T16:17:02.175Z",
+  "postsCount": 4,
+  "excerpt": "Hello! \nMy app, which has been running for a few years, suddenly stopped uploading files. It seems that the upload via the v2/ endpoint stopped working. I have a client-side JavaScript app using fetch. It is a known exam&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 35,
+  "posts": [
+    {
+      "id": 214153,
+      "postNumber": 1,
+      "createdAt": "2024-12-16T07:55:49.178Z",
+      "author": "Rrigor (Goran)",
+      "cookedHtml": "<p>Hello!</p>\n<p>My app, which has been running for a few years, suddenly stopped uploading files. It seems that the upload via the v2/ endpoint stopped working. I have a client-side JavaScript app using fetch. It is a known example from this forum.</p>\n<pre><code class=\"lang-auto\">let query = `mutation add_file($file: File!) {\n                add_file_to_column (item_id: ${itemId}, column_id: \"${columnId}\", file: $file) {id}\n            }`;\n\nconst formData = new FormData();\nformData.append(\"variables[file]\", newFile, newFile.name);\nformData.append(\"query\", query);\n\nlet result = await fetch('https://api.monday.com/v2/', {\n    method: \"POST\",\n    body: formData,\n    headers: {\n        \"Authorization\": \"APIToken\"\n    }\n});\n</code></pre>\n<p>I tried a few things that failed:</p>\n<ol>\n<li>\n<p>v2 endpoint: Monday returns CORS error “error type: cors, status: 500”.</p>\n</li>\n<li>\n<p>v2/file endpoint: I got an error, but not from Monday, “Failed to fetch” and “has been blocked by CORS policy”.</p>\n</li>\n<li>\n<p>via monday.api: It sends a request to the v2/ endpoint. I got a response from Monday, “status_code: 500, error_message: Internal server error”.</p>\n</li>\n</ol>\n<p>Then I tried in Chrome with --disable-web-security:</p>\n<ol>\n<li>\n<p>v2 endpoint: Monday returns error “type: basic, status: 500”.</p>\n</li>\n<li>\n<p>v2/file endpoint: It works, files are uploaded. But of course, because of --disable-web-security, this is not a solution for the app.</p>\n</li>\n<li>\n<p>via monday.api: Monday returns error “error_message: Internal server error, status_code: 500”.</p>\n</li>\n</ol>\n<p>I tried all this in different API versions, and with published versions with uploaded zip code.</p>\n<p>Then I tried POSTMAN:</p>\n<ol>\n<li>\n<p>v2 endpoint, API-version 2024-10: I got “500 Internal Server Error”.</p>\n</li>\n<li>\n<p>v2 endpoint, API-version 2024-07: I got the error “Variable $file of type File! was provided invalid value”, “Expected value to not be null”.</p>\n</li>\n<li>\n<p>v2/file endpoint: File is uploaded!</p>\n</li>\n</ol>\n<p>My conclusion is that Monday disabled the v2 endpoint for uploading files. The v2/file endpoint is working fine, but because of the CORS issue, it cannot be used for client-side upload.</p>\n<p>Maybe someone has the same issue or a solution for how to upload files client-side. I would be very grateful.</p>\n<p>Just to add the monday.api code:</p>\n<pre><code class=\"lang-auto\">let query = `mutation add_file($file: File!) {\n                add_file_to_column (item_id: ${itemId}, column_id: \"${columnId}\", file: $file) {id}\n            }`;\n\nthis._monday.api(query, { variables: { file: newFile } })\n    .then(response =&gt; console.log(response))\n    .catch(error =&gt; console.error(error));\n</code></pre>"
+    },
+    {
+      "id": 214154,
+      "postNumber": 2,
+      "createdAt": "2024-12-16T07:56:34.723Z",
+      "author": "LeeatF (Lee-at )",
+      "cookedHtml": ""
+    },
+    {
+      "id": 214251,
+      "postNumber": 3,
+      "createdAt": "2024-12-16T10:38:24.289Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/r/8c91f0/48.png\" class=\"avatar\" /> Goran:</div>\n<blockquote>\n<p><code>https://api.monday.com/v2/</code></p>\n</blockquote>\n</aside>\n<p>Have you tried changing the URL to <code>https://api.monday.com/v2/file</code>?</p>\n<p>See <a href=\"https://developer.monday.com/api-reference/reference/assets-1#mutations\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Assets (files)</a> in the docs.</p>\n<p>The URL you are using <em>may have</em> recently stopped working</p>"
+    },
+    {
+      "id": 214409,
+      "postNumber": 4,
+      "createdAt": "2024-12-17T16:07:10.554Z",
+      "author": "Rrigor (Goran)",
+      "cookedHtml": "<p>Thanks for the reply.</p>\n<p>Yes, I have tried using the <strong>/v2/file</strong> endpoint as mentioned in the Assets (files) documentation. As I mentioned, the <strong>/v2/files</strong> endpoint is working, but if you have a client-side application like I do, it does not work because of a CORS issue.</p>\n<p>I am hoping that someone can confirm whether Monday has stopped uploading files via the <strong>/v2</strong> endpoint, or if this is some “glitch” on Monday’s side that they are fixing.</p>\n<p>It’s strange that monday.api is still using the <strong>/v2</strong> endpoint for uploading files, which does not work now.</p>\n<p>Regarding the <strong>/v2/files</strong> endpoint, it has this CORS error. I have tried to find some solutions on this forum, but they are old and say that the published build works without the CORS issue (<a href=\"https://community.monday.com/t/cors-issue-when-uploading-file-with-api-v2/9993/12\">cors-issue-when-uploading-file-with-api</a>). Now it does not.</p>"
+    },
+    {
+      "id": 214980,
+      "postNumber": 5,
+      "createdAt": "2024-12-22T08:22:13.651Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 215706,
+      "postNumber": 6,
+      "createdAt": "2025-01-02T16:17:02.175Z",
+      "author": "Rrigor (Goran)",
+      "cookedHtml": "<p>Just to say that I have received an answer from Monday support:</p>\n<aside class=\"quote no-group\">\n<blockquote>\n<p>The <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">monday.com</a> API is mainly designed for server-side use, as it needs specific headers and authentication, which can be tricky to securely set up on the client side.</p>\n<p>Usually, we suggest using the <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">monday.com</a> SDK for most scenarios. However, at the moment, the SDK doesn’t support file uploads.</p>\n<p>As a workaround, the user could set up a backend proxy. their client-side app would then talk to their backend server, which would handle communication with the <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">monday.com</a> API. This should avoid any CORS issues and keep things more secure.</p>\n<p>We will work on adding file upload support to the SDK in the future, but we don’t have an exact ETA just yet.</p>\n</blockquote>\n</aside>\n<p>It would be nice if they put this in the Monday API documentation. I made a server-side solution with the <strong>/v2/file</strong> endpoint that works perfectly. Thanks to support, they were quick and helpful.</p>"
+    },
+    {
+      "id": 215904,
+      "postNumber": 7,
+      "createdAt": "2025-01-05T08:18:58.304Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

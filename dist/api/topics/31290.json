@@ -1,0 +1,67 @@
+{
+  "id": 31290,
+  "title": "Help! How can I create Multiple If statements to create a sum?",
+  "slug": "help-how-can-i-create-multiple-if-statements-to-create-a-sum",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-02-08T17:13:18.825Z",
+  "lastPostedAt": "2022-02-16T09:26:48.152Z",
+  "postsCount": 7,
+  "excerpt": "I’m trying to work out the following formula if a status says a specific word to multiply the time column by 100 then if it says something else times it by 200 etc. Heres the formula I’m trying to use but no sure where I&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2540,
+  "posts": [
+    {
+      "id": 76551,
+      "postNumber": 1,
+      "createdAt": "2022-02-08T17:13:18.900Z",
+      "author": "RuthQ (Ruth)",
+      "cookedHtml": "<p>I’m trying to work out the following formula if a status says a specific word to multiply the time column by 100 then if it says something else times it by 200 etc. Heres the formula I’m trying to use but no sure where I’m going wrong!</p>\n<p>IF(OR({Resource type}=“green”, SUM({Time tracking round up})*400)),IF(OR({Resource type}=“blue”, SUM({Time tracking round up})*200)))</p>"
+    },
+    {
+      "id": 76557,
+      "postNumber": 2,
+      "createdAt": "2022-02-08T18:56:27.535Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ruthq\">@RuthQ</a></p>\n<p>Case is important. But, assuming that your status labels are “green” and not “Green”, this should do what you want:</p>\n<pre><code class=\"lang-auto\">SWITCH({Resource type}, \"green\", {Time tracking round up} * 400, \"blue\", {Time tracking round up} * 200), 0)\n</code></pre>\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/Pij1gADrUJo\">Column Total in monday.com Formulas? YES!!!</a><br />\nCheck out our monday apps, now in beta: <a href=\"https://themondayman.com/apps/\">The Monday Man Apps</a></p>"
+    },
+    {
+      "id": 76602,
+      "postNumber": 3,
+      "createdAt": "2022-02-09T05:48:08.053Z",
+      "author": "RuthQ (Ruth)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/jcorrell/48/10443_2.png\" class=\"avatar\" /> JCorrell:</div>\n<blockquote>\n<p><code>SWITCH({Resource type}, \"green\", {Time tracking round up} * 400, \"blue\", {Time tracking round up} * 200), 0)</code></p>\n</blockquote>\n</aside>\n<p>Hi Jim, Thanks for taking the time to help <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=12\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" width=\"20\" height=\"20\" /></p>\n<p>I used the formula you suggested and it still came back with an illegal formula. I then removed the , 0) at the end and and this worked for the fields that were populated but the ones that weren’t still had an illegal formula. As there were a few more status’ to apply I thought just appending what you  suggested and using “Other”  would do the job. This works for two statuses but not if I want to apply more. Do you have any further suggestions? for example:</p>\n<p>SWITCH({Resource type}, “green”, {Time tracking round up} * 400, “blue”, {Time tracking round up} * 200), “red”, {Time tracking round up} * 100) “Other”, {Time tracking round up} * 0)</p>"
+    },
+    {
+      "id": 76604,
+      "postNumber": 4,
+      "createdAt": "2022-02-09T06:15:57.294Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ruthq\">@RuthQ</a> ,</p>\n<p>imagine SWITCH as follow:</p>\n<pre><code class=\"lang-auto\">SWITCH( \n Resource = {Resource type},\n Case1 = \"green\",\n Solution for Case1 = {Time tracking round up} * 400,\n Case2 = \"blue\",\n Solution for Case2 = {Time tracking round up} * 200),\n Case3 = \"red\",\n Solution for Case3 =  {Time tracking round up} * 100,\n Case4 = \"Other\",\n Solution for Case4 =  {Time tracking round up} * 0\n)\n</code></pre>\n<p>As you can see you can just add more “cases” with their “solutions” to the SWITCH() function.<br />\nFor example:</p>\n<pre><code class=\"lang-auto\"> Case5 = \"yellow\",\n Solution for Case5 =  {Time tracking round up} + 1000\n</code></pre>\n<p>and in terms of empty fields you could add a “solution” to an empty field like so:</p>\n<pre><code class=\"lang-auto\">Case6 = \"\",\nSolution for Case6 = {Time tracking round up} * 0\n</code></pre>\n<p>So your switch would look like this:</p>\n<p><code>SWITCH({Resource type}, \"green\", {Time tracking round up} * 400, \"blue\", {Time tracking round up} * 200, \"\", {Time tracking round up} * 0 )</code></p>\n<p>Or use the default like <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> mentioned (and is probably the better solution, because it covers everything which is not covered in your “cases”), which you can tell by the trailing 0 at the end:</p>\n<p><code>SWITCH({Resource type}, \"green\", {Time tracking round up} * 400, \"blue\", {Time tracking round up} * 200, 0 )</code></p>\n<p>You can always check how the formula fucntions work by hovering the functions in the configuration of the formula:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/f/f827eaec07e84f3f24e792a9075b9d22d5755f05.png\" alt=\"image\" width=\"413\" height=\"479\" /></p>\n<p>Hope I could help.</p>\n<p>Greetings</p>"
+    },
+    {
+      "id": 76605,
+      "postNumber": 5,
+      "createdAt": "2022-02-09T07:06:44.216Z",
+      "author": "RuthQ (Ruth)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/t/bc8723/48.png\" class=\"avatar\" /> TMNXT-Dev:</div>\n<blockquote>\n<p>SWITCH({Resource type}, “green”, {Time tracking round up} * 400, “blue”, {Time tracking round up} * 200, “”, {Time tracking round up} * 0 )</p>\n</blockquote>\n</aside>\n<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>  Thanks for your help, I’ve got it working  <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=12\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 76623,
+      "postNumber": 6,
+      "createdAt": "2022-02-09T09:25:53.903Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ruthq\">@RuthQ</a></p>\n<p>Sorry about that. I usually test stuff like this before posting… But, this one was “easy”… Oh well.</p>\n<p>In my original answer, I missed deleting one of the “)” from your first formula (the one right after the “200”).</p>\n<p>Here it is corrected:</p>\n<pre><code class=\"lang-auto\">SWITCH({Resource type}, \"green\", {Time tracking round up} * 400, \"blue\", {Time tracking round up} * 200, 0)\n</code></pre>\n<p>As written, it will return 0 when {Resource type} is neither “green” nor “blue”.</p>\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/Pij1gADrUJo\">Column Total in monday.com Formulas? YES!!!</a><br />\nCheck out our monday apps, now in beta: <a href=\"https://themondayman.com/apps/\">The Monday Man Apps</a></p>"
+    },
+    {
+      "id": 77399,
+      "postNumber": 7,
+      "createdAt": "2022-02-16T09:26:48.152Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

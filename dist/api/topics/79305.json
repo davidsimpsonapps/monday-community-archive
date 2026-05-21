@@ -1,0 +1,39 @@
+{
+  "id": 79305,
+  "title": "Problem calculating difference in hours between 2 date columns when one of them is empty",
+  "slug": "problem-calculating-difference-in-hours-between-2-date-columns-when-one-of-them-is-empty",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-02-26T08:58:07.876Z",
+  "lastPostedAt": "2024-02-26T10:21:35.585Z",
+  "postsCount": 3,
+  "excerpt": "Hi, \nI am new to monday. Sorry if it is a trivial question but I can’t figure it out. \nI want to calculate the number of hours between 2 dates and it raises an error when one of the 2 dates are empty: \nDAYS({Resolved On}&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 372,
+  "posts": [
+    {
+      "id": 169923,
+      "postNumber": 1,
+      "createdAt": "2024-02-26T08:58:07.954Z",
+      "author": "johnm (John)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I am new to monday. Sorry if it is a trivial question but I can’t figure it out.<br />\nI want to calculate the number of hours between 2 dates and it raises an error when one of the 2 dates are empty:<br />\nDAYS({Resolved On},{Reported On})*24<br />\nI tried If without success…</p>"
+    },
+    {
+      "id": 169939,
+      "postNumber": 2,
+      "createdAt": "2024-02-26T10:04:07.512Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi John,</p>\n<p>Thats a complicated one.</p>\n<p>If you didn’t need the hours, this would give you the answer in days, without any error if one or both dates are empty:</p>\n<pre><code class=\"lang-auto\">DAYS({Resolved On},{Reported On})\n</code></pre>\n<p>The problem starts with you trying to multiply it by 24. Here is the solution:</p>\n<p>When one or both dates are empty, the above function returns nothing, so you need to test for nothing before multiplying by 24.</p>\n<pre><code class=\"lang-auto\">MULTIPLY(IF(DAYS({Resolved On},{Reported On}),DAYS({Resolved On},{Reported On}),0),24)\n</code></pre>\n<p>In this case, you get 0 if one or both dates are not supplied, so if you want the formula cell to remain blank, you need to check the result of the above formula for 0:</p>\n<pre><code class=\"lang-auto\">IF(MULTIPLY(IF(DAYS({Resolved On},{Reported On}),DAYS({Resolved On},{Reported On}),0),24)=0,\"\",MULTIPLY(IF(DAYS({Resolved On},{Reported On}),DAYS({Resolved On},{Reported On}),0),24))\n</code></pre>\n<p> <br />\n </p>\n<hr />\n<p><strong>Curious to know how that same formula would look in the</strong> <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, the 3rd party app that makes it so easy to write formulas, does not use the Formula column but rather can write to any type of columns?</p>\n<p>Since the Advanced Formula Booster does not use the formula column, you would create a <em>Hours passed</em> number column to store the value (which you can then re-use everywhere, contrarily to the formula column).</p>\n<p>Then you would write a formula like this:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/b/2bed93c1c756a195d24b89ed528bcbd3cf8cfe3e.gif\" title=\"2024-02-26_06-56-10\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/b/2bed93c1c756a195d24b89ed528bcbd3cf8cfe3e.gif\" alt=\"2024-02-26_06-56-10\" width=\"690\" height=\"111\" /><div class=\"meta\"><span class=\"filename\">2024-02-26_06-56-10</span><span class=\"informations\">873×141 16.4 KB</span></div></a></div><p></p>\n<p>Formulas in AFB can have up to 100 lines (instructions).</p>\n<ul>\n<li>in the 1st line, we set the target field to “” in case it contains a value (only necessary because of the following 2 lines that might stop the formula).</li>\n<li>in the following 2 lines, we test if both values are empty and we stop the formula if it is the case (no calculation is needed + we already blanked out the column in the 1st line, so we can stop there).</li>\n<li>in the last line, since we already know dates are in the 2 columns, we can perform the calculation.</li>\n</ul>\n<p>This is a good example of why we decided to create the Advanced Formula Booster: so that everyone could write formulas that work. The app has many more advantages…</p>"
+    },
+    {
+      "id": 169942,
+      "postNumber": 3,
+      "createdAt": "2024-02-26T10:21:35.585Z",
+      "author": "johnm (John)",
+      "cookedHtml": "<p>Thanks, Gilles.</p>\n<p>It works. Thanks for being so thorough.</p>"
+    }
+  ]
+}

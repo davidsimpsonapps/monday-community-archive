@@ -1,0 +1,55 @@
+{
+  "id": 76628,
+  "title": "I've found a couple of bugs in API v2024-01",
+  "slug": "ive-found-a-couple-of-bugs-in-api-v2024-01",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    455
+  ],
+  "createdAt": "2024-01-31T09:58:47.808Z",
+  "lastPostedAt": "2024-02-08T12:38:38.381Z",
+  "postsCount": 4,
+  "excerpt": "Hi devs. \nI’ve found a couple of bugs in API v2024-01. \n1. creator is null in items object. \nThe query \n{\n  items(ids: 12345) {\n    creator {\n      name\n    }\n}\n\nreturns &quot;creator&quot;: null. \n2. Despite what’s written in the&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 210,
+  "posts": [
+    {
+      "id": 165099,
+      "postNumber": 1,
+      "createdAt": "2024-01-31T09:58:47.887Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi devs.<br />\nI’ve found a couple of bugs in API v2024-01.</p>\n<p><strong>1. <code>creator</code> is <code>null</code> in <code>items</code> object.</strong></p>\n<p>The query</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 12345) {\n    creator {\n      name\n    }\n}\n</code></pre>\n<p>returns <code>\"creator\": null</code>.</p>\n<p><strong>2. Despite <a href=\"https://developer.monday.com/api-reference/reference/creation-log#reading-the-creation-log-column\">what’s written in the documentation</a>, retrieving the <code>creator</code> in a <code>CreationLogValue</code> rises an error.</strong></p>\n<p>The query</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 12345) {\n   column_values {\n     ... on CreationLogValue {\n        creator {\n          name\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>returns</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"The string did not match the expected pattern.\",\n      \"stack\": \"\"\n    }\n  ]\n}\n</code></pre>\n<p>Can you confirm you are experiencing the same problem?</p>"
+    },
+    {
+      "id": 165127,
+      "postNumber": 2,
+      "createdAt": "2024-01-31T12:30:26.726Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Here is my query:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 123123123) {\n    creator {\n      name\n    }\n    column_values(types: [creation_log]) {\n      ... on CreationLogValue {\n        creator {\n          name\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>and the response:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": \"123123123\",\n        \"creator\": {\n          \"name\": \"Cody F.\"\n        },\n        \"column_values\": [\n          {\n            \"creator\": {\n              \"name\": \"Cody F.\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n</code></pre>\n<p>I am just filtering it by creation_log column type so I don’t get other columns back, but it works without the type filter on columns the same.</p>"
+    },
+    {
+      "id": 165167,
+      "postNumber": 3,
+      "createdAt": "2024-01-31T14:17:43.588Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Based on what Cody said, <a class=\"mention\" href=\"/u/rob\">@rob</a> I think you’re facing an account-level bug. Can you raise it with our team using the API support form?</p>\n<h2><a name=\"p-165167-link-to-formhttpssupportmondaycomhcen-usrequestsnewticket_form_id13855862562962-1\" class=\"anchor\" href=\"#p-165167-link-to-formhttpssupportmondaycomhcen-usrequestsnewticket_form_id13855862562962-1\"></a><a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">Link to form</a></h2>"
+    },
+    {
+      "id": 166729,
+      "postNumber": 4,
+      "createdAt": "2024-02-08T12:38:38.381Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Done. Thank you, <a class=\"mention\" href=\"/u/dipro\">@dipro</a> .</p>"
+    },
+    {
+      "id": 167831,
+      "postNumber": 5,
+      "createdAt": "2024-02-14T13:35:16.764Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": 110726,
+  "title": "Troubleshooting \"Workspace not found\" Error When Creating Docs via API Mutation",
+  "slug": "troubleshooting-workspace-not-found-error-when-creating-docs-via-api-mutation",
+  "categoryId": 6,
+  "tagIds": [
+    358
+  ],
+  "createdAt": "2025-03-02T10:42:31.769Z",
+  "lastPostedAt": "2025-03-05T17:09:31.895Z",
+  "postsCount": 2,
+  "excerpt": "I’m trying to use the create_doc mutation to create a new doc in a specific workspace on Monday.com, but I’m encountering an error: Workspace not found. I’ve confirmed that the workspace_id is correct and matches the wor&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 7,
+  "posts": [
+    {
+      "id": 222870,
+      "postNumber": 1,
+      "createdAt": "2025-03-02T10:42:31.853Z",
+      "author": "Isaachayes (Isaa chayes)",
+      "cookedHtml": "<p>I’m trying to use the <code>create_doc</code> mutation to create a new doc in a specific workspace on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>, but I’m encountering an error: <code>Workspace not found</code>. I’ve confirmed that the <code>workspace_id</code> is correct and matches the workspace where I want the doc to be created. Here’s my mutation:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_doc(location: {workspace: {workspace_id: 12345678, name: \"New Doc\", kind: private}}) {\n    id\n  }\n}\n</code></pre>\n<p>Despite following the steps in the (<a href=\"https://www.concretesrichmondva.com/\" rel=\"noopener nofollow ugc\">site</a><a href=\"https://developer.monday.com/api-reference/reference/docs\" rel=\"noopener nofollow ugc\">.developer.monday.com/api-reference/reference/docs</a>), I still get this error. I’ve also verified that the workspace exists and that I have the appropriate permissions to create docs in it.</p>\n<p>Could there be a problem with the workspace_id format or the workspace’s visibility settings? Is there something I’m missing in the mutation setup? Any help or tips would be greatly appreciated.</p>"
+    },
+    {
+      "id": 223211,
+      "postNumber": 2,
+      "createdAt": "2025-03-05T17:09:31.895Z",
+      "author": "trevor13 (Trevor Chauvin-DeCaro)",
+      "cookedHtml": "<p>It looks like there may be a syntax or formatting issue with your mutation. Here are a few things to check and a revised approach to try.</p>\n<h3><a name=\"p-223211-possible-issues-1\" class=\"anchor\" href=\"#p-223211-possible-issues-1\"></a><strong>Possible Issues:</strong></h3>\n<ol>\n<li><strong>Incorrect <code>workspace_id</code> Structure</strong></li>\n</ol>\n<ul>\n<li>In the <code>create_doc</code> mutation, the <code>workspace_id</code> should be a direct integer value, not nested inside <code>{workspace: {}}</code>.</li>\n<li>Your current structure is likely causing the API to <strong>not recognize the workspace properly</strong>.</li>\n</ul>\n<ol>\n<li><strong>Incorrect Mutation Syntax</strong></li>\n</ol>\n<ul>\n<li>The <code>\"name\"</code> and <code>\"kind\"</code> fields should not be inside the <code>location</code> object. They should be <strong>separate parameters</strong>.</li>\n</ul>\n<ol>\n<li><strong>Visibility Settings</strong></li>\n</ol>\n<ul>\n<li>Ensure that your workspace <strong>is not private or restricted</strong> in a way that prevents API-created documents.</li>\n</ul>\n<ol>\n<li><strong>Check for API Token Permissions</strong></li>\n</ol>\n<ul>\n<li>If your token lacks permissions to create docs in that workspace, you may get this error. <strong>Try creating a doc manually</strong> in the workspace to confirm you have the right access.</li>\n</ul>\n<hr />\n<h3><a name=\"p-223211-corrected-mutation-2\" class=\"anchor\" href=\"#p-223211-corrected-mutation-2\"></a><strong>Corrected Mutation:</strong></h3>\n<p>Try using this version instead:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_doc(\n    name: \"New Doc\",\n    kind: private,\n    location: { workspace_id: 12345678 }\n  ) {\n    id\n  }\n}\n</code></pre>\n<h3><a name=\"p-223211-additional-debugging-steps-3\" class=\"anchor\" href=\"#p-223211-additional-debugging-steps-3\"></a><strong>Additional Debugging Steps:</strong></h3>\n<ul>\n<li><strong>Confirm the workspace_id</strong> by querying your workspaces:</li>\n</ul>\n<pre><code class=\"lang-auto\">query {\n  workspaces {\n    id\n    name\n  }\n}\n</code></pre>\n<ul>\n<li>Make sure the <strong>ID you’re using is correct</strong>.</li>\n<li><strong>Test creating a doc without specifying a workspace</strong> to see if the issue is workspace-related:</li>\n</ul>\n<pre><code class=\"lang-auto\">mutation {\n  create_doc(name: \"Test Doc\", kind: private) {\n    id\n  }\n}\n</code></pre>\n<ul>\n<li>If this works, the problem is likely with how the workspace ID is being referenced.</li>\n</ul>\n<p>Let me know if you’re still running into issues!</p>"
+    }
+  ]
+}

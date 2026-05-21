@@ -1,0 +1,125 @@
+{
+  "id": 3419,
+  "title": "Basic C# API v2 Example",
+  "slug": "basic-c-api-v2-example",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    105,
+    137
+  ],
+  "createdAt": "2019-12-10T20:41:44.945Z",
+  "lastPostedAt": "2021-02-25T12:23:04.615Z",
+  "postsCount": 15,
+  "excerpt": "Hello fellow humans, \nHere’s a basic snippet of C# that let’s you execute queries against the v2 API and return the response as JSON. For some this may be old hat, but it took me a good couple of hours of mucking about -&hellip;",
+  "solvedPostId": null,
+  "likeCount": 9,
+  "views": 14193,
+  "posts": [
+    {
+      "id": 9192,
+      "postNumber": 1,
+      "createdAt": "2019-12-10T20:41:45.078Z",
+      "author": "grt-s (Sam)",
+      "cookedHtml": "<p>Hello fellow humans,</p>\n<p>Here’s a basic snippet of C# that let’s you execute queries against the v2 API and return the response as JSON. For some this may be old hat, but it took me a good couple of hours of mucking about - so hopefully it can save someone else that time in the future!</p>\n<p>For convenience I’ve created a little helper class to encapsulate the call and return;</p>\n<pre><code>using System;\nusing System.Collections.Generic;\nusing System.IO;\nusing System.Net;\nusing System.Threading.Tasks;\n\nnamespace Monday.lib\n{\n\tpublic class MondayHelper\n\t{\n\t\tprivate const string MondayApiKey = \"your-api-key-goes-here\";\n\t\tprivate const string MondayApiUrl = \"https://api.monday.com/v2/\";\n\n\t\t/// &lt;summary&gt;\n\t\t/// Get a JSON response from the Monday.com V2 API.\n\t\t/// &lt;/summary&gt;\n\t\t/// &lt;param name=\"query\"&gt;GraphQL Query to apply to the Monday.com production instance for Grange.&lt;/param&gt;\n\t\t/// &lt;returns&gt;JSON response of query results.&lt;/returns&gt;\n\t\t/// &lt;remarks&gt;\n\t\t/// Query must be in JSON,\n\t\t///\t\te.g. = \"{\\\"query\\\": \\\"{boards(ids: 1234) {id name}}\\\"}\"\n\t\t/// &lt;/remarks&gt;\n\t\tpublic async Task&lt;string&gt; QueryMondayApiV2(string query)\n\t\t{\n\t\t\tbyte[] dataBytes = System.Text.Encoding.UTF8.GetBytes(query);\n\n\t\t\tHttpWebRequest request = (HttpWebRequest)WebRequest.Create(MondayApiUrl);\n\t\t\trequest.ContentType = \"application/json\";\n\t\t\trequest.Method = \"POST\";\n\t\t\trequest.Headers.Add(\"Authorization\", MondayApiKey);\n\n\t\t\tusing (Stream requestBody = request.GetRequestStream())\n\t\t\t{\n\t\t\t\tawait requestBody.WriteAsync(dataBytes, 0, dataBytes.Length);\n\t\t\t}\n\n\t\t\tusing (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())\n\t\t\tusing (Stream stream = response.GetResponseStream())\n\t\t\tusing (StreamReader reader = new StreamReader(stream))\n\t\t\t{\n\t\t\t\treturn await reader.ReadToEndAsync();\n\t\t\t}\n\t\t}\n\t}\n</code></pre>\n<p>You can then use the helper like so;</p>\n<pre><code>var helper = new Monday.lib.MondayHelper();\nstring json = await helper.QueryMondayApiV2(\"{\\\"query\\\": \\\"{boards(limit:1){id name}}\\\"}\");\n</code></pre>\n<p>Which will give you the JSON response string to consume as you will.</p>\n<p><em>Note</em>: you don’t need any Nuget Packages or libraries. The only one I’ve used is Newtonsoft’s JSON just so I didn’t have to hand-serialise/deserialise the JSON going in and returning.</p>"
+    },
+    {
+      "id": 9791,
+      "postNumber": 2,
+      "createdAt": "2019-12-30T19:34:35.765Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Amazing <a class=\"mention\" href=\"/u/grt-s\">@grt-s</a> – thanks so much for sharing!</p>"
+    },
+    {
+      "id": 11891,
+      "postNumber": 3,
+      "createdAt": "2020-02-11T14:27:43.528Z",
+      "author": "taniamm2002 (Tanya)",
+      "cookedHtml": "<p>hey thank you so much!! can you post an example of hwo to update column value .<br />\nfor example when i change the query</p>\n<pre><code>        string query = @\"{\"\"query\"\":\"\"mutation{change_column_value(item_id:456191942, board_id: 454686247, column_id: \"\"numbers\"\", value:\"\"\"\"123456\"\"\"\"){ name}}\"\"}\";       \n</code></pre>\n<p>I got bad  reques and  I think I am not escaping the string properly</p>\n<p>.</p>"
+    },
+    {
+      "id": 11903,
+      "postNumber": 4,
+      "createdAt": "2020-02-11T19:29:48.873Z",
+      "author": "grt-s (Sam)",
+      "cookedHtml": "<p>Given you’re attempting to retain an escaped string in JSON I’d suggest using it’s escape context rather than the C# style. Thus whilst in C# you use a repeated double quote for escape context in a literal string (<code>\"\"</code>) - in JSON you manually escape a double quote with a preceding slash (<code>\\\"</code>). Combining the two will be necessary to get the result you need to achieve.</p>\n<p>Thus rather than this;<br />\n<code>value:\"\"\"\"123456\"\"\"\"</code><br />\nPerhaps instead try something like this;<br />\n<code>value:\\\"\"123456\\\"\"</code><br />\nSince the end result you’re shooting for is (probably) this;<br />\n<code>value:\\\"123456\\\"</code></p>\n<p>You’ll also need to do that for where you’re specifying <em>numbers</em>. Use <code>\\\"\"</code> there as well.</p>\n<p>I haven’t tried this myself but it should give you something to work off.</p>"
+    },
+    {
+      "id": 11947,
+      "postNumber": 5,
+      "createdAt": "2020-02-12T08:49:16.192Z",
+      "author": "taniamm2002 (Tanya)",
+      "cookedHtml": "<p>Thank you so much for your reply - I tried your code, but I am still unable to co change value .  Thank you for your effort</p>"
+    },
+    {
+      "id": 11971,
+      "postNumber": 6,
+      "createdAt": "2020-02-12T13:58:16.453Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Tania, I’m going to reply on your other thread so we can get to the bottom of this.</p>"
+    },
+    {
+      "id": 12070,
+      "postNumber": 7,
+      "createdAt": "2020-02-13T16:53:54.457Z",
+      "author": "SHaddy (Sean Haddy)",
+      "cookedHtml": "<p>I’ve been trying to get this to work with a create item mutation - but nothing I’ve worked to insert “column_values” has worked correctly - my query:</p>\n<p>string query = @“{”“query”“: ““mutation {create_item(board_id: 455625781, item_name: \"“John Doe\"”, column_values: { \"“text8\"”: \"“2182134567\"” } ) { id} }”” }”;</p>\n<p>This works correctly in the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> tooling for creating items, looks correct from a script standpoint - any thoughts on fixing this so I can pass column data in on creation? if I remove the “column_values” segment, the item gets created correctly using the helper class.</p>\n<p>unformatted screen shot:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6768a5566e665c3047aec99924183c7f0669679b.png\" title=\"query string\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/6/6768a5566e665c3047aec99924183c7f0669679b.png\" alt=\"query string\" width=\"690\" height=\"21\" /><div class=\"meta\">\n<span class=\"filename\">query string</span><span class=\"informations\">1069×33 2.27 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 12109,
+      "postNumber": 8,
+      "createdAt": "2020-02-14T02:26:34.011Z",
+      "author": "SHaddy (Sean Haddy)",
+      "cookedHtml": "<p>I messed around with this for quite a bit today - still have not found a solution… this is the working Mutation in the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API window: </p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/a6bb62a77b863c165fd7a0ed40811c496131b6c0.png\" title=\"sampleMutation\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/a/a6bb62a77b863c165fd7a0ed40811c496131b6c0.png\" alt=\"sampleMutation\" width=\"690\" height=\"105\" /><div class=\"meta\">\n<span class=\"filename\">sampleMutation</span><span class=\"informations\">867×132 4.84 KB</span>\n</div></a></div><p></p>\n<p>This is the area that is causing the issue - the column value section, here it is in my code:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/712217773ef3c65272c23a7e6731a9073b2e41d5.png\" title=\"errorArea\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/7/712217773ef3c65272c23a7e6731a9073b2e41d5.png\" alt=\"errorArea\" width=\"690\" height=\"14\" /><div class=\"meta\">\n<span class=\"filename\">errorArea</span><span class=\"informations\">1013×22 5.04 KB</span>\n</div></a></div><p></p>\n<p>If I don’t include it, my query runs fine from my C# code:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/923cad77fef92336a0c80b8ca04f093c0dab20a0.png\" title=\"worksFine\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/923cad77fef92336a0c80b8ca04f093c0dab20a0_2_690x16.png\" alt=\"worksFine\" width=\"690\" height=\"16\" /><div class=\"meta\">\n<span class=\"filename\">worksFine</span><span class=\"informations\">1178×28 5.13 KB</span>\n</div></a></div><p></p>\n<p>(the above works but does not modify any columns)</p>\n<p>I can get this working without the “column values” portion, so the rest is formatted correctly - there’s something wrong with my column values formatting for Monday to understand it… any help would be greatly appreciated.</p>\n<p>Comparison:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/4510785976e472978100678a4c099c43ed2bd7ca.png\" title=\"compareStrings\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/4510785976e472978100678a4c099c43ed2bd7ca_2_690x60.png\" alt=\"compareStrings\" width=\"690\" height=\"60\" /><div class=\"meta\">\n<span class=\"filename\">compareStrings</span><span class=\"informations\">1537×135 17.4 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 12110,
+      "postNumber": 9,
+      "createdAt": "2020-02-14T02:53:25.281Z",
+      "author": "SHaddy (Sean Haddy)",
+      "cookedHtml": "<p>I figured this out - wanted to share here, in case another runs into this issue. My issue with the column values was the escape sequences for the quotes! Since this is a text string that’s meant to be embedded json, it gets a bit nasty.  Here is my final query using the library that is working to add an item, as well as, insert column data in all the columns that I want to:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e1c18459f4ba39c1f68fea5ecdf299b885097e11.png\" title=\"working\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e1c18459f4ba39c1f68fea5ecdf299b885097e11_2_690x28.png\" alt=\"working\" width=\"690\" height=\"28\" /><div class=\"meta\">\n<span class=\"filename\">working</span><span class=\"informations\">1504×62 12.8 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 12122,
+      "postNumber": 10,
+      "createdAt": "2020-02-14T13:16:54.563Z",
+      "author": "taniamm2002 (Tanya)",
+      "cookedHtml": "<p>Thank you so much <a class=\"mention\" href=\"/u/shaddy\">@SHaddy</a>  - can you imagine I have spent a day and a half going crazy with formatting the query string in various way and maybe your working version  was the only one I haven’t tried. Can you share - how you managed to  discover it - you get almost no response from the API why the request fails with bad response.</p>\n<p>I even tried different ways with <a href=\"http://Json.net\" rel=\"noopener nofollow ugc\">Json.net</a> serializing object - in vain.<br />\nThank you so much for sharing.</p>"
+    },
+    {
+      "id": 12126,
+      "postNumber": 11,
+      "createdAt": "2020-02-14T14:23:57.125Z",
+      "author": "SHaddy (Sean Haddy)",
+      "cookedHtml": "<p>Yeah, unfortunately with how Graph is built, it can be prone to giving generic responses - I figured it out by literally trying a ton of different things and working on the formatted string. I kept trying different combinations and reducing the query to know what worked. Once I got a solid positive result, I added a single field update to my query and then the real fun began - trying different formatting for output.</p>\n<p>Once I kept running into a single field update issue - I read some more on the API and noticed the data passed to the standard graph differentiated from the later parameters - this made me start trying different formatting to try and determine what could impact the result set. I ran the data through some json escape sequence builders and modifying from there. After many hours there, I finally came up with a combination that worked - once a single param was built, it was home free from there.</p>\n<p>It really amazes me that the graph system does not have a standard json input option that general json objects can be passed to - it would make it incredibly more simple to interface with.</p>"
+    },
+    {
+      "id": 12130,
+      "postNumber": 12,
+      "createdAt": "2020-02-14T15:29:46.943Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/shaddy\">@SHaddy</a>, thanks for walking us through your approach!</p>\n<p>In your last post you refer to a “Standard JSON input” to pass data in your API call. Could variables do the trick (they let you pass the arguments of your mutation as a JSON object), or do you mean standard JSON input for column values specifically?</p>\n<p>Would love to know more <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 13425,
+      "postNumber": 13,
+      "createdAt": "2020-03-06T08:15:26.080Z",
+      "author": "taniamm2002 (Tanya)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/shaddy\">@SHaddy</a> first so much thanks to your effort and help. I have been trying yesterday when I had time to get rid of this nasty string formatting but it seems that that is the only format monday api accepts, really the only one!</p>\n<p>I  have tried to achieve this query :</p>\n<blockquote>\n<p>var query = @“{ ““query””: ““mutation {create_item(board_id: 12, column_values:\"”{\\\"“text\\\"”:\\\"”” + row.CampaignReference + @“\\\"”}\"“) { id} }”\" }\";</p>\n</blockquote>\n<p>and especially generate the column_values json dynamically but what I have come up with</p>\n<pre><code class=\"lang-auto\">public static string CreateColumnValuesStrng(CampaignStatsusReportRow row)\n        {\n            string builder = string.Empty;\n            dynamic obj = new ExpandoObject();\n            foreach (var property in row.GetType().GetProperties())\n            {\n                switch (property.Name)\n                {\n                    case \"CampaignReference\":\n                        {\n                            var columnname = @\"\\\"\"\" + property.Name+  @\"\\\"\"\";\n                            var columnvalue = @\"\\\"\"\" + row.CampaignReference + @\"\\\"\"\";\n                            ((IDictionary&lt;string, object&gt;)obj)[columnname] =columnvalue;                                  \n                            break;\n                            // more cases\n\n                        }\n                }              \n\n            }\n            var scriptSerializer = new JavaScriptSerializer();\n            return scriptSerializer.Serialize(obj);\n        }\n</code></pre>\n<p>Unfortunately JsonConvert.SerializeObject adds one slash and quote for escaping at the end and beginning of each key value and I cannot achieve the same string format required.  If you can suggest a better way that mine junior developer struggling I would be so grateful.</p>"
+    },
+    {
+      "id": 13441,
+      "postNumber": 14,
+      "createdAt": "2020-03-06T13:46:16.471Z",
+      "author": "SHaddy (Sean Haddy)",
+      "cookedHtml": "<p>Tanya,</p>\n<p>I tried a lot of different work-arounds for inserting the proper escape sequences using available libraries. Unfortunately the built in json values essentially need to be double escaped due to the way Graph is built (not Monday’s fault - but graph should have built out a better way to pass in plain json vs their own proprietary format).</p>\n<p>Now, I’m sure there’s a way to stack multiple escape json sequences in .NET, but this was a small side project for our marketing department, so I didn’t dig deeper. This is the solution I came up with: got the query working in plain format without passed in values, then replaced keywords in the query to finalize the query.</p>\n<p>You could easily fill this out into a method by using an array of values stacked at different positions and loop through those dynamically. Below is a screenshot of my method I created that’s working for this project. Like I said, I kept it simple because we had a specific need for this project - I might dig further on the next time I use the Graph system:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d14008545021a04c1f1633921b12f7cf38278d64.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/d14008545021a04c1f1633921b12f7cf38278d64_2_690x286.png\" alt=\"image\" width=\"690\" height=\"286\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1083×449 108 KB</span>\n</div></a></div><p></p>\n<p>The main thing I think should be noted is, the depth of the escapes on each column value. Also note, I tried various versions of this by inserting parameters into the query itself, but had trouble (because of the escape depth) getting the parameters inserted correctly. I ended up going the replace route, due to this.</p>\n<p>-Sean</p>"
+    },
+    {
+      "id": 42103,
+      "postNumber": 15,
+      "createdAt": "2021-02-25T12:23:04.615Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

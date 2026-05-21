@@ -1,0 +1,53 @@
+{
+  "id": 69932,
+  "title": "How to get data of specific board with all fields?",
+  "slug": "how-to-get-data-of-specific-board-with-all-fields",
+  "categoryId": 58,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-11-03T05:51:19.016Z",
+  "lastPostedAt": "2023-11-04T15:01:17.056Z",
+  "postsCount": 4,
+  "excerpt": "I’m trying to get data of a specific board.  I want data of all fields but as per my understanding I have to add item’s field name. \nBut when I’m trying the below query, I’m facing error \nquery-&gt; { \n“query”: “query { boa&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 166,
+  "posts": [
+    {
+      "id": 151374,
+      "postNumber": 1,
+      "createdAt": "2023-11-03T05:51:19.080Z",
+      "author": "deepmonday (Deepak Choudhary)",
+      "cookedHtml": "<p>I’m trying to get data of a specific board.  I want data of all fields but as per my understanding I have to add item’s field name.<br />\nBut when I’m trying the below query, I’m facing error<br />\nquery-&gt; {<br />\n“query”: “query { boards(ids: [1821199498]) { items { id name email phone} }}”<br />\n}</p>\n<p>error-&gt;  “message”: “Field ‘phone’ doesn’t exist on type ‘Item’”</p>"
+    },
+    {
+      "id": 151424,
+      "postNumber": 2,
+      "createdAt": "2023-11-03T12:38:25.545Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>first, boards{items} is deprecated, you need to use <a href=\"https://developer.monday.com/api-reference/docs/items_page\">Items Page</a> to retrieve items from a board (in API 2023-10 which will be the minimum supported version starting 15 Jan 2024).</p>\n<p>Column values are not individual fields on the item, they are rather entities retrieved in the <code>column_values</code> query on the item.</p>\n<p>The query below, will return the <code>column_values</code> specified by ID - if no ID is specified then all columns are returned.  (See <a href=\"https://support.monday.com/hc/en-us/articles/360000225709-Board-item-column-and-automation-or-integration-ID-s\">board,item,column IDs</a> for how to find them in the UI if specifying directly, and see the API documentation for how to query a board for its column IDs, or send the column ID in a webhook or app action block.)</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 1234567890){\n    items_page (limit: 100) {\n      cursor\n      items {\n        id \n        name \n        column_values(ids: [columnIDs]) {\n             id,type,text,value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 1234567890){\n    items_page (limit: 100) {\n      cursor\n      items {\n        id \n        name \n        column_values {\n             id,type,text,value\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 151582,
+      "postNumber": 3,
+      "createdAt": "2023-11-04T14:49:41.554Z",
+      "author": "deepmonday (Deepak Choudhary)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> Thanks for reply<br />\nBut still don’t get what I want.<br />\nI need the query which gives me all the records with all the field values ​​of Board (ID:1821199498)</p>"
+    },
+    {
+      "id": 151584,
+      "postNumber": 4,
+      "createdAt": "2023-11-04T15:01:17.056Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Then use the second query. This will return the first 100 items, with all of the column values (except mirror/formula columns, mirror columns you can find details in the documentation). If you want to get the next 100 (or up to 500, the max limit you can set) use the <a href=\"https://developer.monday.com/api-reference/docs/items_page#cursor-based-pagination-using-next_items_page\">cursor based pagination</a></p>\n<p>If you want OTHER non-column value fields then specify those per the <a href=\"https://developer.monday.com/api-reference/docs/items#fields\">Items</a> documentation, you can see the field names there.</p>\n<p>In your initial example you specified fields that do not exist - that’s why it failed.  phone is not a field on an item. It would be referencing a column so you must specify <code>column_values{}</code> to return it. Email is a field on an item and is the email address used to send updates to the item by email - it is not a column named Email, which is returned under <code>column_values</code>.</p>\n<p>I won’t type a query with every Item field listed, they are all listed in the documentation I linked to for Items - so reference that. experiment in the playground, it has the schema built in to help see all of the fields and arguments. <a href=\"https://monday.com/developers/v2/try-it-yourself\">API Playground</a></p>"
+    },
+    {
+      "id": 151646,
+      "postNumber": 5,
+      "createdAt": "2023-11-05T12:34:26.110Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

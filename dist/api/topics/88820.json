@@ -1,0 +1,32 @@
+{
+  "id": 88820,
+  "title": "Type mismatch on variable $boardId",
+  "slug": "type-mismatch-on-variable-boardid",
+  "categoryId": 6,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-06-03T09:51:25.484Z",
+  "lastPostedAt": "2024-06-03T11:07:16.374Z",
+  "postsCount": 2,
+  "excerpt": "I am using Monday.Client.v2 in .Net, just trying to fetch board data by calling the following \n _client = new MondayClient(&quot;API_KEY&quot;);\n long boardId = 1514653242;\n var result = await _client.GetBoard(boardId);\n\nbut i got&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 132,
+  "posts": [
+    {
+      "id": 186892,
+      "postNumber": 1,
+      "createdAt": "2024-06-03T09:51:25.557Z",
+      "author": "Fady (Fady Ashraf)",
+      "cookedHtml": "<p>I am using Monday.Client.v2 in .Net, just trying to fetch board data by calling the following</p>\n<pre><code class=\"lang-auto\"> _client = new MondayClient(\"API_KEY\");\n long boardId = 1514653242;\n var result = await _client.GetBoard(boardId);\n</code></pre>\n<p>but i got an error<br />\n“Message”: “Type mismatch on variable $boardId and argument board_id (Int! / ID!)”</p>\n<p>I have checked the implementation for GetBoard(), and here it’s</p>\n<pre><code class=\"lang-auto\">public async Task&lt;Board&gt; GetBoard(long boardId)\n{\n    GraphQLRequest request = new GraphQLRequest\n    {\n        Query = \"query request($id:Int) { boards(ids:[$id]) { id name description board_kind state board_folder_id permissions owner { id name email url photo_original title birthday country_code location time_zone_identifier phone mobile_phone is_guest is_pending enabled created_at } columns { id, title, type, archived settings_str } } }\",\n        Variables = new\n        {\n            id = boardId\n        }\n    };\n    GraphQLResponse&lt;GetBoardsResponse&gt; graphQLResponse = await _graphQlHttpClient.SendQueryAsync&lt;GetBoardsResponse&gt;(request);\n    ThrowResponseErrors(graphQLResponse.Errors);\n    return graphQLResponse.Data.Boards.FirstOrDefault();\n}\n</code></pre>\n<p>i think the error at that type <code>request($id:Int)</code> should be <code>request($id[ID])</code><br />\nbut since it’s library code and i can’t modify it, how can i fix this ?</p>"
+    },
+    {
+      "id": 186907,
+      "postNumber": 2,
+      "createdAt": "2024-06-03T11:07:16.374Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Check you’re using the latest version of the library, if so, open an issue with the library developer.</p>\n<p>Alternatively, fork the library from its source repository, and make necessary changes yourself to update it. Then ideally create a pull request for the library developer to incorporate your changes in the library.</p>\n<p>Lastly of course, you can abandon the library and implement the queries yourself.</p>"
+    }
+  ]
+}

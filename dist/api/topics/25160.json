@@ -1,0 +1,82 @@
+{
+  "id": 25160,
+  "title": "About connect to API via CURL",
+  "slug": "about-connect-to-api-via-curl",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-09-22T06:38:38.142Z",
+  "lastPostedAt": "2021-09-30T06:06:12.259Z",
+  "postsCount": 8,
+  "excerpt": "Hi, \nI am trying to connect via curl but if I do it from the command line I get an error: \ncurl: (60) SSL certificate problem: unable to get local issuer certificate \nusing the same command but in https://reqbin.com/curl &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1724,
+  "posts": [
+    {
+      "id": 64217,
+      "postNumber": 1,
+      "createdAt": "2021-09-22T06:38:38.239Z",
+      "author": "jparada (Javier Parada)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I am trying to connect via curl but if I do it from the command line I get an error:<br />\ncurl: (60) SSL certificate problem: unable to get local issuer certificate</p>\n<p>using the same command but in <a href=\"https://reqbin.com/curl\" rel=\"noopener nofollow ugc\">https://reqbin.com/curl</a> it works perfect, I don’t know much about this topic, can I get some help please?.</p>\n<p>I’m using curl like this</p>\n<p>curl -X POST -H “Content-Type:application/json” -H “Authorization:TOKEN” -d ‘{“query”:“{ boards (ids: xxxxxxxxxx){name views{name}}}”}’ “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”</p>\n<p>if I use -k or --insecure I only get a empty pair of curly braces.</p>\n<p>I appreciate any help.</p>\n<p>Regards,<br />\nJavier</p>"
+    },
+    {
+      "id": 64239,
+      "postNumber": 2,
+      "createdAt": "2021-09-22T08:28:18.882Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jparada\">@jparada</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks for reaching out to us! I see this is your first post as well - my warmest welcome to our community. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I’ve just tried using the same cURL request you’ve provided, and I didn’t face any issues using the API call. Seems like this might be related to cURL using a self-signed certificate by default when you’re trying to send the API call, and it is not recognized correctly.</p>\n<p>From doing some quick reading up on StackOverflow and Medium, it seems like the solution is to update your php.ini file, in case you are making the cURL request through PHP. Here’s what was suggested in Medium:</p>\n<p><a href=\"https://medium.com/@narendravaghela/how-to-fix-curl-error-60-ssl-certificate-problem-80e7dafafa57\" rel=\"noopener nofollow ugc\">Fixing cURL error 60</a></p>\n<p>Let us know if this helps resolve this behavior <img src=\"https://emoji.discourse-cdn.com/apple/face_with_monocle.png?v=12\" title=\":face_with_monocle:\" class=\"emoji\" alt=\":face_with_monocle:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64257,
+      "postNumber": 3,
+      "createdAt": "2021-09-22T11:09:48.991Z",
+      "author": "jparada (Javier Parada)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>\n<p>Thanks for answering, I can solve my reported problem, what I did was the following:</p>\n<p>Download the latest cacert.pem file from <a href=\"https://curl.se/docs/caextract.html\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">curl - Extract CA Certs from Mozilla</a> and set the environment variable</p>\n<p>SET CURL_CA_BUNDLE=/cacert.pem</p>\n<p>with this I solved my problem about the error (60) SSL certificate problem.</p>\n<p>then I had another problem sending the query, receiving a pair of empty braces as a response, then I had to escape the query, change from this:</p>\n<p>‘{“query”:“{ boards (ids: xxxxxx){name views{name}}}”}’</p>\n<p>to this:</p>\n<p>“{\"query\":\"{ boards (ids: xxxxxx){name views{name}}}\"}”</p>\n<p>and now everything works fine.</p>\n<p>This test with cURL has been successful, I also tried to do a test with XMLHttpRequest and I get a 200 ok response code, but I get a response:</p>\n<p>‘{“errors”:[{“message”:“No query string was present”}],“account_id”:xxxxxxx}’</p>\n<p>I have read here in the forum some answers that indicate that the reason for receiving this error is because the query is probably badly formed, with the experience of escaping the cURL statement you think it should be something similar, then try to escape the query with sending using XMLHttpRequest?.</p>\n<p>I appreciate your help and if I need to open a new topic please let me know.</p>\n<p>Regards,<br />\nJavier</p>"
+    },
+    {
+      "id": 64258,
+      "postNumber": 4,
+      "createdAt": "2021-09-22T11:25:41.366Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jparada\">@jparada</a></p>\n<p>Thank you for circling back with me! I’m glad to hear this is working as expected in cURL now.</p>\n<p>Could you please provide the code you are using to send the XMLHttpRequest? It does sounds like something is missing when you format the query, so I’m wondering if we can pinpoint the issue after seeing the code in full context, as this would help us confirm the behavior.</p>\n<p>Thanks so much for your patience and for sharing your solution with the community as well, I’m sure this will help someone in case they run into a similar behavior.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64281,
+      "postNumber": 5,
+      "createdAt": "2021-09-22T13:13:51.562Z",
+      "author": "jparada (Javier Parada)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>\n<p>Basically this is how I’m sending the request</p>\n<p>query = ’ “{”“query”\":\"\"{boards(ids: xxxxxxx){name views{name}}}\"\"}\" ’</p>\n<p>BEGIN SEQUENCE WITH { |o| break(o) }<br />\nxmlhttp:Open( “POST”, cUrl, .F. )\t<br />\nxmlhttp:setRequestHeader( ‘Content-Type’, ‘application/json’ )<br />\nxmlhttp:setRequestHeader( ‘Accept’, ‘application/json’ )<br />\nxmlhttp:setRequestHeader( ‘Authorization’, cAuth )<br />\nxmlhttp:Send( hb_jsonEncode ( query ) )</p>\n<p>? xmlhttp:status<br />\n? cReturn  := hb_ValToExp( xmlhttp:ResponseText )</p>\n<p>RECOVER USING oErr</p>\n<p>? cReturn := “Error!” + hb_eol() + If ( ValType( oErr ) = ‘O’, oErr:Description, oErr )</p>\n<p>END SEQUENCE</p>\n<p>can you see something wrong?</p>\n<p>Regards,<br />\nJavier</p>"
+    },
+    {
+      "id": 64335,
+      "postNumber": 6,
+      "createdAt": "2021-09-22T23:54:56.842Z",
+      "author": "jparada (Javier Parada)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>\n<p>don’t waste your time anymore, I was able to figure it out, it was my fault since I was sending encoded as json.</p>\n<p>I appreciate your help.</p>\n<p>Regards,<br />\nJavier</p>"
+    },
+    {
+      "id": 64345,
+      "postNumber": 7,
+      "createdAt": "2021-09-23T05:53:07.425Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jparada\">@jparada</a></p>\n<p>Oh haha, I was just about to post the same thing <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Glad you were able to figure it out on your own! Thanks for providing the solution to your issue as well, that’s really helpful.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64350,
+      "postNumber": 8,
+      "createdAt": "2021-09-23T06:05:51.653Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 64975,
+      "postNumber": 9,
+      "createdAt": "2021-09-30T06:06:12.259Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

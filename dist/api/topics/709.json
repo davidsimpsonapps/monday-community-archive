@@ -1,0 +1,320 @@
+{
+  "id": 709,
+  "title": "Basic PHP API v2 Example",
+  "slug": "basic-php-api-v2-example",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    105
+  ],
+  "createdAt": "2019-07-11T15:21:23.494Z",
+  "lastPostedAt": "2021-02-11T20:30:36.492Z",
+  "postsCount": 40,
+  "excerpt": "Here’s a basic snippet of PHP that lets me execute queries against the v2 API and return the data as JSON.  I hope it can provide a leg up and save someone time as they get started. \nJust enter your own API key, change t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 10,
+  "views": 22117,
+  "posts": [
+    {
+      "id": 1968,
+      "postNumber": 1,
+      "createdAt": "2019-07-11T15:21:23.574Z",
+      "author": "jsachief (Scott Staples)",
+      "cookedHtml": "<p>Here’s a basic snippet of PHP that lets me execute queries against the v2 API and return the data as JSON.  I hope it can provide a leg up and save someone time as they get started.</p>\n<p>Just enter your own API key, change the URL to match yours, and put in your query.</p>\n<pre><code>$token = '[Personal API Token]';\n$tempUrl = \"https://api.monday.com/v2/\";\n\n$query = '  {\n                users{\n                    id \n                    email\n                    name\n                }\n            }';\n$headers = ['Content-Type: application/json', 'User-Agent: [MYTEAM] GraphQL Client', 'Authorization: ' . $token];\n$data = @file_get_contents($tempUrl, false, stream_context_create([\n    'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        'content' =&gt; json_encode(['query' =&gt; $query]),\n    ]\n]));\n$tempContents = json_decode($data, true);\n</code></pre>"
+    },
+    {
+      "id": 1971,
+      "postNumber": 2,
+      "createdAt": "2019-07-11T15:54:10.980Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jsachief\">@jsachief</a> – this is amazing!</p>\n<p>Thanks for sharing <img src=\"https://emoji.discourse-cdn.com/apple/100.png?v=9\" title=\":100:\" class=\"emoji\" alt=\":100:\" /></p>"
+    },
+    {
+      "id": 3093,
+      "postNumber": 3,
+      "createdAt": "2019-07-27T10:55:45.211Z",
+      "author": "thomasvandenbulcke (Thomas Van den Bulcke)",
+      "cookedHtml": "<p>thanks, I’ve tried to create a board with a group “test” that contains a simple title and a note column (type:text).  I want to add an item with this query below.<br />\nIt works, but it doesn’t add the value in the text column “note”.   the column stays empty… <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>\n<p>$token = ‘[Personal API Token]’;<br />\n$tempUrl = “<a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a>”;</p>\n<p>$query = ’<br />\nmutation {<br />\ncreate_item (board_id: xxxxxxxxx, group_id: “test”, item_name: “new item”, column_values: “{\"note\": \"a easy text here\"}” ) {<br />\nid<br />\n}<br />\n}<br />\n';</p>\n<p>$headers = [‘Content-Type: application/json’, ‘User-Agent: [MYTEAM] GraphQL Client’, 'Authorization: ’ . $token];<br />\n$data = <span class=\"mention\">@file_get_contents</span>($tempUrl, false, stream_context_create([<br />\n‘http’ =&gt; [<br />\n‘method’ =&gt; ‘POST’,<br />\n‘header’ =&gt; $headers,<br />\n‘content’ =&gt; json_encode([‘query’ =&gt; $query]),<br />\n]<br />\n]));<br />\n$tempContents = json_decode($data, true);</p>"
+    },
+    {
+      "id": 3108,
+      "postNumber": 4,
+      "createdAt": "2019-07-28T07:49:13.896Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/thomasvandenbulcke\">@thomasvandenbulcke</a>,<br />\nfirst of all, lets make sure that you have the correct column id for the notes column.<br />\nyou can try out this query via our GraphiQL try it yourself interface to see all columns of that board:</p>\n<pre><code>query{\n  boards (ids: xxxxxxxxx){\n    columns{\n      id\n      title\n      type\n    }\n  }\n}\n</code></pre>\n<p>now that you are sure you have the correct column ID lets look at the mutation itself.<br />\nsince the column values are a string inside a string they need to be escaped, like so:<br />\n<code>column_values: \"{\\\"note\\\": \\\"a easy text here\\\"}\"</code></p>\n<p>let us know if it worked <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 4401,
+      "postNumber": 5,
+      "createdAt": "2019-08-12T22:02:04.563Z",
+      "author": "renow (Frank R.)",
+      "cookedHtml": "<p>I have used this Code to create a pulse/item and change columns values in a board.  It works well. I am working on moving changing the code from the API v1 to API v2.  In v1 when I create a new pulse/item in a group it places the new pulse/item at the top of the group.</p>\n<p>I noticed with v2 it places the pulse/item at the bottom of the group.  Is there anyway to make a new pulse/item go to the top like it does with v1?</p>"
+    },
+    {
+      "id": 4461,
+      "postNumber": 6,
+      "createdAt": "2019-08-13T11:12:14.608Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/renow\">@renow</a>,<br />\nCurrently it is not possible to add a new item to the top of the group.<br />\nAPI v2 works similar to the way you add items in the monday platform using the “New” button or the empty item row marked “+Add”.</p>"
+    },
+    {
+      "id": 4483,
+      "postNumber": 8,
+      "createdAt": "2019-08-13T18:56:46.257Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>i copied the code “as is” , only replaced token and MYTEAM text, but it does not work for me . I do not know where a mistake is</p>"
+    },
+    {
+      "id": 4507,
+      "postNumber": 9,
+      "createdAt": "2019-08-14T07:35:15.534Z",
+      "author": "renow (Frank R.)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ayelet\">@Ayelet</a><br />\nThanks for the response. I have another question.  How do I insert variables in this code? I would like to pass $_POST data from a web form to this code so it can dynamically add the value to the column with the variable $columnValue. How do I go about doing this?</p>\n<p>$token = ‘[Personal API Token]’;<br />\n$tempUrl = “<a href=\"https://api.monday.com/v2/%E2%80%9D\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/”</a>;</p>\n<p>//Place a Web form Name field value into a variable to add to a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> column<br />\n$$columnValue = $_POST[‘name’];</p>\n<p>$query = ’<br />\nmutation {<br />\ncreate_item (board_id: xxxxxxxxx, group_id: “test”, item_name: “new item”, column_values: “{“Name”: “$columnValue”}” ) {<br />\nid<br />\n}<br />\n}<br />\n';</p>\n<p>$headers = [‘Content-Type: application/json’, ‘User-Agent: [MYTEAM] GraphQL Client’, 'Authorization: ’ . $token];<br />\n$data = <span class=\"mention\">@file_get_contents</span>($tempUrl, false, stream_context_create([<br />\n‘http’ =&gt; [<br />\n‘method’ =&gt; ‘POST’,<br />\n‘header’ =&gt; $headers,<br />\n‘content’ =&gt; json_encode([‘query’ =&gt; $query]),<br />\n]<br />\n]));<br />\n$tempContents = json_decode($data, true);</p>"
+    },
+    {
+      "id": 4546,
+      "postNumber": 10,
+      "createdAt": "2019-08-14T15:53:28.569Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/renow\">@renow</a>!</p>\n<p>You can dynamically update variables by including references to variables in your query and then passing the actual data for these  variables in another “variables” JSON string in the request body. For example, this request would let you dynamically populate the board ID, item name, and columns in a mutation.</p>\n<p><em>Query string (“query” value in request body)</em></p>\n<pre><code>mutation ($board: Int!, $name: String!, $column: JSON!) { \n  create_item( board_id: $board, item_name: $name, column_values:$column) { \n    id \n    column_values { \n      id \n      value \n    } \n  } \n} \n</code></pre>\n<p><em>Variables (“variables” value in request body)</em></p>\n<pre><code>{\"board\": 139415582, \n\"name\": \"Hello world\", \n\"column\" : \"{\\\"status\\\" : {\\\"index\\\" : 5}}\"\n} \n</code></pre>\n<p>For more context, the GraphQL website has a great introduction to this: <a href=\"https://graphql.org/learn/queries/#variables\">https://graphql.org/learn/queries/#variables</a></p>"
+    },
+    {
+      "id": 4547,
+      "postNumber": 11,
+      "createdAt": "2019-08-14T15:54:07.545Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Alex, what error are you receiving?</p>"
+    },
+    {
+      "id": 4549,
+      "postNumber": 12,
+      "createdAt": "2019-08-14T16:32:21.865Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>Hi Dipro, thanks for coming back . I am new in php and have a feeling that have made some basic mistake, here is my code:</p>\n&lt;?php\n\n\t$token = '[    here is my token  ]';\n$tempUrl = 'https://api.monday.com/v2/';\n\n$query='\t\t\nmutation {\ncreate_item (board_id: 231718005, item_name: \"new ABC customer\", column_values: \"{\\\"note\\\": \\\"test text \\\"}\" ) \n  { id \n}\n}\t\n'\n\t;\t\n\t\t\t\t\n$headers = ['Content-Type: application/json', 'User-Agent: [whatpresents] GraphQL Client', 'Authorization:' . $token];\n\t\t\n$data = @file_get_contents($tempUrl, false, stream_context_create([\n    'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        'content' =&gt; json_encode(['query' =&gt; $query]),\n    ] \n])); \n$tempContents = json_decode($data, true);\n\n?&gt;\n<p>mutation snippet works fine through “…/v2/try-it-yourself” page.</p>"
+    },
+    {
+      "id": 4559,
+      "postNumber": 13,
+      "createdAt": "2019-08-14T19:10:15.784Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/alextop\">@alextop</a> – are you using “https://[whatpresents].monday.com/v2” as the URL, or is this dummy data? This is not a valid URL, I’d suggest using <a href=\"https://api.monday.com/v2\">https://api.monday.com/v2</a> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 4609,
+      "postNumber": 14,
+      "createdAt": "2019-08-15T16:07:26.886Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>thanks !<br />\ni have replaced the url but is is something else (</p>"
+    },
+    {
+      "id": 4665,
+      "postNumber": 15,
+      "createdAt": "2019-08-16T15:00:46.667Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Are you receiving an error from our server? If you are, it indicates your query isn’t formatted correctly and I can help you figure out what the problem with it is.</p>\n<p>If your code isn’t sending a request to our server at all, that means there’s an issue with your code (as opposed to the query). I’m not super familiar with PHP and can’t really help you debug syntax errors.</p>\n<p>To figure out if the issue is with your query or the code itself, let’s try a simple query first (before moving to a mutation). Can you try the code below and let me know if it works?</p>\n<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/j/ecc23a/48.png\" class=\"avatar\" /> jsachief:</div>\n<blockquote>\n<p>$token = ‘[Personal API Token]’; $tempUrl = “https://[MYTEAM].monday.com/v2/”; $query = ’ { users{ id email name } }'; $headers = [‘Content-Type: application/json’, ‘User-Agent: [MYTEAM] GraphQL Client’, 'Authorization: ’ . $token]; $data = <span class=\"mention\">@file_get_contents</span>($tempUrl, false, stream_context_create([ ‘http’ =&gt; [ ‘method’ =&gt; ‘POST’, ‘header’ =&gt; $headers, ‘content’ =&gt; json_encode([‘query’ =&gt; $query]), ] ])); $tempContents = json_decode($data, true);</p>\n</blockquote>\n</aside>"
+    },
+    {
+      "id": 4666,
+      "postNumber": 16,
+      "createdAt": "2019-08-16T15:02:13.361Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Ah <a class=\"mention\" href=\"/u/alextop\">@alextop</a> – did you fix your code, as per <a href=\"https://community.monday.com/t/create-pulse-isuue/1686/3\">this message</a>?</p>\n<p>Can you tell me what was wrong?</p>"
+    },
+    {
+      "id": 4678,
+      "postNumber": 17,
+      "createdAt": "2019-08-16T19:09:19.398Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>Hi Dipro,<br />\nyes I have fixed , the reason was that I missed  CURLOPT_HTTPHEADER information.<br />\nI have another question. When I create a new item and populate columns, I can fill the cells with Text type, but not with Long Text format.  IDs of columns are correct (taken from query). Has someone complained on similar issue with Long Text format ?</p>"
+    },
+    {
+      "id": 4679,
+      "postNumber": 18,
+      "createdAt": "2019-08-16T22:06:56.254Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Oh nice!</p>\n<p>The long text column has a different structure as the text column – check our documentation at <a href=\"http://developers.monday.com\">developers.monday.com</a> for a full example.</p>\n<p>Cheers!<br />\nDipro</p>"
+    },
+    {
+      "id": 4683,
+      "postNumber": 19,
+      "createdAt": "2019-08-17T05:53:21.450Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>hi Dipro,<br />\ni have found and fixed. Thanks a lot for your support !<br />\nCheers,<br />\nAlex</p>"
+    },
+    {
+      "id": 4718,
+      "postNumber": 20,
+      "createdAt": "2019-08-18T19:31:08.599Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>mutation ($name: String!)    {<br />\ncreate_item ( board_id: 201725833, group_id: “lost”,<br />\nitem_name: $name,<br />\ncolumn_values:<br />\n“{<br />\n“text7”:“NY” ,<br />\n“numbers60”:“2” ,<br />\n“delivery_address”:{“text”:“address text is here”} ,<br />\n“email”:{“email”:“test@test.com”,“text”:“test@test.com”}<br />\n}”<br />\n) { id } }</p>\n<p>{<br />\n“name” : “new user”<br />\n}</p>\n<p>Hello,<br />\nthe code works fine with constant “item_name” (like:  item_name: “superuser”.  However, once i declare variable $name, (the code is above) i got parse error. What am I doing wrong with variables value, or something else ?</p>"
+    },
+    {
+      "id": 4767,
+      "postNumber": 21,
+      "createdAt": "2019-08-19T12:59:48.872Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Alex! The query structure looks correct. Are you sending the variables as a variables value in your HTTP request?</p>\n<p>Your request’s body should look like this:<br />\n{ “query” : [your query here],<br />\n“variables” : [your variables here] }</p>"
+    },
+    {
+      "id": 4785,
+      "postNumber": 22,
+      "createdAt": "2019-08-20T07:09:11.976Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>Hi Dipro, thank you for your help.<br />\ni  understand now where my mistake is: I put my variables in wrong place.<br />\nCheers,<br />\nAlex</p>"
+    },
+    {
+      "id": 6298,
+      "postNumber": 23,
+      "createdAt": "2019-09-23T07:20:07.347Z",
+      "author": "Stephen (Stephen)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I am trying to create a page that would insert a new pulse on one of our boards. The above threads really helped and I was able to create a pulse with one column, however, when I am trying to insert data in each column I am getting a Parse error on \" : \" (STRING).</p>\n<p>This is what I’m trying to run:</p>\n&lt;?php\n$token = '[MY TOKEN]';\n$tempUrl = \"https://api.monday.com/v2/\";\n\n$name = \"John\";\n$trainer = \"Jeff\";\n\n$query = ' mutation{\n                create_item(board_id: xxxxxxx, group_id: \"Active\", item_name: \"' . $name . '\", column_values: \"{\"Trainer\" : \"' .  $trainer . '\", \"Location\" : \"London\", \"Course\" : \"After Effects\"}\"){\n                   \t\tid\n\t\t\t\t\t\t\n\t\t\t\t\t}\n                       }\n            ';\n$headers = ['Content-Type: application/json', 'User-Agent: [MY TEAM] GraphQL Client', 'Authorization: ' . $token];\n$data = @file_get_contents($tempUrl, false, stream_context_create([\n    'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        'content' =&gt; json_encode(['query' =&gt; $query]),\n    ]\n]));\n$tempContents = json_decode($data, true);\n\nprint_r($tempContents);\n\n?&gt;\n<p>Appreciate any help I can get guys !!</p>\n<p>Thanks,</p>"
+    },
+    {
+      "id": 8386,
+      "postNumber": 24,
+      "createdAt": "2019-11-15T19:37:10.849Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/stephen\">@Stephen</a>, sorry for the late response here we just saw this.</p>\n<p>Were you able to get your code working?</p>\n<p>I suspect the issue here is that you are sending strings inside the JSON string without escaping them. I would suggest sending the column values in a format like so: <code>column_values : \"{\\\"text\\\" : \\\"hello world\\\"}\"</code></p>\n<p>Let me know if that works.</p>"
+    },
+    {
+      "id": 8483,
+      "postNumber": 25,
+      "createdAt": "2019-11-20T09:41:18.676Z",
+      "author": "Stephen (Stephen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>,</p>\n<p>Yes, we were able to get it to work <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Thanks for the follow up, I appreciate it.</p>"
+    },
+    {
+      "id": 9693,
+      "postNumber": 26,
+      "createdAt": "2019-12-27T15:05:14.807Z",
+      "author": "john.watson (John Watson)",
+      "cookedHtml": "<p>Newbie here!  I want to use basically this same HEADER you have to create an API Connector in DOMO.  But my authentication fails, even though I know the username and password is correct.</p>\n<p>my code looks like this:  (encodedData is the actual username and password)</p>\n<p><em>httprequest.addHeader(‘User-Agent: [MYTEAM] GraphQL Client’, ‘Authorization:[MYToken]’, 'Basic ’ +  encodedData);</em><br />\n<em>var res = httprequest.get(‘https://[MYTEAM].monday.com/v2/’);</em></p>\n<p>I tried with and without including the “Content Type” parameter.<br />\nWhat is the best way of seeing where I am going wrong?  I have zero API experience and any suggestions would be appreciated.  Thanks!</p>"
+    },
+    {
+      "id": 9775,
+      "postNumber": 27,
+      "createdAt": "2019-12-30T17:38:40.637Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey John!</p>\n<p>I see a couple of problems in your code.</p>\n<h3><a name=\"p-9775-authentication-1\" class=\"anchor\" href=\"#p-9775-authentication-1\"></a>Authentication</h3>\n<p>Our API uses token-based auth, which is slightly different from Basic auth. Looks like you’re using both in your code… <img src=\"https://emoji.discourse-cdn.com/apple/crystal_ball.png?v=15\" title=\":crystal_ball:\" class=\"emoji\" alt=\":crystal_ball:\" width=\"20\" height=\"20\" /></p>\n<p>I’d suggest removing that third header (<code>Basic + encodedData</code>) because Basic not needed to access our API.</p>\n<h2><a name=\"p-9775-request-format-and-verb-2\" class=\"anchor\" href=\"#p-9775-request-format-and-verb-2\"></a>Request Format and Verb</h2>\n<p>All requests to our API should be POST requests, with a “query” parameter sent in the body. Check out this article for a quick introduction: <a href=\"https://support.monday.com/hc/en-us/articles/360005144659-Does-monday-com-have-an-API-?abcb=8536\">https://support.monday.com/hc/en-us/articles/360005144659-Does-monday-com-have-an-API-?abcb=8536</a></p>\n<p>Let me know if that helps!</p>"
+    },
+    {
+      "id": 9787,
+      "postNumber": 28,
+      "createdAt": "2019-12-30T18:43:04.000Z",
+      "author": "john.watson (John Watson)",
+      "cookedHtml": "<p>Thank you for the suggestion.<br />\nI removed that header and changed the authentication type to “API Key”.</p>\n<p>But I still make it to the “ELSE” portion below:</p>\n<p>if(res.indexOf(‘Account.Name’) &gt; 0){<br />\nauth.authenticationSuccess();<br />\n} else {<br />\nauth.authenticationFailed(‘user/password incorrect’);<br />\n}</p>\n<p>I am attempting to contact DOMO too, but their third party connector person must be out for the holidays.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 9814,
+      "postNumber": 29,
+      "createdAt": "2019-12-31T15:33:04.777Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Do let us know what Domo says! Happy to help further once you hear from them.</p>"
+    },
+    {
+      "id": 9815,
+      "postNumber": 30,
+      "createdAt": "2019-12-31T15:54:55.000Z",
+      "author": "john.watson (John Watson)",
+      "cookedHtml": "<p>It turns out that the connection was successful - but my code for checking the return value was incorrect.<br />\nSince this is an API connection there is no username/password sent.</p>\n<p>So when I check this:</p>\n<p><strong>if(res.indexOf(‘Account.Name’) &gt; 0)</strong></p>\n<p>it will always return zero.</p>\n<p>Instead, I need to check this:</p>\n<p><strong>httprequest.getStatusCode() == 200)</strong></p>\n<p>Now I just need to figure out how to write my query.</p>\n<p>This works in the Monday developer site:</p>\n<p><strong>query {<br />\nboards () {<br />\nname<br />\nstate<br />\nboard_folder_id<br />\nowner {<br />\nid<br />\nname<br />\n}<br />\n}<br />\n}</strong></p>\n<p>But the DOMO Connector Builder does not like the format.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 9990,
+      "postNumber": 31,
+      "createdAt": "2020-01-07T15:21:42.000Z",
+      "author": "john.watson (John Watson)",
+      "cookedHtml": "<p>I made some progress but I have another question.<br />\nWhen I want to loop thru all of the Boards, I have a ‘for next’ loop with the upper limit of ‘Boards.Length’</p>\n<p>I also need to grab all of the Items and Groups - but they don’t have that ‘Length’ property (or a count)</p>\n<p>Do you have any documentation I can look at to figure that out?</p>\n<p>I was looking here:  <a href=\"https://monday.com/developers/v2#queries-section\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#queries-section</a></p>\n<p>But that does not even show the Boards.Length (even though I am currently using it!)</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 13539,
+      "postNumber": 32,
+      "createdAt": "2020-03-08T11:39:35.398Z",
+      "author": "tburks2392 (Timothy Burks)",
+      "cookedHtml": "<p>I’m a little new to API and <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">Monday.com</a> as well. I am building an Administrative Dashboard for my employees and we use <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">Monday.com</a> heavily for our Project &amp; Estimation Planning and Tracking. I would like to create a table view of the Projects I have listed in a board on <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">Monday.com</a> to a back-end dashboard.</p>\n<p>I currently use the following coding languages and infrastructures:<br />\nPHP 7.3<br />\nCodeigniter 3.10<br />\nCI Bonfire 1.8</p>\n<p>At this time, I am simply trying to figure out how to display all information for each item in a row (using PHP) to create a table view for my technicians in their Admin Dashboard of my website.</p>\n<p>Can someone assist me with the proper query? I’ve tested multiple ways in the Try It Yourself Section to no avail.</p>"
+    },
+    {
+      "id": 15944,
+      "postNumber": 33,
+      "createdAt": "2020-04-15T11:36:34.966Z",
+      "author": "gmrstudios (GMR)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tburks2392\">@tburks2392</a></p>\n<p>I use the following which will produce an array for you to do whatever you see fit:</p>\n<pre><code>&lt;?php\n$token = 'YOURTOKEN';\n$tempUrl = \"https://api.monday.com/v2/\";\n\n$query = 'query {\nboards (ids: NUMERICBOARDID) {\ngroups (ids: group_title) {\n    items {\n      id\n      name\n      column_values {\n        id\n        text\n        title\n      }\n    }\n  }\n}\n}';\n$headers = ['Content-Type: application/json', 'User-Agent: [MYTEAM] GraphQL Client', 'Authorization: ' . $token];\n$data = @file_get_contents($tempUrl, false, stream_context_create([\n    'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        'content' =&gt; json_encode(['query' =&gt; $query]),\n    ]\n]));\n$tempContents = json_decode($data, true);\n</code></pre>\n<p>If you just want the whole board and don’t care about a specific group use the following query:</p>\n<pre><code>query {\nboards (ids: 007007007) {\n    items {\n      id\n      name\n      column_values {\n        id\n        text\n        title\n      }\n    }\n  }\n}</code></pre>"
+    },
+    {
+      "id": 16641,
+      "postNumber": 34,
+      "createdAt": "2020-04-24T14:06:56.263Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey y’all, we just released a PHP API quickstart! It will go through making API calls as well as a little bit about our GraphQL schema <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Here it is: <a href=\"https://support.monday.com/hc/en-us/articles/360013465659\">PHP Quickstart</a></p>"
+    },
+    {
+      "id": 21104,
+      "postNumber": 35,
+      "createdAt": "2020-06-29T03:39:21.665Z",
+      "author": "sim (sim)",
+      "cookedHtml": "<p>Hi, I am very new to the API implementation and sorry for my poor english.<br />\nI copy the code of  <a href=\"https://support.monday.com/hc/en-us/articles/360013465659\" rel=\"noopener nofollow ugc\">PHP Quickstart - <strong>Making your first API call</strong> </a> and replace with my own API v2 Token  , however it returns “null” value.<br />\nI not sure which part is wrong ,please help me.  <img src=\"https://emoji.discourse-cdn.com/apple/persevere.png?v=12\" title=\":persevere:\" class=\"emoji\" alt=\":persevere:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 21124,
+      "postNumber": 36,
+      "createdAt": "2020-06-29T04:11:41.269Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sim\">@sim</a>,</p>\n<p>Have you copied the first example from the link?</p>\n<p>Which environment are you using to make the API call?</p>\n<p>Are you able to share some screenshots with us?</p>"
+    },
+    {
+      "id": 21125,
+      "postNumber": 37,
+      "createdAt": "2020-06-29T04:25:15.545Z",
+      "author": "sim (sim)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a>,  basically I just copied the example and replace it with API v2 Token copied from Admin panel.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/54cfeed3363ad1c9181f637bd82c84d2be6daa28.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/5/54cfeed3363ad1c9181f637bd82c84d2be6daa28.png\" alt=\"image\" width=\"690\" height=\"198\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1244×358 18.8 KB</span>\n</div></a></div><p></p>\n<p>I test run the code on localhost and this it the output :<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/c/cb09b32257543722cefae32a93098f83ea395441.png\" alt=\"image\" width=\"540\" height=\"136\" /></p>\n<p>In addition, i copied the API v2 token and tried it on <a href=\"https://monday.com/developers/v2/try-it-yourself\" rel=\"noopener nofollow ugc\">Developers</a> tools,  it shows “Internal server error” .</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0bea3c2f5df5b0a00894ceeeb79cf90302b83b0e.png\" title=\"2020-06-29_15-22-42\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0bea3c2f5df5b0a00894ceeeb79cf90302b83b0e_2_690x125.png\" alt=\"2020-06-29_15-22-42\" width=\"690\" height=\"125\" /><div class=\"meta\">\n<span class=\"filename\">2020-06-29_15-22-42</span><span class=\"informations\">1893×345 40.9 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 21127,
+      "postNumber": 38,
+      "createdAt": "2020-06-29T04:42:28.753Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Remove the <code>@</code> before <code>file_get_contents</code> function.<br />\nThat prevents any error from showing.<br />\nYou should be able to see what’s wrong.</p>"
+    },
+    {
+      "id": 21128,
+      "postNumber": 39,
+      "createdAt": "2020-06-29T04:43:28.043Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sim\">@sim</a>,</p>\n<p>It looks like your query is incorrect.</p>\n<p>It looks like you are missing the ‘boards’ keyword in the query before you provide the variables to the function.</p>\n<p>If you restructure your query to be the below:<br />\n<code>$query = '{ boards(ids: [1,2,3,], limit:100) { name id items { name column_values{id type text } } } }';</code><br />\nYou should have a valid query.</p>\n<p>You can test this in GraphiQL.</p>\n<p>One other note that I will make, you probably is that if you are submitting the ids variable, you probably don’t need the limit variable as well given this will restrict the number of responses anyway</p>"
+    },
+    {
+      "id": 21129,
+      "postNumber": 40,
+      "createdAt": "2020-06-29T05:50:20.218Z",
+      "author": "sim (sim)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rob\">@rob</a> and <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> , after remove the @ , the error message is “SSL operation failed with code 1. OpenSSL Error messages: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed”<br />\nIt turns out that the I did not add CA certs into my php.ini file and the problem is solved.<br />\nYou saved my days, thank you very much .  <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=9\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=9\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" /></p>"
+    },
+    {
+      "id": 25983,
+      "postNumber": 42,
+      "createdAt": "2020-08-19T16:28:53.866Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 25984,
+      "postNumber": 43,
+      "createdAt": "2020-08-19T16:28:56.531Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 40531,
+      "postNumber": 44,
+      "createdAt": "2021-02-11T20:30:19.470Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 40532,
+      "postNumber": 45,
+      "createdAt": "2021-02-11T20:30:36.492Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

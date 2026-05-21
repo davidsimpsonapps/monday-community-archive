@@ -1,0 +1,46 @@
+{
+  "id": 47015,
+  "title": "IF conditions & Date Calculation Formula",
+  "slug": "if-conditions-date-calculation-formula",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-12-07T09:41:15.321Z",
+  "lastPostedAt": "2022-12-09T14:45:59.002Z",
+  "postsCount": 4,
+  "excerpt": "Hi all, \nTwo different scenarios, very simple but I could not manage to get them working :frowning: \nFirst is, \nI am trying to create a formula where it’s supposed to calculate the days between 12/31/2022 and certain col&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1619,
+  "posts": [
+    {
+      "id": 106542,
+      "postNumber": 1,
+      "createdAt": "2022-12-07T09:41:15.396Z",
+      "author": "thekid (Cemre Coban)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>Two different scenarios, very simple but I could not manage to get them working <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>\n<p>First is,<br />\nI am trying to create a formula where it’s supposed to calculate the days between 12/31/2022 and certain column, then divide it to 30 to take months, then multiply the result with two other columns and round the result and reflect it to the respective row.</p>\n<p>Now I have added a condition to apply a rule where it should check if the result of the above mentioned equation is less than zero or not and reflect the data accordingly. However, I could not get the formula working properly…</p>\n<p>IF(ROUND(SUM(DAYS(DATE(2022,12,31), {Possible Start Date})/30)<em>{Number of Employees}</em>{Price Equivalence}) &gt; 0,<br />\nROUND(SUM(DAYS(DATE(2022,12,31), {Possible Start})/30)<em>{Number of Employees}</em>{Price Equivalence}),0)</p>\n<p>What I’m trying to achieve is very simple, if the round result between dates is negative, than reflect 0 (or any custom text) otherwise, reflect the result itself.</p>\n<p>Second is,<br />\nThe same formula, however I’ll be making it calculate results for 2023 only. Therefore I need the formula to make the calculation starting from Jan 1, 2023 and avoid any months coming from 2022. How should I modify it?</p>\n<p>ROUND(SUM(DAYS(DATE(2023,12,31), {Possible Start})/30)<em>{Number of Employees}</em>{Price Equivalence}<br />\n,0)</p>\n<p>Any tips or help is much appreciated.</p>\n<p>Thanks to all in advance!</p>"
+    },
+    {
+      "id": 106570,
+      "postNumber": 2,
+      "createdAt": "2022-12-07T13:27:31.594Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/thekid\">@thekid</a></p>\n<p>The primary issue with your formula is that monday formulas do not support implicit multiplication, e.g., {Number of Employees}{Price Equivalence}, must be changed to explicit mulitplication, like, {Number of Employees} * {Price Equivalence}.</p>\n<p>So, ROUND(SUM(DAYS(DATE(2023,12,31), {Possible Start})/30)<em>{Number of Employees}</em> {Price Equivalence},0) should read: <code>ROUND(SUM(DAYS(DATE(2023, 12, 31), {Possible Start}) / 30) * {Number of Employees} * {Price Equivalence} ,0)</code></p>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a><br />\n<strong><a href=\"https://monday.com/marketplace/10000123\"><img src=\"https://emoji.discourse-cdn.com/apple/magic_wand.png?v=12\" title=\":magic_wand:\" class=\"emoji\" alt=\":magic_wand:\" width=\"20\" height=\"20\" /> Update Magic #1 </a></strong>– <strong>New</strong> update enhancement toolbox<br />\n<strong><a href=\"https://monday.com/marketplace/10000102\"><img src=\"https://emoji.discourse-cdn.com/apple/magic_wand.png?v=12\" title=\":magic_wand:\" class=\"emoji\" alt=\":magic_wand:\" width=\"20\" height=\"20\" /> Column Magic <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" /></a></strong>– The magical columns toolbox<br />\n<a href=\"https://themondayman.com/custom/\">We Create Custom Apps, Integrations &amp; Automations for monday</a></p>"
+    },
+    {
+      "id": 106847,
+      "postNumber": 3,
+      "createdAt": "2022-12-09T05:55:48.202Z",
+      "author": "thekid (Cemre Coban)",
+      "cookedHtml": "<p>Hi Jim,</p>\n<p>Thanks for your reply! Formulas are actually saved as you have mentioned, the * parts just got deleted while copy pasting formulas over here. However, as is they just do not perform what I need…</p>"
+    },
+    {
+      "id": 106902,
+      "postNumber": 4,
+      "createdAt": "2022-12-09T14:45:59.002Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/thekid\">@thekid</a></p>\n<p>Try this:<br />\n<code>MAX(YEARFRAC(DATE(2023, 12, 31), {Possible Start}) * 12 * {Number of Employees} * {Price Equivalence}, 0)</code></p>\n<p>and:<br />\n<code>MAX(YEARFRAC(DATE(2023, 1, 1), {Possible Start}) * 12 * {Number of Employees} * {Price Equivalence}, 0)</code></p>\n<hr />\n<p>Jim - <a href=\"https://themondayman.com/\">The Monday Man</a><br />\n<strong><a href=\"https://monday.com/marketplace/10000123\"><img src=\"https://emoji.discourse-cdn.com/apple/magic_wand.png?v=12\" title=\":magic_wand:\" class=\"emoji\" alt=\":magic_wand:\" width=\"20\" height=\"20\" /> Update Magic #1 </a></strong> – <strong>New</strong> update enhancement toolbox<br />\n<strong><a href=\"https://monday.com/marketplace/10000102\"><img src=\"https://emoji.discourse-cdn.com/apple/magic_wand.png?v=12\" title=\":magic_wand:\" class=\"emoji\" alt=\":magic_wand:\" width=\"20\" height=\"20\" /> Column Magic <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" /></a></strong> – The magical columns toolbox<br />\n<a href=\"https://themondayman.com/custom/\">We Create Custom Apps, Integrations &amp; Automations for monday</a></p>"
+    }
+  ]
+}

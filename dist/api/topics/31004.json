@@ -1,0 +1,47 @@
+{
+  "id": 31004,
+  "title": "Webhook gives me wrong TriggerTime",
+  "slug": "webhook-gives-me-wrong-triggertime",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-02-03T08:48:08.665Z",
+  "lastPostedAt": "2022-02-03T09:24:24.423Z",
+  "postsCount": 4,
+  "excerpt": "Hello! \nSomething strange happens when my webhook receives some data from Monday. It gives me the wrong Timestamp on the triggerTime variable. It’s off by excatly 60 minutes. Time here was 11:29 when I received the data,&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 938,
+  "posts": [
+    {
+      "id": 76006,
+      "postNumber": 1,
+      "createdAt": "2022-02-03T08:48:08.740Z",
+      "author": "Sina (Sina Sultani)",
+      "cookedHtml": "<p>Hello!<br />\nSomething strange happens when my webhook receives some data from Monday. It gives me the wrong Timestamp on the triggerTime variable. It’s off by excatly 60 minutes. Time here was 11:29 when I received the data, but on the data I get back it says “10:29”. I’ve tried it on different times and it always gives me the time with one hour shaved off.<br />\nI’m in Sweden which puts me in the timezone “GMT+01:00 Stockholm”. Can anybody give me a reason for that?<br />\nI need the correct time to be able to calculate what to do with the data.<br />\nThanks! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 76007,
+      "postNumber": 2,
+      "createdAt": "2022-02-03T08:57:19.084Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/sina\">@Sina</a></p>\n<p>I don’t think it is wrong, is shows:<br />\ntriggerTime: '2022-02-03T10:54:35.434Z</p>\n<p>The Z at the end indicates it is in “Zero” timezone (aka UTC or GMT). See also <a href=\"https://stackoverflow.com/questions/29281935/what-exactly-does-the-t-and-z-mean-in-timestamp#:~:text=The%20Z%20stands%20for%20the,not%20documented%20by%20the%20datetime\" class=\"inline-onebox\">python - What exactly does the T and Z mean in timestamp? - Stack Overflow</a>.</p>"
+    },
+    {
+      "id": 76010,
+      "postNumber": 3,
+      "createdAt": "2022-02-03T09:11:35.969Z",
+      "author": "Sina (Sina Sultani)",
+      "cookedHtml": "<p>Oh. I didn’t know that. So there’s no way of getting it set to my timezone? Or must I always +1 in the calculations? Thanks for the quick answer!</p>"
+    },
+    {
+      "id": 76015,
+      "postNumber": 4,
+      "createdAt": "2022-02-03T09:24:24.423Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>The webhook <strong>always</strong> report in UTC. Also all dates and times stored in columns are stored in UTC. The TZ variable in the profile is used to convert the date / time you enter in a column to UTC, and visa versa when you view that date. I use date and time here because not only the time can be affected, also the date. If you are in Sweden I suggest you always test at 23.30 and 0.30 to make sure your TZ is handles correctly. As we are one hour off (or 2 hours in summer) when you enter a date at 0.30 on Wednesday the date is stored as Tuesday 23.30. You even need to think about months and years as the can be off too.</p>\n<p>I recommend that your app always read any time from monday and interpret that as UTC. When you enter time in your app (e.g. in a text box) you need to use the TZ of the user by reading the user’s profile. If you calculate a time and store it in monday you need to use the TZ of the server calculating the time (in most cases Local) will do.</p>\n<p>In NodeJS there is a very nice package that can do all of this for you, it’s called Luxon (see <a href=\"https://www.npmjs.com/package/luxon\" class=\"inline-onebox\">luxon - npm</a>)</p>"
+    }
+  ]
+}

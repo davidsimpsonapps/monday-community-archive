@@ -1,0 +1,48 @@
+{
+  "id": 78176,
+  "title": "API migration Query",
+  "slug": "api-migration-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    460
+  ],
+  "createdAt": "2024-02-14T13:48:40.598Z",
+  "lastPostedAt": "2024-02-20T07:03:47.449Z",
+  "postsCount": 4,
+  "excerpt": "Hi, I am not programmer but API migration can block my Power BI repport, this is the Query that stay on my Developper Center, whar I need to update? Thanks for helping. \nExample: Get board items\nThe example will return t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 226,
+  "posts": [
+    {
+      "id": 167850,
+      "postNumber": 1,
+      "createdAt": "2024-02-14T13:48:40.684Z",
+      "author": "JorgeTORRES (Jorge TORRES)",
+      "cookedHtml": "<p>Hi, I am not programmer but API migration can block my Power BI repport, this is the Query that stay on my Developper Center, whar I need to update? Thanks for helping.</p>\n<h1><a name=\"p-167850-example-get-board-items-1\" class=\"anchor\" href=\"#p-167850-example-get-board-items-1\"></a>Example: Get board items</h1>\n<h1><a name=\"p-167850-the-example-will-return-the-first-5-items-of-a-specifc-2\" class=\"anchor\" href=\"#p-167850-the-example-will-return-the-first-5-items-of-a-specifc-2\"></a>The example will return the first 5 items of a specifc</h1>\n<h1><a name=\"p-167850-board-and-include-all-collumn-values-3\" class=\"anchor\" href=\"#p-167850-board-and-include-all-collumn-values-3\"></a>board and include all collumn values.</h1>\n<p>query GetBoardItems{<br />\nboards(ids: {{target_board_id}} {<br />\nitems_page(limit: 5) {<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\nid<br />\nvalue<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>And this is the Query of interface between MOnday and Power BI:</p>\n<p>// Queries <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> items from a specific board<br />\n// Created by Guilherme Chaguri<br />\n// Replace the API Key and Board ID for it to work</p>\n<p>let<br />\nKey = “My key”,<br />\nBoard = “2910485819”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) { items { name, updated_at, group { title }, columns: column_values { title, text } } } }””}”)<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, {“Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\n#“Monday” = Table.FromRecords(Table.TransformRows(Data, each<br />\nList.Accumulate([Columns], [<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[title], current[text]) )<br />\n)),<br />\n#“Type modifié” = Table.TransformColumnTypes(Monday,{{“Identifiant”, type text}, {“Date assign. pré-analyse”, type date}}),<br />\n#“Fractionner la colonne par position” = Table.SplitColumn(#“Type modifié”, “UpdateDate”, Splitter.SplitTextByRepeatedLengths(10), {“UpdateDate.1”, “UpdateDate.2”}),<br />\n#“Type modifié1” = Table.TransformColumnTypes(#“Fractionner la colonne par position”,{{“UpdateDate.1”, type date}, {“UpdateDate.2”, type text}}),<br />\n#“Fractionner la colonne par position1” = Table.SplitColumn(#“Type modifié1”, “Dernière mise à jour”, Splitter.SplitTextByRepeatedLengths(10), {“Dernière mise à jour.1”, “Dernière mise à jour.2”, “Dernière mise à jour.3”}),<br />\n#“Type modifié2” = Table.TransformColumnTypes(#“Fractionner la colonne par position1”,{{“Dernière mise à jour.1”, type date}, {“Dernière mise à jour.2”, type time}, {“Dernière mise à jour.3”, type text}}),<br />\n#“Fractionner la colonne par délimiteur” = Table.SplitColumn(#“Type modifié2”, “Échéances Préanalyse”, Splitter.SplitTextByDelimiter(\" “, QuoteStyle.Csv), {“Échéances Préanalyse.1”, “Échéances Préanalyse.2”, “Échéances Préanalyse.3”}),<br />\n#“Type modifié3” = Table.TransformColumnTypes(#“Fractionner la colonne par délimiteur”,{{“Échéances Préanalyse.1”, type date}, {“Échéances Préanalyse.2”, type text}, {“Échéances Préanalyse.3”, type date}}),<br />\n#“Colonnes supprimées” = Table.RemoveColumns(#“Type modifié3”,{“Échéances Préanalyse.2”}),<br />\n#“Fractionner la colonne par délimiteur1” = Table.SplitColumn(#“Colonnes supprimées”, “Échéance souhaitée”, Splitter.SplitTextByDelimiter(” \", QuoteStyle.Csv), {“Échéance souhaitée.1”, “Échéance souhaitée.2”, “Échéance souhaitée.3”}),<br />\n#“Type modifié4” = Table.TransformColumnTypes(#“Fractionner la colonne par délimiteur1”,{{“Échéance souhaitée.1”, type date}, {“Échéance souhaitée.2”, type text}, {“Échéance souhaitée.3”, type date}}),<br />\n#“Colonnes supprimées1” = Table.RemoveColumns(#“Type modifié4”,{“Échéance souhaitée.2”}),<br />\n#“Colonnes renommées” = Table.RenameColumns(#“Colonnes supprimées1”,{{“Échéances Préanalyse.1”, “Échéances Préanalyse Debut”}, {“Échéances Préanalyse.3”, “Échéances Préanalyse Fin”}, {“Échéance souhaitée.1”, “Échéance souhaitée Debut”}, {“Échéance souhaitée.3”, “Échéance souhaitée Fin”}}),<br />\n#“Type modifié5” = Table.TransformColumnTypes(#“Colonnes renommées”,{{“Date de la demande”, type date}})<br />\nin<br />\n#“Type modifié5”</p>"
+    },
+    {
+      "id": 168732,
+      "postNumber": 2,
+      "createdAt": "2024-02-19T08:25:24.515Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/jorgetorres\">@JorgeTORRES</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Your first query looks almost correct, but I see in the one in your script you use boards-&gt;items without using<a href=\"https://developer.monday.com/api-reference/reference/items-page\"> items_page</a>.</p>\n<p>You can change it to something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1111111) {\n    items_page(limit: 5) {\n      items {\n        id\n        name\n        column_values {\n          id\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 168758,
+      "postNumber": 3,
+      "createdAt": "2024-02-19T12:05:29.423Z",
+      "author": "JorgeTORRES (Jorge TORRES)",
+      "cookedHtml": "<p>Thanks so much Matias! it is working very well, best regards from Canada!</p>"
+    },
+    {
+      "id": 168887,
+      "postNumber": 4,
+      "createdAt": "2024-02-20T07:03:47.449Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/jorgetorres\">@JorgeTORRES</a> !!!</p>"
+    }
+  ]
+}

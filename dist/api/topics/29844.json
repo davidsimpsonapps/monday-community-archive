@@ -1,0 +1,100 @@
+{
+  "id": 29844,
+  "title": "Board IDs are now too big for an integer! Check your databases and update your apps :)",
+  "slug": "board-ids-are-now-too-big-for-an-integer-check-your-databases-and-update-your-apps",
+  "categoryId": 70,
+  "tagIds": [],
+  "createdAt": "2022-01-13T19:12:54.984Z",
+  "lastPostedAt": "2023-03-21T10:54:59.134Z",
+  "postsCount": 12,
+  "excerpt": "Today we hit a big milestone – board IDs in our platform became larger than 2147483647! Our users are creating more boards and workflows than ever! \nHowever, this comes with an issue: board IDs cannot be stored as intege&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 2993,
+  "posts": [
+    {
+      "id": 73875,
+      "postNumber": 1,
+      "createdAt": "2022-01-13T19:12:55.048Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Today we hit a big milestone – board IDs in our platform became larger than 2147483647! Our users are creating more boards and workflows than ever!</p>\n<p>However, this comes with an issue: board IDs cannot be stored as integers anymore. More specifically, they are larger than the largest 32-bit signed int.</p>\n<p>If you are currently handling board IDs in your application as integers, you need to update your application to use another data type such as bigInt. You will also need to run migrations on any databases that store board IDs as integers, as they will fail to store any new board IDs.</p>\n<p>EDIT: Item IDs are also affected by this! As a best practice, please update all IDs to bigInt.</p>"
+    },
+    {
+      "id": 73963,
+      "postNumber": 2,
+      "createdAt": "2022-01-14T15:10:36.743Z",
+      "author": "mcd (marc codere dussault)",
+      "cookedHtml": "<p>Many thanks for the info.</p>"
+    },
+    {
+      "id": 74247,
+      "postNumber": 3,
+      "createdAt": "2022-01-18T15:36:49.668Z",
+      "author": "nlopez (Noah Lopez)",
+      "cookedHtml": "<p>Are updates affected by this as well?</p>"
+    },
+    {
+      "id": 74248,
+      "postNumber": 4,
+      "createdAt": "2022-01-18T15:41:53.052Z",
+      "author": "adrian_crossan (Adrian Crossan)",
+      "cookedHtml": "<p>Our Integrations are affected by this. We are now receiving a string value for our current board ids (int values &lt; 2^32), which is fair enough. However, we are having to parse this to an Int before submitting the update, as the graphql mutation query insists the type is still Int, e.g.:</p>\n<p><code>const query = ``mutation change_column_value($boardId: Int!, $itemId: Int!, ...</code></p>\n<p>(The item Id is still a js Number, by the way, so we might have to convert it from a string at some point.)</p>\n<p>Presumably if this were to run against a new board, the mutation would fail as the type for the board Id should be ID. Is this correct? If so, are there plans to make the API consistent for old and new boards? We are simply passing the board Id through as an immutable token and don’t want to worry about what its actual value might be, and avoid choosing slightly different mutation queries to post.</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 74506,
+      "postNumber": 5,
+      "createdAt": "2022-01-20T07:16:29.623Z",
+      "author": "adrian_crossan (Adrian Crossan)",
+      "cookedHtml": "<p>Is there to be no response to this?</p>\n<p>When will documentation and example code be updated to reflect these changes?</p>\n<p>For example, board Ids are ints here:</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/columns-queries-1\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/columns-queries-1\" target=\"_blank\" rel=\"noopener nofollow ugc\">Columns</a></h3>\n\n  <p>Columns and items are two core elements of any board in monday.com. A board is formatted as a table, where there are columns and rows, called items. You can learn more about this object type here. In monday.com, each column has a specific...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<aside class=\"onebox githubblob\">\n  <header class=\"source\">\n\n      <a href=\"https://github.com/mondaycom/welcome-apps/blob/master/apps/quickstart-integrations/src/services/monday-service.js\" target=\"_blank\" rel=\"noopener nofollow ugc\">github.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <h4><a href=\"https://github.com/mondaycom/welcome-apps/blob/master/apps/quickstart-integrations/src/services/monday-service.js\" target=\"_blank\" rel=\"noopener nofollow ugc\">mondaycom/welcome-apps/blob/master/apps/quickstart-integrations/src/services/monday-service.js</a></h4>\n\n\n      <pre><code class=\"lang-js\">const initMondayClient = require('monday-sdk-js');\n\nconst getColumnValue = async (token, itemId, columnId) =&gt; {\n  try {\n    const mondayClient = initMondayClient();\n    mondayClient.setToken(token);\n\n    const query = `query($itemId: [Int], $columnId: [String]) {\n        items (ids: $itemId) {\n          column_values(ids:$columnId) {\n            value\n          }\n        }\n      }`;\n    const variables = { columnId, itemId };\n\n    const response = await mondayClient.api(query, { variables });\n    return response.data.items[0].column_values[0].value;\n  } catch (err) {\n    console.error(err);\n</code></pre>\n\n\n\n  This file has been truncated. <a href=\"https://github.com/mondaycom/welcome-apps/blob/master/apps/quickstart-integrations/src/services/monday-service.js\" target=\"_blank\" rel=\"noopener nofollow ugc\">show original</a>\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>Presumably the quickstart-integrations example no longer works.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 74571,
+      "postNumber": 6,
+      "createdAt": "2022-01-20T18:25:57.380Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/adrian_crossan\">@adrian_crossan</a> – sorry for the late response here.</p>\n<p>Our resolvers still handle IDs the same way, so queries that use integers larger than 2^32 will still work.</p>\n<p>However, we have a known issue where <strong>variables</strong> cannot be converted from string to integer, and our team is working on a fix. You’ll see an error if you pass a large board ID as a variable.  The short-term solution is to put these values directly in the query (ie, using string interpolation).</p>\n<p>I’ll circle back on this thread when we have an update on this issue; and will update the documentation once we have a path forward.</p>"
+    },
+    {
+      "id": 74625,
+      "postNumber": 7,
+      "createdAt": "2022-01-21T07:11:58.139Z",
+      "author": "adrian_crossan (Adrian Crossan)",
+      "cookedHtml": "<p>OK, thanks, I’m looking forward to it.</p>"
+    },
+    {
+      "id": 74872,
+      "postNumber": 8,
+      "createdAt": "2022-01-24T20:54:15.997Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/adrian_crossan\">@adrian_crossan</a>, the bug you reported earlier has been fixed.</p>\n<p>I originally misinterpreted the root cause of the bug. The bug was that board IDs were being sent from our webhooks and apps framework endpoints as strings, which caused issues if you tried using these strings in API calls.</p>\n<p>We now will send board IDs as integers (not strings) from webhooks and app , which means that sending large board IDs via variables now works, as does the quickstart integration guide. Let us know on this thread if you’re still having issues.</p>"
+    },
+    {
+      "id": 74923,
+      "postNumber": 9,
+      "createdAt": "2022-01-25T09:45:14.065Z",
+      "author": "adrian_crossan (Adrian Crossan)",
+      "cookedHtml": "<p>OK, good to know. Our Integration is still working.</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 80054,
+      "postNumber": 10,
+      "createdAt": "2022-03-16T21:23:17.408Z",
+      "author": "carlosdelgado (Carlos Delgado)",
+      "cookedHtml": "<p>Hi there,<br />\nI’m facing this issue in a different context - I’m developing a backend that delegates some queries to Monday, so I was going to use <a href=\"https://www.graphql-tools.com/docs/remote-schemas\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Remote Schemas – GraphQL Tools</a> for delegation.<br />\nThe problem is that this tools has built-in scalar validation, and correctly throws an error when it finds an Int larger than 4 bytes, for example for the ids argument in the items query.<br />\nHow can I make this work? To me it seems Monday API is ‘hacking’ the graphql specification to suit their needs - which is legitimate but needs to be worked out in the long term.</p>\n<p>Is there a way to make it work?</p>\n<p>To reproduce, we need first to retrieve the executable schema from Monday:</p>\n<pre><code class=\"lang-javascript\">// Get an executable schema as per this doc: https://www.graphql-tools.com/docs/remote-schemas\nconst executor: AsyncExecutor = async ({ document, variables, context }) =&gt; {\n  const query = print(document)\n  const fetchResult = await fetch(process.env.MONDAY_URL, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': process.env.MONDAY_TOKEN\n    },\n    body: JSON.stringify({ query, variables })\n  })\n  return fetchResult.json()\n}\n\nlet mondaySchema = null;\n\nexport const getMondaySchema = async () =&gt; {\n  if (mondaySchema != null) {\n    return mondaySchema\n  }\n\n  const schema = wrapSchema({\n    schema: await introspectSchema(executor),\n    executor\n  })\n  mondaySchema = schema\n  return schema\n}\n</code></pre>\n<p>Then, to use it, just call the delegateToSchema function:</p>\n<pre><code class=\"lang-javascript\">const mondaySchema = await getMondaySchema();\n    const mondayRes = delegateToSchema({\n      schema: mondaySchema,\n      operation: 'query',\n      fieldName: 'items',\n      args: {\n        ids: requestIds,\n      },\n      context: _context,\n      info: _info,\n    });\n</code></pre>\n<p>The documentation can be found here: <a href=\"https://www.graphql-tools.com/docs/schema-delegation\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Schema Delegation – GraphQL Tools</a></p>\n<p>Thanks,<br />\nCarlos</p>"
+    },
+    {
+      "id": 120211,
+      "postNumber": 11,
+      "createdAt": "2023-03-17T18:20:22.804Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<p>Hi, I’m just piggybacking on this thread to ask a related question:</p>\n<p>I’m receiving board IDs and item IDs as strings from monday, and possibly others that I’ll discover as I go through my code to clean up types, and monday wants them as numbers in my requests. I’m storing these as numbers in my database. I’m casting these in my Typescript as I need to but I’d like to make things as consistent as possible so I need to decide if I 'm going to handle these IDs as strings or ints. I’d prefer ints but want to make sure the type that mutations require wont change to string sometime in the future.</p>"
+    },
+    {
+      "id": 120495,
+      "postNumber": 12,
+      "createdAt": "2023-03-21T10:54:59.134Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/janssen\">@Janssen</a>,</p>\n<p>I can not assure this won’t ever change but as far as I can see, we do not have any plans of changing this in the nearest future.</p>\n<p>If we change this, we will let you guys know in advance in our <a href=\"https://developer.monday.com/api-reference/changelog\">changelog</a>.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

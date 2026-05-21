@@ -1,0 +1,27 @@
+{
+  "id": 48331,
+  "title": "Uploading kml/kmz files using the GraphQL API",
+  "slug": "uploading-kml-kmz-files-using-the-graphql-api",
+  "categoryId": 7,
+  "tagIds": [
+    6,
+    41,
+    94
+  ],
+  "createdAt": "2023-01-03T18:04:59.688Z",
+  "lastPostedAt": "2023-01-03T18:04:59.783Z",
+  "postsCount": 1,
+  "excerpt": "Sup folks! \nI’m working on an integration with Monday to upload some files, my main problem is with KML/KMZ extensions. \nI’ve manged to upload pdf and csv without any issues, but these guys are having an odd behaviour. W&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1556,
+  "posts": [
+    {
+      "id": 109070,
+      "postNumber": 1,
+      "createdAt": "2023-01-03T18:04:59.783Z",
+      "author": "richter (Ricardo)",
+      "cookedHtml": "<p>Sup folks!</p>\n<p>I’m working on an integration with Monday to upload some files, my main problem is with KML/KMZ extensions.</p>\n<p>I’ve manged to upload pdf and csv without any issues, but these guys are having an odd behaviour. When I send one of those to the files column in my board, it sits there as a *.kmz file, however if I download it, the downloaded file has the extension converted to xml.<br />\nI understand this is not a browser issue, because the very same file doesn’t have this problem if I upload it by hand to the Monday board, the issue has only being happening when the file is sent through the API.</p>\n<p>One of my references for research is the link below, I’ve followed most of the recommendations, including change the “Content-Type” field to either “application/vnd.google-earth.kmz” or \" application/vnd.google-earth.kml/xml\", with the same effect.</p>\n<p>I understand this can be kind of esoteric, but I suppose it has some relation to how the multi-part form is being built. Below is an example of how I’ve been doing it.</p>\n<pre><code class=\"lang-auto\">        let data=\"\";\n        data += \"--\" + boundary + \"\\r\\n\";\n        data += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n        data += \"Content-Type:application/json\\r\\n\\r\\n\";\n        data += \"\\r\\n\" + query + \"\\r\\n\";\n\n        data += \"--\" + boundary + \"\\r\\n\";\n        data += \"Content-Disposition: form-data; name=\\\"map\\\"; \\r\\n\";\n        data += \"Content-Type:application/json\\r\\n\\r\\n\";\n        data += \"\\r\\n\" + JSON.stringify(map)+ \"\\r\\n\";\n\n        data += \"--\" + boundary + \"\\r\\n\";\n        data += \"Content-Disposition: form-data; name=\\\"file\\\"; filename=\\\"\" + filename + \"\\\"\\r\\n\";\n        data += \"Content-Type:application/vnd.google-earth.kmz\\r\\n\\r\\n\";\n        \n        const payload = Buffer.concat([\n                Buffer.from(data, \"utf8\"),\n                new Buffer.from(content, 'binary'),\n                Buffer.from(\"\\r\\n--\" + boundary + \"--\\r\\n\", \"utf8\"),\n        ]);\n\n        return payload;\n</code></pre>\n<p>Any help or tip is appreciated.</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/accessing-and-upload-files-using-the-graphql-api/5997\">Accessing and upload files using the GraphQL API</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/dev-guides/70\"><span class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Announcements</span></span></a>\n  </div>\n  <blockquote>\n    Hey community! <img width=\"20\" height=\"20\" src=\"https://emoji.discourse-cdn.com/apple/crystal_ball.png?v=12\" title=\"crystal_ball\" alt=\"crystal_ball\" class=\"emoji\" /> \nYou can now access files that are on your board via our API, and also upload them. Here’s the <a href=\"https://monday.com/developers/v2#queries-section-files\" rel=\"noopener nofollow ugc\">documentation</a>. \nModerator Note: Check out the following announcement for examples that upload a file from the client-side: <a href=\"https://community.monday.com/t/announcement-uploading-files-to-monday-com-has-just-become-easier/16803\" class=\"inline-onebox\">Announcement: Uploading files to monday.com has just become easier :)</a> \nReading Files using the API \nThe assets field represents a file that is uploaded to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>. You can query the title of the file, the URL, and also generate a public URL that can…\n  </blockquote>\n</aside>\n"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": 93489,
+  "title": "Monday OAuth - JWT signing key",
+  "slug": "monday-oauth-jwt-signing-key",
+  "categoryId": 8,
+  "tagIds": [
+    152,
+    208,
+    351
+  ],
+  "createdAt": "2024-07-21T05:25:26.714Z",
+  "lastPostedAt": "2024-07-23T12:12:32.777Z",
+  "postsCount": 8,
+  "excerpt": "My Monday.com app is successfully authenticating users as described in the documentation. The resulting JWT token is passed to a .NET API application in the Authorization HTTP header. \nI’m having some trouble to decrypt &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 63,
+  "posts": [
+    {
+      "id": 194165,
+      "postNumber": 1,
+      "createdAt": "2024-07-21T05:25:26.804Z",
+      "author": "ngruson (Nils Gruson)",
+      "cookedHtml": "<p>My <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> app is successfully authenticating users as described in the documentation. The resulting JWT token is passed to a .NET API application in the Authorization HTTP header.<br />\nI’m having some trouble to decrypt the JWT token.<br />\nWhen I look at the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> app definition on the tab called ‘Basic Information’, there’s a ‘Signing Secret’ value.<br />\nIs that signing secret used to sign the JWT token or not?<br />\nSince the JWT token is not containing ‘iss’ (issuer) and ‘aud’ (audience) claims, I need to write some custom C# code to decrypt the JWT token in the .NET API.</p>"
+    },
+    {
+      "id": 194239,
+      "postNumber": 2,
+      "createdAt": "2024-07-21T14:38:51.607Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The OAuth JWT is signed with signing secret(on the basic info page), as are the JWT for automation actions. However, the JWT for the install webhooks are signed with the client secret for some reason.</p>\n<p>I would think that there is a .NET library that handles json web tokens, where if you don’t specify the issuer or audience to verify will skip verifying them.</p>"
+    },
+    {
+      "id": 194282,
+      "postNumber": 3,
+      "createdAt": "2024-07-22T07:46:41.538Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Another way of looking at this is:</p>\n<p>Use the <strong>Signing Secret</strong> when the JWT token is:</p>\n<ul>\n<li>in the <code>Authorization</code> header without being prefixed with <code>Bearer </code></li>\n<li>in the <code>URLSearchParams</code> as a parameter named <code>token</code></li>\n</ul>\n<p>Use the <strong>Client Secret</strong>  when the JWT token is:</p>\n<ul>\n<li>in the <code>URLSearchParams</code> as a parameter named <code>sessionToken</code></li>\n</ul>"
+    },
+    {
+      "id": 194409,
+      "postNumber": 4,
+      "createdAt": "2024-07-22T18:05:57.208Z",
+      "author": "ngruson (Nils Gruson)",
+      "cookedHtml": "<p>The signature validation in my .NET API currently fails. It’s assuming a symmetric security key.<br />\nDo we know which algorithm is used by <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> to sign the JWT token?</p>\n<p>I can bring in my own token validator but then I would have to know how to decode the JWT token with the signature into a set of claims. This is depending on the signing algorithm that is used to create the JWT token in the first place.</p>"
+    },
+    {
+      "id": 194433,
+      "postNumber": 5,
+      "createdAt": "2024-07-22T19:07:00.072Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Pretty sure it’s HS256.</p>"
+    },
+    {
+      "id": 194442,
+      "postNumber": 6,
+      "createdAt": "2024-07-22T21:06:04.249Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>the first segment of base64 characters in a JWT (split the JWT on <code>.</code>) decodes to JSON which defines the signing algorithm and encryption.</p>"
+    },
+    {
+      "id": 194479,
+      "postNumber": 7,
+      "createdAt": "2024-07-23T07:44:00.181Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>idk about .NET, but here’s a basic example using <code>jsonwebtoken</code> with <code>sveltekit</code> that just returns the content of the JWT:</p>\n<pre><code class=\"lang-auto\">import { error, json, type RequestEvent } from '@sveltejs/kit';\nimport { env } from '$env/dynamic/private';\nimport { logger } from 'path/to/logger';\n\nimport jwt from 'jsonwebtoken';\n\n/**\n * GET /path/to/here?token=.....\n */\nexport async function GET(event: RequestEvent) {\n\ttry {\n\t\tconst token = event.url.searchParams.get('token');\n\t\tconst payload = await jwt.verify(token, env.MONDAY_SIGNING_SECRET);\n\t\t// display the payload or do something else here...\n\t\treturn json(payload);\n\t} catch (err: any) {\n\t\tlogger.error('jwt catch error ', err);\n\t\tthrow error(401, err.body?.message || 'Unauthorized. Please try again.');\n\t}\n}\n</code></pre>\n<p>As you can see <code>jsonwebtoken</code> is just using the defaults, so try using the defaults with whatever you’re using in .NET.</p>"
+    },
+    {
+      "id": 194501,
+      "postNumber": 8,
+      "createdAt": "2024-07-23T12:12:32.777Z",
+      "author": "ngruson (Nils Gruson)",
+      "cookedHtml": "<p>I’ve got it working now with some help of .NET folks.<br />\nThe .NET API is authorizing the user with the incoming JWT token.</p>"
+    },
+    {
+      "id": 195170,
+      "postNumber": 9,
+      "createdAt": "2024-07-28T10:11:23.912Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

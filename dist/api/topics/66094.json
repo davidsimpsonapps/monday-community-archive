@@ -1,0 +1,53 @@
+{
+  "id": 66094,
+  "title": "Monday.com External Api authentication",
+  "slug": "monday-com-external-api-authentication",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-09-15T14:55:26.401Z",
+  "lastPostedAt": "2023-09-26T12:24:24.180Z",
+  "postsCount": 4,
+  "excerpt": "Hi Monday.com Team, \nI need to understand the External API authentication method. While creating an app feature, we are providing a public remote URL (lambda function URL) that triggers when a particular column changes t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 921,
+  "posts": [
+    {
+      "id": 143838,
+      "postNumber": 1,
+      "createdAt": "2023-09-15T14:55:26.465Z",
+      "author": "Deepan (Deepan)",
+      "cookedHtml": "<p>Hi <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> Team,</p>\n<p>I need to understand the External API authentication method. While creating an app feature, we are providing a public remote URL (lambda function URL) that triggers when a particular column changes to “started.” However, I have other vendors who have an external API and prefer not to pass the API token in the URL (not accessed remotely). So, I need your help in understanding how <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> authenticates external APIs.</p>\n<p>Thanks,<br />\nDeepan</p>"
+    },
+    {
+      "id": 143939,
+      "postNumber": 2,
+      "createdAt": "2023-09-17T02:21:57.806Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Firstly, there is actually a primary section called “monday apps &amp; developers” dedicated to this kind of topic (the one you’ve found, is end users discussing apps and integrations, within platform discussions). <a href=\"https://community.monday.com/c/developers/8\" class=\"inline-onebox\">monday Apps &amp; Developers - monday Community Forum</a></p>\n<p><a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> does not integrate directly with any third-party API. Thats what your app will do. When you create an integration feature, you set an “authentication URL” that is for the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> OAuth process - at the most basic you redirect your request back to the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> authentication page to accept scopes, which then returns the user to your server to complete the process.</p>\n<p>It is that final step where you can simply request an OAuth token from the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> server and redirect back to the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> URL provided to complete recipe creation - OR in your case get the OAuth token and then redirect the user to the authentication pages required for the third party service and collect the API token for that service.</p>\n<p>You’ll now have the tokens (which you will want to of course encrypt and store securely). So all of that will likely be another lambda from the one which handles your actual app functionality.</p>\n<p>Then your lambda that handles the actions (triggered by column changes) will receive a JWT that tells you the account, app, user, etc. that created the recipe, you can use that to look up the OAuth tokens required (both <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> and the third-party service(s)). With that you then integrate the two together in your lambda. The JWT contains a short lived token (1 minute) so that may suffice for any simple changes you need to make. You could in theory in the Authentication process skip getting a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> OAuth token and rather direct the user directly to the third-party OAuth process.</p>\n<p>But it is the OAuth process in monday that affords you the opportunity to redirect to the external authentication process. (All of this is driven by your code, except the initial call by monday to your OAuth process.) The OAuth process is triggered when a recipe is installed. You can of course check for existing tokens and immediately redirect them to finish creating the recipe if everything is already authenticated.</p>\n<p>Having done this before, I’d recommend a couple things - use API Gateway (HTTP API) to handle routing your requests to the correct lambda. Ideally create a custom domain there, so that you can create multiple APIs and they share a domain. The only downside is that you cut your timeout for completing a request without queuing to 29 seconds from the default 60 seconds monday provides. That said, that should be enough for most operations. Without the API Gateway though, every action block or trigger is going to be a different function URL and get really ugly to keep straight unless you put cloudfront in front of everything - or build a monolith in a lambda which is usually considered an anti-pattern.  I’ve found the Serverless framework or AWS CDK to make this rather easy to implement where there are separate APIs for the install webhooks, oauth process, and then then each app integration feature. Then each path in route in those apis is a separate lambda (unless there is a very specific overlap).</p>"
+    },
+    {
+      "id": 145546,
+      "postNumber": 3,
+      "createdAt": "2023-09-26T04:09:53.965Z",
+      "author": "mangodance (Andy )",
+      "cookedHtml": "<p>Hi Cody, can you provide some guidance here? I am able to get my 3rd party’s API Key through OAuth, I am wondering what is the best and most secure way to store this API Key so that it can be accessed and used every time my integration recipe is fired?</p>\n<p>thank you for your help</p>"
+    },
+    {
+      "id": 145622,
+      "postNumber": 4,
+      "createdAt": "2023-09-26T12:24:24.180Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>While I cannot advise specific technologies since I don’t know what languages, databases, or environments you’re running in - general guidance is that you need to encrypt the token in your code when you get it, then you can store it in a database. Decrypt it after you retrieve it. The encryption/decryption should be happening on your server, this isn’t simple database encryption where its encrypting data on disk but decrypting the data when you query it.</p>\n<p>The main consideration is that you don’t have the ability to access the keys to decrypt it, nor do any users. Only the server has the ability to access the keys and use them (and not stored in code!).</p>\n<p>If you were to query the database what you’d get back is encrypted data, and no way for you to decrypt it - even if you tried.</p>\n<p>Make sure you don’t log tokens anywhere of course!</p>"
+    },
+    {
+      "id": 145777,
+      "postNumber": 5,
+      "createdAt": "2023-09-27T09:34:18.334Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

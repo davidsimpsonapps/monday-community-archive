@@ -1,0 +1,46 @@
+{
+  "id": 29180,
+  "title": "PHP API Quickstart tutorial example 3, as-written doesn't work due to json_encode being run on an already encoded JSON object",
+  "slug": "php-api-quickstart-tutorial-example-3-as-written-doesnt-work-due-to-json-encode-being-run-on-an-already-encoded-json-object",
+  "categoryId": 8,
+  "tagIds": [
+    155
+  ],
+  "createdAt": "2021-12-30T04:27:07.541Z",
+  "lastPostedAt": "2023-03-30T05:49:36.574Z",
+  "postsCount": 4,
+  "excerpt": "The last example described in the PHP API Quickstart tutorial here: https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP does not work out of the box. \nThis example indicates that variabl&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2244,
+  "posts": [
+    {
+      "id": 72644,
+      "postNumber": 1,
+      "createdAt": "2021-12-30T04:27:07.624Z",
+      "author": "GuyRus (Guy Richards)",
+      "cookedHtml": "<p>The last example described in the PHP API Quickstart tutorial here: <a href=\"https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP</a> does not work out of the box.</p>\n<p>This example indicates that variables should be passed in as part of the request in a separate vars object passed alongside the query object; modified ever so slightly to work with text columns</p>\n<pre><code class=\"lang-auto\">&lt;?php\n$token = 'tokenstring';\n    $apiUrl = 'https://api.monday.com/v2';\n    $headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n    $query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:XXXXXXXXX, item_name:$myItemName, column_values:$columnVals) { id } }';\n    $vars = ['myItemName' =&gt; 'Hello world!',\n      'columnVals' =&gt; json_encode([\n        'long_text5' =&gt; ['text' =&gt; '0400000000'],\n        'phone3' =&gt; ['text' =&gt; 'asd']\n      ])];\n    $test_encoded = json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]);\n    $data = @file_get_contents($apiUrl, false, stream_context_create([\n      'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        'content' =&gt; $test_encoded,\n      ]\n    ]));\n    $responseContent = json_decode($data, false);\n\n    echo json_encode($responseContent);\n?&gt;\n</code></pre>\n<p>It also seems to indicate the columnVals should be json_encoded at the time of assignment. Encoding columnVals here, however, AND again when constructing the content array as part of the $data request seems to lead to an error response from the API. The request sent to the API is valid JSON:</p>\n<p>$test_encoded just after assignment (Valid JSON):<br />\n{“query”:“mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:XXXXXXXXX, item_name:$myItemName, column_values:$columnVals) { id } }”,“variables”:{“myItemName”:“Hello world!”,“columnVals”:“{\"long_text5\":{\"text\":\"0400000000\"},\"phone3\":{\"text\":\"asd\"}}”}}</p>\n<p>Yet the response seems to indicate php is sending a PHP array instead of JSON as part of the request?</p>\n<pre><code class=\"lang-auto\">{\"error_code\":\"ColumnValueException\",\"status_code\":200,\"error_message\":\"invalid value, please check our API documentation for the correct data structure for this column. https://api.developer.monday.com/docs/change-column-values\",\"error_data\":{\"column_value\":\"{\\\"text\\\"=\\u003e\\\"asd\\\"}\",\"column_type\":\"TextColumn\"}}\n</code></pre>\n<p>I’m under no illusion there is something simple I’m missing, or a flag that needs to be set somewhere - would be good to understand how this works, and maybe updating the example with a more complex column type requiring a deeper associative array like email.</p>\n<p>Any help is greatly appreciated!</p>\n<p>Cheers,</p>"
+    },
+    {
+      "id": 72664,
+      "postNumber": 2,
+      "createdAt": "2021-12-30T13:06:12.883Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey, great feedback. I see that the dummy example is a bit simplistic and I can certainly see how it can be improved.</p>\n<p>Let’s try and get your example working. To update columns on your board, you need to ensure two things:</p>\n<ol>\n<li>The column <strong>IDs</strong> that are passed must correspond to the IDs on your board. The example contains some dummy IDs that you need to update. Here’s how to get the column IDs of your board: <a href=\"https://support.monday.com/hc/en-us/articles/360000225709-Board-item-column-and-automation-or-integration-IDs\">Board, item, column, and automation or integration IDs</a>\n</li>\n<li>The structure of each column value needs to correspond to the <strong>type</strong> of each column. For example, a phone column accepts different data than a text column. Check out our API reference here: <a href=\"https://api.developer.monday.com/docs/guide-to-changing-column-data\">Column Values</a>\n</li>\n</ol>\n<p>As an example, here’s how you would structure the $vars variable to update an email column:</p>\n<pre><code class=\"lang-auto\">$vars = ['myItemName' =&gt; 'Hello world!',\n      'columnVals' =&gt; json_encode([\n        'long_text5' =&gt; ['text' =&gt; '0400000000'],\n        'email' =&gt; ['email' =&gt; 'alice@aliceandbob.com', 'text' =&gt; 'alice@aliceandbob.com']\n      ])];\n</code></pre>"
+    },
+    {
+      "id": 121874,
+      "postNumber": 3,
+      "createdAt": "2023-03-29T16:27:37.603Z",
+      "author": "hderic (Eric Davidson)",
+      "cookedHtml": "<p>Did you ever get this figured out? How should the example look if you don’t mind me asking? just getting ‘null’ when I try it. For one the example they have posted not doesn’t have the first three lines declaring  $token, $apiUrl and $headers. but I just copied it from the other examples which I did get to work.</p>\n<p>Been talking to support about problems with the tutorial but still cant figure it out.</p>\n<p>added first 3 lines<br />\nadded my column_values and ‘text’</p>\n<p>Here is what I’m have:</p>\n<pre><code class=\"lang-auto\">&lt;?php\n\n$token = 'MY_TOKEN_IS_HERE';\n$apiUrl = 'https://api.monday.com/v2';\n$headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n$query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:MY_BOARD_ID_IS_HERE, item_name:$myItemName, column_values:$columnVals) { id } }';\n$vars = ['myItemName' =&gt; 'Hello world!', \n  'columnVals' =&gt; json_encode([\n    'text9' =&gt; ['text' =&gt; 'TEST VENDOR'], \n    'long_text' =&gt; ['text' =&gt; '12345678901234567']\n])];\n\n$data = @file_get_contents($apiUrl, false, stream_context_create([\n 'http' =&gt; [\n 'method' =&gt; 'POST',\n 'header' =&gt; $headers,\n 'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n ]\n]));\n$responseContent = json_decode($data, true);\n\necho json_encode($responseContent);\n?&gt;\n</code></pre>"
+    },
+    {
+      "id": 121984,
+      "postNumber": 4,
+      "createdAt": "2023-03-30T05:49:36.574Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/hderic\">@hderic</a>,</p>\n<p>Just in case, I wanted to let you know that I replied in the ticket you opened <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

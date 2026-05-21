@@ -1,0 +1,72 @@
+{
+  "id": 10660,
+  "title": "How to retrieve specific column by name?",
+  "slug": "how-to-retrieve-specific-column-by-name",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-08-28T19:42:47.657Z",
+  "lastPostedAt": "2021-02-25T14:32:52.837Z",
+  "postsCount": 8,
+  "excerpt": "I’m using the below query at the moment which works fine, but I only want the data for two specific columns. I am giving the text/string value (column name) as the column ‘id’, but so far none of my attempts have worked.&hellip;",
+  "solvedPostId": null,
+  "likeCount": 10,
+  "views": 5969,
+  "posts": [
+    {
+      "id": 27046,
+      "postNumber": 1,
+      "createdAt": "2020-08-28T19:42:47.717Z",
+      "author": "Shinny (Sinead)",
+      "cookedHtml": "<p>I’m using the below query at the moment which works fine, but I only want the data for two specific columns. I am giving the text/string value (column name) as the column ‘id’, but so far none of my attempts have worked. Here is my current query and hope someone can help:<br />\n<code>boards (ids:XXXX) { items { column_values { title text }}}}</code></p>\n<p>Things I tried: thought I could maybe specify the column by providing its title, “Status”, to the title key. Also tried to refer to it by \"id: “Status” but this didn’t work. I had that under columns/column_values. Maybe my syntax was wrong, but could be faulty approach too!</p>"
+    },
+    {
+      "id": 27056,
+      "postNumber": 2,
+      "createdAt": "2020-08-29T01:03:01.894Z",
+      "author": "vishwajeets (Vishwajeet Singh)",
+      "cookedHtml": "<p>I am not sure if retrieving specific column values is possible.  What you could do is take all the values and filter out the ones you need . I am using same approach for now. May be someone from Monday could confirm otherwise.</p>"
+    },
+    {
+      "id": 27063,
+      "postNumber": 3,
+      "createdAt": "2020-08-29T03:13:07.470Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/shinny\">@Shinny</a> and <a class=\"mention\" href=\"/u/vishwajeets\">@vishwajeets</a></p>\n<p>That’s a great question! It is currently not possible to retrieve a specific column by name, or ID, and I would indeed recommend querying all of the board data and then filtering the specific values you need in your application logic instead. I hope that helps. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>EDIT: I stand corrected - please check <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> 's post just below my own that provides a working API query example that can look up column values based on column ID.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27074,
+      "postNumber": 4,
+      "createdAt": "2020-08-29T04:35:30.752Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/shinny\">@Shinny</a> and <a class=\"mention\" href=\"/u/vishwajeets\">@vishwajeets</a></p>\n<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>, I might be reading the question wrong, but you can actually query based on the <code>column_id</code>. I have attached a sample query below.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: XXX) {\n    items {\n      column_values (ids: [\"text\", \"status\"]) {\n        title\n        text\n      }\n    }\n  }\n}\n\n</code></pre>\n<p>This will return the data for each item in the board, but only the column values that you have requested.</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items\": [\n          {\n            \"column_values\": [\n              {\n                \"title\": \"Status\",\n                \"text\": \"Done\"\n              },\n              {\n                \"title\": \"First Name\",\n                \"text\": \"Test\"\n              }\n            ]\n          },\n          {\n            \"column_values\": [\n              {\n                \"title\": \"Status\",\n                \"text\": null\n              },\n              {\n                \"title\": \"First Name\",\n                \"text\": \"\"\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  },\n}\n\n</code></pre>\n<p>I only have a few items in this board. You can find the column id’s by using the API, or by enabling the developer tools in monday Labs.</p>\n<p>Let me know if I have misunderstood your question.</p>"
+    },
+    {
+      "id": 27075,
+      "postNumber": 5,
+      "createdAt": "2020-08-29T04:39:19.118Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Indeed, as <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> shows, it is possible to retrieve column data by columnId. This is not possible by column_name. It looks like this is because column names can be changed by the user, where column ids are set by the system and can’t be changed.</p>"
+    },
+    {
+      "id": 27083,
+      "postNumber": 6,
+      "createdAt": "2020-08-29T06:07:42.945Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> oh, that makes perfect sense! I am sorry for the misleading answer previously, and I really appreciate your clarification here, especially with a working code example as well.</p>\n<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> thank you for siding with Mitchell here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27092,
+      "postNumber": 7,
+      "createdAt": "2020-08-29T11:51:01.223Z",
+      "author": "Shinny (Sinead)",
+      "cookedHtml": "<p>Thanks all! This absolutely solves the case.</p>"
+    },
+    {
+      "id": 42385,
+      "postNumber": 8,
+      "createdAt": "2021-02-25T14:32:52.837Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

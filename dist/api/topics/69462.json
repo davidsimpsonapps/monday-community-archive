@@ -1,0 +1,84 @@
+{
+  "id": 69462,
+  "title": "How I could delete multiple items in one API call?",
+  "slug": "how-i-could-delete-multiple-items-in-one-api-call",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    106,
+    107,
+    351
+  ],
+  "createdAt": "2023-10-28T14:41:57.172Z",
+  "lastPostedAt": "2023-10-30T05:03:18.544Z",
+  "postsCount": 8,
+  "excerpt": "I want to delete multiple items in one API call, something like the following: \nmutation{ \ndelete_item(item_id: 5406008582) { \nid \n} \ndelete_item(item_id: 5406008601) { \nid \n} \n}",
+  "solvedPostId": null,
+  "likeCount": 9,
+  "views": 565,
+  "posts": [
+    {
+      "id": 150385,
+      "postNumber": 1,
+      "createdAt": "2023-10-28T14:41:57.243Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p>I want to delete multiple items in one API call, something like the following:</p>\n<p>mutation{<br />\ndelete_item(item_id: 5406008582) {<br />\nid<br />\n}<br />\ndelete_item(item_id: 5406008601) {<br />\nid<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 150395,
+      "postNumber": 2,
+      "createdAt": "2023-10-28T16:57:56.249Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You need to use multiple named mutations (instead of anonymous mutations) in the same request:</p>\n<pre><code class=\"lang-auto\">mutation delete1 {\n  delete_item(item_id: \"12321321\") {\n    id\n  }\n}\n\nmutation delete2 {\n  delete_item(item_id: \"5242344\") {\n    id\n  }\n}\n</code></pre>\n<p>Notice how each mutation has a name (delete1, delete2) now? this allows multiple mutations in the same request.</p>"
+    },
+    {
+      "id": 150396,
+      "postNumber": 3,
+      "createdAt": "2023-10-28T17:12:35.127Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>. It worked.</p>"
+    },
+    {
+      "id": 150397,
+      "postNumber": 4,
+      "createdAt": "2023-10-28T17:23:04.457Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>A few things to watch:</p>\n<p>Since the API server has a limit of 5000 connections per IP per minute:</p>\n<p>If this is a UI based feature, it may be preferable to just do two queries, and use <code>Promise.allSettled()</code> to execute concurrently but handle them individually.</p>\n<p>If you’re using a microservice backend, I would do the same since the IP space your microservices run in is much larger. You won’t run into limits by having concurrent connections.</p>\n<p>If you’re using a monolithic server (container or VM) that is serving many accounts simultaneously, from a single IP, then using GraphQL batching as shown may be a way avoid exhausting the 5000 cpm rate limit in a busy environment.</p>\n<p>The problem with batching the mutations into a single call, is with error handling and retrying since you now must parse responses, figure out which ones failed, and retry them as appropriate. This particularly comes in with API complexity limits. Individual requests will error individually and you don’t need to write code just to figure out what failed - you already know.</p>"
+    },
+    {
+      "id": 150408,
+      "postNumber": 5,
+      "createdAt": "2023-10-29T06:45:41.031Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a><br />\nThe code you have shared is working fine when I execute it on <code>https://monday.com/developers/v2/try-it-yourself</code>, but when I convert it to Python it no longer works.</p>\n<pre><code class=\"lang-auto\">query = '''\nmutation delete1($item_id_1: Int!) {\n        delete_item(item_id: $item_id_1) {\n                id\n        }\n}\n\nmutation delete2($item_id_2: Int!) {\n        delete_item(item_id: $item_id_2) {\n                id\n        }\n}\n'''\nvariables = {'item_id_1': 5406008, 'item_id_2': 548754}\ndata = {'query' : query, 'variables' : variables}\nresponse = requests.post(url=apiUrl, json=data, headers=headers) # make request\nresponse.json()\n</code></pre>\n<p>The code above give me the following error:</p>\n<pre><code class=\"lang-auto\">{'errors': [{'message': 'An operation name is required'}], 'account_id': 196}\n</code></pre>\n<p>The query you shared works fine on <code>https://monday.com/developers/v2/try-it-yourself</code> but the exact same query in Python give me the same error I shared above.</p>"
+    },
+    {
+      "id": 150419,
+      "postNumber": 6,
+      "createdAt": "2023-10-29T11:11:15.158Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1698585029067939\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 150426,
+      "postNumber": 7,
+      "createdAt": "2023-10-29T11:26:24.382Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/amirsaleem\">@AmirSaleem</a>,</p>\n<p>Can you please try something like this?</p>\n<pre><code class=\"lang-auto\">mutation($item_id_1: Int!, $item_id_2: Int!){ \n    delete1: delete_item(item_id: $item_id_1) {id}\n\n    delete2: delete_item(item_id: $item_id_2) {id}\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 150463,
+      "postNumber": 8,
+      "createdAt": "2023-10-30T03:15:07.282Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p>It worked. Thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>"
+    },
+    {
+      "id": 150497,
+      "postNumber": 9,
+      "createdAt": "2023-10-30T05:03:18.544Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I’m glad that worked <a class=\"mention\" href=\"/u/amirsaleem\">@AmirSaleem</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

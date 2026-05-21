@@ -1,0 +1,69 @@
+{
+  "id": 123555,
+  "title": "See the content blocking my Connect Boards visibility",
+  "slug": "see-the-content-blocking-my-connect-boards-visibility",
+  "categoryId": 6,
+  "tagIds": [
+    12,
+    18,
+    20
+  ],
+  "createdAt": "2026-02-06T20:11:33.311Z",
+  "lastPostedAt": "2026-02-09T12:45:09.501Z",
+  "postsCount": 7,
+  "excerpt": "A user has a Connect Board column with 40+ connected boards. We found that some users, including Admins, could not see the column values because they could not access 1 of the connected boards. It took a long time to tra&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 23,
+  "posts": [
+    {
+      "id": 245521,
+      "postNumber": 1,
+      "createdAt": "2026-02-06T20:11:33.399Z",
+      "author": "nateworks (Nate Zuzack)",
+      "cookedHtml": "<p>A user has a Connect Board column with 40+ connected boards. We found that some users, including Admins, could not see the column values because they could not access 1 of the connected boards. It took a long time to track down the offending board. Requests for access went “into the void” with no response from the owner (who could have left the company, for all we knew).</p>\n<p>Is there a way to see the names of the boards behind a Connect Boards or Mirror column for Admins, even if they are not invited to the underlying boards? This would help guide an investigation when troubleshooting.</p>"
+    },
+    {
+      "id": 245545,
+      "postNumber": 2,
+      "createdAt": "2026-02-06T23:30:04.247Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/nateworks\">@nateworks</a></p>\n<p>Right now, this is expected behavior: <strong>Connect Boards</strong> and <strong>Mirror</strong> columns only show values from boards the viewer can access. So if someone (even an Admin) is missing access to just one connected board, the connected/mirrored values can appear blank or incomplete.</p>\n<p>Unfortunately, there’s <strong>no built in way for Admins to see a list of the connected board names</strong> behind a Connect Boards or Mirror column unless they’re invited to those boards.</p>\n<p>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=15\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" /> <a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Calendly</a></p>"
+    },
+    {
+      "id": 245564,
+      "postNumber": 3,
+      "createdAt": "2026-02-08T05:07:46.583Z",
+      "author": "YOGESHP (Yogesh Pokale)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nateworks\">@nateworks</a>, Welcome to the Community!!</p>\n<p>This is a tricky scenario and, unfortunately, there isn’t a guaranteed admin-level override for this today.</p>\n<p>That said, one thing that may be worth trying (and has helped in some cases) is inspecting the <strong>Connect Boards column settings</strong> via the API. Even if an Admin can’t see the linked items or mirror values, the column’s <code>settings_str</code> <em>may</em> still list the IDs of the boards it’s connected to. From there, you can attempt to query each board ID individually to identify which one you don’t have access to — that often points to the “offending” board.</p>\n<p>To do this, you could try running a query like the following in the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API Playground:</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: SOURCE_BOARD_ID) {\n    columns {\n      id\n      title\n      type\n      settings_str\n    }\n  }\n}\n\n</code></pre>\n<p>It’s not a perfect solution and won’t bypass permissions, but it can sometimes provide enough visibility to narrow down where the issue is coming from and help guide the investigation.</p>"
+    },
+    {
+      "id": 245572,
+      "postNumber": 4,
+      "createdAt": "2026-02-08T14:31:00.978Z",
+      "author": "JDer (Daniel Jackman)",
+      "cookedHtml": "<p>Wild that even admins can’t see which boards are connected if they don’t have access. Seems like a basic oversight in permission design.</p>"
+    },
+    {
+      "id": 245607,
+      "postNumber": 5,
+      "createdAt": "2026-02-09T12:16:39.497Z",
+      "author": "Bree (Bree)",
+      "cookedHtml": "<p>I think I have the answer! (This is for admins.)</p>\n<ol>\n<li>\n<p>On the board in question, open developer tools (right-click &gt; inspect).</p>\n</li>\n<li>\n<p>Go to the <strong>Network</strong> tab.</p>\n</li>\n<li>\n<p>If you don’t see anything listed, you may need to refresh the page.</p>\n</li>\n<li>\n<p>In the search field, search “metadata”.</p>\n</li>\n<li>\n<p>In the <strong>Name</strong> column, click the “metadata” event.</p>\n</li>\n<li>\n<p>Go to the <strong>Response</strong> tab.</p>\n</li>\n<li>\n<p>Look for “missing_linked_boards_permissions”.<br />\nThat will show all the boards you are missing permissions for.</p>\n</li>\n<li>\n<p>Copy one of the board IDs listed.</p>\n</li>\n<li>\n<p>Click your name icon in the top-right corner of the screen. Select “Administration.”</p>\n</li>\n<li>\n<p>Select <strong>Content Directory</strong> in the left side panel.</p>\n</li>\n<li>\n<p>Paste the board ID in the search field.</p>\n</li>\n<li>\n<p>In the list, you’ll be able to see the board owner and members.</p>\n</li>\n<li>\n<p>You can click the kebab menu and add yourself as an owner, or you can ask the owner to add you to the board.</p>\n</li>\n</ol>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/4/d/4d18ce4333553bc0fe43b0b7033b50db2caaef3d.png\" class=\"site-icon\" alt=\"\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://eu.guidde.com/share/playbooks/qsi2EuKxNaua4ynZmkt26Q?origin=SSk9KzomxvTQ1GTr7MQoCObNHPO2\" target=\"_blank\" rel=\"noopener nofollow ugc\">guidde.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://storage.eu.guidde.com/v0/b/guidde-production-eu.appspot.com/o/quickguiddeScreenshots%2FTGJ5LhIcdnQ59hyQSOb0RTwc32X2%2Fqsi2EuKxNaua4ynZmkt26Q%2F1iQhw8LqyAWJCyZo6TSCjT_preview.webp?alt=media&amp;token=4d44ec5f-00f4-4898-8a2b-fe47464e4912\" class=\"thumbnail\" alt=\"\" width=\"540\" height=\"300\" /></div>\n\n<h3><a href=\"https://eu.guidde.com/share/playbooks/qsi2EuKxNaua4ynZmkt26Q?origin=SSk9KzomxvTQ1GTr7MQoCObNHPO2\" target=\"_blank\" rel=\"noopener nofollow ugc\">How to see the missing permissions on a board using the developer tools</a></h3>\n\n  <p>This video was created by Diego Cosillo on guidde, the GenAI platform that lets anyone create how-to videos and visual documentation in seconds.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 245627,
+      "postNumber": 6,
+      "createdAt": "2026-02-09T12:41:37.913Z",
+      "author": "LamHUan (Huan)",
+      "cookedHtml": "<blockquote>\n<p>This is a common pain point with Connect Boards. Unfortunately, Admins can’t see the names of connected boards if they don’t have access — that’s why one “missing” board can block visibility.</p>\n</blockquote>\n<blockquote>\n<p>A workaround is to temporarily give yourself access via a co-owner or request the owner to add you, or keep a separate list of connected boards for troubleshooting. It’s not perfect, but it can save a lot of time when tracking issues like this.</p>\n</blockquote>"
+    },
+    {
+      "id": 245638,
+      "postNumber": 7,
+      "createdAt": "2026-02-09T12:45:09.501Z",
+      "author": "nateworks (Nate Zuzack)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/yogeshp\">@YOGESHP</a> , this is helpful. I’ll keep it in the toolbox. Thank you!</p>"
+    }
+  ]
+}

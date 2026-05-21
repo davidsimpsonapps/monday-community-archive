@@ -1,0 +1,46 @@
+{
+  "id": 20902,
+  "title": "Countdown date Formula error",
+  "slug": "countdown-date-formula-error",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2021-06-05T13:48:35.103Z",
+  "lastPostedAt": "2021-06-07T09:49:49.498Z",
+  "postsCount": 4,
+  "excerpt": "Hello! I am building my board and make a formula column that can show countdown of workdays date info of the due date either from today date or completion date but there is a problem here to make it works. \nThis is my co&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2115,
+  "posts": [
+    {
+      "id": 53786,
+      "postNumber": 1,
+      "createdAt": "2021-06-05T13:48:35.227Z",
+      "author": "ilhamfajar (Ilham Fajar)",
+      "cookedHtml": "<p>Hello! I am building my board and make a formula column that can show countdown of workdays date info of the due date either from today date or completion date but there is a problem here to make it works.</p>\n<p>This is my code<br />\nIF({Timeline#End}&lt;&gt;\"\",<br />\nIF({Completion Date}&lt;&gt;\"\",<br />\nIF(DAYS({Timeline#End},{Completion Date})&gt;0,<br />\n“Complete - “&amp;(WORKDAYS({Timeline#End},{Completion Date})-1)&amp;” days”,<br />\nIF(DAYS({Completion Date},{Timeline#End})&gt;0,<br />\n“Complete + “&amp;WORKDAYS({Completion Date},{Timeline#End})-1&amp;” days”,<br />\n“Complete 0 Days”<br />\n)<br />\n),<br />\nIF(DAYS({Timeline#End},TODAY())&gt;0,<br />\n\" - “&amp;(WORKDAYS({Timeline#End},TODAY())-1)&amp;” more days\",<br />\nIF(DAYS(TODAY(),{Timeline#End})&gt;0,<br />\n\" + “&amp;(WORKDAYS(TODAY(),{Timeline#End})-1)&amp;” more days\",<br />\n\" 0 Days\"<br />\n)<br />\n)<br />\n),<br />\n“-”<br />\n)</p>\n<p>After several experiment to find where is the problem, then I conclude the problem appear at (WORKDAYS(xx,xx)-1) that can’t combined with that nested if.  As an example</p>\n<p>IF({Timeline#End}&lt;&gt;\"\",<br />\nIF({Completion Date}&lt;&gt;\"\",<br />\nIF(DAYS({Timeline#End},{Completion Date})&gt;0,<br />\nWORKDAYS({Timeline#End},{Completion Date})-1,<br />\nIF(DAYS({Completion Date},{Timeline#End})&gt;0,<br />\n“Complete +  days”,<br />\n“Complete 0 Days”<br />\n)<br />\n),<br />\n“Simsalabim!”<br />\n),<br />\n“-”<br />\n)</p>\n<p>“Simsalabim!” and “-” cant appear and the column only show one parameter is invalid</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/6/6548c3e9878e186b647e22aa1ebd4daa1a1e8bd1.png\" alt=\"image\" width=\"533\" height=\"227\" /></p>\n<p>Does anyone have an idea to fix it? Or this is a bug?</p>"
+    },
+    {
+      "id": 53799,
+      "postNumber": 2,
+      "createdAt": "2021-06-06T06:34:33.418Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ilhamfajar\">@ilhamfajar</a>,</p>\n<p>The problem is basically due to the fact that the monday formula evaluator returns an error when any part of the formula is invalid, even when that portion is excluded. Specifically,<br />\nWORKDAYS({Timeline#End},{Completion Date})-1 returns an error whenever either of the dates is blank.</p>\n<p>To fix it, you have to ensure that this part of the formula is always valid.</p>\n<p>Try this:</p>\n<pre><code>IF({Timeline#End}&lt;&gt;\"\", IF({Completion Date}&lt;&gt;\"\", IF(DAYS({Timeline#End},{Completion Date})&gt;0, WORKDAYS(LEFT({Timeline#End}&amp;\"2000-01-01\",10), LEFT({Completion Date}&amp;\"2000-01-01\",10))-1, IF(DAYS({Completion Date},{Timeline#End})&gt;0, \"Complete + days\", \"Complete 0 Days\")), \"Simsalabim!\"), \"-\")</code></pre>"
+    },
+    {
+      "id": 53861,
+      "postNumber": 3,
+      "createdAt": "2021-06-07T09:49:49.498Z",
+      "author": "ilhamfajar (Ilham Fajar)",
+      "cookedHtml": "<p>Ahh, Great!!! It’s work! Thanks a lot!</p>"
+    },
+    {
+      "id": 54591,
+      "postNumber": 4,
+      "createdAt": "2021-06-14T09:49:49.849Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

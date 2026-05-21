@@ -1,0 +1,68 @@
+{
+  "id": 68758,
+  "title": "API 2023-10 \"Column\" object ID type mismatch with ids argument",
+  "slug": "api-2023-10-column-object-id-type-mismatch-with-ids-argument",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    203
+  ],
+  "createdAt": "2023-10-19T14:12:18.518Z",
+  "lastPostedAt": "2023-10-25T04:37:04.594Z",
+  "postsCount": 6,
+  "excerpt": "Queries of the “column” field on “boards” take the argument of boards(columns(ids: [String!])) however the Column object id field is of type ID! according to the schema. \nwhile its essentially moot, since ID in a column &hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 554,
+  "posts": [
+    {
+      "id": 148994,
+      "postNumber": 1,
+      "createdAt": "2023-10-19T14:12:18.590Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Queries of the “column” field on “boards” take the argument of <code>boards(columns(ids: [String!]))</code> however the Column object id field is of type ID! according to the schema.</p>\n<p>while its essentially moot, since ID in a column is always a string. But inconsistencies like this make writing queries using variables a bit more painful since all IDs should be of type ID including when used as arguments (as is the case for <code>boards(ids: [ID!])</code>)</p>\n<p>of course someone will gripe that fixing this will create a breaking change in the next API where queries need to get updated…</p>"
+    },
+    {
+      "id": 149046,
+      "postNumber": 2,
+      "createdAt": "2023-10-19T22:07:09.411Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>Thanks so much for bringing this up - this feedback is very useful!</p>\n<p>I’ve shared it with our API team <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 149734,
+      "postNumber": 4,
+      "createdAt": "2023-10-24T12:15:07.774Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>This is not the way variables are used in GraphQL.</p>\n<p>each argument in GraphQL accepts a single variable. You are trying to combine variables into an array within the query string which is not possible. For the items are using the ID type name as a variable name. The first part after the word <code>query</code> is the definition of variables <code>$itemId</code> and its type - a non nullable array of IDs <code>[ID!]</code>.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n\n      <a href=\"https://graphql.org/learn/queries/#variables\" target=\"_blank\" rel=\"noopener\">graphql.org</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://graphql.org/learn/queries/#variables\" target=\"_blank\" rel=\"noopener\">Queries and Mutations | GraphQL</a></h3>\n\n  <p>A query language for your API — GraphQL provides a complete description of the data in your API, gives clients the power to ask for exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables powerful developer...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<pre><code class=\"lang-auto\">const query = `query($itemId: [ID!], $columnIDs: [String]) {\n      items(ids: $itemId) {\n        column_values(ids: $columnIds) {\n          value\n        }\n      }\n    }`\n</code></pre>\n<p>the variables must be:</p>\n<pre><code class=\"lang-auto\">const variables = {\n   itemId: [ID],\n   columnIds: [typeColumnId, statusId]\n}\n</code></pre>"
+    },
+    {
+      "id": 149742,
+      "postNumber": 5,
+      "createdAt": "2023-10-24T12:57:44.827Z",
+      "author": "fabiomiguel.ribeiro (Fábio Ribeiro)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">const query = `query($itemId: [ID!], $columnIDs: [String]) {\n      items(ids: $itemId) {\n        column_values(ids: $columnIds) {\n          value\n        }\n      }\n    }`\n</code></pre>\n</blockquote>\n</aside>\n<p>I tried that way but it didn’t work.</p>\n<p>What I’m finding strange is that I have another function that works correctly, with the same structure.</p>\n<pre><code class=\"lang-auto\">const getDatesValue = async (token, itemId, startColumnId, endColumnId) =&gt; {\n  // Used in Dates To timeline\n  try {\n    const mondayClient = initMondayClient();\n    mondayClient.setToken(token);\n\n    const query = `query($itemId: ID, $startColumnId: String, $endColumnId: String) {\n  items(ids: [$itemId]) {\n    column_values(ids: [$startColumnId, $endColumnId]) {\n      value\n    }\n  }\n}\n`;\n    const variables = { startColumnId, endColumnId, itemId };\n\n    const response = await mondayClient.api(query, { variables });\n    console.log ('response timeline:', response);\n    if (response.data.items[0].column_values[0].value !== null &amp;&amp; response.data.items[0].column_values[1].value !== null) {\n    return response;\n    }\n  } catch (err) {\n    console.error(err);\n  }\n};```</code></pre>"
+    },
+    {
+      "id": 149745,
+      "postNumber": 6,
+      "createdAt": "2023-10-24T13:03:19.900Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Well in your original query you are using [$ID] as a variable for items, when there is no variable $ID defined - there is a variable $itemId defined like in the second one, which you are using correctly there but not in the first query.</p>\n<p>You are referencing a variable that doesn’t exist and defining a variable that isn’t used in the first query you asked about.</p>\n<p>Also, just for reference, this thread was about the argument type of <code>colum_values(ids: [String]</code> mismatching with the type of column IDs (ID). This is not directly related to the issue you were having. This really should have been a new thread instead of threadjacking the original thread.</p>"
+    },
+    {
+      "id": 149847,
+      "postNumber": 7,
+      "createdAt": "2023-10-25T04:21:43.419Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 149849,
+      "postNumber": 8,
+      "createdAt": "2023-10-25T04:37:04.594Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>Let’s please continue this in <a href=\"https://community.monday.com/t/api-2023-10-problems-with-query/69103/4\">this topic</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

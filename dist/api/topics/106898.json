@@ -1,0 +1,41 @@
+{
+  "id": 106898,
+  "title": "Get Monday Board Data to PowerBI via API ALL ITEMS through cursor",
+  "slug": "get-monday-board-data-to-powerbi-via-api-all-items-through-cursor",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    20,
+    94,
+    102,
+    165,
+    166,
+    167,
+    203,
+    239,
+    460
+  ],
+  "createdAt": "2025-01-08T16:06:00.811Z",
+  "lastPostedAt": "2025-01-08T16:06:00.898Z",
+  "postsCount": 1,
+  "excerpt": "You should be able to use the code below in PowerBI to get all columns and all items from a board even past the 500 item limit. \nnote: when connecting to the API, use anonymous and be sure to use the advanced editor when&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 34,
+  "posts": [
+    {
+      "id": 216374,
+      "postNumber": 1,
+      "createdAt": "2025-01-08T16:06:00.898Z",
+      "author": "JeremyChang (Jeremy Chang)",
+      "cookedHtml": "<p>You should be able to use the code below in PowerBI to get all columns and all items from a board even past the 500 item limit.</p>\n<p>note: when connecting to the API, use anonymous and be sure to use the advanced editor when you are adding your blank power query.</p>\n<p>let</p>\n<pre><code>Key = \"eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjMzMDU2NjU1MywiYWFpIjoxMSwidWlkIjozMjIwODE0MSwiaWFkIjoiMjAyNC0wMy0wOFQxOTowNjo1Ni45OTdaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NzgxNjIyNiwicmduIjoidXNlMSJ9.ClnbaoqfF_kWiBwUyX7KDOeyJ4j5GCQK8HWq70KP8so\",  // Replace with your Monday API key \nBoard = \"6534102022\",  // Replace with your board ID \nBaseUrl = \"https://api.monday.com/v2\",  \n\n// Function to fetch items based on cursor\nGetItems = (Cursor as nullable text) =&gt;\nlet\n\n    Query = if Cursor = null then\n                \"{\"\"query\"\": \"\"query { boards(ids: \" &amp; Board &amp; \") { items_page(limit: 500) { items { name, updated_at, group { title }, columns: column_values { column { title }, text, ...on DependencyValue { display_value }, ...on MirrorValue { display_value }, ...on BoardRelationValue { display_value } } } } } }\"\"}\"\n            else\n                \"{\"\"query\"\": \"\"query { next_items_page(cursor: \"\"\" &amp; Cursor &amp; \"\"\") { items { name, updated_at, group { title }, columns: column_values { column { title }, text, ...on DependencyValue { display_value }, ...on MirrorValue { display_value }, ...on BoardRelationValue { display_value } } } cursor } } }\"\"}\",\n\n    // Sending request to the API\n    Source = Web.Contents(BaseUrl, [\n        Headers = [\n            #\"Method\" = \"POST\",\n            #\"Content-Type\" = \"application/json\",\n            #\"Authorization\" = \"Bearer \" &amp; Key,\n            #\"API-Version\" = \"2024-01\"\n        ],\n        Content = Text.ToBinary(Query)\n    ]),\n\n    // Parsing the response\n    Response = Json.Document(Source),\n    Items = Response[data][boards]{0}[items_page][items],\n    NewCursor = try Response[data][boards]{0}[items_page][cursor] otherwise null,\n\n    // Returning items and cursor\n    Result = [Items = Items, Cursor = NewCursor]\nin\n\n    Result,\n\n// Initialize by getting the first 500 items\nFirstBatch = GetItems(null),\nInitialItems = FirstBatch[Items],\nInitialCursor = FirstBatch[Cursor],\n\n// Recursively fetching additional items if a cursor is present\nGetAllItems = (cursor as nullable text, allItems as list) =&gt;\n\nlet\n    // Get the next batch of items\n    NextBatch = GetItems(cursor),\n    NewItems = NextBatch[Items],\n    NewCursor = NextBatch[Cursor],\n\n    // Combine the new items with the existing ones\n    CombinedItems = List.Combine({allItems, NewItems}),\n\n    // If there is a new cursor, recurse; otherwise, return the combined items\n    AllItems = if NewCursor = null then CombinedItems else @GetAllItems(NewCursor, CombinedItems)\nin\n    AllItems,\n\n// Start the process with the initial cursor and an empty list\nFinalItems = GetAllItems(InitialCursor, InitialItems),\n\n// Convert the final list of items into a table\nData = Table.FromList(FinalItems, Record.FieldValues, {\"Title\", \"UpdatedAt\", \"Group\", \"Columns\"}),\n\n// Expanding columns using your original transformation logic\n#\"ExpandedColumns\" = Table.FromRecords(Table.TransformRows(Data, each\n\n    List.Accumulate([Columns], [\n        Title = [Title],\n        UpdateDate = [UpdatedAt],\n        Group = [Group][title]\n    ], (state, current) =&gt; Record.AddField(\n        state, current[column][title],\n        if Record.HasFields(current, \"display_value\") then current[display_value] ?? current[text] else current[text]\n\n    ))\n\n))\n</code></pre>\n<p>in<br />\n#“ExpandedColumns”</p>"
+    },
+    {
+      "id": 216859,
+      "postNumber": 2,
+      "createdAt": "2025-01-12T08:34:48.169Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

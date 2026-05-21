@@ -1,0 +1,62 @@
+{
+  "id": 40988,
+  "title": "Add ids argument to updates field on query",
+  "slug": "add-ids-argument-to-updates-field-on-query",
+  "categoryId": 58,
+  "tagIds": [
+    53,
+    94,
+    276
+  ],
+  "createdAt": "2022-08-15T15:44:00.887Z",
+  "lastPostedAt": "2024-10-16T10:21:47.487Z",
+  "postsCount": 6,
+  "excerpt": "There is still no “ids” argument on the “updates” field of a query. We can get this updateid from a trigger (new update created), yet the only way to do anything with it is to turn around and query an item for its most r&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 832,
+  "posts": [
+    {
+      "id": 94839,
+      "postNumber": 1,
+      "createdAt": "2022-08-15T15:44:00.966Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There is still no “ids” argument on the “updates” field of a query. We can get this updateid from a trigger (new update created), yet the only way to do anything with it is to turn around and query an item for its most recent updates.</p>\n<pre><code class=\"lang-auto\">query ($updateId: [Int!]) {\n    updates (ids: $updateId) {\n        body,\n        text_body,\n        assets {\n            id,\n            name,\n            file_size,\n            url,\n        }\n    }\n}\n</code></pre>\n<pre><code class=\"lang-auto\">{\n    \"errors\": [\n        {\n            \"message\": \"Field 'updates' doesn't accept argument 'ids'\"\n        }\n    ]\n}\n</code></pre>\n<p>Instead the query below is needed, then, item[0].update.map() to get the update in question. This requires getting more updates, and depending on the query more nested queries are required. All of this increases complexity - both query, and code.</p>\n<pre><code class=\"lang-auto\">query ($itemId: [Int!]) {\n    items (ids: $itemId) {\n        updates (limit: 5) {\n            id,\n            assets {\n                id,\n                name,\n                url\n            }\n        }\n    }\n}\n</code></pre>"
+    },
+    {
+      "id": 94902,
+      "postNumber": 2,
+      "createdAt": "2022-08-16T04:55:47.299Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>!</p>\n<p>Thank you for the feedback. I have shared it with the team <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 150938,
+      "postNumber": 3,
+      "createdAt": "2023-11-01T10:39:07.173Z",
+      "author": "Shanee (Shanee Radzewsky)",
+      "cookedHtml": "<p>Just updating that this is now possible as of the previous version <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\nSee <a href=\"https://developer.monday.com/api-reference/docs/updates\">documentation</a></p>"
+    },
+    {
+      "id": 150959,
+      "postNumber": 4,
+      "createdAt": "2023-11-01T12:47:18.946Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Documentation makes no mention of update ID being an argument for querying updates. Though it does appear in the schema now. Good to know.</p>"
+    },
+    {
+      "id": 205684,
+      "postNumber": 5,
+      "createdAt": "2024-10-14T17:48:48.743Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> or <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> this one is long released.</p>"
+    },
+    {
+      "id": 205876,
+      "postNumber": 6,
+      "createdAt": "2024-10-16T10:21:47.487Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Good catch. Here’s the relevant documentation for this field &amp; argument:</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/reference/updates#arguments\" target=\"_blank\" rel=\"noopener\">monday.com Platform API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/4/0/4005563d911b52634489bff44a7c345ce1686d22.png\" class=\"thumbnail\" width=\"358\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/api-reference/reference/updates#arguments\" target=\"_blank\" rel=\"noopener\">Updates</a></h3>\n\n  <p>Learn how to query monday.com board or item updates using the platform API</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    }
+  ]
+}

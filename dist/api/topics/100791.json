@@ -1,0 +1,47 @@
+{
+  "id": 100791,
+  "title": "Best way to search for multiple emails across multiple boards",
+  "slug": "best-way-to-search-for-multiple-emails-across-multiple-boards",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-10-17T17:15:59.744Z",
+  "lastPostedAt": "2024-11-21T06:25:38.169Z",
+  "postsCount": 4,
+  "excerpt": "Given 5 emails, I’m looking to see which ones exists in which boards(and which ones don’t). I have 5 different boards that I need to search in with those 5 emails. \nCurrenlty, I have some sort of linear search in place w&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 21,
+  "posts": [
+    {
+      "id": 206063,
+      "postNumber": 1,
+      "createdAt": "2024-10-17T17:15:59.822Z",
+      "author": "Zepticona (Shahriar Islam Sakil)",
+      "cookedHtml": "<p>Given 5 emails, I’m looking to see which ones exists in which boards(and which ones don’t). I have 5 different boards that I need to search in with those 5 emails.</p>\n<p>Currenlty, I have some sort of linear search in place where I take one email, search across 5 boards. So for 5 emails its 5x5=25 api calls which results in a very slow response(yes I need the total response). I’m looking for suggestions to improve this so that I don’t get stuck in api calls for about a minute. Here’s what I’m exploring currently:</p>\n<ol>\n<li>Make 1 api call ber board, with all the email values passed at the same time</li>\n</ol>\n<pre><code class=\"lang-auto\">query {\n  items_page_by_column_values (limit: 50, board_id: 123456789, columns: [{column_id: \"email__1\", column_values: [\"test@emial.com\", \"tes2t@emial.com\", \"test3@emial.com\"]}]) {\n    cursor\n    items {\n      id\n      name\n      column_values {\n      \tid\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>This gives me fairly lower reponse time, but I’m curious to know if there is a way to only receive a certain number of columns. I know that there exists something like this for statuses, but not sure if anything can be done for email column.</p>\n<ol>\n<li>I haven’t found anything on this yet, but what would be even more nice is the above query, but for multiple boards.</li>\n</ol>"
+    },
+    {
+      "id": 209031,
+      "postNumber": 2,
+      "createdAt": "2024-11-07T10:14:57.974Z",
+      "author": "OmerK (Omer Koort)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/zepticona\">@Zepticona</a><br />\nI checked with the team and got a code that this should look like this:</p>\n<pre><code class=\"lang-auto\">query GetBoardItems {\n  boards(ids: [7753601158, 7753604175, 37753606898]) {\n    items_page(\n      limit: 50\n      query_params: {rules: [{column_id: \"email__1\", compare_value: [\"a@a.com\", \"b@a.com\", \"c@a.com\"], operator: any_of}]}\n    ) {\n      items {\n        id\n        name\n        column_values {\n          id\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Let me know if this helps</p>"
+    },
+    {
+      "id": 210536,
+      "postNumber": 3,
+      "createdAt": "2024-11-18T10:36:04.873Z",
+      "author": "Zepticona (Shahriar Islam Sakil)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/omerk\">@OmerK</a></p>\n<p>I really apprecaite you getting back to me on this. It just shows how dedicated you are to helping the community.</p>\n<p>Now, that’s amazing what you’ve given me. I kind of knew that it would be something like this but I couldn’t really figure it out.</p>\n<p>By the way, on the process of lowering the query time, I discovered that the query takes significantly less time if I chain the queries per board. So if I have an email column titled email_1, email_2, and email_3 on 3 different boards, I could do somehting like</p>\n<pre><code class=\"lang-auto\">query {\n  firstQuery: items_page_by_column_values(\n    limit: 50\n    board_id: 1613606727\n    columns: [{column_id: \"email_1\", column_values: [${emails.map((str) =&gt; `\"${str}\"`).join(\", \")}]}]\n  ) {\n    cursor\n    items {\n      id\n      name\n      board {\n        name\n      }\n      column_values(ids: [\"email_1\"]) {\n        id\n        value\n      }\n    }\n  }\n  secondQuery: items_page_by_column_values(\n    limit: 50\n    board_id: 1613687876\n    columns: [{column_id: \"email_2\", column_values: [${emails.map((str) =&gt; `\"${str}\"`).join(\", \")}]}]\n  ) {\n    cursor\n    items {\n      id\n      name\n      board {\n        name\n      }\n      column_values(ids: [\"email_2\"]) {\n        id\n        value\n      }\n    }\n  }\n  thirdQuery: items_page_by_column_values(\n    limit: 50\n    board_id: 1613695311\n    columns: [{column_id: \"email_3\", column_values: [${emails.map((str) =&gt; `\"${str}\"`).join(\", \")}]}]\n  ) {\n    cursor\n    items {\n      id\n      name\n      board {\n        name\n      }\n      column_values(ids: [\"email_3\"]) {\n        id\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>I have chained a total of 8 queries like this for 8 boards. I get a query time of about 7seconds on average for 3/4 emails which is pretty good for now.</p>\n<p>My question to you is, will this new query lower the search time by a few seconds? Keep in mind that I’ll still have to chain a few queries like this. Because while 5 of my boards have the same column_id value for the email column, 2 of them use a different one, and 1 of them use another one. Obviously I’ll do my tests as well but wanted to know if you or the team have any data on the time complexity of this. Thanks!</p>"
+    },
+    {
+      "id": 210910,
+      "postNumber": 4,
+      "createdAt": "2024-11-21T06:25:38.169Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/zepticona\">@Zepticona</a>,</p>\n<p>Matias from the technical support team here!</p>\n<p>We can not specify the response time for the queries since there are many fields and factors that can affect them.</p>\n<p>We encourage the developers to test in their own specific scenarios, what works best for them in relation to response times when comparing different queries <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Let us know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

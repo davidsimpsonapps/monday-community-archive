@@ -1,0 +1,32 @@
+{
+  "id": 46374,
+  "title": "API connection in Power Query to Monday.com",
+  "slug": "api-connection-in-power-query-to-monday-com",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-11-28T00:52:29.491Z",
+  "lastPostedAt": "2022-11-28T06:51:31.245Z",
+  "postsCount": 2,
+  "excerpt": "Hi, \nI have used the following API connection in power query for one of our boards successfully: \nlet \nKey = “xx”, \nBoard = “xx”, \nSource = Web.Contents( \n“https://api.monday.com/v2”, \n[ \nHeaders=[ \n#“Method”=“POST”, \n#“&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1738,
+  "posts": [
+    {
+      "id": 105345,
+      "postNumber": 1,
+      "createdAt": "2022-11-28T00:52:29.596Z",
+      "author": "shunter (Scott Hunter)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I have used the following API connection in power query for one of our boards successfully:<br />\nlet<br />\nKey = “xx”,<br />\nBoard = “xx”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) { items { name, updated_at, group { title }, columns: column_values { title, text } } } }””}”)<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, {“Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\n#“Monday” = Table.FromRecords(Table.TransformRows(Data, each<br />\nList.Accumulate([Columns], [<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[title], current[text]) )<br />\n))<br />\nin<br />\n#“Monday”</p>\n<p>Now when I try and change the board to another one with the same query it times out.  Is there some difference in the boards or the query to make this work?</p>\n<p>Thanks for your help</p>"
+    },
+    {
+      "id": 105366,
+      "postNumber": 2,
+      "createdAt": "2022-11-28T06:51:31.245Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/shunter\">@shunter</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Our server will show a timeout if the requested data can not be retrieved within 60 seconds.</p>\n<p>You can use pagination <a href=\"https://developer.monday.com/api-reference/docs/rate-limits#pagination\">as explained here</a> to retrieve the information in smaller batches of data.</p>\n<p>Let us know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

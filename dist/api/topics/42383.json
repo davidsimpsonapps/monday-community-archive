@@ -1,0 +1,83 @@
+{
+  "id": 42383,
+  "title": "Google Apps Script GAS: update value, what is the syntax for UNchecking a box",
+  "slug": "google-apps-script-gas-update-value-what-is-the-syntax-for-unchecking-a-box",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    125,
+    351
+  ],
+  "createdAt": "2022-09-13T04:41:26.261Z",
+  "lastPostedAt": "2022-10-06T16:45:19.941Z",
+  "postsCount": 9,
+  "excerpt": "Greetings from the dystopia of nested backslashes. I hope to save you some trouble even if I myself am not fully free of it. \nMany Monday posts exist; however translating them into something executable for Google Apps sc&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 1741,
+  "posts": [
+    {
+      "id": 97535,
+      "postNumber": 1,
+      "createdAt": "2022-09-13T04:41:26.356Z",
+      "author": "McMurry (Julie McMurry)",
+      "cookedHtml": "<p>Greetings from the dystopia of nested backslashes. I hope to save you some trouble even if I myself am not fully free of it.</p>\n<p>Many Monday posts exist; however translating them into something executable for Google Apps script has not been obvious, which is unfortunate because Google Script is among the most accessible ways for casual users to leverage the Monday API for small tasks. Getting started is as easy as typing script.new into your browser address bar and following the prompts.</p>\n<p>Key insights thus far on Monday / Google Sheets integration:</p>\n<ol>\n<li>Across Monday boards, Column IDs vary for the exact same Column Name. No fetchColIDFromName kind of function exists; thus you’ll need to loop all columns and match on the expected name. The code block is not rendering properly in this venue, so please see <a href=\"https://github.com/bridge2ai/mondayintegration/blob/main/monday.gs\" rel=\"noopener nofollow ugc\">getColIDFromName here</a>\n</li>\n<li>Google Apps Script expects the word “payload” instead of “body” (see working examples at <a href=\"https://github.com/bridge2ai/mondayintegration/blob/main/monday.gs\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">mondayintegration/monday.gs at main · bridge2ai/mondayintegration · GitHub</a>)</li>\n<li>passing in \\\"true\\\" for checking boxes works fine; however passing in \\\"false\\\" fails silently along with 13 other permutations of blank or null. 2 additional options trigger fatal errors.</li>\n</ol>\n<pre><code class=\"lang-auto\">  // all of these fail silently (they do not change state of checkbox to true, but they don't throw errors either)\n  var silentFailParameters = [\n    null,\n    false,\n    'false',\n    '\\\"false\\\"',\n    '\\\\\"false\\\\\"',\n    '\\\\\\\"false\\\\\\\"',\n    '\"{}\"',\n    '\\\"{}\\\"',\n    '\\\\\"{}\\\\\"',\n    '\\\\\\\"{}\\\\\\\"',\n    '\\\\\\\"\\\\\\\"'\n  ];\n\n  var fatalErrorParameters = [\n    \"\",\n    {}\n  ];\n</code></pre>\n<p>I’m what am I missing?</p>\n<p>thanks in advance,<br />\nJulie</p>"
+    },
+    {
+      "id": 97539,
+      "postNumber": 2,
+      "createdAt": "2022-09-13T05:18:17.768Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mcmurry\">@McMurry</a>!</p>\n<p>Regarding the clearing of a checkbox column, you can use a mutation like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id: 1234567890, board_id: 1122334455, column_values: \"{\\\"checkbox\\\" : null}\") {\n    id\n  }\n}\n</code></pre>\n<p>Hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 97580,
+      "postNumber": 3,
+      "createdAt": "2022-09-13T11:41:29.852Z",
+      "author": "McMurry (Julie McMurry)",
+      "cookedHtml": "<p>Hi Matias, Apologies; I wasn’t clear, null is the first permutation I tried<br />\nI’m iteratively passing each of the failing values into the method below. Unfortunately, Google apps script won’t work with the raw api syntax; it has to be pretty close to pure javascript.</p>\n<pre><code class=\"lang-auto\">  function testParameterEncoding(permutation) {\n    var query =\n      'mutation{change_column_value(' +\n      'board_id: ' + Board_id + \",item_id:\" + Item_id +\n      ',column_id: \"checkbox\",value:\"{\\\\\"checked\\\\\": ' + permutation + '}\"){id}}'\n\n    Logger.log('-----------------------------')\n    Logger.log(\"Testing query with: \" + JSON.stringify(permutation));\n\n    runQuery(query);\n    let result = runQuery(queryCheckboxState);\n    getCheckedStateFromResult(result)\n  }\n</code></pre>\n<p>which then runs the query via the method below:</p>\n<pre><code class=\"lang-auto\">  function runQuery(query) {\n\n    var result = UrlFetchApp.fetch(\"https://api.monday.com/v2\", {\n      method: 'post',\n      headers: {\n        'Content-Type': 'application/json',\n        'Authorization': MONDAY_KEY\n      },\n      payload: JSON.stringify({\n        'query': query\n      })\n    })\n    return result;\n  }\n}\n</code></pre>\n<p>then the output of the iterative execution is:</p>\n<pre><code class=\"lang-auto\">7:37:29 AM\tInfo\tStarted: Tue Sep 13 2022 07:37:29 GMT-0700 (Pacific Daylight Time)\n7:37:29 AM\tInfo\tChecking baseline checkbox state\n7:37:29 AM\tInfo\tnull\n7:37:29 AM\tInfo\t-------\n7:37:29 AM\tInfo\t-----------------------------\n7:37:29 AM\tInfo\tTesting query with: \"\\\\\\\"true\\\\\\\"\"\n7:37:30 AM\tInfo\t{\"checked\":\"true\",\"changed_at\":\"2022-09-13T14:37:29.801Z\"}\n7:37:30 AM\tInfo\t-----------------------------\n7:37:30 AM\tInfo\tTesting query with: null\n7:37:31 AM\tInfo\t{\"checked\":\"true\",\"changed_at\":\"2022-09-13T14:37:29.801Z\"}\n7:37:31 AM\tInfo\t-----------------------------\n7:37:31 AM\tInfo\tTesting query with: false\n7:37:31 AM\tInfo\t{\"checked\":\"true\",\"changed_at\":\"2022-09-13T14:37:29.801Z\"}\n7:37:31 AM\tInfo\t-----------------------------\n7:37:31 AM\tInfo\tTesting query with: \"false\"\n7:37:32 AM\tInfo\t{\"checked\":\"true\",\"changed_at\":\"2022-09-13T14:37:29.801Z\"}\n</code></pre>\n<p>and so on for the other fails.</p>"
+    },
+    {
+      "id": 97584,
+      "postNumber": 4,
+      "createdAt": "2022-09-13T12:14:07.160Z",
+      "author": "McMurry (Julie McMurry)",
+      "cookedHtml": "<p>It was @ MelissaH who got me partially unstuck via this post; THANKS: <a href=\"https://community.monday.com/t/mutating-a-date-in-v2/10404\" class=\"inline-onebox\">Mutating a Date in v2</a><br />\nI’d be very grateful if it might be possible to comment on how, in Google Apps Script to pass in <code>null</code>   to uncheck a box?<br />\nThanks in advance <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 97597,
+      "postNumber": 5,
+      "createdAt": "2022-09-13T13:17:50.475Z",
+      "author": "MelissaH (Melissa Hallbauer)",
+      "cookedHtml": "<p>Julie,</p>\n<p>it’s been several years since I tried to uncheck a box, but here’s how I typically write my Monday API queries:</p>\n<ol>\n<li>Tweak the query in the API playground until I get it working there - usually the documentation leaves things out and a raw copy/paste involves some tweaking to get confirmation</li>\n<li>Switch to Postman and tweak it again until the JavaScript works the same way the original query did - as you found, there are quirks to the way the Monday API interprets backslashes and quotation marks.</li>\n<li>Once I have a working JavaScript query in Postman, it’s usually a pretty simple copy/paste to GAS.</li>\n</ol>"
+    },
+    {
+      "id": 97693,
+      "postNumber": 6,
+      "createdAt": "2022-09-14T04:09:08.197Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mcmurry\">@McMurry</a>!</p>\n<p>Please note  that the mutation you are using is <code>change_column_values</code> and what I sent is <code>change_multiple_column_values</code>.</p>\n<p>Also, at least on the GraphQL side, you are using two backslashes to escape outer quotes when only one is needed (not sure if you are using 2 because of some GAS syntax requirement). And no quotes are needed for <code>null</code>:</p>\n<p><code>column_values: \"{\\\"checkbox\\\" : null}\"</code></p>\n<p>Regarding the syntax required in GAS, I am sorry I can not help there since I have no experience with it.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 99776,
+      "postNumber": 7,
+      "createdAt": "2022-10-06T16:00:20.392Z",
+      "author": "McMurry (Julie McMurry)",
+      "cookedHtml": "<p>Thanks, when I get back to this project, I will certainly try. I appreciate your willingness to respond.</p>"
+    },
+    {
+      "id": 99777,
+      "postNumber": 8,
+      "createdAt": "2022-10-06T16:12:49.300Z",
+      "author": "MelissaH (Melissa Hallbauer)",
+      "cookedHtml": "<p>Matias,</p>\n<p>GAS syntax for API requests is diabolical and ever-changing. consider yourself lucky to have no experience in it <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 99781,
+      "postNumber": 9,
+      "createdAt": "2022-10-06T16:45:19.941Z",
+      "author": "McMurry (Julie McMurry)",
+      "cookedHtml": "<p>Well hey, at least in GAS API, I’ve never seen “null” and “true”  being required opposites of each other <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

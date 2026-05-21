@@ -1,0 +1,75 @@
+{
+  "id": 2881,
+  "title": "Issue with mutation - change_column_value with date column",
+  "slug": "issue-with-mutation-change-column-value-with-date-column",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94
+  ],
+  "createdAt": "2019-11-01T12:56:06.348Z",
+  "lastPostedAt": "2021-02-25T12:23:06.910Z",
+  "postsCount": 8,
+  "excerpt": "Hi there, \nI’ve been using the Monday API to automatically post updates to a board for several weeks now. One of the columns that I’m changing is a Date column. Starting yesterday, all of my requests to change columns of&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 6517,
+  "posts": [
+    {
+      "id": 7770,
+      "postNumber": 1,
+      "createdAt": "2019-11-01T12:56:06.539Z",
+      "author": "chdastolfo (Christina D'Astolfo)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>I’ve been using the Monday API to automatically post updates to a board for several weeks now. One of the columns that I’m changing is a Date column. Starting yesterday, all of my requests to change columns of this type have returned 400 errors, with the message:</p>\n<pre><code>{\n  \"error_code\": \"ColumnValueException\",\n  \"status_code\": 400,\n  \"error_message\": \"change_column_value invalid value\",\n  \"error_data\": {\n    \"column_value\": \"{\\\"date\\\"=&gt;\\\"2019-11-1\\\", \\\"time\\\"=&gt;\\\"12:39:00\\\"}\",\n    \"column_type\": \"DateColumn\"\n  }\n}\n</code></pre>\n<p>My query, obviously, does not have “=&gt;” in it. My query looks like this:</p>\n<pre><code>mutation\n    {\n        change_column_value(\n            board_id: 12335234,\n            item_id: 2312342341231,\n            column_id: date,\n            value: \"{\\\"date\\\":\\\"2019-11-1\\\", \\\"time\\\":\\\"12:39:00\\\"}\"\n        ) {\n            id\n            name\n            column_values {\n                id\n                text\n                value\n            }\n        }\n    }\n</code></pre>\n<p>which, according to your documentation, is correct. Any input as to what could be happening/ what I’m doing wrong? Thanks!</p>"
+    },
+    {
+      "id": 7782,
+      "postNumber": 2,
+      "createdAt": "2019-11-01T18:30:11.638Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/chdastolfo\">@chdastolfo</a>, welcome to the community <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I tested this and I know the issue <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Our date column expects dates in YYYY-MM-DD format, and your date is <code>2019-11-1</code> instead of <code>2019-11-01</code>.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/3/3d93236caf324d00532c795180dc8f3b2dc386ec.png\" alt=\"image\" width=\"585\" height=\"156\" /></p>\n<p>Let me know if that helps!</p>"
+    },
+    {
+      "id": 10559,
+      "postNumber": 3,
+      "createdAt": "2020-01-19T05:50:33.714Z",
+      "author": "devendra (Devendra Verma)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a><br />\nI am also having issue with date format. I am sending it in YYYY-mm-dd format but still I am getting invalid date format issue.</p>\n<pre><code>{\n  \"error_code\": \"ColumnValueException\",\n  \"status_code\": 400,\n  \"error_message\": \"change_column_value invalid value\",\n  \"error_data\": {\n   \"column_value\": \"2020-01-19\",\n   \"column_type\": \"DateColumn\"\n }\n</code></pre>\n<p>}</p>\n<p>Can you please let me now what I am missing.</p>"
+    },
+    {
+      "id": 10815,
+      "postNumber": 4,
+      "createdAt": "2020-01-25T17:42:18.287Z",
+      "author": "jeffnb (Jeff N)",
+      "cookedHtml": "<p>I am getting the exact same problem.  blocking development</p>\n<p>{<br />\n“error_code”: “ColumnValueException”,<br />\n“status_code”: 400,<br />\n“error_message”: “change_column_value invalid value”,<br />\n“error_data”: {<br />\n“column_value”: “2021-01-31”,<br />\n“column_type”: “DateColumn”<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 10848,
+      "postNumber": 5,
+      "createdAt": "2020-01-26T22:44:24.967Z",
+      "author": "lauralev (Laura Levy)",
+      "cookedHtml": "<p>HI <a class=\"mention\" href=\"/u/jeffnb\">@jeffnb</a> and <a class=\"mention\" href=\"/u/devendra\">@devendra</a>! Thanks for posting about this - happy to help. I see that you are both formatting the value string like this below:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/a/a7c9185d30e6c4f0d760ffc6b135cf94874af6b6.png\" alt=\"image\" width=\"506\" height=\"342\" /></p>\n<p>Could you try altering the value string  to reflect this format for mutating the date column? You’d need to format this stringified JSON object with a date key (see below).<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/8f7b9cfe124d62f31b8791f33ab1052a275925c9.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/8f7b9cfe124d62f31b8791f33ab1052a275925c9_2_690x322.png\" alt=\"image\" width=\"690\" height=\"322\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">752×352 40.1 KB</span>\n</div></a></div><p></p>\n<p>You can see here on <a href=\"http://developers.monday.com\">developers.monday.com</a> - <a href=\"https://monday.com/developers/v2#column-values-section-date\">https://monday.com/developers/v2#column-values-section-date</a></p>\n<p>After looking at our documentation, it looks like the format you were using is for mutating text columns possibly?</p>\n<p>Does that work for you both? Cheers!<br />\n-Laura</p>"
+    },
+    {
+      "id": 10853,
+      "postNumber": 6,
+      "createdAt": "2020-01-27T04:13:29.091Z",
+      "author": "devendra (Devendra Verma)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/lauralev\">@lauralev</a> Thanks it worked.</p>"
+    },
+    {
+      "id": 11667,
+      "postNumber": 7,
+      "createdAt": "2020-02-07T17:35:31.157Z",
+      "author": "meetee (aviram)",
+      "cookedHtml": "<p>hi !<br />\nIm trying it too but for me its not working</p>\n<pre><code>const query2 =`mutation {\n\n        change_column_value (board_id: ${req.body.data.boardid}, item_id: ${item.create_item.id}, column_id: \"due_to\", value: \"{\\\"date\\\":\\\"2020-01-09\\\"}\") {\n\n            id\n\n          }\n\n       }`\n</code></pre>\n<p>and the error I get :</p>\n<p>(node:26156) UnhandledPromiseRejectionWarning: Error: Parse error on “:” (STRING) at [2, 107]: {“response”:{“errors”:[{“message”:“Parse error on “:” (STRING) at [2, 107]”,“locations”:[{“line”:2,“column”:107}]}],“account_id”:5593070,“status”:200},“request”:{“query”:“mutation {\\n            change_column_value (board_id: 453149783, item_id: 453319956, column_id: “due_to”, value:”{“date”:“2020-01-09”}\") {\\n                id\\n<br />\n}\\n           }\"}}<br />\nat GraphQLClient. (C:\\Users\\aviram\\meetee0.3\\node_modules\\graphql-request\\dist\\src\\index.js:116:35)<br />\nat step (C:\\Users\\aviram\\meetee0.3\\node_modules\\graphql-request\\dist\\src\\index.js:40:23)<br />\nat Object.next (C:\\Users\\aviram\\meetee0.3\\node_modules\\graphql-request\\dist\\src\\index.js:21:53)<br />\nat fulfilled (C:\\Users\\aviram\\meetee0.3\\node_modules\\graphql-request\\dist\\src\\index.js:12:58)<br />\nat process._tickCallback (internal/process/next_tick.js:68:7)<br />\n(node:26156) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). (rejection id: 1)<br />\n(node:26156) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.</p>"
+    },
+    {
+      "id": 42127,
+      "postNumber": 8,
+      "createdAt": "2021-02-25T12:23:06.910Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

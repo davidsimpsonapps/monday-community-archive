@@ -1,0 +1,83 @@
+{
+  "id": 100039,
+  "title": "How to use addMultiBlocks",
+  "slug": "how-to-use-addmultiblocks",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    297,
+    351
+  ],
+  "createdAt": "2024-10-08T07:36:24.877Z",
+  "lastPostedAt": "2024-10-18T06:31:30.305Z",
+  "postsCount": 8,
+  "excerpt": "Just reading through monday.execute, I want to use addMultiBlocks to add some blocks to a specific WorkDoc. Looking at the documentation, it does not tell you how to specify the WorkDoc. How do I do that? \nIn contrast, t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 25,
+  "posts": [
+    {
+      "id": 204791,
+      "postNumber": 1,
+      "createdAt": "2024-10-08T07:36:24.962Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>Just reading through <a href=\"https://developer.monday.com/apps/docs/mondayexecute\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.execute</a>, I want to use <code>addMultiBlocks</code> to add some blocks to a specific WorkDoc. Looking at the documentation, it does not tell you how to specify the WorkDoc. How do I do that?</p>\n<p>In contrast, the API for adding a block to a workdoc allows we to specify the <code>doc_id</code> if I use <code>create_doc_block</code>.</p>"
+    },
+    {
+      "id": 205024,
+      "postNumber": 2,
+      "createdAt": "2024-10-09T08:36:22.222Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking<br />\n<a href=\"https://monday.slack.com/archives/C072MJYUD37/p1728473760880509\" class=\"onebox\" target=\"_blank\" rel=\"noopener\">https://monday.slack.com/archives/C072MJYUD37/p1728473760880509</a><br />\n<a href=\"https://monday.slack.com/archives/C023GQWGZ51/p1728473754751699\" class=\"onebox\" target=\"_blank\" rel=\"noopener\">https://monday.slack.com/archives/C023GQWGZ51/p1728473754751699</a></p>"
+    },
+    {
+      "id": 205025,
+      "postNumber": 3,
+      "createdAt": "2024-10-09T08:40:34.714Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/danielball\">@danielball</a>,</p>\n<p>There is no place to specify the doc’s ID. This is because it is automatically taken from the context when the SDK method is being used in a doc-related app feature <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 205031,
+      "postNumber": 4,
+      "createdAt": "2024-10-09T08:50:14.111Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/danielball\">@danielball</a>,</p>\n<p>That SDK method automatically takes the doc ID from the context when being used in a doc-related app feature <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 205115,
+      "postNumber": 5,
+      "createdAt": "2024-10-09T17:02:11.134Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>Ok, can I put in a feature request to do this in a workspace context please.</p>"
+    },
+    {
+      "id": 205214,
+      "postNumber": 6,
+      "createdAt": "2024-10-10T10:08:23.738Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/danielball\">@danielball</a>,</p>\n<p>If you want to use this method outside of a doc-related feature (which is what you want to do if I understand correctly), you can create a feature for it <a href=\"https://community.monday.com/c/developers/api-feature-requests/58/l/latest\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 205484,
+      "postNumber": 7,
+      "createdAt": "2024-10-13T06:25:41.373Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>I added <a href=\"https://community.monday.com/t/multi-block-add-outside-of-workdoc-context/100293\" class=\"inline-onebox\">Multi-block add outside of WorkDoc context</a></p>\n<p>Essentially I’m looking for the most efficient way to programmatically create a workdoc and then populate it with blocks (from either the SDK or API). The options right now are a bit limited for this purpose.</p>"
+    },
+    {
+      "id": 205485,
+      "postNumber": 8,
+      "createdAt": "2024-10-13T06:25:58.797Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/danielball\">@danielball</a> for the feature request!</p>"
+    },
+    {
+      "id": 206095,
+      "postNumber": 9,
+      "createdAt": "2024-10-18T06:31:30.305Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>I have one final thought on this. As an experiment I used the API to create add a single block to an existing document. Then I used the block ID returned by the API call to fill in the <code>afterBlockId</code> argument for <code>addMultiBlocks</code>.</p>\n<p>This failed as expected because I was calling this from a workspace app with the message <code>Error: \"addMultiBlocks\" execute command isn't available or supported for this app feature type</code>. This is understandable as there is no document context for a workspace app.</p>\n<p>What I’m thinking though is that because the block ID is a UUID it makes it universal and therefore you can infer the document context from it. Would it therefore be possible to change the SDK implementation of <code>monday.execute</code> so that when the <code>afterBlockId</code> is supplied you infer the document context even for workspace apps.</p>\n<p>This way, you don’t have to change the SDK interface or even the documentation. It may be a small internal code change but will make the SDK much more useful for workspace apps.</p>"
+    }
+  ]
+}

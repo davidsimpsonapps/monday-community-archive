@@ -1,0 +1,49 @@
+{
+  "id": 108676,
+  "title": "App_subscription_* webhooks vs free plan in the app pricing",
+  "slug": "app-subscription-webhooks-vs-free-plan-in-the-app-pricing",
+  "categoryId": 8,
+  "tagIds": [
+    144,
+    152,
+    249,
+    351
+  ],
+  "createdAt": "2025-01-29T17:21:50.271Z",
+  "lastPostedAt": "2025-02-12T03:50:00.532Z",
+  "postsCount": 4,
+  "excerpt": "Hi there, \nRecently we subscribed to the app life cycle events and I have a question regarding app_subscription_* webhooks. \nOur app includes a free plan that applies if there’s no more than 3 users on the account. What &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 32,
+  "posts": [
+    {
+      "id": 219372,
+      "postNumber": 1,
+      "createdAt": "2025-01-29T17:21:50.355Z",
+      "author": "anowacka (Anna from SolDevelo)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>Recently we subscribed to the app life cycle events and I have a question regarding <code>app_subscription_*</code> webhooks.</p>\n<p>Our app includes a free plan that applies if there’s no more than 3 users on the account. What will happen in the case described below?</p>\n<ol>\n<li>User (on a paid monday plan, 2 users) installs our app. A trial period starts now.</li>\n<li>We receive both - <code>install</code> and <code>app_trial_subscription_started</code> webhooks.</li>\n<li>Trial period of our app ends. We receive <code>app_trial_subscription_ended</code> webhook. User can still use our app on a free plan.</li>\n</ol>\n<p>Important information:  a change from trial to the free plan happens automatically - if the account fulfills the condition based on the number of seats they can still use the app, if condition is not met app prompts user to the upgrade.</p>\n<p><strong>Question</strong>: In that case, if subscription changes from a trial period of our app to the free plan, should we receive any of <code>app_subscription_*</code> webhook? If yes, which one will it be?</p>"
+    },
+    {
+      "id": 219450,
+      "postNumber": 2,
+      "createdAt": "2025-01-29T23:06:57.950Z",
+      "author": "Billchenau (Bill)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anowacka\">@anowacka</a> ,</p>\n<p>Bill here from <a href=\"http://monday.com\">monday.com</a></p>\n<p>You should only receive the <code>app_trial_subscription_ended</code> webhook when this happens.</p>\n<p>Since the user doesn’t end up purchasing a subscription, their transition to the free plan won’t trigger a <code>app_subscription_created</code> or <code>app_subscription_changed</code> webhook.</p>\n<p>After receiving the <code>app_trial_subscription_ended</code> webhook, you could always query the API to double check which plan they are currently on.</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/279d6c49c26dd38347d668ffb26c0ba4637a6ce5.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/api-reference#app-subscription\" target=\"_blank\" rel=\"noopener\">Apps Framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/3/8325f1a28793fa1163d11e463033d572166f56c4.png\" class=\"thumbnail\" width=\"420\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/apps/docs/api-reference#app-subscription\" target=\"_blank\" rel=\"noopener\">Monetization reference</a></h3>\n\n  <p>The monday apps framework has three interfaces to manage your app’s monetization: monday SDK: Handles subscriptions in a frontend app GraphQL API: Allows your backend to access subscription information and create mock subscriptions for testing...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>I hope this helps!</p>\n<p>Cheers,<br />\nBill</p>"
+    },
+    {
+      "id": 219599,
+      "postNumber": 3,
+      "createdAt": "2025-01-30T17:45:02.384Z",
+      "author": "anowacka (Anna from SolDevelo)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/billchenau\">@Billchenau</a> ! Another question if I may: if user is on a paid feature-based subscription and decides to go on a free plan, will we receive <code>app_subscription_changed</code> webhook? Or <code>app_subscription_cancelled_by_user</code>?</p>"
+    },
+    {
+      "id": 220926,
+      "postNumber": 4,
+      "createdAt": "2025-02-12T03:50:00.532Z",
+      "author": "Billchenau (Bill)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anowacka\">@anowacka</a> you’re welcome!</p>\n<p>Sorry for the delay in reply. In this case, you should receive a “app_subscription_changed” webhook since they are changing plans to the free tier.</p>\n<p>If they were to cancel completely, then you’d receive a “app_subscription_cancelled_by_user” webhook.</p>\n<p>Cheers,<br />\nBill</p>"
+    }
+  ]
+}

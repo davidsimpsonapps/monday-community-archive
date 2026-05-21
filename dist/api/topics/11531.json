@@ -1,0 +1,51 @@
+{
+  "id": 11531,
+  "title": "Nested query complexity and rate limit",
+  "slug": "nested-query-complexity-and-rate-limit",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-09-24T09:54:09.013Z",
+  "lastPostedAt": "2021-02-25T14:38:38.237Z",
+  "postsCount": 5,
+  "excerpt": "I’m using the GraphQL API and I’m not sure if the issue I’m facing is due to an error or a mistake on my side. I’m trying to get all groups and items on a particular board. While the query works in general, it has a comp&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2174,
+  "posts": [
+    {
+      "id": 29432,
+      "postNumber": 1,
+      "createdAt": "2020-09-24T09:54:09.080Z",
+      "author": "StefanSays (Stefan)",
+      "cookedHtml": "<p>I’m using the GraphQL API and I’m not sure if the issue I’m facing is due to an error or a mistake on my side. I’m trying to get all groups and items on a particular board. While the query works in general, it has a complexity that doesn’t make sense to me. The query complexity seems to assume I potentially parse all items in the account, not only the ones in the specified board. Here is my query:</p>\n<p>{<br />\nboards(ids: 123456789) {<br />\ngroups{<br />\ntitle<br />\nitems(limit:100) {<br />\nname<br />\ncolumn_values(ids: [“firsti_d”, “second_id”]) {<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>Running the query with different limits on “items” gives the same result, but with vastly different complexity, making me hit the rate limit really quickly, although the board is rather small. A workaround might be a limit in groups, but that doesn’t seem to exist?</p>"
+    },
+    {
+      "id": 29442,
+      "postNumber": 2,
+      "createdAt": "2020-09-24T10:39:00.755Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/stefansays\">@StefanSays</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Great first post and thank you for allowing us to help here! My warmest welcome to the community and I hope you enjoy your stay with us <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Just to clarify, are you querying this on a Trial account or on a Paid account? The reason I’m asking is that Trial accounts have a 1,000,000 complexity limit per minute, while paid accounts have 10,000,000, which might make the difference here.</p>\n<p>As for a limit in Groups, you could definitely specify the exact group IDs you’d be looking to query., which could help you with the complexity limits here. That said, I was wondering if you’d need to make this type of query frequently? The complexity rate refreshes every minute, so perhaps using a delay or a timeout would work in your case?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 29449,
+      "postNumber": 3,
+      "createdAt": "2020-09-24T11:13:59.406Z",
+      "author": "StefanSays (Stefan)",
+      "cookedHtml": "<p>Hi Alex, thank you for the quick reply! We are on a paid account, so the rate limit is the higher one. The query produces a very high complexity score of over a million, whereas I believe the actual complexity is quite limited, as it’s only one board I’m hitting. It’s not really that I think we’ll have more than 7 of these requests a minute, which would make us hit the rate limit, but I’m still trying to understand on how to potentially create queries with a lower score. Splitting the query into two, calling the groups and the items separately produces a much, much lower complexity, but then the implementation effort on our side is a lot higher.</p>"
+    },
+    {
+      "id": 29661,
+      "postNumber": 4,
+      "createdAt": "2020-09-27T11:10:43.747Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/stefansays\">@StefanSays</a></p>\n<p>Thank you for providing your line of thought here and I appreciate further context to what you are looking for here.</p>\n<p>I do think that the more “general” your query is, the more data you are pulling in at a time, thus getting a higher complexity cost per query. For mutations, it definitely makes a lot more sense to bulk up what you’re looking to send to the API - for example, instead of using multiple change_column_value queries, using a single change_multiple_column_values query.</p>\n<p>That said, I definitely understand how trying to workaround this by using targeted queries also puts a lot of extra effort on your developer’s plate. Perhaps someone within the community can provide helpful pointers to how to manage this more efficiently from a frequent user’s point of view?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42508,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T14:38:38.237Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "id": 68538,
+  "title": "Performance impact of \"... on MirrorValue\"",
+  "slug": "performance-impact-of-on-mirrorvalue",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-10-17T04:24:33.749Z",
+  "lastPostedAt": "2023-10-17T15:40:29.459Z",
+  "postsCount": 7,
+  "excerpt": "Hey all, \nI’m currently trying to figure out the fastest way to load all board items with the new API versions (2023-10 and above). One thing I realized during my tests is that using ... on MirrorValue has quite a negati&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 475,
+  "posts": [
+    {
+      "id": 148561,
+      "postNumber": 1,
+      "createdAt": "2023-10-17T04:24:33.845Z",
+      "author": "xatxat (Simon Kusterer @ Gorilla Apps)",
+      "cookedHtml": "<p>Hey all,</p>\n<p>I’m currently trying to figure out the fastest way to load all board items with the new API versions (2023-10 and above). One thing I realized during my tests is that using <code>... on MirrorValue</code> has quite a negative impact on the loading performance. Here are two screenshots of queries to fetch a slice of 500 items in a board. In the first example, <code>... on MirrorValue</code> isn’t used, it takes the API about <code>8 seconds</code> to respond. In the second example <code>... on MirrorValue</code> is used, it takes the API roughly <code>48 seconds</code> to respond. So it’s about 6 times slower.</p>\n<p>Is this something that could be improved? If I use the main board view on <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>, it loads very fast in comparison.</p>\n<p><strong>Without “… on MirrorValue”:</strong><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/c/4cacaf154562261c30baba79142619df35276886.jpeg\" title=\"Screenshot 2023-10-17 at 8.57.19 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/c/4cacaf154562261c30baba79142619df35276886_2_690x380.jpeg\" alt=\"Screenshot 2023-10-17 at 8.57.19 AM\" width=\"690\" height=\"380\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-17 at 8.57.19 AM</span><span class=\"informations\">1920×1058 112 KB</span></div></a></div><p></p>\n<p><strong>With “… on MirrorValue”:</strong><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/1/d12ffe408801e83a24178bc6cb23ff732207c70e.jpeg\" title=\"Screenshot 2023-10-17 at 8.54.39 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/1/d12ffe408801e83a24178bc6cb23ff732207c70e_2_690x376.jpeg\" alt=\"Screenshot 2023-10-17 at 8.54.39 AM\" width=\"690\" height=\"376\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-17 at 8.54.39 AM</span><span class=\"informations\">1920×1049 111 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 148591,
+      "postNumber": 2,
+      "createdAt": "2023-10-17T08:30:34.726Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1697542221982479\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 148610,
+      "postNumber": 3,
+      "createdAt": "2023-10-17T10:52:37.208Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/xatxat\">@xatxat</a>,</p>\n<p>I checked this with the team and they shared that you should avoid fetching MirrorValue for large amount of items if possible.</p>\n<p>This was one of the reasons we added an explicit MirrorValue, so that developers don’t request mirrored columns by default in each API request.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 148618,
+      "postNumber": 4,
+      "createdAt": "2023-10-17T12:01:28.128Z",
+      "author": "xatxat (Simon Kusterer @ Gorilla Apps)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>thanks for checking with the team. Appreciate it.</p>\n<p>The app I’m working on turns monday boards into spreadsheets. So the options I now have are:</p>\n<p>a) The export will take very long but will contain the values of mirror columns (for example, a board with 5000 items and two mirror columns would take roughly 8 minutes to export).</p>\n<p>b) The export will not contain mirror columns, but it will be faster (for example, a board with 5000 items would take about 100 seconds to export).</p>\n<p>Both options are not so great. And even the 100 seconds from case b) is quite slow, tbh. So I’ll have to figure out how to deal with it. There are quite a few apps in the marketplace that require loading all board items.</p>\n<p>Maybe some sort of dump-endpoint would be nice, which just returns a dump of an entire board, without the graphql stuff. So that third-party apps can load as fast as the main board view on <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>– Simon</p>"
+    },
+    {
+      "id": 148640,
+      "postNumber": 5,
+      "createdAt": "2023-10-17T13:28:06.426Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>One suggestion I might make, is use the “items_page” to retrieve the item IDs and some basic information that returns fast. (maybe just the IDs).</p>\n<p>Then use a simple <code>items(ids: $itemIds){id, column_values{... on ColumnType}}</code> query and batch the Ids you got in the first step to get the actual information.</p>\n<p>Execute a few batches at a time (using Promise.all() (javascript) or similar depending on language). You can then process them into the final output you want.</p>\n<p>I’ll leave the exact algorithm to you. But I suspect by using items_page to quickly get the item ID pages and queue them for retrieval, and fire an event when each retrieval completes to then process the results into the output. (while other batches are being fetched)</p>\n<p>Keep your batches reasonable sized because you don’t want to starve your event loop waiting on I/O but you also don’t want to block anything with long processing times.</p>"
+    },
+    {
+      "id": 148648,
+      "postNumber": 6,
+      "createdAt": "2023-10-17T13:53:22.035Z",
+      "author": "xatxat (Simon Kusterer @ Gorilla Apps)",
+      "cookedHtml": "<p>Thanks! What you’re describing is more or less how I did it before 2023-10. What changed now is that it’s not possible (or soon won’t be possible) anymore to fetch more than 100 items by ID at once. Before I used batches of 250 items.</p>\n<p>I’m aware that there are some tricks to speed it up a bit by running requests in parallel: For example, you can also fetch the cursor of each page upfront and then do the more complex query for each page in parallel. However, it’s not really nice and I’m sure the monday devs are also not happy about third-party apps DOSing their API like this <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 148667,
+      "postNumber": 7,
+      "createdAt": "2023-10-17T15:20:17.620Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/xatxat\">@xatxat</a> just a clarification – we increased the number of items that you can return using <code>items_page</code> to 500.</p>\n<p>So:</p>\n<ul>\n<li>if you’re returning items from a <strong>specific</strong> board using items_page, the limit is 500 items.</li>\n<li>If you’re returning items across multiple boards using the root <code>items</code> query, it’s 100 items.</li>\n</ul>\n<p>EDIT: apologies for any confusion; I found that some of our docs still said the limit was 100 items. I have updated them.</p>"
+    },
+    {
+      "id": 148669,
+      "postNumber": 8,
+      "createdAt": "2023-10-17T15:40:29.459Z",
+      "author": "xatxat (Simon Kusterer @ Gorilla Apps)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>, thanks for hopping in!</p>\n<p>Yep, I’m aware of those limitations. Considering a board with 5000 items where I need the values of the mirror columns, would you suggest running 10 queries in parallel with 500 items each?</p>"
+    }
+  ]
+}

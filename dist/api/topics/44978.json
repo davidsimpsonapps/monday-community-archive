@@ -1,0 +1,63 @@
+{
+  "id": 44978,
+  "title": "Post request for changing column value from expressjs",
+  "slug": "post-request-for-changing-column-value-from-expressjs",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    154,
+    351
+  ],
+  "createdAt": "2022-11-02T06:20:50.528Z",
+  "lastPostedAt": "2022-11-09T09:46:21.302Z",
+  "postsCount": 6,
+  "excerpt": "Hey there! \nI’ve a really bad time wrapping my head around this… I’m trying to change a column value from a post request. It’s formed as follows: \n            var query = `mutation change_column_value($board_id: Int!, $i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 860,
+  "posts": [
+    {
+      "id": 102529,
+      "postNumber": 1,
+      "createdAt": "2022-11-02T06:20:50.632Z",
+      "author": "ti-sign (Till)",
+      "cookedHtml": "<p>Hey there!</p>\n<p>I’ve a really bad time wrapping my head around this… I’m trying to change a column value from a post request. It’s formed as follows:</p>\n<pre><code class=\"lang-auto\">            var query = `mutation change_column_value($board_id: Int!, $item_id: Int!, $column_id: String!, $value: String!) {\n                          change_column_value(board_id: $board_id, item_id: $item_id, column_id: $column_id, value: $value)\n                            {id}}`\n\n</code></pre>\n<p>And these are my variables:</p>\n<pre><code class=\"lang-auto\">            var board_id = 3395274995;\n            var item_id = req.body.eventId;\n            var column_id = \"text71\";\n            var value = \"Test\";\n</code></pre>\n<p>And I’m getting this response:</p>\n<pre><code class=\"lang-auto\">'Type mismatch on variable $value and argument value (String! / JSON!)'\n</code></pre>\n<p>I just don’t get it, column_id is a String and that seems to work perfectly but the value throws an error. The field is a simple text field, so it should be of type String or am I missing something?</p>"
+    },
+    {
+      "id": 102553,
+      "postNumber": 2,
+      "createdAt": "2022-11-02T08:07:35.339Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Except the the value needs to be stringified <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 102556,
+      "postNumber": 3,
+      "createdAt": "2022-11-02T08:15:24.505Z",
+      "author": "ti-sign (Till)",
+      "cookedHtml": "<p>Thanks again for your support Bas <img src=\"https://emoji.discourse-cdn.com/apple/smiling_face.png?v=12\" title=\":smiling_face:\" class=\"emoji\" alt=\":smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>here is where I get stuck… This request works fine:</p>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation{ change_column_value (item_id: 3395473805, board_id: 3395274995, column_id: \\\"numbers7\\\", value: \\\"2\\\") { id } }\"}\n{\n</code></pre>\n<p>This one doesn’t:</p>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation{ change_column_value (item_id: 3395473805, board_id: 3395274995, column_id: \\\"text6\\\", value: \\\"Test\\\") { id } }\"}\n</code></pre>\n<p>Now, do I need to double escape a text value or what am I missing? How should the text value look like to be accepted?</p>\n<p>Thanks again for helping out here!</p>"
+    },
+    {
+      "id": 102565,
+      "postNumber": 4,
+      "createdAt": "2022-11-02T09:01:18.542Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Please check the API docs for column references at <a href=\"https://developer.monday.com/api-reference/docs/text\" class=\"inline-onebox\">Text</a> and <a href=\"https://developer.monday.com/api-reference/docs/number\" class=\"inline-onebox\">Numbers</a></p>\n<p>Looks like you are mixing Simple strings and JSON formatted strings (these need to be stingified)</p>"
+    },
+    {
+      "id": 102568,
+      "postNumber": 5,
+      "createdAt": "2022-11-02T09:45:52.195Z",
+      "author": "ti-sign (Till)",
+      "cookedHtml": "<p>Uuh, I got it. Yes, I mixed and matched the formatting. For anybody finding this. I’ve adapted the example in the text API docs:</p>\n<pre><code class=\"lang-auto\">            var requestBody = JSON.stringify({\n                query: \"mutation ($myBoardId:Int!, $myItemId:Int!, $myColumnValues:JSON!) { change_multiple_column_values(item_id:$myItemId, board_id:$myBoardId, column_values: $myColumnValues) { id }}\",\n                variables: JSON.stringify({\n                    \"myBoardId\": MY_BOARD_ID,\n                    \"myItemId\": MY_ITEM_ID,\n                    \"myColumnValues\": `{\\\"text64\\\": \\\"${MY_TEXT}\\\"}`\n            })\n\n</code></pre>\n<p>Thanks a lot Bas, great help!</p>"
+    },
+    {
+      "id": 103475,
+      "postNumber": 6,
+      "createdAt": "2022-11-09T09:46:21.302Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

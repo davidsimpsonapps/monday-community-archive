@@ -1,0 +1,84 @@
+{
+  "id": 56919,
+  "title": "Querying monday API with power bi",
+  "slug": "querying-monday-api-with-power-bi",
+  "categoryId": 58,
+  "tagIds": [
+    5,
+    17,
+    94,
+    187
+  ],
+  "createdAt": "2023-04-26T10:23:00.281Z",
+  "lastPostedAt": "2023-05-03T04:15:22.318Z",
+  "postsCount": 9,
+  "excerpt": "Hello everyone in the community. \nI am using monday API to load the data in my power bi. Recently I started to face a problem of not bringing all monday sub-items. \nAfter a few moments, I noticed that it was necessary to&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1146,
+  "posts": [
+    {
+      "id": 125576,
+      "postNumber": 1,
+      "createdAt": "2023-04-26T10:23:00.376Z",
+      "author": "leorocha (leo motta rocha)",
+      "cookedHtml": "<p>Hello everyone in the community.</p>\n<p>I am using monday API to load the data in my power bi. Recently I started to face a problem of not bringing all monday sub-items.</p>\n<p>After a few moments, I noticed that it was necessary to perform some paging in the API so that all the data could be loaded. I did the pagination, but as there is a lot of data, Power BI cannot bring everything in a 1-minute query.</p>\n<p>Has anyone ever experienced this? Is there any way to pause the API on each request so it doesn’t overload the queries?</p>"
+    },
+    {
+      "id": 125772,
+      "postNumber": 2,
+      "createdAt": "2023-04-27T12:11:58.374Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>We would love to take a look into your script if you would like to send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with it.</p>\n<p>Please specify the steps of your process so we can see the full picture.</p>\n<p>See you over there!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 125776,
+      "postNumber": 3,
+      "createdAt": "2023-04-27T12:28:43.135Z",
+      "author": "leorocha (leo motta rocha)",
+      "cookedHtml": "<p>Hello Matias, this is my code, for each id_board I need to go through 6 pages to get all the sub-items available on monday. So, if I have 10 id_boards, power bi will generate 60 pages and for each page, power BI will bring 25 records, totaling 1500 records (60 x 25 = 1500)</p>\n<pre><code class=\"lang-auto\">(id_board as text, page as text) =&gt;\n\nlet\nKey = \"&lt;API_TOKEN&gt;\",\n\n\n     Source = Web.Contents(\"https://api.monday.com/\",\n     [\n         RelativePath=\"v2\",\n         Headers=[\n             #\"Method\"=\"POST\",\n             #\"Content-Type\"=\"application/json\",\n             #\"Authorization\"= Key\n             ],\n             Content=Text.ToBinary(\"{\"\"query\"\": \"\"{ boards(ids: \"&amp; id_board &amp;\") { items (limit: 25, page: \"&amp; page&amp;\"){ id subitems{name column_values{ title text }} } } }\"\"}\")\n             ]\n     ),\n     #\"JSON\" = Json.Document(Source,65001),\n     date = JSON[date],\n     boards = data[boards],\n     boards1 = boards{0},\n     items = boards1[items],\n     #\"Converted to Table\" = Table.FromList(items, Splitter.SplitByNothing(), null, null, ExtraValues.Error)\nin\n     #\"Converted to Table\"\n</code></pre>"
+    },
+    {
+      "id": 125816,
+      "postNumber": 4,
+      "createdAt": "2023-04-27T16:52:06.000Z",
+      "author": "leorocha (leo motta rocha)",
+      "cookedHtml": "<p>Hello Matias, this is my code, for each id_board I need to go through 6 pages to get all the sub-items available on monday. So, if I have 10 id_boards, power bi will generate 60 pages and for each page, power BI will bring 25 records, totaling 1500 records (60 x 25 = 1500)</p>\n<p>(id_board <strong>as</strong> text, page <strong>as</strong> text) =&gt;</p>\n<p>let</p>\n<p>Key = “&lt;API_TOKEN&gt;”,</p>\n<p>Source = Web.Contents(<a href=\"https://api.monday.com/\" rel=\"noopener nofollow ugc\">https://api.monday.com/</a>,</p>\n<p>[</p>\n<p>RelativePath=“v2”,</p>\n<p>Headers=[</p>\n<p>#“Method”=“POST”,</p>\n<p>#“Content-Type”=“application/json”,</p>\n<p>#“Authorization”= Key</p>\n<p>],</p>\n<p>Content=Text.ToBinary(“{”“query”“: “”{ boards(ids: “&amp; id_board &amp;”) { items (limit: 25, page: “&amp; page&amp;”){ id subitems{name column_values{ title text }} } } }”“}”)</p>\n<p>]</p>\n<p>),</p>\n<p>#“JSON” = Json.Document(Source,65001),</p>\n<p>date = JSON[date],</p>\n<p>boards = <strong>data</strong>[boards],</p>\n<p>boards1 = boards{0},</p>\n<p>items = boards1[items],</p>\n<p>#“Converted to Table” = Table.FromList(items, Splitter.SplitByNothing(), null, null, ExtraValues.Error)</p>\n<p><strong>in</strong></p>\n<p>#“Converted to Table”</p>\n<p>Internal Use Only</p>"
+    },
+    {
+      "id": 125922,
+      "postNumber": 5,
+      "createdAt": "2023-04-28T19:15:50.357Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/leorocha\">@leorocha</a>,</p>\n<p>Thanks for sending this in! Would you please send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with these details so we can take a closer look this issue?<br />\nThanks!</p>"
+    },
+    {
+      "id": 126199,
+      "postNumber": 6,
+      "createdAt": "2023-05-02T10:00:58.000Z",
+      "author": "leorocha (leo motta rocha)",
+      "cookedHtml": "<p>Hello Alessandra,</p>\n<p>Here is code, as requested by the forum.</p>\n<p>(id_board <strong>as</strong> text, page <strong>as</strong> text) =&gt;</p>\n<p>let</p>\n<p>Key = “&lt;API_TOKEN&gt;”,</p>\n<p>Source = Web.Contents(<a href=\"https://api.monday.com/\" rel=\"noopener nofollow ugc\">https://api.monday.com/</a>,</p>\n<p>[</p>\n<p>RelativePath=“v2”,</p>\n<p>Headers=[</p>\n<p>#“Method”=“POST”,</p>\n<p>#“Content-Type”=“application/json”,</p>\n<p>#“Authorization”= Key</p>\n<p>],</p>\n<p>Content=Text.ToBinary(“{”“query”“: “”{ boards(ids: “&amp; id_board &amp;”) { items (limit: 25, page: “&amp; page&amp;”){ id subitems{name column_values{ title text }} } } }”“}”)</p>\n<p>]</p>\n<p>),</p>\n<p>#“JSON” = Json.Document(Source,65001),</p>\n<p>date = JSON[date],</p>\n<p>boards = <strong>data</strong>[boards],</p>\n<p>boards1 = boards{0},</p>\n<p>items = boards1[items],</p>\n<p>#“Converted to Table” = Table.FromList(items, Splitter.SplitByNothing(), null, null, ExtraValues.Error)</p>\n<p><strong>in</strong></p>\n<p>#“Converted to Table”</p>\n<p>Internal Use Only</p>"
+    },
+    {
+      "id": 126225,
+      "postNumber": 7,
+      "createdAt": "2023-05-02T11:57:30.454Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/leorocha\">@leorocha</a> ,</p>\n<p>I replied to this in the ticket you opened with us via email <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Let’s please continue over there.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 126257,
+      "postNumber": 8,
+      "createdAt": "2023-05-02T13:36:28.161Z",
+      "author": "leorocha (leo motta rocha)",
+      "cookedHtml": "<p>Hello monday friends. Thank you for taking the time to help me. Fortunately I was able to solve the problem with some help from our friends at Microsoft. Thank you again and I believe this question can now be closed.</p>\n<p>I would like to leave the solution link registered here, in case another member has the same difficulty;</p>\n<p>Microsoft forum link:</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/4/8/48a360ed621d0035a13a66c6ab2bbdc18e705935.png\" class=\"site-icon\" width=\"16\" height=\"16\" />\n\n      <a href=\"https://community.powerbi.com/t5/Power-Query/Get-monday-com-API-subitems/m-p/3215708#M103468\" target=\"_blank\" rel=\"noopener nofollow ugc\" title=\"07:08PM - 25 April 2023\">community.powerbi.com – 25 Apr 23</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/1/d/1d0fde524064f8a1b004e68913907339771ab70e.png\" class=\"thumbnail\" width=\"690\" height=\"181\" /></div>\n\n<h3><a href=\"https://community.powerbi.com/t5/Power-Query/Get-monday-com-API-subitems/m-p/3215708#M103468\" target=\"_blank\" rel=\"noopener nofollow ugc\">Get monday.com API subitems</a></h3>\n\n  <p>Hi guys, I have a question. I'm using the monday API to retrieve the platform data. Recovering the initial data was a piece of cake, but now I face a bit annoying problem. When trying to retrieve the sub-items (child activities) of a project, power...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 126351,
+      "postNumber": 9,
+      "createdAt": "2023-05-03T04:15:22.318Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/leorocha\">@leorocha</a>,</p>\n<p>I am glad you could find the source of the issue!</p>\n<p>Our ticket will be closed then.</p>\n<p>Thank you for sharing this with the community <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

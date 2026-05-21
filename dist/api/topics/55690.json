@@ -1,0 +1,81 @@
+{
+  "id": 55690,
+  "title": "Bundle a special column template with my app?",
+  "slug": "bundle-a-special-column-template-with-my-app",
+  "categoryId": 8,
+  "tagIds": [
+    234
+  ],
+  "createdAt": "2023-04-10T13:35:08.343Z",
+  "lastPostedAt": "2023-04-19T17:05:28.259Z",
+  "postsCount": 6,
+  "excerpt": "My app is an integration that connects to an external view that displays particular items that are selected via a status column in the board. The status column has to have specifically named labels. Is there a way to pac&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 694,
+  "posts": [
+    {
+      "id": 123279,
+      "postNumber": 1,
+      "createdAt": "2023-04-10T13:35:08.406Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<p>My app is an integration that connects to an external view that displays particular items that are selected via a status column in the board. The status column has to have specifically named labels. Is there a way to package a column template with my app or otherwise publish a column template? The worst case scenario is the user having to set up the column manually because any mistake will mean the app doesn’t work.</p>"
+    },
+    {
+      "id": 123345,
+      "postNumber": 2,
+      "createdAt": "2023-04-11T05:13:30.868Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/janssen\">@Janssen</a>,</p>\n<p>You could use a <a href=\"https://developer.monday.com/apps/docs/workspace-templates\">workspace template</a> for this. You would add a workspace template feature to the same app that has the integration feature. You could even have the integration already set in the board of your workspace template if you want.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 123400,
+      "postNumber": 3,
+      "createdAt": "2023-04-11T13:09:14.414Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<p>Okay thanks… I should have looked into this before asking but I assumed it wasn’t quite what I wanted. Which it isn’t, but I think it’s a bit better for my users than asking them to create column from scratch according to exacting specifications. At least this way there’s a model they can look at to see what the column should be.</p>\n<p>The problem with this is that my app is meant to work with an existing board and people who find utility in my app will already have a lot of items and columns. Asking them to repopulate a board (or worse a workspace) just so they can use my little app is total non-starter. If I may suggest a feature it would be a way for developers to provide custom columns with an app. This would go very well with your existing set of built-in triggers because I was able to come up with a pretty decent UX combining the status column trigger with my own status column labels and logic on my server, and I’m sure many more such possibilities exist.</p>\n<p>Since you already have a feature enabling saving column templates for Entrepreneur accounts, maybe this feature wouldn’t be too hard for your team to come up with! That existing feature might actually be useful to me but I can’t check because my developer account doesn’t seem to let me save column templates so maybe you can answer for me: If a user has an Entrepreneur account could they save a column from my workspace template and then use it in their existing boards?</p>"
+    },
+    {
+      "id": 123751,
+      "postNumber": 4,
+      "createdAt": "2023-04-13T13:20:39.300Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<p>It occurred to me that I may be able to do this with the api, and sure enough!</p>\n<ul>\n<li><a href=\"https://developer.monday.com/api-reference/docs/columns#change-a-simple-column-value\" rel=\"noopener nofollow ugc\">API docs - Columns</a></li>\n<li><a href=\"https://developer.monday.com/api-reference/docs/columns#change-a-simple-column-value\" rel=\"noopener nofollow ugc\">Add status labels via API</a></li>\n</ul>\n<p>Looks like I can programmatically build a column just the way I need it. This <em>much</em> better than using a workspace template though it still would be nice to have the option of including a column template with my app.</p>\n<p>I’m going to try setting up an app installation page, which I haven’t done yet because I yet needed to, and there the user will provide a board ID. My server will create the column on monday and all that’s left for the user to do is add the integration to the new column. I’ll write back next week and report how it went, but I think this should work.</p>"
+    },
+    {
+      "id": 123883,
+      "postNumber": 5,
+      "createdAt": "2023-04-14T16:29:18.877Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 124369,
+      "postNumber": 6,
+      "createdAt": "2023-04-18T17:13:11.128Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<p>I meant to post this in the above post: <a href=\"https://community.monday.com/t/released-creating-new-labels-with-the-api/19091/4\">https://community.monday.com/t/released-creating-new-labels-with-the-api/19091/4</a></p>"
+    },
+    {
+      "id": 124454,
+      "postNumber": 7,
+      "createdAt": "2023-04-19T06:04:21.695Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 124572,
+      "postNumber": 8,
+      "createdAt": "2023-04-19T17:05:28.259Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<p>I was able to accomplish what I needed to do and for posterity I’ll give an overview of how to do it.</p>\n<p>First set up an <a href=\"https://developer.monday.com/apps/docs/integration-authorization#the-authorization-url\" rel=\"noopener nofollow ugc\">authorization URL</a>, say to <strong>mysite/install</strong>.</p>\n<p>After a board admin installs your app using the via the “share your app” found in your developer console or the marketplace a user will add your integration feature to a board. This will take them <strong>mysite/install</strong> with <strong>token</strong> as a URL query.</p>\n<p>Next your site <strong>mysite/install</strong> redirects to <a href=\"https://developer.monday.com/apps/docs/oauth\" rel=\"noopener nofollow ugc\">monday.com OAuth</a> with <strong>token</strong> for the <strong>state</strong> param and also another page you contro as <strong>redirect_uri</strong>l: <strong>mysite/redirect</strong>. The user authorizers the feature and <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> fowards them back to <strong>mysite/redirect</strong>.</p>\n<p>You now have <strong>code</strong> and <strong>state</strong> attached to your <strong>mysite/recirect</strong> url. Make a request to your server with both of those parameters.</p>\n<p>On your server use jwt decode/verify to extract <strong>boardId</strong> and <strong>backToUrl</strong> from <strong>state</strong> using your app’s signing secret. Remember, <strong>state</strong> is  first token you got from the initial <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> feature install event.</p>\n<p>Next continue the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> OAuth process to exchange <strong>code</strong> for an <strong>access_token</strong> using the proper fields. <strong>access_token</strong> is the API key you need in order to build your column, assuming your scopes are set correctly. Build your column using <a href=\"https://this\" rel=\"noopener nofollow ugc\">https://community.monday.com/t/changing-or-deleting-status-column-labels/56275</a>. It’s not elegant, but my process was to first make a new status column; next create a new item assigning a new label to the new status column; then as many <strong>change_multiple_column_values</strong> using the new item and new column as necessary to make all remaining labels I need. Unfortunately there’s no way to delete labels so your stuck with the default ones, but you can of course delete the item you created to make the labels with.</p>\n<p>The column has been built and all that’s left is for the server to return <strong>backToUrl</strong> (which you got from <strong>state</strong>) back to your page <strong>mysite/recirect</strong>. Your page simply redirects to <strong>backToUrl</strong> and now the user will be back on <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> at the recipe interaction. What’s very nice is the user can select the new column in the recipe! The only thing they have to worry about is removing the default labels but aside from that is now installed to a new column built exactly to your specifications. Sweet!</p>"
+    },
+    {
+      "id": 125023,
+      "postNumber": 9,
+      "createdAt": "2023-04-23T10:56:31.478Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

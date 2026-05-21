@@ -1,0 +1,161 @@
+{
+  "id": 22022,
+  "title": "Creation of many sub-items",
+  "slug": "creation-of-many-sub-items",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2021-07-06T16:13:59.746Z",
+  "lastPostedAt": "2021-07-14T19:43:31.368Z",
+  "postsCount": 17,
+  "excerpt": "I wanted to know if there is any limitation in the creation of subitem, \nI need to create 57 subitem, create normal up to subitem 53, then return the following error: \n{ errors: [ ‘Not Authenticated’ ] } \nThis is the mut&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 2059,
+  "posts": [
+    {
+      "id": 57016,
+      "postNumber": 1,
+      "createdAt": "2021-07-06T16:13:59.846Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>I wanted to know if there is any limitation in the creation of subitem,<br />\nI need to create 57 subitem, create normal up to subitem 53, then return the following error:</p>\n<p>{ errors: [ ‘Not Authenticated’ ] }</p>\n<p>This is the mutation i’m using:</p>\n<p>const query = <code>mutation {       create_subitem (parent_item_id: ${itemId}, item_name: \"${nomeSubItem}\") {       id,       board {       id       }       }       }</code>;</p>"
+    },
+    {
+      "id": 57066,
+      "postNumber": 2,
+      "createdAt": "2021-07-07T11:09:11.845Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 57067,
+      "postNumber": 3,
+      "createdAt": "2021-07-07T11:11:13.180Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a>!</p>\n<p>There should not be a limit to how many subitems you’re able to create. I tested this myself and was not able to recreate the same issue.</p>\n<p>How are you creating these subitems? Do you have a function that’s looping through and creating these subitems in the span of let’s say 5-10 minutes? Or are you creating these subitems over long stretches of time, by hand?</p>\n<p>Does this behavior also occur for different items? Or just a single item? What about different boards?</p>\n<p>I’m curious to learn more and see why this might be occurring for you…</p>"
+    },
+    {
+      "id": 57432,
+      "postNumber": 4,
+      "createdAt": "2021-07-12T09:49:28.719Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>Hi, Sorry for the delay.</p>\n<p>let templete = [‘0-Recebido de peça padrão’,‘1-Digitalização de peça padrão’,</p>\n<pre><code>'2-coleta dados técnicos peça padrão','3-Abrir projeto no sistema de gestão','4-Gerar dossier produto',\n\n'5-Estudo saveglass','6-Solicita PLM INTERNACIONAL','7-Criação apresentação do projeto',\n\n'8-Criação/atualização de estrutura no PDM','9-Kick-Off','10-Armazenamento peça padrão e identificação',\n\n'11-Criação de cronograma','12-Definição de processo pré-montagem','13-Previsto no budget',\n\n'14-Viabilidade produtiva','15-Definição de ferramenta','16-Mapeamento homologação','17-Solicitações CAD/ferramental',\n\n'18-Criação da BOM e roteiro','19-Saveglass','20-Programa de acorte','21-Plotter para corte','22-corte de peça padrão',\n\n'23-confecção do fatolito','24-Impressão/Validação do fotolito','25-Impressão para estiragem BANDA',\n\n'26-Gabarito de controle','27-Ferramental modelamental','28-Construção ferramentais','29-AP3-Zona de visão',\n\n'30-Chapelona de logotipo','31-Chapelona de pré-montagem','32-Definição de embalagem','33-Criar codigo argis para integração pedido',\n\n'34-Inserir pedido de compras autover','35-Ficha técnica-vidro base','36-Ficha técnica-vidro pré-montagem',\n\n'37-Criar VL10i/VD52','38-Criação do trello-Amostrar','39-RAA-Agendamento','40-Produção de amostra',\n\n'41-Pré-montagem para teste laboratório','42-Aprovação tridimensional','43-Validação laborat ório',\n\n'44-Homologação','45-Emissão de-PSW','46-Aprovação autover-PSW','47-Teste de montagem',\n\n'48-Pré-montagem de todas as peças de amostra','54-Transferência para FER1',\n\n'55-Transferência para autover','56-Lançamento do produto autover'];\n\n\n    for (let contador = 0; contador &lt; templete.length; contador++) {\n\n        console.log(\"Inside the for\")\n\n        let nomeSubItem = templete[Number(contador)]\n\n        await mondayService.criandoSubItems(shortLivedToken, item, nomeSubItem);\n\n        console.log(nomeSubItem)  \n\n    }\n\n    return res.status(200).send({ message: \"sucesso\" })\n</code></pre>\n<p>This code base, ‘criandoSubItems’ is where I call mutation. The parameter ‘item’ is the id of the parent item, and the parameter ‘nomeSubItem’ is where I define the name of the subitems.<br />\nBecause there are many subitems, do I need to delay the creation?<br />\nI tested this problem on two different accounts, on my company’s internal board and on the client’s.</p>\n<p>Thank you for your attention!</p>"
+    },
+    {
+      "id": 57436,
+      "postNumber": 5,
+      "createdAt": "2021-07-12T10:18:46.549Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a>,</p>\n<p>Thank you for getting back to me!</p>\n<p>I am tempted to say that what you’re running into here is a race condition issue, which happens when you try to create too many objects (be it items, columns, boards, etc) at once. However, the error message throws me off.</p>\n<p>Do you mind letting me know the name of these accounts that are experiencing this issue, as well as a time frame for the most recent occurrence? This way I can check our logs too and see what I find.</p>"
+    },
+    {
+      "id": 57469,
+      "postNumber": 6,
+      "createdAt": "2021-07-12T14:44:16.046Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>I see, the one I have access to now is “desenvolvimento-agr”<br />\nI just ran the code to create new logs, so you can find it faster (14:31: Brasilia Time (BRT)</p>"
+    },
+    {
+      "id": 57480,
+      "postNumber": 7,
+      "createdAt": "2021-07-12T16:16:15.387Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a>,</p>\n<p>I can’t seem to find the account. Your account name should be whatever is in from of “.monday.com” in the URL.</p>\n<p>For instance, if your account is “<a href=\"http://EXAMPLE.monday.com\" rel=\"noopener nofollow ugc\">EXAMPLE.monday.com</a>,” the account name is “EXAMPLE.”</p>\n<p>Let me know-- thanks!</p>"
+    },
+    {
+      "id": 57552,
+      "postNumber": 8,
+      "createdAt": "2021-07-13T09:53:49.383Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>Hi, the account looks exactly like this ‘<a href=\"https://desenvolvimento-agr.monday.com\" rel=\"noopener nofollow ugc\">https://desenvolvimento-agr.monday.com</a>’</p>"
+    },
+    {
+      "id": 57572,
+      "postNumber": 9,
+      "createdAt": "2021-07-13T12:26:19.709Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a></p>\n<p>That’s so weird… Okay let’s try a different way. What is the email associated with this account?</p>"
+    },
+    {
+      "id": 57589,
+      "postNumber": 10,
+      "createdAt": "2021-07-13T15:20:17.440Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>The email that is linked is:karla.moncayo@sinergis.com.br</p>"
+    },
+    {
+      "id": 57592,
+      "postNumber": 11,
+      "createdAt": "2021-07-13T16:07:30.871Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a>!</p>\n<p>Thank you, I was able to find it.</p>\n<p>Okay, I see an error in our logs and I think we should submit a bug report. As such, I just need some additional information from you:</p>\n<ol>\n<li>When did this issue begin occurring? (Time specificity if you can remember!)</li>\n<li>What’s the URL of the board and item where the issue is occurring?</li>\n<li>It would be most helpful if you could provide us a screenshot of the console while clicked into one of these URLs. This will help us and our developers to recognize any error messages. To access the console click here: <a href=\"https://support.monday.com/hc/en-us/articles/360002197259-How-to-Open-the-Developer-Console-in-your-Browser\" rel=\"noopener nofollow ugc\">How to Access the Console</a> (make sure to click the “console” tab at the top!)</li>\n<li>Does the issue always occur at 53 subitems? Or is it a different number sometimes?</li>\n<li>In the case that we need to escalate this issue to our developers, do you provide consent that the developer can log into your account on your behalf in efforts to troubleshoot this bug?</li>\n</ol>\n<p>I know that this is a lot of information, but all of it will be relevant for inclusion and for our developers to understand the background issues that could be present.</p>\n<p>Thank you for working with us on this issue!</p>"
+    },
+    {
+      "id": 57593,
+      "postNumber": 12,
+      "createdAt": "2021-07-13T16:08:29.952Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>coralogix: <a href=\"https://monday.coralogix.com/#/query/logs?id=2V3pF99CAFA\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Coralogix</a></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/3e640731da9ece96aa99cec560b70260975d83c7.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/3e640731da9ece96aa99cec560b70260975d83c7_2_690x241.png\" alt=\"image\" width=\"690\" height=\"241\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1588×556 97.7 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 57694,
+      "postNumber": 13,
+      "createdAt": "2021-07-14T11:15:09.790Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>Hi Helen,</p>\n<ol>\n<li>I started having this problem on 07-01-2021 (month-day-year).</li>\n<li>Where this bug occurs is in all items on this board: ‘<a href=\"https://desenvolvimento-agr.monday.com/boards/1249777578/\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com: Where Teams Get Work Done</a>’</li>\n<li>In the console does not update anything when the error returns in the terminal, follows the prints.</li>\n</ol>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e69a63e3c109d13c3183649ff5f4790e252bfffe.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/e/e69a63e3c109d13c3183649ff5f4790e252bfffe.png\" alt=\"image\" width=\"690\" height=\"372\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1191×643 25.1 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/8f8d8ab4098dbb895c4730a299543653043b46fd.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/8f8d8ab4098dbb895c4730a299543653043b46fd_2_690x260.png\" alt=\"image\" width=\"690\" height=\"260\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">795×300 29.2 KB</span>\n</div></a></div><p></p>\n<ol>\n<li>The problem happens between 53, 54, 55.</li>\n<li>Can login yes.</li>\n</ol>\n<p>Could you give me a prediction about this? I have to give feedback to my client.</p>\n<p>Thank you for your help.</p>"
+    },
+    {
+      "id": 57719,
+      "postNumber": 14,
+      "createdAt": "2021-07-14T12:12:26.379Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Thank you so much <a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a>!</p>\n<p>I just submitted a bug report for our developers. I will let you know as soon as they get back to me with an update.</p>"
+    },
+    {
+      "id": 57720,
+      "postNumber": 15,
+      "createdAt": "2021-07-14T12:12:33.152Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>DOW: <a href=\"https://monday.monday.com/boards/620317422/views/8906608/pulses/1481452399?userId=12942868\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 57725,
+      "postNumber": 16,
+      "createdAt": "2021-07-14T12:24:23.942Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a>,</p>\n<p>Is your app an integration or a board view? If it’s an integration and you’re using the <code>shortLivedtoken</code>, this will only be valid for 1 minute which could be why your requests are always timing out then!</p>"
+    },
+    {
+      "id": 57730,
+      "postNumber": 17,
+      "createdAt": "2021-07-14T12:39:05.086Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>My app is an integration, but I didn’t know about this information about visualization, great to know!</p>"
+    },
+    {
+      "id": 57736,
+      "postNumber": 18,
+      "createdAt": "2021-07-14T12:54:57.219Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>An addendum, the code is running locally, do I need to leave it running?</p>"
+    },
+    {
+      "id": 57807,
+      "postNumber": 19,
+      "createdAt": "2021-07-14T19:43:31.368Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a>, apologies, it’s integrations not board views where the shortLivedToken is only valid for 1 minute, so this makes sense!</p>\n<p>In this case, I would utilize a different authentication method, perhaps implementing OAuth instead so that you have access to a token for a longer period of time.</p>\n<p>Here is our article on implementing authorization for integration recipes: <a href=\"https://monday.com/developers/apps/integration-authorization/\" rel=\"noopener nofollow ugc\">https://monday.com/developers/apps/integration-authorization/</a>.</p>\n<p>I hope this helps!</p>"
+    },
+    {
+      "id": 58537,
+      "postNumber": 20,
+      "createdAt": "2021-07-21T19:43:40.609Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

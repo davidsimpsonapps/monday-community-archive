@@ -1,0 +1,174 @@
+{
+  "id": 78124,
+  "title": "Getting data from Monday API",
+  "slug": "getting-data-from-monday-api",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2024-02-14T05:58:15.835Z",
+  "lastPostedAt": "2025-03-04T10:18:15.904Z",
+  "postsCount": 18,
+  "excerpt": "Hi Monday support. \nI am using the Monday API to pull data via Python. I am using the following code: \ndef monday_fetch_and_process_data(api_key, board_id): \n# API Endpoint \nurl = “https://api.monday.com/v2” \n# Query to &hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 3079,
+  "posts": [
+    {
+      "id": 167728,
+      "postNumber": 1,
+      "createdAt": "2024-02-14T05:58:15.915Z",
+      "author": "pb_python (Philip)",
+      "cookedHtml": "<p>Hi Monday support.</p>\n<p>I am using the Monday API to pull data via Python. I am using the following code:<br />\ndef monday_fetch_and_process_data(api_key, board_id):<br />\n# API Endpoint<br />\nurl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”</p>\n<pre><code># Query to get items from a specific board\nquery = '''\n{\n  boards(ids: %s) {\n    items {\n      name\n      column_values {\n        title\n        text\n      }\n    }\n  }\n}\n''' % board_id\n\n# Headers\nheaders = {\n    'Authorization': api_key,\n    'Content-Type': 'application/json'\n}\n\n# Make the API Request\nresponse = requests.post(url, json={'query': query}, headers=headers)\ndata = response.json()\n</code></pre>\n<p>Everything has been running smoothly until this morning, where I get this error when running the code:<br />\nAPI Response: {‘errors’: [{‘message’: “Field ‘items’ doesn’t exist on type ‘Board’”, ‘locations’: [{‘line’: 4, ‘column’: 9}], ‘path’: [‘query’, ‘boards’, ‘items’], ‘extensions’: {‘code’: ‘undefinedField’, ‘typeName’: ‘Board’, ‘fieldName’: ‘items’}}], ‘account_id’: 4064623}</p>\n<p>I would greatly appreciate if someone can help me.</p>"
+    },
+    {
+      "id": 167875,
+      "postNumber": 2,
+      "createdAt": "2024-02-14T14:16:19.266Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/pb_python\">@pb_python</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>This looks related to the API version change (more information <a href=\"https://developer.monday.com/api-reference/docs/api-versioning\">here</a>. Migration guide <a href=\"https://developer.monday.com/api-reference/docs/migrating-to-v-2023-10\">here</a>).</p>\n<p>You can use items_page as explained <a href=\"https://developer.monday.com/api-reference/reference/items-page\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 168259,
+      "postNumber": 4,
+      "createdAt": "2024-02-16T07:32:35.410Z",
+      "author": "Cindy (Cynthia Udoye)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/pb_python\">@pb_python</a>,</p>\n<p>You can use this because it worked for me:</p>\n<p>headers = {‘Authorization’: api_key, ‘Content-Type’: ‘application/json’}<br />\nquery = “”\"<br />\n{<br />\nboards(ids: %s) {<br />\nitems_page(limit: 500) {<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\ncolumn {<br />\ntitle<br />\n}<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n“”\" % board_id</p>"
+    },
+    {
+      "id": 168260,
+      "postNumber": 5,
+      "createdAt": "2024-02-16T07:37:59.359Z",
+      "author": "Cindy (Cynthia Udoye)",
+      "cookedHtml": "<p>And use this function to get all the data in the board. Make sure you specify all variables :</p>\n<p>headers = {‘Authorization’: api_key, ‘Content-Type’: ‘application/json’}<br />\ndef fetch_items(api_key, board_id, url, cursor=None):<br />\nwhile True:<br />\n# Include the cursor parameter if it’s provided<br />\ncursor_param = f’cursor: “{cursor}”’ if cursor else ‘’<br />\nquery = f\"“”<br />\n{{<br />\nboards(ids: {board_id}) {{<br />\nitems_page(limit: 50, {cursor_param}) {{<br />\ncursor<br />\nitems {{<br />\nid<br />\nname<br />\ncolumn_values {{<br />\ncolumn {{<br />\ntitle<br />\n}}<br />\ntext<br />\n}}<br />\n}}<br />\n}}<br />\n}}<br />\n}}<br />\n“”\"<br />\nresponse = requests.post(url, headers=headers, json={‘query’: query})<br />\ndata = response.json()<br />\nif ‘data’ in data and ‘boards’ in data[‘data’] and len(data[‘data’][‘boards’]) &gt; 0:<br />\nitems_page = data[‘data’][‘boards’][0][‘items_page’]<br />\nitems = items_page[‘items’]<br />\nnext_cursor = items_page[‘cursor’]<br />\nfor item in items:<br />\nitem_id = item[‘id’]<br />\nitem_name = item[‘name’]<br />\n# Check if ‘column_values’ key exists before accessing it<br />\ncolumn_values = item.get(‘column_values’, <span class=\"chcklst-box fa fa-square-o fa-fw\"></span>)<br />\ncolumn_values_dict = {column[‘column’][‘title’]: column[‘text’] for column in column_values}<br />\nprint(f\"Item ID: {item_id}, Item Name: {item_name}, Column Values: {column_values_dict}\")<br />\n# Break the loop if there is no next page<br />\nif not next_cursor:<br />\nbreak<br />\n# Set the cursor to the next_cursor value for the next iteration<br />\ncursor = next_cursor<br />\nelse:<br />\nprint(“No data available or invalid board ID”)<br />\nbreak</p>\n<h1><a name=\"p-168260-example-usage-1\" class=\"anchor\" href=\"#p-168260-example-usage-1\"></a>Example usage</h1>\n<p>fetch_items(api_key, board_id, url)</p>"
+    },
+    {
+      "id": 168535,
+      "postNumber": 7,
+      "createdAt": "2024-02-18T11:02:36.248Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/cindy\">@Cindy</a> for sharing!!</p>"
+    },
+    {
+      "id": 169034,
+      "postNumber": 8,
+      "createdAt": "2024-02-20T18:34:43.569Z",
+      "author": "pb_python (Philip)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/c/a8b319/48.png\" class=\"avatar\" /> Cynthia Udoye:</div>\n<blockquote>\n<p>headers = {‘Authorization’: api_key, ‘Content-Type’: ‘application/json’}<br />\ndef fetch_items(api_key, board_id, url, cursor=None):<br />\nwhile True:</p>\n<h1>Include the cursor parameter if it’s provided</h1>\n<p>cursor_param = f’cursor: “{cursor}”’ if cursor else ‘’<br />\nquery = f\"“”<br />\n{{<br />\nboards(ids: {board_id}) {{<br />\nitems_page(limit: 50, {cursor_param}) {{<br />\ncursor<br />\nitems {{<br />\nid<br />\nname<br />\ncolumn_values {{<br />\ncolumn {{<br />\ntitle<br />\n}}<br />\ntext<br />\n}}<br />\n}}<br />\n}}<br />\n}}<br />\n}}<br />\n“”\"<br />\nresponse = requests.post(url, headers=headers, json={‘query’: query})<br />\ndata = response.json()<br />\nif ‘data’ in data and ‘boards’ in data[‘data’] and len(data[‘data’][‘boards’]) &gt; 0:<br />\nitems_page = data[‘data’][‘boards’][0][‘items_page’]<br />\nitems = items_page[‘items’]<br />\nnext_cursor = items_page[‘cursor’]<br />\nfor item in items:<br />\nitem_id = item[‘id’]<br />\nitem_name = item[‘name’]</p>\n<h1>Check if ‘column_values’ key exists before accessing it</h1>\n<p>column_values = item.get(‘column_values’, )<br />\ncolumn_values_dict = {column[‘column’][‘title’]: column[‘text’] for column in column_values}<br />\nprint(f\"Item ID: {item_id}, Item Name: {item_name}, Column Values: {column_values_dict}\")</p>\n<h1>Break the loop if there is no next page</h1>\n<p>if not next_cursor:<br />\nbreak</p>\n<h1>Set the cursor to the next_cursor value for the next iteration</h1>\n<p>cursor = next_cursor<br />\nelse:<br />\nprint(“No data available or invalid board ID”)<br />\nbreak</p>\n<h1>Example usage</h1>\n<p>fetch_items(api_key, board_id, url)</p>\n</blockquote>\n</aside>\n<p>Thanks alot <a class=\"mention\" href=\"/u/cindy\">@Cindy</a>!</p>"
+    },
+    {
+      "id": 169169,
+      "postNumber": 9,
+      "createdAt": "2024-02-21T10:26:29.135Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 172210,
+      "postNumber": 10,
+      "createdAt": "2024-03-08T14:46:26.783Z",
+      "author": "tlgemp (Theo)",
+      "cookedHtml": "<p>Hi, <a class=\"mention\" href=\"/u/cindy\">@Cindy</a>. Thank you for sharing this snippet. It really helped me. One issue I am having now is that the values from columns that are connected to other boards are coming up as None, which seems to be a pretty bizarre behaviour by the API.</p>\n<p>Would anyone here have any idea how to get those values too.</p>\n<p>Thanks,</p>\n<p>tlg</p>"
+    },
+    {
+      "id": 172381,
+      "postNumber": 11,
+      "createdAt": "2024-03-10T13:12:44.555Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hi there <a class=\"mention\" href=\"/u/tlgemp\">@tlgemp</a>,</p>\n<p>I replied <a href=\"https://community.monday.com/t/column-values-for-connected-boards-are-an-empty-string-for-api/34589/4\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 172756,
+      "postNumber": 12,
+      "createdAt": "2024-03-12T10:25:54.585Z",
+      "author": "tlgemp (Theo)",
+      "cookedHtml": "<p>Would anyone know how to simply pull all rows of a given dashboard? The query above returns None to some of the columns even though I can see that the field is not empty in the UI</p>"
+    },
+    {
+      "id": 172788,
+      "postNumber": 13,
+      "createdAt": "2024-03-12T12:04:05.153Z",
+      "author": "Adam.B (Adam)",
+      "cookedHtml": "<p>I think its likely youre running into None values due to having board relation values/Dependency values/Mirror values that you arent specifically asking for. The October 2023 API updates made it so they have to be specifically asked for to limit overhead</p>\n<p>Here is a query I use to grab every column for a specific item name on a given board. If you remove the query_params line it will grab all items on the given board up to the given limit</p>\n<p>Please note, for any formula values on your dashboard those will always return blank as the formulas are calculated on the client and therefore cannot be accessed by the API</p>\n<pre><code class=\"lang-auto\">headers = {‘Authorization’: API_KEY}\nquery {\n  boards(ids: BOARD_ID) {\n    items_page(\n      limit: NUM_OF_ITEMS\n      query_params: {rules: [{column_id: \"name\", compare_value: [ITEM_NAME]}]}\n    ) {\n      items {\n        column_values {\n          column {\n            title\n          }\n          ... on MirrorValue {\n            display_value\n          }\n          ... on BoardRelationValue {\n            display_value\n          }\n          ... on DependencyValue {\n            display_value\n          }\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 172832,
+      "postNumber": 14,
+      "createdAt": "2024-03-12T13:59:35.941Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 172980,
+      "postNumber": 15,
+      "createdAt": "2024-03-13T07:38:34.246Z",
+      "author": "tlgemp (Theo)",
+      "cookedHtml": "<p>Thanks, <a class=\"mention\" href=\"/u/adam.b\">@Adam.B</a>! I am trying to test your query on the API playground here. What would be the compare_value parameter? I am not sure what value to pass there.</p>\n<p>My use case entails pulling all the rows and all the columns from the board. Would those rules still be required in this case?</p>\n<p>I have tried to investigate the schema and the documentation, but graphql seems to be the main issue for me. It is as if I had to learn a whole new query language just to automate a simple board export <img src=\"https://emoji.discourse-cdn.com/apple/joy.png?v=12\" title=\":joy:\" class=\"emoji\" alt=\":joy:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks,</p>\n<p>Theo</p>"
+    },
+    {
+      "id": 172981,
+      "postNumber": 16,
+      "createdAt": "2024-03-13T07:51:39.424Z",
+      "author": "Adam.B (Adam)",
+      "cookedHtml": "<p>No problem <a class=\"mention\" href=\"/u/tlgemp\">@tlgemp</a><br />\nYou can use any item name for that value (item name being the first column on a table) but that line isnt actually necessary. If you simply want all the items on the table you can remove the “query_params” line entirely. Then it will display the first N items of the table (where N is the limit you set on the line above)</p>\n<p>I use the compare value since im generally looking for exactly one item in a table based on a serial number.</p>\n<p>Hopefully that works for you!</p>\n<p>EDIT: Regarding your edits, I think removing the query parameter line should allow you to pull all the rows and columns from a board. The other rules (on MirrowValue/BoardRelationValue/DependencyValue) would be required if your board has linkages to other boards (eg connected columns and mirror columns)</p>\n<p>Additionally, some column types are wholly unsupported for export, such as formula columns where the display value cant be export via the API since it is calculated client side. You may be able to pull the formula from the API somehow but im not sure so youd have to dig into the documentation.</p>\n<p>Good luck with GraphQL! It definitely is a change from the more common RESTful API so yeah it is kind of a new query language to learn. And I am definitely no expert myself.</p>"
+    },
+    {
+      "id": 173048,
+      "postNumber": 17,
+      "createdAt": "2024-03-13T13:04:52.095Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 175711,
+      "postNumber": 18,
+      "createdAt": "2024-03-29T07:55:19.547Z",
+      "author": "tlgemp (Theo)",
+      "cookedHtml": "<p>Thanks, Adam. That’s much appreciated <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> I’ve modified your query and have been able to retrieve all items from the board.</p>"
+    },
+    {
+      "id": 175953,
+      "postNumber": 19,
+      "createdAt": "2024-03-31T09:50:04.524Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 176592,
+      "postNumber": 20,
+      "createdAt": "2024-04-02T22:03:01.679Z",
+      "author": "charles.reily (charles.reily)",
+      "cookedHtml": "<p>To resolve this, you should check the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API documentation to ensure that you’re using the correct fields and structure in your GraphQL query.</p>\n<p>Here’s a revised version of your query that might work:</p>\n<h1><a name=\"p-176592-query-to-get-items-from-a-specific-board-1\" class=\"anchor\" href=\"#p-176592-query-to-get-items-from-a-specific-board-1\"></a>Query to get items from a specific board</h1>\n<p>query = ‘’’<br />\n{<br />\nboards(ids: %s) {<br />\nitems {<br />\nname<br />\ncolumn_values {<br />\ntitle<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n‘’’ % board_id</p>"
+    },
+    {
+      "id": 176647,
+      "postNumber": 21,
+      "createdAt": "2024-04-03T04:08:02.158Z",
+      "author": "charles.reily (charles.reily)",
+      "cookedHtml": "<p>Previously, you could directly access items within the <code>boards</code> object. However, <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> has <a href=\"https://www.globaldatabase.com/top-10-b2b-data-providers-in-2024\" rel=\"noopener nofollow ugc\">enrich customer data</a>, and now you need to use a different field to access them.<br />\nInstead of requesting <code>items</code> directly under <code>boards</code>, use the <code>items_page</code> field. This field retrieves a paginated list of items for a board.</p>\n<p>Here’s the updated query:<br />\nquery = ‘’’<br />\n{<br />\nboards(ids: “%s”) {<br />\nitems_page(limit: 100) {  # Adjust limit as needed<br />\nname<br />\ncolumn_values {<br />\ntitle<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n‘’’ % board_id</p>"
+    },
+    {
+      "id": 177050,
+      "postNumber": 22,
+      "createdAt": "2024-04-05T01:50:17.314Z",
+      "author": "voodoomaximilian (Maximilian Hirz)",
+      "cookedHtml": "<p>Hi guys, thanks a lot for the great help. I can now read out the data again. However, I now have the problem that columns that are created as formulas in Monday are no longer transferred. Can anyone help me here? The column is indeed in the answer, but there is no text in it.</p>"
+    },
+    {
+      "id": 177274,
+      "postNumber": 23,
+      "createdAt": "2024-04-07T10:23:07.389Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/voodoomaximilian\">@voodoomaximilian</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>What do you mean when  you say they are not “transfered”? What mutation are you using exactly, what do you see as a result, and what are you expecting?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 223037,
+      "postNumber": 24,
+      "createdAt": "2025-03-04T10:18:15.904Z",
+      "author": "mginsburg4903 (Mark Ginsburg)",
+      "cookedHtml": "<p>I am working with an organization that gave me a APIKEY and a Temporary Email to use and that email is meant to have access to boards that I need data for.  However I don’t have the Board IDs.  Is that required to use the Python API techniques shown here?   If I do need the board ID and acquire it, do I need to know anything about the fields in the board before I go to capture them?</p>"
+    }
+  ]
+}

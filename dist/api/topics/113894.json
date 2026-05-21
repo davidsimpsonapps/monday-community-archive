@@ -1,0 +1,82 @@
+{
+  "id": 113894,
+  "title": "Unable to validate JWT",
+  "slug": "unable-to-validate-jwt",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2025-05-01T02:05:51.684Z",
+  "lastPostedAt": "2025-05-06T12:26:08.599Z",
+  "postsCount": 9,
+  "excerpt": "we are using this code to validate the JWT on the backend in response to a webhook event. refer: Authentication \nimport jwt from &#39;jsonwebtoken&#39;\nexport const authenticate = (req, res, next) =&gt; {\n    const token = req.head&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 43,
+  "posts": [
+    {
+      "id": 228302,
+      "postNumber": 1,
+      "createdAt": "2025-05-01T02:05:51.780Z",
+      "author": "morpheus (morpheus)",
+      "cookedHtml": "<p>we are using this code to validate the JWT on the backend in response to a webhook event. refer: <a href=\"https://developer.monday.com/apps/docs/integration-authorization#verify-the-authenticity-of-requests-from-monday:\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Authentication</a></p>\n<pre><code class=\"lang-auto\">import jwt from 'jsonwebtoken'\nexport const authenticate = (req, res, next) =&gt; {\n    const token = req.headers.authorization\n    if (!token) { return res.status(401).end() }\n    try {\n      res.locals.user = jwt.verify(token, JWT_SECRET);\n      console.log(res.locals.user)\n    } catch (e) {\n      console.error(e)\n      return res.status(401).end()\n    }\n    next()\n};\n</code></pre>\n<p>we get back a token that is decodable but the signature is invalid. we also double checked the JWT_SECRET is set to the signing secret on</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/7/771f66604f4c36e68b51af11f98d17e80960f813.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/7/771f66604f4c36e68b51af11f98d17e80960f813_2_690x60.png\" alt=\"image\" width=\"690\" height=\"60\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2556×224 10 KB</span></div></a></div><p></p>\n<p>has anyone run into this?</p>"
+    },
+    {
+      "id": 228380,
+      "postNumber": 2,
+      "createdAt": "2025-05-01T13:08:04.622Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>What exact error do you get?</p>\n<p>Here’s what I usually do to troubleshoot or investigate:</p>\n<ol>\n<li>Log the JWT</li>\n<li>Manually verify it in <a href=\"http://jwt.io\">jwt.io</a> against your signing secret</li>\n</ol>\n<p>Usually when I do this, I’ll find the issue.</p>\n<p>Let me know if you have any success in <a href=\"http://jwt.io\">jwt.io</a> and we can go from there.</p>"
+    },
+    {
+      "id": 228389,
+      "postNumber": 3,
+      "createdAt": "2025-05-01T13:27:19.000Z",
+      "author": "morpheus (morpheus)",
+      "cookedHtml": "<p>the jwt decodes but the signature is invalid. that is the error. we double checked the client secret we are using.</p>"
+    },
+    {
+      "id": 228405,
+      "postNumber": 4,
+      "createdAt": "2025-05-01T16:11:29.450Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>For the record, your code looks correct. What is the exact error you’re getting from the JWT library?</p>\n<p>JWTs are just Base64 encoded JSONs – so the fact that it decodes properly doesn’t really tell you much.</p>\n<p>If you’re getting invalid signature, probably means that it’s not signed correctly. In production, this means the JWT has been tampered with (man in the middle attack) and you should not trust that request. In development, it likely means that the secret is wrong.</p>\n<p>The signature is the last few characters of the JWT, so if you truncated the JWT accidentally it would also cause an invalid signature error.</p>\n<p>Make sure you’re using <a href=\"https://developer.monday.com/apps/docs/integration-authorization#verify-the-authenticity-of-requests-from-monday\">the <strong>signing secret</strong> for integrations</a>, and <strong>client secret</strong> if <a href=\"https://developer.monday.com/apps/docs/mondayget#retrieving-your-session-token\">decoding the sessionToken</a> that you get using the monday SDK.</p>"
+    },
+    {
+      "id": 228421,
+      "postNumber": 5,
+      "createdAt": "2025-05-02T00:17:09.000Z",
+      "author": "morpheus (morpheus)",
+      "cookedHtml": "<p>this is bizarre. the documentation says:<br />\n<a href=\"https://developer.monday.com/apps/docs/integration-authorization\" rel=\"noopener nofollow ugc\">https://developer.monday.com/apps/docs/integration-authorization</a></p>\n<blockquote>\n<p>Every request from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> to your app will contain a <a href=\"https://jwt.io/\" rel=\"noopener nofollow ugc\">JWT</a> in the <code>Authorization</code> header. This token is signed using your app’s <em>Signing Secret</em> and can be decoded to retrieve additional metadata.</p>\n</blockquote>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/6/a6820dd6afc6dcfd4a2e8c07734bd980d5ea7ed3.png\" title=\"image.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/6/a6820dd6afc6dcfd4a2e8c07734bd980d5ea7ed3_2_562x45.png\" alt=\"image.png\" width=\"562\" height=\"45\" /><div class=\"meta\"><span class=\"filename\">image.png</span><span class=\"informations\">1412×113 18.4 KB</span></div></a></div><p></p>\n<p>and yet its the client secret that is used to sign the token:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/7/07300c33583769753e0bd45c7a8ab4558897e04c.png\" title=\"image.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/0/7/07300c33583769753e0bd45c7a8ab4558897e04c.png\" alt=\"image.png\" width=\"505\" height=\"183\" /><div class=\"meta\"><span class=\"filename\">image.png</span><span class=\"informations\">505×183 10.6 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 228427,
+      "postNumber": 6,
+      "createdAt": "2025-05-02T07:42:20.987Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I think it’s the signing secret for automations, but the OAuth client secret for all other things, such as view.</p>"
+    },
+    {
+      "id": 228437,
+      "postNumber": 7,
+      "createdAt": "2025-05-02T10:05:37.763Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Gosh, didn’t realize you’re using the lifecycle webhooks. We’ll make it more clear in our docs so other users don’t hit the same problem.</p>\n<p>It’s client secret for:</p>\n<ul>\n<li>Signed session token you get from frontend - <code>monday.get('sessionToken')</code></li>\n<li>Life cycle webhooks (eg “Install/uninstall notification webhook”)</li>\n</ul>\n<p>Signing secret for:</p>\n<ul>\n<li>Custom automations/integrations</li>\n<li>Board webhooks (eg “When a status changes, send a webhook”)</li>\n</ul>"
+    },
+    {
+      "id": 228627,
+      "postNumber": 8,
+      "createdAt": "2025-05-05T06:07:48.639Z",
+      "author": "Ipeek (Isaac)",
+      "cookedHtml": "<p>That is helpful, I had the same confusion when I was setting up mine too. Turns out it is listed as such in other parts of the docs, it’s just confusing depending on the page you’re reading.</p>"
+    },
+    {
+      "id": 228766,
+      "postNumber": 9,
+      "createdAt": "2025-05-06T12:26:08.599Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Totally understand.</p>\n<p>BTW since we’re talking about docs: if you can use the “Did this page help you?” button at the bottom of each article to leave your feedback on confusing unhelpful articles, it’s really valuable. We just made it more accessible!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/a/8a5ac7ac8f11f854b9ebc17a0a47bb2d7c34cac0.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/a/8a5ac7ac8f11f854b9ebc17a0a47bb2d7c34cac0_2_690x386.png\" alt=\"image\" width=\"690\" height=\"386\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1328×744 92.1 KB</span></div></a></div><p></p>"
+    }
+  ]
+}

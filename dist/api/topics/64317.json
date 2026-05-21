@@ -1,0 +1,120 @@
+{
+  "id": 64317,
+  "title": "Breaking change: Removed the deprecated `items` field on groups queries, replaced with `items_page`",
+  "slug": "breaking-change-removed-the-deprecated-items-field-on-groups-queries-replaced-with-items-page",
+  "categoryId": 70,
+  "tagIds": [
+    94,
+    115,
+    245,
+    406,
+    410
+  ],
+  "createdAt": "2023-08-23T17:42:25.099Z",
+  "lastPostedAt": "2023-10-11T17:42:08.372Z",
+  "postsCount": 12,
+  "excerpt": "We just added a new breaking change to API version 2023-10: \nThe deprecated items field on the groups object will be removed and replaced with items_page in API version 2023-10 . Please see our previous announcement for &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1009,
+  "posts": [
+    {
+      "id": 140469,
+      "postNumber": 1,
+      "createdAt": "2023-08-23T17:42:25.169Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>We just added a new breaking change to <a href=\"https://community.monday.com/t/whats-new-in-api-version-2023-10/61350\">API version <code>2023-10</code></a>:</p>\n<p>The deprecated <code>items</code> field on the groups object will be removed and replaced with <code>items_page</code> in API version <code>2023-10</code> . Please see our previous <a href=\"https://developer.monday.com/api-reference/changelog/removing-the-deprecated-items-field-on-boards-queries-replace-with-items-page\">announcement</a> for more information about the <code>items_page</code> field.</p>"
+    },
+    {
+      "id": 144718,
+      "postNumber": 2,
+      "createdAt": "2023-09-21T01:10:57.822Z",
+      "author": "MSIlydia (Lydia Taylor)",
+      "cookedHtml": "<p>Uuuuuuuuh.  Whoa.  This is all becoming a little too real here.</p>\n<p>So are you telling me that at a certain time less than a year from now (the rolling dates have me a little confused), if I run a query using the “items” field, even though it has worked 1000s of times before, it is suddenly going to give me an error?</p>\n<p>And I have to go under the hood of all my GraphQL queries that I have running in <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a> and update them to use items_page???</p>"
+    },
+    {
+      "id": 147477,
+      "postNumber": 3,
+      "createdAt": "2023-10-09T02:39:56.045Z",
+      "author": "Kofi (Kofi FiftyTechSolutions.com)",
+      "cookedHtml": "<p>I know right, this sounds a bit crazy. Also “page” field will no longer work, making items_count a bit redundant.</p>"
+    },
+    {
+      "id": 147581,
+      "postNumber": 4,
+      "createdAt": "2023-10-09T18:13:58.902Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/msilydia\">@MSIlydia</a>,</p>\n<p>Our apologies for the delayed response.</p>\n<p>You are correct that the <code>items</code> field on <code>groups</code> (and <code>boards</code>) will not work in version <code>2023-10</code> and beyond. You will instead need to use <code>items_page</code>. This change comes due to updates to our infrastructure that now allow for larger boards. You can read more about that <a href=\"https://developer.monday.com/api-reference/changelog/removing-the-deprecated-items-field-on-boards-queries-replace-with-items-page\">here</a>.</p>\n<p>Regarding dates, version <code>2023-07</code> (the last version that supports the <code>items</code> field) will be completely removed on January 15th. Any calls using the <code>items</code> field at that point will not run.</p>\n<p>We are working with the developers at Make to update their platform with the new version. We are still waiting to confirm whether or not Make end-users will need to update their workflows.</p>\n<p><a class=\"mention\" href=\"/u/kofi\">@Kofi</a> I see what you mean. <code>items_page</code> utilizes the <code>limit</code> and <code>cursor</code> arguments instead of <code>page</code> to paginate through data sets, though the default limit/the ability to set your own limit makes <code>items_count</code> redundant. Either way I will pass your feedback along to our API team <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 147605,
+      "postNumber": 5,
+      "createdAt": "2023-10-09T20:52:45.069Z",
+      "author": "Kofi (Kofi FiftyTechSolutions.com)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/rachelatmonday/48/14631_2.png\" class=\"avatar\" /> Rachel:</div>\n<blockquote>\n<p>paginate through data sets, though th</p>\n</blockquote>\n</aside>\n<p>Thanks for your response. I have just spent some hours learning the new items_page system to work with my <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a> automation, and for non-coder like myself was a bit painful.</p>\n<p>It especially did not help that while this is now the default API, there isnt a way to set headers or use items_page in <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a>. A <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a> specific HTTP module could help.</p>\n<p>I used the standard HTTP module with Make as a work arround. However, because the structure of output between <strong>next_items_page</strong> and <strong>items_page</strong> are different, iterating through the items in both cases was not fun.</p>\n<p>Fingers crossed something more useable comes along, because I can see this being a nightmare explaining this and liaising with clients that have had working automations in place for years.</p>\n<p>I’d like to get ahead of this change asap.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/1/e1016ae284ed72f39bdc89176291b537c1de1adc.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/1/e1016ae284ed72f39bdc89176291b537c1de1adc_2_462x499.png\" alt=\"image\" width=\"462\" height=\"499\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1120×1211 27.2 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 147655,
+      "postNumber": 6,
+      "createdAt": "2023-10-10T04:24:47.025Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 147710,
+      "postNumber": 7,
+      "createdAt": "2023-10-10T12:34:17.423Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Thanks for the feedback Kofi! Make is currently adapting their modules to work with the new API, and I’ll pass your feedback along to our contact there <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=12\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 147715,
+      "postNumber": 8,
+      "createdAt": "2023-10-10T12:57:59.975Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I have been involved in a discussion in the make community and the impression I got from their response is that they are going to release a NEW monday app and module set. This is a poor choice because its going to force every make &amp; monday user to recreate every scenario with the new set of modules.</p>\n<p>There is very little changing that will actually break outputs of existing modules, the most likely break point is if there is make routing around a column type and the ColumnType enum is different (and I suspect this is going to be a rare scenario because most of the time the columns in use are static so no decision needs to be made on the column type). Everything else just requires internal changes (specifically around items_page) to get the same outputs.</p>\n<p>Also they have yet to do what you and I discussed and that’s let the Execute GraphQL Query module specify the API version. This is forcing all make/monday users into a corner. The window to modify all of the custom queries is closing quickly. All partner created scenarios are going to require partners to “update” them - and there won’t be enough time do anything.</p>\n<p>At the very least if they are going to go with the new app in make, they should release the Execute GraphQL Query (the simplest module to adapt) as the first module in the new app ASAP.</p>"
+    },
+    {
+      "id": 147729,
+      "postNumber": 9,
+      "createdAt": "2023-10-10T14:50:37.043Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Cody – don’t be so sure about that. I’m working with Make to update their modules such that there’s minimal migration needed.</p>\n<p>I cannot promise what exactly migration will look like, but I am advocating for as smooth a transition as possible!</p>"
+    },
+    {
+      "id": 147732,
+      "postNumber": 10,
+      "createdAt": "2023-10-10T15:05:26.714Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Thanks!</p>\n<p>Any chance they’re open to at least letting us specify API version on the Execute GraphQL Query module in advance of the final new version?</p>\n<p>The custom queries are what worries me the most right now - since if the new version isn’t released until November or December, then we’re pretty much down to a couple weeks to migrate several hundred scenarios across customers with the holidays in there.</p>"
+    },
+    {
+      "id": 147873,
+      "postNumber": 11,
+      "createdAt": "2023-10-11T12:17:00.532Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Will bring it up with them!</p>"
+    },
+    {
+      "id": 147918,
+      "postNumber": 12,
+      "createdAt": "2023-10-11T17:40:13.742Z",
+      "author": "MSIlydia (Lydia Taylor)",
+      "cookedHtml": "<p>The feedback I have been getting from <a href=\"http://make.com\" rel=\"noopener nofollow ugc\">make.com</a> is similar to <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>–the transition will not be seamless, and there will/may well be modifications made to existing scenarios.</p>\n<p>I agree with Cody, the window between the new version, third party’s (Make) ability to react, and us an end-user is tight to keep everything running smoothly.</p>"
+    },
+    {
+      "id": 147920,
+      "postNumber": 13,
+      "createdAt": "2023-10-11T17:42:08.372Z",
+      "author": "MSIlydia (Lydia Taylor)",
+      "cookedHtml": "<p>Cody, could you share the HTTP code, including header information you were able to get to work to specify the version to make your own calls to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>?</p>\n<p>I’ve been a bit stymied in trying to do my own testing/work around.</p>"
+    },
+    {
+      "id": 147985,
+      "postNumber": 14,
+      "createdAt": "2023-10-12T04:20:58.966Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

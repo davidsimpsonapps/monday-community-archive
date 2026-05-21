@@ -1,0 +1,84 @@
+{
+  "id": 83543,
+  "title": "Upload a file to an update using power automate",
+  "slug": "upload-a-file-to-an-update-using-power-automate",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    53,
+    94,
+    351
+  ],
+  "createdAt": "2024-04-10T15:39:04.629Z",
+  "lastPostedAt": "2024-06-12T14:48:49.758Z",
+  "postsCount": 7,
+  "excerpt": "I am struggling to upload a file to an update using power automate. I have managed using postman but I am unable to replicate it. \nI would like to upload a file using a url and this is the query I am using:",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 679,
+  "posts": [
+    {
+      "id": 177852,
+      "postNumber": 1,
+      "createdAt": "2024-04-10T15:39:04.716Z",
+      "author": "Pablito (Pablo)",
+      "cookedHtml": "<p>I am struggling to upload a file to an update using power automate. I have managed using postman but I am unable to replicate it.<br />\nI would like to upload a file using a url and this is the query I am using:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/6/861cbb1ad308d65b1774c93f81c5a26b58380514.png\" alt=\"image\" width=\"445\" height=\"192\" /></p>"
+    },
+    {
+      "id": 177974,
+      "postNumber": 2,
+      "createdAt": "2024-04-11T04:58:45.027Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 180081,
+      "postNumber": 3,
+      "createdAt": "2024-04-22T04:35:55.711Z",
+      "author": "hazriq.saleh (Hazriq Saleh)",
+      "cookedHtml": "<p>+1 on this! Found several solutions on this but it’s not working on my end. The best one that I found is <a href=\"https://willpage.dev/2019/12/20/using-the-http-action-to-post-multipart-form-data-in-power-automate-logic-apps/\" rel=\"noopener nofollow ugc\">this</a>, except the example uses BambooHR instead of Monday, and I have no idea on how to include the mutation into the request body.</p>"
+    },
+    {
+      "id": 180147,
+      "postNumber": 4,
+      "createdAt": "2024-04-22T10:09:13.534Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Our API does not support uploading a file from a URL. You will have to upload the content of the file instead. Not sure if PowerAutomate supports that…</p>"
+    },
+    {
+      "id": 180249,
+      "postNumber": 5,
+      "createdAt": "2024-04-22T23:40:11.530Z",
+      "author": "hazriq.saleh (Hazriq Saleh)",
+      "cookedHtml": "<p>Thanks for the reply Dipro! Power Automate does indeed support uploading file content instead of the URL.</p>\n<p>This is the multipart request that I’ve added in the HTTP body:</p>\n<pre><code class=\"lang-auto\">{\n  \"$content-type\": \"multipart/form-data\",\n  \"$multipart\": [\n    {\n      \"body\": \"3088397636\",\n      \"headers\": {\n        \"Content-Disposition\": \"form-data; name=\\\"update_id\\\"\"\n      }\n    },\n    {\n      \"body\": \"iVBORw0KGgo ...\",\n      \"headers\": {\n        \"Content-Disposition\": \"form-data; name=\\\"file\\\"; filename=\\\"test blue_logo.png\\\"\"\n      }\n    }\n  ]\n}\n</code></pre>\n<p>Are there any other perimeters that I need to include in the body?</p>"
+    },
+    {
+      "id": 180319,
+      "postNumber": 7,
+      "createdAt": "2024-04-23T10:56:50.327Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Aha, thanks for clarifying. I also read the article you linked and am starting to understand how PowerAutomate converts this JSON into a valid multipart.</p>\n<p>For our API, you need to have three parts in the multipart:</p>\n<ul>\n<li><strong>query:</strong> your query</li>\n<li><strong>map:</strong> maps the relation between variables in your query and other parts of the request</li>\n<li><strong>one or more variables:</strong> these are referenced by name in the map (example below)</li>\n</ul>\n<p>In PowerAutomate JSON format, it would look somehting like this:</p>\n<pre><code class=\"lang-json\">{\n  \"$content-type\": \"multipart/form-data\",\n  \"$multipart\": [\n    {\n      \"body\": \"mutation ($file: File!) { add_file_to_update (file: $file, update_id: 1234567890) { id } }\",\n      \"headers\": {\n        \"Content-Disposition\": \"form-data; name=\\\"query\\\"\"\n      }\n    },\n    {\n      \"body\": \"{\\\"image\\\":\\\"variables.file\\\"}\",\n      \"headers\": {\n        \"Content-Disposition\": \"form-data; name=\\\"map\\\"\"\n      }\n    },\n    {\n      \"body\": \"iVBORw0KGgo ...\",\n      \"headers\": {\n        \"Content-Disposition\": \"form-data; name=\\\"image\\\"; filename=\\\"test blue_logo.png\\\"\",\n        \"Content-Type\": \"&lt;Content-Type header here&gt;\"\n      }\n    }\n  ]\n}\n</code></pre>\n<p>I copied the content of each part from our Postman sample collection – <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-fed6a141-844b-4390-be54-00228a90293d?tab=body\">Upload a file to an update</a></p>\n<p>Hope this helps!</p>"
+    },
+    {
+      "id": 181014,
+      "postNumber": 8,
+      "createdAt": "2024-04-26T06:35:55.473Z",
+      "author": "hazriq.saleh (Hazriq Saleh)",
+      "cookedHtml": "<p>Wow you are a lifesaver. It works perfectly!</p>\n<p>Thank you so much for your help <img src=\"https://emoji.discourse-cdn.com/apple/raised_hands.png?v=12\" title=\":raised_hands:\" class=\"emoji\" alt=\":raised_hands:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 181208,
+      "postNumber": 9,
+      "createdAt": "2024-04-28T06:43:10.164Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 188428,
+      "postNumber": 10,
+      "createdAt": "2024-06-12T14:48:49.758Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>A post was split to a new topic: <a href=\"/t/500-error-when-uploading-file-to-update-using-powerautomate/89780\">500 error when uploading file to update using PowerAutomate</a></p>"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "id": 15321,
+  "title": "Project Size & Score Calculator (nested Formula with variable update)",
+  "slug": "project-size-score-calculator-nested-formula-with-variable-update",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2021-01-22T13:46:52.743Z",
+  "lastPostedAt": "2021-01-28T19:30:18.288Z",
+  "postsCount": 9,
+  "excerpt": "I am trying to write a formula based on several columns of different types.  Basically what I really need is a running variable that I can add to.  There will be several factors that give a project a project size and sco&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2063,
+  "posts": [
+    {
+      "id": 38459,
+      "postNumber": 1,
+      "createdAt": "2021-01-22T13:46:52.808Z",
+      "author": "Telecaster (John Bunch)",
+      "cookedHtml": "<p>I am trying to write a formula based on several columns of different types.  Basically what I really need is a running variable that I can add to.  There will be several factors that give a project a project size and score.  I want a column that ends up with a points total and then a column that classifies that total.</p>\n<p>Here is the pseudo code:</p>\n<p>If {col1} = True then add 10 pts to Var!<br />\nIf {col1} = False then add 0 pts to Var!</p>\n<p>If {col2} = 0 to 5 then 10 pts to Var!<br />\nIf {col2} = 6-10 then 20 ptst o Var!</p>\n<p>…so several of these that show total pts in one column</p>\n<p>Then I want to have simple formula that is if total Var! = 0-25 then small, if 26-50 then large<br />\n(I can figure that one out.)</p>\n<p>Just stuck on how to have multiple cols logically adding up based on input.</p>"
+    },
+    {
+      "id": 38464,
+      "postNumber": 2,
+      "createdAt": "2021-01-22T15:08:07.431Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/telecaster\">@Telecaster</a> ,</p>\n<p>Here is one way:</p>\n<pre><code>SUM(IF({col1}=TRUE,10,0), IF(AND({col2}&gt;=0, {col2}&lt;=5),10,0), IF(AND({col2}&gt;=6, {col2}&lt;=10),20,0))</code></pre>"
+    },
+    {
+      "id": 38467,
+      "postNumber": 3,
+      "createdAt": "2021-01-22T15:19:42.342Z",
+      "author": "Telecaster (John Bunch)",
+      "cookedHtml": "<p>Perfect thanks.  I will give it a shot</p>"
+    },
+    {
+      "id": 38758,
+      "postNumber": 4,
+      "createdAt": "2021-01-26T18:54:39.159Z",
+      "author": "Telecaster (John Bunch)",
+      "cookedHtml": "<p>So this worked perfectly and thanks:<br />\nSUM(IF({New Feature}=“Yes”,10,0),  MULTIPLY({Num Languages}, 10),MULTIPLY({Num Countries}, 10),MULTIPLY({Num ePRO}, 10),IF({Data Integration}=“Yes”,10,0),IF({Wearable}=“Yes”,10,0),IF({Provisioning}=“Yes”,10,0))</p>\n<p>Now this gives out a total number and I am trying to classify that number into a project size:<br />\n0-100 = Small<br />\n101-199 = Med<br />\n200-299 = Large<br />\n300 &gt; = xLarge</p>\n<p>I looked at the Switch formula but not sure that is it and also tried nesting Ifs but that is getting messy</p>\n<p>Simple example F(AND({Points Total} &gt;= 0,{Points Total} &lt;= 100), “Small” ,IF(1&gt;0,“hello world”,\"\"))</p>\n<p>Is the above the way to do this and just keep nesting (small (med (Large …?</p>"
+    },
+    {
+      "id": 38767,
+      "postNumber": 5,
+      "createdAt": "2021-01-26T22:24:16.460Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/telecaster\">@Telecaster</a>,</p>\n<p>As long as the conditions are mutually exclusive, there is no need to nest them. Just string them one after another.</p>\n<p>IF(AND({Points Total} &gt;= 0,{Points Total} &lt;= 100), “Small”, “”)&amp;IF(AND({Points Total} &gt;=101,{Points Total} &lt;= 199), “Medium”, “”)&amp;…</p>"
+    },
+    {
+      "id": 38797,
+      "postNumber": 6,
+      "createdAt": "2021-01-27T13:11:08.287Z",
+      "author": "Telecaster (John Bunch)",
+      "cookedHtml": "<p>Fantastic! got everything all working.  Thanks for the help</p>"
+    },
+    {
+      "id": 38977,
+      "postNumber": 7,
+      "createdAt": "2021-01-28T12:21:10.451Z",
+      "author": "Telecaster (John Bunch)",
+      "cookedHtml": "<p>One additional question-</p>\n<p>There are two columns that I am try to have work together.  The points total and the size.  However one of the selections should just always make the size be “Small”.    i.e Desired behavior is \"If Express = Yes then the points total should be 0 or the points total should work but the size should always be small.</p>\n<p>If in the points total col I check this condition outside of the sum it just appends the value like a text string:</p>\n<p>Points Total Formula:<br />\nSUM(IF({New Feature}=“Yes”,300,0),  MULTIPLY({Num Languages}, 10),MULTIPLY({Num Countries}, 10),MULTIPLY({Num ePRO}, 10),IF({Data Integration}=“Yes”,10,0),IF({Wearable}=“Yes”,10,0),IF({Provisioning}=“Yes”,10,0))&amp;IF({Express}=“Yes”, “0”, “”)</p>\n<p>For the above if the points total is 410 and Express is Yes then the display is 4100.  I could just put this inside the sum and subtract 10,000 so the points are always in the small (but this seems like a hack)</p>\n<p>Project Size Classification Formula<br />\nIF(AND({Points Total} &gt;= 0,{Points Total} &lt;= 100), “Small” ,\"\") &amp;IF(AND({Points Total} &gt;= 101,{Points Total} &lt;= 199), “Medium” ,\"\") &amp;IF(AND({Points Total} &gt;= 200,{Points Total} &lt;= 299), “Large” ,\"\") &amp;IF(AND({Points Total} &gt;= 300,{Points Total} &lt;= 5000), “X-Large” ,\"\")</p>\n<p>Question.  Is there the concept of IF condition is true do something else do nothing?  It seems I have to provide IF({Some column} &gt; 100, “Big Deal”, “Small Deal”) both results.  Like if I change the “Small deal” to “” it inserts a blank.  It doesn’t see to have the concept  of IF({Some column} &gt; 100, “Big Deal”). ie do noting and continue.</p>\n<p>I guess I could wrap the entire sum in an IF. IF({Express} = “Yes”, “0”, “do the big sum formula above”). Would that be the way?</p>\n<p>It would be nice if there was the IF do something else do nothing</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 39025,
+      "postNumber": 8,
+      "createdAt": "2021-01-28T19:30:18.288Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/telecaster\">@Telecaster</a>,</p>\n<p>Simple answer, do this:</p>\n<p>SUM(IF({New Feature}=“Yes”,300,0), MULTIPLY({Num Languages}, 10),MULTIPLY({Num Countries}, 10),MULTIPLY({Num ePRO}, 10),IF({Data Integration}=“Yes”,10,0),IF({Wearable}=“Yes”,10,0),IF({Provisioning}=“Yes”,10,0)) * IF({Express}=“Yes”, 0, 1)</p>\n<p>Your “wrap” option would also work.</p>"
+    },
+    {
+      "id": 50321,
+      "postNumber": 9,
+      "createdAt": "2021-05-06T08:21:23.379Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

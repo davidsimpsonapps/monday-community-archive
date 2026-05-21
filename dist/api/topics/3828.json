@@ -1,0 +1,37 @@
+{
+  "id": 3828,
+  "title": "INtegrating monday API in python on oozie",
+  "slug": "integrating-monday-api-in-python-on-oozie",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-01-09T17:54:19.199Z",
+  "lastPostedAt": "2021-02-25T14:32:56.250Z",
+  "postsCount": 3,
+  "excerpt": "Here is my code: \n#!./python36/bin/python3.6\nimport requests\nimport json\nimport sys, subprocess, datetime, json, math\ndef querySprintDetails(api_key, board_id ):\n    headers = {&quot;Authorization&quot; : api_key}\n    monday_url =&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2132,
+  "posts": [
+    {
+      "id": 10106,
+      "postNumber": 1,
+      "createdAt": "2020-01-09T17:54:19.299Z",
+      "author": "spb (spb)",
+      "cookedHtml": "<p>Here is my code:</p>\n<pre><code>#!./python36/bin/python3.6\nimport requests\nimport json\nimport sys, subprocess, datetime, json, math\ndef querySprintDetails(api_key, board_id ):\n    headers = {\"Authorization\" : api_key}\n    monday_url = 'https://api.monday.com/v2'\n    # store request body in a dict, including variables\n    req_data = {\"query\" : \"{boards(ids:%d) { \\\n                                items { \\\n                                  id \\\n                                  name \\\n                                  column_values{title text} \\\n                                  group{title} \\\n                                }\\\n                            }}\"%(board_id)}\n    # make HTTP POST using requests\n    r = requests.post(url=monday_url, json=req_data, headers=headers)\n    if r.status_code != 200:  # throw exception\n        print('Status:', r.status_code)\n        return -1\n    return r\n\nr = querySprintDetails( api_key, board_id )\n</code></pre>\n<p>When I run directly this works. Whereas when I try to schedule this on oozie it starts failing</p>\n<pre><code>Traceback (most recent call last):\n  File \"./getSprintData.py\", line 79, in &lt;module&gt;\n    r = querySprintDetails( api_key, board_id )\n  File \"./getSprintData.py\", line 27, in querySprintDetails\n    r = requests.post(url=monday_url, json=req_data, headers=headers)\n  File \"/grid/5/tmp/yarn-local/usercache/ma_d/appcache/application_1572358313567_19492469/container_e17_1572358313567_19492469_01_000001/python36/lib/python3.6/site-packages/requests/api.py\", line 112, in post\n    return request('post', url, data=data, json=json, **kwargs)\n  File \"/grid/5/tmp/yarn-local/usercache/ma_d/appcache/application_1572358313567_19492469/container_e17_1572358313567_19492469_01_000001/python36/lib/python3.6/site-packages/requests/api.py\", line 58, in request\n    return session.request(method=method, url=url, **kwargs)\n  File \"/grid/5/tmp/yarn-local/usercache/ma_d/appcache/application_1572358313567_19492469/container_e17_1572358313567_19492469_01_000001/python36/lib/python3.6/site-packages/requests/sessions.py\", line 512, in request\n    resp = self.send(prep, **send_kwargs)\n  File \"/grid/5/tmp/yarn-local/usercache/ma_d/appcache/application_1572358313567_19492469/container_e17_1572358313567_19492469_01_000001/python36/lib/python3.6/site-packages/requests/sessions.py\", line 622, in send\n    r = adapter.send(request, **kwargs)\n  File \"/grid/5/tmp/yarn-local/usercache/ma_d/appcache/application_1572358313567_19492469/container_e17_1572358313567_19492469_01_000001/python36/lib/python3.6/site-packages/requests/adapters.py\", line 513, in send\n    raise ConnectionError(e, request=request)\nrequests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.monday.com', port=443): Max retries exceeded with url: /v2 (Caused by NewConnectionError('&lt;urllib3.connection.VerifiedHTTPSConnection object at 0x7f1c09787e10&gt;: Failed to establish a new connection: [Errno 110] Connection timed out',))\nFailing Oozie Launcher, Main class [org.apache.oozie.action.hadoop.ShellMain], exit code [1]\n</code></pre>\n<p>Is it accessing wrong port? If yes, what port should i direct it to?<br />\nUsing python 3.6</p>\n<p>I am a noob. Sorry if this is a very basic question.</p>"
+    },
+    {
+      "id": 21466,
+      "postNumber": 2,
+      "createdAt": "2020-07-02T17:51:05.292Z",
+      "author": "Scott-monday.com (Scott Underwood)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/spb\">@spb</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>I do want to be up front and let you know that I’m not a Python developer, nor am I familiar with Oozie. Although I’m happy to see how I might be able to help! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I’d love to start by isolating whether this issue is related to Oozie, or perhaps to <a href=\"http://monday.com\">monday.com</a>’s API. As it works for you in certain instances, my inclination is that it’s related to Oozie.</p>\n<p>Although if you can send over any API call that’s being sent to <a href=\"http://monday.com\">monday.com</a> when scheduling this within Oozie, I’d be happy to take a look and see if there might be any contributing factors in that instance.</p>\n<p>I did a bit of research into the errors that you’re being returned within Oozie. I found a few resources that you might find helpful. While I’m not entirely certain these are related to your exact issue, I wanted to share them in case it’s helpful in pointing you in the right direction:</p>\n<ul>\n<li><a href=\"https://stackoverflow.com/questions/35084080/connectionexception-when-running-a-oozie-workflow\" class=\"inline-onebox\">hadoop - ConnectionException when running a Oozie workflow - Stack Overflow</a></li>\n<li><a href=\"https://community.cloudera.com/t5/Support-Questions/Issue-with-HUE/td-p/143754\" class=\"inline-onebox\">Solved: Issue with HUE - Cloudera Community - 143754</a></li>\n</ul>\n<p>Thanks and I look forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>-Scott</p>"
+    },
+    {
+      "id": 42419,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T14:32:56.250Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

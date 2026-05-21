@@ -1,0 +1,49 @@
+{
+  "id": 71850,
+  "title": "Odd issue with GraphQL",
+  "slug": "odd-issue-with-graphql",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    196,
+    335,
+    351
+  ],
+  "createdAt": "2023-11-30T00:04:14.615Z",
+  "lastPostedAt": "2023-12-04T16:22:39.234Z",
+  "postsCount": 3,
+  "excerpt": "Hey Monday community, \nI would like some feedback on this gql query \nimport { gql } from &#39;graphql-request&#39;;\n\nexport const GET_VOLUNTEERS_GROUPED_BY_LANGUAGE = gql`\n    query GetVolunteersGroupedByCanSpeakLanguage(\n      &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 313,
+  "posts": [
+    {
+      "id": 155444,
+      "postNumber": 1,
+      "createdAt": "2023-11-30T00:04:14.703Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>Hey Monday community,</p>\n<p>I would like some feedback on this gql query</p>\n<pre><code class=\"lang-typescript\">import { gql } from 'graphql-request';\n\nexport const GET_VOLUNTEERS_GROUPED_BY_LANGUAGE = gql`\n    query GetVolunteersGroupedByCanSpeakLanguage(\n        $boardId: ID!\n        $groupId: String!\n        $langColId: ID!\n        $capacityColId1: String!\n        $capacityColId2: ID!\n        $limit: Int\n    ) {\n        boards(ids: [$boardId]) {\n            groups(ids: [$groupId]) {\n                items_page(\n                    limit: $limit\n                    query_params: {\n                        rules: [\n                            { column_id: $langColId, compare_value: [null], operator: is_not_empty }\n                            { column_id: $capacityColId2, compare_value: [8], operator: lower_than }\n                        ]\n                        order_by: [{ column_id: $capacityColId1, direction: asc }]\n                    }\n                ) {\n                    items {\n                        id\n                        name\n                    }\n                }\n            }\n        }\n    }\n`;\n</code></pre>\n<p>note the type for the same <code>capacityColId</code> is diffrent in the two places.<br />\nfor some reason using String! or ID! alone and passing the same var to both places threw me type mismatch errors.</p>"
+    },
+    {
+      "id": 156099,
+      "postNumber": 2,
+      "createdAt": "2023-12-04T12:14:21.416Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/darkmift\">@darkmift</a>,</p>\n<p>Would you be able to please send this over to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with the actual values of the variables and the exact errors you are getting?</p>\n<p>Looking forward to hearing from you via email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 156148,
+      "postNumber": 3,
+      "createdAt": "2023-12-04T16:22:39.234Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>In the code snippet I sent I changed to use [<code>capacityColId2</code>,<code>capacityColId1</code>] instead of <code>capacityColId</code> where it would fail either as ID! or String! it was taking in a string.</p>\n<p>Using said snippet changes should allow reproduction<br />\nHere’s the full repo in hopes this may help out.</p>\n<aside class=\"onebox githubblob\">\n  <header class=\"source\">\n\n      <a href=\"https://github.com/Darkmift/monday_assign_volunteer/blob/main/monday_assign_volunteer/utils/queries.ts\" target=\"_blank\" rel=\"noopener nofollow ugc\">github.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <h4><a href=\"https://github.com/Darkmift/monday_assign_volunteer/blob/main/monday_assign_volunteer/utils/queries.ts\" target=\"_blank\" rel=\"noopener nofollow ugc\">Darkmift/monday_assign_volunteer/blob/main/monday_assign_volunteer/utils/queries.ts</a></h4>\n\n\n      <pre><code class=\"lang-ts\">import { gql } from 'graphql-request';\n\nexport const GET_ITEMS_QUERY = gql`\n    query GetItems($ids: ID!) {\n        items(ids: [$ids]) {\n            name\n            column_values {\n                column {\n                    id\n                }\n                id\n                type\n                value\n            }\n        }\n    }\n`;\n\nexport const GET_VOLUNTEER_COLUMNS = gql`\n    query GetVolunteerColumns($boardId: ID!) {\n</code></pre>\n\n\n\n  This file has been truncated. <a href=\"https://github.com/Darkmift/monday_assign_volunteer/blob/main/monday_assign_volunteer/utils/queries.ts\" target=\"_blank\" rel=\"noopener nofollow ugc\">show original</a>\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 156308,
+      "postNumber": 4,
+      "createdAt": "2023-12-05T12:31:44.698Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

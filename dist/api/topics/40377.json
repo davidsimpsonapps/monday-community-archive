@@ -1,0 +1,33 @@
+{
+  "id": 40377,
+  "title": "API BUG? Many items returned when querying blank board",
+  "slug": "api-bug-many-items-returned-when-querying-blank-board",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-08-04T03:56:10.330Z",
+  "lastPostedAt": "2022-08-05T15:17:31.256Z",
+  "postsCount": 2,
+  "excerpt": "I think I found an API Bug.  Wondering if anyone can confirm. \nMonday states that all boards must have at least 1 group.  Yet, using the API, you can use the delete_group mutation to delete all groups from a board and ul&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 791,
+  "posts": [
+    {
+      "id": 93493,
+      "postNumber": 1,
+      "createdAt": "2022-08-04T03:56:10.409Z",
+      "author": "beninsler (Ben)",
+      "cookedHtml": "<p>I think I found an API Bug.  Wondering if anyone can confirm.</p>\n<p>Monday states that all boards must have at least 1 group.  Yet, using the API, you can use the delete_group mutation to delete all groups from a board and ultimately have a blank board that displays “No results were found”.</p>\n<p>If I do this to clear all groups from a board, and then request the items on this blank board using the items query, I get hundreds of items returned (I have this set up with pagination to return all items from the board).  I would expect, since the board has been cleared, that 0 items would be returned.  The moment that there is a single empty group on the board, everything works correctly and my items query returns 0 items… and as I add items and groups, the number of items returns correctly as expected when queried.</p>\n<p>I have no idea where these hundreds of items are coming from when the blank board is queried.  They could be from archived groups.  They could be from deleted groups.  They could be from another board.  I’m using these boards for API testing so it’s a bit hard to trace what’s been created and deleted, and what lives in the archive.  That said, it does appear that, when blank, the items query is returning more items than I would expect to remain in the board’s archived or deleted database.  Nonetheless, I queried each item’s parent board and state, and all these mystery items show that they belong to the blank board, and that they are all active.</p>\n<p>I know that I’m <em>somewhat</em> breaking the rules by deleting all groups from a board… but is this a bug?  Where are these items coming from when the board is blank, and why does the items query not return 0 items?</p>\n<p>(for a little bit of context, I’m using the API to automatically scan groups on a board, and if all items within a group are marked with a “Done” status, that group is automatically archived/deleted.  This can result in all groups being removed from the board if all groups have all items marked as “Done”.  With many users accessing the board, there is no way to enforce a “Never delete this one group, and never mark it as done” rule to ensure that one group always remains on the board.)</p>"
+    },
+    {
+      "id": 93865,
+      "postNumber": 2,
+      "createdAt": "2022-08-05T15:17:31.256Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/beninsler\">@beninsler</a>!</p>\n<p>Thanks for bringing this to our attention! I was able to reproduce this and looks to be a bug. The items that you see being returned are the ones that were in the groups that were deleted. I will be passing this on to our R&amp;D team for their review.</p>\n<p>In the meantime and for your use case, I noticed the items were cleared when a new group was made. Perhaps this could help you ensure you are only working with visible items, and not those that were deleted with the group.</p>\n<p>I hope this helps!</p>"
+    }
+  ]
+}

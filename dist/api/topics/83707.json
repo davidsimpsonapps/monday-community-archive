@@ -1,0 +1,46 @@
+{
+  "id": 83707,
+  "title": "I want to upload image file and .wav file to an item in a board",
+  "slug": "i-want-to-upload-image-file-and-wav-file-to-an-item-in-a-board",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-04-12T03:52:56.031Z",
+  "lastPostedAt": "2024-04-15T05:32:07.685Z",
+  "postsCount": 4,
+  "excerpt": "I am using below code to upload pic to an item row but gets blank response, no error \nPlease help \n$filepath = “dec-logo201901.png”; \n$ch = curl_init(); \ncurl_setopt($ch, CURLOPT_URL, ‘https://api.monday.com/v2/file’); \n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 106,
+  "posts": [
+    {
+      "id": 178183,
+      "postNumber": 1,
+      "createdAt": "2024-04-12T03:52:56.103Z",
+      "author": "rajnish123saini (Rajneesh)",
+      "cookedHtml": "<p>I am using below code to upload pic to an item row but gets blank response, no error<br />\nPlease help</p>\n<p>$filepath = “dec-logo201901.png”;</p>\n<p>$ch = curl_init();<br />\ncurl_setopt($ch, CURLOPT_URL, ‘<a href=\"https://api.monday.com/v2/file\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file</a>’);<br />\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);<br />\ncurl_setopt($ch, CURLOPT_POST, 1);<br />\n$post = array(<br />\n‘query’ =&gt; “mutation {<br />\nadd_file_to_column (item_id: 6441733054, column_id: ‘files’, file: ‘$filepath’) {<br />\nid<br />\n}<br />\n}”,<br />\n‘variables’ =&gt; ‘\"{\"item_id\": 6441733054, \"column_id\": \"files\"}\"’,<br />\n‘map’ =&gt; ‘\"{\"image\":\"variables.file\"}\"’,<br />\n‘file’ =&gt; ‘@’ .realpath(“$filepath”)<br />\n);<br />\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $post);</p>\n<p>$headers = array();<br />\n$headers<span class=\"chcklst-box fa fa-square-o fa-fw\"></span> = ‘Api-Version: 2024-01’;<br />\n$headers<span class=\"chcklst-box fa fa-square-o fa-fw\"></span> = 'Authorization: '.$token;<br />\ncurl_setopt($ch, CURLOPT_HTTPHEADER, $headers);</p>\n<p>echo $result = curl_exec($ch);<br />\nif (curl_errno($ch)) {<br />\necho ‘Error:’ . curl_error($ch);<br />\n}<br />\ncurl_close($ch);</p>"
+    },
+    {
+      "id": 178420,
+      "postNumber": 2,
+      "createdAt": "2024-04-14T09:38:30.945Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/rajnish123saini\">@rajnish123saini</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I have this example that might help you with your script:</p>\n<pre><code class=\"lang-auto\">import fs from 'fs';\nimport fetch from 'node-fetch';\n\n// set filename\nvar upfile = 'images.png';\n\n// set auth token and query\nvar API_KEY = \"APITOKEN\"\nvar query = 'mutation ($file: File!) { add_file_to_column (file: $file, item_id: 1122334455, column_id: \"files\") { id } }';\n\n// set URL and boundary\nvar url = \"https://api.monday.com/v2/file\";\nvar boundary = \"xxxxxxxxxx\";\nvar data = \"\";\n\nfs.readFile(upfile, function(err, content){\n\n    // simple catch error\n    if(err){\n        console.error(err);\n    }\n\n    // construct query part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n    data += \"Content-Type:application/json\\r\\n\\r\\n\";\n    data += \"\\r\\n\" + query + \"\\r\\n\";\n\n    // construct file part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"variables[file]\\\"; filename=\\\"\" + upfile + \"\\\"\\r\\n\";\n    data += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\n    var payload = Buffer.concat([\n            Buffer.from(data, \"utf8\"),\n            new Buffer.from(content, 'binary'),\n            Buffer.from(\"\\r\\n--\" + boundary + \"--\\r\\n\", \"utf8\"),\n    ]);\n\n    // construct request options\n    var options = {\n        method: 'post',\n        headers: {\n          \"Content-Type\": \"multipart/form-data; boundary=\" + boundary,\n          \"Authorization\" : \"APITOKEN\"\n        },\n        body: payload,\n    };\n\n    // make request\n    fetch(url, options)\n      .then(res =&gt; res.json())\n      .then(json =&gt; console.log(json));\n});\n</code></pre>"
+    },
+    {
+      "id": 178442,
+      "postNumber": 3,
+      "createdAt": "2024-04-14T11:13:34.000Z",
+      "author": "rajnish123saini (Rajneesh)",
+      "cookedHtml": "<p>Whats does this parameter means</p>\n<p>$file: File!</p>\n<p>Is this $file a simple var name?<br />\nWhat does File! mean does it represent some dynamic value or just a label to use as it is?</p>\n<p>Can you do above code in PHP?</p>"
+    },
+    {
+      "id": 178549,
+      "postNumber": 4,
+      "createdAt": "2024-04-15T05:32:07.685Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/rajnish123saini\">@rajnish123saini</a>,</p>\n<p>I do not have much experience with PHP but using an automatic “translator” from JS to PHP, I got this (again, please double-check it because it was done automatically):</p>\n<pre><code class=\"lang-auto\">&lt;?php\n// set filename\n$upfile = 'images.png';\n\n// set auth token and query\n$API_KEY = \"APITOKEN\";\n$query = 'mutation ($file: File!) { add_file_to_column (file: $file, item_id: 1122334455, column_id: \"files\") { id } }';\n\n// set URL and boundary\n$url = \"https://api.monday.com/v2/file\";\n$boundary = \"xxxxxxxxxx\";\n$data = \"\";\n\n$content = file_get_contents($upfile);\n\n// simple catch error\nif ($content === false) {\n    echo \"Error: \" . error_get_last()[\"message\"] . \"\\n\";\n    exit;\n}\n\n// construct query part\n$data .= \"--\" . $boundary . \"\\r\\n\";\n$data .= \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n$data .= \"Content-Type:application/json\\r\\n\\r\\n\";\n$data .= \"\\r\\n\" . $query . \"\\r\\n\";\n\n// construct file part\n$data .= \"--\" . $boundary . \"\\r\\n\";\n$data .= \"Content-Disposition: form-data; name=\\\"variables[file]\\\"; filename=\\\"\" . $upfile . \"\\\"\\r\\n\";\n$data .= \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\n$payload = implode(\"\", array(\n    $data,\n    $content,\n    \"\\r\\n--\" . $boundary . \"--\\r\\n\"\n));\n\n// construct request options\n$options = array(\n    'http' =&gt; array(\n        'method' =&gt; 'POST',\n        'header' =&gt; array(\n            \"Content-Type: multipart/form-data; boundary=\" . $boundary,\n            \"Authorization: \" . $API_KEY\n        ),\n        'content' =&gt; $payload\n    )\n);\n\n$context = stream_context_create($options);\n$response = file_get_contents($url, false, $context);\n\nif ($response === false) {\n    echo \"Error: \" . error_get_last()[\"message\"] . \"\\n\";\n} else {\n    $json = json_decode($response, true);\n    print_r($json);\n}\n</code></pre>\n<p><code>$files</code> is the name of the variable. Check the part that says <code>// construct file part</code></p>\n<p>File! is the type of data for that variable.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

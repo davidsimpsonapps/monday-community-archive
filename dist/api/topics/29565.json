@@ -1,0 +1,40 @@
+{
+  "id": 29565,
+  "title": "Im trying to add phone number to the new lead record with no success",
+  "slug": "im-trying-to-add-phone-number-to-the-new-lead-record-with-no-success",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    155
+  ],
+  "createdAt": "2022-01-09T12:42:31.360Z",
+  "lastPostedAt": "2022-01-10T10:42:49.645Z",
+  "postsCount": 3,
+  "excerpt": "hey , im trying to add multiple columns to new record in one time \nand its always ignore from the phone and doesnt sign it \n $vars = [\n            &#39;leadName&#39; =&gt; $data[&#39;item_name&#39;],\n            &#39;columns&#39; =&gt; json_encode([\n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1809,
+  "posts": [
+    {
+      "id": 73357,
+      "postNumber": 1,
+      "createdAt": "2022-01-09T12:42:31.436Z",
+      "author": "dorlevy (dor levy)",
+      "cookedHtml": "<p>hey , im trying to add multiple columns to new record in one time<br />\nand its always ignore from the phone and doesnt sign it</p>\n<pre><code class=\"lang-auto\"> $vars = [\n            'leadName' =&gt; $data['item_name'],\n            'columns' =&gt; json_encode([\n                'email' =&gt; ['email' =&gt; $data['email'], 'text' =&gt; $data['email']],\n                'phone' =&gt; ['phone' =&gt; 972525938456, 'countryShortName' =&gt; IL],\n                'text' =&gt; \"test\"\n            ])\n        ];\n\n\n        $query = 'mutation ($leadName: String!, $columns: JSON!) {\n        create_item (board_id:'.$data['board_id'].', item_name:$leadName, column_values:$columns\n        ) { id } }';\n\n\n        $ch = curl_init();\n        curl_setopt_array($ch, array(\n            CURLOPT_URL =&gt; \"https://api.monday.com/v2\",\n            CURLOPT_RETURNTRANSFER =&gt; true,\n            CURLOPT_ENCODING =&gt; \"\",\n            CURLOPT_MAXREDIRS =&gt; 10,\n            CURLOPT_TIMEOUT =&gt; 30,\n            CURLOPT_HTTP_VERSION =&gt; CURL_HTTP_VERSION_1_1,\n            CURLOPT_CUSTOMREQUEST =&gt; \"POST\",\n            CURLOPT_POSTFIELDS =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n            CURLOPT_HTTPHEADER =&gt; array(\n                \"content-type: application/json\",\n                \"Authorization: \".$data['token']\n            ),\n        ));\n</code></pre>\n<p>any solutions ?</p>"
+    },
+    {
+      "id": 73409,
+      "postNumber": 2,
+      "createdAt": "2022-01-10T10:40:22.139Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dorlevy\">@dorlevy</a> and welcome to the community!</p>\n<p>I believe your issue could reside in the fact that you don’t seem  to be passing the countryShortName as a string.</p>\n<p>Here is an example I just made and is working properly in the playground:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value(board_id: 1122334455, item_id: 12345678, column_id: \"phone9\", value: \"{\\\"phone\\\":\\\"972525938456\\\",\\\"countryShortName\\\":\\\"IL\\\"}\") {\n    id\n  }\n}\n</code></pre>\n<p>Hope this helps!</p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 73410,
+      "postNumber": 3,
+      "createdAt": "2022-01-10T10:42:49.645Z",
+      "author": "dorlevy (dor levy)",
+      "cookedHtml": "<p>actually the problem was that the column_id is phone_1 and not only phone<br />\nbut for other calls i will remeber your advice</p>\n<p>thanks!</p>"
+    }
+  ]
+}

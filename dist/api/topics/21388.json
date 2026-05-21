@@ -1,0 +1,110 @@
+{
+  "id": 21388,
+  "title": "Variables in Column_Values with PHP",
+  "slug": "variables-in-column-values-with-php",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-06-17T00:13:01.161Z",
+  "lastPostedAt": "2021-06-24T11:12:09.446Z",
+  "postsCount": 12,
+  "excerpt": "Hey All, \nNew here to the community and have been playing around with your &quot; API Quickstart Tutorial - PHP&quot;.  I have been able to get pretty far playing around with things I need but I have come up with a stumbling block&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 4404,
+  "posts": [
+    {
+      "id": 54998,
+      "postNumber": 1,
+      "createdAt": "2021-06-17T00:13:01.261Z",
+      "author": "mabramsphoto (Michael Abrams)",
+      "cookedHtml": "<p>Hey All,<br />\nNew here to the community and have been playing around with your \" API Quickstart Tutorial - PHP\".  I have been able to get pretty far playing around with things I need but I have come up with a stumbling block and all of my searching in the community I can’t seem to find anything so here I am!</p>\n<p>I went ahead and did a copy and paste of your \" <strong>Creating a new item using GraphQL variables</strong>\" section and it worked great in my board but that was for the item name.  How can I put a variable into a column_value value?</p>\n<p>Here’s the code (with token and everything after $responseContent = removed):<br />\n$apiUrl = ‘<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>’;</p>\n<p>$headers = [‘Content-Type: application/json’, 'Authorization: ’ . $token];</p>\n<p>$marketing = “Package A ($150)”;</p>\n<p>$query = ‘mutation ($myItemName: String!) { create_item (board_id:My Board_ID, item_name:$myItemName, column_values : “{\"title\":$myItemName}”) { id } }’;</p>\n<p>$vars = [‘myItemName’ =&gt; $marketing];</p>\n<p>$data = <span class=\"mention\">@file_get_contents</span>($apiUrl, false, stream_context_create([</p>\n<p>‘http’ =&gt; [</p>\n<p>‘method’ =&gt; ‘POST’,</p>\n<p>‘header’ =&gt; $headers,</p>\n<p>‘content’ =&gt; json_encode([‘query’ =&gt; $query, ‘variables’ =&gt; $vars]),</p>\n<p>]</p>\n<p>]));</p>\n<p>$responseContent = json_decode($data, true);</p>\n<p>Any help or pointing me in the right direction is greatly appreciated!</p>"
+    },
+    {
+      "id": 55013,
+      "postNumber": 2,
+      "createdAt": "2021-06-17T06:46:42.650Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mabramsphoto\">@mabramsphoto</a> and welcome to the community.</p>\n<p>The snippet below adds an item to a board from PHP. There are a few constants that need to be changed to work in another account. Hope this will give you a glue.</p>\n<blockquote>\n<p>//Create a new item in the board<br />\n$header = array(<br />\n‘User-Agent’ =&gt; MONDAY_TEAM . ’ GraphQL Client’,<br />\n‘Authorization’ =&gt; get_field(‘mondaykey’, ‘user_’ . get_current_user_id()),<br />\n‘Content-Type’ =&gt; ‘multipart/form-data’<br />\n);</p>\n<p>//str_replace is used in an effort to get as close as possible to the original file name (sanitized by WPForms)<br />\n$body = array(<br />\n‘query’ =&gt; ‘mutation {create_item (board_id: ’ . $board_id . ‘, group_id: “topics”, item_name: \"’ . str_replace(“-”,\" “,pathinfo($upload[‘name’], PATHINFO_FILENAME)) . '”) {id}}’<br />\n);</p>\n<p>$response = wp_remote_post( MONDAY_URL, [‘headers’ =&gt; $header, ‘body’ =&gt; $body] );<br />\n$arr1 = json_decode($response[‘body’], true);<br />\n$item_id = $arr1[‘data’][‘create_item’][‘id’];</p>\n</blockquote>"
+    },
+    {
+      "id": 55039,
+      "postNumber": 3,
+      "createdAt": "2021-06-17T11:32:19.203Z",
+      "author": "mabramsphoto (Michael Abrams)",
+      "cookedHtml": "<p>Hi Basedbruin,<br />\nThank you for your reply, I really appreciate it, but this has nothing to do with a file upload I am trying to get form data and put it into monday as a new item.  when adding values into the column_values hard coded it works great, but I want to know how I can use a variable that was received from a $_POST into column_values.</p>\n<p>Any help in that matter is definitely help full!</p>"
+    },
+    {
+      "id": 55042,
+      "postNumber": 4,
+      "createdAt": "2021-06-17T11:34:42.716Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mabramsphoto\">@mabramsphoto</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>That’s a great question! There is a section in our PHP quickstart that sheds more light on how to create an item with column values populated - have you been able to test that out as well?</p>\n<ul>\n<li><a href=\"https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP#\" rel=\"noopener nofollow ugc\"> <strong>Creating a new item with column values populated</strong> </a></li>\n</ul>\n<p>-Alex</p>"
+    },
+    {
+      "id": 55045,
+      "postNumber": 5,
+      "createdAt": "2021-06-17T11:46:50.683Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/mabramsphoto\">@mabramsphoto</a><br />\nSorry, didn’t understand you were looking for file upload. Actually the snippet I showed does continue (see below) and does do a file upload. The file should be available on your server (in my case a WordPress server). Hope you find your answer here.</p>\n<blockquote>\n<p>/************************************************************************************************************************************************************</p>\n<ul>\n<li>Name:\t\t\tmonday_upload_files</li>\n<li>Arguments:\t$board_id, $upload - board_id: DOCS board id where item needs to be created / $upload: array with file upload information</li>\n<li>Returns:\t\tNone</li>\n<li>Function:\t\tCreates an item in the given board (first group) and attaches the file to the file column<br />\n*************************************************************************************************************************************************************/</li>\n</ul>\n<p>function monday_upload_files( $board_id, $upload) {</p>\n<p>//Create a new item in the board<br />\n$header = array(<br />\n‘User-Agent’ =&gt; MONDAY_TEAM . ’ GraphQL Client’,<br />\n‘Authorization’ =&gt; get_field(‘mondaykey’, ‘user_’ . get_current_user_id()),<br />\n‘Content-Type’ =&gt; ‘multipart/form-data’<br />\n);</p>\n<p>//str_replace is used in an effort to get as close as possible to the original file name (sanitized by WPForms)<br />\n$body = array(<br />\n‘query’ =&gt; ‘mutation {create_item (board_id: ’ . $board_id . ‘, group_id: “topics”, item_name: \"’ . str_replace(“-”,\" “,pathinfo($upload[‘name’], PATHINFO_FILENAME)) . '”) {id}}’<br />\n);</p>\n<p>$response = wp_remote_post( MONDAY_URL, [‘headers’ =&gt; $header, ‘body’ =&gt; $body] );<br />\n$arr1 = json_decode($response[‘body’], true);<br />\n$item_id = $arr1[‘data’][‘create_item’][‘id’];</p>\n<p>//Generate a boundary, needed for the Header (Content-Type) and the Body (to split in multiple parts)<br />\n$boundary = wp_generate_password(24);<br />\n$eol = “\\r\\n”;</p>\n<p>$header = array(<br />\n‘User-Agent’ =&gt; MONDAY_TEAM . ’ GraphQL Client’,<br />\n‘Authorization’ =&gt; get_field(‘mondaykey’, ‘user_’ . get_current_user_id()),<br />\n‘Content-Type’ =&gt; ‘multipart/form-data; boundary=’ . $boundary<br />\n);</p>\n<p>//We need to build the body from scratch because it is multipart with boundaries<br />\n//Take care of the extra empty lines (twice $eol) before the actual query and file, otherwise an error 500 is returned</p>\n<p>$body = ‘–’ . $boundary . $eol;<br />\n$body .= ‘Content-Disposition: form-data; name=“query”’ . $eol . $eol;<br />\n$body .= 'mutation ($file: File!) {add_file_to_column (item_id: ’ . $item_id . ‘, column_id: file, file: $file) {id}}’ . $eol;<br />\n$body .= ‘–’ . $boundary . $eol;<br />\n$body .= ‘Content-Disposition: form-data; name=“variables[file]”; filename=\"’ . $upload[‘name’] . ‘\"’ . $eol;<br />\n$body .= 'Content-Type: ’ . $upload[‘type’] . $eol . $eol;<br />\n$body .= file_get_contents($upload[‘value’]);<br />\n$body .= $eol . ‘–’ . $boundary . ‘–’;</p>\n<p>$response = wp_remote_post( MONDAY_URL . ‘file/’, [‘headers’ =&gt; $header, ‘body’ =&gt; $body] );</p>\n<p>unlink(ABSPATH . substr($upload[‘value’], 25));<br />\n}</p>\n</blockquote>"
+    },
+    {
+      "id": 55054,
+      "postNumber": 6,
+      "createdAt": "2021-06-17T12:15:55.053Z",
+      "author": "mabramsphoto (Michael Abrams)",
+      "cookedHtml": "<p>Hi Alex,<br />\nI feel like a dumb a** for not seeing that right below!</p>\n<p>Sooooooo, it’s almost there.</p>\n<p>I tried to plug and play a few different things based on my board.</p>\n<p>I did the date id, made it a date type and added a date just like your sample and and it worked great.</p>\n<p>BUT when I tried one of my text type columns I got an error…</p>\n<ul>\n<li>\n<p>error_code: “ColumnValueException”,</p>\n</li>\n<li>\n<p>status_code: 200,</p>\n</li>\n<li>\n<p>error_message: “invalid value, please check our API documentation for the correct data structure for this column. <a href=\"https://monday.com/developers/v2#column-values-section\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#column-values-section</a>”,</p>\n</li>\n<li>\n<p>error_data: {</p>\n<ul>\n<li>\n<p>column_value: “{“text”=&gt;“Michael Abrams”}”,</p>\n</li>\n<li>\n<p>column_type: “TextColumn”}</p>\n</li>\n</ul>\n</li>\n</ul>\n<p>Here is the code:<br />\n$query = ‘mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:XXXXXXXXXX, item_name:$myItemName, column_values:$columnVals) { id } }’;</p>\n<p>$vars = [‘myItemName’ =&gt; $marketing,</p>\n<p>‘columnVals’ =&gt; json_encode([</p>\n<pre><code>'text9' =&gt; ['text' =&gt; 'Michael Abrams']\n</code></pre>\n<p>])];</p>\n<p>$data = <span class=\"mention\">@file_get_contents</span>($apiUrl, false, stream_context_create([</p>\n<p>‘http’ =&gt; [</p>\n<p>‘method’ =&gt; ‘POST’,</p>\n<p>‘header’ =&gt; $headers,</p>\n<p>‘content’ =&gt; json_encode([‘query’ =&gt; $query, ‘variables’ =&gt; $vars]),</p>\n<p>]</p>\n<p>]));</p>\n<p>$responseContent = json_decode($data, true);</p>\n<p>Also, I have another column which is id: “status87” type: “color”<br />\ni formatted it as ‘status87’ =&gt; [‘color’ =&gt; ‘Michael Abrams’] and it ran just fine but nothing was the column when I went to refresh.</p>\n<p>I feel like we are definitely in the right direction, just need to figure out these little snafus.</p>\n<p>I really appreciate your help!</p>"
+    },
+    {
+      "id": 55056,
+      "postNumber": 7,
+      "createdAt": "2021-06-17T12:32:58.792Z",
+      "author": "mabramsphoto (Michael Abrams)",
+      "cookedHtml": "<p>Hi again basedbruin…</p>\n<p>My apologies is I am not communicating it correctly.  i am NOT looking to do a file upload, just looking to bring over some form data that was entered in by a client.</p>\n<p>BUT you have given me a great solution possibly for another part that I am building, so I definitely appreciate that!!!</p>"
+    },
+    {
+      "id": 55063,
+      "postNumber": 8,
+      "createdAt": "2021-06-17T13:09:57.712Z",
+      "author": "mabramsphoto (Michael Abrams)",
+      "cookedHtml": "<p>So going further in checking all of the column types in my board the only ones that actually populate from a creat item scenario is “Date” and “Phone”</p>\n<p>Color and Dropdown types run fine but nothing is populated when refreshing and finding the record.  It’s as if it thinks the column isn’t there and runs it no matter what because I made up a column id that doesn’t exist in the table and it ran no problem gave me a new item id and created the item on the board without errors.</p>\n<p>Text and Numeric types produce the error that I showed above even though it’s exactly entered like the quick start.</p>\n<p>very confusing</p>"
+    },
+    {
+      "id": 55073,
+      "postNumber": 9,
+      "createdAt": "2021-06-17T13:41:45.054Z",
+      "author": "mabramsphoto (Michael Abrams)",
+      "cookedHtml": "<p>Ok figured out the “color” type!!!  It’s actually a “label” type!!!  when i changed it to</p>\n<p>‘status87’ =&gt; [‘label’ =&gt; ‘XXXXXX’] it worked!!  One step closer!</p>\n<p>Text, Email and Numeric Types still don’t work</p>"
+    },
+    {
+      "id": 55244,
+      "postNumber": 10,
+      "createdAt": "2021-06-20T14:28:08.259Z",
+      "author": "LaurentConroux (Laurent Conroux)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mabramsphoto\">@mabramsphoto</a>,</p>\n<p>Text and Numeric should be set directly like this:</p>\n<pre><code class=\"lang-auto\">'text9' =&gt; 'Michael Abrams'\n</code></pre>\n<p>I had a hard time with that too <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=9\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" /></p>\n<p>Laurent</p>"
+    },
+    {
+      "id": 56185,
+      "postNumber": 11,
+      "createdAt": "2021-06-24T11:10:29.236Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 56186,
+      "postNumber": 12,
+      "createdAt": "2021-06-24T11:12:09.446Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mabramsphoto\">@mabramsphoto</a>!</p>\n<p>Adding on here, the email column should be formatting as described in our documentation <a href=\"https://monday-api.readme.io/docs/email\" rel=\"noopener nofollow ugc\">here</a>.</p>\n<p>Essentially, this should be the formatting:</p>\n<pre><code class=\"lang-auto\">\"{\\\"email\\\":\\\"itsmyemail@mailserver.com\\\",\\\"text\\\":\\\"my email\\\"}\"\n\n</code></pre>"
+    },
+    {
+      "id": 56713,
+      "postNumber": 13,
+      "createdAt": "2021-07-01T11:12:21.673Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

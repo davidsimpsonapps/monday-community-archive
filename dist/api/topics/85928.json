@@ -1,0 +1,33 @@
+{
+  "id": 85928,
+  "title": "Anyway to Reduce add_file_to_column api budget cost, which is 100001?",
+  "slug": "anyway-to-reduce-add-file-to-column-api-budget-cost-which-is-100001",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-05-05T12:22:31.952Z",
+  "lastPostedAt": "2024-05-06T08:02:37.160Z",
+  "postsCount": 2,
+  "excerpt": "For some reason my add_file_to_column query costs is 100001 for a small 2KB file. \nWhat can I do to reduce the api query budget size of the upload? \n@Matias.Monday  Any pointers on how to make this more efficient? \nasync&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 133,
+  "posts": [
+    {
+      "id": 182218,
+      "postNumber": 1,
+      "createdAt": "2024-05-05T12:22:32.048Z",
+      "author": "ianhunter373 (IH)",
+      "cookedHtml": "<p>For some reason my add_file_to_column query costs is <strong>100001</strong> for a small 2KB file.</p>\n<p>What can I do to reduce the api query budget size of the upload?</p>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>  Any pointers on how to make this more efficient?</p>\n<pre><code class=\"lang-auto\">async function uploadAndRemoveFile(upfile, token, itemId, columnId) {\n    try {\n      const affordability = await canAfford(token, 100001)\n      console.log(\"Can Afford Query: \" + affordability.canAfford)\n      if(affordability.canAfford)\n      {\n      const mondayClient = initMondayClient();\n      mondayClient.setToken(token);\n      console.log(\"UPLOAD AND REMOVE FILE\");\n      console.log(\"upfile: \" + upfile);\n      console.log(\"itemId: \" + itemId);\n      console.log(\"columnId: \" + columnId);\n  \n      const filename = path.basename(upfile)\n  \n      const query = `mutation($item_id: ID!, $column_id: String!, $file: File!) {\n        add_file_to_column(item_id: $item_id, column_id: $column_id, file: $file) { \n          id \n        } \n      }`;\n      \n      // Define variables for the mutation\n      const variables = {\n        \"item_id\": itemId,\n        \"column_id\": columnId\n      };\n  \n      // Prepare the map object to associate the file variable with the form field\n      const map = {\n        \"file\": \"variables.file\"\n      };\n  \n      // Read the file content\n      const content = await fs.promises.readFile(upfile);\n  \n      // Create an instance of FormData\n      const formData = new FormData();\n      formData.append('query', query);\n      formData.append('variables', JSON.stringify(variables));\n      formData.append('map', JSON.stringify(map));\n      formData.append('file', content, {filename: filename});\n  \n      // Define the fetch options\n      const options = {\n        method: 'POST',\n        headers: {\n          \"API-Version\": \"2024-01\",\n          \"Authorization\": \"Bearer \" + token\n          // 'Content-Type': 'multipart/form-data' header will be added automatically by the FormData instance\n        },\n        body: formData\n      };\n  \n      const response = await fetch('https://api.monday.com/v2/file', options);\n      const jsonResponse = await response.json();\n      console.log('Response status:', jsonResponse);\n      return jsonResponse.status_code\n    }\n    } catch (err) {\n      console.error(\"Error in uploadAndRemoveFile:\", err);\n      return '500';\n    }\n  }\n</code></pre>\n<p>I get this frequently</p>\n<pre><code class=\"lang-auto\">[0] Failed to upload file: {\n[0]   errors: [\n[0]     'Complexity budget exhausted, query cost 100001 budget remaining 99951 out of 5000000 reset in 11 seconds'\n[0]   ],\n[0]   error_code: 'ComplexityException',\n[0]   status_code: 429,\n[0]   account_id: XXXXXXXXX\n[0] }\n</code></pre>"
+    },
+    {
+      "id": 182298,
+      "postNumber": 2,
+      "createdAt": "2024-05-06T08:02:37.160Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ianhunter373\">@ianhunter373</a>,</p>\n<p>I believe there is no way to make this particular mutation lighter.</p>\n<p>You can always <a href=\"https://developer.monday.com/api-reference/docs/rate-limits#calculating-complexity\">calculate the usage of the complexity points quota</a> and create a mechanism to avoid hitting the limit <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

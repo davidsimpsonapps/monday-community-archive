@@ -1,0 +1,60 @@
+{
+  "id": 36718,
+  "title": "Calculate with month in formula column",
+  "slug": "calculate-with-month-in-formula-column",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-05-23T17:14:43.438Z",
+  "lastPostedAt": "2022-05-24T14:51:45.648Z",
+  "postsCount": 6,
+  "excerpt": "Hello, I would like to calculate an end date for a contract, but I always deviate by a few days. I use the following formula calculation: \nSWITCH({CoP},36,1095,12,365,6,183,3,92,2,61,1,31,0))\n\nThe CoP variable is given i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 3097,
+  "posts": [
+    {
+      "id": 86652,
+      "postNumber": 1,
+      "createdAt": "2022-05-23T17:14:43.517Z",
+      "author": "Honor (Honor)",
+      "cookedHtml": "<p>Hello, I would like to calculate an end date for a contract, but I always deviate by a few days. I use the following formula calculation:</p>\n<pre><code class=\"lang-auto\">SWITCH({CoP},36,1095,12,365,6,183,3,92,2,61,1,31,0))\n</code></pre>\n<p>The CoP variable is given in months.</p>\n<p>For example:<br />\n3-year contract has a CoP of 36 months aka 3*12 months =1095 days<br />\n1 year contract is a CoP of 12 months aka 365 days<br />\n1/2 year contract a CoP of 6 months aka 183 days and so on.</p>\n<p>In order for me to calculate a contract end date, I proceed as follows:<br />\nI calculate the months into days with: SWITCH({CoP},36,1095,12,365,6,183,0)) and then I use  ADD_Days( ) to calculate the end date. Problem: The end date can never be calculated exactly because each month has different days.</p>\n<p>Can you show me an example that, for a given date, e.g. 15.03.2022, calculates 18 months ahead, i.e. 15.09.2023.</p>\n<p>Thank you very much in advance !</p>"
+    },
+    {
+      "id": 86665,
+      "postNumber": 2,
+      "createdAt": "2022-05-23T20:31:17.552Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/honor\">@Honor</a></p>\n<p>If your given date is in a column {Date}, this will give the new date:<br />\n<code>FORMAT_DATE(EDATE(FORMAT_DATE({Date}), {CoP}))</code></p>\n<p>The inner FORMAT_DATE() eliminates time zone issues.</p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/LRWLhnktNs0\">Creating subitems using Make/Integromat The Monday Man (EASY) Way</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 86696,
+      "postNumber": 3,
+      "createdAt": "2022-05-24T05:59:34.130Z",
+      "author": "Honor (Honor)",
+      "cookedHtml": "<p>Hi Jim,<br />\nThank you very much for your help. I didn’t know there were hidden functions <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /> I’ve also read a special post from you about hidden functions.</p>\n<p>Unfortunately I get errors ! I used a date calendar object, see screenshot and use<br />\nyour formula:</p>\n<pre><code class=\"lang-auto\"> FORMAT_DATE(EDATE(FORMAT_DATE({Heute}), {CoP}))\n</code></pre>\n<p>The result is not continuously filled, although a (calendar) date is always selected.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/287991f66931ab57ca43c6e92926c34fd0f80bcb.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/287991f66931ab57ca43c6e92926c34fd0f80bcb_2_367x500.png\" alt=\"image\" width=\"367\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">370×504 21.4 KB</span>\n</div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/98352bfbd0e582ac055f448185760a744e8a1091.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/98352bfbd0e582ac055f448185760a744e8a1091_2_340x500.png\" alt=\"image\" width=\"340\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">394×578 23.4 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 86706,
+      "postNumber": 4,
+      "createdAt": "2022-05-24T08:13:31.960Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/honor\">@Honor</a></p>\n<p>The issue is that FORMAT_DATE() apparently can SPEAK German but doesn’t UNDERSTAND German. I would consider this a bug. It might be helpful to submit the issue to monday support.</p>\n<p>Here is a workaround:</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(EDATE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(FORMAT_DATE({Heute}),\"Dez.\", \"Dec\"),\"März\", \"Mar\"),\"Okt.\", \"Oct\"),\"Mai\", \"May\"), {CoP}))\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/LRWLhnktNs0\">Creating subitems using Make/Integromat The Monday Man (EASY) Way</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 86757,
+      "postNumber": 5,
+      "createdAt": "2022-05-24T14:51:45.648Z",
+      "author": "Honor (Honor)",
+      "cookedHtml": "<p>Thanks a million for your help !</p>\n<p>Who knows where else such traps lurk <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /> As a beginner, I would never have found it on my own.<br />\nI thought I was too stupid to do it properly. Will report this obvious bug to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>.<br />\nYour example works perfectly. You are just great !</p>\n<p>Thanks Jim !</p>"
+    },
+    {
+      "id": 87272,
+      "postNumber": 6,
+      "createdAt": "2022-05-31T14:52:00.814Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

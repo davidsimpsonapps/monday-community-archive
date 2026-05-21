@@ -1,0 +1,51 @@
+{
+  "id": 44544,
+  "title": "ColumnValueException Invalid column value schema for column type: color",
+  "slug": "columnvalueexception-invalid-column-value-schema-for-column-type-color",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2022-10-25T13:29:19.664Z",
+  "lastPostedAt": "2022-10-25T17:02:55.656Z",
+  "postsCount": 5,
+  "excerpt": "My Monday.com integration has been working until recently I’ve started getting the message below: \n{&quot;error_code&quot;:&quot;ColumnValueException&quot;,&quot;status_code&quot;:200,&quot;error_message&quot;:&quot;Invalid column value schema for column type: colo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1011,
+  "posts": [
+    {
+      "id": 101737,
+      "postNumber": 1,
+      "createdAt": "2022-10-25T13:29:19.751Z",
+      "author": "bobpotter (Bob)",
+      "cookedHtml": "<p>My <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> integration has been working until recently I’ve started getting the message below:</p>\n<pre><code class=\"lang-auto\">{\"error_code\":\"ColumnValueException\",\"status_code\":200,\"error_message\":\"Invalid column value schema for column type: color. Expected schema is: {\\\"changed_at\\\"=\\u003e{\\\"type\\\"=\\u003e[\\\"string\\\", \\\"null\\\"]}, \\\"index\\\"=\\u003e{\\\"type\\\"=\\u003e[\\\"string\\\", \\\"number\\\", \\\"null\\\"]}, \\\"post_id\\\"=\\u003e{\\\"type\\\"=\\u003e[\\\"number\\\", \\\"null\\\"]}, \\\"label\\\"=\\u003e{\\\"type\\\"=\\u003e[\\\"string\\\", \\\"number\\\", \\\"null\\\"]}, \\\"extra_color_index\\\"=\\u003e{\\\"type\\\"=\\u003e[\\\"number\\\"]}}, received: {\\\"labels\\\"=\\u003e[\\\"- Select -\\\"]}\",\"error_data\":{\"column_value\":\"{\\\"labels\\\"=\\u003e[\\\"- Select -\\\"]}\",\"column_type\":\"color\"}}\n</code></pre>\n<p>The query mutation is below. I don’t understand why this is now happening when it was working flawlessly for months.</p>\n<pre><code class=\"lang-auto\">\nQuery:(call) {\"query\":\"mutation {change_multiple_column_values (board_id: 3312041234, item_id: 3417890000, create_labels_if_missing:true, column_values: \\\"{ \\\\\\\"text\\\\\\\": \\\\\\\"TerraMai Product Management\\\\\\\",\\\\\\\"status\\\\\\\": \\\\\\\"Printed\\\\\\\",\\\\\\\"text8\\\\\\\": \\\\\\\"Rock Walnut Decking Test\\\\\\\",\\\\\\\"status_1\\\\\\\": \\\\\\\"Design\\\\\\\",\\\\\\\"link5\\\\\\\" : {\\\\\\\"url\\\\\\\" : \\\\\\\"http://localhost:81/departments/sales/SampleInsert.aspx?Mode=E&amp;ID=40163\\\\\\\", \\\\\\\"text\\\\\\\": \\\\\\\"View Sample\\\\\\\" }, \\\\\\\"link\\\\\\\" : {\\\\\\\"url\\\\\\\" : \\\\\\\"\\\\\\\", \\\\\\\"text\\\\\\\": \\\\\\\"Tracking Link\\\\\\\" }, \\\\\\\"date\\\\\\\" : {\\\\\\\"date\\\\\\\" : \\\\\\\"2022-10-24\\\\\\\"} , \\\\\\\"date0\\\\\\\" : {\\\\\\\"date\\\\\\\" : \\\\\\\"2022-10-26\\\\\\\"} , \\\\\\\"date4\\\\\\\" : {\\\\\\\"date\\\\\\\" : \\\\\\\"2022-11-18\\\\\\\"} , \\\\\\\"ship_method\\\\\\\" : {\\\\\\\"labels\\\\\\\":[\\\\\\\"- Select -\\\\\\\"]} }\\\") {id} }\"}\n</code></pre>\n<p>Any ideas? Is this a new bug?</p>"
+    },
+    {
+      "id": 101740,
+      "postNumber": 2,
+      "createdAt": "2022-10-25T13:45:52.818Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/bobpotter\">@bobpotter</a></p>\n<p>I guess this is because the strict validation that started October 11th. It looks like it is failing this validation because the url in your columnId “link” is an empty string.</p>\n<p>See also (from monday):</p>\n<p>From October 11th, 2022, we’ll be validating the JSON you send to update column values. Sending unexpected values will return an error. For example:</p>\n<p>To update an hour column, you must send the hour and minute in 24-hour format.</p>\n<p>“{\"hour\":16,\"minute\":42}”</p>\n<p>If you send an unexpected value, for example:</p>\n<p>“{\"hour\":false}”</p>\n<p>You will see an error saying that “hour” should be a number and that the “minute” key is missing.</p>\n<p>Validation will not only check for expected keys, but for types as well. Sending a string when an integer is expected will result in an error, for example.</p>\n<h4><a name=\"p-101740-how-should-i-respond-to-this-change-1\" class=\"anchor\" href=\"#p-101740-how-should-i-respond-to-this-change-1\"></a>How should I respond to this change?</h4>\n<p>If you are updating column values, you should confirm you are sending expected values by comparing them to our Column Types Reference here: <a href=\"https://api.developer.monday.com/docs/guide-to-changing-column-data\">https://api.developer.monday.com/docs/guide-to-changing-column-data</a></p>"
+    },
+    {
+      "id": 101745,
+      "postNumber": 3,
+      "createdAt": "2022-10-25T14:22:13.146Z",
+      "author": "bobpotter (Bob)",
+      "cookedHtml": "<p>Thanks for responding. The blank link you reference as the possible error is NOT causing the problem. It’s the last column “ship_method”.</p>\n<pre><code class=\"lang-auto\">\\\\\\\"ship_method\\\\\\\" : {\\\\\\\"labels\\\\\\\":[\\\\\\\"- Select -\\\\\\\"]}\n</code></pre>\n<p>If I remove this, the query works. This column is a status column with colors. I guess it now want’s a color specified?</p>\n<p>Oddly, the query to create the record in Monday looks basically the same and the record get’s created fine. It’s just when updating the Monday record that the error occurs.</p>"
+    },
+    {
+      "id": 101763,
+      "postNumber": 4,
+      "createdAt": "2022-10-25T15:50:22.502Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>ohhh, I see.</p>\n<p>I think it is {label: “- Select -”} and not {labels: [“- Select -”]}</p>\n<p>See <a href=\"https://developer.monday.com/api-reference/docs/status\" class=\"inline-onebox\">Status</a></p>"
+    },
+    {
+      "id": 101770,
+      "postNumber": 5,
+      "createdAt": "2022-10-25T17:02:55.656Z",
+      "author": "bobpotter (Bob)",
+      "cookedHtml": "<p>Thanks! Yes. That’s now the correct syntax.</p>"
+    }
+  ]
+}

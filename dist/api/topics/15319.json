@@ -1,0 +1,61 @@
+{
+  "id": 15319,
+  "title": "How to assign a sales rep automatically based on state location?",
+  "slug": "how-to-assign-a-sales-rep-automatically-based-on-state-location",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    152
+  ],
+  "createdAt": "2021-01-22T13:13:31.509Z",
+  "lastPostedAt": "2021-01-26T00:48:40.778Z",
+  "postsCount": 6,
+  "excerpt": "Hi! As a newer user, I’ve gone through tons of content but I haven’t been able to achieve something that I would expect to be possible. \nOn the submission of a form which allows the submitter to select a US State, we wou&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 4021,
+  "posts": [
+    {
+      "id": 38455,
+      "postNumber": 1,
+      "createdAt": "2021-01-22T13:13:31.587Z",
+      "author": "iverevi (Vic V)",
+      "cookedHtml": "<p>Hi! As a newer user, I’ve gone through tons of content but I haven’t been able to achieve something that I would expect to be possible.</p>\n<p>On the submission of a form which allows the submitter to select a US State, we would like the row that is create to be assign to a particular sales rep that is assigned to that state. IE, if someone makes a request for Texas, then an item is create and Bill, the Texas sales rep, gets assigned to that case.</p>\n<p>Is there a way to automate that?</p>\n<p>Thanks for the help,</p>\n<p>Vic</p>"
+    },
+    {
+      "id": 38460,
+      "postNumber": 2,
+      "createdAt": "2021-01-22T13:57:39.807Z",
+      "author": "andrewalmand (Andrew Almand)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/iverevi\">@iverevi</a></p>\n<p>I think this can be done. Can you clarify some points and I’ll try to test it a few ways.</p>\n<p>-What type of column is the State data populating from? Drop down?<br />\n-How is the rep being assigned? Via the Person column or just notified somehow?</p>\n<p>Let me know. Thanks!</p>"
+    },
+    {
+      "id": 38462,
+      "postNumber": 3,
+      "createdAt": "2021-01-22T14:02:38.245Z",
+      "author": "iverevi (Vic V)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/andrewalmand\">@andrewalmand</a> Thanks for the reply. The state data is in a drop-down, but that isn’t a requirement. I understand that Status isn’t an option because the max number of statuses is something less than 50.</p>\n<p>Ideally, I’d like the rep to be assigned to the person column so that we can have the rest of the process worked in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a></p>\n<p>Thoughts? Thanks again,</p>\n<p>V</p>"
+    },
+    {
+      "id": 38484,
+      "postNumber": 4,
+      "createdAt": "2021-01-22T17:06:48.430Z",
+      "author": "andrewalmand (Andrew Almand)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/iverevi\">@iverevi</a></p>\n<p>Okay good that is how I figured it was set up, and makes the most sense. Yes currently Status columns are limited to 40 items so</p>\n<p>I’ve figured it out, sort of…</p>\n<p>It will require that you install an App from the <a href=\"http://Monday.com\">Monday.com</a> App Marketplace. General Caster is honestly the most useful app on the marketplace and really opens up so much in the way of bypassing formula and column type compatibility issues. Instead of performing formulas in the Formula column, General Caster does it outside of Monday and then cast the result to basic columns like text, numbers etc.<br />\n<a href=\"https://community.monday.com/t/general-caster-is-here-get-rid-of-formula-columns/8549/11\" class=\"inline-onebox\">General Caster is here. Get rid of formula columns! - #11 by rob</a></p>\n<p>Now for the specifics and the roadblock i’ve hit. It’s just a SWITCH formula in the General Caster which I’ve successfully created. See below example:</p>\n<blockquote>\n<p>SWITCH({item.dropdown}, “Florida”, 10955951, “Texas”, 10752723, “”)</p>\n</blockquote>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/b1911820118938c3cc25a5928f12e49d30b7b123.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/b1911820118938c3cc25a5928f12e49d30b7b123_2_517x90.png\" alt=\"image\" width=\"517\" height=\"90\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1178×206 16.6 KB</span></div></a></div><br />\nThis formula will check for the state in the dropdown column and then produce the corresponding ID number for the rep. So in the above example, when FL is picked it should cast the ID# 10955951 which is my User ID in Monday. If TX is picked then it cast the other ID#. The issue is that it won’t cast that number to the Person column.<p></p>\n<p>But If I have that number placed in a Text column and I tell General Caster to cast it to a Person Column it works!<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/2d448fd11f5cdc8f64095d44e4d9248b340f0edb.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/2d448fd11f5cdc8f64095d44e4d9248b340f0edb_2_517x76.png\" alt=\"image\" width=\"517\" height=\"76\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1249×185 13.5 KB</span></div></a></div><br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/d/d53fdf369b5e67ae07b31c54d4195338fabb5f83.png\" alt=\"image\" width=\"531\" height=\"75\" /><p></p>\n<p>But for some reason it won’t if the ID# is the result of the formula. A workaround would be for one General Caster formula to send the result to a plain Text column, and the another to send the ID# to a Person column. I tested this and got it work only once. The formulas process at the same time and the first one rarely processes fast enough for the second one to use the result.</p>\n<p>Bringing in <a class=\"mention\" href=\"/u/rob\">@rob</a> from General Caster here to see if he can help further. Maybe it’s just a matter of formatting the result of the formula so it can properly cast it to the Person column.</p>"
+    },
+    {
+      "id": 38709,
+      "postNumber": 5,
+      "createdAt": "2021-01-26T00:48:40.778Z",
+      "author": "iverevi (Vic V)",
+      "cookedHtml": "<p>Thanks, Andrew, this is super helpful. General Caster is great to know about. Although that workaround might work, perhaps <a class=\"mention\" href=\"/u/rob\">@rob</a> will manage to work directly from a formula at some point. Thanks again for this useful and thorough reply.</p>"
+    },
+    {
+      "id": 49703,
+      "postNumber": 6,
+      "createdAt": "2021-05-03T15:42:14.246Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

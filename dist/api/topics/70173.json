@@ -1,0 +1,62 @@
+{
+  "id": 70173,
+  "title": "C# query escape characters- 500 error",
+  "slug": "c-query-escape-characters-500-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    137,
+    203
+  ],
+  "createdAt": "2023-11-06T18:27:16.267Z",
+  "lastPostedAt": "2023-11-08T13:11:39.398Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nI seem to be struggling with a very simple query that I can’t seem to get to execute without giving me a 500 error. \nBelow using test query everything executes as normal. When I try to execute a query with quotation&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 669,
+  "posts": [
+    {
+      "id": 151862,
+      "postNumber": 1,
+      "createdAt": "2023-11-06T18:27:16.344Z",
+      "author": "J_Morl (Joel Morlier)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I seem to be struggling with a very simple query that I can’t seem to get to execute without giving me a 500 error.</p>\n<p>Below using test query everything executes as normal. When I try to execute a query with quotation marks in the query and use the escape characters the app returns 500 error.</p>\n<p>I have tried removing the escape characters and obviously that throws an error. Any insight as to what this issue could be would be much appreciated.</p>\n<pre><code class=\"lang-auto\">var testQuery = \"{\\\"query\\\":\\\" {boards(ids:5146042481) {id}}\\\"}\";\n</code></pre>\n<pre><code class=\"lang-auto\">var fullQuery = \"{\\\"query\\\":\\\" {items_page_by_column_values(board_id: 5146042481 columns: [{column_id: \\\"name\\\", column_values: \\\"DDNL05\\\"}]) {cursor items{id}}} \\\"}\";\n</code></pre>\n<p>The below code does work in the API playground as well:</p>\n<pre><code class=\"lang-auto\">{\n  items_page_by_column_values(\n    board_id: 5146042481\n    columns: [{column_id: \"name\", column_values: \"DDNL05\"}]\n  ) {\n    cursor\n    items {\n      id\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 151890,
+      "postNumber": 2,
+      "createdAt": "2023-11-06T20:13:47.054Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The problem is you are trying to manually serialize your request body.</p>\n<pre><code class=\"lang-auto\"># warning, I am not a C# guy, so I know C# gets weird about strings. Needing a number of \n# $ equal to the number of sequential {{{ for example, and \"\"\" three or greater depending \n# on how many sequential quotes are inside the string.\nvar queryString = \"\"\"{\n  items_page_by_column_values(\n    board_id: 5146042481\n    columns: [{column_id: \"name\", column_values: \"DDNL05\"}]\n  ) {\n    cursor\n    items {\n      id\n    }\n  }\n}\"\"\";\nvar fullQuery = JsonSerializer.Serialize({query: queryString});\n</code></pre>\n<p>Investigate <a href=\"https://graphql.org/learn/queries/#variables\">GraphQL Variables</a> because they will make your life much easier trying to substitute the values in your query.</p>"
+    },
+    {
+      "id": 151959,
+      "postNumber": 3,
+      "createdAt": "2023-11-07T06:00:14.318Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/j_morl\">@J_Morl</a> I don’t have experience with C# either, but this might help. I used your query in Postman and then exported it and this is the result:</p>\n<p>C# HttpClient:</p>\n<pre><code class=\"lang-auto\">var client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.Post, \"https://api.monday.com/v2/\");\nrequest.Headers.Add(\"API-Version\", \"2023-10\");\nrequest.Headers.Add(\"Authorization\", \"APITOKEN\");\nvar content = new StringContent(\"{\\\"query\\\":\\\"{\\\\n  items_page_by_column_values(\\\\n    board_id: 1234567890\\\\n    columns: [{column_id: \\\\\\\"name\\\\\\\", column_values: \\\\\\\"DDNL05\\\\\\\"}]\\\\n  ) {\\\\n    cursor\\\\n    items {\\\\n      id\\\\n    }\\\\n  }\\\\n}\\\",\\\"variables\\\":{}}\", null, \"application/json\");\nrequest.Content = content;\nvar response = await client.SendAsync(request);\nresponse.EnsureSuccessStatusCode();\nConsole.WriteLine(await response.Content.ReadAsStringAsync());\n</code></pre>\n<p>C# RestSharp:</p>\n<pre><code class=\"lang-auto\">var client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.Post, \"https://api.monday.com/v2/\");\nrequest.Headers.Add(\"API-Version\", \"2023-10\");\nrequest.Headers.Add(\"Authorization\", \"APITOKEN\");\nvar content = new StringContent(\"{\\\"query\\\":\\\"{\\\\n  items_page_by_column_values(\\\\n    board_id: 1234567890\\\\n    columns: [{column_id: \\\\\\\"name\\\\\\\", column_values: \\\\\\\"DDNL05\\\\\\\"}]\\\\n  ) {\\\\n    cursor\\\\n    items {\\\\n      id\\\\n    }\\\\n  }\\\\n}\\\",\\\"variables\\\":{}}\", null, \"application/json\");\nrequest.Content = content;\nvar response = await client.SendAsync(request);\nresponse.EnsureSuccessStatusCode();\nConsole.WriteLine(await response.Content.ReadAsStringAsync());\n</code></pre>\n<p>Hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 152240,
+      "postNumber": 4,
+      "createdAt": "2023-11-08T11:22:39.652Z",
+      "author": "J_Morl (Joel Morlier)",
+      "cookedHtml": "<p>Hey guys,</p>\n<p>Thank you both for the great suggestions, I have definitely added Postman to my tools. I wanted to give an update. I was able to get a working query this morning using JsonSerializer.  with a basic HttpClient.</p>\n<pre><code class=\"lang-auto\">            string json =\n                System.Text.Json.JsonSerializer.Serialize(\n                    new\n                    {\n                        query = @\"{\n                              items_page_by_column_values (board_id: $board columns: [{column_id: \"\"name\"\", column_values: \"\"Test_01\"\"}]) {cursor items{id}} }\",\n                    }\n                );\n</code></pre>"
+    },
+    {
+      "id": 152264,
+      "postNumber": 5,
+      "createdAt": "2023-11-08T13:11:39.398Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>That’s great <a class=\"mention\" href=\"/u/j_morl\">@J_Morl</a> !!</p>"
+    },
+    {
+      "id": 152387,
+      "postNumber": 7,
+      "createdAt": "2023-11-09T06:19:04.411Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

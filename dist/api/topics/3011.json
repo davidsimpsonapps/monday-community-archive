@@ -1,0 +1,65 @@
+{
+  "id": 3011,
+  "title": "API v2 with VBA",
+  "slug": "api-v2-with-vba",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2019-11-10T18:19:23.879Z",
+  "lastPostedAt": "2021-02-25T14:32:50.392Z",
+  "postsCount": 7,
+  "excerpt": "Attempting to push a record (item) to a board from an Excel DB using VBA. The script adds an item as intended from the try-it-yourself utility. (I built the script in the code and captured it from the function [strJSON] &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 3288,
+  "posts": [
+    {
+      "id": 8145,
+      "postNumber": 1,
+      "createdAt": "2019-11-10T18:19:23.938Z",
+      "author": "HydroCompDon (D MacPherson)",
+      "cookedHtml": "<p>Attempting to push a record (item) to a board from an Excel DB using VBA. The script adds an item as intended from the try-it-yourself utility. (I built the script in the code and captured it from the function [strJSON] just to make sure it was identical.) The token (strToken) was taken from my account page, and was used in the utility as well. So, I am certain that there are no errors in the script, but just for clarity, here it is:</p>\n<p>mutation { create_item( board_id: XXXXXXX, group_id: “topics”, item_name: “My Company”, column_values: “{\"text8\":\"Me\",\"date4\":{\"date\":\"2019-11-10\"}}”)}</p>\n<p>I cannot get it to rpocess the added item using VBA. My code is:</p>\n<pre><code>Dim http As Object\nSet http = CreateObject(\"WinHttp.WinHttpRequest.5.1\")\n\nhttp.Open \"POST\", strURL, False\nhttp.setRequestHeader \"Content-Type\", \"application/json\"\nhttp.setRequestHeader \"Authorization\", strToken\nhttp.Send strJSON\n\nPushToMondayPM = http.responseText\nstrError = http.statusText\nSet http = Nothing\n</code></pre>\n<p>The responseText is empty, and the statusText says “Bad Request”.</p>\n<p>Also, FWIW, there is conflicting information if the APIv2 URL is <a href=\"http://api.monday.com/v2\" rel=\"noopener nofollow ugc\">api.monday.com/v2</a> or <a href=\"http://COMPANY.monday.com/v2\" rel=\"noopener nofollow ugc\">COMPANY.monday.com/v2</a>.</p>\n<p>Any help or sample code that you can provide is greatly appreciated. Thanks!</p>\n<p>Don</p>"
+    },
+    {
+      "id": 8243,
+      "postNumber": 2,
+      "createdAt": "2019-11-12T14:18:58.871Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/hydrocompdon\">@HydroCompDon</a>!</p>\n<p>I don’t have a lot of VBA experience so I’ll let the community handle this <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> However, I did notice something: you’ve got some strings-inside-strings in your column_values parameter. Can you ensure you’re escaping all strings and double-escaping nested strings? This will ensure your query is parsed correctly.</p>\n<p>Here’s an example of a properly escaped string:</p>\n<pre><code class=\"lang-auto\">Set queryString = \"mutation { create_item( board_id: XXXXXXX, group_id: \\“topics\\”, item_name: \\“My Company\\”, column_values: \\“{\\\\\\“text8\\\\\\”:\\\\\\“Me\\\\\\”,\\\\\\“date4\\\\\\”:{\\\\\\“date\\\\\\”:\\\\\\“2019-11-10\\\\\\”}}\\”)}\"\n</code></pre>"
+    },
+    {
+      "id": 8303,
+      "postNumber": 3,
+      "createdAt": "2019-11-13T13:08:22.983Z",
+      "author": "HydroCompDon (D MacPherson)",
+      "cookedHtml": "<p>Thanks for the reply. I tried to push your “escaped” string into the try-it-yourself utility and it failed (where my example worked). Is the “escaping” different when pushed through code as I have described?</p>"
+    },
+    {
+      "id": 8320,
+      "postNumber": 4,
+      "createdAt": "2019-11-13T17:57:10.740Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/hydrocompdon\">@HydroCompDon</a>, yes exactly. The try-it-yourself utility is automatically parsing your query as a string so you don’t need to explicitly define it as such (and if you do, it will fail).</p>\n<p>However, when you pass a query to our server using an API call, you need to explicitly define the query as a string. Hence the double-quotes on the outside of the mutation and then \" (escaped quotes) inside.</p>\n<p>Essentially, escaping gives the server a way to differentiate pairs of quotes. For example, if we send <code>\"hello, my name is \"Dipro\"\"</code> to the server, it will parse <code>\"hello, my name is \"</code> as one string, ignore <code>Dipro</code> and then parse <code>\"\"</code> as the other string. But, if we send <code>\"hello, my name is \\\"Dipro\\\"\"</code>, it will be able to differentiate the inner quote from the outer quote.</p>\n<p>Does that help clarify?</p>"
+    },
+    {
+      "id": 9892,
+      "postNumber": 5,
+      "createdAt": "2020-01-04T10:50:18.627Z",
+      "author": "Jeyson.Mendoza (Jeyson Mendoza)",
+      "cookedHtml": "<p>Hi, everybody, Happy New Year, it is this theme closed? Or it is still open?</p>"
+    },
+    {
+      "id": 12888,
+      "postNumber": 6,
+      "createdAt": "2020-02-27T11:50:40.121Z",
+      "author": "admzia (Adam)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/hydrocompdon\">@HydroCompDon</a> ,</p>\n<p>have you managed to find the solutions for this? I’m trying to update a pulse from VBA as well and still failing.</p>\n<p>I have tried your method with a query string like this:</p>\n<p>“mutation { change_column_value( board_id: XXXXXX, item_id: XXXXXX, column_id: “status”, value: “{ \\“index\\”: 1 }”) {id}}”</p>\n<p>I’m getting error:</p>\n<p>{“errors”:[{“message”:“No query string was present”}],“account_id”:XXXXX}</p>\n<p>Any ideas why?</p>\n<p>Thanks,</p>\n<p>Adam</p>"
+    },
+    {
+      "id": 42359,
+      "postNumber": 7,
+      "createdAt": "2021-02-25T14:32:50.392Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

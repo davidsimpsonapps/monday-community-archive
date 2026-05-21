@@ -1,0 +1,48 @@
+{
+  "id": 55013,
+  "title": "How to fix Parse Error?",
+  "slug": "how-to-fix-parse-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2023-03-30T05:19:58.430Z",
+  "lastPostedAt": "2023-04-04T05:55:48.247Z",
+  "postsCount": 4,
+  "excerpt": "I have wonder why this query has occurred Parse Error? \nAnd i wonder what should I do to operate as create Item? \n[ My GraphQL Query ] \nmutation {\n    create_item (board_id: ${boardId}, group_id: ${groupId}, item_name: $&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1241,
+  "posts": [
+    {
+      "id": 121975,
+      "postNumber": 1,
+      "createdAt": "2023-03-30T05:19:58.514Z",
+      "author": "thlee (Taeho Lee)",
+      "cookedHtml": "<p>I have wonder why this query has occurred Parse Error?</p>\n<p>And i wonder what should I do to operate as create Item?</p>\n<p>[ My GraphQL Query ]</p>\n<pre><code class=\"lang-auto\">mutation {\n    create_item (board_id: ${boardId}, group_id: ${groupId}, item_name: ${itemName}, column_values: \"{\\\"___5\\\":\\\"\\uC708(\\uC8FC)\\\"}\"\n    )\n    { id\n        board {\n            id\n            name\n        }              \n        group {\n            id\n            title\n        }\n    }\n}\n</code></pre>\n<p><strong>[ Error Code ]</strong></p>\n<pre><code class=\"lang-auto\">{\n    \"errors\": [\n        {\n            \"message\": \"Parse error on \\\"(\\\" (LPAREN) at [2, 149]\",\n            \"locations\": [\n                {\n                    \"line\": 2,\n                    \"column\": 149\n                }\n            ]\n        }\n    ],\n    \"account_id\": 8736257\n}\n</code></pre>"
+    },
+    {
+      "id": 122517,
+      "postNumber": 2,
+      "createdAt": "2023-04-03T12:17:07.087Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/thlee\">@thlee</a>,</p>\n<p>I see an extra \\ in this part of your value: (\\uC8FC)<br />\nWas this intentional?</p>\n<p>I believe this is causing a parsing error when escaping the quotes.</p>"
+    },
+    {
+      "id": 122588,
+      "postNumber": 3,
+      "createdAt": "2023-04-04T02:31:04.119Z",
+      "author": "thlee (Taeho Lee)",
+      "cookedHtml": "<p>I using Apache Common Text Library for handling escaping letters in java.<br />\nThat is the result of StringEscapeUtils.escapeJava() which is unicode.<br />\nIf get rid of \"\" then items that are registered have the following values.</p>\n<pre><code class=\"lang-auto\">(uC8FC)\n</code></pre>\n<p>I want to create an item with a value of “윈(주)” but it’s registered as above.<br />\nI used “(주)” to substitute other values, but I confirmed that the item is registered normally with that content.<br />\n[ Working Example ]</p>\n<pre><code class=\"lang-auto\">example : (\\uC8FC)\\uB9CC\n</code></pre>\n<p>[ Non-Working Example</p>\n<pre><code class=\"lang-auto\">example : \\uB9CC(\\uB9CC)\n</code></pre>\n<p>This seems to happen when ‘(\\uB9CC)’ comes after the word.</p>\n<p>Please answer how to resolve this problem?</p>"
+    },
+    {
+      "id": 122615,
+      "postNumber": 4,
+      "createdAt": "2023-04-04T05:55:48.247Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/thlee\">@thlee</a>,</p>\n<p>I believe you can make this work by passing the column values as a variable:</p>\n<pre><code class=\"lang-auto\">mutation ($columnValues: JSON!) {\n    create_item (board_id: 1234567890, group_id: \"topics\", item_name: \"My item\", column_values: $columnValues\n    )\n    { id\n        board {\n            id\n            name\n        }              \n        group {\n            id\n            title\n        }\n    }\n}\n</code></pre>\n<p>Variables:<br />\n<code>{\"columnValues\":\"{\\\"text\\\":\\\"\\uC708(\\uC8FC)\\\"}\"}</code></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/e/fefbae3d92a9b2bf9594f197a48cafe5ffef4b3e.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/e/fefbae3d92a9b2bf9594f197a48cafe5ffef4b3e_2_690x298.png\" alt=\"image\" width=\"690\" height=\"298\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2712×1175 236 KB</span>\n</div></a></div><p></p>\n<p>Please let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

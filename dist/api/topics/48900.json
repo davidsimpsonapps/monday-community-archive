@@ -1,0 +1,39 @@
+{
+  "id": 48900,
+  "title": "Find First letters of complicated first names using formulas",
+  "slug": "find-first-letters-of-complicated-first-names-using-formulas",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-01-11T12:20:53.410Z",
+  "lastPostedAt": "2023-01-13T08:55:27.990Z",
+  "postsCount": 3,
+  "excerpt": "I am trying to get the first letters of first names. The problem I have is adding it all together in one formula. Individually they work fine. These are some sample names: \n\nSven\nTamara-Siers\nPieter Hidde\n\nThe results ha&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1120,
+  "posts": [
+    {
+      "id": 110109,
+      "postNumber": 1,
+      "createdAt": "2023-01-11T12:20:53.486Z",
+      "author": "svenimhoz (Sven Imholz)",
+      "cookedHtml": "<p>I am trying to get the first letters of first names. The problem I have is adding it all together in one formula. Individually they work fine. These are some sample names:</p>\n<ul>\n<li>Sven</li>\n<li>Tamara-Siers</li>\n<li>Pieter Hidde</li>\n</ul>\n<p>The results have to be:</p>\n<ul>\n<li>S.</li>\n<li>T. S.</li>\n<li>P. H.</li>\n</ul>\n<p>The formula I now have gives an error but I do not know why, could anyone help?</p>\n<pre><code class=\"lang-auto\">REGEXEXTRACT({Voornaam}, \"^[A-Z]\") &amp; \".\"\n&amp;\nIF(REGEXMATCH({Voornaam}, \".*-.*\"), \" \" &amp; (REGEXEXTRACT({Voornaam}, \"-([A-Z])\") &amp; \".\"), \"\")\n&amp;\nIF(REGEXMATCH({Voornaam}, \"\\s\"), (REGEXEXTRACT({Voornaam}, \"\\s[A-Z]\") &amp; \".\"), \"\")\n</code></pre>"
+    },
+    {
+      "id": 110310,
+      "postNumber": 2,
+      "createdAt": "2023-01-12T13:40:20.388Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/svenimhoz\">@svenimhoz</a></p>\n<p>The problem comes from</p>\n<pre><code class=\"lang-auto\">REGEXEXTRACT({Voornaam}, \"-([A-Z])\")\n</code></pre>\n<p>If you create a formula with only this syntax, you’ll see that if the first name is without hyphen, the column cell is empty. You would think that it returned an empty string…</p>\n<p>But if you test it by changing the syntax to the following</p>\n<pre><code class=\"lang-auto\">ISNONTEXT(REGEXEXTRACT({Voornaam}, \"-([A-Z])\"))\n</code></pre>\n<p>the result is <strong>True</strong>. So, in fact, it does NOT return an empty string.</p>\n<p>The question is what does it return then?</p>\n<pre><code class=\"lang-auto\">ISBLANK(REGEXEXTRACT({Voornaam}, \"-([A-Z])\"))\n</code></pre>\n<p>returns <strong>True</strong>, i.e. it returns an <strong>empty object</strong>.</p>\n<p><strong>Why the error?</strong></p>\n<p>For 2 reasons:</p>\n<ul>\n<li>when you do \" \" &amp; (REGEXEXTRACT({Voornaam}, “-([A-Z])”) and the firstname has no hyphen, you’re concatening a space with an empty object which is not possible therefore the error.  You’re probably thinking “this is not true because I added an if statement checking if there is an hyphen in the name”… Indeed but you need to know the following:</li>\n<li>when you run an if statement, If(Condition, resultIfTrue, resultIfFalse), as counterintuitive as it may seem, resultIfTrue and resultIfFalse are “calculated” first then only the one meeting the condition is returned by the function. It seems logical to assume that if the condition is met, resultIfFalse is never calculated because it is unnecessary to calculate it. But, in fact, both are calculated upfront. So if one of the 2 potential results generates an error no matter whether the condition is met or not, you’ll get an error.</li>\n</ul>\n<p><strong>Now, what is the SOLUTION?</strong></p>\n<p>The solution is to NOT concatenate your space and period within the if statement with the REGEXTRACT function.</p>\n<p>Try the following. It should work.</p>\n<pre><code class=\"lang-auto\">REGEXEXTRACT({Voornaam}, \"^[A-Z]\") &amp; \".\" &amp; \nIF(ISBLANK(REGEXEXTRACT({Voornaam}, \"-([A-Z])\")),\"\", \" \") &amp; \nIF(ISBLANK(REGEXEXTRACT({Voornaam}, \"-([A-Z])\")),\"\", REGEXEXTRACT({Voornaam}, \"-([A-Z])\")) &amp; \nIF(ISBLANK(REGEXEXTRACT({Voornaam}, \"-([A-Z])\")),\"\", \".\") &amp; \nIF(ISBLANK(REGEXEXTRACT({Voornaam}, \"\\s[A-Z]\")), \"\", REGEXEXTRACT({Voornaam}, \"\\s[A-Z]\")) &amp; \nIF(ISBLANK(REGEXEXTRACT({Voornaam}, \"\\s[A-Z]\")), \"\", \".\")\n</code></pre>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/2/27cd4028d87050d0e1c31c30b972b9c28936abaf.jpeg\" alt=\"2023-01-12_10-39-38\" width=\"332\" height=\"177\" /></p>"
+    },
+    {
+      "id": 110454,
+      "postNumber": 3,
+      "createdAt": "2023-01-13T08:55:27.990Z",
+      "author": "svenimhoz (Sven Imholz)",
+      "cookedHtml": "<p>Thank you so much! It works now, and I understand it also <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": 9363,
+  "title": "When I use mutation query, sometimes some items will be null",
+  "slug": "when-i-use-mutation-query-sometimes-some-items-will-be-null",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2020-07-23T13:04:13.772Z",
+  "lastPostedAt": "2021-02-25T14:32:54.359Z",
+  "postsCount": 3,
+  "excerpt": "Hi there! \nI’ve been using GraphQL API for 3 months. I love the monday.com! \nI probably found a bug in mutation (create_item and change_column_value). \nWhen I use mutation query, sometimes some items will be null. \nRefer&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1900,
+  "posts": [
+    {
+      "id": 23509,
+      "postNumber": 1,
+      "createdAt": "2020-07-23T13:04:13.854Z",
+      "author": "kai_dev (Shinnosuke Kai)",
+      "cookedHtml": "<p>Hi there!<br />\nI’ve been using GraphQL API for 3 months. I love the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>!<br />\nI probably found a bug in mutation (<strong>create_item</strong> and <strong>change_column_value</strong>).</p>\n<p>When I use mutation query, sometimes some items will be null.<br />\nReference: <a href=\"https://gyazo.com/a9cc1089a290e639bee15d6e13d01b71\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Screenshot - a9cc1089a290e639bee15d6e13d01b71 - Gyazo</a></p>\n<p>My Node.js code is below,</p>\n<pre><code>  const mondayItemPost = async () =&gt; {\n    const items = () =&gt; {\n      let obj = {}\n      for (let mo of mondayAry) {\n        obj[mo.id] = mo.value\n      }\n\n      //in the end, set initial status\n      obj['status'] = {index: 1}\n      \n      return obj\n    }\n\n    const data = {\n      query: `mutation ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {\n        create_item (\n          board_id: $boardId,\n          group_id: $groupId,\n          item_name: $itemName,\n          column_values: $columnValues\n        ) {\n          id\n        }\n      }`,\n      variables: {\n        boardId: {**writing a board id**},\n        groupId: '_____',\n        itemName: {**writing an item name**},\n        columnValues: JSON.stringify(items())\n      }\n    }\n\n    return await axios.post(mondayUrl, data, {headers: mondayHeaders}).then(mondayRes =&gt; {\n      return 'succeeded'\n    })\n  }\n</code></pre>\n<p>I’m using GCP’s Cloud Functions, Node.js is version 8.x.<br />\nI didn’t catch any errors. So, if you know the reason, please tell me that.</p>\n<p>Thanks,<br />\nShinnosuke</p>"
+    },
+    {
+      "id": 23601,
+      "postNumber": 2,
+      "createdAt": "2020-07-25T03:54:20.312Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/kai_dev\">@kai_dev</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>I’m so glad to hear you’ve been enjoying the platform so far!</p>\n<p>To be transparent with you, that does seem strange as the code itself looks valid, at least from what I can tell. Is there any chance that you are sending a lot of API calls to create items in a limited amount of time? In some cases, this will lead the platform to not let through the excess calls, and I’d suggest setting a queue of requests so that you’re not exceeding that limit. Does that make sense?</p>\n<p>If you don’t mind, I would love to continue troubleshooting this with you through email in a different channel so we can figure out what exactly may be causing this. Do you mind if I reach out to you directly via email using our support email inbox instead in order to troubleshoot this further? I’d love to gather a bit more detail here in case my initial hunch is off.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42401,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T14:32:54.359Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": 101987,
+  "title": "How to capture the elements that are in the link columns",
+  "slug": "how-to-capture-the-elements-that-are-in-the-link-columns",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-10-31T14:53:01.011Z",
+  "lastPostedAt": "2024-11-04T11:58:23.797Z",
+  "postsCount": 2,
+  "excerpt": "I have this query that basically paginates the board until reaching the end. However, I don’t know if it’s something I did in my code or if it’s something with the API itself, but the JSON response always arrives with th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 16,
+  "posts": [
+    {
+      "id": 208010,
+      "postNumber": 1,
+      "createdAt": "2024-10-31T14:53:01.121Z",
+      "author": "Vini (Vini)",
+      "cookedHtml": "<p>I have this query that basically paginates the board until reaching the end. However, I don’t know if it’s something I did in my code or if it’s something with the API itself, but the JSON response always arrives with the link columns empty.</p>\n<p>def get_items_from_board(self, cursor=None):</p>\n<pre><code>    query = {\n        \"query\": f\"\"\"\n            {{\n            boards(ids: {self.board_id}) {{\n                items_page(limit: 100{f', cursor: \"{cursor}\"' if cursor else ''}) {{\n                cursor\n                items {{\n                    id\n                    name\n                    column_values {{\n                    column {{\n                    title\n                    id\n                    }}\n                    text\n                    }}\n                }}\n                }}\n            }}\n            }}\n            \"\"\"\n    }\n\n    response = requests.post(self.URL, headers=self.headers, json=query)\n\n    if response.status_code == 200:\n        return response.json()\n    else:\n        print(f\"Erro: {response.status_code}, {response.text}\")\n        return None\n\ndef fetch_all_items(self):\n    all_items = []\n    cursor = None\n\n    while True:\n        data = self.get_items_from_board(cursor)\n\n        if data:\n            items_page = data[\"data\"][\"boards\"][0][\"items_page\"]\n            items = items_page[\"items\"]\n            cursor = items_page[\"cursor\"]\n\n            all_items.extend(items)\n\n            if not cursor:\n                break\n        else:\n            break\n\n    return all_items\n</code></pre>\n<p>Sorry if this is poorly formatted or if there’s already an open topic that solves this; I’ve never used this forum before. Thank you in advance <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 208553,
+      "postNumber": 2,
+      "createdAt": "2024-11-04T11:58:23.797Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/vini\">@Vini</a>,</p>\n<p>That is odd. If you have a link column that has values in the items of the board to it, and the user whose API token is being used has access to that column and those items, you should get the text inside of it.</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it (such as account ID, board IDs, item IDs, timestamps, etc.) so that our team can take a look into it?</p>"
+    }
+  ]
+}

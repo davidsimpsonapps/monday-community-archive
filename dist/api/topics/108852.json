@@ -1,0 +1,46 @@
+{
+  "id": 108852,
+  "title": "IFERROR function not supported. Need Workaround",
+  "slug": "iferror-function-not-supported-need-workaround",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2025-01-31T16:19:52.626Z",
+  "lastPostedAt": "2025-02-07T13:11:30.360Z",
+  "postsCount": 4,
+  "excerpt": "I have a formula that references a date column that I adjust to obtain the fiscal year without commas (see below). However, when there is no date, I’m unable to use IFERROR or an IF function to return a blank cell when t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 49,
+  "posts": [
+    {
+      "id": 219739,
+      "postNumber": 1,
+      "createdAt": "2025-01-31T16:19:52.692Z",
+      "author": "mweekend (Matthew)",
+      "cookedHtml": "<p>I have a formula that references a date column that I adjust to obtain the fiscal year without commas (see below). However, when there is no date, I’m <strong>unable to use IFERROR or an IF function to return a blank cell when the date column is empty</strong>. When hovering over the error cells (with ! inside a triangle), I see “<strong>One of the parameters is invalid</strong>”. Does anyone have a workaround?</p>\n<p><strong>Current Formula:</strong></p>\n<pre><code class=\"lang-auto\">IF({date}=\"\",\"\",\n\tTEXT(\n\t\tIF(MONTH({date}) &gt;= 8,  \n\t\t\tYEAR({date}) + 1, \n    \t\tYEAR({date}))\n\t\t,\"0\")\n\t)\n</code></pre>\n<p>As mentioned, I’ve tried using IFERROR too, but it appears to be unsupported. I’ve also tried ISBLANK and other options, but I am never able to get rid of the error.</p>"
+    },
+    {
+      "id": 219747,
+      "postNumber": 2,
+      "createdAt": "2025-01-31T20:34:13.859Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Matthew,</p>\n<p>Try:</p>\n<pre><code>IF({Date}=\"\",\"\",\nTEXT(\n\tIF(MONTH(IF({Date}=\"\",\"2001-01-01\",{Date})) &gt;= 8,  \n\t\tYEAR(IF({Date}=\"\",\"2001-01-01\",{Date})) + 1, \n\t\tYEAR(IF({Date}=\"\",\"2001-01-01\",{Date})))\n\t,\"0\")\n)\n</code></pre>\n<p>2001-01-01 is an arbitrary date. It could be anything. Monday uses the eager approach to IF statements, so you need to provide a date (any date) to avoid errors when the date is empty. If you want to know more on what is an eager approach, see <a href=\"https://blog.mdboosters.com/en/a-simple-way-to-handle-empty-columns-and-avoid-errors-in-your-formulas-in-monday-com\" rel=\"noopener nofollow ugc\"> A Simple Way to Handle Empty Columns and Avoid Errors in your Formulas</a>.</p>\n<p> </p>\n<hr />\n<p><strong>Want to take your formulas to the next level?</strong> Try the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, the app that reinvents formulas in monday.</p>\n<ul>\n<li>Create formulas without using the Formula column (and avoid its limitations)</li>\n<li>Build formulas involving data from the previous item, the next item, the sub-items, the parent item, even items in the same group or the same board.</li>\n<li>In one formula, update multiple columns from multiple items.</li>\n</ul>\n<p>Check our blog for <a href=\"https://blog.mdboosters.com\" rel=\"noopener nofollow ugc\">real use cases</a>.</p>"
+    },
+    {
+      "id": 219860,
+      "postNumber": 3,
+      "createdAt": "2025-02-03T12:29:10.589Z",
+      "author": "mweekend (Matthew)",
+      "cookedHtml": "<p>Thank you very much! That works perfectly and helps me understand why Monday has trouble with my original formula. I also just discovered that the formula below gives the same result with a different approach. Merci!</p>\n<p>FORMAT_DATE(EDATE(FORMAT_DATE({Date}),8),“YYYY”)</p>"
+    },
+    {
+      "id": 220417,
+      "postNumber": 4,
+      "createdAt": "2025-02-07T13:11:30.360Z",
+      "author": "JoseDaher (Jose Daher)",
+      "cookedHtml": "<p>I’m glad you solved it… But the “iferror” issue is broader than that… I often get a “!” when I use “if” statements when one of the cells are empty… But in that case I need the comparison with the empty cell. I simply stop trying.</p>\n<p>Best regards,</p>"
+    }
+  ]
+}

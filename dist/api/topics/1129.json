@@ -1,0 +1,68 @@
+{
+  "id": 1129,
+  "title": "Visual Studio VB.Net API v2",
+  "slug": "visual-studio-vb-net-api-v2",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    137
+  ],
+  "createdAt": "2019-07-30T16:39:57.971Z",
+  "lastPostedAt": "2021-02-25T12:23:14.277Z",
+  "postsCount": 7,
+  "excerpt": "I am new to GraphQL.  Does anyone know how to set up queries (or have any examples) using visual studio VB.net.",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 7133,
+  "posts": [
+    {
+      "id": 3181,
+      "postNumber": 1,
+      "createdAt": "2019-07-30T16:39:58.034Z",
+      "author": "dennis_pappas (Dennis Pappas)",
+      "cookedHtml": "<p>I am new to GraphQL.  Does anyone know how to set up queries (or have any examples) using visual studio <a href=\"http://VB.net\" rel=\"noopener nofollow ugc\">VB.net</a>.</p>"
+    },
+    {
+      "id": 3292,
+      "postNumber": 2,
+      "createdAt": "2019-08-04T12:45:43.722Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/dennis_pappas\">@dennis_pappas</a>,<br />\nI’ve never used <a href=\"http://VB.net\">VB.net</a> before but maybe this will help:<br />\nYou can access our GraphQL API with a POST request with the query in the request body.<br />\nThe query needs to be set where the identifier is “query” and its value is the actual query, in JSON it would look like this:</p>\n<pre><code>body: {\n 'query': 'query {\n               boards (limit: 1) {\n                  id\n                  name\n               }\n            }'\n}\n</code></pre>\n<p>The API v2 Token needs to be sent in the Authorization header.</p>\n<p>Hope this helps!</p>"
+    },
+    {
+      "id": 4396,
+      "postNumber": 3,
+      "createdAt": "2019-08-12T19:24:37.855Z",
+      "author": "dennis_pappas (Dennis Pappas)",
+      "cookedHtml": "<p>I am not sure how to make the post request.  I worked on the Monday website on building the actual query, but I am not sure how to set up GraphQL.  I see you referring to the authorization in the header in other posts, but I am not sure if I completely understand where the token would go.  Does it go in the URL, or is the API object oriented and requires me to define the authorization/set some property?</p>"
+    },
+    {
+      "id": 4557,
+      "postNumber": 4,
+      "createdAt": "2019-08-14T18:33:43.356Z",
+      "author": "lucy.parry (Lucy Parry)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dennis_pappas\">@dennis_pappas</a></p>\n<p>It’s not <code>VB.NET</code> but I did some work on this in C# quite recently which might be similar to what you need.</p>\n<p>I subclassed <code>HttpClient</code> and set the HTTP Authorization header like this -</p>\n<pre><code>string apiToken = \"YOUR TOKEN HERE\";\nthis.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse(apiToken);\n</code></pre>\n<p>Then the query can be sent as JSON as the <code>HttpContent</code> (i.e. the request body) of a <code>POST</code> request, like this (where <code>_mondayClient</code> is the subclassed <code>HttpClient</code>) -</p>\n<pre><code>StringContent content = new StringContent(YOUR_QUERY_HERE, Encoding.UTF8, \"application/json\");\nusing (var response = _mondayClient.PostAsync(\"\", content))\n{\n    // … process the response as you need\n}\n</code></pre>\n<p>It’s far from perfect but I have put a full example on GitHub at <a href=\"https://github.com/LucyParry/MondayAPIV2_BasicExample\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - LucyParry/MondayAPIV2_BasicExample: A really simple example of calling the v2 GraphQL API for Monday.com with C# because they seem a little elusive and it's the sort of thing the boss will want done quick smart</a> if it’s useful to anyone. Hope this helps!  <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 4558,
+      "postNumber": 5,
+      "createdAt": "2019-08-14T19:08:20.717Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dennis_pappas\">@dennis_pappas</a>! Happy to give you more general context in addition to <a class=\"mention\" href=\"/u/lucy.parry\">@lucy.parry</a>’s amazing post above.</p>\n<p>All requests to our API are simply HTTP POST requests sent to <a href=\"https://api.monday.com/v2\">https://api.monday.com/v2</a>. To authenticate your requests, you need to include an “Authorization” value in the header of the request, and this value should be your API key.</p>\n<p>The body of the HTTP request should be a JSON formatted string, and the body should contain a “query” value that contains a JSON string of the operation you want to complete. There are no parameters you need to set in the URL, all the relevant data for your queries should be put in the body of the JSON request.</p>"
+    },
+    {
+      "id": 31931,
+      "postNumber": 6,
+      "createdAt": "2020-10-26T13:24:41.722Z",
+      "author": "willod (William M O'Dwyer)",
+      "cookedHtml": "<p>This worked for me in <a href=\"http://VB.Net\" rel=\"noopener nofollow ugc\">VB.Net</a></p>\n<p>Dim client = New RestClient(“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”)<br />\nDim request = New RestRequest(Method.POST)<br />\nrequest.AddHeader(“cache-control”, “no-cache”)<br />\nrequest.AddHeader(“Accept-Encoding”, “gzip, deflate”)<br />\nrequest.AddHeader(“Cache-Control”, “no-cache”)<br />\nrequest.AddHeader(“Accept”, “<em>/</em>”)<br />\nrequest.AddHeader(“Authorization”,<br />\n“Bearer YOUR TOKEN”)<br />\n'works<br />\n’       Dim jsonQuery As String = “{”“query”“: “”{boards(limit:1){id name}}”“}”</p>\n<pre><code>    Dim jsonQuery As String = \"{\"\"query\"\": \"\"{boards(){items {name}}}\"\"}\"\n    request.AddParameter(\"application/json\", jsonQuery, ParameterType.RequestBody)\n\n    Try\n        Dim response As IRestResponse = client.Execute(request)\n        JSONResponseString = response.Content\n    Catch ex As Exception\n    End Try\n</code></pre>"
+    },
+    {
+      "id": 42134,
+      "postNumber": 7,
+      "createdAt": "2021-02-25T12:23:14.277Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

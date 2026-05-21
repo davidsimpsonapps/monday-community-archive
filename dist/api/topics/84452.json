@@ -1,0 +1,68 @@
+{
+  "id": 84452,
+  "title": "What's the mutation to add an externally-hosted file to a column?",
+  "slug": "whats-the-mutation-to-add-an-externally-hosted-file-to-a-column",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-18T12:51:59.164Z",
+  "lastPostedAt": "2024-04-24T10:59:01.475Z",
+  "postsCount": 5,
+  "excerpt": "I’ve been looking at the Files column type, and see that for external files hosted in say Google Drive, Box, Dropbox or Sharepoint, the files are described by a stringified version of the structure below: \n{\n\t&quot;files&quot;: [\n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 164,
+  "posts": [
+    {
+      "id": 179580,
+      "postNumber": 1,
+      "createdAt": "2024-04-18T12:51:59.263Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I’ve been looking at the Files column type, and see that for external files hosted in say Google Drive, Box, Dropbox or Sharepoint, the files are described by a stringified version of the structure below:</p>\n<pre><code class=\"lang-auto\">{\n\t\"files\": [\n\t\t{\n\t\t\t\"name\": \"Book.xlsx\",\n\t\t\t\"fileId\": \"c42b3230-42b3-42b3-42b3-9d6f7b2a081b\",\n\t\t\t\"fileType\": \"ONE_DRIVE\",\n\t\t\t\"createdAt\": 1234,\n\t\t\t\"createdBy\": \"456\",\n\t\t\t\"linkToFile\": \"https://someinstance-my.sharepoint.com/:x:/g/personal/username_someinstance_onmicrosoft_com/PlkJXFVMWpEV2cVApxt_H_EB6GH1viK96wa1-rEqGKjmpw\"\n\t\t},\n\t\t...\n\t]\n}\n</code></pre>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/point_right.png?v=12\" title=\":point_right:\" class=\"emoji\" alt=\":point_right:\" width=\"20\" height=\"20\" /> <strong>What mutation would be required to add a file from an external provider such as Google Drive, Box, Dropbox or Sharepoint to a column?</strong></p>\n<p>This is not the normal “upload a file” mutation as described <a href=\"https://developer.monday.com/api-reference/reference/assets-1#add-file-to-the-file-column\" rel=\"noopener nofollow ugc\">here</a> by:</p>\n<pre><code class=\"lang-auto\">mutation {\n  add_file_to_column (\n    item_id: 1234567890, \n    column_id: \"files\", \n    file: YOUR_FILE\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>or</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/file' \\                          \n     --header 'API-Version: 2024-01' \\\n     --header 'Authorization: thisisasecret' \\\n     --form 'query=\"mutation($item_id: ID!, $column_id: String!, $file: File!) { add_file_to_column(item_id: $item_id, column_id: $column_id, file: $file) { id } }\"' \\\n     --form 'variables=\"{\\\"item_id\\\": 123456, \\\"column_id\\\": \\\"files\\\"}\"' \\\n     --form 'map=\"{\\\"file\\\":\\\"variables.file\\\"}\"' \\\n     --form 'file=@/Users/me/Pictures/MyCat.png'\n</code></pre>\n<p>It looks to be different, but is not documented anywhere I can see.</p>\n<hr />\n<p>.<br />\n.<br />\n.</p>\n<p><strong>Aside:</strong> I’m seeing a 404 on the documentation examples here:</p>\n<pre><code class=\"lang-auto\">https://developer.monday.com/api-reference/changelog/add_file_to_column-mutation\n</code></pre>\n<p>It points to this:</p>\n<pre><code class=\"lang-auto\">https://developer.monday.com/api-reference/docs/columns-queries-1#add-a-file-to-the-file-column \n</code></pre>\n<p>…rather than this:</p>\n<pre><code class=\"lang-auto\">https://developer.monday.com/api-reference/reference/assets-1#add-file-to-the-file-column\n</code></pre>"
+    },
+    {
+      "id": 179582,
+      "postNumber": 2,
+      "createdAt": "2024-04-18T12:55:01.798Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Oh, could it be as described in <a href=\"https://developer.monday.com/api-reference/reference/files-1#clearing-the-files-column\" rel=\"noopener nofollow ugc\">clearing-the-files-column</a>, but by updating the JSON contained rather than clearing everything?</p>\n<p><strong>Update:</strong> No, that doesn’t seem to work <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 179963,
+      "postNumber": 3,
+      "createdAt": "2024-04-21T06:50:58.959Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>,</p>\n<p>As of today, that can not be achieved (passing an external file from a different platform such as Google Drive or Box, to a files column via API).</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 179969,
+      "postNumber": 4,
+      "createdAt": "2024-04-21T06:59:40.738Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> Please confirm – this is a private API available only to monday.com?</p>\n<p>What workaround would you use instead?</p>\n<ul>\n<li>Add a Link/URL column and populate that with an individual link to said external file (on Google Drive, Box etc)?</li>\n</ul>"
+    },
+    {
+      "id": 180019,
+      "postNumber": 5,
+      "createdAt": "2024-04-21T10:29:24.378Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1713706153155489\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 180683,
+      "postNumber": 6,
+      "createdAt": "2024-04-24T10:59:01.475Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>!</p>\n<p>The workaround for this would be as you said to add a URL to a link column.</p>"
+    },
+    {
+      "id": 213981,
+      "postNumber": 8,
+      "createdAt": "2024-12-15T07:31:54.947Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

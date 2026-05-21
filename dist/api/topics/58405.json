@@ -1,0 +1,89 @@
+{
+  "id": 58405,
+  "title": "[BUG monday SDK] monday.execute for 'openItemCard' does not resolve promise for kind 'updates' when closing item card",
+  "slug": "bug-monday-sdk-monday-execute-for-openitemcard-does-not-resolve-promise-for-kind-updates-when-closing-item-card",
+  "categoryId": 8,
+  "tagIds": [
+    297,
+    326
+  ],
+  "createdAt": "2023-05-17T07:14:40.612Z",
+  "lastPostedAt": "2023-06-18T05:24:31.168Z",
+  "postsCount": 9,
+  "excerpt": "Hi there, \nI created a new issue for the monday-sdk-js package: [Bug] monday.execute for &#39;openItemCard&#39; does not resolve promise for kind &#39;updates&#39; · Issue #92 · mondaycom/monday-sdk-js · GitHub \nI wanted to report it he&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 383,
+  "posts": [
+    {
+      "id": 128290,
+      "postNumber": 1,
+      "createdAt": "2023-05-17T07:14:40.707Z",
+      "author": "frednijs (Frederik Nijs)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>I created a new issue for the monday-sdk-js package: <a href=\"https://github.com/mondaycom/monday-sdk-js/issues/92\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">[Bug] monday.execute for 'openItemCard' does not resolve promise for kind 'updates' · Issue #92 · mondaycom/monday-sdk-js · GitHub</a><br />\nI wanted to report it here as well in case I  am missing someone or to check if someone else also experienced this issue.<br />\nThis is a blocking bug for us in creating a custom view in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>.</p>\n<p>Thank you for checking this and helping us out!</p>"
+    },
+    {
+      "id": 128549,
+      "postNumber": 2,
+      "createdAt": "2023-05-18T08:42:22.100Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/frednijs\">@frednijs</a>,</p>\n<p>Thank you for that!</p>\n<p>I will share this with the person in charge of it so that it can be checked <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheeers,<br />\nMatias</p>"
+    },
+    {
+      "id": 129026,
+      "postNumber": 3,
+      "createdAt": "2023-05-23T03:31:59.923Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>DOW <a href=\"https://monday.monday.com/boards/620317422/pulses/4518106081\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 129277,
+      "postNumber": 4,
+      "createdAt": "2023-05-24T10:28:14.797Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/frednijs\">@frednijs</a>,</p>\n<p>A fix for this will be deployed soon. You can check it next Monday and it should be deployed already.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 129292,
+      "postNumber": 5,
+      "createdAt": "2023-05-24T11:37:35.133Z",
+      "author": "frednijs (Frederik Nijs)",
+      "cookedHtml": "<p>Great, thank you!</p>"
+    },
+    {
+      "id": 129699,
+      "postNumber": 6,
+      "createdAt": "2023-05-29T08:51:52.189Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/frednijs\">@frednijs</a> !</p>"
+    },
+    {
+      "id": 131698,
+      "postNumber": 7,
+      "createdAt": "2023-06-16T06:46:22.631Z",
+      "author": "70shakeel (Muhammad Shakeel ur Rehman Tariq)",
+      "cookedHtml": "<p>Was this resolved?<br />\nI am facing the same issue.<br />\nmonday.execute(“openItemCard”, {<br />\nitemId: item.id,<br />\nkind:“updates”<br />\n});</p>"
+    },
+    {
+      "id": 131713,
+      "postNumber": 8,
+      "createdAt": "2023-06-16T08:21:08.691Z",
+      "author": "frednijs (Frederik Nijs)",
+      "cookedHtml": "<p>We tested this and this issue was resolved. However, we are also facing the issue again.</p>\n<p>Since opening the item card is resizing the window where the app is running, we used this code as a workaround. It is not completely failsafe and it is of course a workaround but it is doing the trick for us. Maybe it can help you as well.</p>\n<pre><code class=\"lang-auto\">/**\n * Workaround for issue: https://github.com/mondaycom/monday-sdk-js/issues/92\n */\nconst resizePromise = new Promise&lt;void&gt;((resolve) =&gt; {\n  const initialWidth = window.innerWidth;\n  const resizeHandler = () =&gt; {\n    if (window.innerWidth &gt;= initialWidth) {\n      resolve();\n      window.removeEventListener('resize', resizeHandler);\n    }\n  };\n  setTimeout(() =&gt; {\n    window.addEventListener('resize', resizeHandler);\n  }, 500);\n});\n\nconst mondayPromise = monday.execute('openItemCard', { itemId: item.id, kind: 'updates' });\nawait Promise.any([resizePromise, mondayPromise]);\n\n</code></pre>"
+    },
+    {
+      "id": 131714,
+      "postNumber": 9,
+      "createdAt": "2023-06-16T08:23:45.433Z",
+      "author": "70shakeel (Muhammad Shakeel ur Rehman Tariq)",
+      "cookedHtml": "<p>can you share the output? If I do not give kind attribute it is opening up an item view card and when I give kind: “updates” as an attribute, it shows nothing.</p>"
+    },
+    {
+      "id": 131833,
+      "postNumber": 10,
+      "createdAt": "2023-06-18T05:24:31.168Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>If you are still facing issues with this, please send over an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with all the data about your situation and we will take a closer look from there!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

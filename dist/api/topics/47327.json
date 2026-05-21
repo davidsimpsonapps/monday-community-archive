@@ -1,0 +1,76 @@
+{
+  "id": 47327,
+  "title": "Python app example of authorization",
+  "slug": "python-app-example-of-authorization",
+  "categoryId": 8,
+  "tagIds": [
+    139,
+    152,
+    159
+  ],
+  "createdAt": "2022-12-13T12:45:25.482Z",
+  "lastPostedAt": "2022-12-16T14:24:26.746Z",
+  "postsCount": 8,
+  "excerpt": "Hi everybody, \nIs there any working Python example of custom app authentication? \nThere is a Node example, but I cannot make it work on Python. \n\n\nMy Python code (powered by Flask and PyJWT) \nimport jwt\n...\n@app.route(&#39;/&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 1334,
+  "posts": [
+    {
+      "id": 107223,
+      "postNumber": 1,
+      "createdAt": "2022-12-13T12:45:25.576Z",
+      "author": "snb (Sergey Batishchev)",
+      "cookedHtml": "<p>Hi everybody,</p>\n<p>Is there any working Python example of custom app authentication?<br />\nThere is a Node example, but I cannot make it work on Python.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/integration-authorization#authorization-url-example\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday apps framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/apps/docs/integration-authorization#authorization-url-example\" target=\"_blank\" rel=\"noopener nofollow ugc\">Authorization for Integration Recipes</a></h3>\n\n  <p>Read more for a guide to designing your app's authorization flows.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>My Python code (powered by Flask and PyJWT)</p>\n<pre><code class=\"lang-auto\">import jwt\n...\n@app.route('/auth', methods=['GET'])\ndef auth():\n    args = request.args\n    token = args['token']\n    data = jwt.decode(token, MY_CLIENT_SECRET, algorithms=['HS256', 'SHA256', 'RSASSA', 'HMAC'])\n    return Response()  # just a stub for now\n</code></pre>\n<p>So I’m getting error “Signature verification failed” when decode the token (jwt.decode method).<br />\nWhat am I do wrong?</p>\n<p>Best regards,<br />\nSergey.</p>"
+    },
+    {
+      "id": 107237,
+      "postNumber": 2,
+      "createdAt": "2022-12-13T14:17:46.745Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/snb\">@snb</a>,</p>\n<p>Could you please confirm that you’re using your Signing Secret and not your Client Secret to decode the jwt?</p>\n<p>You can find your Signing Secret in your App configuration page.</p>"
+    },
+    {
+      "id": 107451,
+      "postNumber": 3,
+      "createdAt": "2022-12-15T08:19:50.376Z",
+      "author": "snb (Sergey Batishchev)",
+      "cookedHtml": "<p>Yes, it worked, thank you. Meanwhile I have to add option</p>\n<pre><code class=\"lang-auto\">options={'verify_aud': False}\n</code></pre>\n<p>to “decode” function to make it work.</p>"
+    },
+    {
+      "id": 107458,
+      "postNumber": 4,
+      "createdAt": "2022-12-15T10:07:08.127Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/snb\">@snb</a>,</p>\n<p>I am glad that worked!</p>\n<p>I did not understand what you said about adding verify_aud to the options object. Would you please elaborate?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 107531,
+      "postNumber": 5,
+      "createdAt": "2022-12-16T03:00:56.556Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> the JWT contains an “aud” element. This is the full URL to which monday sent the original request. When we receive a token, we can look at our headers and determine to what URL the request was sent (or if someone is daring enough to hard code it into their code…)</p>\n<p>We can pass this URL as follows (node.js)</p>\n<pre><code class=\"lang-auto\">jwt.verify(authHeader, secretKey, { audience: url })\n</code></pre>\n<p>Doing so, jwt.verify also checks that the token was sent by monday to the URL in question. I use it in my auth stage, as just a tiny bit of extra checking. Obviously an issue if you use redirects.</p>\n<p>Now just if the expiration timestamp in the jwt wasnt several minutes after the one in the shortLivedToken which is when the API server starts rejecting the token. So I have to also verify the slt to get the real expiration time, so I can reject the request if the slt is too close to becoming invalid to complete execution of the scenario.</p>"
+    },
+    {
+      "id": 107544,
+      "postNumber": 6,
+      "createdAt": "2022-12-16T08:37:16.673Z",
+      "author": "snb (Sergey Batishchev)",
+      "cookedHtml": "<p>My code is:</p>\n<pre><code class=\"lang-auto\">data = jwt.decode(token, MY_SIGNING_SECRET, algorithms=['HS256', 'SHA256', 'RSASSA', 'HMAC'], options={'verify_aud': False})\n</code></pre>"
+    },
+    {
+      "id": 107567,
+      "postNumber": 7,
+      "createdAt": "2022-12-16T12:47:48.935Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>yes, thats for python, i was just giving matias a node example and explanation.</p>"
+    },
+    {
+      "id": 107581,
+      "postNumber": 8,
+      "createdAt": "2022-12-16T14:24:26.746Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Just checking – <a class=\"mention\" href=\"/u/snb\">@snb</a> did you get this working in the end? Seems like yes, but wanted to confirm <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

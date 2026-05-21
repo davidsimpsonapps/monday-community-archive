@@ -1,0 +1,110 @@
+{
+  "id": 13662,
+  "title": "OAuth token for integrations",
+  "slug": "oauth-token-for-integrations",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-11-26T11:05:22.519Z",
+  "lastPostedAt": "2020-11-28T11:27:38.762Z",
+  "postsCount": 13,
+  "excerpt": "I am creating an integration that sends data from monday.com to an external application. The integration flow is as such: \nWhenever an item is created or updated in a board, the integration triggers my custom action url &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 2676,
+  "posts": [
+    {
+      "id": 34625,
+      "postNumber": 1,
+      "createdAt": "2020-11-26T11:05:22.592Z",
+      "author": "devagrawal09 (Dev Agrawal)",
+      "cookedHtml": "<p>I am creating an integration that sends data from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> to an external application. The integration flow is as such:<br />\nWhenever an item is created or updated in a board, the integration triggers my custom action url with the board ID from context. The custom trigger endpoint then uses the board ID to get data about the board (all the groups, columns and items) using the graphql API.<br />\nTo access the API, the app also includes oauth flow for <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> api.</p>\n<p>My question is: when I receive the update in my custom trigger endpoint, how do I decide which access token to use? All I receive in the custom trigger right now is the board id, and the oauth flow gives me the user id. How do I establish a relationship between the user and board?</p>\n<p>I also looked into custom entities, but it doesn’t seem to suit my use case.</p>"
+    },
+    {
+      "id": 34638,
+      "postNumber": 2,
+      "createdAt": "2020-11-26T13:15:51.918Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/devagrawal09\">@devagrawal09</a> – good question.</p>\n<p>From what you’re describing, t sounds like you’re using a <strong>custom action</strong> to update the external application. Is that correct?</p>\n<p>If that’s the case, you can add more input fields to your custom action to receive this data. For example, you can set up the action to include the “board” and “user” input fields:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/b13833ced63ad127139fb60128ce34f8604f2d52.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/b13833ced63ad127139fb60128ce34f8604f2d52_2_656x500.png\" alt=\"image\" width=\"656\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1650×1256 107 KB</span></div></a></div><p></p>\n<p>You can then set the block to get these fields from the integration “context”. This means that our server will send you the ID of the current board and user when the action is called. Here’s an example of that in action (no pun intended):<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/691870c887b99f173e8e582cdb64f05df391e371.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/691870c887b99f173e8e582cdb64f05df391e371_2_342x500.png\" alt=\"image\" width=\"342\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1066×1554 50.3 KB</span></div></a></div><p></p>\n<p>This information should be enough for you to choose the right user’s token.</p>\n<p>Let me know if that helps!</p>"
+    },
+    {
+      "id": 34646,
+      "postNumber": 3,
+      "createdAt": "2020-11-26T13:52:17.379Z",
+      "author": "devagrawal09 (Dev Agrawal)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> thank you for the response! Yes, I am using custom action, sorry for not mentioning that earlier. There might be one issue with the solution though, it is possible that the user who triggered the recipe and action is different from the person who authorized my application and provided the token. The user id sent along in the block is the id of the person who triggers the recipe, is it not? Please correct me if I’m wrong.</p>"
+    },
+    {
+      "id": 34654,
+      "postNumber": 4,
+      "createdAt": "2020-11-26T14:54:43.400Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/devagrawal09\">@devagrawal09</a></p>\n<p>Are you looking for the userid that has requested the monday token through an OAuth handshake?<br />\nIf so, can’t decode the token, like:</p>\n<pre><code>const jwt = require(\"jsonwebtoken\");\nconst tokenDecode = jwt.decode(token);\nconsole.log(tokenDecode.uid);</code></pre>"
+    },
+    {
+      "id": 34678,
+      "postNumber": 5,
+      "createdAt": "2020-11-26T18:42:04.148Z",
+      "author": "devagrawal09 (Dev Agrawal)",
+      "cookedHtml": "<p>Thanks, I did that already. The issue is that this user id might not be the same as the user id that is sent to me in the custom integration.</p>"
+    },
+    {
+      "id": 34683,
+      "postNumber": 6,
+      "createdAt": "2020-11-26T19:41:08.558Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Looks like we are not fully in sync. I read your previous reply and was under the impression that you were looking for the userid of the user who added the recipe to the board.</p>\n<p>The userid which is sent in a webhook is the userid who initiated the action (e.g. changed a status).</p>\n<p>When not using webhook I like the solution from Dipro to add the user in the recipe builder and define it’s originin as “Context”.</p>\n<p>Another solution is to read the activity log and check which user last changed the column triggering the event. (should be very high up in the activity log)</p>"
+    },
+    {
+      "id": 34700,
+      "postNumber": 7,
+      "createdAt": "2020-11-27T06:22:25.421Z",
+      "author": "devagrawal09 (Dev Agrawal)",
+      "cookedHtml": "<p>I agree we are not in sync. I do want the userid of the user who added the recipe to the board, and I know I can get that by decoding the oauth token. I also know that the userid send in a webhook is the id of the user who initiated the action.<br />\nMy issue is that once I receive the webhook/recipe action, I need to decide which access token to use to make API calls. If the user who initiated the action is the same as the user who added the recipe to the board, then I can just look for the access token related to the user id in my database. But if there is another user who triggered the action on the same board, how do I decide which access token to use?<br />\nPlease let me know if I need to clarify this issue more.</p>"
+    },
+    {
+      "id": 34705,
+      "postNumber": 8,
+      "createdAt": "2020-11-27T07:08:29.280Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Starting to understand (I think <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=9\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" />). Still a little confused why you want to execute the API call with a token other than the token from the user who added the recipe to the board. IMHO this can become very messy. Assume I added the recipe to the board and you trigger the automation. The API call should be done under my token as you might have different board permissions. I use the below piece of code at the start of all my functions that are linked to my endpoints.</p>\n<pre><code>try {\n    var { authorization } = req.headers;\n    if (!authorization &amp;&amp; req.query) authorization = req.query.token;\n    const { accountId, userId, aud, exp, iat } = jwt.verify(authorization, envVars.signingSecret);\n    req.session = { accountId, userId, aud, exp, iat };\n  } catch (err) {\n    res.status(401).json({ error: \"not authenticated\" });\n  }\n\n  const routePath = \"https://\" + req.headers.host + \"/\" + envVars.appCode + req.route.path;\n  if (req.session.aud !== routePath) return res.status(401).json({ error: \"not authenticated\" });\n\n  //Get the token from the token table\n   const token = await mySqlAccess.readToken(req.session.accountId, req.session.userId, envVars.appCode);</code></pre>"
+    },
+    {
+      "id": 34711,
+      "postNumber": 9,
+      "createdAt": "2020-11-27T07:27:17.468Z",
+      "author": "devagrawal09 (Dev Agrawal)",
+      "cookedHtml": "<p>I don’t want to execute the API call with a token other than the token from the user who added the recipe to the board. Let me explain it this way -<br />\nLet’s say you are the one who added the integration to a board, and also used oauth to provide a token. In the integration server, there is now an access token that is related with your user id.<br />\nNow let’s say I perform an action on your board that triggers the recipe. The recipe sends the board id, and <strong>my</strong> user id to the integration server. Now because I am not the one who provided the token, the integration server cannot find an access token with my user id. How does the integration server know that it has to find an access token related to <strong>your</strong> user id, when all it received in the integration recipe is <strong>my</strong> user id?</p>"
+    },
+    {
+      "id": 34716,
+      "postNumber": 10,
+      "createdAt": "2020-11-27T08:07:03.343Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Sorry, still not getting it <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />. When you say “integration server” is that your backend handling the endpoint configured as custom action?  I think you ar wrong by saying that integration server receives <strong>your</strong> user id, it actually receives <strong>my</strong> user id (as the creator of the recipe). See my code snippet how I get the accountId (I use my server for many accounts) and userId from the authorization header to get the token (that is the token for the one who created the recipe).</p>\n<p>I don’t even have (not do I want to) the tokens for all possible users in my customers accounts. I only have tokens from people who actually added the recipe on one of their boards.</p>"
+    },
+    {
+      "id": 34770,
+      "postNumber": 11,
+      "createdAt": "2020-11-27T17:53:55.131Z",
+      "author": "devagrawal09 (Dev Agrawal)",
+      "cookedHtml": "<p>Oh okay I did not realize that. I thought the id sent is that of the user who triggered the action. That solves all my problems! Thank you very much</p>"
+    },
+    {
+      "id": 34806,
+      "postNumber": 12,
+      "createdAt": "2020-11-28T11:27:38.762Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/devagrawal09\">@devagrawal09</a></p>\n<p>I’m glad Bas was able to help - he’s always super insightful <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Please feel free to reach out to the community if there’s anything else you’d like to clarify regarding building apps or using the API. <img src=\"https://emoji.discourse-cdn.com/apple/star.png?v=9\" title=\":star:\" class=\"emoji\" alt=\":star:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 43600,
+      "postNumber": 13,
+      "createdAt": "2021-03-05T15:53:32.529Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

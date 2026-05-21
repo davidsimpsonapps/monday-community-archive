@@ -1,0 +1,67 @@
+{
+  "id": 90635,
+  "title": "Redirect to oauth after app installation?",
+  "slug": "redirect-to-oauth-after-app-installation",
+  "categoryId": 58,
+  "tagIds": [
+    159
+  ],
+  "createdAt": "2024-06-21T07:53:21.940Z",
+  "lastPostedAt": "2024-06-27T10:32:57.180Z",
+  "postsCount": 7,
+  "excerpt": "Hi there, \nI created a new monday app, and setup scopes and redirect urls in the oauth section of my app settings. \nWhen I launch my app server locally, and click “login” (which redirect to the monday authorize url), I c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 106,
+  "posts": [
+    {
+      "id": 189840,
+      "postNumber": 1,
+      "createdAt": "2024-06-21T07:53:22.015Z",
+      "author": "wnm (Wolfram Müller)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>I created a new monday app, and setup scopes and redirect urls in the oauth section of my app settings.</p>\n<p>When I launch my app server locally, and click “login” (which redirect to the monday authorize url), I can successfully authorize the app:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/5/856a7aa5ddc76318176f08e5242211d72e465320.png\" title=\"Screenshot 2024-06-21 at 12-47-35 monday.com Your team's growth made easy Sign Up\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/5/856a7aa5ddc76318176f08e5242211d72e465320_2_690x338.png\" alt=\"Screenshot 2024-06-21 at 12-47-35 monday.com Your team's growth made easy Sign Up\" width=\"690\" height=\"338\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-21 at 12-47-35 monday.com Your team's growth made easy Sign Up</span><span class=\"informations\">3840×1884 231 KB</span></div></a></div><p></p>\n<p>After I’ve done that, the app is not installed in my workspace though.</p>\n<p>When I install the app via the “Manage → install” button in my Developer Center account, it installs the app, but it never triggers my oauth endpoint.</p>\n<p>So I’m wondering how app installations and oauth is connected?</p>\n<p>Idially, whenever a user installs the app (via the marketplace), I would like the app to redirect to my oauth endpoint (so that I get the token to make api calls), then I would redirect back a board that I created via api. Is that possible?</p>"
+    },
+    {
+      "id": 189966,
+      "postNumber": 2,
+      "createdAt": "2024-06-22T05:20:45.758Z",
+      "author": "wnm (Wolfram Müller)",
+      "cookedHtml": "<p>I think I found a way that somewhat works for my use case:</p>\n<p>I use the “Workspace template feature” to create a folder, a board for my app, and a Doc with instructions on how to use my app. Within that Doc, there is a link to “<a href=\"http://myapp.com/connect\" rel=\"noopener nofollow ugc\">http://myapp.com/connect</a>” which will trigger the oauth flow, and I tell users to click the link before using my app.</p>\n<p>It’s not ideal though. What if the user doesn’t click the link?</p>\n<p>I found this quote in the <a href=\"https://developer.monday.com/apps/docs/oauth\" rel=\"noopener nofollow ugc\">api docs</a>:</p>\n<blockquote>\n<p>You can set up OAuth for your app in two distinct phases: <strong>configuring your app</strong> and <strong>going through the standard OAuth flow</strong>.</p>\n</blockquote>\n<p>I think this is what I want. How can I trigger the oauth flow after someone installs my app <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ?</p>"
+    },
+    {
+      "id": 190129,
+      "postNumber": 3,
+      "createdAt": "2024-06-24T10:18:39.716Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/wnm\">@wnm</a>,</p>\n<p>What app features does your app have?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMAtias</p>"
+    },
+    {
+      "id": 190133,
+      "postNumber": 4,
+      "createdAt": "2024-06-24T10:34:25.000Z",
+      "author": "wnm (Wolfram Müller)",
+      "cookedHtml": "<p>I’m building a page builder type app, where users have a board, and each item represent a “page”, the content of the page will be stored as a Monday doc column.</p>\n<p>I want to use the api to pull the data out from a user’s workspace, und render the page for them.</p>\n<p>I’m not yet sure if I need any specific Monday app features. I’m probably going to use the ‘item view’ feature, so users can preview a page right there in their board.</p>"
+    },
+    {
+      "id": 190352,
+      "postNumber": 5,
+      "createdAt": "2024-06-25T10:42:12.294Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/wnm\">@wnm</a>,</p>\n<p>If you will have an item view feature, then you can just display the “OAuth request” view for which you can get the link in the OAuth section of your app inside “Redirect URLs”.</p>\n<p>When the user opens the item view, you can check if you already have an OAuth token for that user. If you do, you can redirect to the app. If you don’t you can redirect to the OAuth request view and get it.</p>\n<p>Is that what you needed?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 191216,
+      "postNumber": 6,
+      "createdAt": "2024-06-27T09:43:56.142Z",
+      "author": "wnm (Wolfram Müller)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>thanks for your reply!</p>\n<p>That’s not exactly what I need, no. I would like to get the token right from the start, not just when a user opens an item. The reason: as soon as the app is installed I want to setup their website, and need to make api requests right from the get go.</p>\n<p>I found that when you use an integration for sentence builder feature I can add an autzorization url, which will be used for the oauth. If I then add the integration feature as a starting point for the app, the oauth will be triggered right after install. Which is exactly what I want.</p>\n<p>The only problem with that solution is, that I then no longer can use a specific template as a starting point. <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>\n<p>I then tried something else.</p>\n<p>I added the automation to the template that I’m using as a starting point:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/0/9072ce72842d1be86ca724ba95dfa509f39e6660.png\" title=\"Screenshot 2024-06-27 at 11-36-55 Getting Started\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/9/0/9072ce72842d1be86ca724ba95dfa509f39e6660_2_690x338.png\" alt=\"Screenshot 2024-06-27 at 11-36-55 Getting Started\" width=\"690\" height=\"338\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-27 at 11-36-55 Getting Started</span><span class=\"informations\">3840×1884 304 KB</span></div></a></div><p></p>\n<p>The board which I added the automation, is used as a starting point in my app:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/3/e3bf34a8035ca53bbd4d4450cc66ed9cf4a39318.png\" title=\"Screenshot 2024-06-27 at 11-37-16 monday - Apps\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/3/e3bf34a8035ca53bbd4d4450cc66ed9cf4a39318_2_690x338.png\" alt=\"Screenshot 2024-06-27 at 11-37-16 monday - Apps\" width=\"690\" height=\"338\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-27 at 11-37-16 monday - Apps</span><span class=\"informations\">3840×1884 475 KB</span></div></a></div><p></p>\n<p>I then switched to a different account, installed the app, and clicked on “Use App”:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/9/29e4f9a3c2f9eeee5b095e5e0d5a05395f22dd65.png\" title=\"Screenshot 2024-06-27 at 11-38-24 monday - Home\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/9/29e4f9a3c2f9eeee5b095e5e0d5a05395f22dd65_2_690x338.png\" alt=\"Screenshot 2024-06-27 at 11-38-24 monday - Home\" width=\"690\" height=\"338\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-27 at 11-38-24 monday - Home</span><span class=\"informations\">3840×1884 329 KB</span></div></a></div><p></p>\n<p>This triggered the onboarding flow, which successfully copied the template to my workspace, and added the automation that I’ve setup.</p>\n<p>I did <strong>not</strong> trigger a oauth request though.</p>\n<p>So when the automation triggered (by creating a new item), I received the request on my server, but couldn’t make an api call because I didn’t have a valid access token.</p>\n<p>In my opinion, the puzzle piece that is missing is a standalone “connect via oauth” feature, similiar to what is included in the “integration for sentence” feature, which triggers an oauth flow, after the installation of an app.</p>\n<p>It could also include a backToUrl param, which we could use to redirect the user back to finish the onboarding…to whatever we have setup as the starting point (specific feature, or template).</p>"
+    },
+    {
+      "id": 191242,
+      "postNumber": 7,
+      "createdAt": "2024-06-27T10:32:57.180Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/wnm\">@wnm</a>,</p>\n<p>Thank you for the thorough explanation!</p>\n<p>Then I believe this is a great request for our team to consider <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

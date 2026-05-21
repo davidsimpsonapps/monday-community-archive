@@ -1,0 +1,48 @@
+{
+  "id": 30334,
+  "title": "How can I add a custom readonly column in the dynamic entity mapping(Like Jira column in Jira ticket)?",
+  "slug": "how-can-i-add-a-custom-readonly-column-in-the-dynamic-entity-mapping-like-jira-column-in-jira-ticket",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    208,
+    351
+  ],
+  "createdAt": "2022-01-24T09:14:26.569Z",
+  "lastPostedAt": "2022-01-25T16:49:51.171Z",
+  "postsCount": 4,
+  "excerpt": "I would like to have a custom readonly field which will contain a link to an action item in our system. Similar to what Jira integration has with “Jira” column which contains Issue Id (See screenshot below). \nHow I can a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1877,
+  "posts": [
+    {
+      "id": 74774,
+      "postNumber": 1,
+      "createdAt": "2022-01-24T09:14:26.646Z",
+      "author": "Severyn (Severyn Vehera)",
+      "cookedHtml": "<p>I would like to have a custom readonly field which will contain a link to an action item in our system. Similar to what Jira integration has with “Jira” column which contains Issue Id (See screenshot below).<br />\nHow I can achieve that?<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/b513a87aac4a027be9b5b323c4391ff69fda4a6f.png\" title=\"Jira field\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/b513a87aac4a027be9b5b323c4391ff69fda4a6f_2_495x500.png\" alt=\"Jira field\" width=\"495\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Jira field</span><span class=\"informations\">801×809 30.7 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 74798,
+      "postNumber": 2,
+      "createdAt": "2022-01-24T12:44:51.915Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/severyn\">@Severyn</a></p>\n<p>There is a “secret” column type that can not be added through the UI but only through the API. Example to create such column is:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_column(board_id: 123456789, title: \"Read only\", column_type: integration) {\n    id\n  }\n}\n</code></pre>\n<p>The columnId is returned. You need to <em><strong>refresh</strong></em> the board to see the new column.</p>\n<p>Now, you can set the column value (only through the API) with</p>\n<pre><code class=\"lang-auto\">mutation {\nchange_column_value (item_id:987654321, board_id:123456789, column_id:\"read_only\", value:\"{\\\"entity_id\\\":\\\"whatever you want\\\"}\") {\n  id\n}\n}\n</code></pre>\n<p>This will <em><strong>only</strong></em> work when there is no value in the column (aka write-once-read-many). The second attempt to write will not fail but the new value will not be written.</p>\n<p>The user can’t change the column, but can clear its value. When the value is cleared a new value can be written through the API (once). I did not find a way to clear the column value through the API and I think that is intentional. The fact that the user can clear the column is in my opinion a bug.</p>\n<p>DISCLAIMER: this is not documented and may change at any time <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />. I am not <a href=\"http://monday.com\">monday.com</a> so use it at your own risk.</p>"
+    },
+    {
+      "id": 74830,
+      "postNumber": 3,
+      "createdAt": "2022-01-24T14:45:57.451Z",
+      "author": "Severyn (Severyn Vehera)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>  Thanks for your answer!</p>"
+    },
+    {
+      "id": 74971,
+      "postNumber": 4,
+      "createdAt": "2022-01-25T16:49:51.171Z",
+      "author": "jleni (Juan)",
+      "cookedHtml": "<p>This is very useful!! but the manual clearing should be clarified or fixed to avoid future surprises…</p>"
+    }
+  ]
+}

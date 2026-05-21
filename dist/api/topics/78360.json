@@ -1,0 +1,49 @@
+{
+  "id": 78360,
+  "title": "Python script, API call returning mirror columns 'text' and vaues as None",
+  "slug": "python-script-api-call-returning-mirror-columns-text-and-vaues-as-none",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    203
+  ],
+  "createdAt": "2024-02-15T22:02:29.042Z",
+  "lastPostedAt": "2024-02-18T11:03:00.927Z",
+  "postsCount": 4,
+  "excerpt": "Hello community, \nI am trying to get all items on differents boards into a csv, but I am having an issue, all conencted_boards mirror columns “text” and “values” coming from the API call are None. The Query and code goes&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 214,
+  "posts": [
+    {
+      "id": 168232,
+      "postNumber": 1,
+      "createdAt": "2024-02-15T22:02:29.128Z",
+      "author": "juholaan1 (Juan Becerra)",
+      "cookedHtml": "<p>Hello community,</p>\n<p>I am trying to get all items on differents boards into a csv, but I am having an issue, all conencted_boards mirror columns “text” and “values” coming from the API call are None. The Query and code goes as follows:</p>\n<pre><code class=\"lang-auto\">api_key = my_api_key\nurl = my_url\n\nheaders = {\n'Authorization': api_key,\n'API-Version' : '2024-01'\n}\n\nboard_id = 'xxxxxxx'\n\n#modifies depending on pagination.\nquery = f'''\n    query {{\n        boards(ids: {board_id}) {{\n            items_count\n            items_page(limit: 500{cursor_part}) {{\n                cursor\n                items {{\n                    id\n                    name\n                    column_values {{\n                        column {{\n                            title\n                        }}\n                        type\n                        text\n                        value\n                    }}\n                }}\n            }}\n        }}\n    }}\n\nresponse = requests.post(url, headers=headers, json={'query': query})\ndata = response.json()\n\nitems = data['data']['boards'][0]['items_page']['items']\n\nfor item in items:\n    item_values = {'Item ID': item['id'], 'Item Name': item['name']}\n    for column_value in item['column_values']:\n        print(column_value)\n</code></pre>\n<p>Finally when printing the information ALL the item_values coming from connected_boards/mirror have the following behavior:</p>\n<p><code>{'column': {'title': 'Customer'}, 'type': 'mirror', 'text': None, 'value': None}</code><br />\n<code>{'column': {'title': 'Opportunity'}, 'type': 'board_relation', 'text': None, 'value': '{\"linkedPulseIds\":[{\"linkedPulseId\":5361152121}]}'}</code></p>\n<p>how to get my query or my code to retrieve thos empty values?</p>"
+    },
+    {
+      "id": 168267,
+      "postNumber": 2,
+      "createdAt": "2024-02-16T08:32:00.356Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/juholaan1\">@juholaan1</a></p>\n<p>For those columns that require access to different boards (like connect_boards and mirror columns) you need to ask for the value explicitly in a GraphQL fragment.</p>\n<pre><code class=\"lang-auto\">    query {{\n        boards(ids: {board_id}) {{\n            items_count\n            items_page(limit: 500{cursor_part}) {{\n                cursor\n                items {{\n                    id\n                    name\n                    column_values {{\n                        column {{\n                            title\n                        }}\n                        type\n                        text\n                        value\n                        ... on BoardRelationValue {\n                          display_value\n                        }\n                        ... on MirrorValue {\n                          display_value\n                        }\n                    }}\n                }}\n            }}\n        }}\n    }}\n</code></pre>\n<p>Keep in mind you need to ack for display_value and not value.</p>"
+    },
+    {
+      "id": 168288,
+      "postNumber": 3,
+      "createdAt": "2024-02-16T10:51:44.339Z",
+      "author": "juholaan1 (Juan Becerra)",
+      "cookedHtml": "<p>Hello Bas de Bruin,</p>\n<p>Thanks so much for your answer, that completely solves my issue here.</p>"
+    },
+    {
+      "id": 168536,
+      "postNumber": 4,
+      "createdAt": "2024-02-18T11:03:00.927Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for the help!!</p>"
+    }
+  ]
+}

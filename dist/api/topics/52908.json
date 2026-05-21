@@ -1,0 +1,167 @@
+{
+  "id": 52908,
+  "title": "Accessing assets (files) in Monday through API",
+  "slug": "accessing-assets-files-in-monday-through-api",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    351
+  ],
+  "createdAt": "2023-03-03T13:27:04.261Z",
+  "lastPostedAt": "2024-08-04T08:04:00.846Z",
+  "postsCount": 20,
+  "excerpt": "I have a GraphQL query that I’m running to get access to files uploaded to my board for a certain item.  I’m using the following assets query: \nquery {\n  boards (ids:&lt;board_id&gt;) {\n    items (ids: &lt;item_id&gt;) {\n      asset&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2081,
+  "posts": [
+    {
+      "id": 117965,
+      "postNumber": 1,
+      "createdAt": "2023-03-03T13:27:04.343Z",
+      "author": "davidenergy (David Smith)",
+      "cookedHtml": "<p>I have a GraphQL query that I’m running to get access to files uploaded to my board for a certain item.  I’m using the following <code>assets</code> query:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids:&lt;board_id&gt;) {\n    items (ids: &lt;item_id&gt;) {\n      assets {\n        id\n        name\n        url\n        file_extension\n      }\n    }\n  }\n}\n</code></pre>\n<p>but it’s only returning a single file that is actually in one of the columns.  It’s not returning the other files that are uploaded with and associated with that item (I can see the files on the UI, just not through API)</p>\n<p>any ideas why?</p>"
+    },
+    {
+      "id": 118062,
+      "postNumber": 2,
+      "createdAt": "2023-03-05T06:27:07.455Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/davidenergy\">@davidenergy</a>,</p>\n<p>Are these links too or only files that have been uploaded to monday? Where are the other files located? In other columns? In the updates?</p>"
+    },
+    {
+      "id": 118078,
+      "postNumber": 3,
+      "createdAt": "2023-03-05T10:54:31.222Z",
+      "author": "davidenergy (David Smith)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> , thanks so much for your response.</p>\n<p>I’m very new to Monday so I’m not sure how to differentiate between ‘links’ vs ‘only files’. I’ll attempt to answer with screenshots.</p>\n<p>When I <strong>open</strong> the row, using this screenshot:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/d/8d3571821ec2ddb92a923f511d8f761fa124f9ae.png\" alt=\"image\" width=\"358\" height=\"190\" /></p>\n<p>It brings me to a panel that has these tabs:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/5/d5f2c9e74970de76d6df303dd73742c5cca336fb.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/5/d5f2c9e74970de76d6df303dd73742c5cca336fb.png\" alt=\"image\" width=\"690\" height=\"47\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1086×74 5.21 KB</span>\n</div></a></div><p></p>\n<p>When I click on the Files tab there, I see a bunch of files that I can’t access from the API using the <code>assests</code> query above.  Am I doing something wrong?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 118079,
+      "postNumber": 4,
+      "createdAt": "2023-03-05T11:06:27.607Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/davidenergy\">@davidenergy</a> and thank you for that information!</p>\n<p>The files you are seeing are the ones that are uploaded in a column.</p>\n<p>It looks like the files you also are trying to access are the ones you have in your updates.</p>\n<p>You can use a query like this one to access both of them:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1234567890) {\n    updates {\n      assets {\n        name\n      }\n    }\n    assets {\n      name\n    }\n  }\n}\n</code></pre>\n<p>The first one (updates-&gt;assets) will be the assets from your updates.</p>\n<p>The second one (assets directly) will be the assets from your columns.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 118081,
+      "postNumber": 5,
+      "createdAt": "2023-03-05T11:23:21.314Z",
+      "author": "davidenergy (David Smith)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ,</p>\n<p>Unfortunately the <code>updates-&gt;assets</code> only returned empty results (here is the top part of the return):</p>\n<pre><code class=\"lang-auto\">    \"boards\": [\n      {\n        \"items\": [\n          {\n            \"updates\": [\n              {\n                \"assets\": []\n              }\n            ],\n</code></pre>\n<p>Any other ideas?</p>"
+    },
+    {
+      "id": 118083,
+      "postNumber": 6,
+      "createdAt": "2023-03-05T12:19:22.972Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/davidenergy\">@davidenergy</a>,</p>\n<p>That result can appear if:</p>\n<p>A. You have no assets in the updates for that item.<br />\nor<br />\nB. The API being used does not have access to those assets (because of some permissions in place).</p>\n<p>If none of those is the case, you should send an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with a screen recording of the situation and writing down:</p>\n<ul>\n<li>Your account ID (or account name)</li>\n<li>Board ID of the board you are using</li>\n<li>Item ID of the item you are using</li>\n<li>Timestamp of when you tried the query (date, hour, minute and location)</li>\n</ul>\n<p>With the screen recording and that information, our team can take a closer look into it.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 118084,
+      "postNumber": 7,
+      "createdAt": "2023-03-05T12:35:26.441Z",
+      "author": "davidenergy (David Smith)",
+      "cookedHtml": "<p>Thanks, there are four files in the <code>Files</code> tab (see screenshot):</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/7/7/77198dea199b2e6f640b733cc54b54274fd9d6c3.png\" alt=\"image\" width=\"472\" height=\"216\" /></p>\n<p>I can access and download all files on the UI. I’m assuming my API key has the same permissions as the UI.</p>\n<p>I’ll figure out how to create a screen recording and send to the email you provided.  Thanks!</p>"
+    },
+    {
+      "id": 118090,
+      "postNumber": 9,
+      "createdAt": "2023-03-05T13:52:10.197Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Those 4 files might be in file columns.</p>\n<p>If none of them are in the updates of the item, then you will not see them in</p>\n<pre><code class=\"lang-auto\">updates {\n  assets {\n    name\n  }\n}\n</code></pre>\n<p>If the assets are in file columns, you will see them in:</p>\n<pre><code class=\"lang-auto\">    assets {\n      name\n    }\n</code></pre>"
+    },
+    {
+      "id": 118123,
+      "postNumber": 10,
+      "createdAt": "2023-03-05T16:56:03.815Z",
+      "author": "davidenergy (David Smith)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>  thanks for your reply.</p>\n<p>The files are not in the <code>updates</code> tab, they’re in the <code>files</code> tab (see screenshot).  They’re also not in the columns, only on the <em>Files</em> tab.  Any way to access that?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/0/f0400a50d54ae71cdb3aba247f41d0edf5a8ad61.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/f/0/f0400a50d54ae71cdb3aba247f41d0edf5a8ad61.png\" alt=\"image\" width=\"690\" height=\"174\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1116×282 11.8 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 118192,
+      "postNumber": 11,
+      "createdAt": "2023-03-06T06:00:18.641Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/davidenergy\">@davidenergy</a> oh, you uploaded the assets directly in the gallery.</p>\n<p>In that case there is only one way to access them. You would need to manually open the file using the UI, check the ID of the asset at the end of the URL in your browser’s address bar and then use that ID in a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  assets (ids:1234567890){\n    name\n  }\n}\n</code></pre>\n<p>There is no other way of accessing files that were uploaded directly to the gallery as of today.</p>"
+    },
+    {
+      "id": 118332,
+      "postNumber": 12,
+      "createdAt": "2023-03-06T23:32:56.146Z",
+      "author": "davidenergy (David Smith)",
+      "cookedHtml": "<p>Very helpful - thank you. Hopefully providing an ability to query the <code>ids</code> of these assets in the future will be feasible. I can see that using the <code>assets</code> query with the <code>id</code> that I get from the UI, I can get at the file itself. But this doesn’t help me much since I need a list of <code>ids</code> programmatically.</p>"
+    },
+    {
+      "id": 118367,
+      "postNumber": 13,
+      "createdAt": "2023-03-07T05:51:01.668Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/davidenergy\">@davidenergy</a>,</p>\n<p>I have opened a request for this <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 118368,
+      "postNumber": 14,
+      "createdAt": "2023-03-07T05:52:41.956Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/views/54957189/pulses/4097748835\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 121169,
+      "postNumber": 15,
+      "createdAt": "2023-03-24T07:03:52.815Z",
+      "author": "Kega (Jesper)",
+      "cookedHtml": "<p>I would like to second this.<br />\nIt was breaking my brain that I had assets but couldn’t see them in the API unless they where in a file column.</p>\n<p>We have so many files added through conversation, so being able to search through all files on an item and filter on file type would be a huge help.</p>"
+    },
+    {
+      "id": 121306,
+      "postNumber": 16,
+      "createdAt": "2023-03-26T04:11:58.281Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/kega\">@Kega</a>,</p>\n<p>Thank you for the feedback!</p>\n<p>I have added your vote in this request <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 152794,
+      "postNumber": 17,
+      "createdAt": "2023-11-13T05:13:28.536Z",
+      "author": "beepboop (Sally)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> , can you please share the feature request link?<br />\nAlso is there any update to this?</p>\n<p>Cheers</p>"
+    },
+    {
+      "id": 152803,
+      "postNumber": 18,
+      "createdAt": "2023-11-13T06:50:04.479Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/beepboop\">@beepboop</a> and welcome to the community!</p>\n<p>The requests board is internal and it is not shared with the public.</p>\n<p>I do not have an update on this yet but we will let you know if that changes. I have added your vote for this <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 152835,
+      "postNumber": 19,
+      "createdAt": "2023-11-13T10:02:41.806Z",
+      "author": "beepboop (Sally)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> and <a class=\"mention\" href=\"/u/davidenergy\">@davidenergy</a> , this is possible by using the assets_source argument</p>\n<pre><code class=\"lang-auto\">assets(assets_source: all)\n</code></pre>"
+    },
+    {
+      "id": 152838,
+      "postNumber": 20,
+      "createdAt": "2023-11-13T10:48:09.581Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/beepboop\">@beepboop</a>,</p>\n<p>I missed that completely! My bad!</p>\n<p>Thank you for mentioning it <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 195885,
+      "postNumber": 21,
+      "createdAt": "2024-08-02T13:11:03.869Z",
+      "author": "ipf22 (Iain Lindahl)",
+      "cookedHtml": "<p>This was the answer I was looking for, spent ages searching, thanks Sally!</p>\n<p>This is nowhere to be found in the API reference on Assets. Could someone at Monday look at updating that page to make this clear?</p>"
+    },
+    {
+      "id": 195990,
+      "postNumber": 22,
+      "createdAt": "2024-08-04T08:04:00.846Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ipf22\">@ipf22</a> and welcome to the community <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can find this <a href=\"https://developer.monday.com/api-reference/reference/items#fields\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

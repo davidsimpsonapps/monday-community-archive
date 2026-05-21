@@ -1,0 +1,69 @@
+{
+  "id": 92184,
+  "title": "Type error with Vibe components in React + TypeScript project",
+  "slug": "type-error-with-vibe-components-in-react-typescript-project",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351,
+    353
+  ],
+  "createdAt": "2024-07-03T12:04:15.749Z",
+  "lastPostedAt": "2024-07-07T06:47:33.609Z",
+  "postsCount": 7,
+  "excerpt": "Hi :wave: \nI would like to ask a question about Vibe components in Vite project with React and Typescript. \nWhen I try to render any component from monday-ui-react-core package, I receive this kind of error in IDE: \n&#39;But&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 289,
+  "posts": [
+    {
+      "id": 192048,
+      "postNumber": 1,
+      "createdAt": "2024-07-03T12:04:15.825Z",
+      "author": "dziomek-soldevelo (Daniel Ziomek)",
+      "cookedHtml": "<p>Hi <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>I would like to ask a question about Vibe components in Vite project with React and Typescript.<br />\nWhen I try to render any component from <code>monday-ui-react-core</code> package, I receive this kind of error in IDE:</p>\n<pre><code class=\"lang-auto\">'Button' cannot be used as a JSX component.\n  Its type '((VibeComponent&lt;ButtonProps &amp; RefAttributes&lt;unknown&gt;, unknown&gt; &amp; Partial&lt;{ sizes: { readonly SMALL: \"small\"; readonly MEDIUM: \"medium\"; readonly LARGE: \"large\"; readonly XXS: \"xxs\"; readonly XS: \"xs\"; }; colors: typeof ButtonColor; kinds: typeof ButtonType; types: typeof ButtonInputType; inputTags: typeof ButtonInpu...' is not a valid JSX element type.\n    Type 'VibeComponent&lt;ButtonProps &amp; RefAttributes&lt;unknown&gt;, unknown&gt; &amp; Partial&lt;{ sizes: { readonly SMALL: \"small\"; readonly MEDIUM: \"medium\"; readonly LARGE: \"large\"; readonly XXS: \"xxs\"; readonly XS: \"xs\"; }; colors: typeof ButtonColor; kinds: typeof ButtonType; types: typeof ButtonInputType; inputTags: typeof ButtonInputT...' is not assignable to type 'ElementType'.\n      Type 'VibeComponent&lt;ButtonProps &amp; RefAttributes&lt;unknown&gt;, unknown&gt; &amp; Partial&lt;{ sizes: { readonly SMALL: \"small\"; readonly MEDIUM: \"medium\"; readonly LARGE: \"large\"; readonly XXS: \"xxs\"; readonly XS: \"xs\"; }; colors: typeof ButtonColor; kinds: typeof ButtonType; types: typeof ButtonInputType; inputTags: typeof ButtonInputT...' is not assignable to type '(props: any, deprecatedLegacyContext?: any) =&gt; ReactNode'.\n        Type 'ReactElement&lt;any, string | JSXElementConstructor&lt;any&gt;&gt; | null' is not assignable to type 'ReactNode'.\n          Type 'ReactElement&lt;any, string | JSXElementConstructor&lt;any&gt;&gt;' is not assignable to type 'ReactNode'.\n            Property 'children' is missing in type 'ReactElement&lt;any, string | JSXElementConstructor&lt;any&gt;&gt;' but required in type 'ReactPortal'.ts(2786)\n</code></pre>\n<p>These are the project dependencies:</p>\n<pre><code class=\"lang-auto\">  \"dependencies\": {\n    \"monday-sdk-js\": \"^0.5.5\",\n    \"monday-ui-react-core\": \"^2.116.0\",\n    \"react\": \"^18.3.1\",\n    \"react-dom\": \"^18.3.1\",\n  },\n  \"devDependencies\": {\n    ...,\n    \"@types/react\": \"^18.3.3\",\n    \"@types/react-dom\": \"^18.3.0\",\n    \"typescript\": \"^5.5.2\",\n    \"vite\": \"^5.3.1\"\n  }\n</code></pre>\n<p>It seems that since <code>@types/react: ^18.2.8</code> there is the incompatibility with Vibe components, but when downgrading to earlier versions other JSX type issues come up.</p>\n<p>Is there any solution to get rid of those errors?</p>"
+    },
+    {
+      "id": 192140,
+      "postNumber": 2,
+      "createdAt": "2024-07-04T06:15:53.136Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dziomek-soldevelo\">@dziomek-soldevelo</a>,</p>\n<p>We checked this with the amazing team in charge of Vibe!</p>\n<p>Following your report regarding an issue that occurs when using react 18.3+ alongside <span class=\"mention\">@types</span>/react 18.3+ and Vibe.</p>\n<p>We can confirm that the error that reads “cannot be used as a JSX component” is being shown by TS.</p>\n<p>This is due to type conflicts arising from different versions of <span class=\"mention\">@types</span>/react being used across dependencies.</p>\n<p>Please take a look at this <a href=\"https://react.dev/blog/2024/04/25/react-19-upgrade-guide#react-18-3\">React 19 upgrade guide</a> where they mention that React 18.3 is intended for making the upgrade to React 19 easier, and adds warning for deprecated APIs.</p>\n<p>Therefore, to resolve this issue, we recommend adding the following configuration to your tsconfig.json file:</p>\n<pre><code class=\"lang-auto\">{\n  \"compilerOptions\": {\n    ...\n    \"paths\": {\n      \"react\": [\"./node_modules/@types/react\"]\n    }\n  }\n}\n</code></pre>\n<p>This configuration forces TypeScript to use a single version of the React type definitions, ensuring consistency and preventing the mentioned errors.</p>\n<p>Please let us know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 192200,
+      "postNumber": 3,
+      "createdAt": "2024-07-04T08:31:20.239Z",
+      "author": "ngruson (Nils Gruson)",
+      "cookedHtml": "<p>I just wanted to post the same question. I’m on version 2.105.0 of monday-ui-react-core and I also get the same errors. I tried to downgrade react dependencies but I can’t get my project to build correctly.</p>"
+    },
+    {
+      "id": 192212,
+      "postNumber": 4,
+      "createdAt": "2024-07-04T09:21:35.599Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ngruson\">@ngruson</a>,</p>\n<p>If you have already tried the solution provided above by me and it did not work for you, please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it so that our team can take a look into it <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 192386,
+      "postNumber": 5,
+      "createdAt": "2024-07-07T05:43:46.267Z",
+      "author": "dziomek-soldevelo (Daniel Ziomek)",
+      "cookedHtml": "<p>The solution you provided works! <img src=\"https://emoji.discourse-cdn.com/apple/tada.png?v=12\" title=\":tada:\" class=\"emoji\" alt=\":tada:\" width=\"20\" height=\"20\" /></p>\n<p>Thank you <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> for investigating the problem with Vibe team and a quick response.</p>\n<p><a class=\"mention\" href=\"/u/ngruson\">@ngruson</a> FYI. I saw you had a similar problem.</p>"
+    },
+    {
+      "id": 192403,
+      "postNumber": 6,
+      "createdAt": "2024-07-07T06:47:09.130Z",
+      "author": "ngruson (Nils Gruson)",
+      "cookedHtml": "<p>The suggestion above works for me. I can succesfully compile my project again <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />.<br />\nThank you, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> !</p>"
+    },
+    {
+      "id": 192404,
+      "postNumber": 7,
+      "createdAt": "2024-07-07T06:47:33.609Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone!</p>\n<p>I am glad this is working for all of you now <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Happy to help over here!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

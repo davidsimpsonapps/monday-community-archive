@@ -1,0 +1,54 @@
+{
+  "id": 82599,
+  "title": "How to find the board views for my app only?",
+  "slug": "how-to-find-the-board-views-for-my-app-only",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-03-31T18:14:34.380Z",
+  "lastPostedAt": "2024-04-02T09:14:21.257Z",
+  "postsCount": 5,
+  "excerpt": "I’m trying to find all the board views for my app from within my app. \nFor example, if multiple board views have been added for the same app, I want my app to be aware. \nFor a particular board, I can find all the board v&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 155,
+  "posts": [
+    {
+      "id": 175983,
+      "postNumber": 1,
+      "createdAt": "2024-03-31T18:14:34.457Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I’m trying to find all the board views for my app from within my app.</p>\n<p>For example, if multiple board views have been added for the same app, I want my app to be aware.</p>\n<p>For a particular board, I can find all the board views using this GraphQL:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [2768573330]) {\n    name\n    id\n    type\n    views {\n      id\n      name\n      type\n      __typename\n      settings_str\n      source_view_id\n      view_specific_data_str\n    }\n  }\n}\n\n</code></pre>\n<p>It produces:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"name\": \"My Example Board \",\n        \"id\": \"2768573330\",\n        \"type\": \"board\",\n        \"views\": [\n          {\n            \"id\": \"138306178\",\n            \"name\": \"Google Calendar Example\",\n            \"type\": \"FeatureBoardView\",\n            \"__typename\": \"BoardView\",\n            \"settings_str\": \"{}\",\n            \"source_view_id\": null,\n            \"view_specific_data_str\": \"{}\"\n          },\n          {\n            \"id\": \"184034674\",\n            \"name\": \"Another Example\",\n            \"type\": \"FeatureBoardView\",\n            \"__typename\": \"BoardView\",\n            \"settings_str\": \"{}\",\n            \"source_view_id\": null,\n            \"view_specific_data_str\": \"{}\"\n          },\n          {\n            \"id\": \"146738409\",\n            \"name\": \"Yet another Example\",\n            \"type\": \"FeatureBoardView\",\n            \"__typename\": \"BoardView\",\n            \"settings_str\": \"{}\",\n            \"source_view_id\": null,\n            \"view_specific_data_str\": \"{}\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": 123445678\n}\n</code></pre>\n<p>This returns all board views (from all apps).</p>\n<ul>\n<li>Is there any way to identify which board view goes with which app?</li>\n<li>I want to filter by just my app’s board views, not all of them</li>\n</ul>"
+    },
+    {
+      "id": 176032,
+      "postNumber": 2,
+      "createdAt": "2024-04-01T05:27:21.887Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>I haven’t really tried working with the board view settings but is there a chance you can set a unique value for the settings for your app which you can filter by?</p>"
+    },
+    {
+      "id": 176034,
+      "postNumber": 3,
+      "createdAt": "2024-04-01T05:36:06.073Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> That’s exactly where I was going next if I heard nothing back <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 176040,
+      "postNumber": 4,
+      "createdAt": "2024-04-01T06:53:26.856Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kolaai\">@kolaai</a></p>\n<p>Yeah, storing things in settings is no good.</p>\n<ol>\n<li>There’s no way of hiding settings from the end user, so they will be visible</li>\n<li>Settings are user editable, so may change (and just look odd as well).</li>\n<li>You can only save settings that have been specified in the UI</li>\n</ol>\n<p>Example, if the setting added in the UI is called <code>text</code>, you would only be able to store in that field, so saving this:</p>\n<pre><code class=\"lang-auto\">const payload = {\n  appId: 'my.app',\n  appPath: location.pathname,\n  text: 'xxx'\n}\nmonday.set(\"settings\", payload),then(...)\n</code></pre>\n<p>…would actually save as:</p>\n<pre><code class=\"lang-auto\">{\n  text: 'xxx'\n}\n</code></pre>\n<p>Hmmm.</p>"
+    },
+    {
+      "id": 176386,
+      "postNumber": 5,
+      "createdAt": "2024-04-02T09:14:21.257Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>,</p>\n<p>What about getting the view ID via SDK (context) the first time the view loads and saving it so that then you can query for the views in a board and compare the IDs?</p>"
+    }
+  ]
+}

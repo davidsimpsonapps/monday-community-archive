@@ -1,0 +1,61 @@
+{
+  "id": 72936,
+  "title": "Parse Error With Graph QL when updating column values for sub item",
+  "slug": "parse-error-with-graph-ql-when-updating-column-values-for-sub-item",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-12-13T11:41:53.285Z",
+  "lastPostedAt": "2023-12-27T08:58:11.996Z",
+  "postsCount": 6,
+  "excerpt": "Hello, \nI’m trying to create a subitem for a parent item, and I have difficulties with a mutation who work on playground but not in my code. \n(TypeScript) \nconst client: GraphQLClient = new GraphQLClient(\n      &#39;https://&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 535,
+  "posts": [
+    {
+      "id": 157693,
+      "postNumber": 1,
+      "createdAt": "2023-12-13T11:41:53.359Z",
+      "author": "Alex-AA (Alex AA)",
+      "cookedHtml": "<p>Hello,<br />\nI’m trying to create a subitem for a parent item, and I have difficulties with a mutation who work on playground but not in my code.<br />\n(TypeScript)</p>\n<pre><code class=\"lang-auto\">const client: GraphQLClient = new GraphQLClient(\n      'https://api.monday.com/v2/',\n      {\n        headers: {\n          'Content-Type': 'application/json',\n          Authorization: 'my token',\n        },\n      },\n    );\n\nconst item_id: number = XXX;\nconst metric_item = 'Name';\nconst metric_value = JSON.stringify({ numbers: '22' });\n\nconst add_metric_sub_item_mutation = `\n  mutation {\n    create_subitem (parent_item_id: ${item_id}, item_name: ${metric_item}, column_values: ${metric_value} {\n      id\n     }\n}\n`;\n\nawait client.request(add_metric_sub_item_mutation);\n</code></pre>\n<p>I also try with variables but always the same error. I also try every solution found in previous community posts but still here…</p>\n<pre><code class=\"lang-auto\">Error: Parse error on \"column_values\" (IDENTIFIER) at [3, 83]: {\"response\":{\"errors\":[{\"message\":\"Parse error on \\\"column_values\\\" (IDENTIFIER) at [3, 83]\",\"locations\":[{\"line\":3,\"column\":83}]}],\"account_id\":14676321,\"status\":200,\"headers\":{}},\"request\":{\"query\":\"\\n      mutation {\\n        create_subitem (parent_item_id: XXX, item_name: Name, column_values: {\\\"numbers\\\":\\\"22\\\"} {\\n          id\\n        }\\n      }\\n    \"}}\n</code></pre>\n<p>Any tips?</p>"
+    },
+    {
+      "id": 157711,
+      "postNumber": 2,
+      "createdAt": "2023-12-13T12:37:00.171Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I suggest looking into using GraphQL Variables rather than string substitution. The issue you’re running into is the metric_value JSON being substituted isn’t properly escaped for quotes when the string gets serialized by the client for the request.</p>\n<p>These let you define placeholders the graphql server will use values from a “variables” object thats included with the request when it processes, rather than string substitution.</p>\n<p>Your names can be whatever you want them to be, but i prefer being specific to the query</p>\n<pre><code class=\"lang-auto\">const variables = {\n  itemId: item_id,\n  itemName: metric_item,\n  values: metric_value\n}\n\nconst query = `\n  mutation ($itemId: ID!, $itemName: String!, $values: JSON!) {\n    create_subitem (parent_item_id: $itemId, item_name: $itemName, column_values: $values {\n      id\n     }\n}\n`\n\nawait client.request(query, variables)\n</code></pre>\n<p>GraphQLClient supports a variables object being supplied alongside the query. Another advantage of variables is you don’t have to allocate a string every time its called, you can create the query string outside the query function.</p>\n<p><strong>Also add the \"“API-Version”: “2023-10\"” header. 2023-07 is going to be removed from service on January 15th, so you want to make sure you’re testing against the new API - which does have a lot of breaking changes.</strong></p>\n<p>One change in 2023-10 is item IDs are now ID type instead of Int type. ID can be a string or int. This means you no longer have to coerce your query responses where the ID is a string to a number to use them in a mutation.</p>"
+    },
+    {
+      "id": 157719,
+      "postNumber": 3,
+      "createdAt": "2023-12-13T13:00:25.295Z",
+      "author": "Alex-AA (Alex AA)",
+      "cookedHtml": "<p>I made the updates but it still not working <img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=12\" title=\":confused:\" class=\"emoji\" alt=\":confused:\" width=\"20\" height=\"20\" /><br />\nHere is sample code I am trying</p>\n<pre><code class=\"lang-auto\">const item_id: string = item.create_item.id;\nconst metric_item = 'Total connections';\nconst total_connections = { numbers: '22' };\n\nconst variables = {\n  itemId: item_id,\n  itemName: metric_item,\n  values: total_connections,\n};\n\nconst query = `\n  mutation ($itemId: ID!, $itemName: String!, $values: JSON!) {\n      create_subitem (parent_item_id: $itemId, item_name: $itemName, column_values: $values {\n          id\n         }\n      }\n    `;\n\nawait client.request(query, variables);\n</code></pre>\n<p>Here is the error:<br />\nError: GraphQL Error (Code: 500): {“response”:{“error_message”:“Internal server error”,“status_code”:500,“status”:500,“headers”:{}},“request”:{“query”:\"\\n      mutation ($itemId: ID!, $itemName: String!, $values: JSON!) {\\n        create_subitem (parent_item_id: $itemId, item_name: $itemName, column_values: $values) {\\n          id\\n         }\\n      }\\n    \",“variables”:{“itemId”:“5679169037”,“itemName”:“Total connections”,“values”:{“numbers”:“22”}}}}</p>\n<p>I also added:<br />\n‘Content-Type’: ‘application/json’,<br />\n‘API-Version’: ‘2023-10’,</p>\n<p>inside the header</p>"
+    },
+    {
+      "id": 157721,
+      "postNumber": 4,
+      "createdAt": "2023-12-13T13:02:53.917Z",
+      "author": "Alex-AA (Alex AA)",
+      "cookedHtml": "<p>Update, its working because I forgot to wrap ma values by JSON.stringify() after your updates. Thanks!</p>"
+    },
+    {
+      "id": 157728,
+      "postNumber": 5,
+      "createdAt": "2023-12-13T13:26:49.513Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Glad it works! I don’t think variables add much complexity to your code, and save a lot of headaches around escaping strings.</p>\n<pre><code class=\"lang-auto\">const total_connections = JSON.stringify({ [column_id]: number_of_connections})\n</code></pre>\n<p>Just sharing the above because you may want to abstract out the column_id because those can get changed over time on accident, or you may want to reuse code in some way on another board. So that makes it a bit easier to edit since you might be able to make the column_id a constant someplace if you use it in many places. Or as you advance and create  recipes and custom triggers you can abstract further. (Maybe you want to store this data to several boards one day, having a reusable recipe lets you reuse the code, the recipe just passes the column for that board to your code). I don’t know what you’re working on, just pointing out some more “advanced” techniques to think about before you box yourself in inadvertently.</p>"
+    },
+    {
+      "id": 159295,
+      "postNumber": 6,
+      "createdAt": "2023-12-27T08:58:11.996Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the help!</p>"
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+{
+  "id": 10960,
+  "title": "Update an item on a board",
+  "slug": "update-an-item-on-a-board",
+  "categoryId": 8,
+  "tagIds": [
+    186
+  ],
+  "createdAt": "2020-09-07T19:11:02.497Z",
+  "lastPostedAt": "2021-02-11T21:08:19.554Z",
+  "postsCount": 31,
+  "excerpt": "Here’s a failed attempt to update an item on one of my boards: \n{ “mutation” : “{ change_column_value (board_id: XXXXXXXXX, item_id: YYYYYYYYY, column_id: “text21”, value: “SOMETHING”) { id }} )” } \nand another: \n{ ““mut&hellip;",
+  "solvedPostId": null,
+  "likeCount": 28,
+  "views": 16311,
+  "posts": [
+    {
+      "id": 27859,
+      "postNumber": 1,
+      "createdAt": "2020-09-07T19:11:02.570Z",
+      "author": "enlightened (Bill Cooke)",
+      "cookedHtml": "<p>Here’s a failed attempt to update an item on one of my boards:<br />\n{ “mutation” : “{ change_column_value (board_id: XXXXXXXXX, item_id: YYYYYYYYY, column_id: “text21”, value: “SOMETHING”) { id }} )” }</p>\n<p>and another:<br />\n{ ““mutation”” : “”{ change_column_value (board_id: XXXXXXXXX, item_id: YYYYYYYYY, column_id: “\"text21\"”, value: “\"SOMETHING\"”) { id }} )“” }</p>\n<p>Can anyone see where I’m in error?  Thanks.</p>"
+    },
+    {
+      "id": 27870,
+      "postNumber": 2,
+      "createdAt": "2020-09-08T04:41:37.328Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/enlightened\">@enlightened</a> ,</p>\n<p>check this out.</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/supernova/48/3931_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/cant-change-column-value-s/10895\">Can't change column value(s)</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    The column values are updated successfully when I run the following mutations in Playground. But when called in code, these same mutations throw Graphql Validation errors. All board scope permissions are set. \n  \nworks in playground <img width=\"20\" height=\"20\" src=\"https://emoji.discourse-cdn.com/apple/ballot_box_with_check.png?v=12\" title=\"ballot_box_with_check\" alt=\"ballot_box_with_check\" class=\"emoji\" /> \n[graphql-1]        [graphql-2] \n  \ndoesn’t work in code <img width=\"20\" height=\"20\" src=\"https://emoji.discourse-cdn.com/apple/x.png?v=12\" title=\"x\" alt=\"x\" class=\"emoji\" /> \nconst query1 = `mutation {\nchange_column_value (board_id: 726291451, item_id: 726291453, column_id: \"status\", value: \"{\\\"index\\\": 1}\") {id}}`\n\nconst query2 = `mutation { change_mult…\n  </blockquote>\n</aside>\n\n<p>Greetings</p>"
+    },
+    {
+      "id": 27883,
+      "postNumber": 3,
+      "createdAt": "2020-09-08T08:06:48.809Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/enlightened\">@enlightened</a> ya I encountered the same issue. Answer is to use variables! Please see the post that <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> referenced &amp; follow <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=9\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" /> 's solution. That should solve your problem <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=9\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /></p>"
+    },
+    {
+      "id": 27961,
+      "postNumber": 4,
+      "createdAt": "2020-09-08T18:35:55.920Z",
+      "author": "enlightened (Bill Cooke)",
+      "cookedHtml": "<p>Still in a hole!  This should work:<br />\n{ “query” : “mutation change_column($value: “SAMPLE”) {change_column_value(board_id:218918653, item_id:551681223, column_id: “text21”, value: $value) {name} }” }</p>\n<p>But no luck.  It’s crazy to have to take pot-shot’s in order to make something work.  Isn’t the ANY decent documentation on how to use this stuff?  The examples are horrible, not real world.  What can be done about this?</p>"
+    },
+    {
+      "id": 27988,
+      "postNumber": 5,
+      "createdAt": "2020-09-09T02:58:07.208Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>what the… I can’t get this working either… <img src=\"https://emoji.discourse-cdn.com/apple/question.png?v=9\" title=\":question:\" class=\"emoji\" alt=\":question:\" /><img src=\"https://emoji.discourse-cdn.com/apple/question.png?v=9\" title=\":question:\" class=\"emoji\" alt=\":question:\" /><img src=\"https://emoji.discourse-cdn.com/apple/question.png?v=9\" title=\":question:\" class=\"emoji\" alt=\":question:\" /></p>\n<p>I tried both with &amp; without variable:</p>\n<hr />\n<p>w/ variable   <img src=\"https://emoji.discourse-cdn.com/apple/-1.png?v=9\" title=\":-1:\" class=\"emoji\" alt=\":-1:\" /></p>\n<pre><code>  const query2 = `mutation change_column_value($value: String!) {\n      change_column_value (board_id: 726291451, item_id: 726291453, column_id: \"name1\", value: $value) {id}}`\n\n  monday.api(query2, {variables: {\"value\": \"SAMPLE\"}})\n</code></pre>\n<p>w/o variable   <img src=\"https://emoji.discourse-cdn.com/apple/-1.png?v=9\" title=\":-1:\" class=\"emoji\" alt=\":-1:\" /></p>\n<pre><code>  const query3 = `mutation change_column_value (board_id: 726291451, item_id: 726291453, column_id: \"name1\", value: \"SAMPLE\") {id}}`\n  \n  monday.api(query3)\n</code></pre>\n<hr />\n<p>Variable works when changing value in a status column. But how do we change the string value for an item in a text column? There has to be a way for such a common use case <img src=\"https://emoji.discourse-cdn.com/apple/thinking.png?v=9\" title=\":thinking:\" class=\"emoji\" alt=\":thinking:\" /></p>\n<p>Could there be another form we’re not aware of? Like a text JSON str equivalent of status… something like JSON.stringify({“text” : “sample”}) to pass in, even though that doesn’t rly even make sense…</p>\n<p>^ don’t try that btw, it doesn’t work</p>\n<p>idk hopefully someone else can chime in <img src=\"https://emoji.discourse-cdn.com/apple/wind_chime.png?v=9\" title=\":wind_chime:\" class=\"emoji\" alt=\":wind_chime:\" /></p>"
+    },
+    {
+      "id": 27991,
+      "postNumber": 6,
+      "createdAt": "2020-09-09T03:27:34.288Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>This should do the job</p>\n<p>static async changeColumnValue(token, boardId, itemId, columnId, value) {</p>\n<blockquote>\n<pre><code>try {\n  const mondayClient = initMondayClient({ token });\n  const query = `mutation change_column_value($boardId: Int!, $itemId: Int!, $columnId: String!, $value: JSON!) {\n    change_column_value(board_id: $boardId, item_id: $itemId, column_id: $columnId, value: $value) {\n      id\n    }\n  }\n  `;\n\n  const variables = { boardId, columnId, itemId, value };\n  const response = await mondayClient.api(query, { variables });\n\n  if (response.errors) {\n\n    const errorMessage = response.errors[0].message\n      ? \"AccountId: \" + response.account_id + \" Error: \" + response.errors[0].message\n      : response.errors[0];\n    throw new Error(errorMessage);\n  }\n  return response;\n} catch (err) {\n  console.log(err);\n}\n</code></pre>\n<p>}</p>\n</blockquote>\n<p>I have this in a file called services/monday-service.js. In the calling function I do:</p>\n<ul>\n<li>for text: changeColumnValue(token, boardId, itemId, columnId, JSON.stringify(autoId));</li>\n<li>for status: changeColumnValue(token, parseInt(boardId), parseInt(event.pulseId), columnId, JSON.stringify({ index: onValue }));</li>\n</ul>"
+    },
+    {
+      "id": 27992,
+      "postNumber": 7,
+      "createdAt": "2020-09-09T03:38:36.741Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Fantastic solution by <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>!</p>\n<p>Your query was almost correct <a class=\"mention\" href=\"/u/supernova\">@supernova</a>, JSON object have to be escaped by either using the JSON stringyfy method or format them yourself:</p>\n<p><code>{variables: {\\\"value\\\": \\\"SAMPLE\\\"}}</code></p>\n<p>Greetings</p>"
+    },
+    {
+      "id": 28010,
+      "postNumber": 8,
+      "createdAt": "2020-09-09T05:44:34.227Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/t/bc8723/48.png\" class=\"avatar\" /> TMNXT-Dev:</div>\n<blockquote>\n<p>{variables: {\"value\": \"SAMPLE\"}}</p>\n</blockquote>\n</aside>\n<p>hey <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a></p>\n<p>I still can’t get this stringify thing to work.</p>\n<p>In addition to your suggestion, I’ve tried each of these variations but to no avail:<br />\n<code>variables: \"{\\\"value\\\": \\\"SAMPLE\\\"}\"</code><br />\n<code>variables: JSON.stringify({\"value\": \"SAMPLE\"})</code></p>\n<hr />\nWhat I don't understand is,\n<p>if updating value of an item in a status column is this:     <br />\n<code>\"value\": \"{\\\"index\\\": 1}\"</code></p>\n<p>then how come updating value of item in a text column is this:<br />\n<code>{variables: { jsonStr }}</code></p>\n<p>…</p>\n<p>shouldn’t it look something like this:</p>\n<pre><code>const jsonStr = JSON.stringify({someKey: someValue})\nvariables: { \"value\": jsonStr }\n</code></pre>\n<p>The inconsistent formatting doesn’t make sense to me</p>"
+    },
+    {
+      "id": 28011,
+      "postNumber": 9,
+      "createdAt": "2020-09-09T05:45:29.615Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Hi, thanks for posting your solution <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>It looks promising, but I’m still confused. What are you passing in as the value for text? I see that you set $value var type to JSON instead of String. It’d be especially helpful if you can give us an example value for autoId that would work in this case?</p>"
+    },
+    {
+      "id": 28013,
+      "postNumber": 10,
+      "createdAt": "2020-09-09T06:07:35.317Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/supernova\">@supernova</a></p>\n<p>In the example given autoId is just a string. As the GraphQl expects a JSON I call my function with JSON.stingify(autoId).</p>\n<p>That does make sense?</p>"
+    },
+    {
+      "id": 28015,
+      "postNumber": 11,
+      "createdAt": "2020-09-09T06:26:24.612Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Shouldn’t we be able to just set String type directly then like $value: String! instead of $value: JSON! <img src=\"https://emoji.discourse-cdn.com/apple/thinking.png?v=9\" title=\":thinking:\" class=\"emoji\" alt=\":thinking:\" /> though I did try that &amp; found that it didn’t work…</p>"
+    },
+    {
+      "id": 28017,
+      "postNumber": 12,
+      "createdAt": "2020-09-09T06:37:00.988Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>wow it worked <em><strong>finally</strong></em> jeez thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>   <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=9\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/1st_place_medal.png?v=9\" title=\":1st_place_medal:\" class=\"emoji\" alt=\":1st_place_medal:\" />  <img src=\"https://emoji.discourse-cdn.com/apple/trophy.png?v=9\" title=\":trophy:\" class=\"emoji\" alt=\":trophy:\" /></p>\n<p><a class=\"mention\" href=\"/u/enlightened\">@enlightened</a> we were supposed to stringify a STRING to be passed in as the value. Setting $value as String! type or setting the value to a primitive string won’t work cause  $value must be JSON, apparently<br />\n<br /></p>\n<p>So try this:</p>\n<pre><code>const query = `mutation change_column_value($value: JSON!) {\n       change_column_value (board_id: 218918653, item_id: 551681223, column_id: \"text21\", value: $value) {name}}`\n\nawait monday.api(query, {variables: {\"value\": JSON.stringify(\"SAMPLE\")}})</code></pre>"
+    },
+    {
+      "id": 28022,
+      "postNumber": 13,
+      "createdAt": "2020-09-09T07:19:51.832Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/supernova\">@supernova</a> ,</p>\n<p>sorry I should be more precise in such a case.<br />\nLet’s say we want to change a column value of a Long Text Column.<br />\nIn the documentation,  <a href=\"https://monday.com/developers/v2#column-values-section\">Column-Value-Section</a>, you can see how your String has to be formated.</p>\n<p>It would look like this:</p>\n<pre><code>const query2 = `mutation change_column_value($value: String!) {\n      change_column_value (board_id: 726291451, item_id: 726291453, column_id: \"long_text\", value: $value) {id}}`;\n\nconst variables = \"{\\\"text\\\" :\\\"Sample\\\"}\";\n\nmonday.api(query2, { variables }) \n</code></pre>\n<p>If you want to add a JSON and don’t want to format it by hand you need to  pay attention to your input. It would look like this:</p>\n<pre><code>const query2 = `mutation change_column_value($value:JSON!) {\n      change_column_value (board_id: 726291451, item_id: 726291453, column_id: \"long_text\", value: $value) {id}}`;\n\nconst variables = JSON.stringify({ \n        \"text\": \"Sample\"\n });\n\nmonday.api(query2, { variables })\n</code></pre>\n<p>Hope that helps.</p>"
+    },
+    {
+      "id": 28035,
+      "postNumber": 14,
+      "createdAt": "2020-09-09T10:04:41.068Z",
+      "author": "enlightened (Bill Cooke)",
+      "cookedHtml": "<p>Since I’m doing this from one of our web servers (IIS) I’m using a POST call like this:</p>\n<p>set xmlhttp = server.Createobject(“MSXML2.ServerXMLHTTP”)<br />\nxmlhttp.Open “POST”,“<a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a>”,false<br />\nxmlhttp.setRequestHeader “Authorization”, strToken<br />\nxmlhttp.setRequestHeader “Content-Type”, “application/json”<br />\nxmlhttp.setRequestHeader “Accept”, “application/json”<br />\nxmlhttp.send(str)</p>\n<p>I’m still trying to figure out how to put a mutation with a variable in one string.  I think this is correct:</p>\n<p>str=“{ “query” : “mutation change_column_value($value: String!) {change_column_value(board_id:218933653, item_id:551622223, column_id: “text21”, value: $value) {name} }” }”</p>\n<p>But I not sure where to put the value of the string variable.  This DOES NOT work:<br />\nstr=“{ “query” : “mutation change_column_value($value: “SAMPLE”) {change_column_value(board_id:218933653, item_id:551622223, column_id: “text21”, value: $value) {name} }” }”</p>"
+    },
+    {
+      "id": 28043,
+      "postNumber": 15,
+      "createdAt": "2020-09-09T11:54:41.585Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/enlightened\">@enlightened</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>I’m glad to join in on the help party here! I’ll have to take a further look with the team to see what might be the root cause for this behavior and I’ll get back to you as soon as I can with more pointers <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>That said, I am literally speechless at the amount and quality of help that <a class=\"mention\" href=\"/u/supernova\">@supernova</a>, <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> and <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a>  have provided here!! Thank you so much for being an active pillar of our community and for helping our users where they need more support the most.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 28044,
+      "postNumber": 16,
+      "createdAt": "2020-09-09T11:55:27.766Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 28072,
+      "postNumber": 17,
+      "createdAt": "2020-09-09T13:46:51.656Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>The others brought up a good point about stringifying your JSON and I really think that is the main problem as well. Since you’re using XMLHttpRequest rather than Monday’s API, the requirement is a bit different. Moving forward I recommend using <code>JSON.stringify()</code> than try to figure out where to put the slashes and quotes. <em>insert whohastimeforthat.gif</em><br />\nI believe you wanted to use it all in one line and stick your variables inside the query and not use variables, but unfortunately that’s not possible with changing column values as <a class=\"mention\" href=\"/u/supernova\">@supernova</a> and <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a>  have pointed out.</p>\n<p>I have it working for XMLHttpRequest here:</p>\n<p>The query:</p>\n<pre><code class=\"lang-auto\">const query = `mutation changeValues($board_id: Int!, $item_id: Int, $column_id: String!, $value: JSON!) {\n        change_column_value (board_id: $board_id, item_id: $item_id , column_id: $column_id, value: $value) {\n          id\n        } \n      }`\n</code></pre>\n<p>The variables:</p>\n<pre><code class=\"lang-auto\">//The JSON.stringify() your value way\n\nconst variables =  {\"board_id\": boardId, \"item_id\": itemId, \"column_id\": \"status\", \"value\": JSON.stringify({index: 2})}\n\n//Stringify the value yourself way:\n\nconst variables =  {\"board_id\": boardId, \"item_id\": itemId, \"column_id\": \"status\", \"value\": \"{\\\"index\\\": 2}\"}\n      \n</code></pre>\n<p>I’m not familiar with IIS, but I am a bit familiar with XMLHttpRequests as I use fetch more frequently, so I hope you can translate it to how you want, but this is how I have it working:</p>\n<pre><code class=\"lang-auto\">\n      const xmlhttp = new XMLHttpRequest();\n      const theUrl = \"https://api.monday.com/v2\"\n\n      xmlhttp.open('POST', theUrl);\n      xmlhttp.setRequestHeader(\"Content-Type\", \"application/json\")\n      xmlhttp.setRequestHeader(\"Authorization\", token)\n\n      //Yep, stringify it again.\n      xmlhttp.send(JSON.stringify({query, variables}))\n\n</code></pre>\n<p>Hope that helps you get pass this issue! If not, let us know.</p>"
+    },
+    {
+      "id": 28101,
+      "postNumber": 18,
+      "createdAt": "2020-09-09T17:00:39.666Z",
+      "author": "enlightened (Bill Cooke)",
+      "cookedHtml": "<p>Hmm…</p>\n<p>This works great via the <a href=\"https://monday.com/developers/v2/try-it-yourself:\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2/try-it-yourself:</a></p>\n<p>mutation {change_column_value(board_id:XXXXXXXXX, item_id:YYYYYYYYY, column_id: “text21”, value: “\"some text\"” ) {id name}}</p>\n<p>So it stands to reason this exact string (str) should work via POST to</p>\n<p>set xmlhttp = server.Createobject(“MSXML2.ServerXMLHTTP”)<br />\nxmlhttp.Open “POST”,“<a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a>”,false<br />\nxmlhttp.setRequestHeader “Authorization”, strToken<br />\nxmlhttp.setRequestHeader “Content-Type”, “application/json”<br />\nxmlhttp.setRequestHeader “Accept”, “application/json”<br />\nxmlhttp.send(str)  or xmlhttp.send(JSON.stringify(str))</p>\n<p>Neither work.  And I’m not sure why using variables would have any effect if this string works fine inside the try it yourself area.</p>"
+    },
+    {
+      "id": 28114,
+      "postNumber": 19,
+      "createdAt": "2020-09-09T18:25:01.409Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/enlightened\">@enlightened</a><br />\nI believe it would have to be</p>\n<pre><code class=\"lang-auto\">xmlhttp.send(JSON.stringify({query: str}))\n</code></pre>\n<p>as <code>str</code> is your query, correct? I should have made that clearer.</p>\n<p>As for variables. You’re right and as discussed in <a class=\"mention\" href=\"/u/supernova\">@supernova</a>’s post earlier:  <a href=\"https://community.monday.com/t/cant-change-column-value-s/10895\" class=\"inline-onebox\">Can't change column value(s)</a>  Unfortunately the only way to get it working is with variables.  May be a bug or if it’s not, the documentation should stress it more that variable is required. <em>nudge <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> nudge</em></p>\n<p>So if you’re going to add variables, you’ll just need to send it this way:</p>\n<pre><code class=\"lang-auto\">xmlhttp.send(JSON.stringify({query: str, variables: yourVariables}))\n</code></pre>"
+    },
+    {
+      "id": 28211,
+      "postNumber": 20,
+      "createdAt": "2020-09-10T15:25:30.913Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>If you’re open to suggestions <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> , here are some that I have for monday’s current API doc:</p>\n<ul>\n<li>\n<p>where Playground is first introduced, specify that just because a query runs successfully in the GraphQL editor <strong>does not</strong> mean that that same query will work in code ( also a good place to clearly state requirement of variables* here ) <br /><br />\n*maybe also emphasize variables usage at relevant checkpoints throughout the doc for those who don’t attentively read from A-Z… lol (me)  <br /><br />\nanchor links or even a <img src=\"https://emoji.discourse-cdn.com/apple/warning.png?v=9\" title=\":warning:\" class=\"emoji\" alt=\":warning:\" />  will do  <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=9\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /> </p>\n<hr />\n\n</li>\n<li>\n<p>under  <code> Mutating &gt; Columns &gt; Change column values </code> :<br />\n<br />I suggest including another example for a simple Text column ( and/or add a section for  <code> Text Column </code>  to the list of column types under “Changing column values section” ) <br /><br />\ncuz right now it’s not intuitive (to me at least) from what’s given that you have to convert a ~ <strong>string</strong> ~ to JSON for a Text column. Long Text + Status col inputs (status is the default example in the doc) scream Object! to a newbie. Since updating an item’s text is such a common use case, I feel like it deserves its own special place on the doc y’know?</p>\n<hr />\n\n</li>\n<li>\n<p>include more concrete, practical, thorough examples<br />\n<br />something like this:</p>\n<pre><code>const jsonStr = JSON.stringify(\n  {\n    text: \"success\", \n    status: {\n      label: \"Done\"\n    }\n  });      \n\nconst jsonStr2 = JSON.stringify(\n  {\n    text: \"hooray!\",\n    status: {\n      index: 1\n    },\n    date7: {\n      date: \"2020-09-10\",\n      time: \"13:25:00\"\n    },\n    email_1: {     \n      email: \"itsmyemail@mailserver.com\",\n      text: \"my email\"\n    }, \n    link: {\n      \"url\": \"http://monday.com\",\n      \"text\": \"go to monday!\"\n    },\n    numbers_3: \"110.95\",\n    long_text_1: {\n      \"text\": \"Hi, I'm a Long Text! I can contain up to 2000 chars! Text is my twin...what's her char limit, you ask? Idk! Sadly, our creators never told us ¯\\_(ツ)_/¯ But hopefully we'll find out soon enough so we can let you know :p Anyway, try me out! Click add column &gt; more columns &amp; you'll find me there!\"\n    }           \n  });\n</code></pre>\n</li>\n</ul>\n<br />\n        reads better than this:\n<p>        <code>{\\\"text\\\": \\\"success\\\", \\\"status\\\": {\\\"label\\\": \\\"Done\\\"}}</code></p>\n<br />\nI know there's a section near the end laying out both forms for each individual col type (excluding text). That's great! But it'd be *even more* helpful, compact &amp; comprehensible imo to have a complete example that demonstrates how to **Change multiple column values** as a quick one-stop reference point.\n<p>That way, whenever someone wants to update multiple column values together, s/he won’t have to jump to another section to collect the info needed. It’d be clear right off the bat which key/value pairs &amp; types are expected for which column types.</p><hr />\n<p>Also, ( somewhat minor but still relevant I guess ) :</p>\n<p>For argument types where we see !Int , !String , !JSON, the exclamation points are there to indicate that those args are required, right? Except at first sight, it reads the opposite! I’m sure this one’s a typo &amp; ! should be at the end. Just interesting that a misplacement of 1 char can completely flip the intended meaning haha again, nbd since it’s easy to deduce from the given context.</p>\n<p>Still, I think it’s worth pointing out since I do recall being confused about this very early on. And if someone misinterprets !JSON to mean that JSON is optional…well then you can see the trouble there. That alone may throw them off when their query doesn’t run in code as they expect it to.</p>\n<hr />\n<p>TL;DR</p>\n<p>emphasize variables requirement; add text column example; the more examples the merrier <img src=\"https://emoji.discourse-cdn.com/apple/partying_face.png?v=9\" title=\":partying_face:\" class=\"emoji\" alt=\":partying_face:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/balloon.png?v=9\" title=\":balloon:\" class=\"emoji\" alt=\":balloon:\" /></p>\n<hr />\n<p>Just my 2¢ <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=9\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" /><br />\n<img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=9\" title=\":slightly_smiling_face:\" class=\"emoji only-emoji\" alt=\":slightly_smiling_face:\" /></p>"
+    },
+    {
+      "id": 28212,
+      "postNumber": 21,
+      "createdAt": "2020-09-10T15:26:36.027Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Got fired up by your post &amp; drafted up a whole proposal <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=9\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" /> <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a> lol <img src=\"https://emoji.discourse-cdn.com/apple/joy.png?v=9\" title=\":joy:\" class=\"emoji\" alt=\":joy:\" /></p>"
+    },
+    {
+      "id": 28278,
+      "postNumber": 22,
+      "createdAt": "2020-09-11T11:46:38.939Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey awesome community people <a class=\"mention\" href=\"/u/enlightened\">@enlightened</a>, <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a> and <a class=\"mention\" href=\"/u/supernova\">@supernova</a>!</p>\n<p>Thanks for staying on this case and making sure we can figure this out together! I really appreciate your continued support <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=9\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" /> and <img src=\"https://emoji.discourse-cdn.com/apple/shark.png?v=9\" title=\":shark:\" class=\"emoji\" alt=\":shark:\" /> - your contributions to the community have been just top-notch lately. Honestly, thank you for taking the time out of your day to help other users out <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I’ve taken a further look at this with the team, and we have come to the conclusion that the values you are trying to send to our servers are not formatted as JSON correctly, which is why they’re getting blocked with an error:</p>\n<p>To me, it seems like you are applying the JSON.stringify in a way that shouldn’t work with our API, especially seeing as some columns, like the Text column, have a different structure to their data than others.</p>\n<p>This is what I am referring to when saying the JSON.stringify code could be used in a better way:<br />\n<code>variables: JSON.stringify({“value”: “SAMPLE”})</code></p>\n<p>Instead, it should be<br />\n<code>variables: JSON.stringify({“value” : JSON.stringify(“SAMPLE”)})</code></p>\n<p>Overall, the isn’t going through as expected because at this point in time, our column value parser expects JSON values (not primitives) in most cases, which is something that <a class=\"mention\" href=\"/u/supernova\">@supernova</a> is referring to in his post as well. This means that even if the value you are sending is a string of text to a Text column, the whole string has to be formatted as JSON for the platform to recognise it as such. Does that make sense?</p>\n<p>That said, I do think this is a point of friction and tension for a lot of our users, as I have issues with this exact process myself. To be transparent with you, we are already working on making further improvements to this area and I want to make sure this thread is not lost in the community - I’ve passed it on to the development team just to show how big of an impact this current setup has on our users.</p>\n<p><a class=\"mention\" href=\"/u/supernova\">@supernova</a></p>\n<p>I really appreciate you coming forth with a list of suggestions that would make our users’ life with code easier, as creating apps and integrations is not an easy task to begin with. I’m stunned by the time you’ve put into making sure your experience is taken into account and I definitely agree that the documentation needs some love from our team to make it clearer, easier to use and more intuitive.</p>\n<p>I’m afraid I can’t commit to an ETA when the changes you are looking for would become more than suggestions and be implemented in practice, but I’ve taken those points to the team and hopefully, we can make an effort together to make this part of the platform better. Again, I appreciate your awesome, friendly and clear input with action steps, as this helps us make those changes in a quicker way as well.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 28308,
+      "postNumber": 23,
+      "createdAt": "2020-09-11T15:03:38.178Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> , I appreciate the update</p>\n<p>For Text column, this works as well:</p>\n<pre><code class=\"lang-auto\">variables: {\"value\": JSON.stringify(\"SAMPLE\")}\n</code></pre>\n<p>I guess what we were trying to get across is that we wished the documentation could’ve been clearer with better examples. Ultimately, we were able to get the queries to work, but it wasn’t <strong>until</strong> we discovered that we <strong>had to</strong> use variables (kudos to <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=9\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" />). And from there the struggle then became figuring out exactly <strong>how</strong> to structure the variables so they’d pass. This is but one case where <strong>updating the docs could save a lot of time and frustration</strong> - not just for users of this platform but for monday’s development team as well. I suspect there would be less cases of confusion over simple things like this, eliminating the need for multiple back and forth exchanges surrounding some core piece of information that could have &amp; should have been better explained in the doc.</p>\n<p>Anyway, I typed out that lengthy post (surprised myself too, smh) not just to share my own account + a few others’ I’ve seen on this forum, including <a class=\"mention\" href=\"/u/enlightened\">@enlightened</a>’s from this discussion, but primarily to shed light on how frustrating it can be from a new dev’s perspective. And because I believed the few starter suggestions I listed shouldn’t take long to implement. Any one of the working solutions or examples provided in this forum could literally be copied &amp; pasted, and that would already count as an improvement. It’s bad enough to struggle through something firsthand; even worse to witness someone else fall into the same trap - stuck for what could be hours, days, or worse yet, giving up entirely - when something like this could easily have been avoided with just a few lines edited / highlighted in the doc. This is why it bothers me as much as it does. But I also understand that y’all may have your priorities set elsewhere at this time.</p>\n<p>Well, at least now this thread exists for future new users to reference if they know what to search, so that’s a start! Anyway, it’s awesome that you’ve acknowledged this pain point &amp; plan to someday improve the docs <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=9\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /></p>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=9\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" /> All the best! <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=9\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" /></p>"
+    },
+    {
+      "id": 28341,
+      "postNumber": 24,
+      "createdAt": "2020-09-12T12:41:48.217Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>I completely agree with <img src=\"https://emoji.discourse-cdn.com/apple/dolphin.png?v=9\" title=\":dolphin:\" class=\"emoji\" alt=\":dolphin:\" />!<br />\nMore examples will definitely help and this is the third post regarding this issue (that I’m aware of) .</p>\n<p>Thank you <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> for getting back to us regarding this!</p>\n<p>Sorry for hijacking this post, and please don’t take this the wrong way: I feel like the problem we’re facing is being overlooked as a json issue. Which may still be a possibility but we’ve tried different approaches and the frustration mostly lies on it working in playground but not in practice.</p>\n<p>The thing is… Having variables work:</p>\n<pre><code class=\"lang-auto\">      const query = `mutation changeValues($board_id: Int!, $item_id: Int, $column_id: String!, $value: JSON!) {\n        change_column_value (board_id: $board_id, item_id: $item_id , column_id: $column_id, value: $value) {\n          id\n        } \n      }`\n\n      monday.api(query, {variables: {\"board_id\": boardId, \"item_id\": itemId, \"column_id\": \"status\", \"value\": \"{\\\"index\\\": 1}\"}})\n</code></pre>\n<p>but plugging the value into the query doesn’t:</p>\n<pre><code class=\"lang-auto\">      const query = `mutation {\n        change_column_value (board_id: 123 , item_id: 1234 , column_id: \"status\", value:  \"{\\\"index\\\": 1}\" ) {\n          id\n        } \n      }`\n\n      monday.api(query)\n</code></pre>\n<p>When working with enlightened’s xmlhttp post request, I also had to use variables to be able to successfully update the column so it’s not just a Monday SDK issue.  Well, whether it’s a bug or not, <img src=\"https://emoji.discourse-cdn.com/apple/dolphin.png?v=9\" title=\":dolphin:\" class=\"emoji\" alt=\":dolphin:\" />'s suggestion of having more examples will make any developer happy. haha.</p>"
+    },
+    {
+      "id": 28352,
+      "postNumber": 25,
+      "createdAt": "2020-09-13T05:43:02.008Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p><img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" /> Exactly <img src=\"https://emoji.discourse-cdn.com/apple/sparkling_heart.png?v=12\" title=\":sparkling_heart:\" class=\"emoji\" alt=\":sparkling_heart:\" width=\"20\" height=\"20\" /><img src=\"https://emoji.discourse-cdn.com/apple/green_heart.png?v=12\" title=\":green_heart:\" class=\"emoji\" alt=\":green_heart:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" /></p>\n<p>Just did a quick search &amp; these are the sort of cases I was referring to:</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/e/6a8cbe/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/change-multiple-column-values-in-python/9294\">Change multiple column values in Python</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    I have been testing the requests I have been sending both through <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API tester and my own script and I run into the same issues, a 500 internal server error. I have been able to eliminate it as parse error. If it is a column validation error I am unsure where it is if it is there. \nmutation  {change_multiple_column_values (board_id: *******, item_id: ******, column_values: {“ColumnID_1”: “Example Text”, “12345”, “Text_name1”: “No”, “text4”: \" \",  “status1”: {“label”: “Operating”}}) { id…\n  </blockquote>\n</aside>\n<aside class=\"quote\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/r/f19dbf/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/graphql-api-documentation-doubt/9674\">Graphql api Documentation doubt</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    mutation {\nchange_column_value (board_id: 20178755, item_id: 200819371, column_id: \"status\", value: \"{\\\"index\\\": 1}\") {\nid\n}\n}\n\n<a href=\"https://monday.com/developers/v2#mutations-section-columns\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#mutations-section-columns</a> \nI have a small doubt, in the value json, what exactly is index. Is it the column name or some other property? I would really appreciate some explanation. Thank you.\n  </blockquote>\n</aside>\n<aside class=\"quote\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/d/2bfe46/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/change-item-name/6386\">Change item name?</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Hello, \nI’m looking for something in the documentation that would show me how to update the “name” of the item in a board. I don’t see this in the documentation. Could someone help or point me in the right direction?\n  </blockquote>\n</aside>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/b/ba8739/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/custom-input-field-dropdown/9664\">Custom input field (dropdown)</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Hi, \nI’m trying create a new automation, and I would like to add a custom input field. Is it possible to create a dropdown menu where the user can choose a value? If it is possible, how would I do that? \nThis is an example of what I’m trying to do:  <a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/8c0ca743f202a270d169472a2cbdc204c65b0f1e.jpeg\" title=\"example\" rel=\"noopener nofollow ugc\">[example]</a> \nThanks in advance for your help.\n  </blockquote>\n</aside>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/m/e99b99/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/monday-apiv2-api-token-per-user/7581/5\">Monday APIv2 API-Token per User</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Hello together, \nthank you for your support! \nI have tried running the sample now with ngrok and nodejs. \nI get the index.js running on the npm and start up ngrok with localhost on port 3000. \nIf I navigate to the ngrok https-link, \nit is loading the correct Start Page including the Start Button. \nUnfortunatelly when clicking on it I receive the following invalid request error: \n|error|“invalid_request”| \n|error_description|“Invalid redirect_uri”| \nI think I have to fix some configuration on the…\n  </blockquote>\n</aside>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/d/a5b964/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/api-v2-documentation-really/2742\">API V2 Documentation - Really?</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/api-feature-requests/58\"><span class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Feature Requests - API and Apps Framework</span></span></a>\n  </div>\n  <blockquote>\n    I’d call myself a medium level PHP developer. \nI have to be honest, the API v2 is one of the most poorly documented and difficult API’s I’ve ever worked with. \nI’ve integrated with secure Bitcoin trading platforms easier than it is to create a new pulse with an owner. \nI’m having to hack already broken example codes from other people just to get a new pulse created with a simple name (still can’t figure out how to give it an owner!!). \nHow about giving us some example codes people can use to get…\n  </blockquote>\n</aside>\n\n<hr />\nAlso, I remember responding to someone’s post in discord about having better documented integration &amp; recipe examples. Not sure if our comments were even seen though 🤷🏻‍♀️"
+    },
+    {
+      "id": 28354,
+      "postNumber": 26,
+      "createdAt": "2020-09-13T06:04:37.998Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>  If the team ever needs inspiration, I recommend checking out Chainlink’s dev docs + resources. Although they’re blockchain focused in the cryptosphere, you can still get good ideas from their dev docs (e.g. use of multi-tab editor to demo query code samples in different programming languages) <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=9\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /></p>\n<p>( sry this is the last time I’ll bug you about this stuff aha srsly I’m getting tired too <img src=\"https://emoji.discourse-cdn.com/apple/stuck_out_tongue_closed_eyes.png?v=9\" title=\":stuck_out_tongue_closed_eyes:\" class=\"emoji\" alt=\":stuck_out_tongue_closed_eyes:\" /><br />\nplz don’t take offense at any of this <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=9\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" /> )</p>"
+    },
+    {
+      "id": 38076,
+      "postNumber": 27,
+      "createdAt": "2021-01-18T21:42:48.459Z",
+      "author": "Manu (Manu)",
+      "cookedHtml": "<p>Can we update an item without knowing item_id.<br />\nI am creating a duplicate board.<br />\nAfter duplicating it I need to set some values from webhook.<br />\nBut Now I don’t about the item_id of it but I know name will always same.<br />\nCan Anybody help?</p>"
+    },
+    {
+      "id": 38077,
+      "postNumber": 28,
+      "createdAt": "2021-01-18T22:42:52.071Z",
+      "author": "Manu (Manu)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/discobot\">@discobot</a> <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> <a class=\"mention\" href=\"/u/enlightened\">@enlightened</a>  Can anyone help?</p>"
+    },
+    {
+      "id": 38078,
+      "postNumber": 29,
+      "createdAt": "2021-01-18T22:42:53.335Z",
+      "author": "discobot (discobot)",
+      "cookedHtml": "<p>Hi! To find out what I can do, say <code>@discobot display help</code>.</p>"
+    },
+    {
+      "id": 38183,
+      "postNumber": 30,
+      "createdAt": "2021-01-20T11:07:30.474Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/manu\">@Manu</a></p>\n<p>That’s an interesting use case for sue!</p>\n<p>At the time, you will always need to have an Item ID in order to update a specific item. That said, how is the board being created? Would querying for the items of the board and then fetching the IDs work for you?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 40539,
+      "postNumber": 31,
+      "createdAt": "2021-02-11T21:08:15.515Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>This thread is getting too long for a new user to find their answer, so I’m going to close it. If you have questions about updating items, please open a new topic with your question! Thank you.</p>"
+    },
+    {
+      "id": 40540,
+      "postNumber": 32,
+      "createdAt": "2021-02-11T21:08:19.554Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "id": 12912,
+  "title": "Parse error on \"-\"",
+  "slug": "parse-error-on",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-11-05T22:16:15.743Z",
+  "lastPostedAt": "2020-11-17T20:22:34.597Z",
+  "postsCount": 10,
+  "excerpt": "Hi, I’m building a way to automate the duplicate and creation of group items in my monday board through Google Sheet and Appsscript. However, I’m facing a problem with Parse error on “-”, and I can’t seem to get rid of i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 6276,
+  "posts": [
+    {
+      "id": 32947,
+      "postNumber": 1,
+      "createdAt": "2020-11-05T22:16:15.828Z",
+      "author": "yuhaocooper (yuhao tan)",
+      "cookedHtml": "<p>Hi, I’m building a way to automate the duplicate and creation of group items in my monday board through Google Sheet and Appsscript. However, I’m facing a problem with Parse error on “-”, and I can’t seem to get rid of it even after trying to escape it from my variable. Some help here will be good. I’ve copied the code below with an example of the <code>escapedFullProjectName</code> variable</p>\n<blockquote>\n<p>function overviewGroupCreate(escapedFullProjectName){<br />\n//Create Monday board and tasks lists of it<br />\nvar escapedFullProjectName = xxx-1234<br />\nvar mutation = ‘mutation{ create_group (board_id:’+overviewId+‘, group_name:’+escapedFullProjectName+‘) {id} }’;<br />\nvar response = UrlFetchApp.fetch(“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”, {<br />\nmethod: ‘post’,<br />\nheaders: {<br />\n‘Content-Type’: ‘application/json’,<br />\n‘Authorization’: apiKey<br />\n},<br />\npayload: JSON.stringify({<br />\n‘query’: mutation<br />\n})<br />\n})<br />\nvar json = response.getContentText()<br />\nvar data = JSON.parse(json)<br />\n//cache the createdOverviewId<br />\ncache.put(‘createdOverviewId’,data[‘data’][‘create_group’][‘id’],600)<br />\nLogger.log(‘Overview Group Created’)<br />\n}</p>\n</blockquote>"
+    },
+    {
+      "id": 32954,
+      "postNumber": 2,
+      "createdAt": "2020-11-06T03:22:09.891Z",
+      "author": "ellis (Ellis)",
+      "cookedHtml": "<p>Could the error be on line 3?</p>\n<pre><code class=\"lang-auto\">var escapedFullProjectName = xxx-1234\n</code></pre>\n<p>It looks like it lacks the double-quote around the value.<br />\nMaybe something like this :</p>\n<pre><code class=\"lang-auto\">var escapedFullProjectName = \"xxx-1234\"\n</code></pre>"
+    },
+    {
+      "id": 32956,
+      "postNumber": 3,
+      "createdAt": "2020-11-06T03:30:19.184Z",
+      "author": "ellis (Ellis)",
+      "cookedHtml": "<p>Or full-version :</p>\n<pre><code class=\"lang-auto\">function overviewGroupCreate(escapedFullProjectName) {\n    //Create Monday board and tasks lists of it\n    var escapedFullProjectName = \"xxx-1234\"\n    var mutation = \"mutation{ create_group (board_id:\" + overviewId + \", group_name:\" + escapedFullProjectName + \") {id} }\";\n    var response = UrlFetchApp.fetch(\"https://api.monday.com/v2\", {\n        method: \"post\",\n        headers: {\n            \"Content-Type\": \"application/json\",\n            \"Authorization\": apiKey\n        },\n        payload: JSON.stringify({\n            \"query\": mutation\n        })\n    })\n    var json = response.getContentText()\n    var data = JSON.parse(json)\n    //cache the createdOverviewId\n    cache.put(\"createdOverviewId\",data[\"data\"][\"create_group\"][\"id\"],600)\n    Logger.log(\"Overview Group Created\")\n}\n</code></pre>"
+    },
+    {
+      "id": 32969,
+      "postNumber": 4,
+      "createdAt": "2020-11-06T07:12:45.607Z",
+      "author": "olena (Olena)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ellis\">@ellis</a>! Thank you for your quick answer. But it seems issue isn’t about quotes. It’s the parsing error for each special symbol in group names:</p>\n<p>{“errors”:[{“message”:“Parse error on “-1234” (INT) at [1, 61]”,“locations”:[{“line”:1,“column”:61}]}],“account_id”:myId}</p>\n<p>I have the same one in server response. Working on it.</p>"
+    },
+    {
+      "id": 32973,
+      "postNumber": 5,
+      "createdAt": "2020-11-06T07:48:30.912Z",
+      "author": "yuhaocooper (yuhao tan)",
+      "cookedHtml": "<p>Thanks for the responses guys. But yeah, ellis, sorry for missing out the quotation as the variable was added in to make my post a little clearer, and I didn’t copy my original variable which contains it, but that isn’t the problem.</p>\n<p>From the error message, it seems to be the “-” special character within the string causing the JSON object to not be parsed properly when sent to monday’s server. For e.g. I can change</p>\n<p><code>var mutation = \"mutation{ create_group (board_id:\" + overviewId + \", group_name:\" + escapedFullProjectName + \") {id} }\";</code></p>\n<p>to</p>\n<p><code>var mutation = \"mutation{ create_group (board_id:overviewId , group_name:abc-xxx) {id} }\";</code></p>\n<p>with “-” as part of the string directly, and it will still cause an error. I’ve tried escaping the “-” using both “” and “<span class=\"chcklst-box fa fa-square-o fa-fw\"></span>” to no avail. Hoping for some solutions and explanation in the community.</p>"
+    },
+    {
+      "id": 32978,
+      "postNumber": 6,
+      "createdAt": "2020-11-06T09:18:13.921Z",
+      "author": "olena (Olena)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yuhaocooper\">@yuhaocooper</a>!</p>\n<p>I’ve found the solution for you. You should add another pair of quotes in the name of group:</p>\n<p>var escapedFullProjectName = <strong>‘“xxx-1234”’</strong>;</p>\n<p>And it will work, the server response will be:<br />\n{“data”:{“create_group”:{“id”:“xxx_1234”}},“account_id”:my_id}</p>\n<p>You can notice that in the response you have “_” symbol. But group will be created on <a href=\"http://Monday.com\">Monday.com</a> with the properly name:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/3a76855218f579d4ee5824ae6fd9625c59801d8b.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/3a76855218f579d4ee5824ae6fd9625c59801d8b_2_690x230.png\" alt=\"image\" width=\"690\" height=\"230\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">744×248 4.59 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 32985,
+      "postNumber": 7,
+      "createdAt": "2020-11-06T11:34:55.988Z",
+      "author": "yuhaocooper (yuhao tan)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/olena\">@olena</a> ,</p>\n<p>It worked! Thanks for your help!</p>\n<p>Do you have any idea what’s the rationale for this though? Is it a JSON formatting or a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> server rendering rule that requires us to wrap special characters such as “-” in additional quotations?</p>"
+    },
+    {
+      "id": 32987,
+      "postNumber": 8,
+      "createdAt": "2020-11-06T11:43:13.588Z",
+      "author": "olena (Olena)",
+      "cookedHtml": "<p>As far as I understood it’s some strange behaviour of GraphQL on server side. It tries to parse the string by itself instead of passing it further. And for prevention this parsing we add one more quotation.<br />\nBut I can be mistaken.</p>"
+    },
+    {
+      "id": 33927,
+      "postNumber": 9,
+      "createdAt": "2020-11-17T20:22:34.597Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey there! Apologies for the delay on this - it is indeed something on the GraphQL side. If I can answer any questions on it please let me know.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 44264,
+      "postNumber": 10,
+      "createdAt": "2021-03-10T14:21:28.476Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

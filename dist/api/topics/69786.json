@@ -1,0 +1,89 @@
+{
+  "id": 69786,
+  "title": "Variable Mismatch on variable column_type",
+  "slug": "variable-mismatch-on-variable-column-type",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-01T21:55:24.922Z",
+  "lastPostedAt": "2023-11-05T05:37:46.519Z",
+  "postsCount": 9,
+  "excerpt": "Having some trouble trouble shooting my error. I’ve read through a few other solutions to what I believe the problem I am having, but have yet to find a solution. Is column_type not a String? \nI am creating columns with &hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 505,
+  "posts": [
+    {
+      "id": 151058,
+      "postNumber": 1,
+      "createdAt": "2023-11-01T21:55:25.183Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Having some trouble trouble shooting my error. I’ve read through a few other <a href=\"https://community.monday.com/t/nullability-mismatch-on-variable-value-and-argument-value-string-string/23130/2\">solutions</a> to what I believe the problem I am having, but have yet to find a solution. Is <code>column_type</code> not a String?</p>\n<p>I am creating columns with the following code:</p>\n<p>Note, I am using python=3.10</p>\n<pre><code class=\"lang-auto\">def create_columns(board_id, title, column_type, default_values=None):\n    if default_values:\n        vals_dict = {}\n        for cnt, vals in enumerate(default_values):\n            vals_dict[cnt + 1] = vals\n        status_values = {\"labels\": vals_dict}\n    else:\n        status_values = ''\n\n    query = \"\"\"\n    mutation ($boardId: ID!, $titleName: String!, $columnType: String!, $defaultValues: JSON) {\n        create_column(\n            board_id: $boardId\n            title: $titleName\n            column_type: $columnType\n            defaults: $defaultValues\n        ) {\n            id\n        }\n        }\n    \"\"\"\n\n    variables = {\n    'boardId': board_id,\n    'titleName': title,\n    'columnType': column_type,\n    'defualtValues': json.dumps(status_values, separators=(',', ':'))\n    }\n\n    datas = {\n    'query': query,\n    'variables': variables\n    }\n\n    r_boards = requests.post(url=apiUrl, headers=headers, data=json.dumps(datas)) # make request\n    \n    return r_boards\n</code></pre>\n<p><strong>variables</strong></p>\n<pre><code class=\"lang-auto\">&gt;&gt;&gt;{'boardId': '123456', 'titleName': 'My - Title', 'columnType': 'status', 'defualtValues': '{\"labels\":{\"1\":\"100 - column1\",\"2\":\"200 - column2\",\"3\":\"300 - column,,3\"}}'}\n</code></pre>\n<p><strong>Error Message</strong></p>\n<pre><code class=\"lang-auto\">&gt;&gt;&gt;{'errors': [{'message': 'Type mismatch on variable $columnType and argument column_type (String! / ColumnType!)', 'locations': [{'line': 6, 'column': 13}], 'path': ['mutation', 'create_column', 'column_type'], 'extensions': {'code': 'variableMismatch', 'variableName': 'columnType', 'typeName': 'String!', 'argumentName': 'column_type', 'errorMessage': 'Type mismatch'}}], 'account_id': 123456}\n</code></pre>"
+    },
+    {
+      "id": 151060,
+      "postNumber": 2,
+      "createdAt": "2023-11-01T22:01:00.625Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/b/8e8cbc/48.png\" class=\"avatar\" /> Zach:</div>\n<blockquote>\n<p><code>mutation ($boardId: ID!, $titleName: String!, $columnType: String!, $defaultValues: JSON)</code></p>\n</blockquote>\n</aside>\n<p>Simple enough, the answer is in the error message, define <code>$columnType: ColumnType!</code> instead of <code>String!</code> for your mutation. This is because column types are now an enum ColumnType rather than just strings.</p>\n<p>Also in your <code>variables</code> you misspelled <code>defaultValues</code> as <code>defualtValues</code> which will cause an error later on.</p>\n<p>If you look at the documentation for <code>create_column</code> you can see the arguments and their types, and <code>column_type</code> is of the type <code>ColumnType</code>.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/columns#create-a-column\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/columns#create-a-column\" target=\"_blank\" rel=\"noopener\">Columns</a></h3>\n\n  <p>Columns are one of the core elements of any board in monday.com. Boards are formatted as a table with columns and rows. Each column has specific functionality and only stores relevant data. For example, a numbers column will store numerical values, a...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>lastly, I learned something about <code>request.post</code> is that it can take a <code>json</code> parameter instead of <code>data</code> and an object provided to <code>json</code> gets converted to json automatically - no needs to use <code>json.dumps</code></p>"
+    },
+    {
+      "id": 151104,
+      "postNumber": 3,
+      "createdAt": "2023-11-02T06:03:47.053Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 151253,
+      "postNumber": 4,
+      "createdAt": "2023-11-02T14:18:10.643Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Thanks for pointing that out Cody. Glad it was so simple. I tried to match it against our last discussion and was confused why it wasn’t working. Thanks for pointing out the misspelling as well. I tried removing the <code>json.dumps</code> but failed with a <code>Requests json Decode Error</code>. Put it back in and it worked. Not if that is due to a pythonic issue/format.</p>\n<p>Again, thanks for you help. Guess you will be helping me on all my <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> api questions lol!</p>"
+    },
+    {
+      "id": 151255,
+      "postNumber": 5,
+      "createdAt": "2023-11-02T14:23:16.968Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Okay you’re on my blacklist now! No help from me until someone else steps up! Kidding! Glad we got it sorted. But yeah, if you can figure out how to interpret the error messages, it goes a long way.</p>"
+    },
+    {
+      "id": 151266,
+      "postNumber": 6,
+      "createdAt": "2023-11-02T14:49:16.029Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I agree. The more time I spend working with it, the better I should get. Just need those few pointers here and there to initially learn.</p>"
+    },
+    {
+      "id": 151280,
+      "postNumber": 7,
+      "createdAt": "2023-11-02T16:19:51.786Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Hey Cody, I do have a follow up question. Not sure if I need to post a new question. I’ve noticed that if I have more than 5 defaultValues then the fifth index is used as a place holder within the board. However, if I have fewer than 5 defaultValues then an additional blank default value is automatically created to act as the place holder. Not sure if you have seen or ran into this before. I have not come across anything on monday’s create column documentation yet.</p>"
+    },
+    {
+      "id": 151285,
+      "postNumber": 8,
+      "createdAt": "2023-11-02T16:51:33.966Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I was able to use a work around and just skip the fifth index value, but that just seems a little silly to me.</p>"
+    },
+    {
+      "id": 151352,
+      "postNumber": 9,
+      "createdAt": "2023-11-02T21:51:18.617Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>index 5 is the gray default, oddly not 0 or 1. You can’t change it.</p>"
+    },
+    {
+      "id": 151619,
+      "postNumber": 10,
+      "createdAt": "2023-11-05T05:37:46.519Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the help here!</p>"
+    }
+  ]
+}

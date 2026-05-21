@@ -1,0 +1,76 @@
+{
+  "id": 23555,
+  "title": "Increment a single column for all items using another column",
+  "slug": "increment-a-single-column-for-all-items-using-another-column",
+  "categoryId": 58,
+  "tagIds": [
+    6,
+    13,
+    94
+  ],
+  "createdAt": "2021-08-11T12:29:17.175Z",
+  "lastPostedAt": "2021-08-12T17:37:11.388Z",
+  "postsCount": 8,
+  "excerpt": "I’m using a board to track clients balances. I already have it working to where some transaction will deduct the total cost from a specific clients/items balance. However, I’m trying to write a mutation that will increme&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1818,
+  "posts": [
+    {
+      "id": 60460,
+      "postNumber": 1,
+      "createdAt": "2021-08-11T12:29:17.568Z",
+      "author": "SugarmanZ (Jeremiah Zucker)",
+      "cookedHtml": "<p>I’m using a board to track clients balances. I already have it working to where some transaction will deduct the total cost from a specific clients/items balance. However, I’m trying to write a mutation that will increment <em>all</em> clients balances by an amount determined in another column.</p>\n<p>The schema looks something like this:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/3/39e15d4db21140b6cd0b07d5fc9d0d0f11df37a2.png\" alt=\"Screen Shot 2021-08-11 at 11.25.23 AM\" width=\"300\" height=\"310\" /></p>\n<p>I thought that maybe I could just create a giant mutation containing a <code>change_simple_column_value</code> and <code>create_update</code> for each client dynamically, but the mutation query only seems to allow for a single <code>change_simple_column_value</code> at a time.</p>\n<pre><code class=\"lang-auto\">Field 'change_simple_column_value' has an argument conflict: {board_id:\"X\",item_id:\"Y\",column_id:\"\\\"numbers\\\"\",value:\"\\\"37\\\"\"} or {board_id:\"X\",item_id:\"Z\",column_id:\"\\\"numbers\\\"\",value:\"\\\"66\\\"\"}\n</code></pre>\n<p>Of course, I could just send a discrete mutation per client, but that’s bound to hit some rate limit and just seems like a rather obtuse way to perform this action.</p>"
+    },
+    {
+      "id": 60530,
+      "postNumber": 3,
+      "createdAt": "2021-08-11T14:59:29.929Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sugarmanz\">@SugarmanZ</a>,</p>\n<p>At this time it sounds like the <code>change_multiple_column_values</code> method would work better for you. The only difference is you need to send your column values as JSON rather than simple strings.</p>\n<p>Here is the section in our API documentation that explains this method: <a href=\"https://api.developer.monday.com/docs/change-column-values#changing-multiple-column-values\" rel=\"noopener nofollow ugc\">https://api.developer.monday.com/docs/change-column-values#changing-multiple-column-values</a>.</p>\n<p>However, I’m wondering if perhaps a Formula column wouldn’t work better for you instead? You can even use the General Caster app to “cast” the formula results back into the same column.</p>\n<p>Here is the app in our marketplace: <a href=\"https://monday.com/marketplace/8\" rel=\"noopener nofollow ugc\">https://monday.com/marketplace/8</a>.</p>"
+    },
+    {
+      "id": 60531,
+      "postNumber": 4,
+      "createdAt": "2021-08-11T15:07:39.909Z",
+      "author": "SugarmanZ (Jeremiah Zucker)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p>Thanks for the info. Though, I’m not sure the <code>change_mutliple_column_values</code> is the correct approach either. From the docs:</p>\n<blockquote>\n<p>This mutation allows you to update multiple column values of a specific Item (row).</p>\n</blockquote>\n<p>I want to update a single column for multiple items with one call.</p>\n<p>I don’t think the <code>Formula</code> column works either because I need this to be discrete event that happens once every month. It’s not a concurrent calculation being run all the time. I need to be able to increment each items current balance with their monthly allowance the first of every month.</p>"
+    },
+    {
+      "id": 60553,
+      "postNumber": 5,
+      "createdAt": "2021-08-11T18:21:36.853Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sugarmanz\">@SugarmanZ</a>,</p>\n<p>Got it-- thanks for clarifying this.</p>\n<p>Yes if you’re looking to update a single column for multiple items, I’m afraid the best way to do this would be to query all of your item IDs on your board, and then assign them using a dynamic variable with a single <code>change_simple_column_value</code> mutation to change their column value.</p>\n<p>This would be your best bet!</p>"
+    },
+    {
+      "id": 60569,
+      "postNumber": 6,
+      "createdAt": "2021-08-12T01:58:35.619Z",
+      "author": "SugarmanZ (Jeremiah Zucker)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p>Yes, this seems promising. Do you have any documentation or suggestions on how to create such a query with a dynamic variable? The only documentation I found on variables led me to create this:</p>\n<pre><code class=\"lang-auto\">mutation update_client_credits($clientId:Int!, $balance:JSON!) {\n    change_simple_column_value (board_id: X,item_id: $clientId column_id: \"numbers\", value: $balance) {\n        id\n    \t\tcolumn_values {\n          title\n          text\n        }\n    }\n}\n</code></pre>\n<pre><code class=\"lang-json\">{\n  \"clientId\": 1111111111,\n  \"balance\": \"1300\"\n}\n</code></pre>\n<p>But as you probably guessed, this doesn’t help me with updating all items at once. I couldn’t find much information about iterating mutations over some JSON list. Server side, I already have a JSON payload containing all the client IDs and updated balances. I just need the mutation query to set them.</p>"
+    },
+    {
+      "id": 60620,
+      "postNumber": 7,
+      "createdAt": "2021-08-12T10:42:45.797Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sugarmanz\">@SugarmanZ</a>,</p>\n<p>Ahh okay I see. Yeah we don’t currently offer a way to dynamically pass variables within our API. You would need to complete this step in your server-side code.</p>\n<p>So in this case you would most likely need to write a for-loop or an if statement that would pass each of these items into this mutation.</p>"
+    },
+    {
+      "id": 60664,
+      "postNumber": 8,
+      "createdAt": "2021-08-12T15:10:44.168Z",
+      "author": "andrew.shatz (Andrew Shatz)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/sugarmanz\">@SugarmanZ</a>,</p>\n<p><a class=\"mention\" href=\"/u/helen\">@Helen</a> is correct.  There are currently no API features that allow for bulk item updates.  All updates would need to be done on a per-item basis.</p>\n<p>With that said, <a class=\"mention\" href=\"/u/helen\">@Helen</a>, are there any plans to add in a bulk item update feature for the API?  That would be most stupendous if so, as we do bulk item updates for some of our internal processes.  Having an option to bulkify this would improve performance tremendously for us. <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=10\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" /></p>\n<p>Thank you both for your time, and I wish you all the best.</p>\n<p>Andrew</p>"
+    },
+    {
+      "id": 60704,
+      "postNumber": 9,
+      "createdAt": "2021-08-12T17:37:11.388Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/andrew.shatz\">@andrew.shatz</a>,</p>\n<p>It’s in the books! Sadly there aren’t plans in the coming months for this feature to be released.</p>\n<p>However, I’m happy to forward your feedback for our team to continue prioritizing it.</p>\n<p>Thank you for your feedback!! Keep it coming!</p>"
+    }
+  ]
+}

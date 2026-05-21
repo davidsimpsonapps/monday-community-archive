@@ -1,0 +1,79 @@
+{
+  "id": 9410,
+  "title": "Problem formatting my query",
+  "slug": "problem-formatting-my-query",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-07-25T19:12:44.331Z",
+  "lastPostedAt": "2020-08-08T02:20:12.548Z",
+  "postsCount": 9,
+  "excerpt": "doing lots of other queries, but i’m having trouble formatting a change_multiple_column_values query. \nposting this json: \n\n{“query”:“mutation {     change_multiple_column_values (      board_id: 655318672,       item_id&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 6651,
+  "posts": [
+    {
+      "id": 23648,
+      "postNumber": 1,
+      "createdAt": "2020-07-25T19:12:44.411Z",
+      "author": "barrycox (barry)",
+      "cookedHtml": "<p>doing lots of other queries, but i’m having trouble formatting a change_multiple_column_values query.</p>\n<p>posting this json:</p>\n<blockquote>\n<p>{“query”:“mutation {     change_multiple_column_values (      board_id: 655318672,       item_id: 662694544,       column_values: \\”{\\“date4\\”: {\\“date\\”: \\“2020-08-04\\”},\\“next_arr__days_7\\”: \\“9\\”,\\“property_id\\”: \\“1289\\”,\\“person\\”: {\\“id\\”: null},\\“numbers2\\”: \\“1.50\\”,\\“departing_rez\\”: \\“5146\\”,\\“status\\”: {\\“index\\”: 1}}\\“) {       id      }     }”}</p>\n</blockquote>\n<p>returns:</p>\n<blockquote>\n<p>[errors] =&gt; Array<br />\n(<br />\n[0] =&gt; stdClass Object<br />\n(<br />\n[message] =&gt; Parse error on “: {” (STRING) at [9, 28]<br />\n[locations] =&gt; Array<br />\n(<br />\n[0] =&gt; stdClass Object<br />\n(<br />\n[line] =&gt; 9<br />\n[column] =&gt; 28<br />\n)<br />\n)<br />\n)<br />\n)</p>\n</blockquote>\n<p>putting the mutation text above on try it yourself doesn’t work UNLESS i remove the \\ from the \\\" at the beginning and end of the column_values. so this does not work:</p>\n<blockquote>\n<p>mutation {     change_multiple_column_values (      board_id: 655318672,       item_id: 662694544,       column_values: \\“{\\“date4\\”: {\\“date\\”: \\“2020-08-04\\”},\\“next_arr__days_7\\”: \\“9\\”,\\“property_id\\”: \\“1289\\”,\\“person\\”: {\\“id\\”: null},\\“numbers2\\”: \\“1.50\\”,\\“departing_rez\\”: \\“5146\\”,\\“status\\”: {\\“index\\”: 1}}\\”) {       id      }     }</p>\n</blockquote>\n<p>returns Parse error on \"\\\\\" (error) at [1, 121]</p>\n<p>but this does:</p>\n<p>Preformatted text</p>\n<p>mutation {     change_multiple_column_values (      board_id: 655318672,       item_id: 662694544,       column_values: “{\\“date4\\”: {\\“date\\”: \\“2020-08-04\\”},\\“next_arr__days_7\\”: \\“9\\”,\\“property_id\\”: \\“1289\\”,\\“person\\”: {\\“id\\”: null},\\“numbers2\\”: \\“1.50\\”,\\“departing_rez\\”: \\“5146\\”,\\“status\\”: {\\“index\\”: 1}}”) {       id      }     }</p>\n<p>but changing the \\\"'s  to \" on the post doesn’t work either.  doesn’t return anything (gets an http code 400.)  so i can make it work on try it yourself, but not in my code (php cURL)</p>\n<p>i must be missing something simple…</p>"
+    },
+    {
+      "id": 23889,
+      "postNumber": 2,
+      "createdAt": "2020-07-28T12:08:29.359Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>HI there <a class=\"mention\" href=\"/u/barrycox\">@barrycox</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>I’m sorry to hear you are having some trouble set this up correctly, but it does seem like we’re almost there from where I stand <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> Since you are able to get the try-it-yourself result to work, I would say your JSON formatting is on point in this query:</p>\n<p>mutation { change_multiple_column_values ( board_id: 655318672, item_id: 662694544, column_values: “{\\“date4\\”: {\\“date\\”: \\“2020-08-04\\”},\\“next_arr__days_7\\”: \\“9\\”,\\“property_id\\”: \\“1289\\”,\\“person\\”: {\\“id\\”: null},\\“numbers2\\”: \\“1.50\\”,\\“departing_rez\\”: \\“5146\\”,\\“status\\”: {\\“index\\”: 1}}”) { id } }</p>\n<p>One thing that I’ve noticed in the very first query that you are trying to send is that the whole query is formatted as JSON, whereas I believe only the column values you are trying to send should be formatted as such. Does that make sense?</p>\n<p>EDIT: Turns out I was not entirely correct about this, since the whole request body is JSON.</p>\n<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> has  helped me out here and his insight is that the quotes inside quotes should be double-escaped:<br />\n{“query”:\"mutation { change_multiple_column_values ( board_id: 655318672, item_id: 662694544, column_values: \"{\\\"date4\\\": {\\\"date\\\": …</p>\n<p>To save some hassle, we recommend using GraphQL variables to handle this. That way, you’ll be able to send the column values as JSON and the app will do the escaping for you. There is more information on this topic in our tutorials as well:</p>\n<aside class=\"quote\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/announcement-api-tutorial-for-php-python-and-javascript/6677\">API tutorial for PHP, Python, and Javascript!</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/dev-guides/70\"><span style=\"--category-badge-color:#FFCC00;--category-badge-text-color:#FFFFFF;--parent-category-badge-color:#00ca72\" class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Announcements</span></span></a>\n  </div>\n  <blockquote>\n    Hey there, Community! \nWe just released 3 tutorials in our most popular programming languages! These articles go through the basics of our GraphQL API and are great for anyone just starting out. Each tutorial is aimed at folks with basic familiarity of each programming language. \n\n<a href=\"https://support.monday.com/hc/en-us/articles/360013465659\" rel=\"noopener nofollow ugc\">PHP Quickstart</a>\n<a href=\"https://support.monday.com/hc/en-us/articles/360013465599\" rel=\"noopener nofollow ugc\">Javascript Quickstart</a>\n<a href=\"https://support.monday.com/hc/en-us/articles/360013483119\" rel=\"noopener nofollow ugc\">Python Quickstart</a>\n\nIf you have any questions, feel free to open a thread in the community about it! \nHappy coding! \nDipro <img width=\"20\" height=\"20\" src=\"https://emoji.discourse-cdn.com/apple/crystal_ball.png?v=12\" title=\"crystal_ball\" alt=\"crystal_ball\" class=\"emoji\" />\n  </blockquote>\n</aside>\n\n<p>Also, here is a helpful post that might help:<br />\n<a href=\"https://community.monday.com/t/curl-examples-for-api-v2/1077\">cURL examples for API v2</a></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 24594,
+      "postNumber": 3,
+      "createdAt": "2020-08-04T21:41:17.004Z",
+      "author": "barrycox (barry)",
+      "cookedHtml": "<p>thanks.  i like the variables approach.  i think i am close but i’m getting a 500 internal server error but no other clue.</p>\n<p>here’s what i am posting:<br />\n{“query”:“mutation ($columnVals: JSON!) {     change_multiple_column_values (       board_id: 677637367,        item_id: 678046909,        column_values:$columnVals) {         id        }       }”,“variables”:{“columnVals”:{“cleaning_date”:{“date”:“2020-08-12”},“departure_date”:{“date”:“2020-08-12”},“next_arr__days_”:null,“text3”:“1321”,“numbers7”:“0.00”,“text”:“5030”,“status”:{“index”:1}}}}</p>\n<p>if i change columnVals anywhere to ‘fubar’ i get error Variable $columnVals is declared by  but not used, so i think i’m getting through with proper formatting.</p>\n<p>i looked at each column name in detail to make sure they’re correct.  i also tried with just “text3”:“1321” and get a 500.  same result on api workbench.</p>\n<p>i thought perhaps a scopes issue, so checked off all scopes for testing.  i can create items and groups…  just not change_multiple_column_values.</p>\n<p>ideas for troubleshooting a 500?</p>"
+    },
+    {
+      "id": 24602,
+      "postNumber": 4,
+      "createdAt": "2020-08-04T21:53:39.683Z",
+      "author": "barrycox (barry)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/a6d58a775416beb160283abbf5acbdae8fec600f.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/a/a6d58a775416beb160283abbf5acbdae8fec600f_2_690x292.png\" alt=\"image\" width=\"690\" height=\"292\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1802×763 43.1 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 24736,
+      "postNumber": 5,
+      "createdAt": "2020-08-05T19:34:30.149Z",
+      "author": "stackpond (Sushant Kumar)",
+      "cookedHtml": "<p>May be this would help in formatting query if you are in javascript land (stringify twice):</p>\n<pre><code>let boardId = 655318672;\nlet itemId = 662694544;\n\nlet model = {\n  date4: {\n    date: '2020-08-04',  \n  },\n  next_arr__days_7: 9,\n  property_id: 1289,\n  person: {\n    id: null\n  },\n  numbers2: 1.50,\n  departing_rez: 5146,\n  status: {\n    index: 1\n  }\n}\n\nlet query = `\n  mutation {\n    change_multiple_column_values \n      (board_id: ${boardId}, \n       item_id: ${itemId},\n       column_values: ${JSON.stringify(JSON.stringify(model))})\n  }`;\n\nconsole.log(query);\n</code></pre>\n<p>In chrome inspector it would be as follows</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0050d712d28f848f7975640538bef532f2fc980f.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0050d712d28f848f7975640538bef532f2fc980f_2_690x335.png\" alt=\"image\" width=\"690\" height=\"335\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1372×667 28.7 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 24804,
+      "postNumber": 6,
+      "createdAt": "2020-08-06T13:51:44.748Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey again <a class=\"mention\" href=\"/u/barrycox\">@barrycox</a>,</p>\n<p>To be transparent with you, the 500 Server Error is most often related to the formatting of the API call you are sending. To me, it seems like your status label index might need to be escaped properly. You will always need to send all of the data you are trying to mutate within the Platform formatted as a JSON string with proper escaping as well. To me personally, the Date and Status column JSON formatting was always the most tricky somehow, so I’d recommend taking this 1 step at a time before so that you can make sure parts of your query are correct, and then build on top of that.</p>\n<p>What do you think? Let me know.</p>\n<p><a class=\"mention\" href=\"/u/stackpond\">@stackpond</a> thanks so much for the helpful suggestion! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I appreciate your help here.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 24822,
+      "postNumber": 7,
+      "createdAt": "2020-08-06T18:40:44.710Z",
+      "author": "barrycox (barry)",
+      "cookedHtml": "<p>i agree.  that’s why i sent this screenshot of a very very simplified version which doesn’t work on the try-it-yourself.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/289487de373a3723f6971c70890adf791a96e3c8.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/289487de373a3723f6971c70890adf791a96e3c8_2_690x271.png\" alt=\"image\" width=\"690\" height=\"271\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1850×728 42.2 KB</span></div></a></div><p></p>\n<p>if it’s a syntax error, can you point it out?</p>\n<p>i tried variables as {“columnVals”:{“text3”:“1321”}} and {“columnVals”:{“text3”:1321}}.</p>\n<p><a class=\"mention\" href=\"/u/stackpond\">@stackpond</a>, thanks for the response.  i’m coding in php sending curls, but can’t get it to work on the try-in-yourself board either…</p>"
+    },
+    {
+      "id": 24891,
+      "postNumber": 8,
+      "createdAt": "2020-08-08T02:20:12.548Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/barrycox\">@barrycox</a> sorry for the delay in my response on this!</p>\n<p>How about using something like the below on the try-it-yourself page?</p>\n<p>mutation {<br />\nchange_column_value (board_id:yourboardid, item_id:youritemid, column_id:“yourcolumnid”, value: “{“personsAndTeams”:[{“id”:userid,“kind”:“person”}]}”)<br />\n{id}}</p>\n<p>This should be a working query to assign a person to an item within a board:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/4f815e9a94f14108e9d62f6446a47638407b47de.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/4f815e9a94f14108e9d62f6446a47638407b47de_2_690x388.png\" alt=\"image\" width=\"690\" height=\"388\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">848×478 46.9 KB</span></div></a></div><p></p>\n<p>It seems like in the query you are attempting to send, there is no column ID for the platform to store the data in, so that might be one of the reasons you are getting a 500 in that case. What do you think?</p>\n<p>Let me know <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42197,
+      "postNumber": 9,
+      "createdAt": "2021-02-25T12:58:11.431Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

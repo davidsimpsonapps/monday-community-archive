@@ -1,0 +1,46 @@
+{
+  "id": 91870,
+  "title": "How to get oauth user account details?",
+  "slug": "how-to-get-oauth-user-account-details",
+  "categoryId": 6,
+  "tagIds": [
+    159
+  ],
+  "createdAt": "2024-06-30T10:52:34.007Z",
+  "lastPostedAt": "2024-07-01T16:35:14.591Z",
+  "postsCount": 4,
+  "excerpt": "Hi there, I have checked the documentation and the existing discussions but could not find an answer to this. \nI am researching to integrate Monday Oauth APIs for handling authentication to our system. We will use the ac&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 196,
+  "posts": [
+    {
+      "id": 191581,
+      "postNumber": 1,
+      "createdAt": "2024-06-30T10:52:34.073Z",
+      "author": "dilshan (Dilshan)",
+      "cookedHtml": "<p>Hi there, I have checked the documentation and the existing discussions but could not find an answer to this.</p>\n<p>I am researching to integrate Monday Oauth APIs for handling authentication to our system. We will use the access token for,</p>\n<ol>\n<li>Handle authentication of our system</li>\n<li>To sync user data with Monday Boards</li>\n</ol>\n<p>Now the documentation state that I can request the scope, <code>account:read</code> which I guess I should able to get the user email, name etc.</p>\n<p>However oauth success response returns only following details only ( According to the documentation )\"</p>\n<p>{<br />\naccess_token,<br />\ntoken_type,<br />\nscope,<br />\n}</p>\n<p>My question is how do I read the account details of this user ? I could not find an example for this. I have also checked the gql postman collection but it only has an query to get list of users.</p>\n<p>How do I do a <code>account:read</code> ?</p>"
+    },
+    {
+      "id": 191597,
+      "postNumber": 2,
+      "createdAt": "2024-06-30T11:33:40.715Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Once you get the token, you can use it to request that data with the <a href=\"http://monday.com\">monday.com</a> GraphQL API using the token after you get it.</p>\n<p>If you’re a UI app you get the users Id from the context within the UI itself. If its an integration app, the authorization sends a JWT in the “token” query parameter that is signed with your signing secret. This can be decoded and contains various details like the userId, accountId, boardId, integrationId, backToUrl, etc.</p>\n<p>You would use the following with the GraphQL API to get the user’s details. For this you need the <code>me:read</code> scope. If its a backend you’d use the OAuth, front-end you’d just use seamless authentication.</p>\n<pre><code class=\"lang-auto\">{\n me { //me = token user account; me:read\n   id\n   name\n   email\n }\n}\n</code></pre>\n<p>As far as authenticating to your system, you do not use monday OAuth tokens for that. Your UI can generate a <a href=\"https://developer.monday.com/apps/docs/mondayget#retrieving-your-session-token\">session token</a> which you can verify using your apps client secret on your backend. This is the preferred way your UI to authenticate to your back end since its not a fixed token and expires hourly. Obviously, if you’re integrating with a third-party (or your own) service that has its own login and you need to store a token you’d take them through that process too.</p>\n<p>Your backend would then use the OAuth token to make any API calls needed. The front end (monday app view) would use seamless authentication of the SDK, so no need to provide a token there for API calls.</p>"
+    },
+    {
+      "id": 191632,
+      "postNumber": 3,
+      "createdAt": "2024-07-01T03:37:08.903Z",
+      "author": "dilshan (Dilshan)",
+      "cookedHtml": "<p>Hi Cody,</p>\n<p>Thank you for your detailed answer. I am going to use the Monday Oauth for registering the user to my database. Not for manage authorization. Users are currently complaining as they have to register in both Monday and our system.</p>\n<p>Also, I just realized there’s a playground available. I was checking the Postman collection for <code>me</code> query. My Bad</p>\n<p>Again thank you for your details explanation <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 191720,
+      "postNumber": 4,
+      "createdAt": "2024-07-01T16:35:14.591Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Using the session token I described is exactly what you should use so that users don’t have to register in your system. You can create records in your system without taking them through any process, and the session tokens are seamless - you do not need any user interaction to get them and they contain the userId and accountId you need to store things in your DB by user. This will make everything transparent for your end users. The app just works, no Oauth steps needed.</p>"
+    }
+  ]
+}

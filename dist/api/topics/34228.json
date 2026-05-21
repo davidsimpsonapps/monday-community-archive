@@ -1,0 +1,62 @@
+{
+  "id": 34228,
+  "title": "Item duplicating upon creation",
+  "slug": "item-duplicating-upon-creation",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    107
+  ],
+  "createdAt": "2022-04-05T19:05:21.449Z",
+  "lastPostedAt": "2022-04-28T18:35:56.630Z",
+  "postsCount": 6,
+  "excerpt": "Hello there, \nI successfully followed the api quickstart tutorial. However when I proceed the last PHP example, my new item is created, but four times. Why? Is it related to a specific board setting? \nThanks \nHere is the&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 969,
+  "posts": [
+    {
+      "id": 82030,
+      "postNumber": 1,
+      "createdAt": "2022-04-05T19:05:21.531Z",
+      "author": "Friss (Friss)",
+      "cookedHtml": "<p>Hello there,<br />\nI successfully followed the api quickstart tutorial. However when I proceed the last PHP example, my new item is created, but four times. Why? Is it related to a specific board setting?</p>\n<p>Thanks</p>\n<p>Here is the code ($options and $board_id are defined earlier in the code)</p>\n<pre><code class=\"lang-auto\">$headers = ['Content-Type: application/json', 'Authorization: ' . $options['api_key']];\n\n$query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:'.$board_id.', item_name:$myItemName, column_values:$columnVals) { id } }';\n$vars = ['myItemName' =&gt; 'Prospects1', \n  'columnVals' =&gt; json_encode([\n    'email' =&gt; ['email'=&gt;'zzzz@zz.fr', 'text'=&gt;'zzzz@zz.fr']    \n])];\n$data = @file_get_contents($options['api_end_point'], false, stream_context_create([\n 'http' =&gt; [\n  'method' =&gt; 'POST',\n  'header' =&gt; $headers,\n  'content' =&gt; json_encode(['query' =&gt; $query,'variables'=&gt;$vars]),\n ]\n]));\n$responseContent = json_decode($data, true);\n\necho json_encode($responseContent);\n</code></pre>"
+    },
+    {
+      "id": 82217,
+      "postNumber": 2,
+      "createdAt": "2022-04-07T04:39:01.471Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/friss\">@Friss</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I am not expert on PHP to be transparent with you. Having said that, can’t see anything in this code that would make the creation happen four times. I see no iteration. I don’t know if you have any in the rest of the code, but I can’t see any here.</p>\n<p>You could have some automation or integration in the board that is creating items based on some trigger. I believe you should check that.</p>\n<p>Let me know what you find <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 82243,
+      "postNumber": 3,
+      "createdAt": "2022-04-07T07:50:05.032Z",
+      "author": "Friss (Friss)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> thanks for your reply.<br />\nI confirm you that I have no iteration in my code.<br />\nI followed your advicce and checked for any automation or integration and there is none of them.<br />\nSo I do not know, I tried on another board from another account and I do have the same behaviour: one api call 4 times the same data created.</p>\n<p>Any ideas?<br />\nThanks</p>"
+    },
+    {
+      "id": 82461,
+      "postNumber": 4,
+      "createdAt": "2022-04-10T04:36:36.382Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/friss\">@Friss</a>,</p>\n<p>Matias here!</p>\n<p>This sounds very strange. Would you be able to send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so that we can take the information an make a report about it to check it with our team?</p>\n<p>Please add the ID of the created item/s and the timestamp (date, hour, minute and location) of the HTTP request.</p>\n<p>If you are OK with us logging into your account for troubleshooting purposes (just in case we need it), please explicitly say so in the email as well.</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 84415,
+      "postNumber": 5,
+      "createdAt": "2022-04-28T18:35:56.630Z",
+      "author": "Friss (Friss)",
+      "cookedHtml": "<p>Finally I got this working, here is the code if it can help some people.<br />\nThanks again <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>The duplication came from the query with vars, I changed it into a more primary way and it worked.</p>\n<pre><code class=\"lang-auto\">$token = 'YOUR_TOKEN';\n$board_id = 'YOUR_BOARD_ID';\n\n$apiUrl = 'https://api.monday.com/v2';\n$headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n\n$myItemName = 'test5';\n$column_values = [\n    'name'=&gt; 'jean',\n    'text'=&gt;'dev',\n    'text0'=&gt;'dai',\n    'phone_1'=&gt;'0622334455',\n    'location'=&gt;array(\"lat\"=&gt;29.9772967,\"lng\"=&gt;31.1324955,\"address\"=&gt;\"Giza Pyramid Complex\"),\n    'long_text'=&gt;'lorem',\n    'email' =&gt; ['email'=&gt;'zzzz@zz.fr', 'text'=&gt;'zzzz@zz.fr']    \n];\n$column_values = addslashes(json_encode($column_values));\n\n\n$query = 'mutation { create_item (board_id:'.$board_id.', create_labels_if_missing: true, item_name:'.$myItemName.', column_values:\"'.$column_values.'\") { id } }';\n$data = file_get_contents($apiUrl, false, stream_context_create([\n 'http' =&gt; [\n 'method' =&gt; 'POST',\n 'header' =&gt; $headers,\n 'content' =&gt; json_encode(['query' =&gt; $query]),\n ]\n]));\n$responseContent = json_decode($data, true);\n\necho json_encode($responseContent);\n</code></pre>"
+    },
+    {
+      "id": 85088,
+      "postNumber": 6,
+      "createdAt": "2022-05-05T18:35:58.357Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

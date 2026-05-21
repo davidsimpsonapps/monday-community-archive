@@ -1,0 +1,39 @@
+{
+  "id": 70553,
+  "title": "Timeouts occur in nearly every request after approximately 1 minute when extracting all data from a single board",
+  "slug": "timeouts-occur-in-nearly-every-request-after-approximately-1-minute-when-extracting-all-data-from-a-single-board",
+  "categoryId": 80,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-11-11T10:38:11.995Z",
+  "lastPostedAt": "2023-11-11T12:40:10.974Z",
+  "postsCount": 3,
+  "excerpt": "Hi! \nI’m experiencing a critical issue with one of my customers where data extraction from Monday often results in a timeout. I am attempting to extract all data from one board using the following body: \n{ \n“query”:“quer&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 760,
+  "posts": [
+    {
+      "id": 152686,
+      "postNumber": 1,
+      "createdAt": "2023-11-11T10:38:12.071Z",
+      "author": "Ludwe (Ludwig )",
+      "cookedHtml": "<p>Hi!<br />\nI’m experiencing a critical issue with one of my customers where data extraction from Monday often results in a timeout. I am attempting to extract all data from one board using the following body:<br />\n{<br />\n“query”:“query {boards (ids: 1111122223333){items {name column_values{ description title value text}}}}”<br />\n}</p>\n<p>The board comprises approximately 400 rows and 50 columns. Does anyone know how to address the timeout problem?</p>"
+    },
+    {
+      "id": 152690,
+      "postNumber": 2,
+      "createdAt": "2023-11-11T12:35:44.754Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ludwe\">@Ludwe</a></p>\n<p>I would start with transforming this API call to the 2023-10 version, as the current one will stop working in January 15th. The new API version gives you better control with cursor based pagination. See <a href=\"https://developer.monday.com/api-reference/docs/items_page\" class=\"inline-onebox\">Items page</a></p>"
+    },
+    {
+      "id": 152691,
+      "postNumber": 3,
+      "createdAt": "2023-11-11T12:40:10.974Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Something like:</p>\n<pre><code class=\"lang-auto\">query getItemValuesInBoard ($boardId: ID!, $columnId: [String!], $rules: [ItemsQueryRule!], $order: [ItemsQueryOrderBy!])  {\n        complexity {\n          reset_in_x_seconds\n          before\n          after\n        }\n        boards (ids: [$boardId]) {\n          items_page (limit:100, query_params: {rules: $rules, order_by: $order}) {\n            cursor\n            items {\n              id\n              name\n              column_values (ids: $columnId) {\n                id\n                value\n                text\n                ... on DependencyValue {\n                  id\n                  value\n                  linked_item_ids\n                }\n              }\n            }\n          }\n        }\n      }\n</code></pre>\n<p>Followed by (in case you got a cursor that is not null) a loop to retrieve the rest of the data</p>\n<pre><code class=\"lang-auto\">query getItemValuesInBoard ($columnId: [String!], $cursor: String!) {\n          complexity {\n            reset_in_x_seconds\n            before\n            after\n          }\n          next_items_page (limit:100, cursor: $cursor) {\n            cursor\n            items {\n              id\n              name\n              column_values (ids: $columnId) {\n                id\n                value\n                text\n                ... on DependencyValue {\n                  id\n                  value\n                  linked_item_ids\n                }\n              }\n            }\n          }\n        }\n</code></pre>"
+    }
+  ]
+}

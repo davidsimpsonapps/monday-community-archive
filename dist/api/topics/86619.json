@@ -1,0 +1,83 @@
+{
+  "id": 86619,
+  "title": "Creating updates with mention of a specific user",
+  "slug": "creating-updates-with-mention-of-a-specific-user",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2024-05-11T09:57:30.739Z",
+  "lastPostedAt": "2025-06-11T08:06:02.487Z",
+  "postsCount": 9,
+  "excerpt": "In my app, I’m trying to create an update that mentions someone else, so that they can perform a task stated in the update. \nI’m seeing that I can use the create_update  mutation to create an update, e.g: \nmutation {\n  c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 158,
+  "posts": [
+    {
+      "id": 183350,
+      "postNumber": 1,
+      "createdAt": "2024-05-11T09:57:30.820Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>In my app, I’m trying to create an update that mentions someone else, so that they can perform a task stated in the update.</p>\n<p>I’m seeing that I can use the <code>create_update</code>  mutation to create an update, e.g:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_update (\n    item_id: \"2801294194\", \n    \n    body: \"&lt;p&gt;Hello &lt;a href=\\\"https://mycompany.monday.com/users/38005153\\\" data-mention-type=\\\"User\\\"&gt;@john@mycompany.com&lt;/a&gt;&lt;/p&gt;\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>This “looks right”, but is missing the actual mention mechanism, so the user does not see the mention under “I was mentioned” in the inbox:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/9/a9b6f4e84e2d161425637ad48f92483dae66a25d.jpeg\" title=\"Screenshot 2024-05-11 at 13.49.59\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/9/a9b6f4e84e2d161425637ad48f92483dae66a25d_2_690x436.jpeg\" alt=\"Screenshot 2024-05-11 at 13.49.59\" width=\"690\" height=\"436\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-05-11 at 13.49.59</span><span class=\"informations\">2516×1592 188 KB</span></div></a></div><p></p>\n<p>If I look at the browser console when posting an update in the UI, I see the following call:</p>\n<pre><code class=\"lang-auto\">POST https://mycompany.monday.com/posts\n\nBODY (as FormData):\n  post[item_id]: 2801294194\n  post[kind]: update\n  post[body]: &lt;p&gt;﻿Mentioning&amp;nbsp;&lt;a class=\"user_mention_editor router\" \n  href=\"https://mycompany.monday.com/users/38005153-john-mycompany-com\" data- \n mention-type=\"User\" data-mention- \n id=\"30515803\"&gt;@john@mycompany.com&lt;/a&gt;﻿&amp;nbsp;﻿from the UI﻿&lt;/p&gt;\n  mentions: [{\"type\":\"User\",\"id\":\"38005153\"}]\n  asset_id: []\n  gifs: []\n  version: 1\n  theme: light\n</code></pre>\n<p>So, the platform uses a different endpoint than the public GraphQL endpoint, and it also adds the <code>mentions</code> object.</p>\n<p>Looking in the API playground, I can’t see any way to add mentions to the <code>create_update</code>  mutation.</p>\n<p>How do I do this?</p>\n<p>If I can’t, please convert this into a feature request.</p>\n<p>Cc: <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>"
+    },
+    {
+      "id": 183445,
+      "postNumber": 2,
+      "createdAt": "2024-05-12T09:22:56.209Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Also, if I trigger this:</p>\n<ul>\n<li>server side, I’d expect the update to come from whoever installed the app,</li>\n<li>client side,  I’d expect the update to come from the current logged in user</li>\n</ul>\n<p>Is this correct?</p>"
+    },
+    {
+      "id": 184040,
+      "postNumber": 3,
+      "createdAt": "2024-05-15T09:06:49.497Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>,</p>\n<p>This is not possible via API (to mention someone). I have turned this into a request.</p>\n<p>Regarding your last question, it will be on behalf of the user whose token is being used for the call.</p>\n<p>Let me know if you have any questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 231629,
+      "postNumber": 4,
+      "createdAt": "2025-06-09T12:27:50.324Z",
+      "author": "inspiredearth (Jonathan)",
+      "cookedHtml": "<p>It looks like @-mentioned functionality is starting to be implemented in the API. Perhaps this is relevant to what you were wishing to achieve.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/279d6c49c26dd38347d668ffb26c0ba4637a6ce5.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/release-notes#2025-07\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday.com Platform API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/e/a/ea281669d330e520359c38121e76433683502de2.png\" class=\"thumbnail\" width=\"358\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/release-notes#2025-07\" target=\"_blank\" rel=\"noopener nofollow ugc\">Release notes</a></h3>\n\n  <p>2025-07 Hotfixes April 28th, 2025: For column value exception errors, the column_type property no longer returns \"Column\" appended to the column type. Read more here . May 19th, 2025: All API responses now contain a unique request ID. Read more here...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/279d6c49c26dd38347d668ffb26c0ba4637a6ce5.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/changelog/new-mentions_list-argument-in-create_update-mutations\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday.com Platform API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/e/a/ea281669d330e520359c38121e76433683502de2.png\" class=\"thumbnail\" width=\"358\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/api-reference/changelog/new-mentions_list-argument-in-create_update-mutations\" target=\"_blank\" rel=\"noopener nofollow ugc\">New mentions_list argument in create_update mutation</a></h3>\n\n  <p>🏷️ API version: 2025-07 You can now mention users, teams, boards, and projects when creating updates using the new mentions_list argument in the create_update mutation. 👉 Read more here ! mutation { create_update (item_id: 9876543210, body: \"This...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 231650,
+      "postNumber": 5,
+      "createdAt": "2025-06-09T12:59:04.703Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/inspiredearth\">@inspiredearth</a> wow! <img src=\"https://emoji.discourse-cdn.com/apple/fire.png?v=14\" title=\":fire:\" class=\"emoji\" alt=\":fire:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 231716,
+      "postNumber": 6,
+      "createdAt": "2025-06-10T06:45:22.241Z",
+      "author": "AnishJ (Anish)",
+      "cookedHtml": "<p>What are the use cases for this?</p>"
+    },
+    {
+      "id": 231717,
+      "postNumber": 7,
+      "createdAt": "2025-06-10T06:47:04.971Z",
+      "author": "AnishJ (Anish)",
+      "cookedHtml": "<p>oh ok you mentioned that in the first post</p>"
+    },
+    {
+      "id": 231724,
+      "postNumber": 8,
+      "createdAt": "2025-06-10T08:41:37.484Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anish\">@anish</a> idk, maybe <span class=\"mention\">@mention</span> someone when something changes in an external system, and add an update and link to the external change?</p>"
+    },
+    {
+      "id": 231772,
+      "postNumber": 9,
+      "createdAt": "2025-06-11T08:06:02.487Z",
+      "author": "inspiredearth (Jonathan)",
+      "cookedHtml": "<p>For me there are situations in which I will be using the API to add an update to an item, and I want to draw attention of one or more staff to the update with a simple <code>@mention</code>.</p>"
+    }
+  ]
+}

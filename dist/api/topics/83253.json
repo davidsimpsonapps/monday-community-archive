@@ -1,0 +1,75 @@
+{
+  "id": 83253,
+  "title": "Getting empty values for an API request, where in playground will provide results",
+  "slug": "getting-empty-values-for-an-api-request-where-in-playground-will-provide-results",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-07T13:03:14.036Z",
+  "lastPostedAt": "2024-04-11T11:47:19.639Z",
+  "postsCount": 8,
+  "excerpt": "Hi, \nI am trying to modify a python script that used a GraphQL query to retrieve data from monday via the API, that since the items-&gt; item_pages transition stopped working. \nI have used the playground and was able to gen&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 116,
+  "posts": [
+    {
+      "id": 177282,
+      "postNumber": 1,
+      "createdAt": "2024-04-07T13:03:14.119Z",
+      "author": "Lavil (Lavi Landman)",
+      "cookedHtml": "<p>Hi,<br />\nI am trying to modify a python script that used a GraphQL query to retrieve data from monday via the API, that since the items-&gt; item_pages transition stopped working.</p>\n<p>I have used the playground and was able to generate updated query and get results per board and item, but when trying my script which does the same - just inside a loop the results come back empty.</p>\n<p>This is what I have working in the playground:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/8/f84877662a99498ec5b0dd1a93fda3364dcf62d3.png\" title=\"1\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/8/f84877662a99498ec5b0dd1a93fda3364dcf62d3_2_690x239.png\" alt=\"1\" width=\"690\" height=\"239\" /><div class=\"meta\"><span class=\"filename\">1</span><span class=\"informations\">1911×662 54.9 KB</span></div></a></div><p></p>\n<p>And this is my code snippet that should do the same:</p>\n<p>for item_id in item_ids:<br />\n# API query for item details<br />\nitem_query = ‘’’<br />\nquery {<br />\nboards(ids: %s) {<br />\nitems_page(query_params:{ids: %s}) {<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\ntext<br />\n}<br />\n}<br />\nsubitems {<br />\nname<br />\ncolumn_values {<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n‘’’ % (board_id, item_id)</p>\n<p>Please assist.<br />\n-Lavi</p>"
+    },
+    {
+      "id": 177408,
+      "postNumber": 2,
+      "createdAt": "2024-04-08T11:34:54.470Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/lavil\">@Lavil</a>,</p>\n<p>You are closing the “items” object before asking for that item’s subitems.</p>\n<p>Would you be able to please try this:</p>\n<pre><code class=\"lang-auto\">query {\nboards(ids: %s) {\nitems_page(query_params:{ids: %s}) {\nitems {\nid\nname\ncolumn_values {\ntext\n}\nsubitems {\nname\ncolumn_values {\ntext\n}\n}\n}\n}\n}\n}\n</code></pre>"
+    },
+    {
+      "id": 177450,
+      "postNumber": 3,
+      "createdAt": "2024-04-08T14:52:22.394Z",
+      "author": "Lavil (Lavi Landman)",
+      "cookedHtml": "<p>Thanks Matias, I corrected as you suggested and now get the subitems structure as part of the response. But this doesn’t solve my problem as the items still returns as “empty”.</p>\n<p>This is an example of an empty item which I get now as the response:</p>\n<p>query {<br />\nboards(ids: 6318008740) {<br />\nitems_page(query_params:{ids: 6318008872}) {<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\ntext<br />\n}<br />\n}<br />\nsubitems {<br />\nname<br />\ncolumn_values {<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 177748,
+      "postNumber": 4,
+      "createdAt": "2024-04-10T08:32:10.727Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>That last query is still incorrect regarding the curly bracket. Here is the correct format:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(query_params: {ids: 1122334455}) {\n      items {\n        id\n        name\n        column_values {\n          text\n        }\n        subitems {\n          name\n          column_values {\n            text\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>If you do not get any items in the response at all, it means that the combination of that board ID and that item ID does not exist, or that the user whose API token you are using does not have access to it.</p>\n<p>Please check that the item ID is the ID of an ITEM and not of a SUBITEM.</p>\n<p>Please also check that the user whose API token is being used for the query has access to that item.</p>\n<p>The query itself (the one I send here) is correct.</p>\n<p>Just in case, for a query like this one, where you are querying for the data in one item only, you don’t need the “boards”, or “items_page” parts. You can use something like this:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1122334455) {\n    id\n    name\n    column_values {\n      text\n    }\n    subitems {\n      name\n      column_values {\n        text\n      }\n    }\n  }\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 177832,
+      "postNumber": 5,
+      "createdAt": "2024-04-10T13:17:04.039Z",
+      "author": "Lavil (Lavi Landman)",
+      "cookedHtml": "<p>I think there’s something incorrect in how I write my POST request, so I read the page below:<br />\n<a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-59506fc9-6570-4eb1-ac15-27869325a8cf\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-59506fc9-6570-4eb1-ac15-27869325a8cf</a></p>\n<p>and using the code snippet that is mentioned there (for Python-requests), I was able to create the python script and get the results I wanted back.</p>\n<p>My question is: how would you update the code snippet mentioned in the page, if I wanted to get results for only one item in the board?</p>"
+    },
+    {
+      "id": 177973,
+      "postNumber": 6,
+      "createdAt": "2024-04-11T04:58:16.101Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/lavil\">@Lavil</a>,</p>\n<p>As I mentioned before, if you only need the data from one item, you can use something like this:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1122334455) {\n    id\n    name\n    column_values {\n      text\n    }\n    subitems {\n      name\n      column_values {\n        text\n      }\n    }\n  }\n}\n</code></pre>\n<p>If you still want to use items_page for only one item (which is not necessary), you could add the ID of the specific item in the query_params like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 100, query_params: {ids: 1122334455}) {\n      cursor\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 178007,
+      "postNumber": 7,
+      "createdAt": "2024-04-11T09:24:07.040Z",
+      "author": "Lavil (Lavi Landman)",
+      "cookedHtml": "<p>Thanks a lot Matias! I managed to find the solution I needed with the information you provided,</p>"
+    },
+    {
+      "id": 178045,
+      "postNumber": 8,
+      "createdAt": "2024-04-11T11:47:19.639Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I am glad that is the case <a class=\"mention\" href=\"/u/lavil\">@Lavil</a> !!</p>\n<p>Happy to help <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": 42996,
+  "title": "Retrieving item terminology thru API",
+  "slug": "retrieving-item-terminology-thru-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-09-26T07:34:13.439Z",
+  "lastPostedAt": "2023-04-13T13:10:58.873Z",
+  "postsCount": 8,
+  "excerpt": "Hi devs, \nis there a way to retrieve the item terminology thru API? \n  \nThanks.",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 889,
+  "posts": [
+    {
+      "id": 98596,
+      "postNumber": 1,
+      "createdAt": "2022-09-26T07:34:13.507Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi devs,<br />\nis there a way to retrieve the item terminology thru API?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/1e5a3d1c56cae9334cf0025ea389bcf3b6e0efe6.png\" title=\"Screen Shot 2022-09-26 at 12.33.18\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/1e5a3d1c56cae9334cf0025ea389bcf3b6e0efe6_2_652x500.png\" alt=\"Screen Shot 2022-09-26 at 12.33.18\" width=\"652\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2022-09-26 at 12.33.18</span><span class=\"informations\">976×748 42.5 KB</span>\n</div></a></div><p></p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 98673,
+      "postNumber": 2,
+      "createdAt": "2022-09-26T17:16:03.360Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>This is 100% possible! You are looking for the column type! Your query would look something like this:</p>\n<pre><code class=\"lang-auto\">query = 'query ($boardID:Int!) {boards(ids:[$boardID]){items{column_values{type}}}}'\nvars = {\n    'boardID': boardID\n}\n</code></pre>\n<p>Here is the documentation for what you’re trying:</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/columns-queries-1\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/columns-queries-1\" target=\"_blank\" rel=\"noopener nofollow ugc\">Columns</a></h3>\n\n  <p>Columns and items are two core elements of any board in monday.com. A board is formatted as a table, where there are columns and rows, called items. You can learn more about this object type here. In monday.com, each column has a specific...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 98677,
+      "postNumber": 3,
+      "createdAt": "2022-09-26T17:34:34.906Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Thank you, <a class=\"mention\" href=\"/u/neelpi\">@NeelPi</a>, but no, I’m not talking about column types.</p>"
+    },
+    {
+      "id": 98683,
+      "postNumber": 4,
+      "createdAt": "2022-09-26T17:53:15.894Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>Sorry about that! Misunderstood what you were asking!</p>"
+    },
+    {
+      "id": 98688,
+      "postNumber": 5,
+      "createdAt": "2022-09-26T18:08:23.285Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>It doesn’t look like the item terminology is exposed by the API, hopefully someone else has a better answer.</p>"
+    },
+    {
+      "id": 99718,
+      "postNumber": 6,
+      "createdAt": "2022-10-06T09:14:17.819Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/rob\">@rob</a>!</p>\n<p>As of today, there is no way of retrieving the terminology via API.</p>\n<p>I will add this as a feature request!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 123204,
+      "postNumber": 7,
+      "createdAt": "2023-04-09T11:01:40.136Z",
+      "author": "maorba (Maor Barazani)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rob\">@rob</a> <a class=\"mention\" href=\"/u/neelpi\">@NeelPi</a>,<br />\nGlad to announce this is now available.</p>\n<p>You can use our boards API, and in addition to the already existing fields, you can now retrieve a field called <code>item_terminology</code>, like this:</p>\n<pre><code class=\"lang-auto\">query {\n  boards {\n    id\n    name\n    item_terminology\n  }\n}\n</code></pre>\n<p>This would retrieve the term used for items, on each of the queried boards:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"id\": \"123\",\n        \"name\": \"A\",\n        \"item_terminology\": \"project\"\n      },\n      {\n        \"id\": \"456\",\n        \"name\": \"B\",\n        \"item_terminology\": \"item\"\n      },\n      {\n        \"id\": \"789\",\n        \"name\": \"My first board\",\n        \"item_terminology\": \"task\"\n      }\n    ]\n  },\n  \"account_id\": 123\n}\n</code></pre>\n<p>Have fun with it, and let me know of any further questions! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 123748,
+      "postNumber": 8,
+      "createdAt": "2023-04-13T13:10:58.873Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>That’s a great news!<br />\nThank you, <a class=\"mention\" href=\"/u/maorba\">@maorba</a></p>"
+    },
+    {
+      "id": 123874,
+      "postNumber": 9,
+      "createdAt": "2023-04-14T15:47:30.506Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

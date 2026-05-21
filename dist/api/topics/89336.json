@@ -1,0 +1,76 @@
+{
+  "id": 89336,
+  "title": "Difficulty updating tags on item",
+  "slug": "difficulty-updating-tags-on-item",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    114,
+    351
+  ],
+  "createdAt": "2024-06-07T08:29:17.148Z",
+  "lastPostedAt": "2024-06-08T09:37:58.556Z",
+  "postsCount": 7,
+  "excerpt": "Hello, \nHaving major issues updating the tag on an item column.  I’ve tried various things but no luck.  It appears that some value is being populated in the tag field, but not the actual tag.  In monday, the field gains&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 166,
+  "posts": [
+    {
+      "id": 187685,
+      "postNumber": 1,
+      "createdAt": "2024-06-07T08:29:17.236Z",
+      "author": "Jadams (Jacob Adams)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Having major issues updating the tag on an item column.  I’ve tried various things but no luck.  It appears that some value is being populated in the tag field, but not the actual tag.  In monday, the field gains the little “+” symbol when this code runs, but nothing is visible.  When I right click, I can “clear values” and the “+” disappears.</p>\n<p>Updating other columns using this function works fine.  Just the tags is an issue.  I don’t get any errors.   I’ve tried various things some below:</p>\n<pre><code>        \"tags__1\": { tag_ids: [929292] },\n        [tags__1]: { tag_ids: [929292] },\n        \"tags__1\": { tag_ids: [\"929292\"] },\n</code></pre>\n<p>Here’s my code.  Please help!</p>\n<p>async function updateItem() {<br />\ntry {<br />\nconst response = await fetch(“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”, {<br />\nmethod: “post”,<br />\nheaders: {<br />\n“Content-Type”: “application/json”,<br />\nAuthorization: mondayAPI,<br />\n},<br />\nbody: JSON.stringify({<br />\nquery: <code>                    mutation ($myBoardId: ID!, $myItemId: ID!, $myColumnValues: JSON!) {                          change_multiple_column_values(item_id: $myItemId, board_id: $myBoardId, column_values: $myColumnValues) {                              id                          }                      }                </code>,<br />\nvariables: {<br />\nmyBoardId: “6775681461”,<br />\nmyItemId: “6791619434”, // Replace with your actual item ID<br />\nmyColumnValues: JSON.stringify({<br />\n“tags__1”: { tag_ids: [929292] },<br />\n// [“numbers”]: “123”,<br />\n}),<br />\n},<br />\n}),<br />\n});</p>\n<pre><code>if (!response.ok) {\n  throw new Error(`HTTP error! status: ${response.status}`);\n}\n\nconst data = await response.json();\nreturn data;\n</code></pre>\n<p>} catch (error) {<br />\nconsole.error(“Error updating item:”, error);<br />\nreturn error;<br />\n}<br />\n}<br />\nconst updatedItem = await updateItem();</p>"
+    },
+    {
+      "id": 187703,
+      "postNumber": 2,
+      "createdAt": "2024-06-07T09:58:08.679Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>So something to remember is that monday may not return an HTTP error for all GraphQL errors.</p>\n<p>Instead you need to check the actual response for an errors object, an error_code string, or error_message string. Those will be the real graphql errors.</p>\n<p>I bring this up because you’re not checking these in your code. At this time if the response.data object is undefined you can presume there are errors and log them. In the future it may be null or an empty object on error depending on the error. But for now if its undefined there are GraphQL errors.</p>"
+    },
+    {
+      "id": 187706,
+      "postNumber": 3,
+      "createdAt": "2024-06-07T10:05:25.118Z",
+      "author": "Jadams (Jacob Adams)",
+      "cookedHtml": "<p>Good point, thanks, I’ll add some code to look at the response.</p>"
+    },
+    {
+      "id": 187711,
+      "postNumber": 4,
+      "createdAt": "2024-06-07T10:22:29.613Z",
+      "author": "Jadams (Jacob Adams)",
+      "cookedHtml": "<p>I’ve added the code, but no errors there in the response…</p>"
+    },
+    {
+      "id": 187713,
+      "postNumber": 5,
+      "createdAt": "2024-06-07T10:44:50.917Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Darn. But hey, at least we know its NOT returning an error. I want to double check the board isn’t private/sharable? Tags have context - private/sharable tags are stored in the board itself and aren’t available to other boards. Public tags are available globally - but I don’t believe can be used on private boards.</p>\n<p>Also what happens if you read the column value back by API?</p>"
+    },
+    {
+      "id": 187735,
+      "postNumber": 6,
+      "createdAt": "2024-06-07T12:16:10.383Z",
+      "author": "Jadams (Jacob Adams)",
+      "cookedHtml": "<p>Thanks for your help!</p>\n<p>I read the value of the tags column for two items.  One where I set the tag via API and one where I set it in the browser.</p>\n<p>The issue was that I didn’t realise you had to create the tag, give it a name, and get its ID, before updating a column with a tag ID.</p>\n<p>I thought that a tag just had a value, at that the value given to it was its ID and its name.</p>\n<p>I now have it working, but have noticed that I have to refresh the browser to see the updated tag name in the column.  (Using chrome).</p>"
+    },
+    {
+      "id": 187825,
+      "postNumber": 7,
+      "createdAt": "2024-06-08T09:37:58.556Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Ah, thats where I would go next, I was assuming you were using a tag ID you’d already gotten from someplace else.</p>\n<p>The refreshing browser seems to be something that happens with API based changes not propagating to the browser sometimes. For that I don’t have any answers.</p>"
+    },
+    {
+      "id": 187897,
+      "postNumber": 8,
+      "createdAt": "2024-06-09T09:16:48.515Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

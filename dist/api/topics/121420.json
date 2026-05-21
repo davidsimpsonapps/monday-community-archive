@@ -1,0 +1,41 @@
+{
+  "id": 121420,
+  "title": "How does one go about using Dependencies in Custom Recipes?",
+  "slug": "how-does-one-go-about-using-dependencies-in-custom-recipes",
+  "categoryId": 98,
+  "tagIds": [
+    6,
+    94,
+    239
+  ],
+  "createdAt": "2025-11-05T05:22:11.961Z",
+  "lastPostedAt": "2025-11-05T13:42:48.141Z",
+  "postsCount": 3,
+  "excerpt": "I am working on an automation app that I would like to be available as a custom recipe option. \nThe problem I am running into is whenever I add any dependencies to my Field Types (which I believe is the only way to get t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 11,
+  "posts": [
+    {
+      "id": 241314,
+      "postNumber": 1,
+      "createdAt": "2025-11-05T05:22:12.042Z",
+      "author": "MondayAdmin (MondayAdmin)",
+      "cookedHtml": "<p>I am working on an automation app that I would like to be available as a custom recipe option.</p>\n<p>The problem I am running into is whenever I add any dependencies to my Field Types (which I believe is the only way to get this to work), the option for the workflow block to be published as a custom recipe gets greyed out.</p>\n<p>I am using the dependency to pull data on the boardId, and columnId for a dropdown column so I can display, and select the dropdown column options in my automation.</p>\n<p>I don’t see anyway of achieving this without using a Field Type with dependencies.</p>\n<p>Any help/direction would be greatly appreciated!</p>\n<p>Thanks!!</p>"
+    },
+    {
+      "id": 241331,
+      "postNumber": 2,
+      "createdAt": "2025-11-05T06:37:06.667Z",
+      "author": "Clarey (MondayMotivator)",
+      "cookedHtml": "<p>Hi MondayAdmin, I believe this is by design. Workflow blocks that use dependent fields (e.g., column with dependencies on boardId, dropdown options that depend on columnId) can’t be published as Custom Automations recipes, so the toggle is greyed out.</p>\n<p>Ideas to try?</p>\n<ul>\n<li>\n<p>If you must show and pick dropdown options at config time: publish it as a regular Integration recipe (under your app’s recipes). Dependencies are fine there.</p>\n</li>\n<li>\n<p>If you want it available in the Custom Automations builder: remove dependency-based fields and use Dynamic Mapping.</p>\n<ul>\n<li>\n<p>In your action, use a mapping field with allowedColumnTypes: [“dropdown”].</p>\n</li>\n<li>\n<p>At run time, use the mapping context (boardId, itemId, columnId) and GraphQL to read the dropdown column settings_str to get labels/options.</p>\n</li>\n<li>\n<p>If you need a specific label choice, add a simple text/number field for the label or value to match, rather than a dependent selector.</p>\n</li>\n</ul>\n</li>\n</ul>\n<p>Pattern examples:</p>\n<ul>\n<li>\n<p>Custom Automations–compatible action:</p>\n<ul>\n<li>\n<p>input field: type “mapping”, allowedColumnTypes [“dropdown”] (no dependencies)</p>\n</li>\n<li>\n<p>optional: a text field “Label to match”</p>\n</li>\n</ul>\n</li>\n<li>\n<p>Regular recipe (not Custom Automations):</p>\n<ul>\n<li>fields with dependencies: board → column (dropdown) → option list</li>\n</ul>\n</li>\n</ul>\n<p>So: use a regular recipe if you need dependency-driven pickers; use Dynamic Mapping (no dependencies) if you need the block inside Custom Automations.</p>\n<p>Let me know if that’s help.</p>"
+    },
+    {
+      "id": 241348,
+      "postNumber": 3,
+      "createdAt": "2025-11-05T13:42:48.141Z",
+      "author": "KamalDeepPareek (Kamal Deep Pareek)",
+      "cookedHtml": "<p>In <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> custom recipes, using dependencies in Field Types currently prevents publishing the workflow block as a custom recipe — this is a known limitation. Dependencies dynamically pull board or column data (e.g., dropdown options), but custom recipes require static field definitions. To work around this, use static or predefined fields and handle dynamic data retrieval inside your app’s execution logic or custom trigger/action endpoint instead of through dependencies. Essentially, keep the recipe definition static, and use runtime API calls in your backend to fetch board-specific data after the recipe is created.</p>"
+    }
+  ]
+}

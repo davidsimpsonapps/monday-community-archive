@@ -1,0 +1,88 @@
+{
+  "id": 9486,
+  "title": "Querying with large limit is resulting in errors",
+  "slug": "querying-with-large-limit-is-resulting-in-errors",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2020-07-27T22:24:32.174Z",
+  "lastPostedAt": "2021-02-25T14:32:54.764Z",
+  "postsCount": 10,
+  "excerpt": "simple query: \n{ \n“query”: “{items(limit:50000){ name state board {id} group {title} column_values { title text } }}” \n} \nmentioned below is the error. \nI don’t see this when I query with lower limits like 1000. \nIs ther&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2828,
+  "posts": [
+    {
+      "id": 23825,
+      "postNumber": 1,
+      "createdAt": "2020-07-27T22:24:32.258Z",
+      "author": "spb (spb)",
+      "cookedHtml": "<p>simple query:<br />\n{<br />\n“query”: “{items(limit:50000){ name state board {id} group {title} column_values { title text } }}”<br />\n}</p>\n<p>mentioned below is the error.<br />\nI don’t see this when I query with lower limits like 1000.<br />\nIs there any max cap till which I can query??</p>\n<pre><code>&lt;html&gt;\n</code></pre>\n\n\n\tmonday.com is having some technical issues\n\t\n\t\t@font-face {\n\t\t\tfont-family: Roboto;\n\t\t\tfont-style: normal;\n\t\t\tfont-weight: 300;\n\t\t\tsrc: local(\"Roboto Light\"), local(\"Roboto-Light\"), url(data:font/woff2;base64,d09GMgABAAAAACmQAA4AAAAAURgAACk5AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoFOG5JCHDYGYACHDBEMCvRE3SMLg1oAATYCJAOHMAQgBYJ8ByAbpkIF7Ng0sHEA9uDsckZF2RRNBP9fEjgZQ6rxe01YhItQqVQqtbZKo6NSLXshCcvuamYvk1vBgLu/bcUlFh3Hac1oktcuX/oxUb\\\n.......and so on"
+    },
+    {
+      "id": 23837,
+      "postNumber": 2,
+      "createdAt": "2020-07-28T00:05:46.451Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/spb\">@spb</a>,</p>\n<p>50,000 items is a lot… My guess is this puts you complexity way over the limit.</p>\n<p>Depending on your query and the depth, I would probably look at using a limit of a few hundred to a thousand at a time.</p>"
+    },
+    {
+      "id": 23856,
+      "postNumber": 3,
+      "createdAt": "2020-07-28T04:58:05.067Z",
+      "author": "morneluckybeard (Morne)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a>, is there a way to get the total count of all items? This way we could  break it into lots of small queries. I’ve had queries of 200 000 with complexity 6million and also only recently started getting the technical issues response.</p>\n<p>Is there a better way to get all items?</p>"
+    },
+    {
+      "id": 23915,
+      "postNumber": 4,
+      "createdAt": "2020-07-28T19:47:40.461Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/morneluckybeard\">@morneluckybeard</a> so you are looking to get the total number of all items in a monday account?</p>\n<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> <a class=\"mention\" href=\"/u/scott-monday.com\">@Scott-monday.com</a> any info on the technical issue response?</p>"
+    },
+    {
+      "id": 23948,
+      "postNumber": 5,
+      "createdAt": "2020-07-29T04:05:28.789Z",
+      "author": "morneluckybeard (Morne)",
+      "cookedHtml": "<p>Not necessarily for the entire account, but let’s say I create a query with defined limits, the pagination is great, but it doesn’t help me if I don’t know how many pages to iterate through. I could call sequentially and check if an empty list returns, but this will take just as long as making a large query as the calls need to wait for the previous call to complete. I was hoping for some way to get the total item count based on the page size that I provide. so for a total of 1000 items / page size(200) = 5 pages.</p>"
+    },
+    {
+      "id": 24050,
+      "postNumber": 6,
+      "createdAt": "2020-07-29T20:35:29.704Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/morneluckybeard\">@morneluckybeard</a> I don’t believe there the API returns how many pages of items there are.</p>\n<p>You would need to keep making a request until you return an empty response</p>"
+    },
+    {
+      "id": 24059,
+      "postNumber": 7,
+      "createdAt": "2020-07-30T04:15:40.219Z",
+      "author": "morneluckybeard (Morne)",
+      "cookedHtml": "<p>That is rather unfortunate. Hopefully that gets added at some point as waiting for each call may actually take longer than just submitting a huge query.</p>\n<p>Appreciate your feedback!</p>"
+    },
+    {
+      "id": 24267,
+      "postNumber": 8,
+      "createdAt": "2020-07-31T17:25:51.798Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Dipro from the <a href=\"http://monday.com\">monday.com</a> team here – sorry for the late response.</p>\n<p>Why not make N concurrent requests at a time? You can check the Nth response to see if there are more items to return. This means you can keep each request smaller (lower the chance of hitting a timeout or 500 error) and still get a lot of data at once.</p>\n<p>Here are my responses to the two questions you have:</p>\n<h3><a name=\"p-24267-queries-with-big-limits-1\" class=\"anchor\" href=\"#p-24267-queries-with-big-limits-1\"></a>Queries with big limits</h3>\n<p>At the moment we don’t have a hard limit on how many items you can request at a time. However, we do have a 60 second timeout for all requests, so if you’re returning a ton of data you might see a timeout.</p>\n<p>And of course, if you’re asking for a <em>really</em> big data set an error might be thrown on the infrastructure side and cause a 500 error.</p>\n<h3><a name=\"p-24267-paging-through-responses-2\" class=\"anchor\" href=\"#p-24267-paging-through-responses-2\"></a>Paging through responses</h3>\n<p>We don’t currently expose the number of pages when you’re paginating, but I’ve passed that as feedback.</p>"
+    },
+    {
+      "id": 24367,
+      "postNumber": 9,
+      "createdAt": "2020-08-03T04:12:14.263Z",
+      "author": "morneluckybeard (Morne)",
+      "cookedHtml": "<p>Thank you, the pagination count would be great. I’ll give your solution a go, thanks! As for the OP’s question, the technical issues are returning html instead of an error code. Hopefully this can be solved as well.</p>\n<p>Thanks again for all the help and feedback!</p>"
+    },
+    {
+      "id": 42405,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T14:32:54.764Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": 78129,
+  "title": "Filter subitems by column value",
+  "slug": "filter-subitems-by-column-value",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-02-14T06:50:56.001Z",
+  "lastPostedAt": "2024-03-28T15:36:14.174Z",
+  "postsCount": 8,
+  "excerpt": "I would like to filter subitems items by column value, is it possible without going over all items in the group.",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 355,
+  "posts": [
+    {
+      "id": 167733,
+      "postNumber": 1,
+      "createdAt": "2024-02-14T06:50:56.079Z",
+      "author": "gilaidoc (aidoc)",
+      "cookedHtml": "<p>I would like to filter subitems items by column value, is it possible without going over all items in the group.</p>"
+    },
+    {
+      "id": 167874,
+      "postNumber": 2,
+      "createdAt": "2024-02-14T14:13:26.677Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/gilaidoc\">@gilaidoc</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can use a query like this one, using the board ID of the subitems board:</p>\n<pre><code class=\"lang-auto\">{\n  items_page_by_column_values(\n    limit: 50\n    board_id: 1234567890\n    columns: [{column_id: \"status\", column_values: [\"Done\"]}]\n  ) {\n    cursor\n    items {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<p>If you don’t know the board ID of the subitems board, you can use something like:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 111111111) {\n    items_page(limit: 500) {\n      items {\n        subitems {\n          board {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 167909,
+      "postNumber": 3,
+      "createdAt": "2024-02-14T15:51:01.834Z",
+      "author": "paul-enoda (PaFi)",
+      "cookedHtml": "<p>Adding to the original poster’s question… If I want to return only the items of a board where the items contain a subitem with a status column with a value of “set” (for example) is this possible using the items_page or items_page_by_column_values method? Basically, the column to be filtered on is a subitem column, but it doesn’t seem that subitem columns are not in scope for either of these approaches. Is this true?</p>"
+    },
+    {
+      "id": 167918,
+      "postNumber": 4,
+      "createdAt": "2024-02-14T16:20:39.107Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>on the query of the subitems board, this is a fragment of the query you can put in where relevant.</p>\n<pre><code class=\"lang-auto\">items {\n parent_item {\n  id\n }\n}\n</code></pre>"
+    },
+    {
+      "id": 168015,
+      "postNumber": 5,
+      "createdAt": "2024-02-15T06:34:55.227Z",
+      "author": "gilaidoc (aidoc)",
+      "cookedHtml": "<p>The filter should be apply to the subitem column not the parent<br />\ni would like to get the subitem with column_id and value [“Done”]</p>"
+    },
+    {
+      "id": 168128,
+      "postNumber": 6,
+      "createdAt": "2024-02-15T14:08:15.647Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/gilaidoc\">@gilaidoc</a> and <a class=\"mention\" href=\"/u/paul-enoda\">@paul-enoda</a></p>\n<p>The solution I gave using items_page_by_column_values uses the subitems board. Not the main board.</p>"
+    },
+    {
+      "id": 175457,
+      "postNumber": 7,
+      "createdAt": "2024-03-27T20:24:55.689Z",
+      "author": "Soroh (Soroh Donn)",
+      "cookedHtml": "<p>I want to filter for all subitems with a specific parentItemId and a specific sub-column value.<br />\nHow would I be able to do this?</p>"
+    },
+    {
+      "id": 175637,
+      "postNumber": 8,
+      "createdAt": "2024-03-28T15:36:14.174Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You’ll need to first query the parent item’s subitems column to get a list of subitems for the item, there is no direct filter for parent item in an items_page query. ( I prefer getting just subitem IDs from the subitems column rather than the subitems object of the item, much less API complexity and the worst you have to do is parse some JSON from the value of the subitem column)</p>\n<p>You can then perform an items_page or items_page_by_column_values on the subitems board, and then process the results to filter only those items where its ID is included in the subitems list you got.</p>\n<p>It requires some processing on your side possibly. You may be able to specify the subitem IDs as an IDs argument of the items query under the items_page query to filter it on the monday side. I haven’t tried that one yet though.</p>\n<p>either way its going to take two calls, one to get the list of subitem IDs, then to query the subitems board. Within that you’ll end up filtering it either via monday query or on your client side.</p>"
+    },
+    {
+      "id": 175938,
+      "postNumber": 9,
+      "createdAt": "2024-03-31T07:40:22.667Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

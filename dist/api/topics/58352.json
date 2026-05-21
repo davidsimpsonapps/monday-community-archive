@@ -1,0 +1,74 @@
+{
+  "id": 58352,
+  "title": "I want to generate a new review date based off user's due date, excluding weekends",
+  "slug": "i-want-to-generate-a-new-review-date-based-off-users-due-date-excluding-weekends",
+  "categoryId": 80,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-05-16T12:45:32.791Z",
+  "lastPostedAt": "2023-05-25T15:44:45.476Z",
+  "postsCount": 8,
+  "excerpt": "I have a “Due Date” column that the requestor fills out. Currently I use this formula “LEFT(FORMAT_DATE(SUBTRACT_DAYS({Due Date},3)),6)” to subtract 3 days from the “Due Date” and generate a new date in the “For Review” &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1124,
+  "posts": [
+    {
+      "id": 128199,
+      "postNumber": 1,
+      "createdAt": "2023-05-16T12:45:32.865Z",
+      "author": "BeCass (William Cassar)",
+      "cookedHtml": "<p>I have a “Due Date” column that the requestor fills out. Currently I use this formula “LEFT(FORMAT_DATE(SUBTRACT_DAYS({Due Date},3)),6)” to subtract 3 days from the “Due Date” and generate a new date in the “For Review” column. I would like to exclude weekends from this formula. I understand <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> has a new formula “WORKDAYS({Date1},{Date})” to fix this but I’m not sure how to integrate this with my original formula. If anyone can help me with this it will be greatly appreciated.</p>"
+    },
+    {
+      "id": 128313,
+      "postNumber": 2,
+      "createdAt": "2023-05-17T09:30:55.458Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Here is an implementation of one approach to subtracting working days from a date.</p>\n<p>Right now it uses a number from the “Days to Sub” column, but you can just switch all of those out with “3” and it’ll work fine if you don’t need that flexibility.</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(\n    SUBTRACT_DAYS(\n        {Due Date},\n        SUM(\n            {Days to Sub},\n            IF(\n                MOD(\n                    {Days to Sub},\n                    5\n                )\n                &gt;\n                WEEKDAY({Due Date})-1,\n                2,\n                0\n            ),\n            ROUNDDOWN(\n                {Days to Sub}/5,\n                0\n            )*2\n        )\n    ),\n    \"MMM DD\"\n)\n</code></pre>\n<p>With “3” as a fixed subtraction:</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(\n    SUBTRACT_DAYS(\n        {Due Date},\n        SUM(\n            3,\n            IF(\n                MOD(\n                    3,\n                    5\n                )\n                &gt;\n                WEEKDAY({Due Date})-1,\n                2,\n                0\n            ),\n            ROUNDDOWN(\n                3/5,\n                0\n            )*2\n        )\n    ),\n    \"MMM DD\"\n)\n</code></pre>"
+    },
+    {
+      "id": 128341,
+      "postNumber": 3,
+      "createdAt": "2023-05-17T10:52:24.800Z",
+      "author": "BeCass (William Cassar)",
+      "cookedHtml": "<p>That worked!! Thank you so much!</p>"
+    },
+    {
+      "id": 129479,
+      "postNumber": 4,
+      "createdAt": "2023-05-25T13:05:27.901Z",
+      "author": "BeCass (William Cassar)",
+      "cookedHtml": "<p>Would the same be true if i wanted to subtract 1 day?</p>"
+    },
+    {
+      "id": 129486,
+      "postNumber": 5,
+      "createdAt": "2023-05-25T14:20:01.604Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Yep. You just need to change 3 to 1 in the formula. Or use a helper column with the first formula—that way you can choose the days to subtract.</p>"
+    },
+    {
+      "id": 129492,
+      "postNumber": 6,
+      "createdAt": "2023-05-25T14:59:45.127Z",
+      "author": "BeCass (William Cassar)",
+      "cookedHtml": "<p>I have another board with a “Live Date” column and “Final to Marketing” column using the code below (Subtracting 1). However, if you choose a Sunday (Live Date) it still returns a Saturday date in the Final to Marketing column instead of pushing it to Friday. It works if I pick Monday, it pushes it back to Friday. I think I’m missing something.</p>\n<p>FORMAT_DATE(<br />\nSUBTRACT_DAYS(<br />\n{Live Date},<br />\nSUM(<br />\n1,<br />\nIF(<br />\nMOD(<br />\n1,<br />\n5<br />\n)<br />\n&gt;<br />\nWEEKDAY({Live Date})-1,<br />\n2,<br />\n0<br />\n),<br />\nROUNDDOWN(<br />\n1/5,<br />\n0<br />\n)*2<br />\n)<br />\n),<br />\n“ddd MMM DD”<br />\n)</p>"
+    },
+    {
+      "id": 129495,
+      "postNumber": 7,
+      "createdAt": "2023-05-25T15:28:55.948Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>I see. This is related to starting on Sunday rather than the number of days subtracted. Having it behave correctly for Sundays is something like an enhancement. I’ve added it into the formula below:</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(\n    SUBTRACT_DAYS(\n        {Due Date},\n        SUM(\n            {Days to Sub},\n            IF(\n                MOD(\n                    {Days to Sub},\n                    5\n                )\n                &gt;\n                WEEKDAY({Due Date})-1,\n                2,\n                0\n            ),\n            ROUNDDOWN(\n                {Days to Sub}/5,\n                0\n            )*2,\n            IF(\n                AND(\n                    WEEKDAY({Due Date})=7,\n                    {Days to Sub}&gt;0\n                ),\n                1,\n                0\n            )\n        )\n    ),\n    \"MMM DD\"\n)\n</code></pre>"
+    },
+    {
+      "id": 129499,
+      "postNumber": 8,
+      "createdAt": "2023-05-25T15:44:45.476Z",
+      "author": "BeCass (William Cassar)",
+      "cookedHtml": "<p>That worked!! Thank you!!</p>"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": 10143,
+  "title": "Getting a row (Item and column values) from a board results in Cannot read property 'column_values' of undefined error",
+  "slug": "getting-a-row-item-and-column-values-from-a-board-results-in-cannot-read-property-column-values-of-undefined-error",
+  "categoryId": 80,
+  "tagIds": [
+    5
+  ],
+  "createdAt": "2020-08-16T20:04:12.941Z",
+  "lastPostedAt": "2021-02-25T14:45:48.158Z",
+  "postsCount": 3,
+  "excerpt": "Hi \nMy aim is to export each row of a board as a file (JSON payload) so I can import them into our system and use the values for calculations. \nI have solved (via help on stackoverflow)  getting the column_values ID and &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3956,
+  "posts": [
+    {
+      "id": 25625,
+      "postNumber": 1,
+      "createdAt": "2020-08-16T20:04:13.018Z",
+      "author": "Commissionly (Martin Baker)",
+      "cookedHtml": "<p>Hi<br />\nMy aim is to export each row of a board as a file (JSON payload) so I can import them into our system and use the values for calculations.</p>\n<p>I have solved (via help on stackoverflow)  getting the column_values ID and Text values as Key value pairs<br />\neg<br />\n“column_values”: [ { “id”: “status”, “text”: “Working on it” } ]</p>\n<p>becomes<br />\n“column_values”[{“status”: “Working on it”}]</p>\n<p>using<br />\nresults.data.boards[0].items[0].column_values=results.data.boards[0].items[0].column_values.map(x =&gt; ({[x.id] : x.text}));</p>\n<p>Although some of the ID come across as text1, text2 instad of the actual text value</p>\n<p>When I test this in the intergration it works and the full api payload is converted.</p>\n<p>However when  when I use the intergration in a Zap it fails with the error  - Cannot read property ‘column_values’ of undefined.</p>\n<p>The zap uses Mondays - Column Value Changed in Board in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> with a set board ID  as the trigger to provide the Pulse ID</p>\n<p>I then pass the Board ID and Pulse ID to the Monday api with the following request</p>\n<p>const options = {<br />\nurl: ‘<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>’,<br />\nmethod: ‘POST’,<br />\nheaders: {<br />\n‘Content-Type’: ‘application/json’,<br />\n‘Accept’: ‘application/json’,<br />\n‘Authorization’: bundle.authData.Authorization<br />\n},<br />\nparams: {<br />\n‘Authorization’: bundle.authData.Authorization<br />\n},<br />\nbody: {<br />\n‘query’: <code>{boards (ids:${bundle.inputData.board_id}) {name items (ids:${bundle.inputData.item_id}) {    name id         column_values {                 id                 text             }         }     } }</code><br />\n}<br />\n}</p>\n<p>return z.request(options)<br />\n.then((response) =&gt; {<br />\nresponse.throwForStatus();<br />\nconst results = response.json;</p>\n<pre><code>results.data.boards[0].items[0].column_values=results.data.boards[0].items[0].column_values.map(x =&gt; ({[x.id] : x.text}));\n\nreturn results;\n</code></pre>\n<p>});</p>\n<p>to return the Board Item and Column values  - which fails with the error.</p>"
+    },
+    {
+      "id": 26114,
+      "postNumber": 2,
+      "createdAt": "2020-08-20T14:14:08.131Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/commissionly\">@Commissionly</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Sorry for my delay in getting back to you on this! Let’s try and get this sorted out together.</p>\n<p>I do need to investigate this a little more closely to provide more tailored suggestions, but it seems like you are running into this error code on Zapier’s end, since we do not have an error message like the following:</p>\n<p>Cannot read property ‘column_values’ of undefined.</p>\n<p>Does this work for you in a testing environment, but not when trying to shoot a real Zap to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>?<br />\nIs there any chance your query is too complex in relation to our API’s complexity limit? You can find more info on that here:</p>\n<p><a href=\"https://monday.com/developers/v2#queries-section-complexity\" rel=\"noopener nofollow ugc\">Complexity</a></p>\n<p>What do you think? Let me know <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42566,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T14:45:48.158Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

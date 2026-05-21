@@ -1,0 +1,111 @@
+{
+  "id": 16158,
+  "title": "Custom integration fails when I add ssl to network",
+  "slug": "custom-integration-fails-when-i-add-ssl-to-network",
+  "categoryId": 8,
+  "tagIds": [
+    186,
+    208,
+    351
+  ],
+  "createdAt": "2021-02-11T06:50:10.440Z",
+  "lastPostedAt": "2021-02-12T20:27:35.199Z",
+  "postsCount": 9,
+  "excerpt": "I have a custom integration which was developed and tested using port 8080. \nAll working well and I have setup on a vm with node server. \nAttempting to implement ssl to secure the traffic and all updates are then failing&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2299,
+  "posts": [
+    {
+      "id": 40400,
+      "postNumber": 1,
+      "createdAt": "2021-02-11T06:50:10.519Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>I have a custom integration which was developed and tested using port 8080.</p>\n<p>All working well and I have setup on a vm with node server.</p>\n<p>Attempting to implement ssl to secure the traffic and all updates are then failing.</p>\n<p>Initial intention was to use Cloudfront LB to provide the secure certificate.  and translate to port 80 behind the firewall.   This was not working for me,  so I have then tried to implement a self signed certificate in the code base.</p>\n<p>All attempts to use tls/ssl  from the monday integration donot seem to run in the app.  e.g. log statements dont fire.</p>\n<p>If I disable the middleware jwt and use a postman post.  I get a successful exection of the code.</p>\n<p>But calls from monday  Dont seem to get there.</p>\n<p>I dont believe its a firewall issue as I have configured for all incoming traffic.</p>\n<p>The cloud front approach I could see the post arrive, but I didnt get a successful update.  (this may be a different networking issue)</p>\n<p>That is all background.<br />\nQuestion.<br />\nIs the correct approach to build ssl cert into the integration?<br />\nIf so do I need to do something different in the middleware jwt verify as it seems to not succeed?<br />\nIs anyone using 443 via a load balancer with port 80 internal?</p>\n<p>Thanks in avance.</p>\n<p>Eric White</p>"
+    },
+    {
+      "id": 40407,
+      "postNumber": 2,
+      "createdAt": "2021-02-11T09:30:09.547Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>I am guessing from my testing that <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> wont send <a href=\"https://xxx\" rel=\"noopener nofollow ugc\">https://xxx</a> to a self signed cert.</p>\n<p>So I may need to work out a real one.</p>\n<p>Please confirm if you know this.</p>\n<p>cheers.</p>"
+    },
+    {
+      "id": 40415,
+      "postNumber": 3,
+      "createdAt": "2021-02-11T10:52:10.700Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>Update,  I believe I have worked out what the issue(s)  are that have given me a hard time.  <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>As suggested I am convinced that Monday won’t talk to a self signed cert…</p>\n<p>front ending http traffic  with https LB  or API endpoint   will work but…</p>\n<p><strong>by default</strong>  node/express.js   will ignore proxy / traffic redirect.</p>\n<p>Saved…   there is a function…</p>\n<pre><code>const app = express();\n\napp.set('trust proxy', true);\n</code></pre>\n<p>Hope that helps…</p>"
+    },
+    {
+      "id": 40418,
+      "postNumber": 4,
+      "createdAt": "2021-02-11T11:09:44.088Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/eric.white.au\">@eric.white.au</a>  <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Hmm, I’ll have to check back with our developers on this one! I’m glad you were able to find a solution that seems to be working for you1 I’ll get back to you once I can clarify this a bit further.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 40419,
+      "postNumber": 5,
+      "createdAt": "2021-02-11T11:09:49.004Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 40420,
+      "postNumber": 6,
+      "createdAt": "2021-02-11T11:09:51.552Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 40421,
+      "postNumber": 7,
+      "createdAt": "2021-02-11T11:09:58.270Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 40433,
+      "postNumber": 8,
+      "createdAt": "2021-02-11T11:53:55.433Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/eric.white.au\">@eric.white.au</a></p>\n<p>I’ve just received confirmation from our developers that self-signed SSL certificates are not currently supported by our API - you would always need to use a trusted one. I hope that helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 40434,
+      "postNumber": 9,
+      "createdAt": "2021-02-11T11:53:58.443Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 40516,
+      "postNumber": 10,
+      "createdAt": "2021-02-11T20:11:45.685Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>Thanks for checking…</p>\n<p>That was my assumption based on the testing I did.</p>\n<p>will test further today with the production environment setup.</p>\n<p>thanks again.</p>"
+    },
+    {
+      "id": 40557,
+      "postNumber": 11,
+      "createdAt": "2021-02-11T23:35:23.520Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>Fails to take notice of the proxy setting in the AWS client environment.  My initial testing was not using a proxy…</p>\n<p>I have seen general nodejs discussion about using “npm install http-proxy-agent” as part of the fetch call.  however, I dont know how this would be implemented in Monday_SDK.</p>\n<p>Any assistance or pointers  appreciated.</p>\n<p>thanks.</p>"
+    },
+    {
+      "id": 40656,
+      "postNumber": 12,
+      "createdAt": "2021-02-12T20:27:35.199Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi Eric,</p>\n<p>Great question! This is something that some of our other users have noticed as well.</p>\n<p>I have heard that using the AWS client environment can sometimes lead to difficulties using the node-fetch package. In instances such as these, we do typically encourage our devs to build out their own API calls (instead of using the monday SDK ones).</p>\n<p>I know that this perhaps isn’t the most ideal, but it’s definitely another option for you to consider.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 42007,
+      "postNumber": 13,
+      "createdAt": "2021-02-24T23:04:01.207Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "id": 68458,
+  "title": "Max date of subitems - broken functionality",
+  "slug": "max-date-of-subitems-broken-functionality",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    108,
+    187
+  ],
+  "createdAt": "2023-10-16T10:29:58.797Z",
+  "lastPostedAt": "2023-12-15T07:36:47.726Z",
+  "postsCount": 11,
+  "excerpt": "I have a formula column that uses the max date of subitems. It used to work flawlessly, but now fails for items that have more than one subitem. \nIt may be coincidental, but it appears to have broken with the introductio&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1250,
+  "posts": [
+    {
+      "id": 148382,
+      "postNumber": 1,
+      "createdAt": "2023-10-16T10:29:58.881Z",
+      "author": "garethflower (Gareth Flower)",
+      "cookedHtml": "<p>I have a formula column that uses the max date of subitems. It used to work flawlessly, but now fails for items that have more than one subitem.</p>\n<p>It may be coincidental, but it appears to have broken with the introduction of the new datepicker.</p>\n<p>Here’s a simplified example:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/a/9a3a6bc542ba5fe3711ec7a3639ec3f3ff10dfae.png\" alt=\"image\" width=\"683\" height=\"464\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/1/b/1b254297d37bab4300f790a932b45dcc7caf94b7.png\" alt=\"image\" width=\"422\" height=\"325\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/1/d/1d417572dcde35ad5c9a3d4b106785ec472bf0b8.png\" alt=\"image\" width=\"542\" height=\"223\" /></p>"
+    },
+    {
+      "id": 148391,
+      "postNumber": 2,
+      "createdAt": "2023-10-16T11:06:22.424Z",
+      "author": "rlegall (Rémi LE GALL)",
+      "cookedHtml": "<p>Hi, I’ve the exact same issue. It’s works fine until this afternoon.</p>\n<p>I’ve the new datepicker since a few day but it was working good.</p>\n<p>Everything seemed to be working this morning but this when I’ve reload my board this afternoon, this issue append.</p>"
+    },
+    {
+      "id": 148394,
+      "postNumber": 3,
+      "createdAt": "2023-10-16T11:25:01.322Z",
+      "author": "bob1 (bob)",
+      "cookedHtml": "<p>Same problem over here. They seem to have changed the data type of subitem dates summaries. Now it seems to be outputting an array of values instead of only the max value, hence the formula no longer working. You can verify that by creating a new formula “{SubitemsDateMax}” (with the double quotes), the output will be a list of comma separated numbers representing the different dates of your subitems.</p>\n<p>I’ve been trying to find a workaround for over an hour but no luck so far.</p>\n<p>Edit: I found a workaround <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>\n<p>In your subitems, add a new formula column</p>\n<p>DATEVALUE({Your_Date_Column})</p>\n<p>Then make a summary of those subitems at item level, set it to MAX.</p>\n<p>Then create a new formula at item level</p>\n<p>FORMAT_DATE({Your_Summary_Date_Column},“YYYY-MM-DD”)</p>\n<p>This will get you your max date in the right format, so you can use this column in other formula columns.</p>\n<p>Edit 2:</p>\n<p>There seems to be a weird thing happening when converting a date to numerical value and converting it back to date format. The final date is 1 day earlier than it should. This can be easily fixed by adding 1 in the formula.</p>\n<p>Also, the formula will return 1899-12-30 if the value is 0, so can tweak the formula as such to return nothing instead.</p>\n<p>IF({Date NumFormat Max}=0,“”,FORMAT_DATE({Date NumFormat Max}+1,“YYYY-MM-DD”))</p>\n<p>The final output looks like this and works as intended.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/e/3ea0a2ba48bd39ce9e60a13079296ea938cee1a0.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/3/e/3ea0a2ba48bd39ce9e60a13079296ea938cee1a0_2_690x312.png\" alt=\"image\" width=\"690\" height=\"312\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">950×430 29.6 KB</span></div></a></div><p></p>\n<p>Edit 3: If an item has no subitems, the formula will still return 1899-12-30 because the value in this case would be void, which is different from 0. To avoid that, you can add an OR statement inside your if as follows:</p>\n<p>IF(OR({Date NumFormat Max}=0,{Date NumFormat Max}=NUMERAL(0)),“”,FORMAT_DATE({Date NumFormat Max}+1,“YYYY-MM-DD”))</p>"
+    },
+    {
+      "id": 148555,
+      "postNumber": 4,
+      "createdAt": "2023-10-17T04:02:41.099Z",
+      "author": "rlegall (Rémi LE GALL)",
+      "cookedHtml": "<p>Thanks Bob, your workaround works great ! <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>The only modification I’ve done compare to you is that I don’t need to do the +1 day.<br />\nConverting to a number and set it back to date works fine to me (without the +1 day).</p>"
+    },
+    {
+      "id": 148597,
+      "postNumber": 5,
+      "createdAt": "2023-10-17T09:28:27.019Z",
+      "author": "bob1 (bob)",
+      "cookedHtml": "<p>Hi Rémi, glad it worked for you!</p>\n<p>And thanks for sharing that you don’t need the +1, it will be helpful for future readers.</p>\n<p>My hypothesis is that it is caused by the difference in time zones. I guess you are in GMT+2, whereas I am in GMT-4.</p>\n<p>If Monday initializes their day counter based on GMT+0 at 0:00 on 1899-12-30, it means that the counter actually initialized on 1899-12-29 for those living in negative time zones, hence the 1 day lag.</p>\n<p>So to make it short, if your time zone is negative, add one day, if it’s positive it should give you the correct date right away.</p>"
+    },
+    {
+      "id": 148599,
+      "postNumber": 6,
+      "createdAt": "2023-10-17T09:43:26.203Z",
+      "author": "garethflower (Gareth Flower)",
+      "cookedHtml": "<p>Thanks for the solution Bob.</p>\n<p>Out of interest, is there a way to reference the first/last item in the array that’s returned (I couldn’t find any documentation)? If so, could that be referenced to avoid the additional helper column?</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/a/da66937d61d5b6ec4dc9e412bc5a35e20aa93ffe.png\" alt=\"image\" width=\"544\" height=\"152\" /></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/b/eba94e29ea3e73048630cfd217f4d5f9d300f174.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/b/eba94e29ea3e73048630cfd217f4d5f9d300f174_2_690x148.png\" alt=\"image\" width=\"690\" height=\"148\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">953×205 18 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 148603,
+      "postNumber": 7,
+      "createdAt": "2023-10-17T10:04:14.690Z",
+      "author": "bob1 (bob)",
+      "cookedHtml": "<p>Hi Gareth, that’s the first thing I tried, but unfortunately it doesn’t work for 2 main reasons.</p>\n<ol>\n<li>\n<p>The numbers in the array seem to be kind of in random order; the largest date is sometimes in the middle of the array. If the max would always be first/last, then you could LEFT or RIGHT function to only keep the first/last 13 digits number but unfortunately since numbers are in a nonsequential order you can’t know what number you’ll be extracting.</p>\n</li>\n<li>\n<p>The output here is a 13 digit number, which is different from Monday’s number counter. So converting it back to a date with FORMAT_DATE didn’t seem to be working and I didn’t find any other formula that could convert that 13 digits format into date format.</p>\n</li>\n</ol>\n<p>I personally have over 50 boards to update because of that change on Monday’s side, so I’ll keep it on standby until Monday can tell us whether it’s a bug that will be fixed, or a new feature that’s working as intended.</p>"
+    },
+    {
+      "id": 148613,
+      "postNumber": 8,
+      "createdAt": "2023-10-17T11:15:43.101Z",
+      "author": "garethflower (Gareth Flower)",
+      "cookedHtml": "<p>Hi Bob,</p>\n<p>FYI the date is a Unix timestamp. If I convert the values returned in the array, they correspond to the actual dates.</p>\n<p>Using <a href=\"http://www.epochconverter.com\" rel=\"noopener nofollow ugc\">www.epochconverter.com</a>, this gives me the following (if I use my time zone as you have previously pointed out):</p>\n<p>1691622000000,<br />\n1694041200000,<br />\n1696460400000</p>\n<p>Thursday, 10 August 2023 00:00:00 GMT+01:00 DST<br />\nThursday, 7 September 2023 00:00:00 GMT+01:00 DST<br />\nThursday, 5 October 2023 00:00:00 GMT+01:00 DST</p>\n<p>Which means I can run this function:</p>\n<p><code>ADD_DAYS(\"1970-01-01\", right(\"{SubitemsDateMax}\", 13)/86400000)</code></p>\n<p>Which almost works - I just need to allow for the time zone.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/b/cbbc0f4722f1455e7f2410cd4c98875c6c3ced9a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/b/cbbc0f4722f1455e7f2410cd4c98875c6c3ced9a.png\" alt=\"image\" width=\"690\" height=\"135\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">699×137 10 KB</span></div></a></div><p></p>\n<p>This will fail where only one date is provided, so will need to be wrapped in an IF statement.</p>\n<p>Of course, the best solution would be for Monday to fix the issue <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 148616,
+      "postNumber": 9,
+      "createdAt": "2023-10-17T11:47:26.613Z",
+      "author": "bob1 (bob)",
+      "cookedHtml": "<p>Oh that’s great!</p>\n<p>If I may add to this, if you use max(args2array( it will ensure you’ll get the max value within the array. If the array is empty it will return 1970-01-01 instead of an error.</p>\n<p>To avoid the 1970-01-01 to be displayed you can indeed wrap it in an if statement.</p>\n<p>You can also wrap it in a format date formula to get a more standard date output.</p>\n<p>My final formula looks like this</p>\n<p>IF(max(args2array({SubitemsDateMax}))=0,“”,FORMAT_DATE(ADD_DAYS(“1970-01-01”, max(args2array({SubitemsDateMax}))/86400000),“YYYY-MM-DD”))</p>\n<p>and the final output looks like this</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/d/6d2fbad668cf72b06073cd25e46d65c112056a38.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/6/d/6d2fbad668cf72b06073cd25e46d65c112056a38.png\" alt=\"image\" width=\"690\" height=\"391\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">732×415 10.2 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 157975,
+      "postNumber": 10,
+      "createdAt": "2023-12-14T16:02:57.731Z",
+      "author": "bob1 (bob)",
+      "cookedHtml": "<p>Update: Monday once again managed to change the behaviour of that column without giving anyone a heads up, so this no longer works. The output value of subitem date summary column has been changed; it is no longer an array of timestamps, but a single 4 digits number that’s impossible to work with because different dates can have the same 4 digits number value.</p>\n<p>This is too much of an unstable mess, I’ll just remove those columns from my boards and move on.</p>"
+    },
+    {
+      "id": 158072,
+      "postNumber": 11,
+      "createdAt": "2023-12-15T07:36:47.726Z",
+      "author": "garethflower (Gareth Flower)",
+      "cookedHtml": "<p>Just noticed the same. I too have resorted to removing the columns.</p>\n<p>Surely Monday must recognise that they can’t change the behaviour of a column on a whim?</p>\n<p>It’s all very frustrating.</p>"
+    }
+  ]
+}

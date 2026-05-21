@@ -1,0 +1,36 @@
+{
+  "id": 59845,
+  "title": "Using Power BI to extract data",
+  "slug": "using-power-bi-to-extract-data",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    351,
+    460
+  ],
+  "createdAt": "2023-06-12T14:58:08.238Z",
+  "lastPostedAt": "2023-06-15T10:50:57.512Z",
+  "postsCount": 2,
+  "excerpt": "Hello, colleagues! \nI am starting to use the Monday.com API to extract data and use it at Power BI. I used the following algorithm: \n\n\nA function that sends the API KEY, the board id, the limit, and the page number and r&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 560,
+  "posts": [
+    {
+      "id": 131101,
+      "postNumber": 1,
+      "createdAt": "2023-06-12T14:58:08.360Z",
+      "author": "gregorymelo (Gregory Melo)",
+      "cookedHtml": "<p>Hello, colleagues!</p>\n<p>I am starting to use the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API to extract data and use it at Power BI. I used the following algorithm:</p>\n<ol>\n<li>\n<p>A function that sends the API KEY, the board id, the limit, and the page number and receives only the itemId.</p>\n</li>\n<li>\n<p>A function uses the first function and paginates the results.</p>\n</li>\n<li>\n<p>A function that sends the itemId and receives all information from the column values.</p>\n</li>\n</ol>\n<p>PS.: the functions will be available at the end.</p>\n<p>This algorithm takes around 20 minutes to extract a board with around 900 items with 40 columns. I am doing some actions to reduce time and would like your advice. My first attempt was to reduce the number of column values; however, this did not change the time consumption.</p>\n<p>One point that I would like to understand is the limit logic. Besides my option, my first function is receiving all items. Does the API send all records if the complexity is under the limit?</p>\n<p>First Function =&gt;<br />\n(apikey as text, QuadroId as text, limite as number, pagina as number) =&gt;<br />\nlet<br />\nFonte = Web.Contents(“<a href=\"https://api.monday.com/\" rel=\"noopener nofollow ugc\">https://api.monday.com/</a>” &amp; “v2”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; apikey<br />\n],<br />\nContent=Text.ToBinary(”{““query””: “”{ boards (ids: \" &amp; QuadroId &amp; “, limit:” &amp; Number.ToText(limite) &amp;“, page:” &amp; Number.ToText(pagina) &amp; “) { items { id name state relative_link } } }”“}”)<br />\n]<br />\n),<br />\nDados = Json.Document(Fonte,65001)[data][boards]{0}[items]<br />\nin<br />\nDados</p>\n<p>Second Function<br />\n(apikey as text, QuadroId as text, limite as number) =&gt;<br />\nlet<br />\nFonte = List.Generate(<br />\n() =&gt; [ offset = 1, data = fnConsultaItems( apikey, QuadroId, limite , 1)],<br />\neach not List.IsEmpty( [data] ),<br />\neach [ offset = [offset] + 1, data = fnConsultaItems( apikey, QuadroId, limite , [offset] + 1 )],<br />\neach [data]<br />\n){0}<br />\nin<br />\nFonte</p>\n<p>Third Function<br />\n(apikey, ItemId as text) =&gt;<br />\nlet<br />\nFonte = Web.Contents(“<a href=\"https://api.monday.com/\" rel=\"noopener nofollow ugc\">https://api.monday.com/</a>” &amp; “v2”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; apikey<br />\n],<br />\nContent=Text.ToBinary(”{““query””: “”{ items (ids: \" &amp; ItemId &amp; “) { column_values { title type text } } }”“}”)<br />\n]<br />\n),<br />\nDados = Json.Document(Fonte,65001)[data][items]<br />\nin<br />\nDados</p>"
+    },
+    {
+      "id": 131558,
+      "postNumber": 2,
+      "createdAt": "2023-06-15T10:50:57.512Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/gregorymelo\">@gregorymelo</a>,</p>\n<p>If your query does not exceed the complexity points quota you have left and if the amount of data can be retrieved in 60 seconds (to avoid a <a href=\"https://developer.monday.com/api-reference/docs/rate-limits#timeout-policy\">timeout</a>) then your first function can get all the items.</p>\n<p>Is that the information you needed?</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

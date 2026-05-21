@@ -1,0 +1,47 @@
+{
+  "id": 67891,
+  "title": "Mutation on People column",
+  "slug": "mutation-on-people-column",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-10-06T09:39:02.098Z",
+  "lastPostedAt": "2023-10-08T21:07:37.176Z",
+  "postsCount": 3,
+  "excerpt": "I am attempting to update a people column, with relevant teams to the user in the column. \nThe mutation in the API playground appears to by syntactically correct, but returns a 500 error.  I am very much a novice in this&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 262,
+  "posts": [
+    {
+      "id": 147295,
+      "postNumber": 1,
+      "createdAt": "2023-10-06T09:39:02.173Z",
+      "author": "wriley (William Riley)",
+      "cookedHtml": "<p>I am attempting to update a people column, with relevant teams to the user in the column.</p>\n<p>The mutation in the API playground appears to by syntactically correct, but returns a 500 error.  I am very much a novice in this arena still and can’t seem to sort this out.  The query is as follows:</p>\n<p>mutation {<br />\nchange_column_value(<br />\nboard_id: 11111111111111111<br />\nitem_id: 22222222222<br />\ncolumn_id: “multiple_person1”<br />\nvalue: {personsAndTeams: [ {id: 12345, kind: “team”}, {id: 678910, kind: “team”}]}<br />\n) {<br />\nid<br />\n}<br />\n}</p>\n<p>Any help would be appreciated.</p>"
+    },
+    {
+      "id": 147417,
+      "postNumber": 2,
+      "createdAt": "2023-10-08T06:26:44.323Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/wriley\">@wriley</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can use a mutation like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:9876543210, board_id:1234567890, column_values: \"{\\\"people\\\" : {\\\"personsAndTeams\\\":[{\\\"id\\\":4616627,\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":4616666,\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":51166,\\\"kind\\\":\\\"team\\\"}]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 147460,
+      "postNumber": 3,
+      "createdAt": "2023-10-08T21:07:37.176Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You need to pass the object that is the value through <code>JSON.stringify()</code> first to turn it into a JSON string.</p>\n<p>While a GraphQL query looks a lot like Javascript, is it not, it is actually just a string. In the <code>change_column_value</code> the <code>value</code> field takes a string (or an object that has been stringified) not an object as you tried.</p>\n<p>Below uses GraphQL variables. They are defined in parenthesis after the word mutation in the query string, and then you can use them in the rest of the mutation. These are preferred to trying to build a string since some oddities can happen with string manipulation that won’t happen if the query is fixed.</p>\n<p>Below is some example javascript around this:</p>\n<pre><code class=\"lang-auto\">const query = \"mutation($boardId: Int!, $itemId: Int!, $columnId: String!, $value: JSON!) { change_column_value(board_id: $boardId, item_id: $itemId, column_id: $columnId, value: $value){id}}\"\n\nconst variables = {\n    boardId: 111111111,\n    itemId: 2222222,\n    columnId: \"multiple_persons1\"\n    value: JSON.stringify({personsAndTeams: [ {id: 12345, kind: “team”}, {id: 678910, kind: “team”}]})};\n\nconst response = await monday.api(query, {variables}); \n\n//the monday.api method JSON.stringify()s as below to build the request body sent to the server. You don't need to do this part, its done for you.\n\n//const requestBody = JSON.stringify({query, variables})\n</code></pre>"
+    },
+    {
+      "id": 147510,
+      "postNumber": 4,
+      "createdAt": "2023-10-09T08:45:12.622Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

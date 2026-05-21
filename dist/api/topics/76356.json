@@ -1,0 +1,54 @@
+{
+  "id": 76356,
+  "title": "A complete list of column types?",
+  "slug": "a-complete-list-of-column-types",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-28T16:41:54.949Z",
+  "lastPostedAt": "2024-01-28T21:37:14.377Z",
+  "postsCount": 4,
+  "excerpt": "I don’t understand how to know what column types to pass.  I would think it would be this list: \n\n\nBut doesn’t seem to always be the case?  There are vars for a create_item mutation: \n  let vars = {\n    &quot;myItemName&quot;: nam&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 457,
+  "posts": [
+    {
+      "id": 164536,
+      "postNumber": 1,
+      "createdAt": "2024-01-28T16:41:55.026Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>I don’t understand how to know what column types to pass.  I would think it would be this list:</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/column-types-reference\" target=\"_blank\" rel=\"noopener nofollow ugc\">GraphQL API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/column-types-reference\" target=\"_blank\" rel=\"noopener nofollow ugc\">Column types reference</a></h3>\n\n  <p>The monday.com platform supports a variety of column types to store different data. Our API supports most types, allowing you to read, filter, delete, and update those columns. A handful of columns have limited support that allows you to either read...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>But doesn’t seem to always be the case?  There are vars for a create_item mutation:</p>\n<pre><code class=\"lang-auto\">  let vars = {\n    \"myItemName\": name,\n    \"columnVals\": JSON.stringify({\n      \"website\": { \"url\": website, \"text\" : website},\n      \"deal_stage\" : {\"label\" : stage},\n      \"date_added5\" : {\"date\" : today},\n      \"description\" : {\"text\" : description},\n      \"connect_boards\" : {\"item_ids\" : [founderID]},\n      \"deal_owner\" : {\"personsAndTeams\" : [ {\"id\" : dealOwner, \"kind\" : \"person\"} ]  }\n    })\n</code></pre>\n<p>I only was able to figure out that “website” (a link type) should be passed “url” from asking on this forum.  Now I face the same issue with “description”, which is a text field.</p>\n<p>Here is the error:</p>\n<pre><code class=\"lang-auto\">{\"error_code\":\"ColumnValueException\",\"status_code\":200,\"error_message\":\"invalid value, please check our API documentation for the correct data structure for this column. https://developer.monday.com/api-reference/docs/change-column-values\",\"error_data\":{\"column_value\":\"{\\\"text\\\"=\\u003e\\\"The best!\\\"}\",\"column_type\":\"TextColumn\"}}\n</code></pre>\n<p>If not “text” then what should I be passing?</p>"
+    },
+    {
+      "id": 164538,
+      "postNumber": 2,
+      "createdAt": "2024-01-28T17:03:16.912Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>If description is just a text (not long text) column. Text, Numbers, and Name are simple strings, not a change object.</p>\n<p><code>\"description\": description</code></p>\n<p>For text column, you can look at the “update the text column” and JSON subsection here: <a href=\"https://developer.monday.com/api-reference/docs/text#json\" class=\"inline-onebox\">Text</a> to see an example. You’ll want to remove the \\ of course - and those strings have been put through JSON.stringify() already so you need to keep that in mind.</p>"
+    },
+    {
+      "id": 164560,
+      "postNumber": 3,
+      "createdAt": "2024-01-28T21:28:17.735Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Thanks Cody!  That worked of course.  Really appreciate the help.  But geez, I wish this protocol was more consistent. It’s been quite the uphill battle just to get going!</p>\n<p>I guess if anyone from Monday is paying attention. You really need to<br />\n(1) create more complete examples.  I.e. Post an example of creating an item with one of each type of column.<br />\n(2) Make your protocol consistent!  If a long_text type requires {“text” : “Hello!”}, then at least allow text to also take {“text” : “Hello”}.   And perhaps the other way around as well.  If text can use a simple form of columnId : “Hello” , then allow long_text, label, date also to take this simple form.</p>"
+    },
+    {
+      "id": 164562,
+      "postNumber": 4,
+      "createdAt": "2024-01-28T21:37:14.377Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>What I think monday needs is documented types for each change like the following typescript. I use Zod so I can check things are valid before using them.</p>\n<pre><code class=\"lang-auto\">type LongTextValueChange = {\n url: string;\n text: string;\n}\n\ntype StatusValueChange = \n| {\n label: string;\n} \n| {\n index: number; //a validator would check for actual valid indexes, \n                //since its a sparse range between 0 and 200\n}\n</code></pre>\n<p>Here is another one to look at:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_simple_column_value (item_id:9876543210, board_id:1234567890, column_id:\"dropdown\", value: \"1,2\") {\n    id\n  }\n}\n</code></pre>\n<pre><code class=\"lang-auto\">mutation {\n  change_simple_column_value (item_id:9876543210, board_id:1234567890, column_id:\"dropdown\", value: \"Cookie, Cupcake\") {\n    id\n  }\n}\n</code></pre>\n<p>in this case its a Dropdown column, and you can pass either indexes or labels as a comma separated list (but not both). In text, long_text, status (what you’re calling a label column, is a status column, its just they have templates like label, priority, etc. that are configured differently but all are status columns) you just pass the string. But only one column at a time, and not all types.</p>"
+    },
+    {
+      "id": 164613,
+      "postNumber": 5,
+      "createdAt": "2024-01-29T08:14:52.834Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

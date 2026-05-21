@@ -1,0 +1,93 @@
+{
+  "id": 12922,
+  "title": "Client data segregation",
+  "slug": "client-data-segregation",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-11-06T07:36:16.500Z",
+  "lastPostedAt": "2021-03-15T13:54:52.568Z",
+  "postsCount": 11,
+  "excerpt": "Hi there, \nI am storing data from all customers in the same database (multitenant) and thus I need to segregate this data so that one account can’t see data from another. \nCurrently, I am using the client_id for that. Ho&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 6420,
+  "posts": [
+    {
+      "id": 32971,
+      "postNumber": 1,
+      "createdAt": "2020-11-06T07:36:16.572Z",
+      "author": "v-appgami (Antonio)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>I am storing data from all customers in the same database (multitenant) and thus I need to segregate this data so that one account can’t see data from another.</p>\n<p>Currently, I am using the client_id for that. However, when installing the app in different Monday accounts, I realised that the client_id that I get from the Monday token is always the same! This is the information I can get from the token:</p>\n<pre><code>\"dat\": {\n    \"client_id\": \"123456daef7553456d62345aa37\",\n    \"user_id\": 123456,\n    \"account_id\": 123456,\n    \"slug\": \"my-monday-subdomain\",\n    \"app_id\": 123456,\n    \"install_id\": 123456\n  }\n</code></pre>\n<p>Then, the question: should I be using a different id (maybe the account_id) to segregate data in the database correctly between different Monday instances?</p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 33003,
+      "postNumber": 2,
+      "createdAt": "2020-11-06T15:23:47.697Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/v-appgami\">@v-appgami</a></p>\n<p>The account_id is unique so can be used to segregate accounts data. However, if you want to store tokens your unique key should also contain the user_id as you can’t predict which user in an account will install your app.</p>\n<p>Does that make sense?</p>"
+    },
+    {
+      "id": 33040,
+      "postNumber": 3,
+      "createdAt": "2020-11-07T15:06:36.535Z",
+      "author": "v-appgami (Antonio)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>Thank you very much for the reply.</p>\n<p>Right now, during this Monday marketplace validation phase, we are using this installation link for our app:<br />\n<a href=\"https://auth.monday.com/oauth2/authorize?client_id=123dae1ef47e1e3ee1234b6df123aa12&amp;response_type=install\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com: Where Teams Get Work Done</a></p>\n<p>Note that the client_id is on the install URL, and thus on every different instance that I install the app, the client_id in the client session token is the same.</p>\n<p>I suppose that once published to the marketplace, this behaviour would be different then?</p>\n<p>About storing tokens in the DB, we are actually just validating that we are receiving valid calls from the frontend by validating the Monday session token that we send through. I couldn’t find a reason yet to generate one token per user and store in the DB. Is there anything I’m not seeing here?</p>"
+    },
+    {
+      "id": 33041,
+      "postNumber": 4,
+      "createdAt": "2020-11-07T15:33:39.163Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/v-appgami\">@v-appgami</a></p>\n<p>I am talking about an app (integration) where the code resides on a server. So, it is a server based app. To be able to run under the credentials of a user you need to get a token through the OAuth handshake. I don’t believe you can use the client_id as your token when your app is used in other accounts.</p>\n<p>The marketplace link is the same for all users, it is just the installation link</p>"
+    },
+    {
+      "id": 33046,
+      "postNumber": 5,
+      "createdAt": "2020-11-07T17:07:56.064Z",
+      "author": "v-appgami (Antonio)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>Right, I think we are talking about different things then. I don’t want to make requests to Monday from my backend on behalf of the user. What I need is to just validate that requests coming from my frontend are valid requests. For this, I am using the <code>sessionToken</code> obtained via the SDK <code>monday.get</code> method: <a href=\"https://github.com/mondaycom/monday-sdk-js#mondaygettype-params--\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - mondaycom/monday-sdk-js: Node.js and JavaScript SDK for developing over the monday.com platform</a></p>\n<p>The flow is:</p>\n<ol>\n<li>The frontend makes a request passing the <code>sessionToken</code>\n</li>\n<li>The backend validates the <code>sessionToken</code> using the <code>Client Secret</code> of my app</li>\n<li>If valid, I persist/read information from/to the database</li>\n</ol>\n<p>Now, the problem is that the sessionToken seems to always have my app’s <code>client_id</code> instead of an ID that would represent uniquely the user’s Monday instance.</p>\n<p>Does that makes sense?</p>"
+    },
+    {
+      "id": 33052,
+      "postNumber": 6,
+      "createdAt": "2020-11-07T22:07:06.441Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/v-appgami\">@v-appgami</a></p>\n<p>Yes, that makes sense. I do not have much experience with monday client-side apps. I only can show you how I do this in serverside apps when monday sends a request to my app</p>\n<pre><code>const { authorization } = req.headers;\nconst { accountId, userId, aud, exp, iat } = jwt.verify(authorization, envVars.signingSecret);\n</code></pre>\n<p>where my signing secret comes from  <code>envVars.signingSecret</code> This gives me accesst to the accountId and the userId from the request header.</p>"
+    },
+    {
+      "id": 33064,
+      "postNumber": 7,
+      "createdAt": "2020-11-08T08:51:04.409Z",
+      "author": "v-appgami (Antonio)",
+      "cookedHtml": "<p>I see… well, there’s definitely something different between client-side apps and integrations then, because I can’t validate the token I get in the backend using the <code>signingSecret</code> but I need to use the <code>clientSecret</code> instead.</p>\n<p>This is very strange, I don’t understand yet why the <code>client_id</code> in the <code>sessionToken</code> that I get from the frontend is my client ID instead of the user’s instance client ID <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=9\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /></p>"
+    },
+    {
+      "id": 33066,
+      "postNumber": 8,
+      "createdAt": "2020-11-08T11:06:38.571Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/v-appgami\">@v-appgami</a><br />\nclient_id - is the unique public identifier of your app (this is why it is appearing in the installation url and in each request to your app).</p>\n<p>For implementing multi tenancy you need to use account_id if you want to store information on the account level, or a combination of user_id + account_id if you want to store data on the user level.</p>"
+    },
+    {
+      "id": 33069,
+      "postNumber": 9,
+      "createdAt": "2020-11-08T12:02:49.599Z",
+      "author": "v-appgami (Antonio)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/vladmonday\">@VladMonday</a>,</p>\n<p>Thank you very much for your reply.</p>\n<p>We want to store information on the account level, where each tenant would be one Monday instance (the account, not the user).</p>\n<p>What you explained was my understanding as well. However, it seems not possible to store information tied to the <code>account_id</code> because this ID is always pointing our own instance (the one hosting the app installation). No matter what Monday instance is sending requests to our backend, the session token that we get from the SDK method <code>monday.get</code>. I would expect the <code>client_id</code> in this token to be the ID of the account where the request is coming from i.e. the client’s account, not ours.</p>\n<p>Could this be a bug, or am I still confused with the concepts? Should I use a different token claim for identifying different customer accounts?</p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 33078,
+      "postNumber": 10,
+      "createdAt": "2020-11-08T13:34:58.000Z",
+      "author": "v-appgami (Antonio)",
+      "cookedHtml": "<p>Hey Vlad,</p>\n<p>I’m reading again your answer and now I understand. I confused client id with account id!</p>\n<p>Now it’s all clear, I will use the account ID to segregate data and implement the multi tenant approach.</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 44802,
+      "postNumber": 11,
+      "createdAt": "2021-03-15T13:54:52.568Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    }
+  ]
+}

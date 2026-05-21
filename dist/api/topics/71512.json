@@ -1,0 +1,42 @@
+{
+  "id": 71512,
+  "title": "Update subitem text",
+  "slug": "update-subitem-text",
+  "categoryId": 58,
+  "tagIds": [
+    5,
+    13,
+    94,
+    187
+  ],
+  "createdAt": "2023-11-26T08:51:48.318Z",
+  "lastPostedAt": "2023-11-26T14:29:51.988Z",
+  "postsCount": 2,
+  "excerpt": "Hi! \nI try to update a subitem Text with the API. \nThis is my code: \n  updateChange = f&#39;mutation {{ change_simple_column_value (item_id: 5570607428, board_id: 5548784580, column_id:&quot;text&quot;, value: &quot;test&quot;) {{ id }} }}&#39;\n  d&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 282,
+  "posts": [
+    {
+      "id": 154740,
+      "postNumber": 1,
+      "createdAt": "2023-11-26T08:51:48.394Z",
+      "author": "OmerBenD (Omer)",
+      "cookedHtml": "<p>Hi!<br />\nI try to update a subitem Text with the API.<br />\nThis is my code:</p>\n<pre><code class=\"lang-auto\">  updateChange = f'mutation {{ change_simple_column_value (item_id: 5570607428, board_id: 5548784580, column_id:\"text\", value: \"test\") {{ id }} }}'\n  data = {'query': updateChange}\n  r = requests.post(url=apiUrl, json=data, headers=headers) \n  print(r.json())\n</code></pre>\n<p>And this is my output:</p>\n<blockquote>\n<p>{‘error_code’: ‘ResourceNotFoundException’, ‘status_code’: 404, ‘error_message’: ‘Item not found in board’, ‘error_data’: {‘resource_type’: ‘item’, ‘item_id’: 5570607428, ‘pulse_id’: 5570607428, ‘board_id’: 5548784580, ‘error_reason’: None}}</p>\n</blockquote>\n<p>After some research, i found out that each item has unique subitem ID, so this error appears cause i putted the main board id in board_id instead of the unique subitem board id.</p>\n<p>How can i fix that?<br />\nThanks!</p>\n<p>Update:<br />\nI succeed to get the subitem board id by running this function:</p>\n<pre><code class=\"lang-auto\"> test = f'''\n        query {{\n            boards(ids: 5548784580) {{\n                columns(ids: \"subitems\"){{\n                    settings_str\n                }}\n            }}\n        }}\n        '''\n data = {'query': test}\n r = requests.post(url=apiUrl, json=data, headers=headers)  # make request\n response = r.json()\n</code></pre>\n<p>And this is my ouyput:</p>\n<blockquote>\n<p>{‘data’: {‘boards’: [{‘columns’: [{‘settings_str’: ‘{“displayType”:“BOARD_INLINE”,“itemTypeName”:“column.subtasks.title”,“allowMultipleItems”:true,“boardIds”:[<strong>5548784646</strong>]}’}]}]}, ‘account_id’: 6084643}</p>\n</blockquote>\n<p>But when i try to run this code on different board, I get this output</p>\n<blockquote>\n<p>{‘data’: {‘boards’: [{‘columns’: <span class=\"chcklst-box fa fa-square-o fa-fw\"></span>}]}, ‘account_id’: 6084643}</p>\n</blockquote>\n<p>What is the difference?</p>"
+    },
+    {
+      "id": 154767,
+      "postNumber": 2,
+      "createdAt": "2023-11-26T14:29:51.988Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Does the other board have any subitems? If the other board has never had a subitem created, then a subitem board and subitems column do not yet exist.</p>"
+    },
+    {
+      "id": 154876,
+      "postNumber": 3,
+      "createdAt": "2023-11-27T12:41:41.622Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

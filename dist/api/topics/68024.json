@@ -1,0 +1,54 @@
+{
+  "id": 68024,
+  "title": "Error while updating board-relation value",
+  "slug": "error-while-updating-board-relation-value",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-10-09T16:09:39.822Z",
+  "lastPostedAt": "2023-11-07T07:13:50.880Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nI’m trying to update the board-relation value in an item. \nThe column id I want to update is: ‘boards_verbinden9’, and it’s type is: ‘board-relation’. \nThe item_id = ‘1281247162’ \nthe contact_id (item_id from the it&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 561,
+  "posts": [
+    {
+      "id": 147563,
+      "postNumber": 1,
+      "createdAt": "2023-10-09T16:09:39.908Z",
+      "author": "felipeLW (Felipe)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m trying to update the board-relation value in an item.<br />\nThe column id I want to update is: ‘boards_verbinden9’, and it’s type is: ‘board-relation’.</p>\n<p>The item_id = ‘1281247162’<br />\nthe contact_id (item_id from the item in the other board I want to connect it to) = ‘1281240291’</p>\n<p>The query I’m using in Python is:</p>\n<pre><code class=\"lang-auto\">query = ' mutation ($myItemID: ID!, $columnVals: JSON!) { change_multiple_column_values (item_id: $myItemID, board_id: 1274270217, column_values:$columnVals) { id } }'\nvars = {'$myItemID': item_id,\n        'columnVals': json.dumps({\n            \"boards_verbinden9\": f'{{\"linkedPulseIds\":[{{\"linkedPulseId\":{contact_id} }}]}}'\n        })}\ndata = {'query': query, 'variables': vars}\nmonday_headers = {\"Authorization\": API-KEY, 'API-Version': '2023-10'}\nmonday_apiUrl = \"https://api.monday.com/v2\"\nr = requests.post(url=monday_apiUrl, json=data, headers=monday_headers)\nr = r.json()\n</code></pre>\n<p>And the error I’m obtaining is:</p>\n<pre><code class=\"lang-auto\">{'errors': [{'message': 'Variable $myItemID of type ID! was provided invalid value', 'locations': [{'line': 1, 'column': 12}], 'extensions': {'value': None, 'problems': [{'path': [], 'explanation': 'Expected value to not be null'}]}}], 'account_id':XXXXX}\n</code></pre>\n<p>$myItemID var is of type  ID since I’m using ‘API-Version’: ‘2023-10’</p>\n<p>Please help me identifying what I’m doing wrong.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 147567,
+      "postNumber": 2,
+      "createdAt": "2023-10-09T16:38:02.697Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I believe you should use <code>myItemID</code> and not <code>$myItemId</code> as the key in your <code>vars</code> object.</p>\n<p>The variable in the query is named <code>$myItemID</code> which is going to look for a key in <code>vars</code> named <code>myItemID</code>. In this case it doesn’t exist so its <code>null</code>.</p>\n<pre><code class=\"lang-auto\">vars = {'myItemID': item_id,\n        'columnVals': json.dumps({\n            \"boards_verbinden9\": f'{{\"linkedPulseIds\":[{{\"linkedPulseId\":{contact_id} }}]}}'\n        })}\n</code></pre>"
+    },
+    {
+      "id": 147644,
+      "postNumber": 3,
+      "createdAt": "2023-10-10T02:58:34.653Z",
+      "author": "felipeLW (Felipe)",
+      "cookedHtml": "<p>Thanks Cody, you are right.</p>\n<p>The corrected call is:</p>\n<pre><code class=\"lang-auto\">query = ' mutation ($myItemID: ID!, $columnVals: JSON!) { change_multiple_column_values (item_id: $myItemID, board_id: 1274270217, column_values:$columnVals) { id } }'\nvars = {'myItemID': item_id,\n        'columnVals': json.dumps({\n            \"connect_boards\": {'item_ids': [contact_id]}}\n        )}\ndata = {'query': query, 'variables': vars}\nmonday_headers = {\"Authorization\": API-KEY, 'API-Version': '2023-10'}\nmonday_apiUrl = \"https://api.monday.com/v2\"\nr = requests.post(url=monday_apiUrl, json=data, headers=monday_headers)\nr = r.json()\n</code></pre>\n<p>Nevertheless, I receive the error as if the boards where not connected.</p>\n<pre><code class=\"lang-auto\">{'error_code': 'ColumnValueException', 'status_code': 200, 'error_message': 'There are items that are not in the connected boards', 'error_data': {}}\n</code></pre>\n<p>In my board (the board of the item_id) I already have a “board-relation” column that connects with the other board (the board of the contact_id). In this column I already have some items related to the other board. Do you perhaps know what could be happening?</p>"
+    },
+    {
+      "id": 147645,
+      "postNumber": 4,
+      "createdAt": "2023-10-10T03:04:24.954Z",
+      "author": "felipeLW (Felipe)",
+      "cookedHtml": "<p>I found the error, the client_id in this case should be an Int and not a String.</p>"
+    },
+    {
+      "id": 151978,
+      "postNumber": 5,
+      "createdAt": "2023-11-07T07:13:50.880Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>See also: <a href=\"https://developer.monday.com/api-reference/docs/connect\" class=\"inline-onebox\">Connect boards</a> and in particular:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/1/91ecfba17f10c36d940f373d2e1cb0c4c31c8b3a.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/1/91ecfba17f10c36d940f373d2e1cb0c4c31c8b3a.png\" alt=\"image\" width=\"690\" height=\"166\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">915×221 18.7 KB</span></div></a></div><p></p>"
+    }
+  ]
+}

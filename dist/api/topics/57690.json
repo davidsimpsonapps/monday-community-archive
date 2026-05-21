@@ -1,0 +1,88 @@
+{
+  "id": 57690,
+  "title": "Month() function/formula evaluates February 1st wrong, Month(February 1) => 1 but should be 2",
+  "slug": "month-function-formula-evaluates-february-1st-wrong-month-february-1-1-but-should-be-2",
+  "categoryId": 6,
+  "tagIds": [
+    269
+  ],
+  "createdAt": "2023-05-08T18:40:47.883Z",
+  "lastPostedAt": "2023-06-14T19:43:26.896Z",
+  "postsCount": 10,
+  "excerpt": "The Formula column Month() function is supposed to evaluate to the number of the month of the year. Month(January 10) =&gt; 1 \nHowever, I get an invalid result for February 1st. \nI have not verified with all 364 other days &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1196,
+  "posts": [
+    {
+      "id": 126995,
+      "postNumber": 1,
+      "createdAt": "2023-05-08T18:40:47.974Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>The Formula column Month() function is supposed to evaluate to the number of the month of the year. Month(January 10) =&gt; 1</p>\n<p>However, I get an invalid result for February 1st.<br />\nI have not verified with all 364 other days of the year, but it would be nice if we could know that this evaluates correctly.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/8/b8c8e7e8983390b954c637b0c950b2951e0fbcf8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/8/b8c8e7e8983390b954c637b0c950b2951e0fbcf8_2_564x500.png\" alt=\"image\" width=\"564\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">766×679 37.1 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 127054,
+      "postNumber": 2,
+      "createdAt": "2023-05-09T04:23:34.181Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Working correct for me, I guess this is a Timezone issue. Remember the data is stored in UTC and showing in local TZ. As far as I know the formula month() does not take TZ in consideration.</p>"
+    },
+    {
+      "id": 127172,
+      "postNumber": 3,
+      "createdAt": "2023-05-09T19:37:16.548Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>Thank you for your reply <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>!</p>\n<p>That’s it!</p>\n<p>Unfortunately the team doesn’t want the time of day added to the column though.</p>"
+    },
+    {
+      "id": 127179,
+      "postNumber": 4,
+      "createdAt": "2023-05-09T20:49:00.588Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/apicaptain\">@APICaptain</a></p>\n<p>ohh, the update I got in the mail is little bit different than the one in the community (did you edit it?)</p>\n<p>Anyhow, I am in CET which is UTC+1 (or+2 in summer), therefore my window where the date on my clock differs from the stored date (in UTC) is small. I guess you can test it yourself by setting your TZ in monday to UTC and see if the date column still shows Feb 1. My 2 cents is that is will show Jan 31.</p>\n<p>Can you subtract a fixed number of hours in the formula? Tricky (if at all possible) because than you make your workflow TZ specific.</p>"
+    },
+    {
+      "id": 127295,
+      "postNumber": 5,
+      "createdAt": "2023-05-10T15:42:34.816Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>Yes I edited it. I replied quickly, then tested the theory and edited my initial response with the results.</p>\n<p>Thanks for your reply!</p>\n<p>I don’t think there’s a way to manipulate the value of the date data in that way with the formula column. If you can think of way, I’m all ears!</p>\n<p>Automatically adding a time and having it default after 7:00am fixes this, but like I said, we don’t want the time added to the Due Date column.</p>\n<p>This seems to be a legitimate bug to me. No matter what time zone a workspace is in, time data should evaluate correctly and in the time zone of the workspace.</p>"
+    },
+    {
+      "id": 127298,
+      "postNumber": 6,
+      "createdAt": "2023-05-10T15:47:48.843Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>I did some more testing and actually if I set a time, even 12:00am, the issue is resolved.</p>\n<p>If I just pick a date, no time, the issue persists.</p>\n<p><a class=\"mention\" href=\"/u/benjaminl\">@benjaminl</a>,<br />\nCould you please see if this is a known issue or if you can theorize a workaround?</p>"
+    },
+    {
+      "id": 127309,
+      "postNumber": 7,
+      "createdAt": "2023-05-10T17:27:45.018Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Can you do something like this?</p>\n<p>MONTH(CONCATENATE({Date}, \" 00:00\"))</p>\n<p>I can’t actually recreate the issue, but concatenating at time might just dupe it into doing what you expect.</p>\n<p>I’d hesitate to call this a bug. I can’t quite think of all the possible scenarios where this could come into play, but I don’t think it’s necessarily unexpected or incorrect behavior.</p>\n<p>EDIT: Or even better, just set the month to the 15th in all cases:</p>\n<p>MONTH(CONCATENATE(LEFT({Date},8),“15”))</p>"
+    },
+    {
+      "id": 127468,
+      "postNumber": 8,
+      "createdAt": "2023-05-11T12:16:51.948Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>Thanks a bunch for your reply <a class=\"mention\" href=\"/u/franciselliott\">@FrancisElliott</a>!</p>\n<p>This is a solid workaround.</p>\n<p>As for the bug comment,<br />\nThe month() function does not evaluate correctly for the date column’s default value for Feb 1 without setting a time of day.<br />\nThis is an unexpected and incorrect evaluation that requires a workaround as far as I’m concerned.</p>"
+    },
+    {
+      "id": 131461,
+      "postNumber": 10,
+      "createdAt": "2023-06-14T19:23:45.601Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>\n<p>I’m afraid you will see the same behavior East of GMT expect Feb 1 will show correctly as month 2, but Mar 31 will then show as month 4.</p>"
+    },
+    {
+      "id": 131465,
+      "postNumber": 11,
+      "createdAt": "2023-06-14T19:43:26.896Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>HAHA I didn’t realize this wasn’t my issue with the WEEKNUM() because it is so similar!</p>"
+    }
+  ]
+}

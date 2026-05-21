@@ -1,0 +1,55 @@
+{
+  "id": 122947,
+  "title": "\"Column not found\" errors",
+  "slug": "column-not-found-errors",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    94,
+    466
+  ],
+  "createdAt": "2026-01-16T16:12:26.953Z",
+  "lastPostedAt": "2026-01-19T23:09:09.300Z",
+  "postsCount": 5,
+  "excerpt": "I have an integration using the GraphQL API and add_file_to_column that works most of the time but occasionally it will give me this error “Column not found” but I know that this works and it’s just failing inexplicably &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 26,
+  "posts": [
+    {
+      "id": 244243,
+      "postNumber": 1,
+      "createdAt": "2026-01-16T16:12:27.039Z",
+      "author": "brondavies (Bron Davies)",
+      "cookedHtml": "<p>I have an integration using the GraphQL API and <code>add_file_to_column</code> that works most of the time but occasionally it will give me this error “Column not found” but I know that this works and it’s just failing inexplicably at random times.  Is this a known issue?</p>\n<p>Here is an example:</p>\n<pre><code class=\"lang-graphql\">mutation ($file: File!) { add_file_to_column(item_id: 10941668697, column_id:\"files6\", file: $file) { id } }\n</code></pre>"
+    },
+    {
+      "id": 244248,
+      "postNumber": 2,
+      "createdAt": "2026-01-16T22:54:50.278Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/brondavies\">@brondavies</a>    this usually isn’t random.</p>\n<p>Most of the time Column not found with add_file_to_column means the column_id doesn’t match the item at runtime. This happens if the item is on a different board, the column_id is actually a column name, the column is a Mirror column, or the mutation runs immediately after item creation.</p>\n<p>Quick checks<br />\nUse the API column_id, not the column title<br />\nConfirm the item and column are on the same board<br />\nMirror columns do not support files<br />\nAdd a short delay after creating the item</p>\n<p>Dr. Tanvi Sachar<br />\nMonday Certified Partner, Tuesday  Wizard</p>"
+    },
+    {
+      "id": 244329,
+      "postNumber": 3,
+      "createdAt": "2026-01-19T05:13:55.273Z",
+      "author": "sanmart (sanmart)",
+      "cookedHtml": "<p>This usually isn’t truly random. Intermittent <strong>“Column not found”</strong> errors with <code>add_file_to_column</code> often happen if the column ID (not the column name) is incorrect, the column was deleted and recreated or the board was duplicated, or the item/column was created shortly before the mutation runs, causing a timing issue. It can also occur if the item is archived, is a subitem while the column exists only on the parent board, or if the token/app temporarily lacks access.</p>"
+    },
+    {
+      "id": 244403,
+      "postNumber": 4,
+      "createdAt": "2026-01-19T16:22:13.177Z",
+      "author": "brondavies (Bron Davies)",
+      "cookedHtml": "<p>Thanks for the reply <a class=\"mention\" href=\"/u/sanmart\">@sanmart</a> and <a class=\"mention\" href=\"/u/drtanvisachar\">@drtanvisachar</a> Checking these:</p>\n<ul>\n<li>the column ID is incorrect - NO</li>\n<li>the column was deleted and recreated - NO</li>\n<li>the board was duplicated - NO</li>\n<li>the item/column was created shortly before the mutation runs - <strong>is Monday that bad that I have to wait to upload files?</strong></li>\n<li>the item is archived - NO</li>\n<li>is a subitem while the column exists only on the parent board - NO</li>\n<li>the token/app temporarily lacks access - highly unlikely</li>\n<li>item and column are on the same board - YES, although add_file_to_column doesn’t require the board id.</li>\n</ul>\n<p>I’ll do some more troubleshooting to see if there’s any issues with timing.</p>"
+    },
+    {
+      "id": 244421,
+      "postNumber": 5,
+      "createdAt": "2026-01-19T23:09:09.300Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/brondavies\">@brondavies</a>  If all of those are confirmed <strong>NO</strong>, this is very likely a timing / consistency issue rather than a configuration problem.</p>\n<p>A few quick things to try:<br />\n• When it fails, immediately query the board’s columns to confirm the column still exists and is a <strong>files</strong> column<br />\n• Add a short retry with backoff (e.g. 300ms → 800ms → 1500ms). This often resolves intermittent “Column not found” errors<br />\n• Log the exact <code>item_id</code> and <code>column_id</code> on failure to ensure the ID (not the title) is always being passed<br />\n• Double-check the item isn’t being created or moved by automation right before the upload</p>\n<p>In cases where all checks are solid, a retry delay usually ends up being the reliable fix.</p>\n<p>Dr. Tanvi Sachar<br />\nMonday Certified Partner, Tuesday Wizard</p>"
+    }
+  ]
+}

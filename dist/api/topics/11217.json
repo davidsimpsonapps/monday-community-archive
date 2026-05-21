@@ -1,0 +1,88 @@
+{
+  "id": 11217,
+  "title": "Custom webhook with column value if not null",
+  "slug": "custom-webhook-with-column-value-if-not-null",
+  "categoryId": 8,
+  "tagIds": [
+    5
+  ],
+  "createdAt": "2020-09-15T15:15:02.735Z",
+  "lastPostedAt": "2021-02-25T14:38:38.149Z",
+  "postsCount": 10,
+  "excerpt": "Hello, \nI’m trying to see if I can replace some code and diminish requests by using integrations. \nBasically, if any column changes, I now send a webhook, then I have to query the item for a specific column value that is&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2708,
+  "posts": [
+    {
+      "id": 28568,
+      "postNumber": 1,
+      "createdAt": "2020-09-15T15:15:02.812Z",
+      "author": "lalondesteve (Steve Lalonde)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’m trying to see if I can replace some code and diminish requests by using integrations.</p>\n<p>Basically, if any column changes, I now send a webhook, then I have to query the item for a specific column value that is a unique id that is the same in multiple other applications and is used to identify the item across the company.</p>\n<p>So what I would like to know, is if there’s anyway to create a custom action that would send a webhook with this column value so I can save a request. I managed to replicate the webhook integration but couldn’t find a way to select the text of another column when any column changes. I tried the columnValue from recipe but I could not manage to select anything and import to board.</p>\n<p>I hope this makes sense to someone,</p>\n<p>Thanks,</p>"
+    },
+    {
+      "id": 28571,
+      "postNumber": 2,
+      "createdAt": "2020-09-15T15:25:51.239Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/lalondesteve\">@lalondesteve</a>, Steve,</p>\n<p>This looks very much like the one answered here <a href=\"https://community.monday.com/t/webhook-event-type-change-specific-column-value/9654\" class=\"inline-onebox\">Webhook event type change_specific_column_value</a></p>\n<p>Or am I misunderstanding your question?</p>"
+    },
+    {
+      "id": 28572,
+      "postNumber": 3,
+      "createdAt": "2020-09-15T15:32:34.149Z",
+      "author": "lalondesteve (Steve Lalonde)",
+      "cookedHtml": "<p>Hey, I’m re-reading this post, but I don’t think that’s what I mean.</p>\n<p>Let me try to clarify:<br />\nTrigger : Any column changes<br />\nCurrent Action:<br />\nWebhook is sent with values board_id, item_id, column_id, new column value and previous column_value<br />\nWhat I would like the webhook to be:<br />\nboard_id, item_id, column_id, new_column_value, <strong>specified_column_id’s value</strong></p>\n<p>e.g. my board has columns name, uniqueId, status1, status2, status3, notes<br />\nwhenever any column changes, uniqueId would be returned with the webhook</p>"
+    },
+    {
+      "id": 28577,
+      "postNumber": 4,
+      "createdAt": "2020-09-15T16:48:35.875Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/lalondesteve\">@lalondesteve</a></p>\n<p>OK, understood. So you want to know the value of a specific column when another column changes (triggers the webhook). The only way I can see this work is when you query the item in your code when you receive the request from the webhook. The payload contains the board_id and item_id, so when you knwo the column_id it should be easy to query the value of that column / item.</p>\n<p>Does that make sense?</p>"
+    },
+    {
+      "id": 28579,
+      "postNumber": 5,
+      "createdAt": "2020-09-15T16:51:20.148Z",
+      "author": "lalondesteve (Steve Lalonde)",
+      "cookedHtml": "<p>yep, that’s what I’m doing now :<br />\nreceive webhook, query item values by item_id, process values and ship to other service.</p>\n<p>I was hoping that I could prevent the fetching of item values and remove a request + accelerate the update of my other service.</p>\n<p>dream process : receive webhook, process changes and ship to other service.</p>\n<p>The ultimate goal would be to have the minimal amount of custom code on my server and have the two services talk together with their own solutions.</p>"
+    },
+    {
+      "id": 28586,
+      "postNumber": 6,
+      "createdAt": "2020-09-15T18:13:38.388Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/lalondesteve\">@lalondesteve</a> – thanks for posting here! A “custom webhook” app that lets you construct the webhook’s payload from scratch would be really cool.</p>\n<p>Is your end goal to minimize custom code on your server (ie, use as many features as possible that are packaged in monday) or make requests as quick as possible?</p>\n<p>I ask because sending an additional API request to get data from a column shouldn’t add too much performance overhead (if everything’s working the way it should), but does significantly increase the amount of logic that needs to live outside of monday.</p>\n<p>By the way – what’s the other service that you’re sending data to?</p>"
+    },
+    {
+      "id": 28587,
+      "postNumber": 7,
+      "createdAt": "2020-09-15T18:19:57.352Z",
+      "author": "lalondesteve (Steve Lalonde)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dipro\">@dipro</a>, the goal would be to reduce the influence of the server to a minimum, and with a bit of luck, not have a server in between services by using their own features.</p>\n<p>The other service is a sharepoint list synced to an in house service to manage our inventory and activities.</p>\n<p>I first started trying to do everything in MS Flow, but that would have taken me more time than coding my own intermediary python service. So I have a working solution, but the request is to use as much «out of box» (like ms calls it) features as possible.</p>"
+    },
+    {
+      "id": 28589,
+      "postNumber": 8,
+      "createdAt": "2020-09-15T18:50:14.848Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Thanks for the context. I asked because I can think of another solution, but it’s a pretty involved workaround… Any chance your sharepoint list allows for <a href=\"https://support.microsoft.com/en-ie/office/enable-incoming-e-mail-support-for-a-list-or-library-dcaf44a0-1d9b-451a-84c7-6c52e7db908e\">updates via email</a>?</p>\n<p>Here’s how to set up the solution I’m imagining…</p>\n<p><strong>Step 1:</strong> Set up this email integration (you can use Outlook or Gmail) -<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/147fbf0468b2ac949649a5492110336d6353c2d9.png\" title=\"Screen Shot 2020-09-15 at 5.44.57 PM\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/147fbf0468b2ac949649a5492110336d6353c2d9_2_345x231.png\" alt=\"Screen Shot 2020-09-15 at 5.44.57 PM\" width=\"345\" height=\"231\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2020-09-15 at 5.44.57 PM</span><span class=\"informations\">808×542 20.8 KB</span>\n</div></a></div><p></p>\n<p><strong>Step 2:</strong> Configure the email body to include the other column value<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c83c67edfcf33e231062146c7d76bb80137eeb13.png\" title=\"Screen Shot 2020-09-15 at 5.44.48 PM\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c83c67edfcf33e231062146c7d76bb80137eeb13_2_345x154.png\" alt=\"Screen Shot 2020-09-15 at 5.44.48 PM\" width=\"345\" height=\"154\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2020-09-15 at 5.44.48 PM</span><span class=\"informations\">2062×926 78.2 KB</span>\n</div></a></div><p></p>\n<p><strong>Step 3:</strong> Receive email in Sharepoint (using their incoming email handler) and update list accordingly.</p>\n<p>What do you think?</p>"
+    },
+    {
+      "id": 28590,
+      "postNumber": 9,
+      "createdAt": "2020-09-15T18:55:02.388Z",
+      "author": "lalondesteve (Steve Lalonde)",
+      "cookedHtml": "<p>yeah, we’ve been using the sharepoint email tricks in another branch as it’s the only way to interact with another service.</p>\n<p>I’ll keep this in my backpocket if I get asked to retire the server option.</p>\n<p>Anyway, the slowness and general dinosaurity of sharepoint is a bigger problem than monday’s early limitations.</p>\n<p>Thanks,</p>"
+    },
+    {
+      "id": 42507,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T14:38:38.149Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

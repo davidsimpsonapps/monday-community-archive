@@ -1,0 +1,65 @@
+{
+  "id": 13332,
+  "title": "Column Values are blank - Python (API) - creating new item",
+  "slug": "column-values-are-blank-python-api-creating-new-item",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-11-17T09:01:14.855Z",
+  "lastPostedAt": "2021-03-04T01:22:12.188Z",
+  "postsCount": 6,
+  "excerpt": "Only the item name appears in Monday. \nThe columns are empty. I tried removing the label and text - same result. \nCode: \nimport requests\nimport json\napiKey = &quot;HIDDEN&quot;\napiUrl = &quot;https://api.monday.com/v2&quot;\nheaders = {&quot;Auth&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2062,
+  "posts": [
+    {
+      "id": 33876,
+      "postNumber": 1,
+      "createdAt": "2020-11-17T09:01:14.934Z",
+      "author": "tuesdayman (Shah Auckburaully)",
+      "cookedHtml": "<p>Only the item name appears in Monday.</p>\n<p>The columns are empty. I tried removing the label and text - same result.</p>\n<p>Code:</p>\n<pre><code>import requests\nimport json\napiKey = \"HIDDEN\"\napiUrl = \"https://api.monday.com/v2\"\nheaders = {\"Authorization\": apiKey}\nquery5 = \"mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:HIDDEN, item_name:$myItemName, column_values:$columnVals) { id } }\"\nvars = {\"myItemName\": \"Hello everyone!\",\"columnVals\": json.dumps({\"link\": {\"link\": \"www.google.com\"}, \"people1\": {\"multiple-person\": \"Jane\"}}),}\ndata = {\"query\": query5, \"variables\": vars}\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request print(r.json())\n</code></pre>\n<p>The ids of the columns are correct. I checked.</p>\n<p>What am I doing wrongly here?</p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 33916,
+      "postNumber": 2,
+      "createdAt": "2020-11-17T19:13:19.268Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 33917,
+      "postNumber": 3,
+      "createdAt": "2020-11-17T19:15:25.848Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/tuesdayman\">@tuesdayman</a> - there’s two changes you would want to make to your variables.</p>\n<p>The first would be to modify the link column to follow our parameters:</p>\n<pre><code>        \"link\": {\"url\": \"www.google.com\",\"text\":\"test\"},\n</code></pre>\n<p>The second change is related to the people column - currently this would require you to send the ID of the person to update the column (please see <a href=\"https://monday.com/developers/v2#column-values-section-people\" rel=\"noopener nofollow ugc\">documentation</a>).</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 33928,
+      "postNumber": 4,
+      "createdAt": "2020-11-17T20:50:03.596Z",
+      "author": "tuesdayman (Shah Auckburaully)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a>.</p>\n<p>I got the link to appear. The multiple-person field (people1) results in this syntax error:</p>\n<p><code>  vars = {\"myItemName\": \"test!\",\"columnVals\": json.dumps({\"link\": {\"url\":\"wwww.google.com\",\"text\":\"google.com\"},\"people1\": {\"multiple-person\": {\"14123922\":\"kind\":\"person\"},{\"12472244\":\"kind\":\"person\"} }}),}</code><br />\n^<br />\nSyntaxError: invalid syntax</p>\n<p>The code:</p>\n<pre><code>vars = {\"myItemName\": \"test!\",\"columnVals\": json.dumps({\"link\": {\"url\":\"wwww.google.com\",\"text\":\"google.com\"},\"people1\": {\"multiple-person\": {\"14123922\":\"kind\":\"person\"},{\"12472244\":\"kind\":\"person\"} }}),}\n</code></pre>\n<p>Can you please assist? Thanks.</p>"
+    },
+    {
+      "id": 33960,
+      "postNumber": 5,
+      "createdAt": "2020-11-18T08:41:35.759Z",
+      "author": "tuesdayman (Shah Auckburaully)",
+      "cookedHtml": "<p>The type in the JSON output listing all attributes doesn’t match the API types. E.g. link is a type in Monday UI but for the API, we have to use url.</p>\n<p>Odd!</p>\n<p>Fixed the issue for people. Thank you <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a>. This worked. I didn’t have to add “people” or “multi-person” in the query.</p>\n<p>My next issue is tags not appearing - likely due to type of attribute.</p>\n<p><code>vars = {\"myItemName\": \"test!\",\"columnVals\": json.dumps({\"link\": {\"url\":\"wwww.google.com\",\"text\":\"google.com\"},\"people1\":\"14123922,12472244\",\"tags\":{\"text\":\"#fdfd3\"}}),}</code></p>"
+    },
+    {
+      "id": 34258,
+      "postNumber": 6,
+      "createdAt": "2020-11-20T19:34:12.487Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/tuesdayman\">@tuesdayman</a> - could we try the tag without the # sign?</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 43382,
+      "postNumber": 7,
+      "createdAt": "2021-03-04T01:22:12.188Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

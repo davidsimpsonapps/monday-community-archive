@@ -1,0 +1,35 @@
+{
+  "id": 78720,
+  "title": "The formula is returning an error",
+  "slug": "the-formula-is-returning-an-error",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    107,
+    108,
+    351
+  ],
+  "createdAt": "2024-02-19T17:18:57.559Z",
+  "lastPostedAt": "2024-02-19T18:15:15.322Z",
+  "postsCount": 2,
+  "excerpt": "Hello. I need help with the formula below. I’ve tried several ways to make the formula enter the first condition, returning the value 100 when the Baseline and Alvo columns are equal. However, I end up receiving the erro&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 339,
+  "posts": [
+    {
+      "id": 168810,
+      "postNumber": 1,
+      "createdAt": "2024-02-19T17:18:57.654Z",
+      "author": "carlos.souza (Carlos Henrique)",
+      "cookedHtml": "<p>Hello. I need help with the formula below. I’ve tried several ways to make the formula enter the first condition, returning the value 100 when the <strong>Baseline</strong> and <strong>Alvo</strong> columns are equal. However, I end up receiving the error “Invalid parameter.” The funniest thing is that when I execute only the first condition in isolation, it works. Could someone assist me? Thank you in advance.<br />\nI emphasize that the columns <strong>Baseline</strong>, <strong>Alvo</strong>, and <strong>Resultado Atual</strong> are of numeric type.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/4/d404773064f6314b4b1e2c7fb09575e66b93014e.png\" alt=\"A\" width=\"510\" height=\"244\" /></p>\n<p>The formula is the one described below, and it is in the column <strong>% de Atingimento</strong>:</p>\n<pre><code class=\"lang-auto\">IF(\n\t{Baseline}={Alvo},\n      100,\n   \t    IF(\n    \t    {Resultado Atual}=0,\n\t      \t  ROUND(0/({Alvo}-{Baseline})*100,0),\n\t\t        ROUND(({Resultado Atual}-{Baseline})/({Alvo}-{Baseline})*100,0)\n           )\n  )\n</code></pre>"
+    },
+    {
+      "id": 168818,
+      "postNumber": 2,
+      "createdAt": "2024-02-19T18:15:15.322Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Carlos,</p>\n<p>The problem is when Baseline = Alvo, {Alvo}-{Baseline} = 0 and you can’t divide by 0. I know you believe you ruled out this possibility with your IF({Alvo}={Baseline}, 100…) but it is not the case. See the 2nd paragraph of this article <a href=\"https://blog.mdboosters.com/en/a-simple-way-to-handle-empty-columns-and-avoid-errors-in-your-formulas-in-monday-com\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">A Simple Way to Handle Empty Columns and Avoid Errors in your Formulas | mdBoosters Blog</a>, should you be interested in why.</p>\n<p>Now, if you want to fix your formula, replace</p>\n<pre><code class=\"lang-auto\">ROUND(({Resultado Atual}-{Baseline})/({Alvo}-{Baseline})*100,0)\n</code></pre>\n<p>by</p>\n<pre><code class=\"lang-auto\">ROUND(DIVIDE({Resultado atual}-{Baseline},IF({Alvo}={Baseline},1,{Alvo}-{Baseline}))*100,0)\n</code></pre>\n<p>I am not sure what you’re trying to achieve with</p>\n<pre><code class=\"lang-auto\">ROUND(0/({Alvo}-{Baseline})*100,0)\n</code></pre>\n<p>It will raise an error as well, but besides that, it would in all cases result to 0 (0 divided by x, will always result to 0)</p>\n<p>So I would suggest replacing it with 0.</p>\n<p>As a whole, here is a formula that works (if baseline and alvo are filled in!)</p>\n<pre><code class=\"lang-auto\">IF({Baseline}={Alvo},100,\n   \t    IF(\n    \t    {Resultado Atual}=0,0,\n\t\t        ROUND(DIVIDE({Resultado atual}-{Baseline},IF({Alvo}={Baseline},1,{Alvo}-{Baseline}))*100,0)\n           )\n  )\n</code></pre>\n<p>If you have several formulas like this, you may want to look at a 3rd-party app called <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a> which makes it so much easier to write formulas like this and presents numerous other advantages as well.</p>\n<p>In the <em>Advanced Formula Booster</em>, you can use as many lines as you want to write your formula and you can stop the formula at any point. For instance, you could say IF({Baseline}={Alvo),STOP()) and then you’ll know if the formula reaches the lines below this one, the 2 values are not equal.</p>"
+    }
+  ]
+}

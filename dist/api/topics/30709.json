@@ -1,0 +1,95 @@
+{
+  "id": 30709,
+  "title": "Safe board setup (column creation)",
+  "slug": "safe-board-setup-column-creation",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-01-29T19:01:13.166Z",
+  "lastPostedAt": "2022-02-03T06:35:52.152Z",
+  "postsCount": 11,
+  "excerpt": "Is there any way to create a column only if it does not exist? \nAt the moment, there is a chance that a race condition could result in duplication. \nBefore adding data to a board, we need to be sure the board is correctl&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1414,
+  "posts": [
+    {
+      "id": 75442,
+      "postNumber": 1,
+      "createdAt": "2022-01-29T19:01:13.254Z",
+      "author": "jleni (Juan)",
+      "cookedHtml": "<p>Is there any way to create a column only if it does not exist?</p>\n<p>At the moment, there is a chance that a race condition could result in duplication.</p>\n<p>Before adding data to a board, we need to be sure the board is correctly configure and create the correct columns…</p>\n<p>The only way we can do that now if through two API calls (read, create) and that can result in concurrency issues.</p>\n<p>Is there any solution to this? We need to avoid corrupting our data due to this…</p>"
+    },
+    {
+      "id": 75496,
+      "postNumber": 2,
+      "createdAt": "2022-01-31T06:51:22.614Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/jleni\">@jleni</a>!</p>\n<p>Could you give me an example?</p>\n<p>When you say create a column only if it does not exist, do you mean if the column’s title doesn’t exist? Or if there are no columns of that type in the board?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 75499,
+      "postNumber": 3,
+      "createdAt": "2022-01-31T07:18:08.805Z",
+      "author": "jleni (Juan)",
+      "cookedHtml": "<p>Let’s say we want to add an item with a field “XYZ” to a board ABC.</p>\n<ul>\n<li>\n<p>We are not sure the board has the column XYZ. If we create the item and the column is not there… that field will be ignored.</p>\n</li>\n<li>\n<p>To be sure we need to 1) read columns in the board. 2) if the column is missing create it</p>\n</li>\n<li>\n<p>Then we can create the item safely</p>\n</li>\n</ul>\n<p>The problem we see is that if we want to paralellize this, and create multiple items in parallel, there is a chance that we read and create multiple columns with the same name but different internal IDs.</p>\n<p>Ideally, I would like to have a way to “create column_id=QWERTY” so we are sure of the id and we don’t need to check if the column exist. Creating column by “name” and not “id” is very risky</p>\n<p>Maybe there is something wrong that we are doing and there is already something in the API for this use case?</p>"
+    },
+    {
+      "id": 75840,
+      "postNumber": 4,
+      "createdAt": "2022-02-02T07:34:30.167Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/jleni\">@jleni</a>!</p>\n<p>You can query the titles (or IDs) of the columns in your board and check if the column exists:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567) {\n    columns {\n      title\n      id\n    }\n  }\n}\n</code></pre>\n<p>If it does not exist, you can create it:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_column(board_id: 1234567, title: \"Text Column\", column_type: text) {\n    id\n  }\n}\n</code></pre>\n<p>The column IDs are set automatically. In this case, the ID would be text_column (if it doesn’t exist yet).</p>\n<p>Does this help?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 75843,
+      "postNumber": 5,
+      "createdAt": "2022-02-02T07:47:35.970Z",
+      "author": "jleni (Juan)",
+      "cookedHtml": "<p>Well… this is exactly the race condition I am talking about…</p>\n<blockquote>\n<p>If it does not exist, you can create it:</p>\n</blockquote>\n<p>if we have parallel API calls (event/webhook base) then may create the column twice with different identifiers. Also people can rename columns and break things…</p>\n<p>I see this as an issue in the API design</p>"
+    },
+    {
+      "id": 75857,
+      "postNumber": 6,
+      "createdAt": "2022-02-02T11:22:05.328Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>If users change the column name, the columnId will stay the same. I do not see a reason why this should break an app as I assume you are using columnId’s.</p>"
+    },
+    {
+      "id": 75864,
+      "postNumber": 7,
+      "createdAt": "2022-02-02T11:37:07.678Z",
+      "author": "jleni (Juan)",
+      "cookedHtml": "<p>What matias suggested was to verify that the column exist by searching the column name… and if it is not there… then create…<br />\nif the column is renamed, you cannot rely on the check.<br />\nWe don’t want to track column_id separatedly in a different DB… that would be complicated and error prone.</p>"
+    },
+    {
+      "id": 75869,
+      "postNumber": 8,
+      "createdAt": "2022-02-02T12:32:05.086Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Understood, you can never rely on a column name as the user can always change it. The best solutions depends on a lot of things, like:</p>\n<ul>\n<li>do you create the column through the API? In that case I suggest to create a column through the API with a unique name (timestamp?). The columnId will now be the same as the column name (timestamp) and you can rename it to whatever you want.</li>\n<li>if the board (e.g. derived from a template) already contains the column you can check the columnId because boards derived from a template has the same columnIds as in the template</li>\n</ul>\n<p>Without knowing the exact flow I am afraid I can’t help further.</p>"
+    },
+    {
+      "id": 75877,
+      "postNumber": 9,
+      "createdAt": "2022-02-02T12:52:25.202Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/jleni/48/10518_2.png\" class=\"avatar\" /> jleni:</div>\n<blockquote>\n<p>What matias suggested was to verify that the column exist by searching the column name… and if it is not there… then create…</p>\n</blockquote>\n</aside>\n<p>Just to let you know that searching for the column name fails sometimes. We are still investigating the problem with <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> but it seems related to column permission or column now available thru API just after their creation.</p>"
+    },
+    {
+      "id": 75878,
+      "postNumber": 10,
+      "createdAt": "2022-02-02T12:53:57.642Z",
+      "author": "jleni (Juan)",
+      "cookedHtml": "<p>Yes, we could eventually do something like that… create with a random unique name and then track the column_id in a separate DB. But it is not ideal… <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /></p>\n<p>My concern is that once you start adding too many workaround due to API limitations… code looks strange and affects long term maintainance… but ok, it is possible to encapsulate all these things and wait until the API gets better</p>"
+    },
+    {
+      "id": 75999,
+      "postNumber": 11,
+      "createdAt": "2022-02-03T06:35:52.152Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/jleni\">@jleni</a> !</p>\n<p>Yes. As I mentioned, you could query for the titles of the columns. I mentioned this since I asked before, and you replied saying that you wanted to use the titles (like “XYZ”). I also mentioned the IDs as well, so that you knew that you could use them too. I gave the example of the column creation of a column with title “Text Column” with the ID text_column which is related to what was said about the “custom IDs” set by creating the column via API. Obviously as it is mentioned, using the IDs is better since those are unique.</p>\n<p>Hope it works for you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>\n<p>Cheers,<br />\n-Matias</p>"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": 75871,
+  "title": "Formula brings error due to empty date column",
+  "slug": "formula-brings-error-due-to-empty-date-column",
+  "categoryId": 5,
+  "tagIds": [
+    108,
+    303
+  ],
+  "createdAt": "2024-01-23T08:05:25.360Z",
+  "lastPostedAt": "2024-01-23T11:52:44.227Z",
+  "postsCount": 3,
+  "excerpt": "Hey everyone, \nI have a formula which returns an error when the Date Column, I am using, is empty. \nround({Total Cash Value Now}/1.05^(DAYS({Due Date},TODAY())/360) \nWhen I try to avoid the error by applying an IF formul&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 696,
+  "posts": [
+    {
+      "id": 163597,
+      "postNumber": 1,
+      "createdAt": "2024-01-23T08:05:25.456Z",
+      "author": "Johannes (Johannes Holzäpfel)",
+      "cookedHtml": "<p>Hey everyone,<br />\nI have a formula which returns an error when the Date Column, I am using, is empty.</p>\n<p>round({Total Cash Value Now}/1.05^(DAYS({Due Date},TODAY())/360)</p>\n<p>When I try to avoid the error by applying an IF formula it won’t work either:</p>\n<p>So if I use:<br />\nif({Due Date}=“”,0,round({Total Cash Value Now}/1.05^(DAYS({Due Date},TODAY())/360),0)) I still get an error.</p>\n<p>The DAYS formula brings back an empty value but not nil. I tried making a simple formula like this:<br />\nDAYS({Due Date},TODAY())=“” which returns false.</p>\n<p>However, I think the problem is that Monday even goes into that part of the logic after applying the IF function in the first place:<br />\nIF({Due Date}=“”,0,round({Total Cash Value Now}/1.05^(DAYS({Due Date},TODAY())/360),0))</p>\n<p>The statement ({Due Date}=“”) is true and when I make the following simple case it does not cause an error:</p>\n<p>if({Due Date}=“”,0,1) returns 0.</p>\n<p>When I substitute the 1 in the above IF function with the formula I want in case there is a date. round({Total Cash Value Now}/1.05^(DAYS({Due Date},TODAY())/360),0) I get the error when there is no date. Monday should not process that part of the IF function if it doesn’t need to go there.</p>"
+    },
+    {
+      "id": 163632,
+      "postNumber": 2,
+      "createdAt": "2024-01-23T11:37:41.497Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Johannes,</p>\n<p>Indeed. This is called an <strong>eager</strong> approach of the IF statement vs a <strong>lazy</strong> approach. I actually wrote an article on this last week: <a href=\"https://blog.mdboosters.com/en/a-simple-way-to-handle-empty-columns-and-avoid-errors-in-your-formulas-in-monday-com\" rel=\"noopener nofollow ugc\">A Simple Way to Handle Empty Columns and Avoid Errors in your Formulas | mdBoosters Blog</a>.</p>\n<p>Now if you don’t want to use a 3rd-party app, you’ll need to take a different approach than the one you took. You need to replace:</p>\n<pre><code class=\"lang-auto\">DAYS({Due Date},TODAY())\n</code></pre>\n<p>By this for instance:</p>\n<pre><code class=\"lang-auto\">DAYS(IF({Starting Date}=\"\",TODAY(),{Starting Date}),TODAY())\n</code></pre>\n<p>This will generate 0 in your columns with no date. If you want the column to be empty, then you would need to replace it by:</p>\n<pre><code class=\"lang-auto\">IF(DAYS(IF({Starting Date}=\"\",TODAY(),{Starting Date}),TODAY())=0,\"\",DAYS(IF({Starting Date}=\"\",TODAY(),{Starting Date}),TODAY()))\n</code></pre>\n<p>With the rest of the formula around it, it is barely manageable, but it should work.</p>\n<hr />\n<p><strong>Want to use your formula results in automations, widgets, calendars?</strong> It is now possible with the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>. This 3rd-party app allows you to create formulas that write to any type of column, breaking free of the Formula column.</p>"
+    },
+    {
+      "id": 163638,
+      "postNumber": 3,
+      "createdAt": "2024-01-23T11:52:44.227Z",
+      "author": "Johannes (Johannes Holzäpfel)",
+      "cookedHtml": "<p>Hey Gilles,</p>\n<p>Oh I did not know that there is a name for evaluating both outcomes in an IF function. I assumed this is an error in the design of the function. It appears there might be a purpose for it. Even though i lack the imagination about the usefulness of the eager approach. But now I have something to research. Thanks.</p>\n<p>I subsequently asked <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> for support as well and they ended up telling me that the IF function throws errors when one uses operators such as (^±*/) on emtpy cells . They recommended to use the functions instead. So I turned the formula into this and then it seemed to work.</p>\n<p>round(if({Due Date}=“”,0,Divide({Total Cash Value Now},Power(1.05,DIVIDE(DAYS({Due Date},TODAY()),360)))),0)</p>\n<p>Thanks again.</p>"
+    }
+  ]
+}

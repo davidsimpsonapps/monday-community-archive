@@ -1,0 +1,44 @@
+{
+  "id": 12814,
+  "title": "Creating subitem with column_values",
+  "slug": "creating-subitem-with-column-values",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-11-03T15:30:46.019Z",
+  "lastPostedAt": "2020-11-04T19:12:44.661Z",
+  "postsCount": 3,
+  "excerpt": "Hi, I have some code to create a subitem in Monday.com (i’m using Zapier to dynamically pull variables from Xero). \nThe code works fine and creates the subitems however I’m unable to get it to set column values (setting &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 4735,
+  "posts": [
+    {
+      "id": 32678,
+      "postNumber": 1,
+      "createdAt": "2020-11-03T15:30:46.095Z",
+      "author": "emvy03 (Matthew)",
+      "cookedHtml": "<p>Hi, I have some code to create a subitem in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> (i’m using Zapier to dynamically pull variables from Xero).</p>\n<p>The code works fine and creates the subitems however I’m unable to get it to set column values (setting “Hello” as dummy text for testing).</p>\n<p>Code is below. Any help would be much appreciated.</p>\n<p>The error is a 500 error:</p>\n<p><code>ResponseError: {\"status\":500,\"headers\":{\"content-type\":\"application/json; charset=utf-8\"},\"content\":\"{\\\"error_message\\\":\\\"Internal server error\\\",\\\"status_code\\\":500}\"</code></p>\n<p>Code:</p>\n<pre><code>var project_name = bundle.inputData.project_id;\n\nvar dict = {};\n\nfunction get_id(id){\n  return parseInt(id)\n}\n\nconst options_ids = {\n  url: 'https://api.monday.com/v2',\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n    'Accept': 'application/json',\n    'Authorization': `Bearer ${bundle.authData.access_token}`\n  },\n  params: {\n\n  },\n  body: {\n   'query':\"{  boards (ids:BOARDID){id name items { id name}}}\"\n        }\n}\n\nreturn z.request(options_ids)\n  .then((response) =&gt; {\n  // response.throwForStatus();\n    // var project_id = \"\"\n    const results = JSON.parse(response.content);\n    var items =  results.data.boards[0]['items'];\n    for(i=0;i&lt;items.length;i++){\n    var key = items[i]['name']\n    var value = results.data.boards[0]['items'][i]['id']\n    dict[key] = value\n    }\nconst mutation = \"mutation {create_subitem (parent_item_id: \"+dict[project_name]+\", item_name: \\\"Expense: \"+bundle.inputData.description+\" - \"+bundle.inputData.amount+\" \"+ bundle.inputData.currency+ \"\\\",column_values:{text_value:Hello}) {id,board {id}}}\"\nconst options = {\n  url: 'https://api.monday.com/v2',\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n    'Accept': 'application/json',\n    'Authorization': `Bearer ${bundle.authData.access_token}`\n  },\n  params: {\n  },\n  body: {\n    'query':mutation\n  }\n}\n\nreturn z.request(options)\n  .then((response) =&gt; {\n    response.throwForStatus();\n    items = response.json;\n    const results = response.json;\n    \n    \n    return results\n  })\n\n})\n</code></pre>"
+    },
+    {
+      "id": 32830,
+      "postNumber": 2,
+      "createdAt": "2020-11-04T19:00:27.205Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 32831,
+      "postNumber": 3,
+      "createdAt": "2020-11-04T19:12:44.661Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/emvy03\">@emvy03</a> - welcome to the community!</p>\n<p>I think the issue here is tied to two issues: the column being identified in the <code>'column values'</code> portion, and the formatting of the string being sent to fill in the column value.</p>\n<p>When setting column values you’ll want to make sure you’re sending a JSON string, and that the column being specified matches the column ID you see in the interface.</p>\n<p>In my particular case, the column ID was just ‘text’:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/a/af34b8ed3e29902ee5fb49e2fdd947ce128ba8ee.png\" alt=\"image\" width=\"384\" height=\"92\" /></p>\n<p>With this information, I was able to create a subitem with pre populated content by sending a JSON string to the API:</p>\n<pre><code>mutation { \n      create_subitem (\n        parent_item_id: xxxxxx, \n        item_name: \"My Subitem Test\",\n        column_values:\"{\\\"text\\\": \\\"Testing API\\\"}\"\n        ) { id } \n}\n</code></pre>\n<p>Hope this helps - let me know if you have any other questions.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 43325,
+      "postNumber": 4,
+      "createdAt": "2021-03-03T15:07:17.876Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

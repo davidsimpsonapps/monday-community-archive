@@ -1,0 +1,30 @@
+{
+  "id": 65480,
+  "title": "Getting no text for column that has text on board",
+  "slug": "getting-no-text-for-column-that-has-text-on-board",
+  "categoryId": 58,
+  "tagIds": [],
+  "createdAt": "2023-09-08T12:28:44.581Z",
+  "lastPostedAt": "2023-09-10T08:33:28.668Z",
+  "postsCount": 2,
+  "excerpt": "Hi, hope someone can help me out with this query question. I’m running this query: \n{ \n  boards(ids: 4035946526) { \n    groups(ids:[&quot;new_group&quot;]) { \n      title \n      id\n      items {\n        id\n        column_values (i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 221,
+  "posts": [
+    {
+      "id": 142583,
+      "postNumber": 1,
+      "createdAt": "2023-09-08T12:28:44.652Z",
+      "author": "KargoTechComms (Steve Suranie)",
+      "cookedHtml": "<p>Hi, hope someone can help me out with this query question. I’m running this query:</p>\n<pre><code class=\"lang-auto\">{ \n  boards(ids: 4035946526) { \n    groups(ids:[\"new_group\"]) { \n      title \n      id\n      items {\n        id\n        column_values (ids:[\"connect_boards\", \"long_text\", \"files\", \"formula\"]) { \n          id\n        \ttitle\n        \ttext\n                value\n        }\n      }\n    } \n  } \n} \n</code></pre>\n<p>which returns the expected results:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"groups\": [\n          {\n            \"title\": \"Q3 2023 Projects\",\n            \"id\": \"new_group\",\n            \"items\": [\n              {\n                \"id\": \"4132114327\",\n                \"column_values\": [\n                  {\n                    \"id\": \"long_text\",\n                    \"title\": \"Short Description\",\n                    \"text\": \"xxxxxxxxxxxxxxx\\n\",\n                    \"value\": \"{\\\"text\\\":\\\"xxxxxxxxxxxxxx\\\\n\\\",\\\"changed_at\\\":\\\"2023-03-13T19:06:47.226Z\\\"}\"\n                  },\n                  {\n                    \"id\": \"connect_boards\",\n                    \"title\": \"Themes / Investment Areas\",\n                    \"text\": \"xxxxxxxxxxxxxxxxxxxxxxxxxx.\",\n                    \"value\": \"{\\\"changed_at\\\":\\\"2023-06-21T19:14:14.442Z\\\",\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":4600317529}]}\"\n                  },\n                  {\n                    \"id\": \"formula\",\n                    \"title\": \"Total Pts\",\n                    \"text\": \"\",\n                    \"value\": null\n                  },...\n</code></pre>\n<p>except for the column “Total Pts”, which returns an empty string for every result. The results should be a number, either as an integer or string. I’ve confirmed each item in the board has a value. Is there something wrong with my query that is preventing these values from being returned?</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/c/8c1d291a5596f9f5d6ea587eef4aba695902da12.png\" alt=\"image\" width=\"228\" height=\"155\" /></p>"
+    },
+    {
+      "id": 142742,
+      "postNumber": 2,
+      "createdAt": "2023-09-10T08:33:28.668Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/kargotechcomms\">@KargoTechComms</a>,</p>\n<p>The API does not return the text or value of formula columns since that value is calculated on the client side.</p>\n<p>As a workaround, you can either use an app like General Caster to cast the result of a formula in a “text” or “numbers” column, and then query that column, or query for the structure of the formula in the “formula” column, and then performing the operations on your end:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    columns(ids: \"formula\") {\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

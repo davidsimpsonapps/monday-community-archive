@@ -1,0 +1,119 @@
+{
+  "id": 59947,
+  "title": "Creating a Board with VBA",
+  "slug": "creating-a-board-with-vba",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2023-06-13T16:46:45.879Z",
+  "lastPostedAt": "2023-06-28T18:36:53.176Z",
+  "postsCount": 12,
+  "excerpt": "I’m trying to create a board using VBA.  Here is the code I’m trying: \nSub MigrateToMonday() \nDim monday As New MSXML2.ServerXMLHTTP60 \nDim response As Variant \nDim status As Variant \nDim query As String \nmyurl = “https:&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 652,
+  "posts": [
+    {
+      "id": 131298,
+      "postNumber": 1,
+      "createdAt": "2023-06-13T16:46:46.001Z",
+      "author": "MESGeorge (MESGeorge)",
+      "cookedHtml": "<p>I’m trying to create a board using VBA.  Here is the code I’m trying:</p>\n<p>Sub MigrateToMonday()</p>\n<p>Dim monday As New MSXML2.ServerXMLHTTP60<br />\nDim response As Variant<br />\nDim status As Variant<br />\nDim query As String</p>\n<p>myurl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nmytoken = “*********”</p>\n<p>query = \" { ““query”” : ““mutation{@@@}””}\"<br />\nquery = Replace(query, “@@@”, “create_board(board_name: ““zzTestGJF””, board_kind: public){id}”)</p>\n<pre><code>With monday\n    .Open \"POST\", myurl, False\n    .SetRequestHeader \"Content-Type\", \"application/json\"\n    .SetRequestHeader \"Accept\", \"application/json\"\n    .SetRequestHeader \"Authorization\", mytoken\n    .Send query\n    response = .responseText\n    status = .status &amp; \" | \" &amp; .StatusText\nEnd With\n</code></pre>\n<p>MsgBox response<br />\nMsgBox status<br />\nMsgBox query</p>\n<p>End Sub</p>\n<p>All I get back is a “Run-time error ‘-2147012894(80072ee2)’; Automation error”</p>\n<p>Can someone point out where my error is and how to correct it?</p>"
+    },
+    {
+      "id": 131379,
+      "postNumber": 2,
+      "createdAt": "2023-06-14T09:57:17.995Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 132150,
+      "postNumber": 3,
+      "createdAt": "2023-06-20T11:52:56.454Z",
+      "author": "MESGeorge (MESGeorge)",
+      "cookedHtml": "<p>So I tried a small modifcation:</p>\n<p>Sub MigrateToMonday()</p>\n<p>Dim monday As New MSXML2.ServerXMLHTTP60<br />\nDim response As Variant<br />\nDim status As Variant<br />\nDim query As String</p>\n<p>myurl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nmytoken = “*********”</p>\n<p>query = \" { ““mutation”” : “”@@@“”}\"<br />\nquery = Replace(query, “@@@”, “create_board(board_name: ““myboard””, board_kind: public){id}”)</p>\n<p>Debug.Print query</p>\n<pre><code>With monday\n    .Open \"POST\", myurl, False\n    .SetRequestHeader \"Content-Type\", \"application/json\"\n    .SetRequestHeader \"Accept\", \"application/json\"\n    .SetRequestHeader \"Authorization\", mytoken\n    .Send query\n    response = .responseText\n    status = .status &amp; \" | \" &amp; .StatusText\nEnd With\n</code></pre>\n<p>MsgBox query<br />\nMsgBox response<br />\nMsgBox status</p>\n<p>End Sub</p>\n<p>Now I’m getting a server timeout.  I’m not sure it this is progress or not…really would appreciate any help folks could give me.</p>"
+    },
+    {
+      "id": 132540,
+      "postNumber": 4,
+      "createdAt": "2023-06-22T12:17:25.168Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mesgeorge\">@MESGeorge</a>,</p>\n<p>If you use that query in your API Playground in monday, does it work?</p>"
+    },
+    {
+      "id": 132544,
+      "postNumber": 5,
+      "createdAt": "2023-06-22T12:30:39.346Z",
+      "author": "MESGeorge (MESGeorge)",
+      "cookedHtml": "<p>I have a version that does work in the “try it yourself” area.  I am able to query with the API and VBA, but the mutation is failing.</p>\n<p>One attempt is getting me a timeout error, others give me a nebulous “Internal server error.”</p>\n<p>Does anyone have a VBA sample they can share?</p>"
+    },
+    {
+      "id": 132724,
+      "postNumber": 6,
+      "createdAt": "2023-06-25T10:29:50.565Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mesgeorge\">@MESGeorge</a>,</p>\n<p>There is a mutation that is failing both in the API Playground and in VBA?</p>\n<p>Which one?</p>\n<p>Can you share the exact mutation and response you get?</p>\n<p>How much time does the response take?</p>"
+    },
+    {
+      "id": 132798,
+      "postNumber": 7,
+      "createdAt": "2023-06-26T10:20:01.728Z",
+      "author": "MESGeorge (MESGeorge)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> thanks for getting back to me.</p>\n<p>I have tried a few different versions of the mutation, based on some feedback from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> support.  Here are the 2 most recent they suggested I try:</p>\n<p>{ “query”:“{mutation { create_board (board_name: “my board”, board_kind: public) { id }}”}}</p>\n<p>{ “query”:“mutation { create_board (board_name: “my board”, board_kind: public) { id }}”}</p>\n<p>When I take the second one listed above over to the “try it yourself” utility and paste the mutation portion of it there, it works just fine.</p>\n<p>It takes about 30 seconds to fail.  On different attempts I generally get one of three different errors\"</p>\n<ol>\n<li>Run time error -2147012894 Automation error</li>\n<li>500 Internal Server Error</li>\n<li>The request timed out.</li>\n</ol>\n<p>For what it’s worth, this query (with all the same VBA code otherwise), works just fine:</p>\n<p>{“query” : “{boards(ids: xxxxxxxx){name}}”}</p>\n<p>So I can retrieve data, just not add or update with the mutation.</p>\n<p>I’m hoping you can help me out.  Happy to ship you the current VBA code if that would help.</p>"
+    },
+    {
+      "id": 132926,
+      "postNumber": 8,
+      "createdAt": "2023-06-27T11:07:54.409Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/mesgeorge\">@MESGeorge</a>,</p>\n<p>Would you be able to send all of this information + the script to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so we can take a closer look from there?</p>\n<p>Looking forward to hearing from you via email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 133004,
+      "postNumber": 9,
+      "createdAt": "2023-06-27T21:09:25.327Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mesgeorge\">@MESGeorge</a> Welcome to the land of doublequote-escaping hell in VBA. By the time your query hits the server, many of the required double-quotes in your query will have disappeared.</p>\n<p>Try this in your VBA function:</p>\n<p>query = “{”“query”“:”“mutation { create_board (board_name:  \"“my board \"”, board_kind: public) { id } }”“}”</p>"
+    },
+    {
+      "id": 133008,
+      "postNumber": 10,
+      "createdAt": "2023-06-28T00:29:24.786Z",
+      "author": "MESGeorge (MESGeorge)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jsararas\">@jsararas</a> Thanks for the suggestion.  When I put your recommendation in, the only noticeable difference is some spaces.  My most recent version produces this:</p>\n<p>{“query”:“mutation { create_board (board_name: “my board”, board_kind: public) { id }}”}</p>\n<p>compared to yours or this:</p>\n<p>{“query”:“mutation { create_board (board_name: “my board”, board_kind: public) { id } }”}</p>\n<p>I still gave yours a shot, and sadly am still getting the same 500 Internal server error.  I did add a .setTimeouts to my code to avoid that error…but nothing has borne any fruit.  The code takes pretty consistently 30-40 seconds and then fails.</p>\n<p>It’s just odd that I can retrieve data with no issue, but sending the mutation is failing.</p>\n<p>I’m using references to MS XML 6.0, I’ve tried 3.0 as well, and that fails.</p>\n<p>Any further ideas?</p>"
+    },
+    {
+      "id": 133099,
+      "postNumber": 11,
+      "createdAt": "2023-06-28T13:36:45.970Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>First of all it looks like I neglected to use a code block, so when I copy and paste what I wrote, it ends up with left/right quotes which are wrong and will fail. Sorry about that I was in a rush. This code works for me:</p>\n<pre><code class=\"lang-auto\">query = \"{\"\"query\"\":\"\"mutation { create_board (board_name:  \\\"\"my board \\\"\", board_kind: public) { id } }\"\"}\"\n</code></pre>\n<p>But if the weirdo quotes were not the issue, try adding this reference: <strong>Microsoft WinHTTP Services, version 5.1</strong>. BTW what version of excel are you running?</p>"
+    },
+    {
+      "id": 133124,
+      "postNumber": 12,
+      "createdAt": "2023-06-28T16:45:38.329Z",
+      "author": "MESGeorge (MESGeorge)",
+      "cookedHtml": "<p>By jove, you’ve got it.  Thanks so much.</p>\n<p>And now the REAL work begins, but getting over that hump is enormous.  Can’t thank you enough!</p>"
+    },
+    {
+      "id": 133137,
+      "postNumber": 13,
+      "createdAt": "2023-06-28T18:36:53.176Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Pleasure. I’m still surprised there isn’t more Excel/VBA action in the community. Excel Power Query + Monday = unlimited flexibility!</p>"
+    },
+    {
+      "id": 133500,
+      "postNumber": 14,
+      "createdAt": "2023-07-02T11:41:28.150Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

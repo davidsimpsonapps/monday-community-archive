@@ -1,0 +1,102 @@
+{
+  "id": 9648,
+  "title": "APIv2 create_item mutation working in local, but returning null when in server [PHP]",
+  "slug": "apiv2-create-item-mutation-working-in-local-but-returning-null-when-in-server-php",
+  "categoryId": 8,
+  "tagIds": [
+    155
+  ],
+  "createdAt": "2020-08-01T04:39:27.770Z",
+  "lastPostedAt": "2021-02-25T14:32:55.224Z",
+  "postsCount": 12,
+  "excerpt": "Hi, \n(Pardon if this has been raised before but as far as i can search, can’t find a similar posting so here goes…) \nI’m having a problem with create_item mutation. \nIt works on localhost (tried PHP7.2 and PHP7.4) and re&hellip;",
+  "solvedPostId": null,
+  "likeCount": 10,
+  "views": 3669,
+  "posts": [
+    {
+      "id": 24297,
+      "postNumber": 1,
+      "createdAt": "2020-08-01T04:39:27.841Z",
+      "author": "jth.psp (josiah)",
+      "cookedHtml": "<p>Hi,</p>\n<p>(Pardon if this has been raised before but as far as i can search, can’t find a similar posting so here goes…)</p>\n<p>I’m having a problem with create_item mutation.<br />\nIt works on localhost (tried PHP7.2 and PHP7.4) and returns a proper id<br />\nbut when we are running it in our test env server (cpanel with apache + PHP7.2.32), only “null” is returned.</p>\n<p>I’m starting to doubt that it is code related and perhaps related to PHP setup? Maybe we missed a prerequisite somewhere. Any help would be appreciated (Thanks in advance)</p>\n<p>I tried logging the returned JSON to compare [redacted some info]:</p>\n<p>LOCALHOST:<br />\n<code>    Array ( [myItemName] =&gt; ignoreme1235 [columnVals] =&gt; {\"numbers4\":\"1\",\"status_1\":{\"label\":\"XXX\"},\"package\":{\"label\":\"XXX\"},\"task_date_1\":{\"date\":\"2020-07-31\"},\"client_name5\":\"ignoreme1235\",\"client_name50\":\"ignoreme1235\",\"phone\":{\"phone\":\"\",\"countryShortName\":\"US\"},\"mobile_phone\":{\"phone\":\"\",\"countryShortName\":\"US\"},\"primary03\":null,\"business_type\":\"ignoreme1235, ignoreme1235, ignoreme1235, ignoreme1235, DE, 12344\",\"setup_fee\":\"999.00\",\"eft\":\"499.00\",\"sold_by\":{\"label\":\"XXX\"},\"long_text\":{\"text\":\"ignoreme1235\"},\"numbers\":\"31\",\"text8\":\"20200731224555\"} )    {\"data\":{\"create_item\":{\"id\":\"99999999\"}},\"account_id\":9999999}</code></p>\n<p>SERVER:<br />\n<code>Array ( [myItemName] =&gt; mondayfunday1234 [columnVals] =&gt; {\"numbers4\":\"1\",\"status_1\":{\"label\":\"XXX\"},\"package\":{\"label\":\"XXX\"},\"task_date_1\":{\"date\":\"2020-07-31\"},\"client_name5\":\"mondayfunday1234\",\"client_name50\":\"mondayfunday1234\",\"phone\":{\"phone\":\"\",\"countryShortName\":\"US\"},\"mobile_phone\":{\"phone\":\"\",\"countryShortName\":\"US\"},\"primary03\":null,\"business_type\":\"mondayfunday1234, mondayfunday1234, mondayfunday1234, mondayfunday1234, CO, 12345\",\"setup_fee\":\"999.00\",\"eft\":\"499.00\",\"sold_by\":{\"label\":\"XXX\"},\"long_text\":{\"text\":\"mondayfunday1234\"},\"numbers\":\"31\",\"text8\":\"20200731231626\"} ) null</code></p>\n<hr />\n<p>relevant Laravel PHP code:<br />\n`<br />\n$MONDAY_BOARD_ID = env(‘MONDAY.COM.BOARD_ID’);<br />\n$MONDAY_GROUP_ID = env(‘MONDAY.COM.GROUP_ID’);<br />\n$MONDAY_TOKEN = env(‘MONDAY.COM.TOKEN’);<br />\n$MONDAY_API_URL = env(‘MONDAY.COM.API_URL’);</p>\n<pre><code>\t  \t$headers = ['Content-Type: application/json', 'Authorization: ' . $MONDAY_TOKEN];\n\n\n\t\t\t$query = 'mutation ($myItemName: String!, $columnVals: JSON!) { \n\t\t\t\tcreate_item (\n\t\t\t\t\tboard_id:' . $MONDAY_BOARD_ID .', \n\t\t\t\t\tgroup_id:' . $MONDAY_GROUP_ID .', \n\t\t\t\t\titem_name:$myItemName, \n\t\t\t\t\tcolumn_values:$columnVals) { id } }';\n\n\t\t\t$item_name = $REDACTED_VAR;\n\t\t\t$salesperson_fullname = $REDACTED_VAR;\n\t\t\t$agreement_no = $REDACTED_VAR;\n\n\t\t\t$vars = [\n\t\t\t\t\t'myItemName' =&gt; $item_name, \n\n\t\t\t  \t'columnVals' =&gt; json_encode([\n\t\t\t\t\t\t\"numbers4\" =&gt; $REDACTED_VAR,\n\t\t\t      \"status_1\" =&gt; ['label' =&gt; $REDACTED_VAR],\n\t\t\t      \"package\" =&gt; ['label' =&gt; $REDACTED_VAR],\n\t\t\t      \"task_date_1\" =&gt; ['date' =&gt; date(\"Y-m-d\")],\n\t\t\t      \"client_name5\" =&gt; $REDACTED_VAR,\n\t\t\t      \"client_name50\" =&gt; $REDACTED_VAR,\n\t\t\t      \"phone\" =&gt; [\"phone\" =&gt; $REDACTED_VAR, \"countryShortName\"=&gt;\"US\"],\n\t\t\t      \"mobile_phone\" =&gt; [\"phone\" =&gt; $REDACTED_VAR, \"countryShortName\"=&gt;\"US\"],\n\t\t\t      \"primary03\" =&gt; $REDACTED_VAR,\n\t\t\t      \"business_type\" =&gt; $REDACTED_VAR,\n\t\t\t      \"setup_fee\" =&gt; $REDACTED_VAR,\n\t\t\t      \"eft\" =&gt; $REDACTED_VAR,\n\t\t\t      \"sold_by\" =&gt; [\"label\" =&gt; $salesperson_fullname],\n\t\t\t      \"long_text\" =&gt; [\"text\" =&gt; $REDACTED_VAR],\n\t\t\t      \"numbers\" =&gt; date('d'),\n\t\t\t      \"text8\" =&gt; $agreement_no,\n\t\t\t\t\t])\n\t\t\t];\n\n\t\t\t\\Log::debug(\"monday query vars: \" . print_r($vars));\n\n\t\t\t$data = @file_get_contents($MONDAY_API_URL, false, stream_context_create([\n\t\t\t 'http' =&gt; [\n\t\t\t 'method' =&gt; 'POST',\n\t\t\t 'header' =&gt; $headers,\n\t\t\t 'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n\t\t\t ]\n\t\t\t]));\n\t\t\t$responseContent = json_decode($data, true);\n</code></pre>\n<p>`</p>"
+    },
+    {
+      "id": 24301,
+      "postNumber": 2,
+      "createdAt": "2020-08-01T05:53:59.569Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hi again <a class=\"mention\" href=\"/u/jth.psp\">@jth.psp</a>  <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /> Good to see you as part of the community <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>To be transparent with you, I do not have much experience working with PHP at all, so I’m afraid I am not able to provide more specific guidance here, but I do hope someone within the community will be able to take a further look and provide better suggestions than me. That said, I found this part in your debug log a bit odd - it seems like the cPanel server isn’t connecting to the API URL correctly, at least from what I am able to gather:</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/j/e68b1a/48.png\" class=\"avatar\" /> jth.psp:</div>\n<blockquote>\n<p><code>'http' =&gt; [</code></p>\n</blockquote>\n</aside>\n<p>Do you think this could be the culprit here?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 24352,
+      "postNumber": 3,
+      "createdAt": "2020-08-02T19:41:04.604Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jth.psp\">@jth.psp</a></p>\n<p>Hi there!</p>\n<p>I have done some work with Laravel and the monday API.</p>\n<p>We use the Guzzle package for our requests. This is an example of the call that we use. I haven’t used the <code>file_get_contents</code> option though.</p>\n<pre><code>try {\n        $guzzleClient = new Client(array('headers'=&gt;array('Content-Type'=&gt;'application/json', 'Authorization'=&gt;$this-&gt;token)));\n        $response = $guzzleClient-&gt;post($this-&gt;mondayAPIUrl, ['body' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars])]);\n    } catch (\\GuzzleHttp\\Exception\\ClientException $e) {\n        $response = $e-&gt;getResponse();\n        if ($response-&gt;getStatusCode() == 401) {\n            throw new InvalidAPIKeyException(\"Invalid Monday.com API V2 Key\");\n        } else {\n            throw new Exception(\"Monday.com API Exception\");\n        }\n    }\n</code></pre>\n<p>I hope this will assist you</p>"
+    },
+    {
+      "id": 24410,
+      "postNumber": 4,
+      "createdAt": "2020-08-03T15:44:45.324Z",
+      "author": "jth.psp (josiah)",
+      "cookedHtml": "<p>Ok, I will try that. Thanks!</p>"
+    },
+    {
+      "id": 24412,
+      "postNumber": 5,
+      "createdAt": "2020-08-03T15:48:02.587Z",
+      "author": "jth.psp (josiah)",
+      "cookedHtml": "<blockquote>\n<p>it seems like the cPanel server isn’t connecting to the API URL correctly</p>\n</blockquote>\n<p>Yes suspecting this too, however there is no error message so we are not sure where to begin investigating that</p>"
+    },
+    {
+      "id": 24418,
+      "postNumber": 6,
+      "createdAt": "2020-08-03T18:15:10.991Z",
+      "author": "jth.psp (josiah)",
+      "cookedHtml": "<p>Tried the guzzle approach. Same problem. Still receiving “null”</p>"
+    },
+    {
+      "id": 24430,
+      "postNumber": 7,
+      "createdAt": "2020-08-03T20:18:47.626Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jth.psp\">@jth.psp</a> Are you running cPanel on your own computer? Or is it hosted elsewhere?</p>\n<p>Is there any chance that the is a firewall blocking the call?</p>\n<p>Null is a weird response… you usually get an error back relating back to what has happened.</p>\n<p>Can you please let me know what status code you are getting back?</p>\n<p><code>$response-&gt;getStatusCode()</code> should work before the <code>Catch</code></p>"
+    },
+    {
+      "id": 24450,
+      "postNumber": 8,
+      "createdAt": "2020-08-04T02:46:05.507Z",
+      "author": "jth.psp (josiah)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> , the cPanel is on a remote server. I could try to ask the system admin about that.<br />\nWill try the status code thing in a bit. Thanks!</p>"
+    },
+    {
+      "id": 24523,
+      "postNumber": 9,
+      "createdAt": "2020-08-04T12:38:05.395Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jth.psp\">@jth.psp</a></p>\n<p>Thank you for your patience and willingness to get this to work and I’m hoping we can get this sorted for you together!</p>\n<p><a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> thank you so much for providing some more helpful suggestions here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> you rock!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 24571,
+      "postNumber": 10,
+      "createdAt": "2020-08-04T16:38:33.002Z",
+      "author": "jth.psp (josiah)",
+      "cookedHtml": "<p>Late update: (there seemed to be a problem with my other browser, my earlier message didnt get posted here)<br />\nThere was apparently a problem with my headers when I tried guzzle the first time earlier. (lack of sleep got the best of me lol)<br />\nWhen I fixed that, the API call went without a hitch.</p>\n<p>Thanks again to both of you <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> and <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> !</p>"
+    },
+    {
+      "id": 24590,
+      "postNumber": 11,
+      "createdAt": "2020-08-04T20:05:00.420Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jth.psp\">@jth.psp</a></p>\n<p>Glad to hear you got it working <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Feel free to reach out to the community if you have any more questions   !</p>"
+    },
+    {
+      "id": 42409,
+      "postNumber": 12,
+      "createdAt": "2021-02-25T14:32:55.224Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

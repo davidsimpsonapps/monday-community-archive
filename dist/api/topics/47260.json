@@ -1,0 +1,64 @@
+{
+  "id": 47260,
+  "title": "API Issues with Longtext Column Issue & Time-Outs on Create_SubItem with column_values",
+  "slug": "api-issues-with-longtext-column-issue-time-outs-on-create-subitem-with-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    187,
+    351
+  ],
+  "createdAt": "2022-12-12T12:48:30.894Z",
+  "lastPostedAt": "2022-12-12T23:04:42.708Z",
+  "postsCount": 6,
+  "excerpt": "Two issues I could use advice on: \n\n\nLongtext Column. I am updating column with string and can type returns/new lines manually in the field but inserting them via the API always fails. Can Someone point me in the right d&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 647,
+  "posts": [
+    {
+      "id": 107047,
+      "postNumber": 1,
+      "createdAt": "2022-12-12T12:48:30.982Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>Two issues I could use advice on:</p>\n<ol>\n<li>\n<p>Longtext Column. I am updating column with string and can type returns/new lines manually in the field but inserting them via the API always fails. Can Someone point me in the right direction to keeping the formatting? I have tried both Return and New Line.</p>\n</li>\n<li>\n<p>Best Practices with subitems. I tried following these steps -</p>\n</li>\n</ol>\n<blockquote>\n<p>Step 1: Read CSV Data to add to board convert to paragraphs(rows).<br />\nStep 2: Repeat thru Rows<br />\nStep 3: create_Item using Board ID with about 5 column_values using some row info of CSV<br />\nStep 4: create_subitem using Parent Item ID with about 10 column_values using rest of row info of CSV<br />\nStep 5: End Repeat</p>\n</blockquote>\n<p>This process always fails on the 2nd loop of Step 4 no matter the column_values.</p>\n<p>If I change step 4 from create_subitem with column_values to create_subitem using Parent Item ID eliminating the column_values option, add another step of  change_multiple_column_values changing the Board to Subitem board it does not fail.</p>\n<p>Any idea why the process with extra step works but the other fails?<br />\nThank you</p>"
+    },
+    {
+      "id": 107059,
+      "postNumber": 2,
+      "createdAt": "2022-12-12T13:30:33.346Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/dean_m\">@dean_m</a></p>\n<p>For 1. you can just send a \\n in your string. Remember that newlines are only shows when you click the long text column. In boardview the newlines are ignored.</p>\n<p>For 2. I guess there is something wrong with the format of your column_values when you use it as an argument in the create_subitem mutation. If you share the mutation we all can have a look <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 107063,
+      "postNumber": 3,
+      "createdAt": "2022-12-12T13:40:38.220Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>No idea why I have to triple backslash but this is the only format I had success with although it fails the second time around.</p>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation {create_subitem (parent_item_id: 3653935425, item_name: \\\"881485 - 1\\\", column_values: \\\"{ \\\\\\\"date0\\\\\\\": \\\\\\\"2022-09-21\\\\\\\", \\\\\\\"text18\\\\\\\": \\\\\\\"XXXX\\\\\\\", \\\\\\\"text2\\\\\\\": \\\\\\\"WDMK\\\\\\\",  \\\\\\\"text26\\\\\\\": \\\\\\\"\\\\\\\", \\\\\\\"text14\\\\\\\": \\\\\\\"B - Black\\\\\\\", \\\\\\\"text1\\\\\\\": \\\\\\\"CC-QZ\\\\\\\", \\\\\\\"text21\\\\\\\": \\\\\\\" (verify) - some text\\\\\\\", \\\\\\\"text4\\\\\\\": \\\\\\\"None\\\\\\\", \\\\\\\"text0\\\\\\\": \\\\\\\"_XXXX__B\\\\\\\", \\\\\\\"text47\\\\\\\": \\\\\\\"CC-QZ_Black_WDMK_17585\\\\\\\" , \\\\\\\"text3\\\\\\\": \\\\\\\"3B\\\\\\\", \\\\\\\"text9\\\\\\\": \\\\\\\"1\\\\\\\" ,  \\\\\\\"numbers\\\\\\\": \\\\\\\"1\\\\\\\"}\\\"  ) { id }}\n</code></pre>"
+    },
+    {
+      "id": 107067,
+      "postNumber": 4,
+      "createdAt": "2022-12-12T13:47:56.833Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I don’t think the argument column_values accept simple column values. AFAIK you need to pass them as a JSON. The JSON format for a date column (date0 in your example) is</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:11111, board_id:22222, column_values: \"{\\\"date\\\" : {\\\"date\\\" : \\\"1993-08-27\\\", \\\"time\\\" : \\\"18:00:00\\\"}}\") {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 107068,
+      "postNumber": 5,
+      "createdAt": "2022-12-12T13:53:26.350Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>It works in create_item as simple column values. Do you think that’s a restriction of sub items? Some of my values in the step 3 are that format and It repeats successfully if I remove the step 4 of creating subitems as part of the loop.</p>"
+    },
+    {
+      "id": 107142,
+      "postNumber": 6,
+      "createdAt": "2022-12-12T23:04:42.708Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dean_m\">@dean_m</a>,</p>\n<p>Could you please share the exact query and error you’re seeing?</p>\n<p>Thanks!</p>"
+    }
+  ]
+}

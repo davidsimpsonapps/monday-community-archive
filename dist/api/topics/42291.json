@@ -1,0 +1,112 @@
+{
+  "id": 42291,
+  "title": "How to add a userId to remote options url payload",
+  "slug": "how-to-add-a-userid-to-remote-options-url-payload",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    152,
+    208
+  ],
+  "createdAt": "2022-09-10T07:10:06.448Z",
+  "lastPostedAt": "2022-09-13T14:48:52.380Z",
+  "postsCount": 13,
+  "excerpt": "I am creating a custom field type in my integration that derives values from a remote options url. The payload for the remote options field looks like this {   recipeId: 30019598123,   integrationId: 72966189123,   autom&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1348,
+  "posts": [
+    {
+      "id": 97340,
+      "postNumber": 1,
+      "createdAt": "2022-09-10T07:10:06.556Z",
+      "author": "Keem (Hakeem Baba)",
+      "cookedHtml": "<p>I am creating a custom field type in my integration that derives values from a remote options url. The payload for the remote options field looks like this <code>{   recipeId: 30019598123,   integrationId: 72966189123,   automationId: 72966189123,   pageRequestData: {},   dependencyData: null }</code> .  This is insufficient for my use case as my application need to know which user has triggered the custom field. I have tried to use the dependencies but that seems to require a manual user input.</p>\n<p>Is it possible to automatically add a userId value to the payload that is sent to the remote options url?</p>"
+    },
+    {
+      "id": 97341,
+      "postNumber": 2,
+      "createdAt": "2022-09-10T08:04:19.520Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/keem\">@Keem</a></p>\n<p>You are on the right track by adding a dependency. In your custom field (where you define the Remote Options Url) add a dependency of type User (field id is userId). When you define your workflow block you add this custom field to it and define the source (probably a recipe input if I understand your use case).</p>\n<p>Now, when you create your recipe and use the workflow block you have to setup the dependency. It can either come from the Trigger (in case you use a custom trigger the User field should be part of the output for that trigger to be able to select it as a dependency). When using a custom trigger (with webhooks) don’t forget to put the UserId in the payload of the post to the monday action. The userId can be derived from the webhook event.</p>"
+    },
+    {
+      "id": 97348,
+      "postNumber": 3,
+      "createdAt": "2022-09-10T13:34:57.178Z",
+      "author": "Keem (Hakeem Baba)",
+      "cookedHtml": "<p>Thanks for the reply. In my recipe sentence, I am using a built-in trigger and a custom action. The custom action has a custom field that sends a payload to my remote options url. I will like to have a userId of the user configuring the recipe as part of the payload that is sent to my remote options url.  I do not want the user to input his or her user id manually.<br />\nI want the userID to be added automatically. Following your answer, the user will still have to manually add the userid when configuring the recipe sentence.</p>\n<p>Is it possible to automatically add a userId value to the payload that is sent to the remote options url?</p>"
+    },
+    {
+      "id": 97353,
+      "postNumber": 4,
+      "createdAt": "2022-09-10T16:03:23.765Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>My example was based on a custom trigger. The userId is passed from the event (from the webhook created by the custom trigger) to the action. For the dependency you can select the tigger output User. As there is no trigger input User the user will not have to fill in the userId.</p>\n<p>With a built-in trigger you can still select the trigger &gt; userId (if the built-in trigger supports that field). Most of the built-in triggers sends the userId in their output, so you should be able to selecte trigger &gt; userId as the dependency when you create your recipe.</p>\n<p>You can easilly check that by taking the built-in trigger you want and use the action “notify (with item and user)”. If you can select a userId in that action, the tigger apparently sends the userId so you should eb able to select that.</p>"
+    },
+    {
+      "id": 97475,
+      "postNumber": 5,
+      "createdAt": "2022-09-12T10:46:23.964Z",
+      "author": "Keem (Hakeem Baba)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/basdebruin/48/688_2.png\" class=\"avatar\" /> basdebruin:</div>\n<blockquote>\n<p>trigger</p>\n</blockquote>\n</aside>\n<p>I am confused on how to do this. I have created a screencast to explain on what I am trying to do <a href=\"https://vimeo.com/748780753\" rel=\"noopener nofollow ugc\">https://vimeo.com/748780753</a></p>"
+    },
+    {
+      "id": 97477,
+      "postNumber": 6,
+      "createdAt": "2022-09-12T11:01:23.571Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/keem\">@Keem</a><br />\nIf you use triggers provided by monday, here’s the userId set in the custom block:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/afe7ac655bf466bcac24801f6e5306585f7134a7.png\" title=\"Screen Shot 2022-09-12 at 15.57.39\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/a/afe7ac655bf466bcac24801f6e5306585f7134a7_2_513x500.png\" alt=\"Screen Shot 2022-09-12 at 15.57.39\" width=\"513\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2022-09-12 at 15.57.39</span><span class=\"informations\">699×680 33.9 KB</span>\n</div></a></div><p></p>\n<p>And here how you use it in the “trigger&gt;action” recipe:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/6/68309b4362aeac1cd9143b8c08c913e28f6f92fb.png\" alt=\"Screen Shot 2022-09-12 at 15.58.03\" width=\"564\" height=\"186\" /></p>\n<p>Once you receive the call from monday, you’ll get the corresponding userId in the payload:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6fc32838ef47110813f3d3eb7f83bd660ff856de.png\" title=\"Screen Shot 2022-09-12 at 16.00.10\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/6/6fc32838ef47110813f3d3eb7f83bd660ff856de.png\" alt=\"Screen Shot 2022-09-12 at 16.00.10\" width=\"690\" height=\"339\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2022-09-12 at 16.00.10</span><span class=\"informations\">700×344 33.6 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 97491,
+      "postNumber": 7,
+      "createdAt": "2022-09-12T12:35:04.753Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/keem\">@Keem</a>, like <a class=\"mention\" href=\"/u/rob\">@rob</a> shows.</p>\n<p>I watched your video and I noticed you have a custom action which uses a sentence where “notify” is <strong>not</strong> a field. I noticed that on 0:44 in your video.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/c/c2f24197e5687d6ce8d4cd064c02b708a5bbb7e5.png\" alt=\"image\" width=\"478\" height=\"169\" /></p>\n<p>Then - at 3.40 in your video - you show the integration recipe and here “notify” <strong>is</strong> a field. Are you 100% sure that during the recipe build you picked your own custom action and not a standard monday one?</p>\n<p>Also, I don’t see the dependencies in your custom field. You have to add e dependencie to the userId to get the userId in the payload.</p>"
+    },
+    {
+      "id": 97579,
+      "postNumber": 9,
+      "createdAt": "2022-09-13T11:40:38.657Z",
+      "author": "Keem (Hakeem Baba)",
+      "cookedHtml": "<p>Thanks for the help. I followed your solution and I get the right payload to my custom action run url. That solved one of the two issues I had. I am still stuck at adding the userid automatically to the payload that is sent to the remote spaces url in the custom field</p>"
+    },
+    {
+      "id": 97592,
+      "postNumber": 10,
+      "createdAt": "2022-09-13T13:01:18.108Z",
+      "author": "Keem (Hakeem Baba)",
+      "cookedHtml": "<p>I have created another <a href=\"https://vimeo.com/749232018\" rel=\"noopener nofollow ugc\">dependencies</a> to demonstrate the issue I am facing with dependencies</p>"
+    },
+    {
+      "id": 97599,
+      "postNumber": 11,
+      "createdAt": "2022-09-13T13:41:17.498Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/keem\">@Keem</a><br />\nYou don’t really need that second field “User”. The dependency for the custom fields looks fine to me but I am not sure the standard “Item creation” trigger returns the user object. Can you try to replace (just for testing) with the standard “Status change” trigger.</p>"
+    },
+    {
+      "id": 97601,
+      "postNumber": 12,
+      "createdAt": "2022-09-13T13:51:09.214Z",
+      "author": "Keem (Hakeem Baba)",
+      "cookedHtml": "<p>I just tried it out, \"Status change’ and all the other triggers I tried dont return the user object</p>"
+    },
+    {
+      "id": 97604,
+      "postNumber": 13,
+      "createdAt": "2022-09-13T14:05:26.337Z",
+      "author": "Keem (Hakeem Baba)",
+      "cookedHtml": "<p>I am also wondering how I can get details like the item name, board name and username into the payload that is sent to the run url. At the moment, I can only get the id’s like you demonstrated.<br />\nDo I have to make api calls for the names with the ids I receive in the payload?</p>"
+    },
+    {
+      "id": 97628,
+      "postNumber": 14,
+      "createdAt": "2022-09-13T14:48:52.380Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/keem\">@Keem</a><br />\nI just tested this with one of my existing apps and it looks like the userId can’t be used as a dependency. I get the same empty select box. I suggest to mail to (app)support on this one.</p>"
+    }
+  ]
+}

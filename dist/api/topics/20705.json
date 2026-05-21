@@ -1,0 +1,89 @@
+{
+  "id": 20705,
+  "title": "Return specific columns using GraphQL",
+  "slug": "return-specific-columns-using-graphql",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-06-01T10:56:20.319Z",
+  "lastPostedAt": "2021-06-10T07:15:19.418Z",
+  "postsCount": 9,
+  "excerpt": "Hello! \nI would like to get more columns on my board, but I can only get the id and name, all other fields are said \nField ‘team’ doesn’t exist on type ‘Item’ \nI’m making a filter by date, I don’t know if it’s the most c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2804,
+  "posts": [
+    {
+      "id": 53267,
+      "postNumber": 1,
+      "createdAt": "2021-06-01T10:56:20.405Z",
+      "author": "GabriellaSelbach (Gabriella Selbach Staniecki)",
+      "cookedHtml": "<p>Hello!<br />\nI would like to get more columns on my board, but I can only get the id and name, all other fields are said<br />\nField ‘team’ doesn’t exist on type ‘Item’<br />\nI’m making a filter by date, I don’t know if it’s the most correct either.</p>\n<p>how can i get all columns in fields ?</p>\n<p>I’m using mondy’s Api, with javascript. I have the following code structure:</p>\n<pre><code>async getCelebrateOnPeriod(date: string): Promise&lt;any&gt; {\n    const { query, variables } = gql.query(\n      this.clientQuery.getOnCelebrationOnPeriod(\n        this.boardId,\n        date,\n        date,\n      ),\n    );\n\n    const data = await this.mondayApi.api(query, { variables });\n\ngetOnCelebrationOnPeriod(\n    boardId: number,\n    columnId: string,\n    date: string,\n  ) {\n    return {\n      operation: 'items_by_column_values',\n      variables: {\n        board_id: {\n          value: boardId,\n          required: true,\n          type: 'Int',\n        },\n        column_id: {\n          value: 'date4',\n          required: true,\n          type: 'String',\n        },\n        column_value: {\n          value: date,\n          required: true,\n          type: 'String',\n        },\n      },\n      fields: ['id', 'name', 'texto_longo'],\n    };\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 53271,
+      "postNumber": 2,
+      "createdAt": "2021-06-01T11:03:03.874Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/gabriellaselbach\">@GabriellaSelbach</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Thanks for reaching out! That’s a great question, and I’d also like to take the opportunity to welcome you to our community <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I hope you enjoy your stay and find the answers you are looking for!</p>\n<p>Just to make sure we’re on the same page here, would you be able to clarify exactly what kind of data you are looking for? As far as I understand, you are using the items_by_column_values query, which already searches for a specific value in a specific column. Would you be able to clarify what you’d need to return in terms of data?</p>\n<p>I’d love to make sure we align here, so that I can provide the most relevant info back <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 53272,
+      "postNumber": 3,
+      "createdAt": "2021-06-01T11:03:10.435Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 53273,
+      "postNumber": 4,
+      "createdAt": "2021-06-01T11:06:52.578Z",
+      "author": "GabriellaSelbach (Gabriella Selbach Staniecki)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> . I’m new to monday so I may have made a lot of mistakes.<br />\nWhat I’m trying to do, I want to get from my board, all items of a certain date, with some specific columns or all.</p>"
+    },
+    {
+      "id": 53302,
+      "postNumber": 5,
+      "createdAt": "2021-06-01T12:11:50.775Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gabriellaselbach\">@GabriellaSelbach</a></p>\n<p>Ahh, thank you so much for clarifying what you’re looking for! When querying for a Date’s column values, you will need to query in a “YYYY-MM-DD” Format. Here’s an example query you can use as a reference point:</p>\n<pre><code class=\"lang-auto\">query {\n  items_by_column_values (board_id:$BoardId, column_id:\"date4\", column_value: \"2021-06-01\") {\n    id\n    name\n    column_values {\n      text\n      title\n      id\n      value\n    }\n  }\n}\n</code></pre>\n<p>This will return the following items:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/002f81a7077c47d190f896911c09bb6690c7fc2a.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/002f81a7077c47d190f896911c09bb6690c7fc2a_2_690x106.png\" alt=\"image\" width=\"690\" height=\"106\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1662×256 24.8 KB</span>\n</div></a></div><p></p>\n<p>This query will then return the JSON value and the text value of other columns for those items as well:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/4b04503aaa07459d7563f288fe4b5a65a8169bf8.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/4b04503aaa07459d7563f288fe4b5a65a8169bf8_2_662x500.png\" alt=\"image\" width=\"662\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">954×720 53 KB</span>\n</div></a></div><p></p>\n<p>I hope this helps clarify <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 53336,
+      "postNumber": 6,
+      "createdAt": "2021-06-01T14:34:59.489Z",
+      "author": "GabriellaSelbach (Gabriella Selbach Staniecki)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> very very thanks <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=9\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" />.<br />\nI Would of know how have conditions, for example:</p>\n<pre><code>query {\nitems_by_column_values (board_id: 1321104761, column_id: \"date4\", column_value: \"2021-05-31\", column_id: \"name\", column_value: \"gabriella staniecki\") {\nid\nname\n column_values {\n      id\n      value\n    }\n}\n}</code></pre>"
+    },
+    {
+      "id": 53407,
+      "postNumber": 7,
+      "createdAt": "2021-06-02T05:46:55.482Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gabriellaselbach\">@GabriellaSelbach</a></p>\n<p>I’m glad I could help!</p>\n<p>Ah, I see. You are looking to query items_by_column_values for multiple columns, is that correct? I’m afraid we do not provide this as an option at this time, but it’s definitely something we are considering to implement in the future. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />  I can’t provide an ETA or timeline on this just yet, though.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 53476,
+      "postNumber": 8,
+      "createdAt": "2021-06-02T15:25:04.984Z",
+      "author": "GabriellaSelbach (Gabriella Selbach Staniecki)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> aah right i’m waiting for the functionality. Another question and would this be possible, use logical operator, to say column_value &gt; ‘2020-03-12’?</p>\n<pre><code>{\n  items_by_column_values(board_id: 1321104761, column_id: \"date4\", column_value&gt;: \"2021-06-02\") {\n    id\n    name\n    column_values {\n      text\n      id\n    }\n  }\n}</code></pre>"
+    },
+    {
+      "id": 53588,
+      "postNumber": 9,
+      "createdAt": "2021-06-03T07:14:58.914Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gabriellaselbach\">@GabriellaSelbach</a></p>\n<p>I’m afraid that is also not an option at this time - instead, I would recommend querying the values of that specific column, and then filtering and sorting the values in your application programatically.</p>\n<p>I do understand this would be more convenient via the API directly, so I’ve gone ahead and passed that as a feature request as well <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I hope this helps.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 54306,
+      "postNumber": 10,
+      "createdAt": "2021-06-10T07:15:19.418Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

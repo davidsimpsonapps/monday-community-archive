@@ -1,0 +1,23 @@
+{
+  "id": 38520,
+  "title": "Breaking changes: New limits to the Items query after Oct 3rd",
+  "slug": "breaking-changes-new-limits-to-the-items-query-after-oct-3rd",
+  "categoryId": 70,
+  "tagIds": [],
+  "createdAt": "2022-06-29T16:33:06.490Z",
+  "lastPostedAt": "2022-06-29T16:33:06.574Z",
+  "postsCount": 1,
+  "excerpt": "Later this year, we will be adding new limits to the root Items query: \n\nThe ids argument is now required\nYou cannot return more than 100 items per query\n\nThis change will go into effect on Sunday, October 3rd, so please&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1186,
+  "posts": [
+    {
+      "id": 90026,
+      "postNumber": 1,
+      "createdAt": "2022-06-29T16:33:06.574Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Later this year, we will be adding new limits to the root Items query:</p>\n<ul>\n<li>The <code>ids</code> argument is now required</li>\n<li>You cannot return more than 100 items per query</li>\n</ul>\n<p>This change will go into effect on <strong>Sunday, October 3rd</strong>, so please review your applications’ API usage to prevent any loss of functionality.</p>\n<p>We recently <a href=\"https://api.developer.monday.com/changelog/additional-rate-limit-for-items-query\">added a rate limit to this use case</a>, so you may have already adjusted your code to account for this!</p>\n<p>We will remove references to this feature in our docs, but if you spot a mention that we missed shoot us a message at <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a>.</p>\n<h2><a name=\"p-90026-h-1\" class=\"anchor\" href=\"#p-90026-h-1\"></a></h2>\n<p><strong>Examples of unsupported queries</strong></p>\n<p>Queries without the <code>ids</code> argument:</p>\n<pre><code class=\"lang-auto\">query {\n  items (limit:1000) {\n    id\n    name\n  }\n}\n</code></pre>\n<p>Queries with more than 100 IDs:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids:[1, 2, 3, 4, 5...99, 100, 101, 102]) {\n    id\n    name\n  }\n}\n</code></pre>\n<h2><a name=\"p-90026-h-2\" class=\"anchor\" href=\"#p-90026-h-2\"></a></h2>\n<p><strong>How should I respond to this change?</strong></p>\n<p>You can adjust your queries in these main ways:</p>\n<ul>\n<li>Return items on a specific board only</li>\n<li>Nesting the items query inside Boards</li>\n<li>Looping through the boards on your account</li>\n<li>Query less than 100 items at a time</li>\n</ul>\n<h3><a name=\"p-90026-h-3\" class=\"anchor\" href=\"#p-90026-h-3\"></a></h3>\n<p><strong>Return items on a specific board</strong></p>\n<p>You can return items only on a specific board, by ID. Here’s an example:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids:12345) {\n    id\n    name\n    items (limit:100) {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<h3><a name=\"p-90026-h-4\" class=\"anchor\" href=\"#p-90026-h-4\"></a></h3>\n<p><strong>Nesting the items query inside Boards</strong></p>\n<p>Queries without Items in the root will still work, so you can nest the items query within a boards query. Here’s an example:</p>\n<pre><code class=\"lang-auto\">query { \n  boards (limit:10) { \n    items (limit:1000) { \n      id \n      name \n    } \n  } \n}\n</code></pre>\n<h3><a name=\"p-90026-h-5\" class=\"anchor\" href=\"#p-90026-h-5\"></a></h3>\n<p><strong>Looping through the boards on your account</strong></p>\n<p>If you are looking to return all items across your account, it is best practice to first query for the IDs of all the boards, and then get items a few boards at a time. For example:</p>\n<p>First, query for the IDs of all the boards.</p>\n<pre><code class=\"lang-auto\">query { \n  boards (limit:50) { \n    id\n  } \n}\n</code></pre>\n<p>Second, query and loop through each board in the first query.</p>\n<pre><code class=\"lang-auto\">query { \n   boards (ids: 1234567890) { \n     items (limit:50) { \n       name \n       id \n     } \n   } \n }\n</code></pre>\n<h3><a name=\"p-90026-h-6\" class=\"anchor\" href=\"#p-90026-h-6\"></a></h3>\n<p><strong>Return less than 100 items at a time</strong></p>\n<p>Finally, you can continue to use the same query but restrict the query to a list of item IDs. Here’s an example:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids: [1, 2, 3, 4, 5... 99]) {\n    name\n        column_values {\n            id\n            value\n        }\n    }\n}\n</code></pre>"
+    }
+  ]
+}

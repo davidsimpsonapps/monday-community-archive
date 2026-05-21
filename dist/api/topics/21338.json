@@ -1,0 +1,61 @@
+{
+  "id": 21338,
+  "title": "Graphql query for all items in a board that have a particular column:value",
+  "slug": "graphql-query-for-all-items-in-a-board-that-have-a-particular-column-value",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-06-16T07:52:38.903Z",
+  "lastPostedAt": "2021-06-17T01:53:27.351Z",
+  "postsCount": 5,
+  "excerpt": "I am using the following query to get all column values for a board: \nlet jobsQuery =    { boards (ids: ${cfg.jobBoardId}) {     items {       id       name       column_values {         id         title         value   &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2991,
+  "posts": [
+    {
+      "id": 54843,
+      "postNumber": 1,
+      "createdAt": "2021-06-16T07:52:39.100Z",
+      "author": "mjgs (Mark)",
+      "cookedHtml": "<p>I am using the following query to get all column values for a board:</p>\n<p>let jobsQuery = <code>   { boards (ids: ${cfg.jobBoardId}) {     items {       id       name       column_values {         id         title         value   } } } }</code>;</p>\n<p>It’s running in NodeJS. It’s working great, returning all the items.</p>\n<p>I’d like to narrow the search to only return items that have a particular column set to a particular value.</p>\n<p>Based on the current dataset returned, it’s the data in ‘name’ that should be used to narrow the search.</p>\n<p>I tried the following:</p>\n<p>let jobsQuery = <code>   { boards (ids: ${cfg.jobBoardId}) {     items (names: ${cfg.jobName})  {       id       name       column_values {         id         title         value   } } } }</code>;</p>\n<p>But that didn’t work, it just returns an empty list.</p>\n<p>What would I need to update my query to, so as to return the same data structure and columns, but only the subset that match name === cfg.jobName?</p>"
+    },
+    {
+      "id": 54855,
+      "postNumber": 3,
+      "createdAt": "2021-06-16T09:53:41.251Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mjgs\">@mjgs</a></p>\n<p>The field items does not have an argument “name”, it’s a good practice to use the API playground to see what arguments are accepted by which fields.</p>\n<p>There is another query that gets the items by column value:</p>\n<blockquote>\n<p>query{<br />\nitems_by_column_values(board_id: 1234567890, column_id: “name”, column_value: “My Name”) {<br />\nid<br />\nname<br />\n}</p>\n</blockquote>\n<p>This one will return the itemIds and names for all items that have the name “My Name” in the board 1234567890<br />\n}</p>"
+    },
+    {
+      "id": 54867,
+      "postNumber": 4,
+      "createdAt": "2021-06-16T10:45:04.084Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 54868,
+      "postNumber": 5,
+      "createdAt": "2021-06-16T10:46:36.873Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mjgs\">@mjgs</a>, welcome to our community!</p>\n<p>I agree with <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> here that the best thing to do in this case would most likely be to utilize the <code>items_by_column_values()</code> query that will return a set of items based off of a particular column’s value.</p>\n<p>I would definitely try out his example to see if it works for you and your use-case.</p>\n<p>Let us know if not and we can continue offering examples and ideas.</p>"
+    },
+    {
+      "id": 54999,
+      "postNumber": 6,
+      "createdAt": "2021-06-17T01:53:27.351Z",
+      "author": "mjgs (Mark)",
+      "cookedHtml": "<p>I got it working with a variation of your query. I had to do the following:</p>\n<ol>\n<li>Escape the double quotes around name, since single quotes weren’t accepted, and the double quotes messed up the json passed in the fetch request</li>\n<li>Add the column_values</li>\n<li>Update how I was handling the returned data as it looked a bit different, got returned inside a tems_by_column_values key</li>\n</ol>\n<p>The final query was:</p>\n<p>const jobsQuery = <code>{    items_by_column_values(board_id: ${cfg.jobBoardId}, column_id: \\\"name\\\", column_value: \\\"${cfg.companyId}\\\") {        id        name        column_values {          id         title         value        }      }    }</code>;</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 56136,
+      "postNumber": 7,
+      "createdAt": "2021-06-24T01:54:20.286Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

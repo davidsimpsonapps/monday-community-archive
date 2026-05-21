@@ -1,0 +1,47 @@
+{
+  "id": 58473,
+  "title": "Monday API activity log info",
+  "slug": "monday-api-activity-log-info",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-05-17T16:50:01.891Z",
+  "lastPostedAt": "2023-05-22T05:38:50.512Z",
+  "postsCount": 4,
+  "excerpt": "Hello I am trying to pull activity log data from my board but am getting a 500 internal server error. The monday.com status site says everything is up and running though. Is there anything wrong with my request?",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1005,
+  "posts": [
+    {
+      "id": 128410,
+      "postNumber": 1,
+      "createdAt": "2023-05-17T16:50:01.980Z",
+      "author": "Jmiller1 (Jack )",
+      "cookedHtml": "<p>Hello I am trying to pull activity log data from my board but am getting a 500 internal server error. The <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> status site says everything is up and running though. Is there anything wrong with my request?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/f/df50b0d23e23dc3066e16e85d6b4629496a21680.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/f/df50b0d23e23dc3066e16e85d6b4629496a21680.png\" alt=\"image\" width=\"690\" height=\"174\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">832×211 3.67 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 128587,
+      "postNumber": 2,
+      "createdAt": "2023-05-18T12:50:48.038Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jmiller1\">@Jmiller1</a>!</p>\n<p>GraphQL APIs use a single endpoint for all operations (unlike REST APIs). Our API endpoint is:<br />\n<code>https://api.monday.com/v2</code></p>\n<p>You’ll need to write a query for <a href=\"https://developer.monday.com/api-reference/docs/activity-logs\">Activity Logs</a>, for example:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 1234567890) {\n    activity_logs (from: \"2021-07-23T00:00:00Z\", to: \"2021-07-26T00:00:00Z\") {\n      id\n      event\n      data\n    }\n  }\n}\n</code></pre>\n<p>Additionally, requests to the API should follow these rules:</p>\n<ul>\n<li>POST request with a JSON-formatted body</li>\n<li>Access token must be sent in the Authorization header. Learn more here: <a href=\"https://developer.monday.com/api-reference/docs/authentication\">Authentication</a>\n</li>\n<li>All queries (including mutations) should be sent with the <code>query</code> key in your JSON body</li>\n<li>Optional variables should use the <code>variables</code> key</li>\n<li>Content Type header must be <code>application/json</code>, unless you’re uploading <a href=\"https://developer.monday.com/api-reference/docs/files\">Files</a>\n</li>\n</ul>\n<p>I hope this helps! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 128603,
+      "postNumber": 3,
+      "createdAt": "2023-05-18T13:45:14.351Z",
+      "author": "Jmiller1 (Jack )",
+      "cookedHtml": "<p>Hi Alessandra, thank you for the response. I was able to find the link you sent above, but I can’t figure out how it plugs into the python query. I attached a picture of how the documentation says to format in Python, how does what you provided plug into that structure?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/0/506e88a7a8b786a242202353d01c3ec03b158a4a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/0/506e88a7a8b786a242202353d01c3ec03b158a4a_2_575x499.png\" alt=\"image\" width=\"575\" height=\"499\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">761×661 52.3 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 128910,
+      "postNumber": 4,
+      "createdAt": "2023-05-22T05:38:50.512Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/jmiller1\">@Jmiller1</a>,</p>\n<p>I have created an example for you on Postman and exported it to:</p>\n<p>Python - http.client:</p>\n<p>import http.client<br />\nimport json<br />\nconn = http.client.HTTPSConnection(“<a href=\"http://api.monday.com\">api.monday.com</a>”)<br />\npayload = “{“query”:“query {\\n boards (ids: 1234567890) {\\n activity_logs (from: \"2023-05-10T00:00:00Z\", to: \"2023-05-22T00:00:00Z\") {\\n id\\n event\\n data\\n }\\n }\\n}”,“variables”:{}}”<br />\nheaders = {<br />\n‘Authorization’: ‘APIKEYHERE’,<br />\n‘Content-Type’: ‘application/json’,<br />\n}<br />\nconn.request(“POST”, “/v2”, payload, headers)<br />\nres = conn.getresponse()<br />\ndata = res.read()<br />\nprint(data.decode(“utf-8”))</p>\n<p>–</p>\n<p>Python - Requests:</p>\n<p>import requests<br />\nimport json<br />\nurl = “<a href=\"https://api.monday.com/v2%E2%80%9D\">https://api.monday.com/v2”</a><br />\npayload=“{“query”:“query {\\n boards (ids: 1234567890) {\\n activity_logs (from: \"2023-05-10T00:00:00Z\", to: \"2023-05-22T00:00:00Z\") {\\n id\\n event\\n data\\n }\\n }\\n}”,“variables”:{}}”<br />\nheaders = {<br />\n‘Authorization’: ‘APIKEYHERE’,<br />\n‘Content-Type’: ‘application/json’,<br />\n}<br />\nresponse = requests.request(“POST”, url, headers=headers, data=payload)<br />\nprint(response.text)</p>\n<p>I hope that helps!</p>\n<p>Cheers,</p>\n<p>Matias</p>"
+    }
+  ]
+}

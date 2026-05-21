@@ -1,0 +1,84 @@
+{
+  "id": 71969,
+  "title": "Custom mapping modal crashes tab",
+  "slug": "custom-mapping-modal-crashes-tab",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    209,
+    351
+  ],
+  "createdAt": "2023-11-30T20:13:28.881Z",
+  "lastPostedAt": "2023-12-07T18:48:44.546Z",
+  "postsCount": 7,
+  "excerpt": "Hey devs! \nI’m building an app that uses custom field mappings, but I’m experiencing a browser hang/crash. \nI have an app where in the recipe, the user is given a dynamic list of items as a response from my server, and b&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 255,
+  "posts": [
+    {
+      "id": 155647,
+      "postNumber": 1,
+      "createdAt": "2023-11-30T20:13:28.963Z",
+      "author": "mdgale (Matt Gale)",
+      "cookedHtml": "<p>Hey devs!<br />\nI’m building an app that uses custom field mappings, but I’m experiencing a browser hang/crash.</p>\n<p>I have an app where in the recipe, the user is given a dynamic list of items as a response from my server, and based on what was selected from that list, will be presented with a custom mapper modal.</p>\n<p>I’m experiencing two things:</p>\n<ol>\n<li>\n<p>In the very simple case where there is just one field to map, the modal is presented and doesn’t crash, but the textfield isn’t populated with the mapping choice I made, it just looks empty. The system seems to be mapping it though, because I can click done and when the automation runs, I get the value that was mapped.</p>\n</li>\n<li>\n<p>In the more complex case where there are 5+ items to map, the modal opens and the loading gif is shown, but my browser hangs and crashes my browser tab.</p>\n</li>\n</ol>\n<p>The fact that the simple case is working gives me hope that I have the payload structure correct, but I’m not sure where to go from here, or what more information I can give to help diagnose.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 155648,
+      "postNumber": 2,
+      "createdAt": "2023-11-30T20:14:37.024Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>would you be willing to post the responses  that work and don’t work? with anything like field names replaced.</p>"
+    },
+    {
+      "id": 155654,
+      "postNumber": 3,
+      "createdAt": "2023-11-30T20:26:19.270Z",
+      "author": "mdgale (Matt Gale)",
+      "cookedHtml": "<p>Good place to start. So the simple case with just a single field to map is:</p>\n<pre><code class=\"lang-auto\">[\n\t{\n\t\t\"id\": \"pulse.project_owner\",\n\t\t\"title\": \"pulse project_owner\",\n\t\t\"outboundType\": \"text\",\n\t\t\"inboundTypes\": [\n\t\t\t\"text\"\n\t\t]\n\t}\n]\n</code></pre>\n<p>This is the one I’ve seen semi-working.</p>\n<p>The more complex case that hangs has 4 parameters to map:</p>\n<pre><code class=\"lang-auto\">[\n\t{\n\t\t\"id\": \"pulse.name\",\n\t\t\"title\": \"pulse name\",\n\t\t\"outboundType\": \"text\",\n\t\t\"inboundTypes\": [\n\t\t\t\"text\"\n\t\t]\n\t},\n\t{\n\t\t\"id\": \"pulse.text_1\",\n\t\t\"title\": \"pulse text_1\",\n\t\t\"outboundType\": \"text\",\n\t\t\"inboundTypes\": [\n\t\t\t\"text\"\n\t\t]\n\t},\n\t{\n\t\t\"id\": \"pulse.text8\",\n\t\t\"title\": \"pulse text8\",\n\t\t\"outboundType\": \"text\",\n\t\t\"inboundTypes\": [\n\t\t\t\"text\"\n\t\t]\n\t},\n\t{\n\t\t\"id\": \"pulse.name\",\n\t\t\"title\": \"pulse name\",\n\t\t\"outboundType\": \"text\",\n\t\t\"inboundTypes\": [\n\t\t\t\"text\"\n\t\t]\n\t}\n]\n</code></pre>"
+    },
+    {
+      "id": 155655,
+      "postNumber": 4,
+      "createdAt": "2023-11-30T20:38:21.638Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The dot in the id may be breaking it because those are going to be turned into object keys for the mapping object where a dot wouldn’t be permissible.</p>\n<p>Also just confirm the content-type is application/json on the response. Simple, but something I sometimes see get overlooked.</p>"
+    },
+    {
+      "id": 155809,
+      "postNumber": 5,
+      "createdAt": "2023-12-01T14:02:02.079Z",
+      "author": "mdgale (Matt Gale)",
+      "cookedHtml": "<p>Jeez <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> you know your stuff.</p>\n<p>So the dot in the field ID fixed the issue of the text not rendering in the modal, and inspired me to check other things.</p>\n<p>Then I discovered: I’m returning fields with the same ID twice- there’s two <code>pulse name</code> and thats causing the form to crash!</p>\n<p>Deduping that seems to have fixed it!</p>"
+    },
+    {
+      "id": 155810,
+      "postNumber": 6,
+      "createdAt": "2023-12-01T14:12:19.522Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I missed the duplicate! But then again, its not something I’d have even thought about because… why would you include the same field twice (just from a logic perspective).</p>\n<p>My assumption is name you were adding once manually, and then were creating a list of columns using <code>board{columnds{id,title}}</code> which returns name as a column as well (even though you can’t query the name as a column… stupid!). At least that’s what my intuition tells me. If thats the case, you may not need to worry about deduplication code, just not add name manually to the list. (you won’t get duplicates from querying the boards columns, at least ids)</p>"
+    },
+    {
+      "id": 155938,
+      "postNumber": 7,
+      "createdAt": "2023-12-03T13:16:11.258Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 156796,
+      "postNumber": 8,
+      "createdAt": "2023-12-07T18:48:44.546Z",
+      "author": "mdgale (Matt Gale)",
+      "cookedHtml": "<p>It’s even dumber than that really, the payload I was returning was a hand-edited example one- so it ended up being a copypasta issue.</p>\n<p>Thanks for the help!</p>"
+    },
+    {
+      "id": 156954,
+      "postNumber": 9,
+      "createdAt": "2023-12-08T15:03:44.725Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

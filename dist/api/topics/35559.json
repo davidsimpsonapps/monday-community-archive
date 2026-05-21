@@ -1,0 +1,124 @@
+{
+  "id": 35559,
+  "title": "Complexity changes ? Issue with rate limits? Exceeding 10 million max every 5 mins",
+  "slug": "complexity-changes-issue-with-rate-limits-exceeding-10-million-max-every-5-mins",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187
+  ],
+  "createdAt": "2022-05-01T16:37:55.360Z",
+  "lastPostedAt": "2022-05-16T15:15:44.202Z",
+  "postsCount": 15,
+  "excerpt": "My account is having issues with hitting rate limits, every 5 mins. \nI’ve run a simple script to return the usage every 5 seconds: \n    complexity {\n        after\n        reset_in_x_seconds\n    }\n\nWARNING: 05/01/2022 15:&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 1576,
+  "posts": [
+    {
+      "id": 84605,
+      "postNumber": 1,
+      "createdAt": "2022-05-01T16:37:55.437Z",
+      "author": "bmack (Brian)",
+      "cookedHtml": "<p>My account is having issues with hitting rate limits, every 5 mins.<br />\nI’ve run a simple script to return the usage every 5 seconds:</p>\n<pre><code class=\"lang-auto\">    complexity {\n        after\n        reset_in_x_seconds\n    }\n</code></pre>\n<pre><code class=\"lang-auto\">WARNING: 05/01/2022 15:09:47 | Reset: 60 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/01/2022 15:09:52 | Reset: 55 secs. | Avail: 99.50% | Remaining: 9950000 | Used: 50000\nWARNING: 05/01/2022 15:09:57 | Reset: 50 secs. | Avail: 99.00% | Remaining: 9900000 | Used: 100000\nWARNING: 05/01/2022 15:10:02 | Reset: 45 secs. | Avail: 42.49% | Remaining: 4248952 | Used: 5751048\nWARNING: 05/01/2022 15:10:08 | Reset: 39 secs. | Avail: 0.23% | Remaining: 23166 | Used: 9976834\n</code></pre>\n<p>I’m not aware of anything on our account that runs every 5 minutes, nor a query / mutation that would consume 9,000,000 complexity in the span of 10 seconds.</p>\n<p>Additionally, I have functions / API calls that no longer return information as they hit limits. Seems as if something changed and now querying for subitems has a 10x or more multiplier. I used to be able to query items and subitems, paginated, without issue. Now the first page returns a 6million query complexity.</p>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=12\" title=\":confused:\" class=\"emoji only-emoji\" alt=\":confused:\" width=\"20\" height=\"20\" /></p>\n<p>I have a query that calculates to a complexity of 1120. Adding subitems { id } - causes the complexity to turn into 250295.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/51fcc3a97febc873d47681b0e5de4e4f16882d52.png\" title=\"2022-05-01 15_14_31-monday.com\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/51fcc3a97febc873d47681b0e5de4e4f16882d52_2_690x328.png\" alt=\"2022-05-01 15_14_31-monday.com\" width=\"690\" height=\"328\" /><div class=\"meta\">\n<span class=\"filename\">2022-05-01 15_14_31-monday.com</span><span class=\"informations\">1790×853 84.9 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 84641,
+      "postNumber": 2,
+      "createdAt": "2022-05-02T09:34:08.352Z",
+      "author": "bmack (Brian)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/b1e59d22cfa7609a378f6e5046927cf17b96d8a9.png\" title=\"2022-05-02 08_25_26-Greenshot image editor\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/b1e59d22cfa7609a378f6e5046927cf17b96d8a9_2_512x499.png\" alt=\"2022-05-02 08_25_26-Greenshot image editor\" width=\"512\" height=\"499\" /><div class=\"meta\">\n<span class=\"filename\">2022-05-02 08_25_26-Greenshot image editor</span><span class=\"informations\">918×895 74.7 KB</span>\n</div></a></div><p></p>\n<p>Something is funky with the complexity calculations. Same query - within 12 hour timespan - is 25 times smaller.</p>\n<p>PLEASE FIX!</p>"
+    },
+    {
+      "id": 84643,
+      "postNumber": 3,
+      "createdAt": "2022-05-02T09:48:54.746Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/bmack\">@bmack</a><br />\nI think the issue could be related to the recent change in API complexity:<br />\n<a href=\"https://api.developer.monday.com/changelog/increased-complexity-for-the-users-query\">https://api.developer.monday.com/changelog/increased-complexity-for-the-users-query</a></p>"
+    },
+    {
+      "id": 84645,
+      "postNumber": 4,
+      "createdAt": "2022-05-02T10:01:55.104Z",
+      "author": "bmack (Brian)",
+      "cookedHtml": "<p>I’d love it if it was only a 10x increase. But what I’m seeing on my account is much, much higher.</p>\n<p>Additionally, the above query in the screenshot is for subitems - and doesn’t explain the complexity change.</p>\n<p>I also can’t explain why its happening every 5 mins. There’s no way to see what user, integration, automation may be responsible. I have over 400 users - I’d have to disable their accounts to block this - but doing so removes them from board ownership, automation owners, etc. - and does not reapply if enabled.</p>\n<p>This is problematic that we cannot see what API keys, users - are using our account.</p>"
+    },
+    {
+      "id": 84646,
+      "postNumber": 5,
+      "createdAt": "2022-05-02T10:07:05.894Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/bmack\">@bmack</a>,</p>\n<p>Your issue is to do with the <code>limit</code> you have provided in the <code>items</code> query.</p>\n<p>Last night, you were retrieving 25 items per board, tonight you are retrieving 1 item per board.</p>\n<p>This is the 25x difference in your complexity.</p>"
+    },
+    {
+      "id": 84647,
+      "postNumber": 6,
+      "createdAt": "2022-05-02T10:17:44.317Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/bmack\">@bmack</a></p>\n<p>In terms of your initial post, it might be worth reaching out to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> as they should be able to look further into some of the requests being made on your account.</p>\n<p>One note, the complexity limit is account wide. This applies to all apps that are installed on your account so it may be an integration/board view that is using up the complexity.</p>"
+    },
+    {
+      "id": 84652,
+      "postNumber": 7,
+      "createdAt": "2022-05-02T10:40:48.067Z",
+      "author": "bmack (Brian)",
+      "cookedHtml": "<p>I definitely missed that, apologies.</p>"
+    },
+    {
+      "id": 84655,
+      "postNumber": 8,
+      "createdAt": "2022-05-02T10:56:52.455Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a></p>\n<p>I don’t know if there has been a very recent change but complexity counters used to be per app / per account. Each app receives 5M read + 5M write per minute.</p>"
+    },
+    {
+      "id": 84720,
+      "postNumber": 9,
+      "createdAt": "2022-05-02T23:07:56.644Z",
+      "author": "bmack (Brian)",
+      "cookedHtml": "<p>We are resetting API keys and starting to disable users but this problem persists. It is occuring every five minutes. There is no way to figure what is causing this issue.</p>\n<pre><code class=\"lang-auto\">WARNING: 05/02/2022 22:04:34 | Reset: 51 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:36 | Reset: 49 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:38 | Reset: 47 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:40 | Reset: 45 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:42 | Reset: 43 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:45 | Reset: 40 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:47 | Reset: 38 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:49 | Reset: 36 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:51 | Reset: 34 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:53 | Reset: 32 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:55 | Reset: 30 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:04:57 | Reset: 27 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:05:00 | Reset: 25 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:05:02 | Reset: 23 secs. | Avail: 71.99% | Remaining: 7199476 | Used: 2800524\nWARNING: 05/02/2022 22:05:04 | Reset: 21 secs. | Avail: 43.99% | Remaining: 4398952 | Used: 5601048\nWARNING: 05/02/2022 22:05:06 | Reset: 19 secs. | Avail: 15.98% | Remaining: 1598428 | Used: 8401572\nWARNING: 05/02/2022 22:05:08 | Reset: 16 secs. | Avail: 1.98% | Remaining: 198166 | Used: 9801834\nWARNING: 05/02/2022 22:05:11 | Reset: 14 secs. | Avail: 1.98% | Remaining: 198166 | Used: 9801834\nWARNING: 05/02/2022 22:05:13 | Reset: 12 secs. | Avail: 1.98% | Remaining: 198166 | Used: 9801834\nWARNING: 05/02/2022 22:05:15 | Reset: 10 secs. | Avail: 1.98% | Remaining: 198166 | Used: 9801834\nWARNING: 05/02/2022 22:05:17 | Reset: 8 secs. | Avail: 1.98% | Remaining: 198166 | Used: 9801834\nWARNING: 05/02/2022 22:05:19 | Reset: 6 secs. | Avail: 1.98% | Remaining: 198166 | Used: 9801834\nWARNING: 05/02/2022 22:05:21 | Reset: 4 secs. | Avail: 1.98% | Remaining: 198166 | Used: 9801834\nWARNING: 05/02/2022 22:05:24 | Reset: 1 secs. | Avail: 1.98% | Remaining: 198166 | Used: 9801834\nWARNING: 05/02/2022 22:05:26 | Reset: 60 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:05:28 | Reset: 58 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\nWARNING: 05/02/2022 22:05:30 | Reset: 56 secs. | Avail: 100.00% | Remaining: 10000000 | Used: 0\n</code></pre>"
+    },
+    {
+      "id": 84795,
+      "postNumber": 10,
+      "createdAt": "2022-05-03T10:48:27.205Z",
+      "author": "mclaughlin5360 (Mitch McLaughlin)",
+      "cookedHtml": "<p>Hi Guys,</p>\n<p>I am having a similar issue. I have been running calls via integromat for many months and all the sudden they all error out hitting the limit. A simple GET /itemid is costing 480,129 complexity points. What is going on???</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/4d95757f6b5e666dcac7424b99383649c151b151.png\" title=\"call\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/4/4d95757f6b5e666dcac7424b99383649c151b151.png\" alt=\"call\" width=\"292\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">call</span><span class=\"informations\">391×668 12.5 KB</span>\n</div></a></div><br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/2/2004307b3b8e3c5f3ced9300112a31db6cbc0d19.png\" alt=\"complexity_cost\" width=\"380\" height=\"257\" /><p></p>"
+    },
+    {
+      "id": 84829,
+      "postNumber": 11,
+      "createdAt": "2022-05-03T15:49:33.066Z",
+      "author": "mcd (marc codere dussault)",
+      "cookedHtml": "<p>Bump this thread - also have the same issue where scripts that use to run without any issue with complexity now routinely hit the global 10MM limit…</p>"
+    },
+    {
+      "id": 85060,
+      "postNumber": 12,
+      "createdAt": "2022-05-05T14:51:47.512Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Do you need the subitems? That seems to be the common thread I see in these complaints about query costs. Esp true if column values of subitems are being returned. Integromat definitely does that. You can uncheck the Show Subitems (and Show Parent Item if its not a subitem board) to reduce complexity.</p>"
+    },
+    {
+      "id": 85062,
+      "postNumber": 13,
+      "createdAt": "2022-05-05T15:18:19.074Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>In many cases you can use an alternative for queuering subitem column values. If you query the parent board and retrieve the boardId where the subitems live you can query the subitems as normal items (preventing the nesting). This is definitely cheaper (but not always possible).</p>"
+    },
+    {
+      "id": 85360,
+      "postNumber": 14,
+      "createdAt": "2022-05-09T15:15:34.613Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Esp since Integromat/Make will get all column values of the subitems, when you may only need one.</p>"
+    },
+    {
+      "id": 85940,
+      "postNumber": 15,
+      "createdAt": "2022-05-16T15:15:44.202Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

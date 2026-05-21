@@ -1,0 +1,119 @@
+{
+  "id": 24019,
+  "title": "New Column Creation Bug",
+  "slug": "new-column-creation-bug",
+  "categoryId": 58,
+  "tagIds": [
+    13,
+    22,
+    94,
+    152
+  ],
+  "createdAt": "2021-08-23T06:58:56.751Z",
+  "lastPostedAt": "2021-08-30T15:14:08.089Z",
+  "postsCount": 13,
+  "excerpt": "Currently facing an error whereby some columns created don’t appear on the board and fail when their returned ids are used. \nFor example, in the image below, the mutation returns the ids of the created columns. One of su&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 3442,
+  "posts": [
+    {
+      "id": 61552,
+      "postNumber": 1,
+      "createdAt": "2021-08-23T06:58:56.844Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Currently facing an error whereby some columns created don’t appear on the board and fail when their returned ids are used.<br />\nFor example, in the image below, the mutation returns the ids of the created columns. One of such ids is the <code>last_order9</code> id.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/e/e47a25df8b0f74d64d034f003fde84a389a33be1.png\" alt=\"image\" width=\"536\" height=\"117\" /></p>\n<p>This column doesn’t appear on the board even after refreshing the page. Now, when I try to use the returned column id in another processing, it throws an error saying that, the column id does not exist<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/65f3b62525eaa86757ceed3839a0f4a8738a107f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/6/65f3b62525eaa86757ceed3839a0f4a8738a107f.png\" alt=\"image\" width=\"690\" height=\"12\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1035×19 2.04 KB</span>\n</div></a></div><p></p>\n<p>This is related to a bigger problem that is, some columns created do not appear on the board and those that appear often need a browser refresh to see them.  I already mentioned this problem <a href=\"https://community.monday.com/t/ability-to-delete-columns-through-the-api/23359\">here</a>.<br />\n<br /></p>\n<p>Secondly, to the best of my knowledge, there is no way to create other column types apart from the status column from the documentation. In the create a column (<a href=\"https://developer.monday.com/api-reference/docs/columns-queries-1#create-a-column\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Columns</a>) part of the documentation, the example only shows how to create a status column. In the respective documentation for all the other columns, they all talk about how to update a column but never on how to create them. The example of the status column mentioned above isn’t applicable to the other columns because, as I later found out the hard way, the result received when one queries for the column <code>type</code> is different from what is needed to create a column. Though some may be similar, others are absolutely different so the requests fail. An example of such is the people column. When one queries the <code>type</code> for that column, it returns <code>multiple-person</code> but to create such a column, you have to send the <code>ColumnType</code> of <code>people</code>. <code>status</code> and <code>color</code> is another example.<br />\nCould you please provide the various mapping between the <code>ColumnType</code> and <code>type</code> needed to create a column since they are not in the documentation? For example,</p>\n<pre><code class=\"lang-auto\">{\ncolor: \"status\",\n\"multiple-person\":\"people\"\n}\n\n</code></pre>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 61570,
+      "postNumber": 2,
+      "createdAt": "2021-08-23T10:39:14.209Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a></p>\n<p>I don’t know where the first screenshot came from, is that Postman or the API Playground? I see from that screenshot that you are trying to create a date column. The correct syntax is:</p>\n<pre><code class=\"lang-auto\">mutation {\n    create_column (board_id: 1234567, title: \"My Date\", column_type: date) {\n        id\n    }\n}\n</code></pre>\n<p>The column_type is not a string “date” in your screenshot but a ColumnType, of which date (without quotes) is a valid one. With this you can create any column you need.</p>"
+    },
+    {
+      "id": 61573,
+      "postNumber": 3,
+      "createdAt": "2021-08-23T10:46:06.755Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, the first screenshot is the result of a successfully run query, which is a date column. I added the screenshot to show that, but mutation runs successfully and returns the respective created column ids but the columns are not created, both visibly on the board and also when trying to use the returned “created” column id, it throws an error that the column does not exist.</p>"
+    },
+    {
+      "id": 61575,
+      "postNumber": 4,
+      "createdAt": "2021-08-23T10:52:32.292Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/kolaai/48/7787_2.png\" class=\"avatar\" /> kolaai:</div>\n<blockquote>\n<p>ut to create such a column, you have to send the <code>ColumnType</code> of <code>people</code> . <code>status</code> and <code>color</code> is another example.<br />\nCould you please provide the various mapping between the <code>ColumnType</code> and <code>type</code> needed to create a column since they are not in the documentation? For example,</p>\n</blockquote>\n</aside>\n<p>If you run the above mutation in the API Playground, doesn’t it create the date column?</p>\n<p>You are correct: there is a difference between the types you need to specify and the types being returned. The ones I am aware of are:<br />\nstatus = color<br />\ntimeline = timerange<br />\npeople = multiple-person<br />\ntime_tracking = duration<br />\nnumbers = numeric</p>\n<p>And I am sure there are others <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 61579,
+      "postNumber": 5,
+      "createdAt": "2021-08-23T11:25:43.915Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>For single column creation, like the example you provided, it works (even though I have to refresh the browser before seeing the created column). For multiple columns, that is where it fails. In the screenshot, you can see that, the array contains 5 objects. That is the result of 5 columns that is supposed to created. Out of the 5, it creates like 2 or 3 instead of 5, but in the returned results, it shows that, it created 5 columns. Hope this clarifies the issue.</p>"
+    },
+    {
+      "id": 61596,
+      "postNumber": 7,
+      "createdAt": "2021-08-23T12:28:24.666Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a>,</p>\n<p>Thank you for sharing your feedback! I can absolutely empathize with how confusing it can be that the column type requirements do not match the types returned when querying columns.</p>\n<p>While we don’t have a list on hand, I would be more than happy to let our team know to compile one and put it in our documentation for future reference!</p>\n<p>Regarding the successful responses, this is actually something that I have heard of before as well. I believe this issue happens because the columns are created in quick succession. This could lead to requests “running into” each other and thus some do not get created. In cases such as these I do recommend creating these columns in a more spaced out fashion.</p>\n<p>Are you still having trouble creating your date column? Or is it working say if you create one in our Developer’s Playground area?</p>"
+    },
+    {
+      "id": 61604,
+      "postNumber": 8,
+      "createdAt": "2021-08-23T12:44:58.085Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/helen\">@Helen</a>,<br />\nThank you for your response.<br />\nUnfortunately, the problem with your suggestion is that, there is no guarantee that, the columns will be created even if they are run in a “more spaced out fashion”. How much spacing is advisable and what is the guarantee that, they would still be created with the provided spacing. I think what we are trying to do here is clearly a workaround for something that is clearly a bug. I create items in the same fashion and they work perfectly without any spacing.<br />\n<br /><br />\nAnother problem with your suggestion is that, using ‘spacing’ can quickly result in timeouts when these columns are created through an integration. When running integrations, every second matters since backend service in use have timeouts. This is exactly the reason why I have been requesting for a column deletion because clearing existing ones is a very expensive and time consuming process.<br />\n<br /><br />\n<a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> main feature and single truth of source is the board, which fundamentally consists of rows and columns. If we can’t create columns in the same fashion in how we can create rows, which by the way, has way less limit than the latter (that is, the max number of rows is in the tens of thousands and for columns, in the hundreds), then I think we can both agree that, there is a problem.<br />\n<br /></p>\n<p>To reiterate, I don’t have a problem with creating a date column, I have a problem with creating multiple columns.</p>"
+    },
+    {
+      "id": 61809,
+      "postNumber": 9,
+      "createdAt": "2021-08-25T11:27:04.830Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a>,</p>\n<p>Thanks for letting me know. I can understand your frustration here, but I hope you trust that we’re here to help, and do not take any of your feedback lightly.</p>\n<p>I’m in conversation with our team now about how to fix this issue. One of my devs is investigating, and is wondering if you can send us your full mutation method code in creating these columns from an array. Can you send us the full response that you’re getting as well?</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 61923,
+      "postNumber": 10,
+      "createdAt": "2021-08-26T14:33:41.312Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/helen\">@Helen</a>,<br />\nThank you for response.<br />\nMy comment was in no way to undermine the effort you are putting it to resolve the situation. Not at all. I was just stating the possible challenges I would face should I go on that route. This is because, the very response that indicates a completed request is being sent even though the columns are not created. That is worrying because, one then has no way of knowing whether all not the columns were created or the response was sent without creation.<br />\n<br /><br />\nNow to the code in question,</p>\n<pre><code class=\"lang-auto\">const newColumns = newCols.map((column) =&gt;\n                  createColumn(boardId, column.title, column.type)\n                );\nreturn Promise.all(newColumns)\n                  .then((data) =&gt; {\n                    console.log(data);\n                  })\n</code></pre>\n<p>The logged data returned is:</p>\n<pre><code class=\"lang-auto\">[\n    {\n        \"data\": {\n            \"create_column\": {\n                \"id\": \"last_order5\",\n                \"title\": \"Last order\",\n                \"type\": \"date\"\n            }\n        },\n        \"account_id\": 7845898\n    },\n    {\n        \"data\": {\n            \"create_column\": {\n                \"id\": \"owner\",\n                \"title\": \"Owner\",\n                \"type\": \"multiple-person\"\n            }\n        },\n        \"account_id\": 7845898\n    },\n    {\n        \"data\": {\n            \"create_column\": {\n                \"id\": \"priority\",\n                \"title\": \"Priority\",\n                \"type\": \"color\"\n            }\n        },\n        \"account_id\": 7845898\n    },\n    {\n        \"data\": {\n            \"create_column\": {\n                \"id\": \"qty\",\n                \"title\": \"QTY\",\n                \"type\": \"numeric\"\n            }\n        },\n        \"account_id\": 7845898\n    },\n    {\n        \"data\": {\n            \"create_column\": {\n                \"id\": \"price\",\n                \"title\": \"Price\",\n                \"type\": \"numeric\"\n            }\n        },\n        \"account_id\": 7845898\n    }\n]\n</code></pre>\n<p>Now when I try to use the returned created columns id in my next processing, I get an error because even though the response says they were created, they weren’t. Out of the 5, only 2 were created, that is <code>Last order</code> and <code>Priority</code>.<br />\nThis is evident in the error that I received when I try to use the <code>Owner</code> column.<br />\nBelow is the error message.</p>\n<pre><code class=\"lang-auto\">There was an error in response from monday.com graphql API:  {\"column_id\":\"owner\",\"error_reason\":\"store.monday.automation.error.missing_column\"}\n</code></pre>\n<p>As you can see, even though <code>Owner</code> column was created as indicated in the response, it wasn’t and therefore results in an error.<br />\nHope this clarifies things.<br />\nThank you.</p>"
+    },
+    {
+      "id": 61924,
+      "postNumber": 11,
+      "createdAt": "2021-08-26T14:41:22.029Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>ask-apps link: <a href=\"https://monday.slack.com/archives/C018J3C259C/p1629827871235300\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Slack</a></p>"
+    },
+    {
+      "id": 61931,
+      "postNumber": 12,
+      "createdAt": "2021-08-26T16:11:43.784Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>No of course not <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a>, I can absolutely understand where you’re coming from and how worrisome this behavior would be.</p>\n<p>I just sent this information over to our developer to continue investigating this. I’ll let you know as soon as he gets back to me!</p>"
+    },
+    {
+      "id": 61934,
+      "postNumber": 13,
+      "createdAt": "2021-08-26T16:14:13.394Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Alright. Thank you once again for your help. You are doing a great job <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 62162,
+      "postNumber": 14,
+      "createdAt": "2021-08-30T10:38:05.000Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a>,</p>\n<p>Coming back to you with an update from our dev!</p>\n<p>He was able to take a look and let me know that currently, our <code>create_column()</code> endpoint is not built to support the creation of multiple columns at once. This means that the last few requests you’re sending “override” the data of the first few requests and as a result, only some of the columns are created.</p>\n<p>To resolve this issue, our team is currently conversing about potentially creating a new method dedicated solely to the creation of multiple columns at once.</p>\n<p>For now, the dev suggests a few alternatives for your requests:</p>\n<ol>\n<li>bluebirdjs’s - Promise.each</li>\n<li>bluebirdjs’s - Promise.map (<strong>with concurrency 1</strong>)</li>\n<li>Iterate on your promises and await each of them separately</li>\n</ol>\n<p>Try these out and let me know if they help at all. I’m also going to move your request to the Feature Requests section, since this area of our platform can be greatly improved. Thank you for bringing this to our attention!</p>"
+    },
+    {
+      "id": 62188,
+      "postNumber": 16,
+      "createdAt": "2021-08-30T15:14:08.089Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/helen\">@Helen</a>,<br />\nThank you for your message. I had already tried and implemented the last option after I first noticed the problem. I hoped there was a way to support multiple columns at once since that was faster. Now that I know that, there is no concurrency support at the moment, I’ll have to continue with the current sequential implementation until concurrency is supported. Thanks once again.</p>"
+    }
+  ]
+}

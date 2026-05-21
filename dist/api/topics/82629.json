@@ -1,0 +1,89 @@
+{
+  "id": 82629,
+  "title": "Constraints on ID types like item ID, board ID, account ID and userID",
+  "slug": "constraints-on-id-types-like-item-id-board-id-account-id-and-userid",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-01T05:08:33.275Z",
+  "lastPostedAt": "2024-04-01T13:55:53.060Z",
+  "postsCount": 8,
+  "excerpt": "Can I assume account ID, user ID, item ID, board ID to be always fit within long int, will that assumption be correct, or can it change in future like if monday.com make it string or UUID in the future \nActually I am bui&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 129,
+  "posts": [
+    {
+      "id": 176026,
+      "postNumber": 1,
+      "createdAt": "2024-04-01T05:08:33.345Z",
+      "author": "YashGarg (Yash Garg)",
+      "cookedHtml": "<p>Can I assume account ID, user ID, item ID, board ID to be always fit within long int, will that assumption be correct, or can it change in future like if <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> make it string or UUID in the future</p>\n<p>Actually I am building an app and want to enforce constraints on my sql db columns</p>"
+    },
+    {
+      "id": 176027,
+      "postNumber": 2,
+      "createdAt": "2024-04-01T05:12:15.473Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Better make it a string. That’s more future proof.</p>"
+    },
+    {
+      "id": 176028,
+      "postNumber": 3,
+      "createdAt": "2024-04-01T05:14:30.058Z",
+      "author": "YashGarg (Yash Garg)",
+      "cookedHtml": "<p>Yes it is currently string in my DB. Actually I considered it string throughout also in code validation, but then the some testing infra used by <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> in approval process cluttered my db with random strings (non-numbers), and then I had to remove those entries. So I thought if it was int/number from start, I could add those validations to prevent these sort of tests/attacks.</p>"
+    },
+    {
+      "id": 176029,
+      "postNumber": 4,
+      "createdAt": "2024-04-01T05:20:07.989Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>But then that’s the point, making it a string means that, should it ever change, your code will still work. In this case, this is similar to a stored board id which was then deleted by the user and now the board no longer exists.</p>"
+    },
+    {
+      "id": 176030,
+      "postNumber": 5,
+      "createdAt": "2024-04-01T05:21:15.333Z",
+      "author": "YashGarg (Yash Garg)",
+      "cookedHtml": "<p>Yes this makes sense too</p>"
+    },
+    {
+      "id": 176067,
+      "postNumber": 6,
+      "createdAt": "2024-04-01T09:49:53.288Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 176137,
+      "postNumber": 7,
+      "createdAt": "2024-04-01T13:32:48.258Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>On validation, i check it is a string of digits, <a href=\"https://www.npmjs.com/package/validator\">validator.js</a> has methods for this. Even if you’re checking if its a string, you should check its a string that conforms to your expectations - that would have caught their testing attempts had you don’ that.</p>\n<p>I can change that in the future if monday ever changes the string to alpha-numeric (and create some pattern manually that conforms to their rules since they won’t be so nice as to provide one, nor even document their rules when they do so… unless they use some well known type like a UUID, KSUID, etc.)</p>\n<p>Its best to use strings also because GraphQL returns these values as string types, and I think they fixed the mutations like board relation, dependency, people, etc. that didn’t accept strings.</p>"
+    },
+    {
+      "id": 176138,
+      "postNumber": 8,
+      "createdAt": "2024-04-01T13:35:41.338Z",
+      "author": "YashGarg (Yash Garg)",
+      "cookedHtml": "<p>Yes now I have changed my backend code to check for if string is a number.<br />\nOther thing is they send it as number in their encoded session tokens, that’s why I also had this confusion.</p>"
+    },
+    {
+      "id": 176142,
+      "postNumber": 9,
+      "createdAt": "2024-04-01T13:55:53.060Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>yes.</p>\n<p>I use <a href=\"https://zod.dev/\">Zod</a> for parsing and validating. So I do <code>z.coerce.string().refine(validator.isInt)</code> and that turns the numbers into strings. Then I just treat them as strings from then forward.</p>"
+    },
+    {
+      "id": 176412,
+      "postNumber": 10,
+      "createdAt": "2024-04-02T10:25:52.879Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

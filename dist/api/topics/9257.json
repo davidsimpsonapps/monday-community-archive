@@ -1,0 +1,340 @@
+{
+  "id": 9257,
+  "title": "Accessing archived Items in a board via monday API",
+  "slug": "accessing-archived-items-in-a-board-via-monday-api",
+  "categoryId": 58,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2020-07-21T12:45:20.180Z",
+  "lastPostedAt": "2024-06-13T09:22:44.785Z",
+  "postsCount": 42,
+  "excerpt": "I am looking for accessing archived items from an active board (not archived board) via Monday API (not via UI). How do I do that? \nI see that on the manual Item has a field called “state” which provides the state of the&hellip;",
+  "solvedPostId": null,
+  "likeCount": 15,
+  "views": 8296,
+  "posts": [
+    {
+      "id": 23259,
+      "postNumber": 1,
+      "createdAt": "2020-07-21T12:45:20.313Z",
+      "author": "spb (spb)",
+      "cookedHtml": "<p>I am looking for accessing archived items from an active board (not archived board) via Monday API (not via UI). How do I do that?<br />\nI see that on the manual Item has a field called “state” which provides the state of the board. So it is always active in this scenario as I have only archived single item. Any help is greatly appreciated.<br />\n<a href=\"https://monday.com/developers/v2#queries-section-items\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#queries-section-items</a></p>"
+    },
+    {
+      "id": 23328,
+      "postNumber": 2,
+      "createdAt": "2020-07-21T20:42:53.958Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/spb\">@spb</a>,</p>\n<p>There is no value for state in the argument to query items which means you can’t filter based on the item state.</p>\n<p>You would need to collect all items, and then filter by state in your application logic.</p>"
+    },
+    {
+      "id": 23409,
+      "postNumber": 3,
+      "createdAt": "2020-07-22T11:56:41.828Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> ,</p>\n<p>Thanks for helping out here! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> We really appreciate your assistance throughout the community.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 23417,
+      "postNumber": 4,
+      "createdAt": "2020-07-22T13:07:36.426Z",
+      "author": "spb (spb)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a>/<a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>,<br />\nCorrect. But what I am saying is, let’s say I archive an item like this:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e4c422f919f0498a2fd6267f069c14b38d386217.png\" title=\"Screen Shot 2020-07-20 at 6.01.21 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e4c422f919f0498a2fd6267f069c14b38d386217_2_690x495.png\" alt=\"Screen Shot 2020-07-20 at 6.01.21 PM\" width=\"690\" height=\"495\" /><div class=\"meta\"><span class=\"filename\">Screen Shot 2020-07-20 at 6.01.21 PM</span><span class=\"informations\">2120×1522 319 KB</span></div></a></div><br />\nNow those items can be seen here on UI<br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9d2f55b7714263831f6f80ba5641d4522049755f.png\" title=\"Screen Shot 2020-07-20 at 6.01.06 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9d2f55b7714263831f6f80ba5641d4522049755f_2_690x413.png\" alt=\"Screen Shot 2020-07-20 at 6.01.06 PM\" width=\"690\" height=\"413\" /><div class=\"meta\"><span class=\"filename\">Screen Shot 2020-07-20 at 6.01.06 PM</span><span class=\"informations\">2736×1640 465 KB</span></div></a></div><p></p>\n<p>But when I query on API to get all the items:</p>\n<blockquote>\n<pre><code>{\n       \"query\": \"{boards(ids:xxxxxx){ items() { id name group { title}  state }  } }\"\n }\n</code></pre>\n</blockquote>\n<p>I cant see those archived data.</p>\n<p>I also tried to do this:</p>\n<blockquote>\n<pre><code>   {\n          \"query\": \"{boards(ids:xxxxxx,state:all){ items() { id name group { title}  state }  } }\"\n    }\n</code></pre>\n</blockquote>\n<p>I know this is query is to include archived and deleted boards as well (not archived items in an active board). But I still went ahead and tried. But I still cant find the archived items.<br />\nWhat should be the correct query?</p>"
+    },
+    {
+      "id": 23457,
+      "postNumber": 5,
+      "createdAt": "2020-07-22T20:15:21.571Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/spb\">@spb</a></p>\n<p>I have just done a bit of testing, and it seems you are correct. The <code>boards</code> query does not return archived items. I don’t see a way to alter the default behaviour of this as this stage.</p>\n<p>I have found two other workarounds, however they do both have limitations.<br />\nThe first is using the `items_by_column_values’ query.</p>\n<pre><code>{\n  items_by_column_values(state: archived, board_id: BOARD_ID, column_id:\"COLUMN_ID\", column_value:\"COLUMN_VALUE\") {\n    id\n    state\n    board {\n      id\n    }\n  }\n}\n</code></pre>\n<p>This does require a <code>column_id</code> and <code>column_value</code> field in the query. You could potentially have a hidden column on the board and then query this value, you would set a default value or just make it null and query this. This option is probably better as you can filter by board.</p>\n<p>The other option is to use the <code>items</code> query.</p>\n<p>This would essentially return all items in your monday account, and then you would need to filter them by state and board in your application logic, this would be pretty expensive as you would need to make multiple API calls and loop over every item just to filter the results.</p>\n<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> Do you have any other ideas on how to achieve this?</p>\n<p>As there is an option for a state argument on the boards query, this may be something that is implemented at a later date.</p>"
+    },
+    {
+      "id": 31457,
+      "postNumber": 6,
+      "createdAt": "2020-10-19T19:31:08.137Z",
+      "author": "arnold_wikey (Arnold Wikey)",
+      "cookedHtml": "<p>I am having the same issues with not being able to query archived groups as well. Boosting the signal for <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> support.</p>"
+    },
+    {
+      "id": 31514,
+      "postNumber": 7,
+      "createdAt": "2020-10-20T12:12:59.646Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> / <a class=\"mention\" href=\"/u/arnold_wikey\">@arnold_wikey</a> - my apologies for the delay on getting back on this.</p>\n<p>As you’ve seen this isn’t something that is possible right now. The ‘boards’ query does have an argument for the state of the items, but at this time it is not able to pull archived items. It’s something we’ve passed along to our developers internally as feedback, as we too would like to see the ability to query archived items in the future. That being said, I can’t really offer an ETA on this at the moment.</p>\n<p>The closest workaround at the moment would be something like what Mitchell listed above using either the column values or items query, although both do have limitations.</p>\n<p>Let me know if I can assist with anything else.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 36291,
+      "postNumber": 8,
+      "createdAt": "2020-12-22T19:26:39.233Z",
+      "author": "youcandanch (Alex Dancho)",
+      "cookedHtml": "<p>So I want to preface this by saying in general, I’m a huge Monday fan, and have generally enjoyed it both from the UI and API side.</p>\n<p>That said, this is an absolute dealbreaker for me, and singlehandedly would make me push pretty hard to move off of the platform. Here’s an example workflow:</p>\n<ul>\n<li>We organize teams by board – eg. “Article Production Team” has a board, so on, so forth.</li>\n<li>Within boards, we use groups to represent sprints. Sprints last two weeks.</li>\n<li>After a sprint is complete, we keep it active on the board for a month, and then archive it.</li>\n<li>We still want to be able to calculate metrics on previous sprints, so in the absence of any built in reporting on the UI side, I go to try to pull a list of all issues within a board… and I can’t.</li>\n</ul>\n<p>This means things like mean time to triage, mean time to resolve, distribution of issues between teams – <em>all</em> of these things are actually impossible for me to get any data on, simply because I can’t tell the API to include items from archived groups. I understand we might be operating at the fringes of what Monday is supposed to handle as a platform, but without being able to even get the basics (how many pulses with type Bug did we open this year?), I’m basically flying totally blind without having to materialize the data myself on some cadence and then hope that archived items don’t change.</p>\n<p>Honestly, like I said, I generally <em>genuinely</em> enjoy the platform, but without this getting fixed, I pretty much <em>have</em> to move elsewhere, because I can’t in good faith tell stakeholders throughout the company “I think we fix these things pretty fast, and I think these initiatives cut down on these type of issues being submitted, but really no way to tell, sorry!” <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a> I know you mentioned there’s no ETA, but I need to throw my voice into the ring here that without this being available as part of the API, there’s almost certainly no way we end up using Monday to the depth that we do today.</p>\n<p>Please let us know if there’s anything I can do to help clarify, as it’s in my best interest to see this one get fixed. Thanks.</p>"
+    },
+    {
+      "id": 42681,
+      "postNumber": 9,
+      "createdAt": "2021-02-26T04:59:31.335Z",
+      "author": "zlanich (Zach Lanich)",
+      "cookedHtml": "<p>+1 for this feature please. I need to triage archived/deleted items so I can also archive/delete them in FreshDesk.</p>"
+    },
+    {
+      "id": 48193,
+      "postNumber": 11,
+      "createdAt": "2021-04-19T12:54:32.312Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 64083,
+      "postNumber": 12,
+      "createdAt": "2021-09-21T11:37:35.943Z",
+      "author": "cwhittle (Chris Whittle)",
+      "cookedHtml": "<p>Any update on this?  Needing this as well.</p>"
+    },
+    {
+      "id": 64212,
+      "postNumber": 13,
+      "createdAt": "2021-09-22T05:34:12.770Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/youcandanch\">@youcandanch</a> <a class=\"mention\" href=\"/u/zlanich\">@zlanich</a> <a class=\"mention\" href=\"/u/cwhittle\">@cwhittle</a></p>\n<p>Thank you so much for providing your feedback on this feature, and I definitely understand how tihs would be helpful in your workflows!</p>\n<p>Currently, I do not have any news to share on this. My best recommendation would be adapting <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a>’s idea to your workflows. You could create a Status column in your board, and set up an automation to archive items once the Status is set to Archived. Then, you could use the items_by_column_values query, paired with that column, in order to retrieve your archived items.</p>\n<p>I’ve made sure our records are updated with your use cases and how helpful this feature would be to your implementation of <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>. That said, it would really help us prioritize this suggestion better if you could add your voice to the feature request as a Vote:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/2/239a9cec50b8df6285cab7d7d0879fec2f1c73db.png\" alt=\"image\" width=\"186\" height=\"232\" /></p>\n<p>Thank you for understanding and patience, as well as your input towards making the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API better.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64250,
+      "postNumber": 14,
+      "createdAt": "2021-09-22T10:33:13.627Z",
+      "author": "cwhittle (Chris Whittle)",
+      "cookedHtml": "<p>Thanks for you prompt response, unfortunately their work around will not work for us as we have around 100 boards with new ones being created all the time across the company.</p>\n<p>I am working on code way but the API needs to have this option.</p>"
+    },
+    {
+      "id": 83232,
+      "postNumber": 15,
+      "createdAt": "2022-04-15T14:53:55.240Z",
+      "author": "ULSF (Jed D)",
+      "cookedHtml": "<p>Just ran into this myself.  Actually, my main issue was the opposite problem, I implemented code on the backend to filter out archived items.  It’s only after I decided to include them that I found I didn’t have any in the data returned.</p>\n<p>Eventually I would need these.  Any possibility of fixing this?</p>"
+    },
+    {
+      "id": 83269,
+      "postNumber": 16,
+      "createdAt": "2022-04-17T04:43:10.521Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/ulsf\">@ULSF</a>!</p>\n<p>I will add your vote to this feature request <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Thank you for the feedback!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 108569,
+      "postNumber": 17,
+      "createdAt": "2022-12-28T17:42:40.866Z",
+      "author": "EyalSeagull (Eyal Seagull)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, I will appreciate if you can add my vote, too. If we can’t have access to our own company data thru API (archived or not, deleted within the 30 days undo period or not) then it is pretty bad.</p>"
+    },
+    {
+      "id": 108614,
+      "postNumber": 18,
+      "createdAt": "2022-12-29T05:49:21.615Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/eyalseagull\">@EyalSeagull</a>,</p>\n<p>Your vote was added towards this request <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Thank you for the feedback!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 108615,
+      "postNumber": 19,
+      "createdAt": "2022-12-29T05:49:28.221Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/3722124523\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 116080,
+      "postNumber": 20,
+      "createdAt": "2023-02-19T00:58:59.506Z",
+      "author": "EyalSeagull (Eyal Seagull)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> , any news? This is a basic need. We can not query our own data! Using automation and a hidden column seems like a way to force users to move to a higher plan in order to have more automations actions available.</p>"
+    },
+    {
+      "id": 117192,
+      "postNumber": 21,
+      "createdAt": "2023-02-27T07:57:21.549Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/eyalseagull\">@EyalSeagull</a>,</p>\n<p>I do not have any updates about this. I will share anything I hear back from the team <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 117212,
+      "postNumber": 22,
+      "createdAt": "2023-02-27T09:45:52.895Z",
+      "author": "davidski (David Severski)",
+      "cookedHtml": "<p>It’s distressing to search for a problem we’re having, find this issue which fits our use case exactly, and find zero movement in <em>two and a half years</em>. <img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=12\" title=\":confused:\" class=\"emoji\" alt=\":confused:\" width=\"20\" height=\"20\" /> I don’t understand how the Monday team prioritizes working on things. So many quality of life issues remain unaddressed while other – to my eyes – much lower priority items are implemented.</p>"
+    },
+    {
+      "id": 117224,
+      "postNumber": 23,
+      "createdAt": "2023-02-27T10:19:32.418Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/davidski\">@davidski</a>,</p>\n<p>I understand that your request not being prioritized can feel frustrating. Thank you for the feedback. I will share your thoughts in the request that we opened for this so that our team takes it into account.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 118220,
+      "postNumber": 24,
+      "createdAt": "2023-03-06T10:31:24.763Z",
+      "author": "davidski (David Severski)",
+      "cookedHtml": "<p>I had resigned myself this morning to retool my boards query into an items query so that I could retrieve information on archived items. I quickly came across <a href=\"https://developer.monday.com/api-reference/changelog/new-limits-to-the-items-query-in-90-days\" rel=\"noopener nofollow ugc\">this change</a> from October of 22 stating that items queries now require IDs, with a suggested new pattern of…wait for it…using the boards query first.</p>\n<p>Am I correct in that there is now <em>no</em> way of getting the active and inactive of the items associated with a board, short of the suggestion to basically not use the archive functionality?</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/d/2d1f0ea77d41e6c264e7bad982db9ec96b8929d0.gif\" alt=\"\" width=\"400\" height=\"234\" class=\"animated\" /></p>"
+    },
+    {
+      "id": 118400,
+      "postNumber": 25,
+      "createdAt": "2023-03-07T08:44:07.127Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/davidski\">@davidski</a>,</p>\n<p>What you said is accurate.</p>\n<p>If you want to query for information about archived items you need to use the items resolver and specify the ID of the required item.</p>\n<p>I have added your vote towards the request for the ability to query for archived items from a board.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 118401,
+      "postNumber": 26,
+      "createdAt": "2023-03-07T08:44:18.091Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/3722124523\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 123222,
+      "postNumber": 27,
+      "createdAt": "2023-04-09T21:52:18.699Z",
+      "author": "EyalSeagull (Eyal Seagull)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>The whole idea of API is that you can mimic using the system like a person does, that you can automate operations and integrate the system to/with other sources.</p>\n<p>Not having basic functions like unarchiving, undeleting etc. is not a feature request, it is more of a flaw in the API architecture. It is really strange that issues like this are not prioritize and I can totally understand <a class=\"mention\" href=\"/u/davidski\">@davidski</a> frustration.</p>\n<p>That why I am quite disappointed that in three years those issues are not addressed and resolved.</p>\n<p>The not so funny thing is that Monday has a built-in webhook integration that can call us when an item/subitem delete occurs. However, Monday <strong>does not</strong> sends a <strong>shortLivedToken</strong> to access Monday and - at least - read the deleting object and create it again. You see, this looks like a flaw or an oversight (deliberately or not).</p>\n<p>I hope that another user’s frustration may be an incentive for the Monday team to change the situation.</p>"
+    },
+    {
+      "id": 123239,
+      "postNumber": 28,
+      "createdAt": "2023-04-10T05:18:22.268Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/eyalseagull\">@EyalSeagull</a>,</p>\n<p>I understand the frustration and I added your vote towards this.</p>\n<p>Regarding the shortLivedToken for regular webhooks, I have replied in the other thread <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 123385,
+      "postNumber": 29,
+      "createdAt": "2023-04-11T11:18:21.431Z",
+      "author": "EyalSeagull (Eyal Seagull)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> for all the help.</p>"
+    },
+    {
+      "id": 123625,
+      "postNumber": 30,
+      "createdAt": "2023-04-12T16:37:17.636Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 128943,
+      "postNumber": 31,
+      "createdAt": "2023-05-22T10:39:59.759Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>This doesn’t make sense though. How do we get the id of the item that has been archived if we can’t include archived items on the boards query?</p>\n<p>Why does the API contain a boolean flag for “exclude_nonactive” in the boards =&gt; items query if setting it to false does not return nonactive items?</p>\n<p>This functionality is business critical for my workflow and as such potentially invalidates use of Monday as a technology. Has this, now 3 year old issue, been escalated at all? Specifically wondering if it has made it to a dev backlog for anything like the near future?</p>"
+    },
+    {
+      "id": 130752,
+      "postNumber": 32,
+      "createdAt": "2023-06-08T07:24:18.812Z",
+      "author": "Lindjacob (Jacob)",
+      "cookedHtml": "<p>We need this feature as well!</p>"
+    },
+    {
+      "id": 130956,
+      "postNumber": 33,
+      "createdAt": "2023-06-11T06:19:07.829Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/lindjacob\">@Lindjacob</a>,</p>\n<p>I have added your vote for this!</p>\n<p>Thank you for the feedback!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 141125,
+      "postNumber": 34,
+      "createdAt": "2023-08-29T10:10:57.181Z",
+      "author": "KargoTechComms (Steve Suranie)",
+      "cookedHtml": "<p>Just so I am clear on this. If I run this query:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 4023102011) {\n    groups(ids: [\"new_group\"]) {\n      title\n      id\n      items {\n        id\n        name\n        column_values {\n          id\n          title\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>It will return both archived and unarchived items?</p>"
+    },
+    {
+      "id": 141481,
+      "postNumber": 35,
+      "createdAt": "2023-08-31T09:35:55.434Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/kargotechcomms\">@KargoTechComms</a> and welcome to the community!</p>\n<p>That query will not give you the archived items.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 143551,
+      "postNumber": 36,
+      "createdAt": "2023-09-14T09:38:54.488Z",
+      "author": "Zatura24 (Jannick Joosten)",
+      "cookedHtml": "<p>We would really like this feature as well!</p>"
+    },
+    {
+      "id": 143980,
+      "postNumber": 37,
+      "createdAt": "2023-09-18T04:16:12.347Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/zatura24\">@Zatura24</a>,</p>\n<p>I have added your vote for this <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 143981,
+      "postNumber": 38,
+      "createdAt": "2023-09-18T04:16:22.228Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/3722124523\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 147532,
+      "postNumber": 39,
+      "createdAt": "2023-10-09T10:58:37.723Z",
+      "author": "nairihar (Nairi)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, I will appreciate if you can add our vote, too. We need that thing <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 147577,
+      "postNumber": 40,
+      "createdAt": "2023-10-09T17:42:49.565Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nairihar\">@nairihar</a>,</p>\n<p>I’ve added your vote to the request! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 148431,
+      "postNumber": 41,
+      "createdAt": "2023-10-16T14:22:57.841Z",
+      "author": "nitecow (Dan Foster)",
+      "cookedHtml": "<p>Would also request this feature.</p>"
+    },
+    {
+      "id": 148467,
+      "postNumber": 42,
+      "createdAt": "2023-10-16T17:33:52.686Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Welcome to the community <a class=\"mention\" href=\"/u/nitecow\">@nitecow</a>!</p>\n<p>I’ve added your vote as well <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 174475,
+      "postNumber": 43,
+      "createdAt": "2024-03-21T15:19:13.618Z",
+      "author": "max (max)",
+      "cookedHtml": "<p>Another vote for this feature! <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 174482,
+      "postNumber": 44,
+      "createdAt": "2024-03-21T15:39:05.603Z",
+      "author": "max (max)",
+      "cookedHtml": "<p>Am I correct in thinking that the workarounds proposed by <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> no longer function? Attempting the query items_by_column_values in the playground, and it will not accept the “state” arguement.</p>\n<p>Is Monday phasing out the Archive feature entirely? I don’t understand how one is to use it via the API in its current condition.</p>\n<p>FWIW, my workflow is that we archive items in a contacts board after a certain point, but when adding new contacts, want to query <em>all</em> items, including archived items by a given column value (like email address), to prevent duplicates.</p>"
+    },
+    {
+      "id": 174922,
+      "postNumber": 45,
+      "createdAt": "2024-03-25T11:14:17.380Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/max\">@max</a>,</p>\n<p>The only way to get archived and deleted items is by passing their IDs. This request has 12 votes already so we might see a change on how this works in the future.</p>"
+    },
+    {
+      "id": 188417,
+      "postNumber": 46,
+      "createdAt": "2024-06-12T13:26:08.793Z",
+      "author": "Ramalho (M. Ramalho)",
+      "cookedHtml": "<p>Any news on this?</p>"
+    },
+    {
+      "id": 188539,
+      "postNumber": 47,
+      "createdAt": "2024-06-13T09:22:44.785Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ramalho\">@Ramalho</a>,</p>\n<p>As of today, the only way of retrieving data from an archived item is by passing the item’s ID in your query. For example:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids:1234567890){\n    name\n  }\n}\n</code></pre>"
+    }
+  ]
+}

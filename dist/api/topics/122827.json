@@ -1,0 +1,83 @@
+{
+  "id": 122827,
+  "title": "Due Date set to Previous Working Day based on Event Date",
+  "slug": "due-date-set-to-previous-working-day-based-on-event-date",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    104,
+    108
+  ],
+  "createdAt": "2026-01-12T05:21:22.878Z",
+  "lastPostedAt": "2026-01-14T15:03:35.125Z",
+  "postsCount": 9,
+  "excerpt": "Hello All, \nThis might be something really easy, but I seem to be struggling with this. \nI need my formula column to output the due date - and should be the working day before the event date (delivery date). \nThat means,&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 41,
+  "posts": [
+    {
+      "id": 243964,
+      "postNumber": 1,
+      "createdAt": "2026-01-12T05:21:22.950Z",
+      "author": "ayesha_chopra (Ayesha)",
+      "cookedHtml": "<p>Hello All,</p>\n<p>This might be something really easy, but I seem to be struggling with this.</p>\n<p>I need my formula column to output the due date - and should be the working day before the event date (delivery date).</p>\n<p>That means, if the delivery date is Tuesday 13/1/26, Due Date Should be Monday 12/1/26.<br />\nIf the delivery date is Monday 12/1/26, due date should be Friday, 9/1/26.<br />\nEven if the delivery date is a Sat or Sun, due date should be friday.</p>\n<p>This is what I have so far:</p>\n<p>IF(</p>\n<p>WORKDAYS(SUBTRACT_DAYS({Delivery Date}, 1), SUBTRACT_DAYS({Delivery Date}, 1)) = 1,</p>\n<p>SUBTRACT_DAYS({Delivery Date}, 1),</p>\n<p>IF(</p>\n<pre><code>WORKDAYS(SUBTRACT_DAYS({Delivery Date}, 1), {Delivery Date}) = 1,\n\nSUBTRACT_DAYS({Delivery Date}, 3),\n\nSUBTRACT_DAYS({Delivery Date}, 2)\n</code></pre>\n<p>)</p>\n<p>)</p>\n<p>Can anyone please guide me on how to achieve this?</p>"
+    },
+    {
+      "id": 243999,
+      "postNumber": 2,
+      "createdAt": "2026-01-12T15:32:42.161Z",
+      "author": "Clover_Gal (Desiree McCarthy | monday.com Ambassador)",
+      "cookedHtml": "<p>Which product (CRM/Work Management, etc) and level (Pro/Enterprise) do you have?</p>"
+    },
+    {
+      "id": 244015,
+      "postNumber": 3,
+      "createdAt": "2026-01-12T19:38:36.847Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/ayesha_chopra\">@ayesha_chopra</a><br />\nYou can solve this just by checking the weekday and subtracting the right number of days.</p>\n<p>Formula:</p>\n<pre><code class=\"lang-auto\">IF(\n  WEEKDAY({Delivery Date},1)=1,\n  SUBTRACT_DAYS({Delivery Date},3),\n  IF(\n    WEEKDAY({Delivery Date},1)=7,\n    SUBTRACT_DAYS({Delivery Date},2),\n    IF(\n      WEEKDAY({Delivery Date},1)=6,\n      SUBTRACT_DAYS({Delivery Date},1),\n      SUBTRACT_DAYS({Delivery Date},1)\n    )\n  )\n)\n\n</code></pre>\n<p>Monday → Friday<br />\nSaturday or Sunday → Friday<br />\nOther days → previous day</p>\n<p>Dr. Tanvi Sachar<br />\nMonday Certified Partner, Monday Wizard</p>"
+    },
+    {
+      "id": 244051,
+      "postNumber": 4,
+      "createdAt": "2026-01-13T12:55:40.653Z",
+      "author": "ayesha_chopra (Ayesha)",
+      "cookedHtml": "<p>Hello Tanvi!<br />\nThank you for your response.<br />\nWEEKDAY() Function - I cannot seem to find this in the list if functions available to build a formula column.<br />\nI did put the provided formula in my column, and as you can see in the attachment - WEEKDAY() is not blue as it should be like other functions.<br />\nHowever, it is giving an output - but I do not think it is expected. E.g., is Delivery Date is June 29 2026, the output is June 28 when it should be June 26.<br />\nWhat do you suggest?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/2/f2204c21ee2a7bcbd867973ded33e3abf337d2f3.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/f/2/f2204c21ee2a7bcbd867973ded33e3abf337d2f3.png\" alt=\"image\" width=\"328\" height=\"263\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">328×263 5.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 244061,
+      "postNumber": 5,
+      "createdAt": "2026-01-13T14:13:56.373Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Yep, this is just a weekday numbering mismatch.</p>\n<p>In monday, <code>WEEKDAY()</code> counts like this:<br />\nSunday = 1, Monday = 2, … Saturday = 7</p>\n<p>So use this formula:<br />\nIF(<br />\n{Delivery Date}=“”,<br />\n“”,<br />\nIF(<br />\nWEEKDAY({Delivery Date})=2,<br />\nSUBTRACT_DAYS({Delivery Date},3),<br />\nIF(<br />\nWEEKDAY({Delivery Date})=1,<br />\nSUBTRACT_DAYS({Delivery Date},2),<br />\nIF(<br />\nWEEKDAY({Delivery Date})=7,<br />\nSUBTRACT_DAYS({Delivery Date},1),<br />\nSUBTRACT_DAYS({Delivery Date},1)<br />\n)<br />\n)<br />\n)<br />\n)</p>\n<p>That gives you<br />\nMonday → Friday<br />\nSaturday or Sunday → Friday<br />\nEverything else → day before</p>"
+    },
+    {
+      "id": 244081,
+      "postNumber": 6,
+      "createdAt": "2026-01-13T20:32:19.744Z",
+      "author": "ayesha_chopra (Ayesha)",
+      "cookedHtml": "<p>Hello, <a class=\"mention\" href=\"/u/drtanvisachar\">@drtanvisachar</a>!<br />\nThank you so much for your help!<br />\nI have not tried this method, but with some inspiration from your WEEKDAY() function use, I have got the following code (you are right, it was a weekday numbering mismatch!)</p>\n<p>FORMAT_DATE</p>\n<p>(IF(WEEKDAY({Delivery Date})=1,SUBTRACT_DAYS({Delivery Date},2),</p>\n<p>IF(WEEKDAY({Delivery Date})=2,SUBTRACT_DAYS({Delivery Date},3),</p>\n<p>IF(WEEKDAY({Delivery Date})=3,SUBTRACT_DAYS({Delivery Date},1),</p>\n<p>IF(WEEKDAY({Delivery Date})=4,SUBTRACT_DAYS({Delivery Date},1),</p>\n<p>IF(WEEKDAY({Delivery Date})=5,SUBTRACT_DAYS({Delivery Date},1),</p>\n<p>IF(WEEKDAY({Delivery Date})=6,SUBTRACT_DAYS({Delivery Date},1),</p>\n<p>IF(WEEKDAY({Delivery Date})=7,SUBTRACT_DAYS({Delivery Date},1),“”))))))))</p>\n<p>Thanks a lot - my query is solved.</p>"
+    },
+    {
+      "id": 244082,
+      "postNumber": 7,
+      "createdAt": "2026-01-13T20:45:05.483Z",
+      "author": "ayesha_chopra (Ayesha)",
+      "cookedHtml": "<p>Hi!<br />\nWork Management, Enterprise.</p>"
+    },
+    {
+      "id": 244086,
+      "postNumber": 8,
+      "createdAt": "2026-01-13T22:22:52.577Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ayesha_chopra\">@ayesha_chopra</a>   Love it. Nice job working it through, and you nailed the root cause.</p>\n<p>Yep, that mismatch in weekday numbering is exactly what was throwing things off. Your logic now covers all the cases correctly, and since it’s working for your scenarios, that’s the only thing that really matters.</p>\n<p>Thanks for sharing the final version too.</p>"
+    },
+    {
+      "id": 244113,
+      "postNumber": 9,
+      "createdAt": "2026-01-14T15:03:35.125Z",
+      "author": "Clover_Gal (Desiree McCarthy | monday.com Ambassador)",
+      "cookedHtml": "<p>If you ever want this to live outside of a formula, you can handle it in the Workflow Center instead. Set a rule so that when the delivery or event date column changes, it updates another column (the due date) to match that event date. Then add an action to push the due date back by one business day.</p>\n<p>Desiree - <a href=\"http://www.thecleverclovers.com\" rel=\"noopener nofollow ugc\">www.thecleverclovers.com</a></p>"
+    }
+  ]
+}

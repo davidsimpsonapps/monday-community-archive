@@ -1,0 +1,119 @@
+{
+  "id": 46391,
+  "title": "Complexity Budget Exhausted, try catch error",
+  "slug": "complexity-budget-exhausted-try-catch-error",
+  "categoryId": 58,
+  "tagIds": [
+    5,
+    6,
+    94,
+    208
+  ],
+  "createdAt": "2022-11-28T08:27:05.812Z",
+  "lastPostedAt": "2022-12-14T05:30:26.001Z",
+  "postsCount": 12,
+  "excerpt": "Hi there, \nGreetings! \nHope you are doing well. \nWe have some questions related to monday.com API’s response errors that we are receiving. \nWe are receiving errors in monday.com response while doing the import/update ite&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 3424,
+  "posts": [
+    {
+      "id": 105376,
+      "postNumber": 1,
+      "createdAt": "2022-11-28T08:27:05.902Z",
+      "author": "Aniket_Katre3 (Aniket)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>Greetings!<br />\nHope you are doing well.</p>\n<p>We have some questions related to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API’s response errors that we are receiving.</p>\n<p>We are receiving errors in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> response while doing the import/update items process using GraphQL API’s. We are getting the following message.</p>\n<p>“Complexity budget exhausted, query cost 30001 budget remaining 19834 out of 5000000 reset in 27 seconds”</p>\n<p>We are using <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> custom application and GraphQL API.<br />\nWe are trying to import ADD/UPDATE/DEL 10k to 20k items using CSV files at a time in Clients Code.<br />\nThis is the first time we are receiving errors like “Complexity budget exhausted, query cost 30001 budget remaining 19834 out of 5000000 reset in 28 seconds”. So, do you have any suggestions OR why we received this type of error?</p>\n<p>Is there is any way to catch this Complexity Budget Exhausted error in code inside try catch block when this error comes, we can stop this process for 30-60 sec then, after 60 sec again start process?</p>\n<p>Is it possible??? OR how we can catch this error?</p>\n<p>Best,<br />\nAniket</p>"
+    },
+    {
+      "id": 105377,
+      "postNumber": 2,
+      "createdAt": "2022-11-28T08:57:35.060Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/aniket_katre3\">@Aniket_Katre3</a></p>\n<p>This API “error” is thrown because you hit the 5M complexity limit with your API query. “Error” is between quotes as it is not really an error in the sense you can catch it. The API call went fine (hence there is no error to catch) but the response from the API contains the error. Therefore you can’t “catch” it inside a try/catch. You need to inspect the data returned from the API (as is the case with all kind of other API errors) and act upon in in your code.</p>\n<p>If this occurs during a read (query) the only solution is to use pagination. If this occurs during a write (mutation) you need to time out in your app. Be careful that if you are using shortLivedTokens the token will probably be expired after your timeout. The best way to solve this is to implement a slow dripping queue. As you know what the app is doing you can calculate the “speed” the queue needs to drip.</p>\n<p>It the app updates just one cell per posts you can use this calculation. A single cell update bares a cost of 30.001 (I see that also from your post). So with 5M credits every minute, you can do 5M/30.001 = 166,6 single cell updates per minute. That implies the the queue should drip one post every 360 ms to prevent hitting this complexity limit.</p>"
+    },
+    {
+      "id": 105378,
+      "postNumber": 3,
+      "createdAt": "2022-11-28T09:31:53.433Z",
+      "author": "Aniket_Katre3 (Aniket)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Thanks for quick response,</p>\n<p>As you told, we can’t catch this Complexity budget error, But still I would like to know can we go with below approach,</p>\n<pre><code class=\"lang-auto\">const delay = (ms) =&gt; new Promise(resolve =&gt; setTimeout(resolve, ms))\n// below logMessage is variable inside we got error message\n      logMessage = err.toString() + logMessage;\n      if(logMessage.includes(\"Complexity budget exhausted, query cost\")){\n        logMessage=\"Complexity Error comes from monday.com API wait for 60 sec\";\n        await delay(60000);\n      }\n</code></pre>\n<p>I don’t know this will work or not but still I need your suggestion here if we can catch or make this condition to pause the import or Add item process.</p>\n<p>With your response I have some question,</p>\n<blockquote>\n<p>with 5M credits every minute, you can do 5M/30.001 = 166,6 single cell updates per minute</p>\n</blockquote>\n<p>I didn’t understand this can you elaborate ?</p>\n<p>Best<br />\nAniket <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 105380,
+      "postNumber": 4,
+      "createdAt": "2022-11-28T09:57:33.662Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/aniket_katre3\">@Aniket_Katre3</a></p>\n<p>That piece of code might work (or not <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />). This will log a message and delay “somewhere”. Where do you plan to use this delay? If you plan to put this after the call to</p>\n<pre><code class=\"lang-auto\">mondayClient.api(query, { variables });\n</code></pre>\n<p>is made you only wait sending the response to the calling function. I don’t see where you are retrying. You need to retry and make sure to call the mondayClient.api after the timeout. If your calling function is using shortLivedTokens you probably end up with an authorization error as the shortLivedToken has a 60 second expiration. Therefore a queueing mechanism is the best solution.</p>\n<p>To elaborate on the calculation. You get 5M credits (for both read and write) every 60 seconds. That’s why you see the message from your first post. You consumed all those 5M credits in 33 seconds, hence the message that it will reset in 27 seconds. The message also shows a query costs of 30001 (which is the cost for a single mutation). Because you get 5M credits every 60 seconds, you can do a maximum of 5M/30.001 = 166 mutations per minute before hitting the complexity limit.</p>\n<p>See also: <a href=\"https://developer.monday.com/api-reference/docs/rate-limits\" class=\"inline-onebox\">Rate Limits</a></p>"
+    },
+    {
+      "id": 105995,
+      "postNumber": 6,
+      "createdAt": "2022-12-02T09:12:47.478Z",
+      "author": "Aniket_Katre3 (Aniket)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Greetings!<br />\nHope you are doing well.</p>\n<p>I need you help in this below<br />\nI would like to know the below error status_code<br />\n\" FetchError: request to <a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a> failed, reason: connect ETIMEDOUT <a href=\"http://104.16.11.42:443/\" rel=\"noopener nofollow ugc\">104.16.11.42:443</a>\"</p>\n<p>I unable to get above error Status_code, can you please check from your end or how we can find this error status_code using API playground ??</p>\n<p>For ex. I have done some error and find status_code</p>\n<ol>\n<li>Complexity error code  <strong>status_code: 429</strong>\n</li>\n</ol>\n<pre><code class=\"lang-auto\">COMPLEXITY ERROR\nmonday services log ******************************************= {\n  error_code: 'ComplexityException',\n  status_code: 429,\n  error_message: 'Complexity budget exhausted, query cost 30001 budget remaining 1772 out of 1000000 reset in 15 seconds',\n  error_data: {},\n  errors: [\n    'Complexity budget exhausted, query cost 30001 budget remaining 1772 out of 1000000 reset in 15 seconds'\n  ],\n  account_id: 8473802\n}\n\n</code></pre>\n<p>AND 2nd: for incorrect group ID:   <strong>status_code=404</strong></p>\n<pre><code class=\"lang-auto\">monday services log ******************************************= {\n  error_code: 'ResourceNotFoundException',\n  status_code: 404,\n  error_message: 'Group not found',\n  error_data: {\n    resource_type: 'group',\n    group_id: 'new_gr',\n    board_id: 3566052889,\n    error_reason: 'store.monday.automation.error.missing_group'\n  }\n}\n\n</code></pre>\n<p>I need your help in below error status_code, I unable to find it</p>\n<pre><code class=\"lang-auto\">FetchError: request to https://api.monday.com/v2 failed, reason: connect ETIMEDOUT 104.16.11.42:443\n</code></pre>\n<p>Hope you understand what I need here And also help me how do I find with API playground.</p>\n<p>Cheers!<br />\nAniket</p>"
+    },
+    {
+      "id": 105996,
+      "postNumber": 7,
+      "createdAt": "2022-12-02T09:17:58.359Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/aniket_katre3\">@Aniket_Katre3</a></p>\n<p>Not entirely sure I understand you correctly. These errors will not trigger the catch of your try… catch as they are not really errors form a communications point of view. The handshake went ok so now it is up to you to analyze the result you got form the API.</p>"
+    },
+    {
+      "id": 105997,
+      "postNumber": 8,
+      "createdAt": "2022-12-02T09:25:30.503Z",
+      "author": "Aniket_Katre3 (Aniket)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>thanks for quick reply,</p>\n<p>I’m also trying from my end but, the things is in my code it is not going on try-catch block that’s why I unable to get  <strong>Status_code</strong> of this below error.</p>\n<pre><code class=\"lang-auto\">FetchError: request to https://api.monday.com/v2 failed, reason: connect ETIMEDOUT 104.16.11.42:443\n</code></pre>\n<p>I too finding the way but, it’s not going on TRY-CATCH so, that we can get the <strong>status_code</strong>.</p>\n<p>If possible monday Developer team can tell us what is the <strong>status_code</strong> of this above error.  Cause this status_code is unique for each error<br />\nThis will be great help<br />\nTHANKS!</p>"
+    },
+    {
+      "id": 105998,
+      "postNumber": 9,
+      "createdAt": "2022-12-02T09:56:30.952Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/aniket_katre3\">@Aniket_Katre3</a></p>\n<p>I see, but this error is from fetch, not from the monday API. Fetch is not able to connect to the monday API server, so you will see nothing in monday response as the API never got the request.</p>"
+    },
+    {
+      "id": 107176,
+      "postNumber": 10,
+      "createdAt": "2022-12-13T05:15:49.851Z",
+      "author": "Aniket_Katre3 (Aniket)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>I got it for Fetch error,<br />\nI have one more query, i would like to know below error status_code</p>\n<pre><code class=\"lang-auto\">\"Error: Received timeout from monday.com''s GraphQL API\"\n</code></pre>\n<p>For ex. I have done some error and find status_code</p>\n<ol>\n<li>Complexity error code <strong>status_code: 429</strong>\n</li>\n</ol>\n<pre><code class=\"lang-auto\">COMPLEXITY ERROR\nmonday services log ******************************************= {\n  error_code: 'ComplexityException',\n  status_code: 429,\n  error_message: 'Complexity budget exhausted, query cost 30001 budget remaining 1772 out of 1000000 reset in 15 seconds',\n  error_data: {},\n  errors: [\n    'Complexity budget exhausted, query cost 30001 budget remaining 1772 out of 1000000 reset in 15 seconds'\n  ],\n  account_id: 8473802\n}\n</code></pre>\n<p>I need your help in below GraphQL error status_code, I unable to find it</p>\n<pre><code class=\"lang-auto\">\"Error: Received timeout from monday.com''s GraphQL API\"\n</code></pre>\n<p>Appreciate your response</p>\n<p>Cheers  !<br />\nAniket</p>"
+    },
+    {
+      "id": 107186,
+      "postNumber": 11,
+      "createdAt": "2022-12-13T06:49:02.987Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C018J3C259C/p1670921323972869\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 107190,
+      "postNumber": 12,
+      "createdAt": "2022-12-13T06:52:31.769Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/aniket_katre3\">@Aniket_Katre3</a>!</p>\n<p>When you have a timeout error, you will get as a response an HTML formatted response. With 504 Gateway Time-out.</p>\n<p>Is that the information you were looking for?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 107203,
+      "postNumber": 13,
+      "createdAt": "2022-12-13T09:06:53.746Z",
+      "author": "Aniket_Katre3 (Aniket)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Thanks for quick response,<br />\nI would like to know below error comes from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API ? if yes, for each error <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API have unique error <strong>status_code</strong>, as explained for complexity error <strong>status_code</strong> is <em>429.</em></p>\n<p>In the same way i would like to know GraphQL error <strong>status_code.</strong></p>\n<pre><code class=\"lang-auto\">\"Error: Received timeout from monday.com''s GraphQL API\"\n</code></pre>\n<blockquote>\n<p><em>&gt; When you have a timeout error, you will get as a response an HTML formatted response. With 504 Gateway Time-out.</em><br />\nYes, this I got it, but for this above error too <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API have this error <strong>status_code</strong>, that I need.</p>\n</blockquote>\n<p><em>Actually with this <strong>status_code</strong> I’m trying to add condition like when this error comes it should wait and again go for retry iterate function.</em></p>\n<p>Cheers,<br />\nAniket <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=12\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 107208,
+      "postNumber": 14,
+      "createdAt": "2022-12-13T09:57:26.523Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Asking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1670921323972869\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 107315,
+      "postNumber": 15,
+      "createdAt": "2022-12-14T05:30:26.001Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/aniket_katre3\">@Aniket_Katre3</a> and thank you for the explanation,</p>\n<p>Timeouts have a separate mechanism, not related to graphQL.</p>\n<p>Any request to the system that takes more than 1 minute gets terminated.</p>\n<p>You will not get a <strong>status_code</strong> here.</p>\n<p>To avoid getting timeout errors, you can split the query into multiple requests. You might want to take a look into our <a href=\"https://developer.monday.com/api-reference/docs/rate-limits#timeout-policy\">documentation</a> about it.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

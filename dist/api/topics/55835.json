@@ -1,0 +1,114 @@
+{
+  "id": 55835,
+  "title": "Return value for `monday.api()` function in SDK",
+  "slug": "return-value-for-monday-api-function-in-sdk",
+  "categoryId": 58,
+  "tagIds": [],
+  "createdAt": "2023-03-28T04:45:54.155Z",
+  "lastPostedAt": "2023-04-16T02:07:43.362Z",
+  "postsCount": 12,
+  "excerpt": "Hi @rflynn, \ngreat to hear that the sdk is now type safe! \nHowever, when I try to execute a query to fetch boards, I’m getting a TS error while trying to grab the fetched data: \n \nIs there anything I’m missing? \nThank yo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 708,
+  "posts": [
+    {
+      "id": 121427,
+      "postNumber": 1,
+      "createdAt": "2023-03-27T06:54:15.972Z",
+      "author": "j-ittermann-decadis (Jona Ittermann [Decadis AG])",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a>,<br />\ngreat to hear that the sdk is now type safe!<br />\nHowever, when I try to execute a query to fetch boards, I’m getting a TS error while trying to grab the fetched data:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/e/b/eb77ef4bdc1288c02e0248605debf7fc26376a18.png\" alt=\"grafik\" width=\"579\" height=\"136\" /></p>\n<p>Is there anything I’m missing?<br />\nThank you in advance!</p>\n<p>Cheers<br />\nJona</p>"
+    },
+    {
+      "id": 121429,
+      "postNumber": 2,
+      "createdAt": "2023-03-27T07:21:25.804Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>From what I understand, the Typescript support is currently limited to the SDK methods and not the results returned by monday. Those you will have to handle yourself</p>"
+    },
+    {
+      "id": 121453,
+      "postNumber": 3,
+      "createdAt": "2023-03-27T11:42:17.751Z",
+      "author": "j-ittermann-decadis (Jona Ittermann [Decadis AG])",
+      "cookedHtml": "<p>In the <code>client-api.interface.ts</code> (<a href=\"https://github.com/mondaycom/monday-sdk-js/blob/master/types/client-api.interface.ts#L35\" rel=\"noopener nofollow ugc\">see Github</a>) the type is written like this:</p>\n<pre><code class=\"lang-ts\">// ...\napi(query: string, options?: APIOptions): Promise&lt;{ data: object }&gt;;\n// ...\n</code></pre>\n<p>I think that <code>Promise&lt;{data: object}&gt;</code> needs to be changed in order to have correct types or at least to have no TS errors (maybe to something like <code>Promise&lt;{data: Record&lt;string, any&gt;}&gt;</code>). Else one would have to disable type checking for all lines where one is trying to access <code>res.data</code> from an api call.</p>"
+    },
+    {
+      "id": 121454,
+      "postNumber": 4,
+      "createdAt": "2023-03-27T11:47:52.153Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Why do you have to display type checking for <code>res.data</code>? Giving that the data returned by <code>res.data</code> is dynamic, you can create your own custom interface or class and you it like this <code>res: CustomInterface</code></p>"
+    },
+    {
+      "id": 121603,
+      "postNumber": 5,
+      "createdAt": "2023-03-28T04:45:54.155Z",
+      "author": "j-ittermann-decadis (Jona Ittermann [Decadis AG])",
+      "cookedHtml": "<p>Maybe my explanation wasn’t that good. So let me try to summarize:</p>\n<ul>\n<li>For me it is fine to don’t have type checking on the res object, since - as you stated - <code>res.data</code> is dynamic and type checking would not really have any benifit because it would be only type casting and you never could be sure that the types are really met.</li>\n<li>My problem with the current types is, that I cannot access any values from <code>res.data</code> because it is of type <code>object</code> and this type does not have any properties that I could access (see error in my screenshot above).</li>\n<li>So for every access on the <code>res.data</code> object throughout all api calls in my code, we would have to do type casting so that TS wouldn’t complain. However, this seems to be quite an overhead for us since this would be a fix on our side due to misleading types in the monday sdk. E.g.<pre><code class=\"lang-ts\">api(query: string, options?: APIOptions): Promise&lt;{ data: any }&gt;;\n// or\napi(query: string, options?: APIOptions): Promise&lt;{ data: Record&lt;string, any&gt;}&gt;;\n</code></pre>\nwould allow any access on <code>res.data</code> so that we don’t have to type cast it on our end.</li>\n<li>Doing <code>res: CustomInterface</code> does not work because you cannot just overwrite existing typings</li>\n</ul>\n<p>So, all in all, my issue is not that there is no concrete type checking but that there is “wrong” type checking with <code>data: object</code>.</p>"
+    },
+    {
+      "id": 121684,
+      "postNumber": 6,
+      "createdAt": "2023-03-28T13:34:40.167Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/j-ittermann-decadis\">@j-ittermann-decadis</a>,</p>\n<p>Thanks for your clarification! I can see how this would cost some additional effort.</p>\n<p>I’ve submitted these suggestions to our development team so they consider implementing this fix.</p>"
+    },
+    {
+      "id": 121685,
+      "postNumber": 7,
+      "createdAt": "2023-03-28T13:35:02.794Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Submitted to the Apps Framework feedback board:</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5192a87d2f2716904631da406c51960034c2519b.png\" class=\"site-icon\" width=\"256\" height=\"256\" />\n\n      <a href=\"https://monday.monday.com/users/sign_in\" target=\"_blank\" rel=\"noopener\">monday.monday.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <img src=\"https://global.discourse-cdn.com/monday/original/2X/1/12a1b1fffd8023ba499e8078da3194c62d890b11.png\" class=\"thumbnail onebox-avatar\" width=\"200\" height=\"200\" />\n\n<h3><a href=\"https://monday.monday.com/users/sign_in\" target=\"_blank\" rel=\"noopener\">Welcome to monday.com | a new way of working</a></h3>\n\n  <p>monday.com Work OS is an open platform where anyone can create the tools they need to run every aspect of their work.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 122440,
+      "postNumber": 8,
+      "createdAt": "2023-04-03T03:49:26.768Z",
+      "author": "j-ittermann-decadis (Jona Ittermann [Decadis AG])",
+      "cookedHtml": "<p>Good morning <a class=\"mention\" href=\"/u/alessandra\">@alessandra</a>,<br />\nare there any updates, e.g. maybe a public github issue I could watch to get updates regarding the implementation progress of the fix? Or will you post updates here as soon as there are some?</p>"
+    },
+    {
+      "id": 122456,
+      "postNumber": 9,
+      "createdAt": "2023-04-03T04:47:47.125Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/j-ittermann-decadis\">@j-ittermann-decadis</a>,</p>\n<p>We do not have an update yet.</p>\n<p>Any changes like this one would be announced  in our <a href=\"https://developer.monday.com/apps/changelog\">changelog</a>. You can an eye open over there to check our updates!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 123533,
+      "postNumber": 10,
+      "createdAt": "2023-04-12T10:20:28.459Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/j-ittermann-decadis\">@j-ittermann-decadis</a> – I like the suggestion of using a record for this.</p>\n<p>But I want your 2c: if we changed the return type of <code>api</code> to Record, would it be a breaking change?</p>\n<p>Aka, will the following be a breaking change for people already using the types?</p>\n<p>Old version –</p>\n<pre><code class=\"lang-typescript\">api(query: string, options?: APIOptions): Promise&lt;{ data: object }&gt;;\n</code></pre>\n<p>New version –</p>\n<pre><code class=\"lang-typescript\">api(query: string, options?: APIOptions): Promise&lt;{ data: Record&lt;string, any&gt;}&gt;;\n</code></pre>\n<p>BTW, I moved this to a new topic to keep the original announcement clean!</p>"
+    },
+    {
+      "id": 123680,
+      "postNumber": 11,
+      "createdAt": "2023-04-13T04:03:30.981Z",
+      "author": "j-ittermann-decadis (Jona Ittermann [Decadis AG])",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>,<br />\nthank you for taking a look and creating the new topic!</p>\n<p>As far as I can estimate it, this should not be a breaking change because:</p>\n<ol>\n<li>\n<code>Record&lt;string, any&gt;</code> would still be an object. So when doing for example <code>typeof data</code> for both the old and new version, it would return <code>\"object\"</code>. So anybody out there who is doing type checking like so would not see any difference in their outcome.</li>\n<li>\n<code>object</code> is not a real TS type you could work upon as I stated in the beginning of the post, so I’m assuming that everybody who wants to have here some type safety or in general wants to work with <code>data</code>, is already casting it to some other type. If they didn’t want to have type safety, e.g. by casting to type <code>any</code>, it would not make any difference of which type <code>data</code> is anyways.</li>\n<li>If people are doing type casting (2), e.g. <code>data: SomeCustomType</code> or <code>data as SomeCustomType</code> that means that TS allows that casting from <code>object</code> to <code>SomeCustomType</code>\n</li>\n<li>If (3) holds - and it should do since the TS transpiler is checking it - and having (1) and (2), there should not be anything that would be a breaking change after this fix.</li>\n</ol>\n<p>Let me know, if you can follow my train of thought and if it does also make sense for you <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers!</p>\n<p>PS: FYI there is also some <a href=\"https://github.com/mondaycom/monday-sdk-js/pull/85\" rel=\"noopener nofollow ugc\">PR open</a> for changing the types in another place where using <code>Record</code> is being considered, too.</p>"
+    },
+    {
+      "id": 123754,
+      "postNumber": 12,
+      "createdAt": "2023-04-13T13:30:14.824Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>You’re the best, thanks for the explanation! Sounds like it won’t be a breaking change.</p>\n<p>Anyway, I’ll test it out a bit when making a PR, to double check.</p>"
+    },
+    {
+      "id": 123941,
+      "postNumber": 13,
+      "createdAt": "2023-04-16T02:07:43.362Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I vote that ideal solution is using generics with a default of whatever is decided. That way we can specify the type when we call the method <code>monday.api&lt;CustomResponseType&gt;()</code> and the response will be of a type like:</p>\n<pre><code class=\"lang-auto\">interface MondayResponse&lt;T = Record&lt;string, any&gt;&gt; {\n     data?: T\n     error_code?: string //ideally a union type of all the error_code values\n     // rest of the error related keys\n}\n</code></pre>\n<p>This way if we provide our own type for T, then data will be our custom type, but otherwise Record&lt;string, any&gt; if T is not specified.</p>\n<p>I think the response needs to be a type that includes more than data, we need to be checking if there are errors too still, correct? (unless the SDK is now throwing exceptions… I haven’t tested since I starting using my own custom client for NodeJS.)</p>"
+    },
+    {
+      "id": 125657,
+      "postNumber": 14,
+      "createdAt": "2023-04-26T18:09:49.413Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

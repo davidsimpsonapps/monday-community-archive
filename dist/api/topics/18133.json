@@ -1,0 +1,72 @@
+{
+  "id": 18133,
+  "title": "Possiblity to store 3rd party OAuth token securely",
+  "slug": "possiblity-to-store-3rd-party-oauth-token-securely",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2021-03-25T15:25:08.166Z",
+  "lastPostedAt": "2021-04-05T11:58:23.493Z",
+  "postsCount": 7,
+  "excerpt": "Hi all, \nI am about to create an integration that interacts with a Slack like server. The server provides oauth2 access. I had a look on the slack-app example and there the token from the server will be stored in a local&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1736,
+  "posts": [
+    {
+      "id": 45916,
+      "postNumber": 1,
+      "createdAt": "2021-03-25T15:25:08.248Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi all,<br />\nI am about to create an integration that interacts with a Slack like server. The server provides oauth2 access. I had a look on the slack-app example and there the token from the server will be stored in a local sqlite database along with the userId. I would like to do something similar to prevent the user to authorize at the server each time he uses the integration.<br />\nI saw in another topic, that the storage API should not be used for such data. So is there another way to do it?<br />\nI just found following</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/basdebruin/60/688_2.png\" class=\"avatar\" /><a href=\"https://community.monday.com/t/oauth-token-for-integrations/13662/8\">OAuth token for integrations</a></div>\n<blockquote>\n<pre><code class=\"lang-auto\">  //Get the token from the token table\n   const token = await mySqlAccess.readToken(req.session.accountId, req.session.userId, envVars.appCode);\n</code></pre>\n</blockquote>\n</aside>\n<p>and my question there is, what is that mySqlAccess? I seems, I search for something similar.<br />\nThanks a lot and cheers, Marcus</p>"
+    },
+    {
+      "id": 45918,
+      "postNumber": 2,
+      "createdAt": "2021-03-25T15:29:27.214Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Marcus,</p>\n<p>I understand you want to store a token for the user of the Slack like server? For monday you don’t need to store tokens anymore as monday will send an encrypted - 60 seconds valid - token in the payload of every call they make to your endpoints (except webhooks). The mySqlAccess above is Class in Node.JS that holds the function readToken. The function readToken does a simple query to a local (in this case MariaDB) database.</p>"
+    },
+    {
+      "id": 45924,
+      "postNumber": 3,
+      "createdAt": "2021-03-25T15:53:46.603Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi Bas,<br />\nthanks for the fast answer. I meant the token from the slack like server. And you answered part of my question, you store the token just in a local DB (as the slack-app example).<br />\nI understand that a monday integration will be installed on the monday server, right? So would it be secure enough to have there a local DB that stores token? I mean, who could access to this DB except the app itself? If nobody else can read it, I think it is ok.</p>"
+    },
+    {
+      "id": 45926,
+      "postNumber": 4,
+      "createdAt": "2021-03-25T16:17:29.068Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Marcus,</p>\n<p>If this app contains an integration (you select that during the initial build of the app) the backend of the app runs on your own server (not within monday). Monday post request to your app’s endpoints. How your secure your local DB is up to you. In my setup the DB can only be accessed from the same server the app is running on. If your app is a (dash)board view the code runs indeed on monday servers.</p>"
+    },
+    {
+      "id": 46054,
+      "postNumber": 5,
+      "createdAt": "2021-03-26T14:13:34.196Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Thanks Bas, got it.<br />\nNow I have to think about developing an integration in general as I am not sure if I want to provide an own server for it. Let’s see.</p>"
+    },
+    {
+      "id": 46191,
+      "postNumber": 6,
+      "createdAt": "2021-03-29T11:57:31.088Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a> ,</p>\n<p>I’m glad <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>  was able to shed more light on this! He’s very awesome at that <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I can confirm on my end that you’d need to store the tokens from the other app you are integrating with on your end in your database, and that the integration will indeed run on your server at this point.</p>\n<p>I hope you’ll find a solution that makes sense for you to implement, and for users to work with!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 46192,
+      "postNumber": 7,
+      "createdAt": "2021-03-29T11:57:46.011Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 46809,
+      "postNumber": 8,
+      "createdAt": "2021-04-05T11:58:23.493Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

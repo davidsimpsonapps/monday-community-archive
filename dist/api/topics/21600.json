@@ -1,0 +1,62 @@
+{
+  "id": 21600,
+  "title": "Link two boards using integration",
+  "slug": "link-two-boards-using-integration",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    351
+  ],
+  "createdAt": "2021-06-23T12:50:56.139Z",
+  "lastPostedAt": "2021-07-01T02:24:25.328Z",
+  "postsCount": 6,
+  "excerpt": "Hi All, \nI have created custom trigger to trigger my backend code when new update is created in source board. \nSo, when user install the integration on his board I will receive the installation event in my subscriber end&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1206,
+  "posts": [
+    {
+      "id": 56095,
+      "postNumber": 1,
+      "createdAt": "2021-06-23T12:50:56.246Z",
+      "author": "f2yez (Fayez Bdair)",
+      "cookedHtml": "<p>Hi All,</p>\n<p>I have created custom trigger to trigger my backend code when new update is created in source board.</p>\n<p>So, when user install the integration on his board I will receive the installation event in my subscriber endpoint which is defined in custom trigger endpoints so i will create a new record in my backend DB and store the recipe selected options, webhook id, integration id, subscription id …etc and create webhook using API endpoint on source board.</p>\n<p>So, when user create new update in source board, my code will be triggered and read the update to handle the event payload.</p>\n<p>When user remove the integration from his source board I will remove the webhook from board using remove webhook API.</p>\n<p>Everything working perfectly, but my issue when user install the integration more once same source board, Monday will add another “update was created” webhook on the same board, so I will get the event two times for same created update.</p>\n<p>If I checked in my backend DB about this board is stored or not to doses not create webhook on it two times, I will not able to remove the created row which belongs to the removed integration because the unsubscription event provides me with webhookId only.</p>\n<p>How i can prevent the webhook duplicate on same board when user install the integration more once on same board.</p>\n<p>Or if i don’t needs to create webhook in each time user install the integration on his board how i can remove the recipe row from my backend DB when user remove it from monday.</p>\n<p>I hope it was clear</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 56104,
+      "postNumber": 2,
+      "createdAt": "2021-06-23T15:05:31.073Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/f2yez\">@f2yez</a><br />\nWhat you describe here is very close to how we build most of our integration apps. In the custom trigger subscribe endpoint we create webhooks (in whatever board we need) and store a config record in a local database. I see you store the webhook id (returned from the create_webhook API call) in your database. As this id is unique you can safely delete the record by that key in the unsubscribe event. In this way it will work perfectly fine for a single instance of the app per board.</p>\n<p>When you want to be able to have multiple instances per board you need to do some additional checking. We do thati n the subscribe event (check if we have a record by (a set of) keys - make sure they are unique. In your use case I think the source boardid will be unique, or maybe you have to combine it with a columnid - depending on your recipes. If the record is found we simply do not create the webhook again. Same kind of logic is needed in the unsubscribe endpoint. Check is this recipe is “the last one on board” and if so, delete the webhooks.</p>\n<p>Hope it make sense.</p>"
+    },
+    {
+      "id": 56111,
+      "postNumber": 3,
+      "createdAt": "2021-06-23T16:20:38.015Z",
+      "author": "f2yez (Fayez Bdair)",
+      "cookedHtml": "<p>Ooh, I’m already made what you said, but I had miss understand in subscriptionId and webhookId.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 56114,
+      "postNumber": 4,
+      "createdAt": "2021-06-23T16:48:00.915Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Monday is using some confusing Id names at times <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> As you can see from below snippet I query my database on subscriptionId with the webhookId as parameter.</p>\n<p>PS: I store the webhookIds (if I use multiple) as a string seperated by a pipe, hence the split method.</p>\n<blockquote>\n<p>//Delete the webhook(s) used to trigger the webhookAction in case this is the last recipe.</p>\n<p>const lastSubscription = await rollupMultipleBoards.lastSubscriptionOnBoard(accountId, webhookId);</p>\n<p>const masterConfig = await rollupMultipleBoards.getMasterConfigBySubscription(webhookId);</p>\n<p>if (lastSubscription &amp;&amp; masterConfig) {</p>\n<pre><code>const triggerArray = masterConfig.triggerhooks.split(\"|\");\n\ntriggerArray.forEach(function (triggerHook, index) {\n\n  mondayService.deleteWebhook(shortLivedToken, parseInt(triggerHook));\n\n});\n</code></pre>\n<p>}</p>\n</blockquote>"
+    },
+    {
+      "id": 56138,
+      "postNumber": 5,
+      "createdAt": "2021-06-24T02:24:10.328Z",
+      "author": "f2yez (Fayez Bdair)",
+      "cookedHtml": "<p>I didn’t understand the different between subscriptionId and webhookId because the subscribe function didn’t return webhookId and unsubscribe function return webhookId in response, some conflict was happened to me.</p>\n<p>everythin now is working perfect, thanks a lot</p>"
+    },
+    {
+      "id": 56689,
+      "postNumber": 6,
+      "createdAt": "2021-07-01T02:24:25.328Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

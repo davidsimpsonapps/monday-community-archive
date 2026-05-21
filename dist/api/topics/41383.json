@@ -1,0 +1,67 @@
+{
+  "id": 41383,
+  "title": "Time remaining formula returning incorrect values where more than allocated time has been tracked",
+  "slug": "time-remaining-formula-returning-incorrect-values-where-more-than-allocated-time-has-been-tracked",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-08-22T22:52:47.617Z",
+  "lastPostedAt": "2022-08-24T22:22:30.285Z",
+  "postsCount": 7,
+  "excerpt": "Hi Monday.com users \nI’ve set up time tracking on our boards and in order to return the Time Left from the Time Allocated I have the following formula: \nIF({Subitems Time Tracking}&gt;0,ROUND(({Time allocated}-{Subitems Tim&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1605,
+  "posts": [
+    {
+      "id": 95682,
+      "postNumber": 1,
+      "createdAt": "2022-08-22T22:52:47.687Z",
+      "author": "PenelopeTwist (Penelope)",
+      "cookedHtml": "<p>Hi <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> users</p>\n<p>I’ve set up time tracking on our boards and in order to return the Time Left from the Time Allocated I have the following formula:</p>\n<p>IF({Subitems Time Tracking}&gt;0,ROUND(({Time allocated}-{Subitems Time Tracking}/1440<em>24/60),1),ROUND(({Time allocated}-{Time Tracking}/1440</em>24/60),1))</p>\n<p>This works fine but returns decimal time. I’ve added another formula column to convert the decimal time to hh:mm: RIGHT(“0” &amp; INT({Time remaining}), 2) &amp;\" h “&amp; RIGHT(“0” &amp; ROUNDUP(MOD({Time remaining},1) * 60, 0), 2) &amp; \" m”.</p>\n<p>This is also working fine except when more than the allocated time has been used. For example 1 hour allocated, 1h 5 min used returns -1h 06m.</p>\n<p>Any help on rectifying this anomaly would be greatly appreciated.</p>\n<p>Thanks<br />\nPenelope</p>"
+    },
+    {
+      "id": 95751,
+      "postNumber": 2,
+      "createdAt": "2022-08-23T10:49:05.135Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/penelopetwist\">@PenelopeTwist</a></p>\n<p>Hello and welcome to the community!</p>\n<p>First, it doesn’t look like you formula text in your post was formatted correctly.</p>\n<p>If you use the “Preformatted Text” feature above:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/51a43e523b0b8e3ef1b3110782ba1a4190ca0b6a.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/51a43e523b0b8e3ef1b3110782ba1a4190ca0b6a_2_690x271.png\" alt=\"image\" width=\"690\" height=\"271\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1506×592 37.9 KB</span>\n</div></a></div><p></p>\n<pre><code class=\"lang-auto\">You can put your formula here and you shouldn't have that issue.\n</code></pre>\n<p>Second, the basic issue is that ROUND() always rounds numbers AWAY FROM INFINITY. So, “1.1” becomes “1”, “-1.1” becomes “-2”. One way to address this is to do something like this… Instead of:<br />\n<code>\"ROUND(*formula text*)\"</code><br />\nUse:<br />\n<code>\"ROUND(ABS(*formula text*)) * IF(*formula text* &gt;0, 1, -1)\"</code></p>\n<p>If you need more help, please repost your main formula using the preformatted text.</p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\n<strong><a href=\"https://themondayman.com/make/\">What is Make &amp; How can it help you with monday?</a></strong><br />\n<a href=\"https://themondayman.com/custom/\">We Create Custom Solutions - Your Make or Ours</a><br />\n<a href=\"https://themondayman.com/tutorial/\">Schedule a 1-on-1 Tutorial Session (for monday, Make or Google Sheets)</a></p>"
+    },
+    {
+      "id": 95801,
+      "postNumber": 3,
+      "createdAt": "2022-08-23T21:30:23.680Z",
+      "author": "PenelopeTwist (Penelope)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a></p>\n<p>I’ve tried to work that in but I’m not having much luck. It’s the second formula that seems to be returning the error. The first formula is returning the correct value in decimal time. When I use the following formula to convert it to hh mm, it’s returning an incorrect value for negative amounts.</p>\n<p><code>RIGHT(\"0\" &amp; INT({Time remaining}), 2) &amp;\" h \"&amp; RIGHT(\"0\" &amp; ROUNDUP(MOD({Time remaining},2) * 60, 0), 2) &amp; \" m\"</code></p>"
+    },
+    {
+      "id": 95825,
+      "postNumber": 5,
+      "createdAt": "2022-08-24T05:04:09.114Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/penelopetwist\">@PenelopeTwist</a></p>\n<p>Try this:</p>\n<pre><code class=\"lang-auto\">IF({Time Remaining} &lt; 0, \"-\", \"\") &amp;\nTEXT(INT(ROUND(ABS({Time Remaining}) * 60, 0) / 60), \"00\") &amp; \" h \" &amp;\nTEXT(MOD(ROUND(ABS({Time Remaining}) * 60, 0), 60),\"00\") &amp; \" m\"\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\n<strong><a href=\"https://themondayman.com/make/\">What is Make &amp; How can it help you with monday?</a></strong><br />\n<a href=\"https://themondayman.com/custom/\">We Create Custom Solutions - Your Make or Ours</a><br />\n<a href=\"https://themondayman.com/tutorial/\">Schedule a 1-on-1 Tutorial Session (for monday, Make or Google Sheets)</a></p>"
+    },
+    {
+      "id": 95920,
+      "postNumber": 6,
+      "createdAt": "2022-08-24T19:15:55.194Z",
+      "author": "PenelopeTwist (Penelope)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> you are already at legend status in my books <img src=\"https://emoji.discourse-cdn.com/apple/cowboy_hat_face.png?v=12\" title=\":cowboy_hat_face:\" class=\"emoji\" alt=\":cowboy_hat_face:\" width=\"20\" height=\"20\" /></p>\n<p>That worked a treat. Thanks so much for your help.</p>"
+    },
+    {
+      "id": 95928,
+      "postNumber": 7,
+      "createdAt": "2022-08-24T22:22:30.285Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/penelopetwist\">@PenelopeTwist</a></p>\n<p>LOL… thank you!</p>\n<p>You are welcome.</p>"
+    },
+    {
+      "id": 96590,
+      "postNumber": 8,
+      "createdAt": "2022-08-31T22:23:24.353Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

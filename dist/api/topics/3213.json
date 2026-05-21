@@ -1,0 +1,76 @@
+{
+  "id": 3213,
+  "title": "Tips on how to parse the JSON returned by an API query",
+  "slug": "tips-on-how-to-parse-the-json-returned-by-an-api-query",
+  "categoryId": 70,
+  "tagIds": [
+    5,
+    94,
+    105
+  ],
+  "createdAt": "2019-11-25T18:04:16.950Z",
+  "lastPostedAt": "2021-02-11T20:23:30.468Z",
+  "postsCount": 8,
+  "excerpt": "I just had a great conversation with one of our clients and realized that it would be helpful to have a guide on the structure of the data returned by our API. While each query will return data in a slightly different wa&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 9416,
+  "posts": [
+    {
+      "id": 8687,
+      "postNumber": 1,
+      "createdAt": "2019-11-25T18:04:17.090Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>I just had a great conversation with one of our clients and realized that it would be helpful to have a guide on the structure of the data returned by our API. While each query will return data in a slightly different way, here’s a general guide for understanding response data.</p>\n<h2><a name=\"p-8687-fact-its-easier-when-you-use-a-library-grin-1\" class=\"anchor\" href=\"#p-8687-fact-its-easier-when-you-use-a-library-grin-1\"></a>Fact: It’s easier when you use a library <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=15\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></h2>\n<p>Before we dive in, I’d suggest everyone use a JSON parsing library to make the data returned more manageable. There are tons of libraries out there including <a href=\"https://www.newtonsoft.com/json\">JSON.NET</a>, Python and JavaScript’s native <code>json</code> libraries, and Java’s <a href=\"https://www.oracle.com/technical-resources/articles/java/json.html\"><code>Json</code> API.</a> Check out this page for a library in the language of your choice: <a href=\"http://www.json.org\">www.json.org</a></p>\n<h2><a name=\"p-8687-expressions-to-access-objects-2\" class=\"anchor\" href=\"#p-8687-expressions-to-access-objects-2\"></a>Expressions to access objects</h2>\n<p>Here are some expressions you can use to access objects and fields returned by your query.</p>\n<p><code>data</code> : Parent object that holds all the data in the query. This is returned for all successful queries.<br />\n<code>data.items</code> : List that contains objects that each represent an item.<br />\n<code>data.items[0]</code> : Access the first item in the list of items (Object)<br />\n<code>data.items[0].name</code> : The name of the first item (String)<br />\n<code>data.items[0].id</code> : The ID of the first item.<br />\n<code>data.items[0].group</code> : Object that represents the group that this item is in.<br />\n<code>data.items[0].group.name</code> : The name of the group of the first item (String).</p>\n<h2><a name=\"p-8687-example-data-3\" class=\"anchor\" href=\"#p-8687-example-data-3\"></a>Example data</h2>\n<p>Here is some data that corresponds to the expressions above:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n        \"items\": [\n          {\n            \"name\": \"Here's an item\",\n            \"id\": \"161366694\",\n            \"group\": {\n              \"id\": \"new_group\",\n              \"title\": \"This is a group\"\n            }\n          },\n          {\n            \"name\": \"And this one is also an item\",\n            \"id\": \"161366701\",\n            \"group\": {\n              \"id\": \"new_group\",\n              \"title\": \"This is a group\"\n            }\n          },\n          {\n            \"name\": \"Guess what this is? A item\",\n            \"id\": \"161366747\",\n            \"group\": {\n              \"id\": \"new_group\",\n              \"title\": \"This is a group\"\n            }\n          },\n          {\n            \"name\": \"A pulse can be a task\",\n            \"id\": \"161366844\",\n            \"group\": {\n              \"id\": \"topics\",\n              \"title\": \"Here's another group\"\n            }\n          },\n          {\n            \"name\": \"Or a project\",\n            \"id\": \"160540651\",\n            \"group\": {\n              \"id\": \"topics\",\n              \"title\": \"Here's another group\"\n            }\n          }\n        ]\n      },\n  \"account_id\": 1825528\n}\n</code></pre>\n<h2><a name=\"p-8687-example-query-4\" class=\"anchor\" href=\"#p-8687-example-query-4\"></a>Example query</h2>\n<p>Here is a query that will return the data above.</p>\n<pre><code class=\"lang-auto\">query {\n  items {\n    name\n    id\n    group {\n      id\n     title\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 8711,
+      "postNumber": 2,
+      "createdAt": "2019-11-26T12:09:03.372Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 8950,
+      "postNumber": 3,
+      "createdAt": "2019-12-03T12:43:51.409Z",
+      "author": "PabloVerano (Pablo Verano)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dipro\">@dipro</a>,<br />\nThis is an interesting thread as it relates to a specific need I have.<br />\nHow should I modify this query to specify the board from which I want the items to come from?<br />\nI am currently using something like this<br />\n<code>query {boards (ids: 246352052, limit:100) {  items {     id     name     column_values {         text         title         value } created_at     } } }</code></p>\n<p>The issue I have, is that it places all the items under the data.boards object, and this creates issues with BigQuery when importing the result to a table.<br />\nDo you see any alternative in which I could get something like data.items[0] directly? (so, items positioned one level up the hierarchy)</p>"
+    },
+    {
+      "id": 8982,
+      "postNumber": 4,
+      "createdAt": "2019-12-03T23:05:43.613Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/pabloverano\">@PabloVerano</a> – at the moment no, you’ll need to access them one level down via the data.boards.items object.</p>\n<p>Does BigQuery allow you to reshape the data before it ingests it? I’m thinking of something like the excellent (and magical) <a href=\"https://stedolan.github.io/jq/\">jq utility.</a></p>"
+    },
+    {
+      "id": 13538,
+      "postNumber": 5,
+      "createdAt": "2020-03-08T11:38:24.185Z",
+      "author": "tburks2392 (Timothy Burks)",
+      "cookedHtml": "<p>I’m a little new to API and <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> as well. I am building an Administrative Dashboard for my employees and we use <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>  heavily for our Project &amp; Estimation Planning and Tracking. I would like to create a table view of the Projects I have listed in a board on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> to a back-end dashboard.</p>\n<p>I currently use the following coding languages and infrastructures:<br />\nPHP 7.3<br />\nCodeigniter 3.10<br />\nCI Bonfire 1.8</p>\n<p>At this time, I am simply trying to figure out how to display all information for each item in a row (using PHP) to create a table view for my technicians in their Admin Dashboard of my website.</p>\n<p>Can someone assist me with the proper query? I’ve tested multiple ways in the Try It Yourself Section to no avail.</p>"
+    },
+    {
+      "id": 13909,
+      "postNumber": 6,
+      "createdAt": "2020-03-11T19:53:02.215Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/tburks2392\">@tburks2392</a>!</p>\n<p>The following query will give you all the column values for every item on a board:</p>\n<pre><code class=\"lang-auto\">query {\n    boards (ids:123456) {\n        items {\n            column_values {\n                id\n                text\n            }\n        }\n    }\n}\n</code></pre>\n<p>After you get this data, you will need to parse it and construct your table. What do you think?</p>"
+    },
+    {
+      "id": 20169,
+      "postNumber": 7,
+      "createdAt": "2020-06-15T14:49:17.272Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 40523,
+      "postNumber": 8,
+      "createdAt": "2021-02-11T20:23:30.468Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

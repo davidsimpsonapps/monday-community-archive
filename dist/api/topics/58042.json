@@ -1,0 +1,49 @@
+{
+  "id": 58042,
+  "title": "Change_column_value not working for a \"link\" column in Python",
+  "slug": "change-column-value-not-working-for-a-link-column-in-python",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    139,
+    351
+  ],
+  "createdAt": "2023-05-12T07:49:53.214Z",
+  "lastPostedAt": "2023-05-14T11:20:06.050Z",
+  "postsCount": 4,
+  "excerpt": "Hello, \nI am using Python to query monday API. \nI have been spending many hours trying to use “change_column_value” on a link column, in vain. \nI saw I wasn’t the only one to have this issue but I still couldn’t solve it&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 555,
+  "posts": [
+    {
+      "id": 127644,
+      "postNumber": 1,
+      "createdAt": "2023-05-12T07:49:53.306Z",
+      "author": "twan (Dev Ops)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I am using Python to query monday API.<br />\nI have been spending many hours trying to use “change_column_value” on a link column, in vain.<br />\nI saw I wasn’t the only one to have this issue but I still couldn’t solve it.</p>\n<p>This is my code:</p>\n<pre><code class=\"lang-auto\">def update_field(item_id: int, column_id: str, value):\n    value_str = json.dumps(value).replace('\"', '\\\\\"')\n    print(value_str)\n    query = f'''\n    mutation {{\n        change_simple_column_value(\n            board_id: {BOARD_ID},\n            item_id: {item_id},\n            column_id: \"{column_id}\",\n            value: \"{value_str}\"\n        ) {{\n            id\n        }}\n    }}\n    '''\n    response = requests.post(url=MONDAY_URL, json={'query': query}, headers=monday_headers)\n\n    return response.json()\n\nsome_url = 'https://www.google.com'\nsome_text = 'Google'\nprint(update_field(item_id=item_id, column_id='link', value={'url': some_url, 'text': some_text}).json())\n</code></pre>\n<p>This code returns:</p>\n<pre><code class=\"lang-auto\">{\\\"url\\\": \\\"https://www.google.com\", \\\"text\\\": \\\"Google\\\"}\n{'data': {'change_simple_column_value': {'id': '0000000000'}}, 'account_id': 00000000}\n</code></pre>\n<p>(I replaced the numbers by 0 for safety matters)</p>\n<p>When I print <code>json.dumps(value_str)</code> I get <code>{\"url\": \"https://www.google.com\", \"text\": \"Google\"}</code>.</p>\n<p>Returning back on my Monday board, I can see that the changes have been done, but not accurately. Here is what I get when I get the item:</p>\n<pre><code class=\"lang-auto\">{'id': 'link', 'title': 'Link column', 'value': '{\"url\":\"https://%7B%22url%22:\",\"text\":\"\\\\\"https://www.google.com\\\\\", \\\\\"text\\\\\": \\\\\"Google\\\\\"}\",\"changed_at\":\"2023-05-12T10:14:02.242Z\"}'}\n</code></pre>\n<p>I would be grateful if you could help me through this issue.</p>\n<p>twan</p>"
+    },
+    {
+      "id": 127645,
+      "postNumber": 2,
+      "createdAt": "2023-05-12T08:01:43.446Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/twan\">@twan</a></p>\n<p>So, from your example it shows that the value</p>\n<pre><code class=\"lang-auto\">'value': '{\"url\":\"https://%7B%22url%22:\",\"text\":\"\\\\\"https://www.google.com\\\\\", \\\\\"text\\\\\": \\\\\"Google\\\\\"}\",\"changed_at\":\"2023-05-12T10:14:02.242Z\"}'\n</code></pre>\n<p>you are sending to the column is picked up by monday and URL-encoded, hence is starts with  %7B%22 (which unencoded is {\"). I’m not a Python expert but it looks like json.dumps URL-encodes automatically and when printing it out it decodes it again.</p>"
+    },
+    {
+      "id": 127656,
+      "postNumber": 3,
+      "createdAt": "2023-05-12T09:51:00.885Z",
+      "author": "twan (Dev Ops)",
+      "cookedHtml": "<p>Hi Bas de Bruin,</p>\n<p>Thank you for your help.<br />\nI am not sure what changes to make your message suggest.<br />\nI wrote the value of <code>value_str</code> in a .txt file to see if I get the same output as when printing: yes.</p>\n<p>I don’t see what’s wrong in the format of <code>value_str</code> since when I’m looking at it, it’s a string representing a json with 2 keys: “url” and “text”, as in the column.</p>"
+    },
+    {
+      "id": 127836,
+      "postNumber": 4,
+      "createdAt": "2023-05-14T11:20:06.050Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/twan\">@twan</a>,</p>\n<p>You can use something like this:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(\n    board_id: 1234567890\n    item_id: 1122334455\n    column_values: \"{\\\"link\\\" : {\\\"url\\\" : \\\"http://monday.com\\\", \\\"text\\\":\\\"go to monday!\\\"}}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Which I translated to Python using Postman into:</p>\n<pre><code class=\"lang-auto\">import http.client\nimport json\n\nconn = http.client.HTTPSConnection(\"api.monday.com\")\npayload = \"{\\\"query\\\":\\\"mutation {\\\\n  change_multiple_column_values(\\\\n    board_id: 1234567890\\\\n    item_id: 1122334455\\\\n    column_values: \\\\\\\"{\\\\\\\\\\\\\\\"link\\\\\\\\\\\\\\\" : {\\\\\\\\\\\\\\\"url\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"http://monday.com\\\\\\\\\\\\\\\", \\\\\\\\\\\\\\\"text\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"go to monday!\\\\\\\\\\\\\\\"}}\\\\\\\"\\\\n  ) {\\\\n    id\\\\n  }\\\\n}\\\",\\\"variables\\\":{}}\"\nheaders = {\n  'Content-Type': 'application/json',\n  'Authorization': 'MYAPIKEY',\n}\nconn.request(\"POST\", \"/v2/\", payload, headers)\nres = conn.getresponse()\ndata = res.read()\nprint(data.decode(\"utf-8\"))\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": 21185,
+  "title": "Need some help accessing item status",
+  "slug": "need-some-help-accessing-item-status",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-06-11T14:22:09.375Z",
+  "lastPostedAt": "2021-06-16T10:54:07.511Z",
+  "postsCount": 7,
+  "excerpt": "Hi - I’m new to Monday and am trying to use SyncHub.IO to query my data using PowerBI. It works great to have the Monday.com data in a relational format. \nMy issue is around the text column in ColumnValue table. I’m tryi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1283,
+  "posts": [
+    {
+      "id": 54488,
+      "postNumber": 1,
+      "createdAt": "2021-06-11T14:22:09.475Z",
+      "author": "BRockoff (Bryan Rockoff)",
+      "cookedHtml": "<p>Hi - I’m new to Monday and am trying to use <a href=\"http://SyncHub.IO\" rel=\"noopener nofollow ugc\">SyncHub.IO</a> to query my data using PowerBI. It works great to have the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> data in a relational format.</p>\n<p>My issue is around the text column in ColumnValue table. I’m trying to use the text column to identify the status of items. I get a highly usable set of values most of the time. However it appears a null value in text has multiple meanings - an item that has not been started yet and an item that was deleted. Do I have that correct? I need to know what has not been started vs. what is has been deleted. I looked at the IsDeleted field that that doesn’t seem to help.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 54646,
+      "postNumber": 2,
+      "createdAt": "2021-06-14T19:02:00.687Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Bryan!</p>\n<p>Sounds like <a href=\"http://SyncHub.IO\">SyncHub.IO</a> translates each field in our GraphQL schema into it’s own DB table. Is that correct?</p>\n<p>By that logic, “text column in the columnValue table” means the text representation of a <a href=\"https://support.monday.com/hc/en-us/articles/360001269685-The-Status-Column\">status column’s</a> value. Am I on the right track?</p>\n<p>If my assumptions are correct, then seeing the value “” or <code>null</code> means that the status column is blank. You can cross-reference the item in the UI, and it should look something like this:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/1/17f8a57ff9b204043ef43915b69c775c9986544d.png\" alt=\"image\" width=\"565\" height=\"127\" /></p>\n<p>This doesn’t necessarily mean the item has been deleted, simply that it doesn’t have a status (either it hasn’t been started or it isn’t relevant yet).</p>\n<p>Let me know if that solves your issue!</p>"
+    },
+    {
+      "id": 54750,
+      "postNumber": 3,
+      "createdAt": "2021-06-15T13:06:24.387Z",
+      "author": "BRockoff (Bryan Rockoff)",
+      "cookedHtml": "<p>Thanks!! That does explain and is consistent with what I am seeing.</p>\n<p>Do I need to look into ActivityLog to see if this column has had any activity? Any advice how to navigate this data to find if a column value has been changed manually? I see an event of 'Update Column Value\" under a pulse event but not under a board event.</p>\n<p>PS - <a href=\"http://Synchub.io\" rel=\"noopener nofollow ugc\">Synchub.io</a> pulls data from your APIs and puts the data into a set of tables in Azure or wherever you want. The big difference between their solution and many others on the market is they put the data into a managed data warehouse they manage in the cloud. They handle the ETL and operations of keeping the data up to date. All I need to do is to write the SQL against that SQL platform and connect PowerBI. Its slick!!</p>"
+    },
+    {
+      "id": 54756,
+      "postNumber": 4,
+      "createdAt": "2021-06-15T14:01:07.965Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Whoa, that’s really cool!</p>\n<p>Yes, lookup the item in the Activity Log to understand the history of changes. You can use this if you want to be 100% sure that an item is untouched (as opposed to was manually marked with the empty status).</p>\n<p>Pulse/item events are things like changing column values, creating new items, etc. Board events are more about the board structure, such as adding a new column to a board.</p>\n<p>[BTW, pulses and items are different lingo for the same thing]</p>"
+    },
+    {
+      "id": 54757,
+      "postNumber": 5,
+      "createdAt": "2021-06-15T14:01:11.903Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 54766,
+      "postNumber": 6,
+      "createdAt": "2021-06-15T14:54:42.309Z",
+      "author": "BRockoff (Bryan Rockoff)",
+      "cookedHtml": "<p>re: <a href=\"http://Synchub.io\" rel=\"noopener nofollow ugc\">Synchub.io</a> - I thought so too!!</p>\n<p>So pulseid = itemid??? That clears lots up. Can I use that as a join value?</p>\n<p>To find if a columnvalue has been changed do i need a query where entity = ‘pulse’ and event = ’ update_column_value’ and boardid = (the board I am looking for). Do I have to parse out the Data column to get to the pulseid to match to the itemid or is there a better way to find the changes to a columnvalue?? Parsing in SQL sucks.</p>"
+    },
+    {
+      "id": 54869,
+      "postNumber": 7,
+      "createdAt": "2021-06-16T10:54:07.511Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/brockoff\">@BRockoff</a>,</p>\n<p>Yes indeed-- pulse ID is the same as item ID, back before items were called items, they were pulses!</p>\n<p>Regarding “filtering” through your activity logs, these are the arguments that our activity logs queries currently support:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/958924a09f850c6d1e8aa6e023b765bd55af43e8.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/958924a09f850c6d1e8aa6e023b765bd55af43e8_2_517x277.png\" alt=\"image\" width=\"517\" height=\"277\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">754×405 37.8 KB</span>\n</div></a></div><p></p>\n<p>As such, you can definitely utilize the <code>item_ids</code> and <code>column_ids</code> arguments to narrow down the list, but I do think there is an inevitable amount of parsing out the data returned to get specific event information.</p>\n<p>For board ID, you can actually nest activity logs within a single board, so you don’t need to include an argument for board ID if you choose to implement your query this way.</p>\n<p>Does this help?</p>"
+    },
+    {
+      "id": 56077,
+      "postNumber": 8,
+      "createdAt": "2021-06-23T11:43:17.414Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    },
+    {
+      "id": 99238,
+      "postNumber": 9,
+      "createdAt": "2022-10-01T20:34:46.843Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

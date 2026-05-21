@@ -1,0 +1,70 @@
+{
+  "id": 110250,
+  "title": "Your payload format is incomprehensible. Is there any documentation?",
+  "slug": "your-payload-format-is-incomprehensible-is-there-any-documentation",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2025-02-23T05:47:52.890Z",
+  "lastPostedAt": "2025-02-25T12:35:05.983Z",
+  "postsCount": 7,
+  "excerpt": "Your API requires the use of multiple levels of nested escaped JSON. \nFor example, when using create_item to set column values. \nIndividual column values may contain newlines and quotes, which need to be escaped. \nThe co&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 30,
+  "posts": [
+    {
+      "id": 222104,
+      "postNumber": 1,
+      "createdAt": "2025-02-23T05:47:52.974Z",
+      "author": "Neutrino (Neutrino)",
+      "cookedHtml": "<p>Your API requires the use of multiple levels of nested escaped JSON.</p>\n<p>For example, when using <code>create_item</code> to set column values.</p>\n<p>Individual column values may contain newlines and quotes, which need to be escaped.</p>\n<p>The <code>column_values</code> argument needs to be converted to JSON, so its quotes and newlines need to be escaped, plus the ones in any individual column values need to be escaped a second time.</p>\n<p>Then the mutation GraphQL document itself also need to be assigned to the query property of a JSON object qhich requires escaping the entire mutation document again.</p>\n<p>There are multiple ways this nested escaping could be done. After much trial and error I have found that one format that works for create_item is this</p>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation {\\r\\n create_item (\\r\\n board_id: 6172423554, \\r\\n item_name: \\\"TEst9\\\", \\r\\n column_values: \\\"{\\\\\\\"note\\\\\\\":\\\\\\\"Newline\\\\\\nStuff\\\\\\\\\\\\\\\"Quoted\\\\\\\\\\\\\\\"Stuff\\\\\\\"}\\\"\\r\\n ) \\r\\n {\\r\\n id\\r\\n }\\r\\n }\\r\\n\"}\n</code></pre>\n<p>This form of nested escaping is not produced by the standard C# JSON libraries. They instead use <code>\\u0022</code> to escape quotes. Your API does returns an error if quotes are escaped using <code>\\u0022</code> so your API deserialization appears to be implementation specific.</p>\n<p>Your example code is not very useful since it does not show what you actually need to construct, only the unescaped GraphQL.</p>\n<p>The example provided here is painful enough, requiring quotes to be escaped with 7 backslashes at the most nested level, and this is just a trivial example. For more complex queries the payloads required are totally incompreshensible.</p>\n<p>Does your API support payloads in a more reasonable format?</p>\n<p>Is there any docmentation anywhere on what payload formats are supported regarding the multiple levels of nesting and escaping that are required?</p>"
+    },
+    {
+      "id": 222249,
+      "postNumber": 2,
+      "createdAt": "2025-02-24T14:42:28.536Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Don’t build stuff as strings. Create objects. The column_values is just a JSON string of a column_values object. Start with an OBJECT with that structure then use JSON.stringify to create the string when ready.</p>\n<p>Then for the request the only part that is an actual string is the graphql string, it goes in the query key of the request object. Use GraphQL variables instead of trying to nest your column_values string into the GraphQL string (why they won’t highlight this in the documentation is beyond me, they must think we’re too dumb or something?)</p>\n<p>Google graphql variables, they will make your life 1000X easier, plus the SDK and API-SDK clients support them. Its easy. You would have a variable for your column_values then pass the column_values string as a variable key, and their server uses it at runtime.</p>"
+    },
+    {
+      "id": 222258,
+      "postNumber": 3,
+      "createdAt": "2025-02-24T15:36:09.022Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Agreeing with <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> here. It’s important that the api documentation and any code examples always use graphql variables so that new developers can start from a position of strength.</p>\n<p>Concatenation of strings is the way of madness for JSON objects.</p>"
+    },
+    {
+      "id": 222274,
+      "postNumber": 4,
+      "createdAt": "2025-02-24T18:23:30.815Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> Yes. This is something I’ve been calling out now for THREE years, that they are sabotaging devs unfamiliar with GraphQL - or confusing those who are. Nobody else documents their GraphQL API as creating a JSON body as a string and sending that string in the request. <a href=\"http://monday.com\">monday.com</a>’s own graphql clients are set up to take a query string, variables, operation name - not a pre-formatted body as a string. YET thats what the documentation shows.</p>\n<p>Btw did you know they have a new project for a new graphql client? <a href=\"https://developer.monday.com/api-reference/docs/api-sdk\" class=\"inline-onebox\">API SDK</a></p>\n<p>But none of the documentation for the actual API usage has been updated to reflect it - not that much of it uses the client anyway!</p>"
+    },
+    {
+      "id": 222364,
+      "postNumber": 5,
+      "createdAt": "2025-02-25T11:46:44.948Z",
+      "author": "Neutrino (Neutrino)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p>Don’t build stuff as strings. Create objects.</p>\n</blockquote>\n</aside>\n<p>I’ve seen this recommendation several times over the years when other people have raised this issue, and respectfully I think it demonstrates a misunderstanding of the problem.</p>\n<p>I’m not building my queries from strings.</p>\n<p>As stated in my OP I <em>am</em> composing the query from objects, and if we were just talking about a single level of JSON containing quoted strings there would be no problem.</p>\n<p>But we’re not. We are talking about multiple levels of nested JSON, and the problem is that there is no standard for how escaping should be done in that situation.</p>\n<p>If I happen to be working in Node.js then I’d probably be using a JSON serialization library that has the same implementation specific nested escaping behaviour to the implementation of your API.</p>\n<p>If however I’m working in C# or C++ then I’m probably working with a library that has different nested escaping behaviour.</p>\n<p>I know you have a client SDK but I believe that’s only for Javascript clients, and from what I’ve seen your API works with the nested JSON that’s produced by Javascript clients anyway. So you have an SDK for the one language that doesn’t need it.</p>\n<ol>\n<li>There is no common standard for escaping nested JSON, different libraries do it differently.</li>\n<li>Your API does not accept all the possible variations of nested escaping.</li>\n<li>The variety of nested escaping that your API does accept is undocumented.</li>\n<li>Even knowing what the nested escaping requirements of your API are, if the libraries in the language I’m using don’t support that approach, then takes a lot of effort to create compatible payloads and with these multiple levels of nesting it’s very errorprone.</li>\n</ol>"
+    },
+    {
+      "id": 222383,
+      "postNumber": 6,
+      "createdAt": "2025-02-25T12:20:20.358Z",
+      "author": "Neutrino (Neutrino)",
+      "cookedHtml": "<p>I read your post a bit more carefully Cody and took more notice of what you said about GraphQL variables. I understand what you meant by this now and you’re absolutely right. Using a GraphQL variable instead of inlining the column_values does actually eliminate one level of JSON nesting, which does make things a lot easier.</p>\n<pre><code class=\"lang-auto\">{\n   \"query\": \"mutation CreateItem($columnValues: JSON!) {\\n  create_item (\\n      board_id: 1234567890,\\n      item_name: \\\"Name6\\\",\\n      column_values: $columnValues) {\\n    id\\n  }\\n}\",\n   \"variables\": {\n        \"columnValues\": \"{ \\\"note\\\": \\\"Some \\\\nmore \\\\\\\"quoted\\\\\\\" stuff\\\" }\"\n    }\n}\n</code></pre>\n<p>It’s still a horrible API though and key points not being better documented is painful and time consuming.</p>"
+    },
+    {
+      "id": 222385,
+      "postNumber": 7,
+      "createdAt": "2025-02-25T12:35:05.983Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/neutrino\">@Neutrino</a> has been put on ignore.</p>"
+    }
+  ]
+}

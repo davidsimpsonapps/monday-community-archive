@@ -1,0 +1,60 @@
+{
+  "id": 2126,
+  "title": "Parse error with create_item and column_values",
+  "slug": "parse-error-with-create-item-and-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    13
+  ],
+  "createdAt": "2019-09-08T01:50:12.146Z",
+  "lastPostedAt": "2021-02-25T12:23:14.885Z",
+  "postsCount": 6,
+  "excerpt": "I’ve been trying to get the create_item mutation to work for a little while now but the server response tells me there’s a JSON parse error. I’ve tried escaping my column values manually and with JSON.stringify() but I a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 4626,
+  "posts": [
+    {
+      "id": 5620,
+      "postNumber": 1,
+      "createdAt": "2019-09-08T01:50:12.214Z",
+      "author": "robdodson (Rob Dodson)",
+      "cookedHtml": "<p>I’ve been trying to get the create_item mutation to work for a little while now but the server response tells me there’s a JSON parse error. I’ve tried escaping my column values manually and with JSON.stringify() but I always get the same error. Any help is much appreciated! Here’s my query:</p>\n<pre><code>const mutation = `\n  mutation {\n    create_item(board_id: MY_BOARD_ID, item_name: \"a new item\", column_values: \"{\\\"check\\\": {\\\"checked\\\": \\\"true\\\"}}\") {\n      id\n    }\n  }\n`;\n\nreturn fetch('https://api.monday.com/v2/', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': process.env.MONDAY_TOKEN,\n    },\n    body: JSON.stringify({ query: mutation }),\n  })\n  .then(response =&gt; response.json());\n</code></pre>\n<p>And here’s the error I get back in the response:</p>\n<pre><code>errors: [\n  {\n    message: 'Parse error on \": {\" (STRING) at [3, 84]',\n    locations: [Array]\n  }\n]\n</code></pre>"
+    },
+    {
+      "id": 5672,
+      "postNumber": 2,
+      "createdAt": "2019-09-09T10:37:49.324Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/robdodson\">@robdodson</a>,<br />\nYour mutation text seems correct (you can try it in our try it yourself GraphiQL explorer to make sure).<br />\nI believe that the issue is the JSON.stringify you have added over the body. This transforms the input into a JSON string while it expects a pure JSON.<br />\nTry it like this:</p>\n<pre><code>return fetch('https://api.monday.com/v2/', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': process.env.MONDAY_TOKEN,\n    },\n    body: { \"query\": mutation },\n  })\n  .then(response =&gt; response.json());</code></pre>"
+    },
+    {
+      "id": 5848,
+      "postNumber": 3,
+      "createdAt": "2019-09-11T16:25:59.746Z",
+      "author": "robdodson (Rob Dodson)",
+      "cookedHtml": "<p>Thanks for taking a look Ayelet!</p>\n<p>Unfortunately I’m still hitting an issue. I’ve updated the code to match your description but now the response from the monday API is just <code>\"\"</code>. When it tries to run <code>response.json()</code> it throws an invalid json response body error. Also, the mutation doesn’t show up in the board.</p>\n<p>I tested that the query works in GraphiQL, so it seems like there’s still something wrong with the way I’m calling <code>create_items()</code>. Are you able to get this query to work on your end if you try with one of your own boards?</p>"
+    },
+    {
+      "id": 5881,
+      "postNumber": 4,
+      "createdAt": "2019-09-12T10:37:43.418Z",
+      "author": "danielco (Daniel Cohen - monday.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/robdodson\">@robdodson</a>, Here’s an example of how to pass values to columns using the fetch api, hope this makes it more clear</p>\n<pre><code>const body = {\n  query: `\n\tmutation ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {\n\t  create_item (\n\t    board_id: $boardId,\n\t    group_id: $groupId,\n\t    item_name: $itemName,\n\t    column_values: $columnValues\n\t  ) {\n\t    id\n\t  }\n\t}\n  `,\n  variables: {\n  \tboardId: MY_BOARD_ID,\n\tgroupId: \"topics\",\n\titemName: \"New item name\",\n\tcolumnValues: JSON.stringify({ check: { checked: \"true\" } })\n  }\n}\n\nreturn fetch('http://api.monday.com/v2/', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': process.env.MONDAY_TOKEN,\n    },\n    body: JSON.stringify(body),\n  })\n  .then(response =&gt; response.json());</code></pre>"
+    },
+    {
+      "id": 6043,
+      "postNumber": 5,
+      "createdAt": "2019-09-16T15:42:13.847Z",
+      "author": "robdodson (Rob Dodson)",
+      "cookedHtml": "<p>Thank you Daniel, this seems to work!</p>\n<p>For anyone checking this thread, there is one small thing I need to change. The url needs to be https:// NOT http://</p>"
+    },
+    {
+      "id": 42141,
+      "postNumber": 6,
+      "createdAt": "2021-02-25T12:23:14.885Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

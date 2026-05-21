@@ -1,0 +1,79 @@
+{
+  "id": 10404,
+  "title": "Mutating a Date in v2",
+  "slug": "mutating-a-date-in-v2",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-08-22T15:02:08.205Z",
+  "lastPostedAt": "2021-02-25T14:38:36.156Z",
+  "postsCount": 9,
+  "excerpt": "Please forgive the stupidity - I feel like I’m missing something extremely simple here. \nRunning queries in Postman as a precursor to running them from Google Apps Script and I can’t wrap my brain around what appears to &hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 2153,
+  "posts": [
+    {
+      "id": 26348,
+      "postNumber": 1,
+      "createdAt": "2020-08-22T15:02:08.280Z",
+      "author": "MelissaH (Melissa Hallbauer)",
+      "cookedHtml": "<p>Please forgive the stupidity - I feel like I’m missing something extremely simple here.</p>\n<p>Running queries in Postman as a precursor to running them from Google Apps Script and I can’t wrap my brain around what appears to be a syntax issue. Here’s the script:</p>\n<p>{“query”:“mutation{change_column_value(board_id:XXXXXXXXX,item_id:XXXXXXXXX,column_id:\"dateXXX\",value:\"{\"date\":\"2020-01-09\",\"time\":\"00:00:00\"}\"){id}}”}</p>\n<p>Error message is as follows:<br />\n“Parse error on \":\" (STRING) at [1, 98]”</p>\n<p>Figured out the retrieving and parsing of data and can do “simple” mutations like number and text, no problem, but WOW these date columns are killing me. TIA.</p>"
+    },
+    {
+      "id": 26350,
+      "postNumber": 2,
+      "createdAt": "2020-08-22T15:55:52.692Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>I don’t know the exact issue. But I think the basic issue is that you need to include the proper escaping. The value portion should look something like this:</p>\n<pre><code>\"{\\\"date\\\":\\\"2019-06-03\\\",\\\"time\\\":\\\"13:25:00\\\"}\"</code></pre>"
+    },
+    {
+      "id": 26352,
+      "postNumber": 3,
+      "createdAt": "2020-08-22T16:19:41.352Z",
+      "author": "MelissaH (Melissa Hallbauer)",
+      "cookedHtml": "<p>Using the documentation arguments returns “400 Bad Request” or a different parse error. I know it’s the syntax because I can make the dratted thing work in GraphQL, just not JSON. Not good at this nested objects thing.</p>"
+    },
+    {
+      "id": 26407,
+      "postNumber": 4,
+      "createdAt": "2020-08-23T08:45:17.004Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>When you put 4 spaces before the text you post here it won’t remove the escape characters.</p>\n<p>Can to post a mutation line that works and the one that doesn’t?</p>"
+    },
+    {
+      "id": 26577,
+      "postNumber": 5,
+      "createdAt": "2020-08-25T11:44:55.015Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/melissah\">@MelissaH</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>I am sorry to hear that getting this to work has been somewhat arduous for you! That said, I do have to agree with <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>’s insight here - it seems to be a syntax/formatting issue in this case.</p>\n<p>Just to clarify a bit further, when you send your queries or mutations to our API, they always have to target our API URL (<a href=\"http://api.monday.com/v2\" rel=\"noopener nofollow ugc\">api.monday.com/v2</a>) and you have to send your request as a POST request, formatted as JSON. Your mutation values also have to be formatted as JSON properly, which seems to be what is causing the issue here.</p>\n<p>I think in your latest example, the 400 error is caused by not sending the request to the proper URL, it not being a POST request, or not being formatted as JSON. Those could also be related to network issues as well.</p>\n<p>Let me know if this helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27116,
+      "postNumber": 7,
+      "createdAt": "2020-08-30T11:35:39.252Z",
+      "author": "MelissaH (Melissa Hallbauer)",
+      "cookedHtml": "<p>FINALLY RESOLVED.</p>\n<p>I was…not using enough quotation marks??? See below in case this ever comes up for someone else. I switched to a checkbox column for readability, since the problem for me was 1000% the nesting of objects, but presumably this would work for status, date, and other columns that require an object, not just a single value like numbers and text.</p>\n<p>Google Apps Script code:</p>\n<pre><code>var test = JSON.stringify(\"{\\\"checked\\\": \\\"true\\\"}\");\n\nvar mutation = JSON.stringify({'query' : 'mutation{change_column_value(board_id: XXXXXXXXX,item_id:XXXXXXXXX,column_id: \"check9\",value:'+test+'){id}}'});\n</code></pre>\n<p>Stackdriver log shows this result:</p>\n<pre><code>Aug 30, 2020, 10:24:28 AM\tInfo\t{\"query\":\"mutation{change_column_value(board_id: XXXXXXXXX,item_id:XXXXXXXXX,column_id: \\\"check9\\\",value:\\\"{\\\\\\\"checked\\\\\\\": \\\\\\\"true\\\\\\\"}\\\"){id}}\"}\n\nAug 30, 2020, 10:24:29 AM\tInfo\tMutation response: {\"data\":{\"change_column_value\":{\"id\":\"XXXXXXXXX\"}},\"account_id\":XXXXXXX}\n</code></pre>\n<p>Previous attempts failed because I was doing the following:</p>\n<pre><code>var test = JSON.stringify({\"checked\": \"true\"});\n</code></pre>\n<p>Which fails to put quotation marks outside the curly braces and leads to a parse error.</p>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/exclamation.png?v=9\" title=\":exclamation:\" class=\"emoji\" alt=\":exclamation:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/exclamation.png?v=9\" title=\":exclamation:\" class=\"emoji\" alt=\":exclamation:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/exclamation.png?v=9\" title=\":exclamation:\" class=\"emoji\" alt=\":exclamation:\" />EDIT: For anyone else reading this, if you are trying to mutate multiple columns and not just one - use the third code block, not the first, to set your “var test.” <strong>The extra quotation marks work on single column mutation objects, but <strong>not</strong> multi-column mutations.</strong> Devs, y’all might want to make note of this, because it took me some brute force to figure this out. The documentation for this part of the API may require another pass. It’s also odd that one mutation requires you to pass the object as a string, but the other one accepts nested objects…maybe I’m just looking at it wrong.</p>\n<p>Thanks again for the help. I imagine this is extremely basic, but it was definitely a learning experience for me <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=9\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" /></p>"
+    },
+    {
+      "id": 27442,
+      "postNumber": 8,
+      "createdAt": "2020-09-02T10:42:39.719Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/melissah\">@MelissaH</a></p>\n<p>That’s awesome, I’m glad to hear you’ve been able to find a solution to your issue here, and more importantly, that you’ve also shared what has been causing the issue. This will definitely help pave the way to a smooth experience for other users with a similar situation and I appreciate you making that journey to a successful integration easier <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27453,
+      "postNumber": 9,
+      "createdAt": "2020-09-02T11:37:37.127Z",
+      "author": "MelissaH (Melissa Hallbauer)",
+      "cookedHtml": "<p>Of course! So since single column mutation was a stepping stone to multi-column mutations, I did add my thoughts on that to the above.</p>\n<p><em>Oh, the irony - if I had skipped what I thought was the simpler iteration and gone straight to the complex one, we could’ve saved approximately three days of hair-pulling.</em></p>\n<p>Y’all might want to have another look at the differences in syntax between the two queries as well, because the extra “stuff an object in a string” step for the single-column query is not represented in GraphQL and is very hard to grok if you’re just looking at the documentation.</p>\n<p>Thanks again - Mel signing off <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 42486,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T14:38:36.156Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

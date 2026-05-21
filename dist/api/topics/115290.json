@@ -1,0 +1,46 @@
+{
+  "id": 115290,
+  "title": "Nested formula invalid error",
+  "slug": "nested-formula-invalid-error",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2025-05-28T11:26:36.703Z",
+  "lastPostedAt": "2025-06-03T05:13:25.847Z",
+  "postsCount": 4,
+  "excerpt": "Platform discussions 3 days ago \nI ve AI to assit me to create this formula, but it is not working: Can anyone spot the error: \nIF({Rental Status} = “Active”, ROUND(DAYS({Switch Date (Hide)}, {Rental Start}), 0), DAYS({R&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 18,
+  "posts": [
+    {
+      "id": 230660,
+      "postNumber": 1,
+      "createdAt": "2025-05-28T11:26:36.779Z",
+      "author": "jobcam (Glenn)",
+      "cookedHtml": "<p><a href=\"https://community.monday.com/c/platform-discussions/6\">Platform discussions</a> 3 days ago</p>\n<p>I ve AI to assit me to create this formula, but it is not working: Can anyone spot the error:</p>\n<p>IF({Rental Status} = “Active”, ROUND(DAYS({Switch Date (Hide)}, {Rental Start}), 0), DAYS({Rental End}, {Rental Start}))</p>"
+    },
+    {
+      "id": 230683,
+      "postNumber": 2,
+      "createdAt": "2025-05-28T11:49:15.283Z",
+      "author": "Clover_Gal (Desiree McCarthy | monday.com Ambassador)",
+      "cookedHtml": "<p>What kind of columns are each of thsoe? ie are they all date columns?</p>"
+    },
+    {
+      "id": 230942,
+      "postNumber": 3,
+      "createdAt": "2025-05-30T12:44:22.968Z",
+      "author": "jobcam (Glenn)",
+      "cookedHtml": "<p>Hi Desiree, They are all dates columns except Switch Date, which is a formula column.<br />\nIt uses this formula: SWITCH({Rental Status},“Active”, Today(),“Complete”, {Rental End})</p>"
+    },
+    {
+      "id": 231110,
+      "postNumber": 4,
+      "createdAt": "2025-06-03T05:13:25.847Z",
+      "author": "Megan345 (Megan)",
+      "cookedHtml": "<p>Hi Glenn, I’m making a few assumptions from the information here so shout if I’m wrong!</p>\n<p>I’ve broken the formulae down into individual columns to make it easy to follow but the formulae could be combined.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/4/e4135cbc0a09d09f4b676b00df7fee4339da092c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/4/e4135cbc0a09d09f4b676b00df7fee4339da092c_2_690x84.png\" alt=\"image\" width=\"690\" height=\"84\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1301×159 17.7 KB</span></div></a></div><p></p>\n<p>First, your Switch Date is a formula column. Start and End dates are Date columns and always contain a value. If the rental is complete, it shows the rental end date. If it isn’t complete, it shows today:</p>\n<p>SWITCH(<br />\n{Rental Status},<br />\n“Active”,FORMAT_DATE(TODAY(),“YYYY-MM-DD”),<br />\n“Complete”,{Rental End}<br />\n)</p>\n<p>When I’m working with dates in formula columns I always convert to DATEVALUE so I don’t have errors caused by working with dates in different formats. The Start DateValue, End DateValue and Switch DateValue columns contain these formulae:</p>\n<ul>\n<li>DATEVALUE({Rental Start})</li>\n<li>DATEVALUE({Rental End})</li>\n<li>DATEVALUE({Switch Date})</li>\n</ul>\n<p>Finally, if the rental is Active, the Days column calculates the number of days between the Rental Start date and today. If it’s Complete, it calculates the number of days between Rental Start and End dates:</p>\n<p>IF(<br />\n{Rental Status}=“Active”,<br />\n{Switch DateValue}-{Start DateValue},<br />\n{End DateValue}-{Start DateValue}<br />\n)</p>\n<p>You could combine the five formulae columns into one if you wanted to, but I’ve left it like this so we can follow what each step of the final formula is doing.</p>\n<p>Hope that helps and achieves what you want!</p>"
+    }
+  ]
+}

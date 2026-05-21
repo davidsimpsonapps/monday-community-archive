@@ -1,0 +1,99 @@
+{
+  "id": 28996,
+  "title": "Getting duplicate column_values in Board query with groups",
+  "slug": "getting-duplicate-column-values-in-board-query-with-groups",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    22,
+    94,
+    115,
+    351
+  ],
+  "createdAt": "2021-12-22T08:41:42.635Z",
+  "lastPostedAt": "2022-01-12T05:17:35.956Z",
+  "postsCount": 10,
+  "excerpt": "Hello :wave: \nCurrently trying to pull out some workflow data for a mini dashboard with tasks/statuses/assignees etc. \nQuery here: \nquery Boards($ids: [Int]) {\n  me {\n    name\n  }\n  \n  boards(ids: $ids) {\n    name\n    \n &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1817,
+  "posts": [
+    {
+      "id": 72160,
+      "postNumber": 1,
+      "createdAt": "2021-12-22T08:41:42.722Z",
+      "author": "bradbdf (Brad Fulford)",
+      "cookedHtml": "<p>Hello <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Currently trying to pull out some workflow data for a mini dashboard with tasks/statuses/assignees etc.<br />\nQuery here:</p>\n<pre><code class=\"lang-auto\">query Boards($ids: [Int]) {\n  me {\n    name\n  }\n  \n  boards(ids: $ids) {\n    name\n    \n    columns {\n      title\n      id\n      type\n    }\n    \n    groups {\n    \ttitle\n      id\n    }\n    \n    items {\n      name\n      group {\n        id\n      }\n      \n      column_values {\n        id\n        value\n        text\n      }\n    }\n  }\n}\n</code></pre>\n<p>Weirdly, the data that comes back both in the Monday Playground and in my local Insomnia calls is correct, but in my Next/Apollo app the data for the <code>column_values</code> is all the same as the first <code>column_value</code> entry, depending whichever item comes first in the call…<br />\nCan’t for the life of me work out what is going on, but the difference between local logging (straight from the query response) in node and the local Insomnia response seems odd…?<br />\nHave checked for Apollo caching weirdness but it’s serverside and the simplest call possible, so one would think should align with what Insomnia gets back.</p>\n<p>Any help would be much appreciated, and let me know if any further info needed - thanks!</p>\n<p>Brad</p>"
+    },
+    {
+      "id": 72238,
+      "postNumber": 2,
+      "createdAt": "2021-12-22T18:37:38.831Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Brad, sounds strange.</p>\n<p>As far as I understand, you’re trying to return column values but you’re getting the same value for every column, right?</p>\n<p>Can you share some output from your app so we can see an example?</p>\n<p>Cheers,<br />\nDipro</p>"
+    },
+    {
+      "id": 72256,
+      "postNumber": 3,
+      "createdAt": "2021-12-23T07:08:34.794Z",
+      "author": "bradbdf (Brad Fulford)",
+      "cookedHtml": "<p>Hey Dipro,</p>\n<p>Sure thing. I’ve since found out also that the output changes depending on whether I request the column_values.id or not - with the id field in the request, I get back the incorrect, repeated first value data, whereas without it I get the correct stuff.</p>\n<p>Here is the output for the first 2 items in <code>boards[0].items</code>, firstly with the <code>id</code> in the request:</p>\n<pre><code class=\"lang-auto\">{\n  __typename: 'Item',\n  name: 'List of staff',\n  group: {\n    __typename: 'Group',\n    id: 'new_group123',\n    title: 'Staff rostering'\n  },\n  column_values: [\n    {\n      __typename: 'ColumnValue',\n      id: 'subitems',\n      value: null,\n      text: ''\n    },\n    {\n      __typename: 'ColumnValue',\n      id: 'person',\n      value: '{\"changed_at\":\"2021-12-21T10:55:16.798Z\",\"personsAndTeams\":[{\"id\":12345678,\"kind\":\"person\"}]}',\n      text: 'Brian'\n    },\n    {\n      __typename: 'ColumnValue',\n      id: 'status0',\n      value: '{\"index\":4,\"post_id\":null,\"changed_at\":\"2021-11-22T13:04:53.044Z\"}',\n      text: 'Medium'\n    },\n    {\n      __typename: 'ColumnValue',\n      id: 'status',\n      value: '{\"index\":1,\"post_id\":null,\"changed_at\":\"2021-11-22T13:04:54.962Z\"}',\n      text: 'Done'\n    },\n    {\n      __typename: 'ColumnValue',\n      id: 'date',\n      value: '{\"date\":\"2021-12-14\",\"changed_at\":\"2021-12-14T14:25:27.274Z\"}',\n      text: '2021-12-14'\n    },\n    { __typename: 'ColumnValue', id: 'numbers', value: null, text: '' },\n    { __typename: 'ColumnValue', id: 'files', value: null, text: '' },\n    {\n      __typename: 'ColumnValue',\n      id: 'progress_tracking',\n      value: null,\n      text: ''\n    }\n  ]\n}\n{\n  __typename: 'Item',\n  name: 'Set up to be completed',\n  group: {\n    __typename: 'Group',\n    id: 'new_group123',\n    title: 'Staff rostering'\n  },\n  column_values: [\n    {\n      __typename: 'ColumnValue',\n      id: 'subitems',\n      value: null,\n      text: ''\n    },\n    {\n      __typename: 'ColumnValue',\n      id: 'person',\n      value: '{\"changed_at\":\"2021-12-21T10:55:16.798Z\",\"personsAndTeams\":[{\"id\":12345678,\"kind\":\"person\"}]}',\n      text: 'Brian'\n    },\n    {\n      __typename: 'ColumnValue',\n      id: 'status0',\n      value: '{\"index\":4,\"post_id\":null,\"changed_at\":\"2021-11-22T13:04:53.044Z\"}',\n      text: 'Medium'\n    },\n    {\n      __typename: 'ColumnValue',\n      id: 'status',\n      value: '{\"index\":1,\"post_id\":null,\"changed_at\":\"2021-11-22T13:04:54.962Z\"}',\n      text: 'Done'\n    },\n    {\n      __typename: 'ColumnValue',\n      id: 'date',\n      value: '{\"date\":\"2021-12-14\",\"changed_at\":\"2021-12-14T14:25:27.274Z\"}',\n      text: '2021-12-14'\n    },\n    { __typename: 'ColumnValue', id: 'numbers', value: null, text: '' },\n    { __typename: 'ColumnValue', id: 'files', value: null, text: '' },\n    {\n      __typename: 'ColumnValue',\n      id: 'progress_tracking',\n      value: null,\n      text: ''\n    }\n  ]\n}\n</code></pre>\n<p>And then without the <code>id</code> field:</p>\n<pre><code class=\"lang-auto\">{\n  __typename: 'Item',\n  name: 'List of staff created',\n  group: {\n    __typename: 'Group',\n    id: 'new_group123',\n    title: 'Staff rostering'\n  },\n  column_values: [\n    { __typename: 'ColumnValue', value: null, text: '' },\n    {\n      __typename: 'ColumnValue',\n      value: '{\"changed_at\":\"2021-12-21T10:55:21.978Z\",\"personsAndTeams\":[{\"id\":12345678,\"kind\":\"person\"}]}',\n      text: 'Brian'\n    },\n    {\n      __typename: 'ColumnValue',\n      value: '{\"index\":4,\"post_id\":null,\"changed_at\":\"2021-11-22T13:04:57.856Z\"}',\n      text: 'Medium'\n    },\n    {\n      __typename: 'ColumnValue',\n      value: '{\"index\":1,\"post_id\":null,\"changed_at\":\"2021-11-22T13:04:59.798Z\"}',\n      text: 'Done'\n    },\n    {\n      __typename: 'ColumnValue',\n      value: '{\"date\":\"2021-12-28\",\"changed_at\":\"2021-12-14T14:25:30.134Z\"}',\n      text: '2021-12-28'\n    },\n    { __typename: 'ColumnValue', value: null, text: '' },\n    { __typename: 'ColumnValue', value: null, text: '' },\n    { __typename: 'ColumnValue', value: null, text: '' }\n  ]\n}\n{\n  __typename: 'Item',\n  name: 'Set up to be completed on Teamnet including resource booking',\n  group: {\n    __typename: 'Group',\n    id: 'new_group123',\n    title: 'Staff rostering'\n  },\n  column_values: [\n    { __typename: 'ColumnValue', value: null, text: '' },\n    {\n      __typename: 'ColumnValue',\n      value: '{\"changed_at\":\"2021-12-21T10:55:27.420Z\",\"personsAndTeams\":[{\"id\":12345678,\"kind\":\"person\"}]}',\n      text: 'Brian'\n    },\n    {\n      __typename: 'ColumnValue',\n      value: '{\"index\":2,\"post_id\":null,\"changed_at\":\"2021-11-22T13:05:08.208Z\"}',\n      text: 'High'\n    },\n    {\n      __typename: 'ColumnValue',\n      value: '{\"index\":1,\"post_id\":null,\"changed_at\":\"2021-12-03T15:46:10.576Z\"}',\n      text: 'Done'\n    },\n    { __typename: 'ColumnValue', value: null, text: '' },\n    { __typename: 'ColumnValue', value: null, text: '' },\n    { __typename: 'ColumnValue', value: null, text: '' },\n    { __typename: 'ColumnValue', value: null, text: '' }\n  ]\n}\n</code></pre>\n<p>Probs 2 big blocks of response there, but basically the ColumnValues for the two items should have (anonymised):</p>\n<ul>\n<li>Person: Brian, Priority: <strong>Medium</strong>, Status: Done</li>\n<li>Person: Brian, Priority: <strong>High</strong>, Status: Done</li>\n</ul>\n<p>which they do, but only from the query with no <code>id</code> field.</p>\n<p>Hope that makes sense! I’ll see if I can spin up a minimal repro for it for you to check too.</p>\n<p>B</p>"
+    },
+    {
+      "id": 72317,
+      "postNumber": 4,
+      "createdAt": "2021-12-23T13:19:24.253Z",
+      "author": "bradbdf (Brad Fulford)",
+      "cookedHtml": "<p><a href=\"https://github.com/braddf/monday-api-bug-repro\" rel=\"noopener nofollow ugc\">Minimal reproduction repo here</a> <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=12\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" width=\"20\" height=\"20\" /></p>\n<p>Still exhibits same behaviour, so if you uncomment/comment the <code>id</code> field for <code>column_values</code> in the GQL query in <code>index.ts</code> it should (for me at least) return different data in the console…</p>\n<p>Usual Next.js starter project:</p>\n<ul>\n<li>pull repo</li>\n<li>add API token into <code>.env</code>\n</li>\n<li>add in a board_id of yours into the variable above the query</li>\n<li><code>yarn install &amp;&amp; yarn dev</code></li>\n</ul>\n<p>Let me know what you get if you have a mo to try it out… <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=12\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" width=\"20\" height=\"20\" />  thanks!</p>"
+    },
+    {
+      "id": 72466,
+      "postNumber": 5,
+      "createdAt": "2021-12-27T17:22:11.304Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>I see what he’s talking about.</p>\n<p>Notice in the first example (with the ID field), the “priority” column returns “High” for both items, but when you add the column ID, it returns medium for one and high for the other.</p>\n<p>I noticed that the item names are different across the two examples, I think we should ask him to include the item ID field to verify that the item is indeed the same.</p>\n<p>I am currently installing his code to check on my computer too.</p>"
+    },
+    {
+      "id": 72470,
+      "postNumber": 6,
+      "createdAt": "2021-12-27T18:12:34.989Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Thanks for sharing that repo. Weirdly, I couldn’t reproduce this behaviour on my side. I’m curious if it’s specific to that board or there’s something in your production code that changes the results.</p>\n<p>I think we should resolve this over a call, so we can see the behaviour in action and troubleshoot on the fly. Here’s a link to sign up for a session with our team: <a href=\"https://calendly.com/developer-success-monday/ds-office-hours?month=2021-09\">Developer Success Office Hours</a></p>"
+    },
+    {
+      "id": 72682,
+      "postNumber": 7,
+      "createdAt": "2021-12-30T14:52:23.974Z",
+      "author": "jesmodrazik (Cyrille Perois)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I have the exact same problem. It is quite blocking for me as I need to check unicity of some values in a column. But the data I get returns the same value for each record, even if in the dashboard I clearly see that each record has a different value for this column.</p>\n<p>I scheduled a session with the developer success team.</p>"
+    },
+    {
+      "id": 72860,
+      "postNumber": 8,
+      "createdAt": "2022-01-03T14:42:47.109Z",
+      "author": "bradbdf (Brad Fulford)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jesmodrazik\">@jesmodrazik</a>, I had a call with Matias from the DST too so has been passed on to the R&amp;D team for a look - have you had any luck finding a solution/reason for this in the meantime?</p>"
+    },
+    {
+      "id": 73511,
+      "postNumber": 9,
+      "createdAt": "2022-01-11T07:25:30.519Z",
+      "author": "jesmodrazik (Cyrille Perois)",
+      "cookedHtml": "<p>Just gave it another shot, it seems it has been fixed?</p>"
+    },
+    {
+      "id": 73649,
+      "postNumber": 10,
+      "createdAt": "2022-01-11T20:36:04.538Z",
+      "author": "bradbdf (Brad Fulford)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jesmodrazik\">@jesmodrazik</a> that’s odd, had you changed your code at all?</p>\n<p>I have managed to figure out what was going on with mine this evening, finally… it was a very awkward, but oddly simple, bug with Apollo - basically that in the <code>column_values</code> edge(s), the array contained <code>id</code>’s of the columns, which were being used by Apollo in the internal in-memory caching (separate to the overall caching of results) when the query is returned, and so couldn’t tell that they should be different.</p>\n<p>Adding the following snippet into the <code>cache</code> option in my <code>apollo-client.ts</code> allows the correct results through from the query, thanks to <a href=\"https://stackoverflow.com/questions/48840223/apollo-duplicates-first-result-to-every-node-in-array-of-edges\" rel=\"noopener nofollow ugc\">this Stack Overflow answer</a> <img src=\"https://emoji.discourse-cdn.com/apple/joy.png?v=12\" title=\":joy:\" class=\"emoji\" alt=\":joy:\" width=\"20\" height=\"20\" /></p>\n<pre><code class=\"lang-auto\">const client = new ApolloClient({\n  uri: \"https://api.monday.com/v2\",\n  headers: {\n    \"Content-Type\": \"application/json\",\n    Authorization: process.env.MONDAY_API_TOKEN || \"\",\n  },\n  cache: new InMemoryCache({\n    dataIdFromObject: (o) =&gt; (o._id ? `${o.__typename}:${o._id}` : undefined),\n  }),\n});\n</code></pre>\n<p>Hopefully if anyone else has a similar issue from the get-go with a v simple Apollo + Monday situation, this might save them a week or so of intermittent head-scratching…</p>"
+    },
+    {
+      "id": 73664,
+      "postNumber": 11,
+      "createdAt": "2022-01-12T05:17:35.956Z",
+      "author": "jesmodrazik (Cyrille Perois)",
+      "cookedHtml": "<p>Yeah I switched from <span class=\"mention\">@apollo</span>/client to <a href=\"https://formidable.com/open-source/urql/\" rel=\"noopener nofollow ugc\">urql</a> in the meantine (mainly for bundle size reasons). The problem seems to be on the Apollo side then.</p>"
+    }
+  ]
+}

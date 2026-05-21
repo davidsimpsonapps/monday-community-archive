@@ -1,0 +1,58 @@
+{
+  "id": 19821,
+  "title": "Search PHP Developer for Fileupload via Graphql API",
+  "slug": "search-php-developer-for-fileupload-via-graphql-api",
+  "categoryId": 11,
+  "tagIds": [],
+  "createdAt": "2021-05-08T11:26:27.965Z",
+  "lastPostedAt": "2021-05-11T11:47:14.965Z",
+  "postsCount": 6,
+  "excerpt": "My customer have the possibility to send an email to [example@domain.tld] and via the inbound parse from sendgrid i called a php file where generates a new item in monday and post new update for the created item. \nThis i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1713,
+  "posts": [
+    {
+      "id": 50641,
+      "postNumber": 1,
+      "createdAt": "2021-05-08T11:26:28.038Z",
+      "author": "maximilian (Maximilian Schwarz)",
+      "cookedHtml": "<p>My customer have the possibility to send an email to [example@domain.tld] and via the inbound parse from sendgrid i called a php file where generates a new item in monday and post new update for the created item.</p>\n<p>This is all working fine. Now i also want to add the email attachments via api. I have no success.</p>\n<p>Currently you got from sendgrid an array for attachments, where called via $_FILES. But the upload did not working.</p>"
+    },
+    {
+      "id": 50644,
+      "postNumber": 2,
+      "createdAt": "2021-05-08T11:55:05.147Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/maximilian\">@maximilian</a>,<br />\nI’m Roberto of Omnidea, developer of  <a href=\"https://generalcaster.app\">General Caster app</a> for <a href=\"http://monday.com\">monday.com</a>.<br />\nGeneral Caster is based on PHP and features some integrations that upload files into columns and update.<br />\nFeel free to send me a DM or an email at roberto.tremonti@omnidea.it with some details on your project.<br />\nCheers.</p>"
+    },
+    {
+      "id": 50645,
+      "postNumber": 3,
+      "createdAt": "2021-05-08T12:03:58.872Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/maximilian\">@maximilian</a></p>\n<p>Welcome to the community. About a year (or 2) ago I build this one in PHP. In my case the files itself are uploaded from my client device to my Wordpress server using WPForms file upload. On an event (button click) the function monday_upload_files is called. Not sure if this exactly meet your needs but maybe you can use it a a reference.</p>\n<pre><code>/************************************************************************************************************************************************************\n* Name:\t\t\tmonday_upload_files \n* Arguments:\t$board_id, $upload - board_id: DOCS board id where item needs to be created / $upload: array with file upload information\n* Returns:\t\tNone\n* Function:\t\tCreates an item in the given board (first group) and attaches the file to the file column\n*************************************************************************************************************************************************************/\n\nfunction monday_upload_files( $board_id, $upload) {\n\n\t//Create a new item in the board\n\t$header = array(\n\t\t'User-Agent' =&gt; MONDAY_TEAM . ' GraphQL Client',\n\t\t'Authorization' =&gt; get_field('mondaykey', 'user_' . get_current_user_id()),\n\t\t'Content-Type' =&gt; 'multipart/form-data' \n\t);\n\n\t//str_replace is used in an effort to get as close as possible to the original file name (sanitized by WPForms)\n\t$body = array(\n\t\t'query' =&gt; 'mutation {create_item (board_id: ' . $board_id . ', group_id: \"topics\", item_name: \"' . str_replace(\"-\",\" \",pathinfo($upload['name'], PATHINFO_FILENAME)) . '\") {id}}'\n\t);\n\n\t$response = wp_remote_post( MONDAY_URL, ['headers' =&gt; $header, 'body' =&gt; $body] );\n\t$arr1 = json_decode($response['body'], true);\n\t$item_id = $arr1['data']['create_item']['id'];\t\n\n\t//Generate a boundary, needed for the Header (Content-Type) and the Body (to split in multiple parts)\n\t$boundary = wp_generate_password(24);\n\t$eol = \"\\r\\n\";\n\n\t$header = array(\n\t\t'User-Agent' =&gt; MONDAY_TEAM . ' GraphQL Client',\n\t\t'Authorization' =&gt; get_field('mondaykey', 'user_' . get_current_user_id()),\n\t\t'Content-Type' =&gt; 'multipart/form-data; boundary=' . $boundary\n\t);\n\n\t//We need to build the body from scratch because it is multipart with boundaries\n\t//Take care of the extra empty lines (twice $eol) before the actual query and file, otherwise an error 500 is returned\n\n\t$body = '--' . $boundary . $eol;\n\t$body .= 'Content-Disposition: form-data; name=\"query\"' . $eol . $eol;\n\t$body .= 'mutation ($file: File!) {add_file_to_column (item_id: ' . $item_id . ', column_id: file, file: $file) {id}}' . $eol;\n\t$body .= '--' . $boundary . $eol;\n\t$body .= 'Content-Disposition: form-data; name=\"variables[file]\"; filename=\"' . $upload['name'] . '\"' . $eol;\n\t$body .= 'Content-Type: ' . $upload['type'] . $eol . $eol;\n\t$body .= file_get_contents($upload['value']);\n\t$body .= $eol . '--' . $boundary . '--';\n\n\t$response = wp_remote_post( MONDAY_URL . 'file/', ['headers' =&gt; $header, 'body' =&gt; $body] );\n\n\tunlink(ABSPATH . substr($upload['value'], 25));\n}</code></pre>"
+    },
+    {
+      "id": 50647,
+      "postNumber": 4,
+      "createdAt": "2021-05-08T13:11:28.114Z",
+      "author": "maximilian (Maximilian Schwarz)",
+      "cookedHtml": "<p>Hi Rob,</p>\n<p>thanks for your reply. I have send you an email with more details.</p>"
+    },
+    {
+      "id": 50849,
+      "postNumber": 5,
+      "createdAt": "2021-05-10T19:24:32.650Z",
+      "author": "Andrew1 (Andrew)",
+      "cookedHtml": "<p>Hi Maximilian,<br />\nWhat you are wanting done is well within my area of expertise and I would be happy to help you out on this.<br />\nYou can reach me on <a href=\"mailto:andrewjohnson56782@gmail.com\">andrewjohnson56782@gmail.com</a><br />\nBest Wishes,<br />\nAndrew</p>"
+    },
+    {
+      "id": 50941,
+      "postNumber": 6,
+      "createdAt": "2021-05-11T11:47:14.965Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>I’ve just replied to your email <a class=\"mention\" href=\"/u/maximilian\">@maximilian</a></p>"
+    }
+  ]
+}

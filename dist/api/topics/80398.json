@@ -1,0 +1,25 @@
+{
+  "id": 80398,
+  "title": "API extract subitems - new API",
+  "slug": "api-extract-subitems-new-api",
+  "categoryId": 80,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-03-07T08:03:21.663Z",
+  "lastPostedAt": "2024-03-07T08:03:21.752Z",
+  "postsCount": 1,
+  "excerpt": "Hi, \nI’m struggling to replicate my old extraction in the new API, where I could extract the sub-items this way. \nOld query. \nlet \nMondayKey = “Key”, \nBoardId = “24718676xx”, \nGET_DATA = “”, \nMondayGraphQLBinaryResult = &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 548,
+  "posts": [
+    {
+      "id": 171984,
+      "postNumber": 1,
+      "createdAt": "2024-03-07T08:03:21.752Z",
+      "author": "Rune (Rune)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m struggling to replicate my old extraction in the new API, where I could extract the sub-items this way.</p>\n<p>Old query.</p>\n<p>let<br />\nMondayKey = “Key”,<br />\nBoardId = “24718676xx”,<br />\n<em><strong><strong><strong><strong><strong>GET_DATA</strong></strong></strong></strong></strong></em> = “”,<br />\nMondayGraphQLBinaryResult = Json.Document(Web.Contents(“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”, [<br />\nHeaders=[Method=“POST”, #“Content-Type”=“application/json”, Authorization=MondayKey],</p>\n<p>Content=Text.ToBinary(<br />\n“{”“query”\": ““query { boards(ids: \" &amp; BoardId &amp; “) {”&amp;<br />\n“id name items (limit: 200) { id name group { title }”&amp;<br />\n“subitems { id name column_values { id value text } } } } }””}”<br />\n)<br />\n])),<br />\ndata = MondayGraphQLBinaryResult[data],<br />\nboards = data[boards],<br />\nboards1 = boards{0},<br />\nitems = boards1[items],</p>\n<p>In the new query (below is working)<br />\nlet<br />\nMondayKey = “Key”,<br />\nBoardId = “24718676xx”,<br />\n<em><strong><strong><strong><strong><strong>GET_DATA</strong></strong></strong></strong></strong></em> = “”,<br />\nMondayGraphQLBinaryResult = Json.Document(Web.Contents(“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”, [<br />\nHeaders=[Method=“POST”, #“Content-Type”=“application/json”, Authorization=MondayKey],</p>\n<pre><code>\tContent=Text.ToBinary(\"{\"\"query\"\": \"\"query { boards(ids: \" &amp; BoardId &amp; \") { items_page(limit: 500) { items { name, id, columns: column_values {   ...on MirrorValue { display_value } } } } } }\"\"}\")\n</code></pre>\n<p>])),<br />\ndata = MondayGraphQLBinaryResult[data],<br />\nboards = data[boards],<br />\nboards1 = boards{0},<br />\nitems_page = boards1[items_page],<br />\nitems = items_page[items],<br />\nMondayRawTable = Table.FromList(items, Splitter.SplitByNothing(), null, null, ExtraValues.Error),<br />\n#“Expanded Column1” = Table.ExpandRecordColumn(MondayRawTable, “Column1”, {“name”, “id”, “group”, “columns”}, {“Column1.name”, “Column1.updated_at”, “Column1.group”, “Column1.columns”}),<br />\n#“Expanded Column1.columns2” = Table.ExpandListColumn(#“Expanded Column1”, “Column1.columns”),<br />\n#“Expanded Column1.columns3” = Table.ExpandRecordColumn(#“Expanded Column1.columns2”, “Column1.columns”, {“display_value”}, {“Column1.columns.display_value”})<br />\nin<br />\n#“Expanded Column1.columns3”^</p>\n<p>I’m having trouble finding the structure to extract subitem data, any suggestion to rewrite similar to above?</p>"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": 111420,
+  "title": "How to handle monday API limit?",
+  "slug": "how-to-handle-monday-api-limit",
+  "categoryId": 80,
+  "tagIds": [
+    5,
+    6,
+    94,
+    351
+  ],
+  "createdAt": "2025-03-13T03:58:54.917Z",
+  "lastPostedAt": "2025-03-13T04:47:07.658Z",
+  "postsCount": 3,
+  "excerpt": "We built an app that copies files from one column to another when the column changes. We have tested it with bulk column changes, for example, changing the status of 500 items at a time, each having 1 file (i.e., 500 fil&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 59,
+  "posts": [
+    {
+      "id": 223985,
+      "postNumber": 1,
+      "createdAt": "2025-03-13T03:58:55.008Z",
+      "author": "YuvrajSingh (Yuvraj Singh Rajput)",
+      "cookedHtml": "<p>We built an app that copies files from one column to another when the column changes. We have tested it with bulk column changes, for example, changing the status of 500 items at a time, each having 1 file (i.e., 500 files), and it works fine. We also tested it across multiple accounts and it works.</p>\n<p>However, when we submitted it for review, it failed to copy some files during the bulk column change mentioned earlier. We store file information (name, upload status, etc.) and found that the file is failing to upload due to reaching the maximum retry limit (we are retrying the file a maximum of 3 times).</p>\n<p>When we asked the app reviewer about the steps and other factors they were considering while testing the app, we discovered they are testing other apps as well.</p>\n<p>Since our app copies files from one column to another, it extensively uses the <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">monday.com</a> API (mutation and query). We manage the rate limit and concurrency limit by only uploading 10 files per minute. So why are the files still failing?</p>\n<p>Can someone please suggest what we should do to make it work?</p>"
+    },
+    {
+      "id": 223986,
+      "postNumber": 2,
+      "createdAt": "2025-03-13T04:14:46.791Z",
+      "author": "sachinkarma (sachin kumar karma)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/yuvrajsingh\">@YuvrajSingh</a></p>\n<p>It sounds like you’ve built a solid file-copying app, but the issue likely stems from API rate limits, concurrent API usage, or potential background load caused by other apps during the review process.</p>\n<p>Even though you’re processing 10 files per minute, <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>’s dynamic rate limiting may still throttle requests under heavy load. Consider adding exponential back off with increasing wait times before retries.</p>\n<p>Instead of handling files individually, try batching API requests where possible to optimize efficiency.</p>\n<p>Implement a job queue to track failed uploads and retry asynchronously instead of hitting the limit in quick succession.</p>\n<p>Monitor error codes (e.g., 429 Too Many Requests, 500 Server Errors) and log response headers to better understand the issue during review.<br />\nSimulate a heavier API load to replicate the review environment and fine-tune your app accordingly.</p>"
+    },
+    {
+      "id": 223987,
+      "postNumber": 3,
+      "createdAt": "2025-03-13T04:47:07.658Z",
+      "author": "YuvrajSingh (Yuvraj Singh Rajput)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/sachinkarma\">@sachinkarma</a></p>\n<p>Thanks for the response. <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> file upload API do not support bulk file upload(see it <a href=\"https://developer.monday.com/api-reference/reference/assets-1#add-file-to-the-file-column\" rel=\"noopener nofollow ugc\">here</a>), so we have to upload one file at a time.</p>\n<p>We are also handling 429 status code requests and are retrying after the given value(present in retry-header <a href=\"https://developer.monday.com/api-reference/docs/rate-limits#minute-limit\" rel=\"noopener nofollow ugc\">here</a>) + 10seconds.</p>"
+    }
+  ]
+}

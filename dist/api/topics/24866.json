@@ -1,0 +1,62 @@
+{
+  "id": 24866,
+  "title": "Get connected column board",
+  "slug": "get-connected-column-board",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    22,
+    94
+  ],
+  "createdAt": "2021-09-15T05:19:07.058Z",
+  "lastPostedAt": "2021-09-15T07:27:40.281Z",
+  "postsCount": 6,
+  "excerpt": "Is there a way to get the board id of a connected column? \nWhen querying the column values of an item with a connected column, it only returns the item ids from the connected board columns but no reference to the board i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2154,
+  "posts": [
+    {
+      "id": 63591,
+      "postNumber": 1,
+      "createdAt": "2021-09-15T05:19:07.136Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Is there a way to get the board id of a connected column?<br />\nWhen querying the column values of an item with a connected column, it only returns the item ids from the connected board columns but no reference to the board itself.</p>"
+    },
+    {
+      "id": 63597,
+      "postNumber": 2,
+      "createdAt": "2021-09-15T06:32:31.312Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I think you need to do a 2-step approach here. Get the itemId(s) for the linked items in the connect_boards column, followed by:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 123456789-the itemid found in the connect_boards column) {\n    board {\n      id\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 63599,
+      "postNumber": 3,
+      "createdAt": "2021-09-15T06:38:39.013Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,<br />\nGreat workaround, but what if the connect column is empty? Is it possible to get the connected column board id?</p>"
+    },
+    {
+      "id": 63600,
+      "postNumber": 4,
+      "createdAt": "2021-09-15T07:10:44.774Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a><br />\nIf the connect_boards column is empty, the LinkedPulseID’s will be empty as well and you can’t find the board that holds the original item through this 2-step approach. A more direct approach is to query the settings_str from the connect_boards column. This gives you an <strong>array</strong> of connected boardIds.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    columns(ids: \"connect_boards\") {\n      id\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>Output (that has to go through JSON.parse):</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": [\n          {\n            \"id\": \"connect_boards\",\n            \"settings_str\": \"{\\\"allowMultipleItems\\\":false,\\\"allowMultipleBoards\\\":true,\\\"allowCreateReflectionColumn\\\":false,\\\"boardIds\\\":[987654321]}\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": 1111111\n}\n</code></pre>"
+    },
+    {
+      "id": 63601,
+      "postNumber": 5,
+      "createdAt": "2021-09-15T07:27:40.281Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>This will do. Thank you very much.</p>"
+    },
+    {
+      "id": 64225,
+      "postNumber": 6,
+      "createdAt": "2021-09-22T07:28:38.463Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

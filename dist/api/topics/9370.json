@@ -1,0 +1,67 @@
+{
+  "id": 9370,
+  "title": "Escaping Accents via API in Powershell - Encoding Issue?",
+  "slug": "escaping-accents-via-api-in-powershell-encoding-issue",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2020-07-23T15:47:55.910Z",
+  "lastPostedAt": "2021-02-25T14:32:54.536Z",
+  "postsCount": 7,
+  "excerpt": "Hi! \nI have automated (or am attempting to create items in a board) using a Powershell script. The item name is based off of data from a SQL Server query. \nIt so far works perfectly well, except for the fact that accents&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 4093,
+  "posts": [
+    {
+      "id": 23519,
+      "postNumber": 1,
+      "createdAt": "2020-07-23T15:47:55.989Z",
+      "author": "mcd (marc codere dussault)",
+      "cookedHtml": "<p>Hi!</p>\n<p>I have automated (or am attempting to create items in a board) using a Powershell script. The item name is based off of data from a SQL Server query.<br />\nIt so far works perfectly well, except for the fact that accents (é,è,à, etc) cause trouble when sending the webrequest.</p>\n<blockquote>\n<p>$url = “<a href=\"https://api.monday.com/v2/%E2%80%9D\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/”</a><br />\n$hdr = @{}<br />\n$hdr.Add(“Authorization” , “Secret_key!”)<br />\n$hdr.Add(“Content-Type”,“application/json; charset=utf-8\")</p>\n</blockquote>\n<p>##<span class=\"hashtag-raw\">#This</span> mutation will NOT work: item_name = é</p>\n<blockquote>\n<p>$bodytxt ={“query”:“mutation{create_item(board_id:1234,item_name:\"é \"){id}}”}’<br />\n##<span class=\"hashtag-raw\">#This</span> mutation will work just fine: item_name = e<br />\n$bodytxt ={“query”:“mutation{create_item(board_id:1234,item_name:\"é \"){id}}”}’</p>\n</blockquote>\n<blockquote>\n<p>$response = Invoke-WebRequest -Uri $url -Headers $hdr -Method Post -body $bodytxt</p>\n</blockquote>\n<p>What modification is required for this to work? I can use the graphQL playground and make it work just fine with accents, but the webRequest simply ‘bounces’.</p>\n<p>Many thanks for any help!</p>"
+    },
+    {
+      "id": 23596,
+      "postNumber": 2,
+      "createdAt": "2020-07-25T03:06:28.664Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Heyyy <a class=\"mention\" href=\"/u/mcd\">@mcd</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" />! Glad you’re part of the community now <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks so much for providing so much context to your question right from the start, that’s amazing! To be transparent with you, I do not have much experience with using PowerShell, but it does seem like a formatting issue when sending this kind of symbols through API. It seems like you might need to play around with formatting the symbol differently in PowerShell itself, at least according to the post I’ve found below with a similar issue:</p>\n<aside class=\"onebox stackexchange\">\n  <header class=\"source\">\n\n      <a href=\"https://stackoverflow.com/questions/15290185/invoke-webrequest-issue-with-special-characters-in-json\" target=\"_blank\" rel=\"noopener nofollow ugc\">stackoverflow.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n      <a href=\"https://stackoverflow.com/users/2143668/thomas-b\" target=\"_blank\" rel=\"noopener nofollow ugc\">\n    <img alt=\"Thomas B\" src=\"https://global.discourse-cdn.com/monday/original/2X/8/86ca4d4e5a92f99e6112603c9e6f49ef16f12985.png\" class=\"thumbnail onebox-avatar\" width=\"256\" height=\"256\" />\n  </a>\n\n<h4>\n  <a href=\"https://stackoverflow.com/questions/15290185/invoke-webrequest-issue-with-special-characters-in-json\" target=\"_blank\" rel=\"noopener nofollow ugc\">Invoke-WebRequest - issue with special characters in json</a>\n</h4>\n\n<div class=\"tags\">\n  <strong>powershell, asp.net-mvc-4</strong>\n</div>\n\n<div class=\"date\">\n  asked by\n  \n  <a href=\"https://stackoverflow.com/users/2143668/thomas-b\" target=\"_blank\" rel=\"noopener nofollow ugc\">\n    Thomas B\n  </a>\n  on <a href=\"https://stackoverflow.com/questions/15290185/invoke-webrequest-issue-with-special-characters-in-json\" target=\"_blank\" rel=\"noopener nofollow ugc\">09:01AM - 08 Mar 13 UTC</a>\n</div>\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>Could you please take a look and see if the suggested adjustment there does the trick for you?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 23806,
+      "postNumber": 3,
+      "createdAt": "2020-07-27T18:01:32.678Z",
+      "author": "mcd (marc codere dussault)",
+      "cookedHtml": "<p>Hi Alex,</p>\n<p>Yes I eventually stumbled upon the same article and can confirm that it works just fine.</p>\n<p>That said, I am now into a new problem which has to do with changing an item value.<br />\nThe following argument does NOT work within Powershell even though it works within the API playgroup using the syntax below.</p>\n<pre><code>#POWERSHELL (not functional)\n$bodytxt = '{\"query\":\"mutation{change_column_value(board_id: 640598638, item_id:' + $a.data.create_item.id + ' ,column_id: \"dropdown4\", value: \"{\\\"ids\\\": [1]}\"){id}\"}'\n -&gt;&gt; value of the $bodytxt variable once executed: \n{\"query\":\"mutation{change_column_value(board_id: 640598638, item_id:665073849 ,column_id: \"dropdown4\", value: \"{\\\"ids\\\": [1]}\"){id}\"}\n\n#API PLAYGROUND (functional)\nmutation{change_column_value(board_id: 640598638, item_id:665073849,column_id: \"dropdown4\", value: \"{\\\"ids\\\": [1]}\"){id}}\n</code></pre>\n<p>What part isn’t escaped properly? The outputted powershell string passed to the webrequest seems identical to the API playground one (to my untrained eye at least)…</p>"
+    },
+    {
+      "id": 23813,
+      "postNumber": 4,
+      "createdAt": "2020-07-27T19:31:50.216Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mcd\">@mcd</a>, I recommend using variables to pass json strings so you don’t have to worry about escaping.</p>\n<p>Here is an example in powershell that goes through updating column values. It loops trough the items in a board and updates various columns. You should be able to use it to build a valid column values object and pass it in your mutation!</p>\n<p>Check it out:  <a href=\"https://gist.github.com/yuhgto/17097c7046772b71d1ac788c21898f5c\" class=\"inline-onebox\">monday.com Powershell API Example · GitHub</a></p>"
+    },
+    {
+      "id": 23902,
+      "postNumber": 5,
+      "createdAt": "2020-07-28T15:59:02.505Z",
+      "author": "mcd (marc codere dussault)",
+      "cookedHtml": "<p>Thanks dipro.</p>\n<p>That clarifies ALMOST everything.<br />\nMy main issue is the syntax for dropdowns in PowerShell:</p>\n<p>How do you replicate the {“ids”: [1]} syntax ?</p>\n<p>the square brackets seem to need extra help.</p>\n<p>Dropdown column<br />\nEach dropdown column is a collection of ids and their corresponding label. To update a dropdown column, send the ids of the labels you want to set. If you don’t know the ids of the labels you’re trying to set, you can send the labels text instead. You can only use existing labels, and if the labels you sent doesn’t exist you will get an error containing all the existing labels and their ids.<br />\nRaw JSON - use this in your column values variables:<br />\nJSON.stringify({<br />\n“ids”: [<br />\n1<br />\n]<br />\n});<br />\nJSON string - use this in the GraphiQL editor:<br />\n“{“ids”:[1]}”</p>"
+    },
+    {
+      "id": 24263,
+      "postNumber": 6,
+      "createdAt": "2020-07-31T17:07:24.250Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Every column value is a JSON “object” (key-value pairs, or a hash table in Powershell).</p>\n<p>For the dropdown column, the key is <code>ids</code> and the value is an array of integers (each integer corresponding to a label for the dropdown).</p>\n<p>In the same way that you can serialize hash tables into JSON objects, the Powershell JSON serializer should also support turning an array data structure into a valid JSON string.</p>\n<p>This is roughly the procedure you should do to create that column value. I haven’t tested the code, it’s just to demonstrate the process.</p>\n<pre><code class=\"lang-auto\">$listOfDropdownLabels = 1,2,4 # this is my array\n$columnValue = @{\"ids\" = $listOfDropdownLabels} # this is my column value\n$jsonColValue = $columnValue | ConvertTo-Json # this is my JSON column value\n</code></pre>\n<p>You can see a similar process happening on lines 36-39 of the example code (<a href=\"https://gist.github.com/yuhgto/17097c7046772b71d1ac788c21898f5c#file-mondayexample-ps1-L36-L39\">link</a>).</p>\n<p>Hope that gets you over the hump!</p>"
+    },
+    {
+      "id": 42403,
+      "postNumber": 7,
+      "createdAt": "2021-02-25T14:32:54.536Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

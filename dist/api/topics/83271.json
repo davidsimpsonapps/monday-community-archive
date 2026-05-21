@@ -1,0 +1,90 @@
+{
+  "id": 83271,
+  "title": "Is there no way to query subitems?",
+  "slug": "is-there-no-way-to-query-subitems",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2024-04-08T02:31:15.099Z",
+  "lastPostedAt": "2025-07-03T17:49:45.290Z",
+  "postsCount": 9,
+  "excerpt": "I’d like to query subitems where a date column matches a date range. This is possible for regular items by using items_page queries. Is this not possible at all for subitems? Any feasible workarounds? \nBack in 2020 I thi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 367,
+  "posts": [
+    {
+      "id": 177325,
+      "postNumber": 1,
+      "createdAt": "2024-04-08T02:31:15.181Z",
+      "author": "reinier (Reinier ― 📅 Calendar Plus 🍅 Automato)",
+      "cookedHtml": "<p>I’d like to query subitems where a date column matches a date range. This is possible for regular items by using <a href=\"https://developer.monday.com/api-reference/reference/items-page#queries\" rel=\"noopener nofollow ugc\"><code>items_page</code> queries</a>. Is this not possible at all for subitems? Any feasible workarounds?</p>\n<p><a href=\"https://community.monday.com/t/is-there-a-way-to-query-subitems/10522\">Back in 2020</a> I think the answer was <em>no</em>.</p>"
+    },
+    {
+      "id": 177367,
+      "postNumber": 2,
+      "createdAt": "2024-04-08T09:30:25.967Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You can but you must get the subitem board ID first, then use item_page on THAT board, rather than the main board ID.</p>\n<p>You can get the subitem board ID from</p>\n<pre><code class=\"lang-auto\">{\n boards(id: 123123){\n   columns(ids: \"subitems\") {\n     settings_str\n   }\n }\n}\n</code></pre>\n<p>settings_str is a JSON string you can parse, and there is a boardId property (or boardIds) which contains the subitem board ID.</p>\n<p>This query tends to be the easiest to get the ID.</p>\n<p>Now you can query that subitem board as if it was a regular board.</p>"
+    },
+    {
+      "id": 177465,
+      "postNumber": 3,
+      "createdAt": "2024-04-08T18:25:35.056Z",
+      "author": "reinier (Reinier ― 📅 Calendar Plus 🍅 Automato)",
+      "cookedHtml": "<p>Ahhh, that clears it up. I saw people talking about such a subitems board, but I wouldn’t have thought to look in the settings string. Cheers Cody!</p>"
+    },
+    {
+      "id": 177547,
+      "postNumber": 4,
+      "createdAt": "2024-04-09T09:49:23.728Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The other way to get it to query an item for its subitems and have the subitems include their board ID. I don’t like this method because it results in retrieving items we don’t need and uses up more API complexity (plus since you may not know an item ID to retrieve on the board, you have to do an items_page with a limit of 1 on the board.) It gets messy that way. But I’m sharing it since it may be useful in other settings possibly.</p>\n<pre><code class=\"lang-auto\">{\n  items {\n    subitems {\n      board {\n        id\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 177754,
+      "postNumber": 5,
+      "createdAt": "2024-04-10T08:46:27.018Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you for the help <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!!</p>"
+    },
+    {
+      "id": 196096,
+      "postNumber": 6,
+      "createdAt": "2024-08-05T07:59:32.688Z",
+      "author": "reinier (Reinier ― 📅 Calendar Plus 🍅 Automato)",
+      "cookedHtml": "<p>I wanted to add here that you want to avoid directly querying the <code>subitems</code> column. I made the assumption this is a magic column ID, but the column ID is different depending on the language of the user that created the board! Query by column type instead:</p>\n<pre><code class=\"lang-auto\">boards(ids: [123]) {\n  columns(types: subtasks) {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 196097,
+      "postNumber": 7,
+      "createdAt": "2024-08-05T08:02:21.847Z",
+      "author": "reinier (Reinier ― 📅 Calendar Plus 🍅 Automato)",
+      "cookedHtml": "<p>Don’t forget the <code>settings_str</code> to extract the subboard ID:</p>\n<pre><code class=\"lang-auto\">boards(ids: [123]) {\n  columns(types: subtasks) {\n    id // This can be eg. sous__l_ments (for Sous-éléments)\n    settings_str\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 196111,
+      "postNumber": 8,
+      "createdAt": "2024-08-05T10:45:58.466Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You’re right. It was a magic ID for several years, and always <code>subitems</code> until a few couple months ago!</p>\n<p>Then all the sudden without any notice monday started generating it as <code>subitems__1</code> or such.</p>\n<p>At least there is only one subtasks column - for now. But I can imagine if they added a feature to support multiple types of subitems that there could be more of them. They better think that through first…</p>"
+    },
+    {
+      "id": 196117,
+      "postNumber": 9,
+      "createdAt": "2024-08-05T11:20:51.166Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 233523,
+      "postNumber": 10,
+      "createdAt": "2025-07-03T17:49:45.290Z",
+      "author": "yarhuoy (Ng Yar Huoy)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> , If I want to create a board → add columns (including subitem columns) → insert items and subitems all via API, is there a way to retrieve the Subitems Board ID so I can create the subitem columns and insert the subitems?</p>\n<p>So far, from my testing, it seems that I’m not able to retrieve the Subitems Board ID initially. But after I click on “Expand this item” in the board and then run the same query again, I’m able to retrieve it.</p>"
+    }
+  ]
+}

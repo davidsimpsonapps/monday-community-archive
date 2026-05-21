@@ -1,0 +1,48 @@
+{
+  "id": 21171,
+  "title": "Working with API v2 and VBA - Parsing Mutation",
+  "slug": "working-with-api-v2-and-vba-parsing-mutation",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    94,
+    351
+  ],
+  "createdAt": "2021-06-11T09:03:13.823Z",
+  "lastPostedAt": "2021-06-17T10:08:37.469Z",
+  "postsCount": 4,
+  "excerpt": "Hello! I’ve been trying to work with API v2 and VBA. So far I’ve been able do connect to the server and query board fields and values. I’m now trying to creating items and changing column values using mutation, but haven&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 2172,
+  "posts": [
+    {
+      "id": 54456,
+      "postNumber": 1,
+      "createdAt": "2021-06-11T09:03:13.917Z",
+      "author": "vprado (Vitor Zwecker do Prado Ribeiro)",
+      "cookedHtml": "<p>Hello! I’ve been trying to work with API v2 and VBA. So far I’ve been able do connect to the server and query board fields and values. I’m now trying to creating items and changing column values using mutation, but haven’t had success yet. Hope someone could show me the way.</p>\n<p>My general code is:</p>\n<pre><code class=\"lang-auto\">Public Pass As Variant\n\nSub monday()\n Dim monday As New MSXML2.ServerXMLHTTP60\n Dim response As Variant\n Dim status As Variant\n Dim query As String\n \n query = query\n\n    With monday\n        .Open \"POST\", myurl , False\n        .SetRequestHeader \"Content-Type\", \"application/json\"\n        .SetRequestHeader \"Accept\", \"application/json\"\n        .SetRequestHeader \"Authorization\", mytoken\n        .Send query\n        response = .ResponseText\n        status = .status &amp; \" | \" &amp; .StatusText\n    End With\n\nMsgBox response \nMsgBox status\n\nEnd Sub\n</code></pre>\n<p>When trying to change the columns values, I’ve tried querying the mutation in two different ways, getting different response texts and status.</p>\n<p>1st try:</p>\n<pre><code class=\"lang-auto\">query = \" { \"\"mutation\"\" : \"\"{change_simple_column_value (board_id: xxxxxxxx, item_id: xxxxxxxx, column_id: \"\"texto\"\", value: \"\"Ok\"\" {id}}\"\"}\"\n</code></pre>\n<p>With this I get a huge response text (looks like error) and status and status text: “500 | Internal Server Error”.</p>\n<p>On the 2nd try, I’ve tried escaping the strings:</p>\n<pre><code class=\"lang-auto\">query = \" { \"\"mutation\"\" : \"\"{change_simple_column_value (board_id: xxxxxxxx, item_id: xxxxxxxx, column_id: \\\"\"texto\\\"\", value: \\\"\"Ok\\\"\" {id}}\"\"}\"\n</code></pre>\n<p>This time I get the response text as: “{“errors”:[{“message”:“No query string was present”}],“account_id”:xxxxx}” and status and status text: “200 | OK”.</p>\n<p>What I could possibly be doing wrong?</p>"
+    },
+    {
+      "id": 54471,
+      "postNumber": 2,
+      "createdAt": "2021-06-11T12:02:46.720Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/vprado\">@vprado</a>,</p>\n<pre><code>If OpType = \"Query\" Then argString = \"{\"\"query\"\":\"\"{@@@}\"\"}\"\nIf OpType = \"Update\" Then argString = \"{\"\"query\"\":\"\"mutation{@@@}\"\"}\"\nargString = Replace(argString, \"@@@\", Command)</code></pre>"
+    },
+    {
+      "id": 54484,
+      "postNumber": 3,
+      "createdAt": "2021-06-11T13:52:11.960Z",
+      "author": "vprado (Vitor Zwecker do Prado Ribeiro)",
+      "cookedHtml": "<p>Thanks a lot <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>! I wasn’t sure whether I had to use “query” before “mutation” when updating.</p>\n<p>The working code is:</p>\n<pre><code class=\"lang-auto\">Public Pass As Variant\n\nSub monday()\n Dim monday As New MSXML2.ServerXMLHTTP60\n Dim response As Variant\n Dim status As Variant\n Dim argString As String\n \nargString = \" { \"\"query\"\" : \"\"mutation{@@@}\"\"}\"\nargString = Replace(argString, \"@@@\", \"change_simple_column_value (board_id: xxxxxxxx, item_id: xxxxxxxx, column_id: \\\"\"texto\\\"\", value: \\\"\"Ok\\\"\" ){id}\")\n\n    With monday\n        .Open \"POST\", myurl , False\n        .SetRequestHeader \"Content-Type\", \"application/json\"\n        .SetRequestHeader \"Accept\", \"application/json\"\n        .SetRequestHeader \"Authorization\", mytoken\n        .Send argString\n        response = .ResponseText\n        status = .status &amp; \" | \" &amp; .StatusText\n    End With\n\nEnd Sub\n</code></pre>"
+    },
+    {
+      "id": 55022,
+      "postNumber": 4,
+      "createdAt": "2021-06-17T10:08:37.469Z",
+      "author": "mchinsky (Mark Chinsky)",
+      "cookedHtml": "<p>Thanks for posting the working code.  Alot of people ‘take the info and run’.  Thanks for passing it back to the community!</p>"
+    }
+  ]
+}

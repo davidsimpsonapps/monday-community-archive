@@ -1,0 +1,40 @@
+{
+  "id": 38729,
+  "title": "Verifying webhook athenticity",
+  "slug": "verifying-webhook-athenticity",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6
+  ],
+  "createdAt": "2022-07-05T09:47:55.618Z",
+  "lastPostedAt": "2022-07-06T11:06:34.500Z",
+  "postsCount": 3,
+  "excerpt": "Hello \nI understand custom actions have a JWT token on the “Authorization” header that allows my server to verify the source of the call, but what about webhooks? I’ve noticed there’s no such header, so how can I validat&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 819,
+  "posts": [
+    {
+      "id": 90405,
+      "postNumber": 1,
+      "createdAt": "2022-07-05T09:47:55.690Z",
+      "author": "sp-keyzy (Simon Piscitelli)",
+      "cookedHtml": "<p>Hello</p>\n<p>I understand custom actions have a JWT token on the “Authorization” header that allows my server to verify the source of the call, but what about webhooks? I’ve noticed there’s no such header, so how can I validate the webhook call came from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>?</p>"
+    },
+    {
+      "id": 90470,
+      "postNumber": 2,
+      "createdAt": "2022-07-05T19:32:11.263Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/sp-keyzy\">@sp-keyzy</a>!</p>\n<p>Welcome to the community, we hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/rocket.png?v=12\" title=\":rocket:\" class=\"emoji\" alt=\":rocket:\" width=\"20\" height=\"20\" /></p>\n<p>You are correct in that webhooks do not provide the benefits that come with the authorization header included in custom actions.</p>\n<p>However, our servers will send a \"challenge’ to your URL to verify that you control the endpoint you provide. Our platform checks this by sending a JSON challenge to your endpoint, and your app should respond back with the same challenge.</p>\n<p>We will send a JSON POST body, containing a “challenge” field. This is a randomly generated token that we expect you to return as a “challenge” field of your response JSON body to that request.</p>\n<p>Here is what the “Challenge” will look like:</p>\n<pre><code class=\"lang-auto\">{\n \"challenge\": \"3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P\"\n}\n</code></pre>\n<p>The response body should be an identical JSON POST body:</p>\n<pre><code class=\"lang-auto\">{\n \"challenge\": \"3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P\"\n}\n</code></pre>\n<p>Here is a simple example in JavaScript of a webhook listener that will print the output of the webhook and respond correctly to the challenge:</p>\n<pre><code class=\"lang-auto\">app.post(\"/\", function(req, res) {  console.log(JSON.stringify(req.body, 0, 2));    res.status(200).send(req.body);})\n</code></pre>"
+    },
+    {
+      "id": 90529,
+      "postNumber": 3,
+      "createdAt": "2022-07-06T11:06:34.500Z",
+      "author": "sp-keyzy (Simon Piscitelli)",
+      "cookedHtml": "<p>The problem with challenge is that I get it only when I register the webhook, not when it triggers</p>\n<p>Is there a way to do an official feature request to get some sort of authentication available to webhooks?</p>"
+    }
+  ]
+}

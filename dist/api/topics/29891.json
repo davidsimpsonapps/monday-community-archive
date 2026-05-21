@@ -1,0 +1,40 @@
+{
+  "id": 29891,
+  "title": "API query by board ID hitting max <integer> value",
+  "slug": "api-query-by-board-id-hitting-max-integer-value",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-01-14T14:41:53.255Z",
+  "lastPostedAt": "2022-01-17T14:10:31.403Z",
+  "postsCount": 3,
+  "excerpt": "Hi all, \nThis morning I came across an unexpected (but fairly obvious issue when you think about it): my queries/mutations use the following format (in Powershell) : \n$colValuesJson = ($colValues | ConvertTo-Json -Depth &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2338,
+  "posts": [
+    {
+      "id": 73957,
+      "postNumber": 1,
+      "createdAt": "2022-01-14T14:41:53.330Z",
+      "author": "mcd (marc codere dussault)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>This morning I came across an unexpected (but fairly obvious issue when you think about it): my queries/mutations use the following format (in Powershell) :</p>\n<pre><code class=\"lang-auto\">$colValuesJson = ($colValues | ConvertTo-Json -Depth 5)\n  $query = 'mutation($board:Int!, $item:Int!, $vals: JSON!) {change_multiple_column_values(board_id:$board, item_id:$item, column_values:$vals) {id} }'\n  $vars = @{'board' = $new_ouverture_bid; 'item' = [**int**]$currentItem; 'vals' = $colValuesJson}\n  $vars.vals\n\n  # create request from \"query\" and \"vars\" and make API call\n  $req = @{query = $query; variables = $vars}\n  $bodytxt = $req | ConvertTo-Json\n  echo $bodytxt\n    $bodytxt = ([System.Text.Encoding]::UTF8.GetBytes($bodytxt ))\n\n    $response = Invoke-WebRequest -Uri $url -Headers $hdr -Method Post -body $bodytxt\n    $newItemID = $response.Content | ConvertFrom-Json\n    $newItemID = $newItemID.data.id\n</code></pre>\n<p>This morning, the ItemID surpassed the integer 32 bounds and so this part of the code failed:</p>\n<pre><code class=\"lang-auto\">$query = 'mutation($board:Int!, ****$item:Int!*,*** $vals: JSON!) {change_multiple_column_values(board_id:$board, item_id:$item, column_values:$vals) {id} }'\n  $vars = @{'board' = $new_ouverture_bid; 'item' = *[**int**]*$currentItem; 'vals' = $colValuesJson}\n  $vars.vals\n</code></pre>\n<p>Basically, I had the ItemID converted to regular int32 before sending it to the API, but this needed to be changed to int64 for it to work this morning.</p>\n<p>Which leads me to my question: what happens when we hit the int 64 limit? I’m guessing this isn’t too far into the future given the current rate of growth?</p>\n<p>Might be a dumb question, but this morning it is causing quite a bit of issues to have to convert everything to long… so I am trying to get ahead of the next issue.</p>"
+    },
+    {
+      "id": 73960,
+      "postNumber": 2,
+      "createdAt": "2022-01-14T14:48:56.251Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mcd\">@mcd</a>  — you are correct. Board and item IDs are now larger than the max size for a 32 bit signed int.</p>\n<p>We discovered and announced this yesterday — in our community and apps changelog.</p>\n<p>Here’s a link to the discussion: <a href=\"https://community.monday.com/t/board-ids-are-now-too-big-for-an-integer-check-your-databases-and-update-your-apps/29844\" class=\"inline-onebox\">Board IDs are now too big for an integer! Check your databases and update your apps :)</a></p>"
+    },
+    {
+      "id": 74117,
+      "postNumber": 3,
+      "createdAt": "2022-01-17T14:10:31.403Z",
+      "author": "mcd (marc codere dussault)",
+      "cookedHtml": "<p>Hi dipro,</p>\n<p>FWIW, it might be worthwhile putting it out there for the few that are using Powershell (and possibly other frameworks) that bigint cannot be serialized into JSON and will yield this when you try to put it into the query:</p>\n<pre><code>                  \"item\":  {\n                               \"IsPowerOfTwo\":  false,\n                               \"IsZero\":  false,\n                               \"IsOne\":  false,\n                               \"IsEven\":  true,\n                               \"Sign\":  1\n                           },\n</code></pre>\n<p><a href=\"https://github.com/PowerShell/PowerShell/issues/9207\" rel=\"noopener nofollow ugc\">Github 9207</a></p>\n<p>Solution seems to be to use [int64]</p>\n<p>cheers,</p>"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": 84663,
+  "title": "Unable to verify the first certificate",
+  "slug": "unable-to-verify-the-first-certificate",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    466
+  ],
+  "createdAt": "2024-04-21T05:56:50.018Z",
+  "lastPostedAt": "2024-04-23T04:20:15.544Z",
+  "postsCount": 5,
+  "excerpt": "Hello, \nFor the past few days, I’ve been encountering an error when attempting to activate an integration locally: \nFetchError: request to https://api.monday.com/v2 failed, reason: unable to verify the first certificate\n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1821,
+  "posts": [
+    {
+      "id": 179950,
+      "postNumber": 1,
+      "createdAt": "2024-04-21T05:56:50.102Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hello,</p>\n<p>For the past few days, I’ve been encountering an error when attempting to activate an integration locally:</p>\n<pre><code class=\"lang-auto\">FetchError: request to https://api.monday.com/v2 failed, reason: unable to verify the first certificate\n    at ClientRequest.emit (node:events:513:28)\n    at TLSSocket.socketErrorListener (node:_http_client:490:9)\n    at TLSSocket.emit (node:events:513:28)\n    at emitErrorNT (node:internal/streams/destroy:151:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:116:3)\n    at processTicksAndRejections (node:internal/process/task_queues:82:21) {\n  type: 'system',\n  errno: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',\n  code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE'\n}\n</code></pre>\n<p>Anyone have any idea into what might be causing this issue?</p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 179975,
+      "postNumber": 2,
+      "createdAt": "2024-04-21T07:05:23.474Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Here’s the important bit:</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/r/4da419/48.png\" class=\"avatar\" /> Roy:</div>\n<blockquote>\n<p><code>UNABLE_TO_VERIFY_LEAF_SIGNATURE</code></p>\n</blockquote>\n</aside>\n<p>It suggests that the certificate for <a href=\"http://api.monday.com\" rel=\"noopener nofollow ugc\">api.monday.com</a> is invalid.</p>\n<p>Go to the URL in a browser and check that you see a valid certificate. I do.</p>\n<p>To momentarily get around this problem, try this:</p>\n<pre><code class=\"lang-auto\">npm config set strict-ssl false\n</code></pre>\n<p>and test again to see if you get the expected result.</p>\n<p>After testing, always revert back to</p>\n<pre><code class=\"lang-auto\">npm config set strict-ssl true\n</code></pre>\n<p>I’m guessing that your setup somehow proxies <a href=\"http://api.monday.com\" rel=\"noopener nofollow ugc\">api.monday.com</a> and does something weird.</p>"
+    },
+    {
+      "id": 179976,
+      "postNumber": 3,
+      "createdAt": "2024-04-21T07:24:22.385Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hi David,</p>\n<p>Thank you for the reply.</p>\n<p>What “URL” you referring to ? when I open “<a href=\"http://api.monday.com\" rel=\"noopener nofollow ugc\">api.monday.com</a>” it just redirect me to my monday homepage of my account</p>\n<p>By the way, I am using ngrok as the tunnel. Is that related to the issue ?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 179978,
+      "postNumber": 4,
+      "createdAt": "2024-04-21T07:36:41.489Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/roy\">@Roy</a> i just went to <a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a> without logging into Monday. Then checked the certificate.</p>"
+    },
+    {
+      "id": 180017,
+      "postNumber": 5,
+      "createdAt": "2024-04-21T10:27:16.036Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 180265,
+      "postNumber": 6,
+      "createdAt": "2024-04-23T04:20:15.544Z",
+      "author": "davide.monticelli (Davide)",
+      "cookedHtml": "<p>I’ve the same problem too. Didn’t modify anything on the code<br />\nI’m behind proxy, so i could ask to the it service department if they’ve upgraded something</p>\n<p>Uncaught FetchError FetchError<br />\nat processPromiseRejections (internal/process/promises:265:13)<br />\nat processTicksAndRejections (internal/process/task_queues:97:32)<br />\npromises:265<br />\nDebugger attached.</p>\n<p>C:\\Repo\\monday\\node_modules\\node-fetch\\lib\\index.js:1501<br />\nreject(new FetchError(<code>request to ${request.url} failed, reason: ${err.message}</code>, ‘system’, err));<br />\n^<br />\nWaiting for the debugger to disconnect…<br />\nFetchError: request to <a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a> failed, reason: unable to verify the first certificate<br />\nat ClientRequest. (C:\\Repo\\monday\\node_modules\\node-fetch\\lib\\index.js:1501:11)<br />\nat ClientRequest.emit (node:events:520:28)<br />\nat TLSSocket.socketErrorListener (node:_http_client:442:9)<br />\nat TLSSocket.emit (node:events:520:28)<br />\nat emitErrorNT (node:internal/streams/destroy:157:8)<br />\nat emitErrorCloseNT (node:internal/streams/destroy:122:3)<br />\nat processTicksAndRejections (node:internal/process/task_queues:83:21) {<br />\ntype: ‘system’,<br />\nerrno: ‘UNABLE_TO_VERIFY_LEAF_SIGNATURE’,<br />\ncode: ‘UNABLE_TO_VERIFY_LEAF_SIGNATURE’<br />\n}<br />\nProcess exited with code 1</p>\n<p>that’s my error.</p>"
+    },
+    {
+      "id": 180827,
+      "postNumber": 7,
+      "createdAt": "2024-04-25T04:57:35.651Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "id": 9936,
+  "title": "Custom Block with Custom parameters",
+  "slug": "custom-block-with-custom-parameters",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-08-11T09:58:01.561Z",
+  "lastPostedAt": "2021-02-25T14:24:18.032Z",
+  "postsCount": 10,
+  "excerpt": "Hi, all \nIs there any way to provision any Custom Values to Custom Field type. For example, I have a Custom Field Type that should return a list of items. \nThe problem is for each user I want to return a different list o&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 1414,
+  "posts": [
+    {
+      "id": 25123,
+      "postNumber": 1,
+      "createdAt": "2020-08-11T09:58:01.621Z",
+      "author": "azelenkin0306 (Alexey Zelenkin)",
+      "cookedHtml": "<p>Hi, all<br />\nIs there any way to provision any Custom Values to Custom Field type. For example, I have a Custom Field Type that should return a list of items.</p>\n<p>The problem is for each user I want to return a different list of items. For example, based on User ID or some other Monday Identities I want to identify User or Entity the User belongs to and return corresponding list.</p>\n<p>BR,<br />\nAlexey</p>"
+    },
+    {
+      "id": 25144,
+      "postNumber": 2,
+      "createdAt": "2020-08-11T11:42:14.080Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/azelenkin0306\">@azelenkin0306</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>That’s quite an interesting question! I hope you don’t mind me asking, but it would be really helpful if you could provide more context to your request here. That would allow us to get a much deeper understanding of what you are trying to accomplish in this case. I hope that makes sense <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25148,
+      "postNumber": 3,
+      "createdAt": "2020-08-11T11:55:06.314Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/azelenkin0306\">@azelenkin0306</a></p>\n<p>You have access to accountId and userId in the request that is sent to you when user clicks the custom field type in the recipe. You need to provide an endpoint in the custom field type (dropdown) like this:</p>\n<blockquote>\n<p>router.post(“/master-detail/get-watchlist”, authenticationMiddleware, masterDetailController.getWatchList);</p>\n</blockquote>\n<p>Then in the function specified in the route you have access to accountId and userId after you verified the JWT token in the authorization header. Unfortunately you do <strong>not</strong> have access to boardId. With the userId you can get the teams where the user belongs to but I do not have an example for that. Snippet below shows all board where the boardIds are stored in an SQL table (function masterDetailService.getWatchList).</p>\n<blockquote>\n<p>async function getWatchList(req, res) {<br />\ntry {<br />\nconst { authorization } = req.headers;<br />\nif (!authorization &amp;&amp; req.query) authorization = req.query.token;<br />\nconst { accountId, userId, aud, exp, iat } = jwt.verify(authorization, process.env.MONDAY_SIGNING_SECRET);<br />\nreq.session = { accountId, userId, aud, exp, iat };<br />\n} catch (err) {<br />\nres.status(401).json({ error: “not authenticated” });<br />\n}<br />\nconst routePath = “https://” + req.headers.host + req.route.path;<br />\nif (req.session.aud !== routePath) return res.status(401).json({ error: “not authenticated” });<br />\nwatchList = await masterDetailService.getWatchList(req.session.accountId);<br />\nreturn res.status(200).send(watchList);<br />\n}</p>\n</blockquote>"
+    },
+    {
+      "id": 25150,
+      "postNumber": 4,
+      "createdAt": "2020-08-11T12:01:03.511Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> wow, thanks so much for jumping in and sharing! You’re always there to help out and I really appreciate it.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25159,
+      "postNumber": 5,
+      "createdAt": "2020-08-11T12:55:02.689Z",
+      "author": "azelenkin0306 (Alexey Zelenkin)",
+      "cookedHtml": "<p>Sure.<br />\nWe have a separate Board called <strong>Workflows</strong>. This board is populated by our service. Then we have several Boards with field called <strong>Workflow</strong> which is a Link to specific item in <strong>Workflows</strong> board</p>\n<p>This is how it looks like:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/fc3901672fe86c3275a3ff8e69ab541923110afd.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/fc3901672fe86c3275a3ff8e69ab541923110afd_2_690x328.png\" alt=\"image\" width=\"690\" height=\"328\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2222×1058 189 KB</span></div></a></div><p></p>\n<p>I want to create an Integration Recipe that does the following: When new item is created in specific board, update <strong>Workflow</strong> column of added item with the value taken from <strong>Workflows</strong> board. By using this recipe we’re planning to automate the connection between Tasks and Workflows that will be invoked once the Task needs to be validated.</p>\n<p>I’ve been told by <a class=\"mention\" href=\"/u/dipro\">@dipro</a> that I can use the Custom Field Type for this, but the problem is the same as <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> mentioned. These workflows can be different for each user/organization/entity and since we can’t send any identities in Custom Field type, on server I can’t differentiate which set of workflows should be returned.</p>\n<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>: Thanks for reply. This may work, but it introduces additional complexity to our functionality being already pretty complex</p>"
+    },
+    {
+      "id": 25665,
+      "postNumber": 6,
+      "createdAt": "2020-08-17T09:33:16.847Z",
+      "author": "azelenkin0306 (Alexey Zelenkin)",
+      "cookedHtml": "<p>Hi, <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a><br />\nAny updates? Is it possible to achieve this kind of functionality?</p>"
+    },
+    {
+      "id": 25958,
+      "postNumber": 7,
+      "createdAt": "2020-08-19T14:39:58.682Z",
+      "author": "edogr1 (Edo Garavani)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/azelenkin0306\">@azelenkin0306</a>!<br />\nWe’re going to release soon a possibility to add dependencies for your field type. For example, you can say that before clicking on your field type the user will have to first enter the data for a different field type and then you’ll receive it on the request to your endpoint <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 26006,
+      "postNumber": 8,
+      "createdAt": "2020-08-19T18:02:43.640Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/edogr1\">@edogr1</a>, Edo</p>\n<p>That is great news !!. While you are visiting the custom field types please have a look at the bug I reported to support this week (multiples column types in one recipe does not work).</p>\n<p>Also, it would be very helpful if you can send the boardId of the board where the recipe is configured  to in the payload of the request to the endpoint. In this way I can return options depending on the boardId <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 26075,
+      "postNumber": 9,
+      "createdAt": "2020-08-20T10:34:32.825Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> I’m glad Edo’s update here was helpful! Thank you for pointing those out for us as well! I’ll take a further look from my end and post those as tasks in our roadmap to consider and make further improvements on <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42290,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T14:24:18.032Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": 54953,
+  "title": "Can't Get Access Token: Invalid authorization code",
+  "slug": "cant-get-access-token-invalid-authorization-code",
+  "categoryId": 8,
+  "tagIds": [
+    18,
+    159,
+    310
+  ],
+  "createdAt": "2023-03-29T13:57:19.100Z",
+  "lastPostedAt": "2023-04-02T11:08:16.752Z",
+  "postsCount": 2,
+  "excerpt": "Hey all, \nI have a monday App to develop. Outside of moday, I am creating a small server to implement query and mutation with monday.com API for creating boards and items. \nFirst of all I have to write the Python script &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 917,
+  "posts": [
+    {
+      "id": 121849,
+      "postNumber": 1,
+      "createdAt": "2023-03-29T13:57:19.195Z",
+      "author": "weekendlover (Weiwei Lin)",
+      "cookedHtml": "<p>Hey all,<br />\nI have a monday App to develop. Outside of moday, I am creating a small server to implement query and mutation with <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API for creating boards and items.<br />\nFirst of all I have to write the Python script to get the access token so that my app can be authorized for doing things.</p>\n<p>Prefaces:</p>\n<ol>\n<li>I use Python.</li>\n<li>I built Flask server to have the redirect url for OAuth.</li>\n</ol>\n<p>Now I am facing the messages:<br />\n<code>{'error': 'invalid_grant', 'error_description': 'Invalid authorization code'}</code></p>\n<p>To be more concrete, this is my Python scripts:</p>\n<p><strong>auth.py</strong></p>\n<pre><code class=\"lang-auto\">import requests\n\ndef build_authorization_url(client_id, redirect_uri):\n    authorization_url = 'https://auth.monday.com/oauth2/authorize'\n    params = {\n        'client_id': client_id,\n        'redirect_uri': redirect_uri,\n        'response_type': 'code',\n    }\n    return authorization_url + '?' + '&amp;'.join([f'{k}={v}' for k, v in params.items()])\n\ndef fetch_access_token(client_id, client_secret, redirect_uri, code):\n    token_url = 'https://auth.monday.com/oauth2/token'\n    headers = {'Content-Type': 'application/x-www-form-urlencoded'}\n    data = {\n        'grant_type': 'authorization_code',\n        'client_id': client_id,\n        'client_secret': client_secret,\n        'redirect_uri': redirect_uri,\n        'code': code,\n    }\n    response = requests.post(token_url, headers=headers, data=data)\n    return response.json()\n</code></pre>\n<p><strong>app.py</strong> This is my Flask script.</p>\n<pre><code class=\"lang-auto\">import os\nfrom flask import Flask, flash, request, redirect, url_for\nfrom werkzeug.utils import secure_filename\nfrom auth import build_authorization_url, fetch_access_token\n\nclient_id = 'XXX'\nclient_secret = 'XXX'\nredirect_uri = 'http://127.0.0.1:5000/callback'\n\n\nUPLOAD_FOLDER = 'C:\\dev\\monday.com_formUpdateApp\\temp_upload'\nALLOWED_EXTENSIONS = {'xls', 'csv'}\n\napp = Flask(__name__)\napp.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER\n\ndef allowed_file(filename):\n    return '.' in filename and \\\n           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS\n\n@app.route('/', methods=['GET', 'POST'])\ndef upload_file():\n    if request.method == 'POST':\n\n        if 'file' not in request.files:\n            flash('No file part')\n            return redirect(request.url)\n        file = request.files['file']\n\n        if file.filename == '':\n            flash('No selected file')\n            return redirect(request.url)\n        if file and allowed_file(file.filename):\n            filename = secure_filename(file.filename)\n            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))\n            return redirect(url_for('download_file', name=filename))\n    return '''\n    &lt;!doctype html&gt;\n    &lt;title&gt;介接系統&lt;/title&gt;\n    &lt;h1&gt;請上傳您的Excel (.xls) 檔案&lt;/h1&gt;\n    &lt;form method=post enctype=multipart/form-data&gt;\n      &lt;input type=file name=file&gt;\n      &lt;input type=submit value=Upload&gt;\n    &lt;/form&gt;\n    '''\n\n@app.route('/authorize')\ndef authorize():\n    authorization_url = build_authorization_url(client_id, redirect_uri)\n    return redirect(authorization_url)\n\n\n@app.route('/callback')\ndef callback():\n    code = request.args.get('code')\n    access_token = fetch_access_token(client_id, client_secret, redirect_uri, code)\n    return access_token, code, \"Access token obtained successfully!\"\n</code></pre>\n<p><strong>main.py</strong></p>\n<pre><code class=\"lang-auto\">from auth import build_authorization_url, fetch_access_token\n\nclient_id = 'XXX'\n\nclient_secret = 'XXX'\n\nredirect_uri = 'http://127.0.0.1:5000/callback'\n\nauthorization_url = build_authorization_url(client_id, redirect_uri)\n\ncode = 'the_code_returned_from_callback'\n\naccess_token = fetch_access_token(client_id, client_secret, redirect_uri, code)\n\nprint(access_token)\n</code></pre>\n<p>print(access_token) is what I want to check if the token is fetched successfully.</p>\n<p>Is there any part that seems to be wrong?</p>"
+    },
+    {
+      "id": 122374,
+      "postNumber": 2,
+      "createdAt": "2023-04-02T11:08:16.752Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/weekendlover\">@weekendlover</a> and welcome to the community!</p>\n<p>Would you be able to send this over to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so we can take a look into it from there?</p>\n<p>Please include your whole script, the error message and the step-by-step you are going through!</p>\n<p>See you over there!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

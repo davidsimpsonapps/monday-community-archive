@@ -1,0 +1,82 @@
+{
+  "id": 36340,
+  "title": "Principles for creating a Monday workOS so that it's scalable and data is logically structured?",
+  "slug": "principles-for-creating-a-monday-workos-so-that-its-scalable-and-data-is-logically-structured",
+  "categoryId": 6,
+  "tagIds": [
+    12,
+    203
+  ],
+  "createdAt": "2022-05-16T16:56:07.901Z",
+  "lastPostedAt": "2022-06-05T17:46:21.391Z",
+  "postsCount": 9,
+  "excerpt": "Hi all. We are a professional services organisation of around 30 people, and have been using Monday as Enterprise users for around two years. Over that time it has gradually become our entire WorkOS. It started off as ju&hellip;",
+  "solvedPostId": null,
+  "likeCount": 27,
+  "views": 3559,
+  "posts": [
+    {
+      "id": 85958,
+      "postNumber": 1,
+      "createdAt": "2022-05-16T16:56:07.988Z",
+      "author": "carolinem (Caroline McKinnon)",
+      "cookedHtml": "<p>Hi all. We are a professional services organisation of around 30 people, and have been using Monday as Enterprise users for around two years. Over that time it has gradually become our entire WorkOS. It started off as just a project management template, but quickly grew into the platform for our entire business: CRM, projects, resource booking, staff directory, etc etc.</p>\n<p>We went from having everything scattered across multiple platforms, to bringing everything into Monday. A lot of the processes and use cases were not clearly defined before we started, and as we went along, we kept “bolting on” new functionality to work with our existing schema. The result is that now, things are quite messy and hard to administer. So I am in the process of recreating our schema to ensure that it is scalable, robust, and user-friendly.</p>\n<p>I am looking for advice on a general methodology for how the data should be structured. I pulled our boards and columns into Gephi and visualised their connections, and the result is a tangled mess. Some of our problem lies in the fact that we followed Monday’s advice for project management and designed low-level boards for each project, which then required other apps like rollup multiple boards, general caster, etc to be able to summarise this info in one place. Each project and its budget need to be painstakingly linked to summary boards and budget boards row by row. This creates a significant administrative overhead when setting up a new project, and complicates dashboarding. We also have different views that filter out certain columns for each type of user to see the info they want, but then the main view is just a disparate collection of columns which don’t make a lot of sense together.</p>\n<p>I am beginning to think that some of Monday’s advice on how to achieve certain use cases does not take into account the scalability of data and administration, and that the concept of a “workflow” and a “database” are quite different. If you want cleanly structured data, you should focus first on that, and then use automations, mirror columns, and other apps sparingly to avoid the scope creep and messiness that we are now experiencing.</p>\n<p>Has anyone gone through this process of completely redesigning their environment to clean it up, and do you have any insight into what general data design principles to follow? Interested to hear everyone’s thoughts.</p>"
+    },
+    {
+      "id": 86337,
+      "postNumber": 2,
+      "createdAt": "2022-05-19T10:37:50.028Z",
+      "author": "ElissaM (Elissa)",
+      "cookedHtml": "<p>Hi there!</p>\n<p>Do you have a practical example of board you could share? It’s hard to give you any advice without seeing what the issue is in practice. Because pretty much all you said is what I would advise: avoid redundant data, connect your boards instead, have low-level boards, overview boards etc.</p>\n<p>Maybe check if all your columns are being used and relevant for all your items. I’ve seen people using one board for things that actually didn’t belong to the same board and it eventually became a mess because they just kept adding columns and statuses to match their needs instead of splitting the board.</p>"
+    },
+    {
+      "id": 86363,
+      "postNumber": 3,
+      "createdAt": "2022-05-19T15:39:20.042Z",
+      "author": "max (max)",
+      "cookedHtml": "<p>Following this one <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I’m in a similar boat. Unfortunately, I don’t have much to contribute, as I have no background in database management or design. I have been taking some time to try to learn some basics of database design and apply them as best I can when building new things in Monday; however, I do not feel equipped at this stage to take on anything like the complete redesign you mention.</p>\n<p>I feel like this is something that we might be headed for eventually, but I’m not ready for it at this point. Look forward to hearing other’s suggestions.</p>"
+    },
+    {
+      "id": 86547,
+      "postNumber": 4,
+      "createdAt": "2022-05-22T23:33:18.446Z",
+      "author": "IainM (Iain Massey)",
+      "cookedHtml": "<p>I wold love to be part of this discussion as it evolves.  There are only five of us, also in professional services, and we have quite a few eggs in the Monday basket already (been using about a year).  It’s very seductive to quickly start capturing stuff in Monday, and very easy to evolve.  Like Carolinem, I fear losing track of how it all fits together.</p>"
+    },
+    {
+      "id": 86555,
+      "postNumber": 5,
+      "createdAt": "2022-05-23T05:33:49.169Z",
+      "author": "JPinBe (John Pescod)",
+      "cookedHtml": "<p>Your case makes interesting reading and I will continue to follow it. The advantage of Monday is that it is learned quickly by everyone and they can do their own thing with boards, but then how to get the famous “helicopter view” of everything? Some of the add-ons are great but they can quickly add $ to the system making Monday a much more expensive proposition.</p>"
+    },
+    {
+      "id": 87292,
+      "postNumber": 6,
+      "createdAt": "2022-05-31T16:54:16.282Z",
+      "author": "carolinem (Caroline McKinnon)",
+      "cookedHtml": "<p>Hi everyone. Thanks for your replies.</p>\n<p>So far, I have figured out that applying database normalisation rules is a great start. Although Monday provides many ways to work around the normal limitations of databases, if you adhere to these principles, it can save you running into trouble later. This might be obvious to those with a background in data management, but I’m a newbie: <a href=\"https://docs.microsoft.com/en-us/office/troubleshoot/access/database-normalization-description\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Database normalization description - Office | Microsoft Learn</a></p>\n<p>To give a concrete example, we originally had followed Monday’s advice on project management workflows and created individual boards for each project, based on a template, which contained almost the exact same rows for each one: tasks, timelines, and people. We have a few hundred of these so far. We also had a high-level project summary board with more descriptive information <em>about</em> each project. But when it comes time to try to project future resource availability, it was next to impossible to visualise that data from all those individual boards into one dashboard (there is a limit to how many boards can be connected to one dashboard, not to mention they need to be connected one by one, and there was no way to automatically add new boards and remove old ones). Yes, we could link the individual boards to the summary board, but linking each board to the summary board needs to be done task-by-task, and if you add a new task during the project after the project board is created, you have to go back to the summary board and link that manually, too. Very painful at the scale at which we are operating.</p>\n<p>So what I have been doing is pulling all the data out of those individual project boards and creating one called “project information” and one called “tasks”. The “tasks” one lists all tasks for <em>every</em> project, linked back to the project info board with a project ID to identify which project the task relates to. That way, we can see how busy each consultant is going to be in the future from one place.</p>\n<p>This is just one example of the streamlining I’m doing. I’ll post again as I go along.</p>"
+    },
+    {
+      "id": 87293,
+      "postNumber": 7,
+      "createdAt": "2022-05-31T16:56:38.372Z",
+      "author": "carolinem (Caroline McKinnon)",
+      "cookedHtml": "<p>Hi Elissa! Thanks. I agree an example would be useful. I need to create one with some dummy data in it for this purpose (so that I’m not sharing confidential info). I’ll work on that in the next couple of days.</p>"
+    },
+    {
+      "id": 87642,
+      "postNumber": 8,
+      "createdAt": "2022-06-05T17:28:10.383Z",
+      "author": "Bennett (Bennett Killmer)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/carolinem\">@carolinem</a>!</p>\n<p>Thank you so much for bringing this issue out into the open. 100% with you on the struggle to move from the dreamy easy flow Monday presents in their documentation and marketing to the actual real world brain twister of how to get a company fully running on this incredibly amazing software.</p>\n<p>I’m at a stage where I’ve hit so many roadblocks and gone down so many workaround paths only to hit more roadblocks to the workarounds, etc.</p>\n<p>Your database normalization link was a breath of fresh air. Thank you for that. You helped me have the confidence that this is the right path to take when planning, even though I fear the table and link structure that would work in a normal database doesn’t necessarily lead to getting the info you need visible or usable in a useful way in Monday - like linked item data isn’t picked up by the gantt, or timeline, or group by function, etc. So it’s a constant back and forth for me of seeing a solution, only to realize that that specific part of Monday doesn’t exist…yet. Ugh.  And back to another workaround <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>2 things I only recently learned that maybe you are using already, but in case you haven’t or in case anyone else following this thread finds it useful, this was new to me and helped a lot…</p>\n<p><strong>Connecting boards revelation <span class=\"hashtag\">#1</span> <img src=\"https://emoji.discourse-cdn.com/apple/raised_hands.png?v=12\" title=\":raised_hands:\" class=\"emoji\" alt=\":raised_hands:\" width=\"20\" height=\"20\" /></strong></p>\n<p>This impossible task of manually connecting every single item from low boards to high boards is such a dead end when new items are constantly being created and changed. But I recently saw a Monday Man video <a href=\"https://www.youtube.com/watch?v=Pij1gADrUJo&amp;t=802s\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Column Total in monday.com Formulas? YES!!! - YouTube</a> (about 2 mins in) where he used the “Item Default Values” to set the default new item value to the correctly matching high level board item. So you have to set it up once per board, but then every new item anyone creates automatically connects itself to the right high level board item!</p>\n<p>Then you realize again that you can only have up to 60 boards connected, so it’s not a solution to the high level overview board we all want.</p>\n<p>I’m going back and forth between trying so hard to use Monday’s internal linking between boards and being faced with the reality that it’s not scalable and even worse - not usable for historical data – if I have to disconnect all the old boards to stay under the 60 board limit, then all the older project items in the high level board end up blank eventually <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /> Which is now forcing me to consider just abandoning Monday linking (for low to high level boards) and use Make (Integromat) to keep the high level boards updated so that there is no low level board limit and the info will stay there forever even when the job is over. But it seems like a shame to have to do it this way and I loose some things like the nice status summaries and it’s just one more thing to have to troubleshoot – so I’m really conflicted.</p>\n<p><strong>Connecting boards revelation <span class=\"hashtag\">#2</span> <img src=\"https://emoji.discourse-cdn.com/apple/raised_hands.png?v=12\" title=\":raised_hands:\" class=\"emoji\" alt=\":raised_hands:\" width=\"20\" height=\"20\" /></strong></p>\n<p>On a more positive note, I have started to realize that if I have the high level overview board and another large collection board like an invoice board (or like you were suggesting a giant task dump board), I could use this new automation to automatically make tons of connections even between many thousands of items:</p>\n<p>When ____ changes, connect the item where ____ matches ____ in ____ by this logic.</p>\n<p>I tried it on an invoice board and whenever the project name changes (or is created), it successfully finds the item with that same name in my high level projects board and connects the invoices to their related high level project item. This is opening things up quite a bit for me in seeing how I can use use more linking between boards – as long as I’m confident the boards will stay in the system forever and not expand out to many more than maybe 5 or 10.</p>\n<p>I’m sure this is all probably beginner database stuff, but I agree that this seems to be kind of ignored in Monday’s advice to just unleash the platform on your company and see what people do with it. Maybe this works well if it’s just going to be a task list, but for those of us hoping to realize the Monday promise of a Work OS and really hold company data and processes in a way that offers real benefits to the users (vs just an additional app we all now have to enter everything into), I believe it requires (and deserves) much deeper planning and consistency.</p>\n<p>I still get excited almost every day about the potential <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks again for sharing your thoughts. I really appreciate it!!</p>"
+    },
+    {
+      "id": 87643,
+      "postNumber": 9,
+      "createdAt": "2022-06-05T17:46:21.391Z",
+      "author": "carolinem (Caroline McKinnon)",
+      "cookedHtml": "<p>Hi Bennett! Thanks so much for your incredibly helpful response. I can’t wait to try out your two suggestions. I had noticed that automation you mentioned in revelation <span class=\"hashtag\">#2</span>, and it did seem promising. It is fairly new I think.</p>\n<p>I completely agree with what you have said about the fact that it requires and deserves much deeper planning and consistency - but like you, I can see the potential and want to persevere. My organisation is getting frustrated but if we can just get the schema design right in the first place, I still think Monday is the right tool.</p>\n<p>Please keep the discussion going, everyone!</p>"
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "id": 19867,
+  "title": "Attempt to change column values, get an error about pulse subscription",
+  "slug": "attempt-to-change-column-values-get-an-error-about-pulse-subscription",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-05-10T13:09:14.896Z",
+  "lastPostedAt": "2021-06-30T12:14:36.888Z",
+  "postsCount": 27,
+  "excerpt": "With the following command: \n\nmutation request($boardId:Int! $itemId:Int $columnValues:JSON! $createLabelsIfMissing:Boolean!) { change_multiple_column_values (board_id: $boardId, item_id: $itemId, column_values: $columnV&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3355,
+  "posts": [
+    {
+      "id": 50789,
+      "postNumber": 1,
+      "createdAt": "2021-05-10T13:09:14.998Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>With the following command:</p>\n<blockquote>\n<p>mutation request($boardId:Int! $itemId:Int $columnValues:JSON! $createLabelsIfMissing:Boolean!) { change_multiple_column_values (board_id: $boardId, item_id: $itemId, column_values: $columnValues, create_labels_if_missing: $createLabelsIfMissing) { id }}</p>\n</blockquote>\n<p>-and valid values-</p>\n<p>I got the following response:</p>\n<blockquote>\n<p>{“error_code”:“RecordInvalidException”,“status_code”:422,“error_message”:“Validation failed: user cant subscribe to a pulse without being exposed to it”,“error_data”:{“error_data”:“Validation failed: user cant subscribe to a pulse without being exposed to it”}}</p>\n</blockquote>\n<p>In other words, a message about subscribing to a pulse, while the request was to change multiple column values. How do I deal with such error messages?<br />\nI recorded the response headers, here is a selection:</p>\n<div class=\"md-table\">\n<table>\n<thead>\n<tr>\n<th><strong>Name</strong></th>\n<th><strong>Value</strong></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Transfer-Encoding</td>\n<td>[ “chunked” ]</td>\n</tr>\n<tr>\n<td>Connection</td>\n<td>[ “keep-alive” ]</td>\n</tr>\n<tr>\n<td>x-request-id</td>\n<td>[ “832ffcbd-d134-9f8c-ad90-b86c1ea1cdb1” ]</td>\n</tr>\n<tr>\n<td>x-runtime</td>\n<td>[ “0.222076” ]</td>\n</tr>\n<tr>\n<td>x-envoy-upstream-service-time</td>\n<td>[ “229” ]</td>\n</tr>\n<tr>\n<td>x-monday-rgn</td>\n<td>[ “use1” ]</td>\n</tr>\n<tr>\n<td>CF-Cache-Status</td>\n<td>[ “DYNAMIC” ]</td>\n</tr>\n<tr>\n<td>cf-request-id</td>\n<td>[ “09f8415779000001112b2b2000000001” ]</td>\n</tr>\n<tr>\n<td>Expect-CT</td>\n<td>[ “max-age=604800, report-uri=\"<a href=\"https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct%5C\" rel=\"noopener nofollow ugc\">https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct\\</a>”\" ]</td>\n</tr>\n<tr>\n<td>CF-RAY</td>\n<td>[ “64d3d19f2d8e0111-AMS” ]</td>\n</tr>\n<tr>\n<td>Date</td>\n<td>[ “Mon, 10 May 2021 14:22:17 GMT” ]</td>\n</tr>\n<tr>\n<td>Server</td>\n<td>[ “cloudflare” ]</td>\n</tr>\n</tbody>\n</table>\n</div><p>I tried the same request a few minutes later and go no error anymore. But why was this error returned the first time?</p>\n<p>Thank for your insights!</p>"
+    },
+    {
+      "id": 50829,
+      "postNumber": 2,
+      "createdAt": "2021-05-10T16:17:57.758Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 50830,
+      "postNumber": 3,
+      "createdAt": "2021-05-10T16:18:47.026Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>Hmm strange error.</p>\n<p>Do you mind letting me know of your user ID that was being used to make this API call? I can then check our logs to see if I can find any more information about this incident.</p>\n<p>Glad to hear it’s working now though!</p>"
+    },
+    {
+      "id": 50834,
+      "postNumber": 4,
+      "createdAt": "2021-05-10T16:44:47.987Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>!<br />\nThe user_id is 19162432, account_id is 3133580.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 50929,
+      "postNumber": 5,
+      "createdAt": "2021-05-11T11:02:12.356Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>! Thanks for sharing these IDs with me.</p>\n<p>I took a look, and I think I was able to find the request you were sending.</p>\n<p>It seems one of the column_values you were attempting to change was to assign a user to an item, is that right?</p>\n<p>If so, this error message then makes sense. It seems the user you were hoping to add to the item in the person column doesn’t have access to it, and thus cannot be subscribed (i.e. added).</p>\n<p>Could this explain the error you’re seeing?</p>"
+    },
+    {
+      "id": 50930,
+      "postNumber": 6,
+      "createdAt": "2021-05-11T11:03:06.499Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>error: <a href=\"https://monday.coralogix.com/#/query/logs?id=2P5NF00cZA9\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Coralogix</a></p>\n<p>time frame with other logs: <a href=\"https://monday.coralogix.com/#/query/logs?id=2P5MQJkT3j4\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Coralogix</a></p>"
+    },
+    {
+      "id": 51050,
+      "postNumber": 7,
+      "createdAt": "2021-05-12T05:16:22.331Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/helen\">@Helen</a>,<br />\nThanks for getting to the bottom of this! Two columns were being updated, one was a Status column, the other was a PersonsOrTeams column. The explanation sounds plausible.</p>\n<p>But… That same user could be set at the same column of other items in that board.<br />\nAnd… Applying exactly the same request (same values, same item) about ten minutes later did succeed (sorry, no logs of that request). So the error appeared to be transient.</p>\n<p>Can you think of a reason why this error went away? My goal is to set up a retry when a column update gives a transient error. But then I must know how to recognize transient errors.</p>\n<p>I do have another question about updating PersonsAndTeams columns, with respect to permissions: can pending users be added to those columns?</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 51098,
+      "postNumber": 8,
+      "createdAt": "2021-05-12T12:05:59.165Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>Yes you can definitely assign a pending user to a Person column.</p>\n<p>Hmm I’m not fully sure why you may have received this transient error. I think trying to catch these errors is a fantastic idea, but may be difficult in practice since these errors can come up due to a multitude of reasons: the timing of the requests sent, particulars and events occurring on your server and then on the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> server.</p>\n<p>Do you mind that these transient errors cause many issues in your workflow? If you want to give me a specific example of a case in which these errors caused a hiccup in your workflow, I’m happy to bring this up with our developers to see how we can solve it.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 51199,
+      "postNumber": 9,
+      "createdAt": "2021-05-12T18:21:15.190Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>Helen,</p>\n<p>The use case - if our software can detect that retrying has a good chance of succeeding, it would do so and nobody would know something was wrong. Now we can’t.<br />\nGenerally I always investigate errors. The excessive logging is done to help those investigations.</p>\n<p>If you say there’s not enough information to get the true origin of the problem, well that’s too bad. If more information would have helped, let me know what could help and I will try to collect that for future problems.</p>\n<p>Thanks you!</p>"
+    },
+    {
+      "id": 51275,
+      "postNumber": 10,
+      "createdAt": "2021-05-13T10:47:57.473Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>,</p>\n<p>Not at all! I think the information you provided was perfect, there’s nothing I would’ve changed on that front.</p>\n<p>Apologies I think I’m missing a detail. When the request went through successfully a few minutes later, was this other request caught by our retry policy? Or did you try again manually?</p>\n<p>For all failed requests, we do typically have a retry policy of every minute for the following 30 minutes, so I’m wondering if this error was caught by this retry policy.</p>"
+    },
+    {
+      "id": 51867,
+      "postNumber": 11,
+      "createdAt": "2021-05-19T08:17:28.449Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a> ,</p>\n<p>Apologies about the delay. We ran our software again, our software detected that this item needed an update, and did update the values with success.<br />\nIn case you wonder, my decision to run it again was that the error message made no sense to me, so I had the hypothesis that some other, possibly transient error happened on the Monday server - like a memory corruption. Therefore we just tried it again.</p>\n<p>You  made a remark that haunted me for the last few days:</p>\n<blockquote>\n<p>For all failed requests, we do typically have a retry policy of every minute for the following 30 minutes</p>\n</blockquote>\n<p>I guess this only applies to mutation requests, not query requests (how would a client receive its results?).<br />\nAnyway… Let’s say a mutation request initially fails, for the ultimate transient error: hitting a Rate limit. Are you really saying that this request is retried again and again?</p>\n<p>More general, does this mean Monday API reports that some request failed, while it might succeed. Is this behavior described anywhere?</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 51882,
+      "postNumber": 12,
+      "createdAt": "2021-05-19T10:57:50.504Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>,</p>\n<p>Got it, thank you for letting me know.</p>\n<p>So the retry policy I mentioned is for custom endpoints (i.e. your custom actions and custom triggers). It wouldn’t apply to all API calls made. In this case, should your API query see a rate limit error, it would not be retried over and over again.</p>\n<p>This is the article that explains our retry policy <a href=\"https://monday.com/developers/apps/custom-actions\" rel=\"noopener nofollow ugc\">here</a>:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9823967d31622c82d33e14ab8132fc00e981dcff.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9823967d31622c82d33e14ab8132fc00e981dcff_2_689x45.png\" alt=\"image\" width=\"689\" height=\"45\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1283×85 9.56 KB</span>\n</div></a></div><p></p>\n<p>I think my previous message may have been confusing, apologies! Hopefully this helps clear things up.</p>"
+    },
+    {
+      "id": 53248,
+      "postNumber": 13,
+      "createdAt": "2021-06-01T10:05:15.426Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>,</p>\n<p>Since it’s been a while since we last heard from you, I’m going to mark a solution to this thread.</p>\n<p>If this issue has not yet been resolved, feel free to make a comment within 7 days or start a new thread.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 53444,
+      "postNumber": 14,
+      "createdAt": "2021-06-02T11:40:18.726Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/helen\">@Helen</a> ,</p>\n<p>The problem is still happening every now and then…<br />\nLast time was May 27, the one different thing is the function - this time update_column. I have four separate request (and response headers) of the errors, let me know if you’re interested, and which response headers you need.</p>\n<p>When retried four hours later, no problem occurred.</p>\n<p>I am still investigating why this happened. I have a hunch that our software attempted to update the person column with exactly the SAME value. Obviously that is some error of me, but I would think the API is usually able to handle that situation, right? Especially as the same request succeeds some time later.<br />\nBut then again, maybe the API shouldn’t. After all, the <a href=\"https://monday.com/developers/v2#column-values-section-people\" rel=\"noopener nofollow ugc\">documentation on People columns</a> states:</p>\n<blockquote>\n<p>To <em><strong>UPDATE</strong></em> a people column, send an array with the people or teams you want to <em><strong>ADD</strong></em> to the column.</p>\n</blockquote>\n<p>(emphasizing by me)<br />\nThis would mean you never change or clear the contents of the people - when using the API. Is that correct? In that case, can the documentation also say how to remove people from a person column?<br />\nAnyway I can imagine some problems when you add a person to the list that already contains that particular person. Especially since that particular column has setting “Maximum people allowed in this column” set to… 1.<br />\nCould this be a problem for the Monday API?</p>"
+    },
+    {
+      "id": 53459,
+      "postNumber": 15,
+      "createdAt": "2021-06-02T13:19:20.264Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>Yes I would love to see those errors if you want to send them over.</p>\n<p>Just to make sure we’re on the same page, the error you were seeing was the same “user can’t subscribe to a pulse without being exposed to it” error, right? Or was it a different error?</p>\n<p>In terms of adding a pre-existing user to a People column, your query should not throw any errors. The user will simply not be added (since they already exist in the People column in question), and there won’t be any changes in the UI. This should be the correct behavior you’re seeing.</p>\n<p>While you can’t remove a specific person from a People column, you can clear the entire contents of the people column by sending an empty object in the <code>value</code> argument of <code>change_column_value()</code>, or whichever column change method you’re using. It should look like this:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c1291b9c9b0f16773208b397de1ce56202498c1f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c1291b9c9b0f16773208b397de1ce56202498c1f_2_690x85.png\" alt=\"image\" width=\"690\" height=\"85\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1942×242 22.1 KB</span>\n</div></a></div><p></p>\n<p>This information is stored in the “Removing Column Values” section <a href=\"https://monday.com/developers/v2#column-values-section-removing-values\" rel=\"noopener nofollow ugc\">here</a>, easy to miss!</p>\n<p>I think our next step should be to review the errors you’re seeing. I can confirm though, that your UI should not be affected when attempting to add a pre-existing user to a People column.</p>"
+    },
+    {
+      "id": 53481,
+      "postNumber": 16,
+      "createdAt": "2021-06-02T15:47:16.575Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>Hi Helen, thanks for pointing out the section on clearing column values. Indeed I missed that!</p>\n<p>Anyway, the errors. I have four errors from four different request, all on May 27, between 12:01:28 and 12:01:29 CEST (Central Europe, UTC-2). All API calls were:</p>\n<blockquote>\n<p><code>mutation request($boardId:Int! $itemId:Int $columnId: String! $value:JSON! $createLabelsIfMissing: Boolean!) { change_column_value (board_id: $boardId, item_id: $itemId, column_id: $columnId, value: $value, create_labels_if_missing: $createLabelsIfMissing) { id }}</code></p>\n</blockquote>\n<p>Most variables had the same value every time:</p>\n<div class=\"md-table\">\n<table>\n<thead>\n<tr>\n<th><strong>Variable name</strong></th>\n<th><strong>Value</strong></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>$boardId</td>\n<td>1207052136</td>\n</tr>\n<tr>\n<td>$columnId</td>\n<td>user</td>\n</tr>\n<tr>\n<td>$createLabelsIfMissing</td>\n<td>true</td>\n</tr>\n</tbody>\n</table>\n</div><p>Even variable “$value” always was the same (I only see that now…)</p>\n<blockquote>\n<pre><code>{\n   \"personsAndTeams\": [\n       {\n           \"id\": 12171537,\n           \"kind\": \"person\"\n       }\n   ]\n}\n</code></pre>\n</blockquote>\n<p>Variable “$itemId” was different for every request. I will list them along with response “x-request-id”:</p>\n<div class=\"md-table\">\n<table>\n<thead>\n<tr>\n<th><strong>$itemId</strong></th>\n<th><strong>x-request-id</strong></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1314456151</td>\n<td>1b4cb0e4-6817-90d6-8ee0-5f09f5d1d616</td>\n</tr>\n<tr>\n<td>1302242019</td>\n<td>73686c4c-820a-9979-88b9-3ab255700e49</td>\n</tr>\n<tr>\n<td>1302242003</td>\n<td>2334b0c4-bc82-97d4-b41c-1960d38cef65</td>\n</tr>\n<tr>\n<td>1302241988</td>\n<td>8385671f-fbf9-9787-ac30-fc70fa15ceb6</td>\n</tr>\n</tbody>\n</table>\n</div><p>Note that I do have other response headers too - just ask if they’re necessary.</p>\n<p>The response was always the same:<br />\n<code>{\"error_code\":\"RecordInvalidException\",\"status_code\":422,\"error_message\":\"Validation failed: user cant subscribe to a pulse without being exposed to it\",\"error_data\":{\"error_data\":\"Validation failed: user cant subscribe to a pulse without being exposed to it\"}}</code></p>\n<p>I’m curious what you find out!</p>"
+    },
+    {
+      "id": 53631,
+      "postNumber": 17,
+      "createdAt": "2021-06-03T11:13:54.604Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>Do you mind giving me a more updated time frame? I’m only able to see a week back, and wasn’t able to find any relevant error messages.</p>\n<p>It’s still the same account ID 3133580 and user ID 19162432, right?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 53867,
+      "postNumber": 18,
+      "createdAt": "2021-06-07T10:31:48.431Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>So it didn’t happen again until… today! (June 7, about 12:01h CEST)</p>\n<p>This time $value was:</p>\n<pre><code class=\"lang-auto\">{\n   \"personsAndTeams\": [\n       {\n           \"id\": 13236312,\n           \"kind\": \"person\"\n       }\n   ]\n}\n</code></pre>\n<p>Here is the list of items being set, and the corresponding request ids:</p>\n<div class=\"md-table\">\n<table>\n<thead>\n<tr>\n<th>$itemId</th>\n<th>x-request-id</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1348054546</td>\n<td>45931962-51a6-9074-bdb8-96ad8348fb53</td>\n</tr>\n<tr>\n<td>1348054512</td>\n<td>bd47b943-93be-9cb4-adc3-2eb57a990f59</td>\n</tr>\n<tr>\n<td>1348054505</td>\n<td>105375cf-7708-9b1c-9404-43f3196a12bd</td>\n</tr>\n<tr>\n<td>1348054497</td>\n<td>21d59616-5e71-9b82-ae29-189e9e876126</td>\n</tr>\n<tr>\n<td>1348050128</td>\n<td>34c70cc8-c5cd-984d-9371-c8f99d107790</td>\n</tr>\n<tr>\n<td>1348050099</td>\n<td>9743b760-63e2-9944-ab9e-4e2cb617db1d</td>\n</tr>\n<tr>\n<td>1348050083</td>\n<td>36e30183-5479-9539-88fa-844ca09bbcfb</td>\n</tr>\n<tr>\n<td>1314455799</td>\n<td>386690cc-7aef-9446-9728-6a9dc4d4a386</td>\n</tr>\n<tr>\n<td>1302233885</td>\n<td>8cca20b1-9687-938f-b8e4-d195c2cb94d4</td>\n</tr>\n<tr>\n<td>1302233824</td>\n<td>f145a23d-6ae0-9767-81c4-e481b4aa2ab0</td>\n</tr>\n</tbody>\n</table>\n</div><p>And I have about a dozen more…</p>\n<p>I also noticed:</p>\n<ul>\n<li>These were most likely actual changes. Before the call the column had a different value, maybe an empty value.</li>\n<li>The request was actually executed and is logged under the item’s activity log (!)</li>\n</ul>\n<p>Further, as you said it’s the same account id, same user id making the changes. And the error message was again<br />\n<code>{\"error_code\":\"RecordInvalidException\",\"status_code\":422,\"error_message\":\"Validation failed: user cant subscribe to a pulse without being exposed to it\",\"error_data\":{\"error_data\":\"Validation failed: user cant subscribe to a pulse without being exposed to it\"}}</code></p>\n<p>I wonder what you may find out! Thanks in advance!</p>"
+    },
+    {
+      "id": 53942,
+      "postNumber": 19,
+      "createdAt": "2021-06-07T12:54:35.930Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>Hmm okay, I’m seeing these errors on my end. I would love for our developers to take a look at this, in case there’s a bug.</p>\n<p>In order for me to submit a report to them to review, I will need a little more information from you:</p>\n<ol>\n<li>Is it still true that when this happens, your software catches the error and then retries, and the retries are successful?</li>\n<li>Before, when you were seeing this error it seemed that the users were never added to the People column because of it. This past error however, did subscribe them successfully despite the error-- is that right? Do you think this could have been a result of your own software?</li>\n<li>If needed, do you grant our developers permission to access the account and user ID listed above to troubleshoot?</li>\n</ol>\n<p>The second question I’m especially curious about. I wonder why before the error resulted in the action not be completed, and now the action is completed despite the error message, and is even showing up in the activity log?</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 53974,
+      "postNumber": 20,
+      "createdAt": "2021-06-07T18:45:41.799Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>I checked a bit more. The intention was indeed to change, the previous value of the column was probably user 21132352, so not empty. The new user ( 13236312) was already used for that column on different items.</p>\n<p>On your questions:</p>\n<ol>\n<li>No we don’t retry failed calls yet. At one point we will, as soon as we learn which failed requests may succeed when retrying. But not now.</li>\n<li>Actually we try to CHANGE the column value. The column has setting “Maximum people allowed” set at 1. And as you said, despite the error, the value was changed. Another observation: I think I looked at it at 12:15, and saw the value was not changed, then again at 15:00, and then the value was changed. At that time I wrote my previous response in this thread. Note this observation at 12.15 is very sketchy, no screenshots or anything. About the activity log: it does not mention something failed, only that the change did happen.</li>\n<li>Checking our board - no problem as long as they’re with Monday, we assume the same integrity as the system operators, and we do trust the same data to you already. They may want to change values - ask again if necessary because this is production data. Plus, every four hours we update the board to the last values of our internal enterprise software. I will give different item IDs that are likely similar, but will be ignored by our software.</li>\n</ol>"
+    },
+    {
+      "id": 54064,
+      "postNumber": 21,
+      "createdAt": "2021-06-08T14:16:25.637Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>Thank you for this, I just posted this for our developers to take a look and give us some more info. I’ll let you know what they say once they get back to me.</p>"
+    },
+    {
+      "id": 54065,
+      "postNumber": 22,
+      "createdAt": "2021-06-08T14:16:33.455Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>DOW: <a href=\"https://monday.monday.com/boards/620317422/views/8906608/pulses/1370824834\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 54763,
+      "postNumber": 23,
+      "createdAt": "2021-06-15T14:37:28.513Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>Our devs took a look and let us know that user 13236312 is actually not subscribed to private board 1207052136 which seems to be the cause of the error message you saw.</p>\n<p>The transient behavior is indeed strange though. I’m curious how this user was later added successfully? Could it be that someone then subscribed them to the board?</p>\n<p>Is the board ID indeed 1207052136? Or is there another board in question?</p>"
+    },
+    {
+      "id": 56438,
+      "postNumber": 24,
+      "createdAt": "2021-06-28T13:16:26.418Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>As a heads up, we generally close our threads if we don’t hear back within 2 weeks or so.</p>\n<p>If this issue comes up again, feel free to write into <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a>.</p>\n<p>Thanks~</p>"
+    },
+    {
+      "id": 56446,
+      "postNumber": 25,
+      "createdAt": "2021-06-28T13:43:01.765Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>Helen,</p>\n<p>Sorry about the delay - I enjoyed a holiday. This issue last showed up on June 15.<br />\nFurther, the board ID is indeed 1207052136. User 13236312 at least has a valid login to our account, the ID was even retrieved with a query to retrieve users. And I am 99% certain that this user was already subscribed to different IDs in that board. And nobody else did the job instead.</p>\n<p>The Edit permissions of the board is set to:<br />\n“Edit content only in items assigned to them in the user or  columns”.<br />\nMaybe this is a clue? That particular user did not have edit permission, as he was not assigned before. Then again, the API was not called on behalf of that user, but on behalf of a Board owner.</p>\n<p>Do you have other suggestions for logging?<br />\nThanks!</p>"
+    },
+    {
+      "id": 56544,
+      "postNumber": 26,
+      "createdAt": "2021-06-29T12:56:58.754Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>,</p>\n<p>Thanks for the update!</p>\n<p>The issue the developer let me know of is that the user is not subscribed to that particular board. Since it’s been a few weeks, I’m asking him to double check if this is still the case.</p>\n<p>Do you mind giving me the URL (I need the item ID) of an item where the user was successfully subscribed to on this board?</p>\n<p>Thanks~</p>"
+    },
+    {
+      "id": 56625,
+      "postNumber": 27,
+      "createdAt": "2021-06-30T09:50:36.047Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>,</p>\n<p>Just an update: our developer checked again and he confirms user 13236312 is not subscribed to board 1207052136.</p>\n<p>Once the user has been subscribed these errors should go away.</p>"
+    },
+    {
+      "id": 56632,
+      "postNumber": 28,
+      "createdAt": "2021-06-30T10:46:51.591Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>Hi Helen,</p>\n<p>So I did find some items for the same user, that were created earlier, without any problem. For instance:<br />\n/boards/1207052136/pulses/1248520129<br />\n/boards/1207052136/pulses/1248520205<br />\n/boards/1207052136/pulses/1248520238<br />\nActivity log of those items state they were created two months ago, and after that the person column was never changed.</p>\n<p>But the developer may have a point. Maybe this user got annoyed by all notifications, tried to fix it, and accidentally unsubscribed himself. Is that a valid hypothesis?<br />\n(In the board log I could not find evidence of this, but maybe subscription changes are not logged.)</p>\n<p>I must say I never thought of this possibility - after all, you can enter any user in the regular UI, without any warning when entering an unsubscribed user. Documentation gave no such hints either.<br />\nStill, when you want to update a People column, does that mean you have to check the boards subscribers first, and if necessary add the user to the board subscribers? And the regular UI does all that on the background?</p>\n<p>Thanks in advance!</p>"
+    },
+    {
+      "id": 56644,
+      "postNumber": 29,
+      "createdAt": "2021-06-30T12:14:36.888Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>,</p>\n<p>That does sound like a valid hypothesis, however subscription and unsubscription changes are indeed logged in the board’s activity log!</p>\n<p>Re your question: this only applies to Private and Shareable Boards, but yes, unless a user is subscribed to a Private or Shareable board, they cannot be added to any People columns. This is a permissions feature that’s enforced by the platform.</p>\n<p>In this case, since the board is Private you will need to query the board subscribers first before adding the relevant user to a People column!</p>\n<p>I’m going to mark my previous post as the solution since we have found that this is not a bug-related issue.</p>"
+    },
+    {
+      "id": 57070,
+      "postNumber": 30,
+      "createdAt": "2021-07-07T12:14:40.338Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

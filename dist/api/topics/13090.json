@@ -1,0 +1,72 @@
+{
+  "id": 13090,
+  "title": "Storage API not working?",
+  "slug": "storage-api-not-working",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-11-11T05:14:42.775Z",
+  "lastPostedAt": "2020-12-05T16:57:15.412Z",
+  "postsCount": 8,
+  "excerpt": "I am trying to use the storage api to persist data across user sessions. I am using it as described in the documentation: \nmonday.storage.instance.setItem(‘USER_123456_ROLE’, ‘BASIC_ROLE’); \nwhich returns a success messa&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2378,
+  "posts": [
+    {
+      "id": 33317,
+      "postNumber": 1,
+      "createdAt": "2020-11-11T05:14:42.843Z",
+      "author": "jakedluhy (Jake Dluhy)",
+      "cookedHtml": "<p>I am trying to use the storage api to persist data across user sessions. I am using it as described in the documentation:<br />\nmonday.storage.instance.setItem(‘USER_123456_ROLE’, ‘BASIC_ROLE’);<br />\nwhich returns a success message. However when I then use<br />\nmonday.storage.instance.getItem(‘USER_123456_ROLE’);<br />\nit always returns value: null. How do I get this working?</p>\n<p>Thanks,<br />\nJake</p>"
+    },
+    {
+      "id": 33379,
+      "postNumber": 2,
+      "createdAt": "2020-11-11T19:28:49.433Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Jake! Can you share an example of the code you’re using to set and return the data? Are there any errors being thrown? You’re describing the correct usage of the API, so I’m guessing something else is going on.</p>\n<p>By the way, here’s a super simple storage API example I cooked up recently for a product demo. It should give you an example of how to use it: <a href=\"https://gist.github.com/yuhgto/4d8d9b4b17d0faeb05a19287f363c377\">Storage API Example</a></p>"
+    },
+    {
+      "id": 33388,
+      "postNumber": 3,
+      "createdAt": "2020-11-11T19:57:32.233Z",
+      "author": "jakedluhy (Jake Dluhy)",
+      "cookedHtml": "<p>Hi!</p>\n<p>So I did a little more testing, and the example you provided definitely works. I also tested the case within my own app of using <code>getItem</code> immediately after using <code>setItem</code> and it works as well. So clearly the value is getting set, but while I’m in development mode it isn’t persisting across page reloads. Here is my toolbar as I’m developing my dashboard widget:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/2441b5fd9970dccd5555007d9fd36321d4517bfb.png\" title=\"Screen Shot 2020-11-11 at 1.52.20 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/2441b5fd9970dccd5555007d9fd36321d4517bfb_2_689x71.png\" alt=\"Screen Shot 2020-11-11 at 1.52.20 PM\" width=\"689\" height=\"71\" /><div class=\"meta\"><span class=\"filename\">Screen Shot 2020-11-11 at 1.52.20 PM</span><span class=\"informations\">1181×122 10.7 KB</span></div></a></div><p></p>\n<p>I remember reading something about how the storage instance is not shared across different apps. Is it possible there is some interaction of the development environment creating a new storage context every time it reloads?</p>\n<p>Here is the code I’m using:</p>\n<pre><code>export function getUserRoleFromStorage(userId) {\n  return monday.storage.instance.getItem(getUserRoleKey(userId))\n  .then(res =&gt; _.get(res, 'data.value'));\n}\n\nexport function setUserRole(userId, role) {\n  return monday.storage.instance.setItem(getUserRoleKey(userId), role);\n}\n\nexport async function getCurrentUser() {\n  const currentUser = await getCurrentUserFromApi();\n  if (!currentUser.id) return {};\n\n  const role = await getUserRoleFromStorage(currentUser.id);\n\n  return { ...currentUser, role };\n}\n</code></pre>\n<p>getCurrentUser gets run every time the app loads up, but always has role = null</p>"
+    },
+    {
+      "id": 33865,
+      "postNumber": 4,
+      "createdAt": "2020-11-17T02:10:09.732Z",
+      "author": "jakedluhy (Jake Dluhy)",
+      "cookedHtml": "<p>Hello! Any update on this? I’m hoping this is a dev only thing, in which case I can build my app expecting the feature to work. But I haven’t had the chance to test it out in “production” yet.</p>"
+    },
+    {
+      "id": 35271,
+      "postNumber": 5,
+      "createdAt": "2020-12-04T18:14:25.820Z",
+      "author": "CMcConnell (Colin McConnell)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jakedluhy\">@jakedluhy</a>,</p>\n<p>Did you ever resolve this issue? I’m experiencing a similar problem. Interesting that you get the failure with such a simple, short data string. Simple strings work OK for me, then when I try it with my actual data I get the value: null result, like you.</p>\n<p>I described my issue here - <a href=\"https://community.monday.com/t/editing-files-in-an-app/13750/5\" class=\"inline-onebox\">Editing files in an app - #5 by CMcConnell</a></p>"
+    },
+    {
+      "id": 35301,
+      "postNumber": 6,
+      "createdAt": "2020-12-05T16:26:08.831Z",
+      "author": "jakedluhy (Jake Dluhy)",
+      "cookedHtml": "<p>Ya for me I was able to get it working once I uploaded a build and used that. It just doesn’t work in the sandbox/test environment (using ngrok).</p>"
+    },
+    {
+      "id": 35304,
+      "postNumber": 7,
+      "createdAt": "2020-12-05T16:57:15.412Z",
+      "author": "CMcConnell (Colin McConnell)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jakedluhy\">@jakedluhy</a>,</p>\n<p>Thanks for getting back to me.  That’s interesting.  I just updated my other post with an update. Turns out my problem stemmed from newline characters in the data I was attempting to write.</p>\n<p>But that was testing an uploaded build, so it’s quite possible I might also see your issue too with ngrok, which would be doubly confusing, so it’s good to be  know about.</p>"
+    },
+    {
+      "id": 44239,
+      "postNumber": 8,
+      "createdAt": "2021-03-10T14:00:13.371Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

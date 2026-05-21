@@ -1,0 +1,91 @@
+{
+  "id": 10291,
+  "title": "Confusion around app installation & auth scopes",
+  "slug": "confusion-around-app-installation-auth-scopes",
+  "categoryId": 8,
+  "tagIds": [
+    18,
+    22,
+    208,
+    351
+  ],
+  "createdAt": "2020-08-19T20:13:24.430Z",
+  "lastPostedAt": "2021-02-25T14:24:20.651Z",
+  "postsCount": 9,
+  "excerpt": "We are building a board app that displays data from our platform (ActivTrak) to users in their monday.com accounts. There is not necessarily a 1:1 match between users of both platforms, so for MVP we’ve chosen some accou&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2189,
+  "posts": [
+    {
+      "id": 26016,
+      "postNumber": 1,
+      "createdAt": "2020-08-19T20:13:24.524Z",
+      "author": "ogold (Omri Goldshtrom)",
+      "cookedHtml": "<p>We are building a board app that displays data from our platform (ActivTrak) to users in their <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> accounts. There is not necessarily a 1:1 match between users of both platforms, so for MVP we’ve chosen some account-level insights that are safe to share with all <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> users, whether or not they’re personally generating data in ActivTrak.</p>\n<p>Here’s what’s not clear to us:</p>\n<ol>\n<li>Are board apps installed at the account level (say, by an admin) and appear for all users in that account or do they have to be installed individually by each user?</li>\n<li>Can board apps be authenticated by a single user for that entire account or does each user need to have a corresponding user account in both systems to use it?</li>\n<li>Can we rely on the Storage API (in beta) to store secure data, like tokens?</li>\n</ol>\n<p>We’ve been on seminars, read the docs, and still don’t have a clear understanding of these integration patterns. Thanks in advance!</p>"
+    },
+    {
+      "id": 26032,
+      "postNumber": 2,
+      "createdAt": "2020-08-20T03:10:38.715Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ogold\">@ogold</a>,</p>\n<p>Welcome to the community!</p>\n<p>Let me try and help you out on these questions:<br />\n1 - Apps run at an account level. Only the user who set up the app (integration) is able to edit the configuration. Any user is able to see a view<br />\n2 - Yes, an app can be authenticated by a single user. However any time this is interacted with, it will be on behalf of the user who authorised it. I.e., if I set up the integration, it will use my access token and my user_id when sending data to the action.<br />\n3 - I am not 100% sure, I would say no going by the information in the docs on storage. If you are using a view, you could use a sessionToken and send this to your server to collect your access_token as the sessionToken includes the account_id and user_id</p>\n<p>If you would like to share some information around how your app will work, I might be able to give you some ideas?</p>"
+    },
+    {
+      "id": 26037,
+      "postNumber": 3,
+      "createdAt": "2020-08-20T04:13:57.312Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Really good explained by <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> ,</p>\n<p>I have one addition.</p>\n<ul>\n<li>You can add collaborators to your app.<br />\nThose collaborators can also edit the configurations.</li>\n</ul>"
+    },
+    {
+      "id": 26081,
+      "postNumber": 4,
+      "createdAt": "2020-08-20T11:16:24.677Z",
+      "author": "ogold (Omri Goldshtrom)",
+      "cookedHtml": "<p>Thank you for the responses, <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> and <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a>!</p>\n<p>Our app is straightforward: our platform, <a href=\"https://activtrak.com/\" rel=\"noopener nofollow ugc\">ActivTrak</a>, captures employee activity and processes it into productivity insights. Our webapp displays these insights in various charts and reports:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6d4caff9c3cc896b1e2a04a6f38fe5c2d7b735c8.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/6/6d4caff9c3cc896b1e2a04a6f38fe5c2d7b735c8.png\" alt=\"\" width=\"684\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\"></span><span class=\"informations\">924×675 36.6 KB</span>\n</div></a></div><p></p>\n<p>Our goal is to display several of these charts in the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> integration (i.e. on a board app). So a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> user sees these (ActivTrak) insights about their team’s productivity side-by-side with their <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> progress/boards. <strong>Since our V1 will include only team-level insights, it only needs to be authenticated by a single user and all account users will see the same views.</strong></p>\n<p><a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a>, can you help me confirm/clarify…<br />\n1 - The app is installed and configured at the account level and automatically appears on every users’ board within that account. As <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> pointed out, other collaborators can be added to configure the app.<br />\n2 - The app can be authenticated by a single user and all users, when viewing the integration, will see the data based on that single user’s credentials. <strong>How do you we implement the app with single user credentials vs every user authenticating on their own (as in the documentation examples)?</strong><br />\n3 - The reason we were asking about storing tokens was because we thought the OAuth applied only to user-level authentication and we were exploring ways to implement account-level auth (and persist tokens) on our own. Hopefully this will be unnecessary. <img src=\"https://emoji.discourse-cdn.com/apple/crossed_fingers.png?v=12\" title=\":crossed_fingers:\" class=\"emoji\" alt=\":crossed_fingers:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 26149,
+      "postNumber": 5,
+      "createdAt": "2020-08-20T16:50:31.871Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 26170,
+      "postNumber": 6,
+      "createdAt": "2020-08-20T18:30:25.094Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ogold\">@ogold</a></p>\n<p>Great, thanks for sharing! Here are a few tips that I would recommend, I am sure that <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> will be able to provide some other tips as well.</p>\n<ul>\n<li>\n<p>You can use the sessionToken in the view by using <code>monday.get('sessionToken')</code> This gives you an access token that you can use in the board view to make monday API calls, or send back to your server. The sessionToken is encoded using your App CLIENT SECRET key, and contains the user_id and account_id of the logged in user. You can use these keys to get other information about the user/account and then return the data required based on the user that is viewing your app</p>\n</li>\n<li>\n<p>A collaborator is used when you are developing your app. A collaborator can change config settings. I was referring to an integration/automation setup which doesn’t look like applies to you now so you can ignore that</p>\n</li>\n<li>\n<p>Once an app has been installed, any user can see the view (your app). If you are billing, you will need to bill based on the account_id, not the user_id (unless you bill per user using the app)</p>\n</li>\n</ul>\n<p>In direct response to your points:<br />\n1 - This relates to the sessionToken point above. Once it is installed and the view added to the board, any user can view the app<br />\n2 - you can use the sessionToken for this. If you want to go through the whole oAuth process, you can do this but will need to do it in a new window as CORS will block your request in the iFrame<br />\n3 - I don’t think you will need this</p>\n<p>Let me know if you have any other questions</p>"
+    },
+    {
+      "id": 26313,
+      "postNumber": 7,
+      "createdAt": "2020-08-22T03:14:03.662Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ogold\">@ogold</a>, just thought I’d jump in here and share a bit of insight from our team on this as well to add on to the amazing insight from <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> and <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I’ve just checked with the team and they have confirmed that you should avoid using Storage API to store tokens at this point. Just to make sure we are on the same page here, are you looking to create a \"one-time only” connection between ActiveTrac and <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 26398,
+      "postNumber": 8,
+      "createdAt": "2020-08-23T04:50:36.066Z",
+      "author": "NadavK (Nadav Kemper)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> Maybe you can help me guys.<br />\nIn the publish section of our app - iv’e added multiple accounts and shared with them the installation link. When trying to install the app they get an error:<br />\n{“error”:“invalid_grant”,“error_description”:“Account is not allowed to install this app”}</p>\n<p>or this massage:<br />\n“The app cannot be installed in this account”.</p>\n<p>Anyone know’s why?</p>\n<p>Thanks,<br />\nNadav</p>"
+    },
+    {
+      "id": 26423,
+      "postNumber": 9,
+      "createdAt": "2020-08-23T17:30:47.834Z",
+      "author": "ogold (Omri Goldshtrom)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> thank you for verifying this question about the Storage API (and saving us time and headaches)! <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" width=\"20\" height=\"20\" /></p>\n<p>What we’re trying to do - and maybe this is not supported in V1 - is to authenticate our integration against a single high-access user (e.g. an admin) and aggregate metrics with all <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> users in that account/workspace. This will allow us to get a V1/MVP out quicker and avoid the complexity of user-level authentication (which requires user mapping between both platforms).</p>\n<p>The purpose of storing tokens is to persist the credentials of that 1 admin/user securely for all users to access, so they don’t need to authenticate with their own credentials. This is a high-level diagram of what we’re trying to achieve:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/282f87263ea96a6baa9b26c9b083c24d0ce6c6f3.png\" title=\"ActivTrak _ monday.com integration concepts\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/282f87263ea96a6baa9b26c9b083c24d0ce6c6f3_2_690x388.png\" alt=\"ActivTrak _ monday.com integration concepts\" width=\"690\" height=\"388\" /><div class=\"meta\">\n<span class=\"filename\">ActivTrak _ monday.com integration concepts</span><span class=\"informations\">960×540 71.7 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 42317,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T14:24:20.651Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

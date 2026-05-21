@@ -1,0 +1,100 @@
+{
+  "id": 9870,
+  "title": "Simple c# for adding an item to a board",
+  "slug": "simple-c-for-adding-an-item-to-a-board",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-08-09T13:01:57.974Z",
+  "lastPostedAt": "2020-08-12T11:47:50.797Z",
+  "postsCount": 12,
+  "excerpt": "I am trying to add a simple item to a board: \nvar helper = new MondayHelper(); \nstring json = await helper.QueryMondayApiV2(“{&quot;query&quot;: &quot;{boards(limit:100){id name}}&quot;}”); \nstring query = @&quot;{&quot;&quot;query&quot;&quot;: &quot;&quot;mutation {create_i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 4987,
+  "posts": [
+    {
+      "id": 24955,
+      "postNumber": 1,
+      "createdAt": "2020-08-09T13:01:58.034Z",
+      "author": "ThomasSe (Thomas Segato)",
+      "cookedHtml": "<p>I am trying to add a simple item to a board:<br />\nvar helper = new MondayHelper();<br />\nstring json = await helper.QueryMondayApiV2(“{\"query\": \"{boards(limit:100){id name}}\"}”);</p>\n<pre><code>string query = @\"{\"\"query\"\": \"\"mutation {create_item(board_id: 628989982, item_name: \\\"\"adding works\\\"\", column_values: \"\"{\\\"\"Status\\\"\": \\\"\"Done\\\"\"}\"\")  }\"\" }\";\nawait helper.QueryMondayApiV2(query);\n</code></pre>\n<p>However I get a bad request. Sample works without column_values. All poiters are welcome.</p>"
+    },
+    {
+      "id": 24987,
+      "postNumber": 2,
+      "createdAt": "2020-08-09T19:31:29.445Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/thomasse\">@ThomasSe</a>,</p>\n<p>Welcome to the community!</p>\n<p>Just to confirm, are you using the MondaySDK? Or have your created your own function to perform a query/mutation?</p>\n<p>Just by looking at the code snippet, my guess is that you have created your own function. monday has released an SDK that takes care of all the hard work for you, you simply need to add the query/mutation string and away you go.</p>\n<p>Take a look at the SDK here <a href=\"https://github.com/mondaycom/monday-sdk-js#mondayapiquery-options--\" class=\"inline-onebox\">GitHub - mondaycom/monday-sdk-js: Node.js and JavaScript SDK for developing over the monday.com platform</a></p>\n<pre><code class=\"lang-auto\">try {\n        const mondayClient = initMondayClient();\n        mondayClient.setToken(token);\n\n        const query = `query($itemId: [Int], $columnIds: [String]) {\n            items (ids: $itemId) {\n              column_values(ids:$columnIds) {\n                id\n                type\n                value\n                text\n              }\n            }\n          }`;\n          const variables = { columnIds, itemId };\n          const response = await mondayClient.api(query, { variables });\n\n          return response.data.items[0].column_values\n    } catch (err)  {\n        console.log(err);\n    }\n</code></pre>\n<p>This is a quick sample that I pulled from one of my functions.</p>"
+    },
+    {
+      "id": 25002,
+      "postNumber": 3,
+      "createdAt": "2020-08-10T02:00:10.030Z",
+      "author": "ThomasSe (Thomas Segato)",
+      "cookedHtml": "<p>Thanks very helpfull. Unfortuntly it is a JavaScript SDK and I am looking for a c# version.</p>"
+    },
+    {
+      "id": 25005,
+      "postNumber": 4,
+      "createdAt": "2020-08-10T03:10:29.073Z",
+      "author": "ThomasSe (Thomas Segato)",
+      "cookedHtml": "<p>If I do like this I get following error:<br />\nstring query = @“{”“query”“: ““mutation {create_item(board_id: 628989982, group_id:\"“new_group\"”, item_name: \"“adding works\"”, column_values: \"”{\\\"“long_text\\\"”: \\\"“Done\\\"”}\"”) {id}  }”\" }\";<br />\nvar res = await helper.QueryMondayApiV2(query);</p>\n<p>\"{\"error_code\":\"ColumnValueException\",\"status_code\":200,\"error_message\":\"invalid value, please check our API documentation for the correct data structure for this column. <a href=\"https://monday.com/developers/v2#column-values-section%5C%22,%5C%22error_data%5C%22:%7B%5C%22column_value%5C%22:%5C%22Done%5C%22,%5C%22column_type%5C%22:%5C%22LongTextColumn%5C%22%7D%7D%22\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#column-values-section\\“,\\“error_data\\”:{\\“column_value\\”:\\“Done\\”,\\“column_type\\”:\\“LongTextColumn\\”}}”</a></p>"
+    },
+    {
+      "id": 25118,
+      "postNumber": 5,
+      "createdAt": "2020-08-11T08:31:38.983Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/thomasse\">@ThomasSe</a>! <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a>, thank you so much for jumping in here, you’re literally amazing <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=15\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I am not a C# developer myself by any means, but I did some digging within the forum and here is what I was able to find:</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" />\n    <div class=\"quote-title__text-content\">\n      <a href=\"https://community.monday.com/t/how-to-connect-curl-to-c-apiv2/3022/6\">How to connect Curl to C# APIV2</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span style=\"--category-badge-color:#00ca72;--category-badge-text-color:#FFFFFF\" class=\"badge-category --style-square \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n    </div>\n  </div>\n  <blockquote>\n    Hey <a class=\"mention\" href=\"/u/kfogarty\">@kfogarty</a>, I think I can help here! \nFirst off, it looks like you need to change the AddJsonBody line to serialize an object into a key-value pair like so (<a href=\"https://stackoverflow.com/questions/31937939/restsharp-post-a-json-object\" rel=\"noopener nofollow ugc\">article</a>): \nrequest.AddJsonBody(\n    new \n    {\n      query = \"query {boards(ids: 354318007) {name}}\",\n      variables = \"\"\n    }); // AddJsonBody serializes the object automatically\n\nIf I understand the above code correctly, once you do that and it successfully executes, you will be able to access the data returned by our server by callin…\n  </blockquote>\n</aside>\n\n<p>Based on the error code you are getting, it seems like you are trying to send data to a Long Text column that is not accepted by the platform. It seems to me like this could be caused by the quotation marks, as well as a lack of a “text” declare, although those could be caused by forum formatting:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/7eb6857876bbf07b09aaac55e9f404a13f9be79e.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7eb6857876bbf07b09aaac55e9f404a13f9be79e.png\" alt=\"image\" width=\"600\" height=\"126\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">600×126 5.64 KB</span></div></a></div><p></p>\n<p>I would recommend making ssure the value conforms with each column’s data structure. You can find out more about this in the documentation, as the link suggests. Here is the data structure that is provided ed within our documentation:</p>\n<h2><a name=\"p-25118-long-text-column-1\" class=\"anchor\" href=\"#p-25118-long-text-column-1\"></a>Long text column</h2>\n<p>To update the long text column, send a string up to 2000 characters with the key “text”.</p>\n<p>Raw JSON - use this in your column values variables:</p>\n<p>JSON.stringify({ “text”: “Sample text” });</p>\n<p>JSON string - use this in the GraphiQL editor:</p>\n<p>“{\"text\":\"Sample text\"}”</p>\n<p>Let us know if this helps <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=15\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> We’re keeping our fingers crossed!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25124,
+      "postNumber": 6,
+      "createdAt": "2020-08-11T10:08:45.031Z",
+      "author": "ThomasSe (Thomas Segato)",
+      "cookedHtml": "<p>Thanks for fast response - appreciated. To remove the c# part I have made a post man sample:</p>\n<p>{<br />\n“query”: “mutation {create_item(board_id: 628989982, group_id:“new_group”, item_name: “adding works”, column_values:{“long_text”:{ “text”: “Sample text”}}) {id}}”<br />\n}</p>\n<p>Above works without the column_values section. However with I get following error:<br />\n{<br />\n“errors”: [<br />\n{<br />\n“message”: “Parse error on “long_text” (STRING) at [1, 106]”,<br />\n“locations”: [<br />\n{<br />\n“line”: 1,<br />\n“column”: 106<br />\n}<br />\n]<br />\n}<br />\n],<br />\n“account_id”: 5992539<br />\n}</p>\n<p>Also I see different ways with queries. Some is like:<br />\nquery {<br />\nboards (ids: 157244624) {<br />\nowner {id}<br />\ncolumns {<br />\ntitle<br />\ntype<br />\n}<br />\n}<br />\n}</p>\n<p>And some is like mine as JSON: {“query”: …}. When do you use one over the other?</p>"
+    },
+    {
+      "id": 25143,
+      "postNumber": 7,
+      "createdAt": "2020-08-11T11:37:43.902Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/thomasse\">@ThomasSe</a></p>\n<p>Thank you for providing the code you are having issues with, that is a big help to put your issue into context <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>If I recall correctly, all of the queries sent to our API have to be sent as a JSON string and a POST request. On the try-it-yourself page, that formatting is done automatically within the tool. I’ll double-check this with the team just to be sure.</p>\n<p>That said, from what I am able to tell, the reason you are having issues with this column_values part of creating the item is related to formatting the values you are trying to send properly as a JSON string. I’ve just tried to create a version of your mutation myself and here’s what seems to work within the try it yourself environment:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/187b992a161cdd4523ec58a7355bbf0c4311458d.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/187b992a161cdd4523ec58a7355bbf0c4311458d_2_690x81.png\" alt=\"image\" width=\"690\" height=\"81\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1482×176 41 KB</span></div></a></div><p></p>\n<p>Here is the exact code I’ve used:</p>\n<p>mutation {create_item(<br />\nboard_id: REPLACEWITHYOURBOARDID,<br />\ngroup_id: “REPLACEWITHYOURGROUPID”,<br />\nitem_name: “adding works”,<br />\ncolumn_values: “{ “long_text”: {“text”:“Sample text”}}”)<br />\n{id}<br />\n}</p>\n<p>Let me know if this is helpful <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25146,
+      "postNumber": 8,
+      "createdAt": "2020-08-11T11:49:01.592Z",
+      "author": "ThomasSe (Thomas Segato)",
+      "cookedHtml": "<p>Hi Alex,<br />\nThanks a lot appreciated. I got it working in the “Try it your self” environment. Did not know that existed nifty little tool. Now I got that working I can start converting it to c#. Thanks a lot. It is kind of strange however that column_values expects a string value and not just a json object.</p>"
+    },
+    {
+      "id": 25149,
+      "postNumber": 9,
+      "createdAt": "2020-08-11T11:59:38.183Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/thomasse\">@ThomasSe</a></p>\n<p>I’m really glad I was able to help you here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> That’s awesome!</p>\n<p>I’m sure you will end up making lots of cool integrations and API calls in C#. If I’m not asking for too much, it would be an amazing help to the community to share a few working code examples, even if they’re simple. Sometimes a reference point is all a developer needs in order to plow through their issue, so it would be an awesome way to give back.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25204,
+      "postNumber": 10,
+      "createdAt": "2020-08-12T03:35:29.086Z",
+      "author": "ThomasSe (Thomas Segato)",
+      "cookedHtml": "<p>I will add my findings, give me a week or two. Because your right we base heavily on Monday. But let me wee if I can do some wrappers.</p>"
+    },
+    {
+      "id": 25229,
+      "postNumber": 11,
+      "createdAt": "2020-08-12T11:47:43.538Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/thomasse\">@ThomasSe</a>  amazing, thank you so much! Feel free to take as much time as you need, it’s all about sharing coming from a good place and in positive spirit <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>If you end up getting more questions, I’d recommend starting a new topic at that point. I’m going to close this out for now!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25230,
+      "postNumber": 12,
+      "createdAt": "2020-08-12T11:47:50.797Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    }
+  ]
+}

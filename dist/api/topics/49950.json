@@ -1,0 +1,55 @@
+{
+  "id": 49950,
+  "title": "Possible Infinite Loop caused by api and monday integrations & automations",
+  "slug": "possible-infinite-loop-caused-by-api-and-monday-integrations-automations",
+  "categoryId": 6,
+  "tagIds": [
+    5,
+    6,
+    94
+  ],
+  "createdAt": "2023-01-24T20:15:15.250Z",
+  "lastPostedAt": "2023-01-24T22:00:33.829Z",
+  "postsCount": 5,
+  "excerpt": "We are trying to sync certain tables with our internal Postgres database. We figured the best way to do this would be to create our own custom monday app with an integration.  We have triggers for each board correspondin&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1870,
+  "posts": [
+    {
+      "id": 112070,
+      "postNumber": 1,
+      "createdAt": "2023-01-24T20:15:15.332Z",
+      "author": "joseph_skyclover (Joseph)",
+      "cookedHtml": "<p>We are trying to sync certain tables with our internal Postgres database. We figured the best way to do this would be to create our own custom monday app with an integration.  We have triggers for each board corresponding to the postgres table in which they need to sync with that fire when any column changes.  This works fine (theoretically, theres currently a separate bug preventing us from doing that but we already opened a ticket)  but we also need data to sync FROM the database to monday when it changes. We were planning on either doing this with a custom action or just through the api itself.<br />\nOur issue is that our sync integration on monday will fire when any column changes from the api.  We only want it to fire when a human makes a change or when an automation that isn’t linked with our monday app fires.  Is there a way to make api mutations and somehow tag it to ignore firing any automations or integrations?   In the current state its possible that one change could start an infinite loop of changes!</p>\n<p>I am open to any other suggestions if that isn’t possible!</p>"
+    },
+    {
+      "id": 112073,
+      "postNumber": 2,
+      "createdAt": "2023-01-24T20:20:26.905Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/joseph_skyclover\">@joseph_skyclover</a>,<br />\nWelcome to the community <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>In short, currently what you are looking for is not available, that is there is no way to know who or what triggered an automation which makes developing integration apps which modify data difficult or in some cases impossible.</p>\n<p>I recently created a feature request <a href=\"https://community.monday.com/t/include-trigger-source-in-workflow-triggers-eg-appid-userid/49614\">here</a> which you can upvote to gain more recognition from the devs.</p>"
+    },
+    {
+      "id": 112078,
+      "postNumber": 3,
+      "createdAt": "2023-01-24T20:51:47.356Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/joseph_skyclover\">@joseph_skyclover</a></p>\n<p>Although <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> is 100% correct you can do bi-directional updating (on your own risk <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />). When a column value for an item “changes” to the same value that is already present, the column change trigger will <strong>not</strong> fire.</p>"
+    },
+    {
+      "id": 112080,
+      "postNumber": 4,
+      "createdAt": "2023-01-24T21:06:40.007Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Yes, <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, you are right. I had thought of that but that path is too problematic to be useful. First, it requires keeping a database of the changes to that item just for the purposes of tracking it’s state, which in itself can be an issue because let’s take a timeline column or a date column for an example.</p>\n<p>A user uses the app to change a date to a new date. The app changes date correctly and at another time, the user wants to change the date again, let’s say after the press of a button. Well, good luck, because now the app will not run because the last date has not changed.<br />\nEven if you want to include a set time for the data to be deleted, for how long do you keep it and how would you know if during the time you are keeping it, the user wouldn’t like to update the date again.<br />\nBasically, a simple <code>sourceId</code>, which could be a <code>userId</code> or <code>appId</code> could solve this problem.</p>\n<p>That way, you can rightly tell if a change was made by your app or not.</p>"
+    },
+    {
+      "id": 112085,
+      "postNumber": 5,
+      "createdAt": "2023-01-24T22:00:33.829Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Aboslutly <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> , it all depends on the exact use case. What I understood from <a class=\"mention\" href=\"/u/joseph_skyclover\">@joseph_skyclover</a> is that they already read board data into a database. If that make a change to the database (e.g. a cell (item/column) value change from 100 to 200) it is “safe” to update the board to reflect the change to 200. That will indeed trigger a column change and the database will be updated to 200 (which it already was). Depending on the database side this might trigger another board update to 200, but then it stops as the column change trigger won’t fire.</p>\n<p>I fully agree that it would be very helpful to know the source of the change (user or automation / app) but I don’t think that is easy for monday to implement. It’s not on their roadmap (as far as I can see) so I don’t expect something like this in the next 12-18 months. Maybe the mysterious mondayDB (whatever that is <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />) will help.</p>"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "id": 17665,
+  "title": "[RELEASED] Current status of subitem API support?",
+  "slug": "released-current-status-of-subitem-api-support",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2021-03-15T17:29:53.690Z",
+  "lastPostedAt": "2021-08-05T12:26:40.045Z",
+  "postsCount": 14,
+  "excerpt": "Hi, last time I checked about this it seemed that things were quite limited with subitems, so I’d like to get a current answer. It’s my understanding that there’s now a create subitem method. To get all subitems for a bo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 5329,
+  "posts": [
+    {
+      "id": 44853,
+      "postNumber": 1,
+      "createdAt": "2021-03-15T17:29:53.755Z",
+      "author": "jake (Jake)",
+      "cookedHtml": "<p>Hi, last time I checked about this it seemed that things were quite limited with subitems, so I’d like to get a current answer. It’s my understanding that there’s now a create subitem method. To get all subitems for a board, you must first query all items in a board to retrieve the subitem IDs, and then query the subitem IDs  (no way to directly query all subitems in a board). To modify a subitem, you can modify it like you would a normal item, correct?</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 44939,
+      "postNumber": 2,
+      "createdAt": "2021-03-16T12:29:17.703Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 44940,
+      "postNumber": 3,
+      "createdAt": "2021-03-16T12:36:23.022Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jake\">@jake</a>!</p>\n<p>You actually can query all of the subitems on a board using one of two methods:</p>\n<ol>\n<li>Query all of the items on the board, then use the “column_values” field to query all of the subitems within that parent item.</li>\n<li>Use the above query to find the subitem Id. Use the subitem Id to find the subitem board Id.</li>\n</ol>\n<p>Using the second method, you can then query the subitems like you would with a normal item once you have this subitem board Id!</p>"
+    },
+    {
+      "id": 44976,
+      "postNumber": 4,
+      "createdAt": "2021-03-16T14:20:51.921Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>Hi! New user here, probably the same issue - finding relationships between items and subitems. I understand there are two methods:</p>\n<ol>\n<li>Retrieve all items of the subitem board, and get the group id field. That id should read “subitem_van_”, so you get the parent of each subitem. Unfortunately sometimes you get “topic”. This problem is explained in another <a href=\"https://community.monday.com/t/get-subitems-groups-subitems-of-xxxxx-api-changed/15430\">Forum Topic</a>. On my test setup I see some subitems with a correct group, and some subitems with group “topic”.</li>\n<li>Retrieve all items of the parent board, and get the column_values. Inside the column_values value is a field with ID “subitems”, and a value consisting of a JSON text with values. Unfortunately in <a href=\"https://community.monday.com/t/get-subitems-groups-subitems-of-xxxxx-api-changed/15430\">this topic</a> people report they only get a subset of items - just 25, no order was specified. Funny enough I can get 26 subitems without a problem, but I couldn’t find a Forum Topic mentioning the new limit. Also, it seems impossible to request the number of subitems of a parent item, so one can never be sure whether all items were retrieved.</li>\n</ol>\n<p>Both referenced topics were closed while still being unsolved, and I cannot find any topic explaining how to get parent-subitem relationships.</p>\n<p>In fact, the documentation does not mention reading subitems at all, only creating subitems is discussed. This brings the idea that reading subitems should not be used in production systems using the API. Is that correct?</p>"
+    },
+    {
+      "id": 44985,
+      "postNumber": 5,
+      "createdAt": "2021-03-16T15:26:31.025Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi, welcome to our community!</p>\n<p>Happy to clarify our subitem API for you. At this time, as this feature as whole is still in beta, our team is still constructing definitive methods for working with subitems within our API.</p>\n<p>I have to say I’ve never run into the 26 subitem limit issue that you’re facing. I just tested this out with 33 items across 3 different items, as well as 31 subitems in a single parent item, and I was able to see all of them in my query. What is this limit referring to? Querying more than 26 items at a time? Or querying more than 26 subitems at a time?</p>\n<p>If you’re referring to querying more than 26 items at a time, we do have rate limits for our API. However, you can implement pagination to get past this.</p>\n<p>Let me know! Happy to continue digging into this with you.</p>"
+    },
+    {
+      "id": 45058,
+      "postNumber": 6,
+      "createdAt": "2021-03-17T11:38:30.670Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>Hi Helen, thanks for your reply.</p>\n<p>I seem to have posted a wrong link in my previous post. A typical newbie error of mine!</p>\n<p>Anyway, the limit of returned items in field subitems is mentioned <a href=\"https://community.monday.com/t/best-way-to-get-all-the-sub-items-from-a-parent-item/8585/5\">here</a>. The last reaction mentions a “default limit of 25”. This claim was not disputed and afterwards no announcement was made involving this limit. I assume it still exists.</p>\n<p>I can get all 26 subitems of a parent item, and you managed to get all 31 subitems of another parent item, so the limit is higher nowadays. Do you know the current limit?</p>\n<p>You mention pagination - but I don’t know how to get pagination within a field value. I have the following query:<br />\nquery request($parentitemid: Int) {<br />\nitems(ids: [$parentitemid]) {<br />\ncolumn_values(ids: “subitems”) {<br />\nvalue<br />\n}<br />\n}<br />\n}</p>\n<p>Can you help me rewrite this, to include pagination and a small page size?</p>"
+    },
+    {
+      "id": 45070,
+      "postNumber": 7,
+      "createdAt": "2021-03-17T12:45:33.430Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/zweitze\">@zweitze</a> no worries!</p>\n<p>I believe the 25 item limit is referring to unrestricted item queries (i.e. if you just queried all of your items). Does this make sense?</p>\n<p>So if you’re querying your subitems from their board Id, you should implement pagination to return 25 subitems at a time.</p>\n<p>To do this, just include the “page” argument for your items. An example would be something like this:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/1/11a898283cbc0472a647990d83be8e1ced7d2689.png\" alt=\"image\" width=\"277\" height=\"160\" /></p>\n<p>This example returns my list of boards utilizing pagination (so this would return the first “page” of boards in my account!).</p>"
+    },
+    {
+      "id": 45081,
+      "postNumber": 8,
+      "createdAt": "2021-03-17T13:38:55.957Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>The users in that related topic experience a 25-subitem restriction. When issuing a query similar to mine (i.e. querying one column value of one item) they got a response with one field value, as expected. That one field value is a string like<br />\n“data”: {<br />\n“items”: [<br />\n{<br />\n“column_values”: [<br />\n{<br />\n“value”: “{“linkedPulseIds”:[{“linkedPulseId”:1111111},{“linkedPulseId”:2222222},<br />\n/* …some more items…*/<br />\n{“linkedPulseId”:9999999}]}”<br />\n}<br />\n]<br />\n}<br />\n]<br />\n},<br />\n“account_id”: 1234567<br />\n}</p>\n<p>and not all subitems were present in that one value of that one item, due to some limit. How would I work around that? I don’t see how I can use paging within a single value.</p>"
+    },
+    {
+      "id": 45103,
+      "postNumber": 9,
+      "createdAt": "2021-03-17T15:19:19.478Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>I’m not sure that what the end user stated is actually true. There’s no limitation described in our API documentation, so I’m curious to learn why they believe that there is a 25-item limitation. I think they might’ve gotten confused and were referring to the imposed <em>item</em> limitation when you make an unrestricted query of your items on a board.</p>\n<p>In this case, the subitems queried would show up as a “Connect” column type (from our UI perspective). As such, there isn’t any limitation as to how many items will be returned for this type of column.</p>\n<p>I think the better question would be, how many subitems do you have, and how many is your query returning? I’m assuming you have at least 26 subitems based on your previous response. In any case, if you are running into a limitation issue, please feel free to DM me so that we can continue troubleshooting this as a bug.</p>\n<p>This isn’t something that I’ve run into in my own testing (as I was able to return all 31 of my subitems for a parent item successfully in the same format as you posted), and it seems that the thread you’re referring to is quite old so I would assume that performance (and bugs) have gotten better since then.</p>"
+    },
+    {
+      "id": 45197,
+      "postNumber": 10,
+      "createdAt": "2021-03-18T10:03:50.442Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>This group has multiple topics about retrieving subitems, with complaints about missing subitems, you can find <a href=\"https://community.monday.com/t/extracting-subitems/9085/8\">another one here</a> (scroll to September messages).<br />\nIt is possible that those users were trying to do too much in one query, and running out of complexity.</p>\n<p>All the time the only explanations offered was that subitems were still in beta - implying that you may not get all when they’re in beta. That would be strange, I would think the API returns all, or nothing, or strange errors, but never a few subitems and no errors.<br />\nOnce a user suggested the limit of 25, which sounds more like a better explanation for retrieving only part of the subitems. The topics were later closed without contradicting the explanations.</p>\n<p>You ask how much subitems I would need. Good question but tough answer. The design here is still in development and my job is also to fill them with data from from our backoffice. I have no maximum, but I guess the maximum will be in the range of 50 - 500.</p>\n<p>For me the true issue is ensuring that all subitems are present at the right parent.<br />\nIf the structure of the API is still be considered, I much more prefer an attribute at the subitem, identifying its parent.</p>"
+    },
+    {
+      "id": 45219,
+      "postNumber": 11,
+      "createdAt": "2021-03-18T13:03:45.225Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Regarding the closing of topics, our team is trying out a new flow of answering our developer questions within our community. This is something we’re working through, and will be putting out a message once we’ve finalized this workflow of answering tickets. Thank you for your patience in the meantime and for this invaluable feedback!</p>\n<p>For the last thread you included, it seems the developer experiencing the issue never got back to the other developer who was assisting. I can say from my own testing though, that this 25 subitem limit seems to be misplaced.</p>\n<p>I would say in general, while our developer community is here to help each other out, unless the information originates from a member of the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> team, to take the responses with a grain of salt.</p>\n<p>I totally understand your last point! I agree that it would make more sense to query the subitem board, and from there, be able to have a field attribute linking the subitems returned back to the parent items from which they sit. This is something our developers are aware of, but still working to build out. I will be sure to add your feedback onto the existing pile. Thank you!</p>"
+    },
+    {
+      "id": 46951,
+      "postNumber": 12,
+      "createdAt": "2021-04-06T12:40:24.023Z",
+      "author": "zweitze (Zweitze de Vries)",
+      "cookedHtml": "<p>We ran into a true problem - when querying the subboard it returned subitems WITHOUT parent items. In other words, when querying the parent board those subitems were not returned. The UI doesn’t show these subitems either. How can these “orphan subitems” exist and how do we deal with them?<br />\naccount_id: 3133580<br />\nSub board ID: 1014080652<br />\nSub items IDs: 1014080943,1014080754,1014080744,1014080748,1014080722</p>\n<p>Also, from a bigger perspective, when subitems get regular non-beta support, how will that be communicated? Can I subscribe to some mailing list?</p>\n<p>Thanks for your insights!</p>"
+    },
+    {
+      "id": 46960,
+      "postNumber": 13,
+      "createdAt": "2021-04-06T13:24:37.490Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a>!</p>\n<p>Ahh yes, so if you’re looking to see the connection between subitems and their parent items, I would recommend querying the parent item column_values to see the connection this way.</p>\n<p>Here is a thread that outlined this “matching” process: <a href=\"https://community.monday.com/t/updating-subitems-via-api/16626\" class=\"inline-onebox\">Updating subitems via API</a>.</p>\n<p>Great question! In this case, an announcement will be made both in our community, as well as on our API documentation.</p>\n<p>If you have any further questions, please consider opening a new thread!</p>\n<p>Thank you~</p>"
+    },
+    {
+      "id": 47723,
+      "postNumber": 14,
+      "createdAt": "2021-04-13T13:24:53.403Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    },
+    {
+      "id": 59952,
+      "postNumber": 15,
+      "createdAt": "2021-08-05T12:26:40.045Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zweitze\">@zweitze</a> and <a class=\"mention\" href=\"/u/jake\">@jake</a>!</p>\n<p>Happy to announce that we recently released the <code>parent_item</code> field when querying subitems that should help here.</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/h/a88e57/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/released-parent-item-field-when-querying-subitems/23338\">[RELEASED] `parent_item` Field When Querying Subitems</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/dev-guides/70\"><span class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Announcements</span></span></a>\n  </div>\n  <blockquote>\n    <img width=\"20\" height=\"20\" src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\"sparkles\" alt=\"sparkles\" class=\"emoji\" />:sparkles:Hi everyone, \nI’m so pleased to announce that we now have a parent_item field for our subitems! \nAs many of you know, before this addition you could query your subitem column values and you could query the subitem column in your parent items to see your subitem IDs, but there was no direct link between the two. ﻿In order to match the relevant subitem column values with the correct parent item them, this required a manual searching mechanism created by individual developers to…\n  </blockquote>\n</aside>\n"
+    }
+  ]
+}

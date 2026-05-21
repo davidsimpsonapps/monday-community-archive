@@ -1,0 +1,88 @@
+{
+  "id": 10252,
+  "title": "Mutations are being rolled back?",
+  "slug": "mutations-are-being-rolled-back",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2020-08-19T09:35:01.480Z",
+  "lastPostedAt": "2021-02-25T14:38:36.071Z",
+  "postsCount": 10,
+  "excerpt": "Hi, \nI’m observing some real strange behaviour as part of a custom Monday integration we have created for internal use. We&quot;re using the V2 API to write group and items onto a board. \nLet me outline the architecture first&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1708,
+  "posts": [
+    {
+      "id": 25888,
+      "postNumber": 1,
+      "createdAt": "2020-08-19T09:35:01.559Z",
+      "author": "JorneD (Jorne Delforge)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m observing some real strange behaviour as part of a custom Monday integration we have created for internal use. We\"re using the V2 API to write group and items onto a board.</p>\n<p>Let me outline the architecture first:</p>\n<ol>\n<li>Read data from Monday board X and aggregate that data into an object</li>\n<li>Put the aggregated object on a queue</li>\n<li>Read the aggregated object from the queue and for each item from the queue do the following<br />\n3a. Create a Group<br />\n3b. Insert items into that group</li>\n</ol>\n<p>What we notice is that in some cases, the create group mutation is executed, you briefly see the group appearing on the Monday board. We even get a group id for the created item (it’s <em>november46256</em> for example). But once we try to insert items into the group, the group suddenly no longer exists. When refreshing the Monday board, the group indeed just ‘disappears’.</p>\n<p>I cannot consistantly reproduce this, sometimes it works flawlessly, sometimes it doesn’t.</p>\n<p>Is there any transactional concept on a mutation that we need to be aware of? Anyone got any idea what might be causing this?</p>"
+    },
+    {
+      "id": 25890,
+      "postNumber": 2,
+      "createdAt": "2020-08-19T09:40:57.291Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/jorned\">@JorneD</a> :wave;</p>\n<p>Thank you for such an awesome post - the detail and structure really helps us tackle this as efficiently as possible for you.</p>\n<p>To be transparent here, I have seen other users report a similar issue and it was mostly related to the number of API actions they would run in a short timeframe. When running multiple API calls within a short time window, there will be a conflict in the race condition and thus, some of the values will be rolled back.</p>\n<p>In most cases, adding a timeout between your API calls did the trick for our users, as this helped reduce the overall volume of API calls in a short timespan. Do you think that could do the trick here?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25893,
+      "postNumber": 3,
+      "createdAt": "2020-08-19T09:45:10.179Z",
+      "author": "JorneD (Jorne Delforge)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> ,</p>\n<p>Thanks for the quick reply. That sure sounds like quite a plausible cause. I’ll add some delay and see what happens.</p>\n<p>Looking at the bigger picture: isn’t this something your API should be able to cope with? In my case it would be easily solved if I would have either of two options:</p>\n<ul>\n<li>Create groups with items underneath as part of a single mutation</li>\n<li>Delete items in bulk (then I could modify the overall architecture)</li>\n</ul>"
+    },
+    {
+      "id": 25901,
+      "postNumber": 4,
+      "createdAt": "2020-08-19T09:52:18.239Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jorned\">@JorneD</a></p>\n<p>Thank you for getting back to me and I am keeping my fingers crossed that things work well after adding a delay <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I’ll check on that with the dev team, but in my understanding, we provide our API as a way to pull data and push (mutate) data on your <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> account, and I don’t think there is a way to accomplish certain tasks with a “batch” call. That said, I do agree it would make your life as a developer much easier, so I’ll raise that with the product team to see if we can make some improvements here.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 26886,
+      "postNumber": 5,
+      "createdAt": "2020-08-27T12:14:43.089Z",
+      "author": "Yoav_Amir (Yoav Amir)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jorned\">@JorneD</a>, I’m a developer in the team.<br />\nI’ve deployed today a fix that should resolve your issue. please let me know if it’s still happening.</p>\n<ul>\n<li>Yoav.</li>\n</ul>"
+    },
+    {
+      "id": 26890,
+      "postNumber": 6,
+      "createdAt": "2020-08-27T12:46:40.376Z",
+      "author": "JorneD (Jorne Delforge)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yoav_amir\">@Yoav_Amir</a> , I resolved it by making certain the processes only runs a single thread at a time (it is deployed on an AWS Lambda which launches multiple instances at the same time by default). I will remove the concurrency limit and try again. Will keep you posted.</p>"
+    },
+    {
+      "id": 26996,
+      "postNumber": 7,
+      "createdAt": "2020-08-28T11:38:00.718Z",
+      "author": "JorneD (Jorne Delforge)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yoav_amir\">@Yoav_Amir</a>, after removing my concurrency limit, I’m still tasing the same issue. A group created within a single thread seems to not exist when inserting items in that group within the same thread.</p>\n<p>Any logs I could provide that could help you finding the root cause?</p>"
+    },
+    {
+      "id": 28409,
+      "postNumber": 8,
+      "createdAt": "2020-09-14T06:31:06.007Z",
+      "author": "Yoav_Amir (Yoav Amir)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jorned\">@JorneD</a>, waiting to hear from you, did you manage to solve it ?</p>"
+    },
+    {
+      "id": 28415,
+      "postNumber": 9,
+      "createdAt": "2020-09-14T06:59:30.894Z",
+      "author": "JorneD (Jorne Delforge)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yoav_amir\">@Yoav_Amir</a>, nope still facing the same issue from time to time. Is there any logs/details I could provide that could help you guys in finding the root cause?</p>"
+    },
+    {
+      "id": 42485,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T14:38:36.071Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

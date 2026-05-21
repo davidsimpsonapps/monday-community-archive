@@ -1,0 +1,33 @@
+{
+  "id": 113922,
+  "title": "Additional filter options for the `users` query",
+  "slug": "additional-filter-options-for-the-users-query",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    196
+  ],
+  "createdAt": "2025-05-01T11:59:19.130Z",
+  "lastPostedAt": "2025-05-07T04:38:55.691Z",
+  "postsCount": 2,
+  "excerpt": "Hi! We’d love to add some more filter options to the users query in the API. We’ve been running into several cases where we want to include or exclude users based on certain user properties. We’re using pagination a lot &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 13,
+  "posts": [
+    {
+      "id": 228364,
+      "postNumber": 1,
+      "createdAt": "2025-05-01T11:59:19.222Z",
+      "author": "demi.kesteren (Demi van Kesteren)",
+      "cookedHtml": "<p>Hi! We’d love to add some more filter options to the <code>users</code> query in the API. We’ve been running into several cases where we want to include or exclude users based on certain user properties. We’re using pagination a lot when it comes to users. We have several cases where this becomes harder to do “nicely” without exhausting the API. In total, there are three filters we’d love to see:</p>\n<p>The first and most useful one would be to exclude a list of users by their ids. We now have to do this ourselves, and especially when we make paginated calls, we run into an inconsistent amount per page. We could resolve this by calling the next page until we have the limit we want, but that only exhausts the budget more quickly. And with a larger list of users, it only costs more and more calls.<br />\nSomething along these lines would be nice:</p>\n<pre><code class=\"lang-auto\">users (exclude: [\"12345678\", \"87654321\"]) {\n    id\n    name\n    email\n  }\n</code></pre>\n<p>The second one is a filter for teams. We are aware of the <code>teams</code> { <code>users</code> …} query. However, this results in a list of users per team, not a single list of distinct users. Furthermore, pagination is difficult too, since the limit applies to every list of users per team and not a total limit. The table in Administration &gt; Users is able to do this, so something similar would be most helpful:</p>\n<pre><code class=\"lang-auto\">users (teams: [\"123456\", \"654321\"]) {\n    id\n    name\n    email\n  }\n</code></pre>\n<p>And the last one, also seeing it is possible in Administration &gt; Users, is a filter per role (admin, member, guest and viewer). Here too, we have to do the filtering ourselves and ask for the three user properties, making the request more complex. Even if it’s a call per role, that would be helping out a lot already.</p>\n<p>I’m also curious to learn if there are more people interested and running into this, and if and how you work around this! <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=14\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 228824,
+      "postNumber": 2,
+      "createdAt": "2025-05-07T04:38:55.691Z",
+      "author": "demi.kesteren (Demi van Kesteren)",
+      "cookedHtml": "<p>Some example cases for the request above I’d like to add:</p>\n<p><strong>User filters/selectors</strong><br />\nLet’s say we have a user selector that adds a user to a list on the page. If the user is already selected, we’d like to exclude them from the selection. Besides that, if the user scrolls to the bottom of the menu, we load the next page. Excluding the already selected users results in a potential “random” number of users being returned from the query.</p>\n<p><strong>Account-wide user settings</strong><br />\nAn admin can, using the app settings, adjust several settings per user (think about permissions and access for example). This list of users is paginated. Imagine wanting to restrict access on a user level for all users that are <em>currently</em> viewers, or show all guests and pick a few of them. For cases like these, filters per <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> role would be very helpful.<br />\nAnother example would be to filter on users who don’t have access to our app: we save a list of users that have access in our own database. Fetching users paginated while excluding those users would make this a lot easier, as doing pagination here is almost impossible, as the results per page would differ.</p>"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": 63602,
+  "title": "API Monday x Power BI - Get all data of the boards",
+  "slug": "api-monday-x-power-bi-get-all-data-of-the-boards",
+  "categoryId": 98,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-08-13T17:33:57.102Z",
+  "lastPostedAt": "2025-05-21T13:10:46.438Z",
+  "postsCount": 2,
+  "excerpt": "Hi, I want to direclty link my Monday boards to Power BI for live data. \n\nNeed to directly connect multiple boards at the same time to Power BI\nGet all the information from each boards\nHistory date stamp of when the stag&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1950,
+  "posts": [
+    {
+      "id": 138883,
+      "postNumber": 1,
+      "createdAt": "2023-08-13T17:33:57.189Z",
+      "author": "raquelnsouza (Raquel)",
+      "cookedHtml": "<p>Hi, I want to direclty link my Monday boards to Power BI for live data.</p>\n<ul>\n<li>Need to directly connect multiple boards at the same time to Power BI</li>\n<li>Get all the information from each boards</li>\n<li>History date stamp of when the stage/task changes</li>\n</ul>\n<p>The current query I’m using to fetch data from just one frame is this one, how can I modify it to fetch from all available frames?</p>\n<p>let<br />\nSource = Web.Contents(“<a href=\"https://api.monday.com/\" rel=\"noopener nofollow ugc\">https://api.monday.com/</a>” &amp; “v2”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer ####”<br />\n],<br />\nContent=Text.ToBinary(“{”“query”“: “”{ boards (ids: ####) { items {  id name column_values { title text  } } } }”“}”)<br />\n]<br />\n),<br />\n#“JSON” = Json.Document(Source,65001),<br />\ndata = JSON[data],<br />\nboards = data[boards],<br />\nboards1 = boards{0},<br />\nitems = boards1[items],<br />\n#“Converted to Table” = Table.FromList(items, Splitter.SplitByNothing(), null, null, ExtraValues.Error),<br />\n#“Expanded Column1” = Table.ExpandRecordColumn(#“Converted to Table”, “Column1”, {“name”, “column_values”}, {“Column1.name”, “Column1.column_values”}),<br />\n#“Expanded Column1.column_values” = Table.ExpandListColumn(#“Expanded Column1”, “Column1.column_values”),<br />\n#“Expanded Column1.column_values1” = Table.ExpandRecordColumn(#“Expanded Column1.column_values”, “Column1.column_values”, {“title”, “text”}, {“Column1.column_values.title”, “Column1.column_values.text”}),<br />\n#“Changed Type” = Table.TransformColumnTypes(#“Expanded Column1.column_values1”,{{“Column1.column_values.title”, type text}}),<br />\n#“Pivoted Column” = Table.Pivot(#“Changed Type”, List.Distinct(#“Changed Type”[Column1.column_values.title]), “Column1.column_values.title”, “Column1.column_values.text”),<br />\n#“Renamed Columns” = Table.RenameColumns(#“Pivoted Column”,{{“Column1.name”, “Name”}})<br />\nin<br />\n#“Renamed Columns”</p>\n<p>Thank you</p>"
+    },
+    {
+      "id": 230119,
+      "postNumber": 2,
+      "createdAt": "2025-05-21T13:10:46.438Z",
+      "author": "Dacel (Adcel Fau)",
+      "cookedHtml": "<p>do you find any resolution?</p>"
+    }
+  ]
+}

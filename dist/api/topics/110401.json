@@ -1,0 +1,60 @@
+{
+  "id": 110401,
+  "title": "Avoid errors in an IF statement",
+  "slug": "avoid-errors-in-an-if-statement",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2025-02-25T11:50:44.876Z",
+  "lastPostedAt": "2025-03-04T10:27:10.695Z",
+  "postsCount": 6,
+  "excerpt": "I have to columns of times that I need to find the difference between. These are 24hr times and I need to find the hours between an end time on a Monday and start time on  the next Tuesday. \nI have using this formula: \nI&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 31,
+  "posts": [
+    {
+      "id": 222374,
+      "postNumber": 1,
+      "createdAt": "2025-02-25T11:50:44.943Z",
+      "author": "pgharkness (Philippa)",
+      "cookedHtml": "<p>I have to columns of times that I need to find the difference between. These are 24hr times and I need to find the hours between an end time on a Monday and start time on  the next Tuesday.</p>\n<p>I have using this formula:<br />\nIF(AND(NOT({Tues Start Time}=“”), NOT({Mon Finish Time}=“”)), ROUND(ABS({Tues Start Time} - {Mon Finish Time}), 2), “”)</p>\n<p>However, if a cell is empty, it still returns an error. I have tried using ISBLANK() also, but the same issue occurs.<br />\nAs well as this, the outputs do not round to 2 decimal places, despite specifying.</p>\n<p>I would like the output as a positive number of hours between the two times.</p>\n<p>Can you suggest where this formula might be incorrect?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 222390,
+      "postNumber": 2,
+      "createdAt": "2025-02-25T13:35:16.974Z",
+      "author": "Clarey (MondayMotivator)",
+      "cookedHtml": "<p>Hey,<br />\nSure! It looks like your formula could have an issues on these areas:</p>\n<ol>\n<li>The <strong>empty cell check</strong> isn’t working correctly. <code>{Tues Start Time}</code> and <code>{Mon Finish Time}</code> might be stored as numbers or text, and <code>\"\"</code> might not be correctly identifying blank cells. Instead, use <code>ISBLANK({Column})</code> or check for <code>\"\"</code> explicitly.</li>\n<li>The <strong>time difference calculation</strong> needs to handle crossing midnight correctly (since the times are on different days).</li>\n<li><strong>Rounding issue</strong> – The formula should ensure the calculation explicitly converts the difference to hours.</li>\n</ol>\n<p>Try this formula:</p>\n<pre><code class=\"lang-auto\">IF(AND(NOT(ISBLANK({Tues Start Time})), NOT(ISBLANK({Mon Finish Time}))), \n   ROUND(ABS(({Tues Start Time} + 24) - {Mon Finish Time}), 2), \n   \"\")\n</code></pre>\n<h3><a name=\"p-222390-explanation-1\" class=\"anchor\" href=\"#p-222390-explanation-1\"></a>Explanation:</h3>\n<ul>\n<li><code>NOT(ISBLANK({Column}))</code> ensures both columns have values before performing the calculation.</li>\n<li>Adding <code>24</code> to <code>{Tues Start Time}</code> correctly shifts Tuesday’s start time forward by a full day.</li>\n<li><code>ROUND(ABS((...)), 2)</code> ensures a positive number with two decimal places.</li>\n</ul>\n<p>This should resolve both the error and rounding issues. Hope that helps! If it does, Let me know with a like! <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=15\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" width=\"20\" height=\"20\" />or ask for help!</p>"
+    },
+    {
+      "id": 222477,
+      "postNumber": 3,
+      "createdAt": "2025-02-26T11:12:07.543Z",
+      "author": "pgharkness (Philippa)",
+      "cookedHtml": "<p>Hi Clare,</p>\n<p>Thanks for getting back.</p>\n<p>Using your formula above, calculates the correct times. However, no decimal places are showing and blank cells are still causing errors.</p>\n<p>I think it must be the empty cell check that is not working correctly. The blank cells come from a jotform submission. I’m not sure if this is handled differently?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 222489,
+      "postNumber": 4,
+      "createdAt": "2025-02-26T13:21:04.989Z",
+      "author": "Matt_Frost (Dr Matt Frost - www.frostgroup.uk)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/p/a587f6/48.png\" class=\"avatar\" /> Philippa:</div>\n<blockquote>\n<p>IF(AND(NOT({Tues Start Time}=“”), NOT({Mon Finish Time}=“”)), ROUND(ABS({Tues Start Time} - {Mon Finish Time}), 2), “”)</p>\n</blockquote>\n</aside>\n<p>Hi,</p>\n<p>I was wondering if you’re using the Hoyr column, or the Date column with the time enabled?</p>\n<p>If you’re using the Date column option, try this<br />\nDAYS({Tues Start Time}, {Mon Finish Time}) *24</p>\n<p>If you’re using the Hours column rather than text, is a little tricker to get rid of the errors.</p>"
+    },
+    {
+      "id": 222579,
+      "postNumber": 5,
+      "createdAt": "2025-02-27T11:12:48.468Z",
+      "author": "pgharkness (Philippa)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matt_frost/48/32626_2.png\" class=\"avatar\" /> Dr Matt Frost - www.frostgroup.uk:</div>\n<blockquote>\n<p>If you’re using the Hours column rather than text, is a little tricker to get rid of the errors.</p>\n</blockquote>\n</aside>\n<p>Hi Matt,</p>\n<p>They are hour columns that I am referencing - is there a way around this? Are you suggest a text column would be better?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 223063,
+      "postNumber": 6,
+      "createdAt": "2025-03-04T10:27:10.695Z",
+      "author": "pgharkness (Philippa)",
+      "cookedHtml": "<p>I am trying to perform this formula on “hour” columns, on times that are a day apart.</p>\n<p>Does anyone have advice about how to get a successful output for this calculation? Whether that is changing column type or something else.</p>\n<p>I will, however, not be able to include a date.</p>\n<p>Thanks.</p>"
+    }
+  ]
+}

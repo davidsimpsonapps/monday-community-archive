@@ -1,0 +1,89 @@
+{
+  "id": 49835,
+  "title": "Finding the MIN of 2 dates from timeline column in formula column",
+  "slug": "finding-the-min-of-2-dates-from-timeline-column-in-formula-column",
+  "categoryId": 6,
+  "tagIds": [
+    104,
+    108
+  ],
+  "createdAt": "2023-01-23T16:43:13.298Z",
+  "lastPostedAt": "2023-02-08T16:50:43.304Z",
+  "postsCount": 10,
+  "excerpt": "Hi there! Still getting used to Monday, but I’m trying to use the formula column to return the earliest date from multiple timeline columns. I’ve tried minimum and &gt;/&lt; functions but some reason it’s not working. Likely s&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2738,
+  "posts": [
+    {
+      "id": 111852,
+      "postNumber": 1,
+      "createdAt": "2023-01-23T16:43:13.380Z",
+      "author": "CynthiaD (Cynthia Dims)",
+      "cookedHtml": "<p>Hi there! Still getting used to Monday, but I’m trying to use the formula column to return the earliest date from multiple timeline columns. I’ve tried minimum and &gt;/&lt; functions but some reason it’s not working. Likely something to do with my syntax but would appreciate help. I’ve checked a couple of seemingly similar posts but nothing seems to work.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/717ec4ae3ac62eff38e96dae3df1c52d67227e57.png\" title=\"Date comparison issue\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/717ec4ae3ac62eff38e96dae3df1c52d67227e57_2_556x500.png\" alt=\"Date comparison issue\" width=\"556\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Date comparison issue</span><span class=\"informations\">621×558 21.3 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 111866,
+      "postNumber": 2,
+      "createdAt": "2023-01-23T18:14:12.730Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/cynthiad\">@CynthiaD</a>,</p>\n<p>As far as I know MIN only works with numbers. So you would need to use an If Statement</p>\n<pre><code class=\"lang-auto\">IF({Timeline1#Start}&gt;{Timeline2#Start},{Timeline1#Start},{Timeline2#Start})\n</code></pre>\n<p>If you want to format it “YYYYMMDD”, then</p>\n<pre><code class=\"lang-auto\">IF({Timeline1#Start}&gt;{Timeline2#Start},FORMAT_DATE({Timeline1#Start},\"YYYYMMDD\"),FORMAT_DATE({Timeline2#Start},\"YYYYMMDD\"))\n</code></pre>"
+    },
+    {
+      "id": 111882,
+      "postNumber": 3,
+      "createdAt": "2023-01-23T20:03:41.180Z",
+      "author": "CynthiaD (Cynthia Dims)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a> - let me try that. I thought as much with MIN function, the only problem is that I want to compare up to 5 date columns. I can write a very long if statement if thats the only way but I wanted to make sure first. Thanks again</p>"
+    },
+    {
+      "id": 111891,
+      "postNumber": 4,
+      "createdAt": "2023-01-23T21:35:29.526Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Your other option is to convert the dates into a number, then to use MIN.</p>\n<pre><code class=\"lang-auto\">MIN(DATEVALUE(FORMAT_DATE({Timeline#Start})),DATEVALUE(FORMAT_DATE({Timeline1#Start}))\n</code></pre>\n<p>This is simpler if you have 5 dates.</p>\n<p>You’ll get the first date formatted as a number. To get it back to a date you’ll need to use this syntax:</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(ADD_DAYS(\"1899-12-31\",MIN(DATEVALUE(FORMAT_DATE({Timeline#Start})),DATEVALUE(FORMAT_DATE({Timeline1#Start})))-1.0001),\"YYYYMMDD\")\n</code></pre>\n<p>Refer to <a href=\"https://themondayman.com/hidden/\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">The monday Hidden Functions – The Monday Man</a> for more details.</p>"
+    },
+    {
+      "id": 112205,
+      "postNumber": 5,
+      "createdAt": "2023-01-25T14:22:51.385Z",
+      "author": "CynthiaD (Cynthia Dims)",
+      "cookedHtml": "<p>Thanks so much <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a> !! Will try that today. Really appreciate it</p>"
+    },
+    {
+      "id": 114421,
+      "postNumber": 6,
+      "createdAt": "2023-02-08T01:17:37.814Z",
+      "author": "CynthiaD (Cynthia Dims)",
+      "cookedHtml": "<p>Thanks so much again <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a> ! I was able to get the right minimum by just adding “FORMAT_DATE” to your initial MIN function. Is there a reason you suggest using the ADD_DAYS(\"1899-… portion?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/3a7df38b411b75694c88b5353128f2cd52f29f17.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/3/3a7df38b411b75694c88b5353128f2cd52f29f17.png\" alt=\"image\" width=\"690\" height=\"65\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">807×77 2.18 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 114422,
+      "postNumber": 7,
+      "createdAt": "2023-02-08T01:18:51.002Z",
+      "author": "CynthiaD (Cynthia Dims)",
+      "cookedHtml": "<p>So essentially:</p>\n<p>FORMAT_DATE(MIN(DATEVALUE(FORMAT_DATE({Timeline#Start})),DATEVALUE(FORMAT_DATE({Timeline1#Start})))</p>\n<p>I get back the date I want but want to make sure there wasn’t a special Expert reason you were adding the ADD_DAYS function?</p>"
+    },
+    {
+      "id": 114423,
+      "postNumber": 8,
+      "createdAt": "2023-02-08T01:19:10.785Z",
+      "author": "CynthiaD (Cynthia Dims)",
+      "cookedHtml": "<p>Thanks so much again!!</p>"
+    },
+    {
+      "id": 114501,
+      "postNumber": 9,
+      "createdAt": "2023-02-08T09:26:22.110Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<blockquote>\n<p>I get back the date I want but want to make sure there wasn’t a special Expert reason you were adding the ADD_DAYS function?</p>\n</blockquote>\n<p>The explanation is at <a href=\"https://themondayman.com/hidden/?#date-and-time-functions\" rel=\"noopener nofollow ugc\">https://themondayman.com/hidden/?#date-and-time-functions</a> in the blue frame.</p>"
+    },
+    {
+      "id": 114559,
+      "postNumber": 10,
+      "createdAt": "2023-02-08T16:50:43.304Z",
+      "author": "CynthiaD (Cynthia Dims)",
+      "cookedHtml": "<p>Ahn! Thank you <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a>. So essentially, if I use the shorter formula, I could run into some issues down the line even if it generally works.</p>"
+    }
+  ]
+}

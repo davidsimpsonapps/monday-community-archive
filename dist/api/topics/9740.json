@@ -1,0 +1,51 @@
+{
+  "id": 9740,
+  "title": "Is there a way to simplify my query for a more concise data return with key:value pairs?",
+  "slug": "is-there-a-way-to-simplify-my-query-for-a-more-concise-data-return-with-key-value-pairs",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-08-04T17:07:20.919Z",
+  "lastPostedAt": "2021-02-25T14:32:55.498Z",
+  "postsCount": 5,
+  "excerpt": "I am currently sending a query and getting the data returned from my board: \nconst query = `{\n            boards(ids: ${state.mondayBoardId}) {\n                groups(){\n                    title\n                    item&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1673,
+  "posts": [
+    {
+      "id": 24579,
+      "postNumber": 1,
+      "createdAt": "2020-08-04T17:07:20.983Z",
+      "author": "sbaden (shawn baden)",
+      "cookedHtml": "<p>I am currently sending a query and getting the data returned from my board:</p>\n<pre><code>const query = `{\n            boards(ids: ${state.mondayBoardId}) {\n                groups(){\n                    title\n                    items(limit: 50){\n                        column_values{\n                            text\n                        }\n                    }\n                }\n            }\n        }`\n</code></pre>\n<p>The query returns an array of objects (rows). Each object or row has an array of items (column values).</p>\n<pre><code> [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]\n  1. column_values: Array(9)\n             1. 0: {text: \"ARI\"}\n             2. 1: {text: \"Fitzgerald\"}\n             3. 2: {text: \"Larry\"}\n             4. 3: {text: \"WR\"}\n             5. 4: {text: \"11\"}\n             6. 5: {text: \"Arizona Cardinals\"}\n             7. 6: {text: \"Cardinals\"}\n             8. 7: {text: \"\"}\n             9. 8: {text: \"\"}\n             10. length: 9\n  2. 1: {column_values: Array(9)}\n  3. 2: {column_values: Array(9)}\n  4. 3: {column_values: Array(9)}\n  5. 4: {column_values: Array(9)}\n  6. 5: {column_values: Array(9)}\n</code></pre>\n<p>If I’m referencing a column value I can’t call it out as a key:value pair but instead have to get the value by index. If I for some reason change the order of my columns in a board it will throw off the index value.</p>\n<p>Is there a way to flatten the return to get an array of objects each having key:value pairs for each column? Something more like this?</p>\n<pre><code>1. Array(34)\n      1. 0:\n             1. jerseyNumber: \"jerseyNumber\"\n             2. nameFirst: \"nameFirst\"\n             3. nameLast: \"nameLast\"\n             4. position: \"position\"\n             5. teamFullName: \"teamFullName\"\n             6. teamMascot: \"teamMascot\"\n             7. teamTri: \"teamTri\"\n             8. __proto__: Object\n\n      2. 1: {teamTri: \"ARI\", nameLast: \"Fitzgerald\", nameFirst: \"Larry\", position: \"WR\", jerseyNumber: \"11\", …}\n      3. 2: {teamTri: \"ATL\", nameLast: \"Jones\", nameFirst: \"Julio\", position: \"WR\", jerseyNumber: \"11\", …}\n      4. 3: {teamTri: \"BAL\", nameLast: \"Harbaugh\", nameFirst: \"John\", position: \"COACH\", jerseyNumber: \"11\", …}\n      5. 4: {teamTri: \"BUF\", nameLast: \"Kromer\", nameFirst: \"Aaron\", position: \"COACH\", jerseyNumber: \"11\", …}\n      6. 5: {teamTri: \"CAR\", nameLast: \"Newton\", nameFirst: \"Cam\", position: \"QB\", jerseyNumber: \"11\", …}\n      7. 6: {teamTri: \"CHI\", nameLast: \"Cutler\", nameFirst: \"Jay\", position: \"QB\", jerseyNumber: \"11\", …}\n      8. 7: {teamTri: \"CIN\", nameLast: \"Green\", nameFirst: \"A.J.\", position: \"WR\", jerseyNumber: \"11\", …}\n      9. 8: {teamTri: \"CLE\", nameLast: \"Greco\", nameFirst: \"John\", position: \"DE\", jerseyNumber: \"11\", …}\n</code></pre>"
+    },
+    {
+      "id": 24605,
+      "postNumber": 2,
+      "createdAt": "2020-08-04T23:15:22.519Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sbaden\">@sbaden</a>,</p>\n<p>Which language are you using?</p>\n<p>You may need to create a new array using the data in the format you need.</p>"
+    },
+    {
+      "id": 25180,
+      "postNumber": 3,
+      "createdAt": "2020-08-11T16:42:48.681Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/sbaden\">@sbaden</a>,</p>\n<p>You could do something like a for loop to parse through the JSON response and assign the values to a dictionary in Python. For example, if you’re trying to get a list of teams:</p>\n<pre><code>board_list = []\n    for t in parsed_json ['data']['boards']['groups']['title']['items']['column_values']:\n         board_list.append(int(t['text']))\n</code></pre>\n<p>The API can accept back dictionary values if you declare the variable accordingly with something like [Int!] as your variable declaration.</p>\n<p>Hope this helps!</p>"
+    },
+    {
+      "id": 25212,
+      "postNumber": 4,
+      "createdAt": "2020-08-12T06:24:22.802Z",
+      "author": "paul.whitaker (Paul Whitaker)",
+      "cookedHtml": "<p>It seems to require multiple passes to get a flat usable set of current column values by column name using GraphQL API.</p>\n<p>A secondary issue is you may want the “key” to be the column title - the query syntax appears to only allow access by column ID (internal value).</p>\n<p>I was able to do something similar in 3 parts (in Zapier)</p>\n<ol>\n<li>Get the columns for the board</li>\n</ol>\n<pre><code class=\"lang-auto\">{\n  boards(ids: {{94553960__event__boardId}}) {\n    owner {\n      id\n    }\n    columns {\n      title\n      type\n      id\n    }\n  }\n}\n</code></pre>\n<ol>\n<li>In JavaScript make a key:value pair of column title and name</li>\n</ol>\n<pre><code class=\"lang-auto\">output = {};\ninputData.columnTitles.split(',').forEach((key, i) =&gt; output[key] = inputData.columnIds.split(',')[i]);\n</code></pre>\n<ol>\n<li>Use the output of that to get a specific column value by its ID from the previous step</li>\n</ol>\n<pre><code class=\"lang-auto\">{ items(ids: [{{94553960__event__pulseId}}]) { column_values(ids:[\"{{94574036__Bug Ref}}\"]) { text } } }\n</code></pre>\n<p>You could maybe loop through something similar to step 3 for all columns in a keyvalue pair (maybe using a similar syntax to the JavaScript above.</p>\n<p>I’m interested to see if you are able to make this work so please provide an update if you have advanced this. Thanks!</p>"
+    },
+    {
+      "id": 42412,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T14:32:55.498Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

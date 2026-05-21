@@ -1,0 +1,96 @@
+{
+  "id": 44186,
+  "title": "Integration executes more than once",
+  "slug": "integration-executes-more-than-once",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94
+  ],
+  "createdAt": "2022-10-19T06:25:39.181Z",
+  "lastPostedAt": "2022-10-24T13:56:54.821Z",
+  "postsCount": 11,
+  "excerpt": "Hello, \nI’ve built an app which takes excel data - manipulates it, and: \n\ncreating an item if there is no item yet\ninsert the column values if there is an item on the board.\n\nWe are talking about huge amount of data that&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 708,
+  "posts": [
+    {
+      "id": 101026,
+      "postNumber": 1,
+      "createdAt": "2022-10-19T06:25:39.274Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’ve built an app which takes excel data - manipulates it, and:</p>\n<ol>\n<li>creating an item if there is no item yet</li>\n<li>insert the column values if there is an item on the board.</li>\n</ol>\n<p>We are talking about huge amount of data that need to be insert (2500~ items)</p>\n<p>Here is the example of the integration:</p>\n<pre><code class=\"lang-auto\">export async function post(boardId, project, token) {\n  try {\n    const mondayClient = initMondayClient()\n    await mondayClient.setToken(token)\n\n    for (let i = 0; i &lt; 2500~; i++) {\n      console.log('start of loop')\n\n      const task = ...\n      const taskId = ...\n      const taskName = ...\n      const itemId = await _getItemId(taskId, boardId, token)\n      const columnValues = JSON.stringify({\n         ....\n      })\n\n      if (!itemId) await deleyFunc(_createItem, 2000, boardId, columnValues, taskName, mondayClient, token)\n      else await deleyFunc(_changeItem, 2000, boardId, itemId, columnValues, mondayClient, token)\n     \n      console.log('end of loop')\n    }\n  } catch (err) {\n    console.log('file: monday-service.ts -&gt; line 57 -&gt; post-&gt; err', err)\n  }\n}\n\nasync function _createItem(boardId, columnValues, taskName: string, mondayClient, token) {\n  try {\n    await mondayClient.setToken(token)\n\n    const mutation= `mutation {\n      create_item(board_id: ${boardId}, item_name: ${JSON.stringify(taskName)}, column_values:${JSON.stringify(columnValues)}, create_labels_if_missing: true) {\n        id\n      }\n    }`\n    const mutationResponse = await mondayClient.api(mutation)\n    console.log('item created')\n  } catch (err) {\n    console.log('file: monday-service.ts -&gt; line 90 -&gt; _createItem -&gt; err', err)\n  }\n}\n\nasync function _changeItem(boardId, itemId, columnValues, mondayClient, token) {\n  try {\n    await mondayClient.setToken(token)\n    const mutation = `mutation {\n      change_multiple_column_values (item_id: ${itemId}, board_id: ${boardId}, column_values: ${JSON.stringify(columnValues)}, create_labels_if_missing: true) {\n        id\n      }\n    }`\n    const mutationResponse = await mondayClient.api(mutation)\n    console.log('columns changed')\n  } catch (err) {\n    console.log('file: monday-service.ts -&gt; line 109 -&gt; _changeItem -&gt; err', err)\n  }\n}\n</code></pre>\n<p>In the first 300-400 items everything goes smooth, but then, I can see on my logs that the integration fires/executes again. The integration runs a few times in parallel.<br />\nI have simple console log right after entering to the base url endpoint:</p>\n<blockquote>\n<p>Oct 19 11:53:49.123 <strong>fire</strong><br />\nOct 19 11:58:49.166 <strong>fire</strong><br />\nOct 19 11:59:19.166  <strong>fire</strong><br />\nOct 19 12:01:22.162  <strong>fire</strong></p>\n</blockquote>\n<p>We can see that the integration executes again after a few minutes which is a problem.<br />\nThe integration triggered by button click. I obviously clicked once.<br />\nOn the “Integrations Activity” I see only one activity and not many. But the integration is definitely repeating itself.</p>\n<p>What can cause this? Thanks for any ideas.</p>"
+    },
+    {
+      "id": 101028,
+      "postNumber": 2,
+      "createdAt": "2022-10-19T07:03:49.193Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/roy\">@Roy</a></p>\n<p>This behavior looks like retrying from the monday side. Did you encounter complexity limits? Hitting complexity is one of the reasons monday retries.</p>"
+    },
+    {
+      "id": 101031,
+      "postNumber": 3,
+      "createdAt": "2022-10-19T07:43:43.612Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>I don’t see any complexity limits error on my logs (I’m logging each error/response).<br />\nAnd also I don’t believe creation of item/change column values can reach the complexity limit, right?</p>"
+    },
+    {
+      "id": 101050,
+      "postNumber": 4,
+      "createdAt": "2022-10-19T09:53:52.233Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/roy\">@Roy</a></p>\n<p>Sure column changes can trigger complexity. You have 5.000.000 complexity credit refreshed each minute. A singel update (one item / one column) bares a costs of 30.001. So that leaves us with maximum 166 update per minute. Hitting complexity is is returned in response.errors[0].message.</p>"
+    },
+    {
+      "id": 101055,
+      "postNumber": 5,
+      "createdAt": "2022-10-19T10:05:56.902Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>It may be the problem but I do not see any response with error.<br />\nI also tried to timeout between each iteration for few seconds (3 seconds~) which did not help.</p>\n<p>Do you maybe have any other idea why the integration rexecute?<br />\nThanks!</p>"
+    },
+    {
+      "id": 101056,
+      "postNumber": 6,
+      "createdAt": "2022-10-19T10:17:39.635Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/roy\">@Roy</a></p>\n<p>From your code it doesn’t look like you are checking the response at all. Errors like this do not throw an error because the API call was successful. You have to check the response, in your case:</p>\n<pre><code class=\"lang-auto\">if (mutationResponse.error_code) console.log (mutationResponse.errors[0]);\n</code></pre>\n<p>Instead of just logging “item created”. You might think the item is created (because you are writing that to the console) but you can’t tell without checking the response.</p>"
+    },
+    {
+      "id": 101064,
+      "postNumber": 7,
+      "createdAt": "2022-10-19T10:55:51.631Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>I added console.log, tested again and it is firing it again and I do not see any erors on my logs. I even increased the timeout for each API function for 10 seconds which did not help.</p>\n<p>In my new test the console.log(‘fire’), which is on the endpoint post function</p>\n<pre><code class=\"lang-auto\">\nrouter.post('/monday/update', monday.update);\n....\n\nexport async function update(req, res) {\n  console.log('fire')\n .....\n}\n</code></pre>\n<p>I can see that the ‘fire’ log is happening several times. Like the last time, <strong>exactly</strong> after 5 minutes the it execute the integration again, same behavior like the last test I posted:</p>\n<blockquote>\n<p>Oct 19 16:36:57.451 <strong>fire</strong><br />\nOct 19 16:41:57.446 <strong>fire</strong><br />\nmore …</p>\n</blockquote>\n<p>I believe now it is not related to the complexity issue, specially because the exact time that the intergation runs again and because I cannot see any error logs.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 101066,
+      "postNumber": 8,
+      "createdAt": "2022-10-19T11:08:38.891Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/roy\">@Roy</a></p>\n<p>What does the mutation return? (ie what is the content of  mutationResponse)</p>\n<p>Complexity errors won’t throw an error, you have to inspect the response from the actual API call</p>"
+    },
+    {
+      "id": 101067,
+      "postNumber": 9,
+      "createdAt": "2022-10-19T11:17:14.907Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>Yes, I know it won’t throw an error. I am logging mutationResponse + log of the condition for:<br />\n“if (mutationResponse.error_code) console.log (mutationResponse.errors[0]);” that you mention.<br />\n“mutationResponse” returns the data object and the account_id as expected. no errors.<br />\nAfter the integration re-execute multiple times in a parallel, I get complexity error because I am doing same requests at the same time.</p>"
+    },
+    {
+      "id": 101604,
+      "postNumber": 10,
+      "createdAt": "2022-10-24T13:56:54.821Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>I found the solution for this case for poeple who might facing the same issue:</p>\n<p>I figured out that if monday not recieving response 200 in 5 minutes the integration will re-execute.<br />\nSo, I send response 200 ( <code>res.status(200).send({})</code> ) immediately when entering the intagration and then I perform my tasks.</p>"
+    },
+    {
+      "id": 102345,
+      "postNumber": 11,
+      "createdAt": "2022-10-31T14:56:57.355Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

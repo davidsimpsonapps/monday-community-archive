@@ -1,0 +1,56 @@
+{
+  "id": 99821,
+  "title": "Use monday doc update as trigger for automations",
+  "slug": "use-monday-doc-update-as-trigger-for-automations",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    41,
+    362,
+    491
+  ],
+  "createdAt": "2024-10-04T16:19:09.028Z",
+  "lastPostedAt": "2024-10-16T12:09:42.226Z",
+  "postsCount": 5,
+  "excerpt": "Hello! I know there is the built-in trigger “column change”, but does anyone know if I can build any type of automation (either via automation panel or API) when I change / update a monday doc of an item? It seems that u&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 63,
+  "posts": [
+    {
+      "id": 204420,
+      "postNumber": 1,
+      "createdAt": "2024-10-04T16:19:09.118Z",
+      "author": "Daniel.prudente (DP)",
+      "cookedHtml": "<p>Hello! I know there is the built-in trigger “column change”, but does anyone know if I can build any type of automation (either via automation panel or API) when I change / update a monday doc of an item? It seems that using “column change” only works for monday doc / file columns if I add or remove files from the column but not actually updating anything internally in the document. Am I missing something?</p>"
+    },
+    {
+      "id": 205064,
+      "postNumber": 2,
+      "createdAt": "2024-10-09T10:53:30.303Z",
+      "author": "ZakiImtiaz (Zaki | readylogic.co)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/daniel.prudente\">@Daniel.prudente</a><br />\nYes, there is a solution to your problem. Though not directly but via API. You can use the Query for documents for accessing document.</p>\n<pre><code class=\"lang-auto\">query {\n  docs (object_ids: 123456789, limit: 1) {\n    id\n    object_id\n    settings\n    created_by {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<p>And to discuss the Document content use the following query:</p>\n<pre><code class=\"lang-auto\">query {\n  docs (object_ids: 123456789, limit: 1) {\n    id\n    object_id\n    settings\n    created_by {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<p>In case you need any help setting it up let me know <a href=\"https://app.reclaim.ai/m/zaki-imtiaz/high-priority-meeting\" rel=\"noopener nofollow ugc\">here</a> and I’ll be happy to assist.</p>\n<p>Zaki</p>\n<p>Business Workflow Consultant</p>\n<p><a>Ready Logic</a></p>"
+    },
+    {
+      "id": 205105,
+      "postNumber": 3,
+      "createdAt": "2024-10-09T16:35:38.130Z",
+      "author": "Daniel.prudente (DP)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/zakiimtiaz\">@ZakiImtiaz</a> , thanks for your reply.<br />\nIndeed, I already use this query returning some additional fields and that’s my issue with not having a trigger. I need to check every change in the doc and update a sheet. So, I would usually have a trigger to let me know whenever a doc of my board was updated, and using a webhook running this query. As I couldn’t find any trigger, I have to run this query every two minutes in all my items’ docs to check if any of them were updated…it’s very cumbersome without a trigger.</p>"
+    },
+    {
+      "id": 205896,
+      "postNumber": 4,
+      "createdAt": "2024-10-16T11:05:08.910Z",
+      "author": "ZakiImtiaz (Zaki | readylogic.co)",
+      "cookedHtml": "<p>Internally, Monday has not provided any automation that deals with Monday Docs’ Updates. Even with the external tools don’t provide any such automation trigger. Neither does API work n this regard.<br />\nHowever, there could be one thing that might work. In <a href=\"http://make.com\" rel=\"noopener nofollow ugc\">make.com</a> there is a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> automation Trigger that is able to fetch files attached in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> after regular intervals, that can be used to get the output.</p>\n<p>Theoretical Structure:<br />\n<strong>Automation 1</strong></p>\n<ul>\n<li>Trigger: Column Update (when file attached)</li>\n<li>Action: get the file content and save it temporarily at a space.</li>\n</ul>\n<p><strong>Automation 2</strong></p>\n<ul>\n<li>Trigger: Get list of files (at regular intervals)</li>\n<li>Action: Compare the content of each file with the previous content.</li>\n<li>Condition: if there has been an update.</li>\n<li>Action: Reflect the update in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a></li>\n</ul>\n<p>This is a rough sketch of how it might work. it might be not the most optimal situation. Before working on it, remember it might require API calling and AI as well. So make sue if the hassle is even worth it.</p>\n<p>In case you need any help setting it up let me know <a href=\"https://app.reclaim.ai/m/zaki-imtiaz/high-priority-meeting\" rel=\"noopener nofollow ugc\">here</a> and I’ll be happy to assist.</p>\n<p>Zaki</p>\n<p>Business Workflow Consultant</p>\n<p><a>Ready Logic</a></p>"
+    },
+    {
+      "id": 205908,
+      "postNumber": 5,
+      "createdAt": "2024-10-16T12:09:42.226Z",
+      "author": "Daniel.prudente (DP)",
+      "cookedHtml": "<p>Thanks for the detailed explanation, <a class=\"mention\" href=\"/u/zakiimtiaz\">@ZakiImtiaz</a>! This is the structure I’m currently doing , but instead of Make triggers, I’m using webhook via Google Sheets Appscript.</p>"
+    }
+  ]
+}

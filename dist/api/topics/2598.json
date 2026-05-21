@@ -1,0 +1,306 @@
+{
+  "id": 2598,
+  "title": "Rename of column IDs",
+  "slug": "rename-of-column-ids",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    413
+  ],
+  "createdAt": "2019-10-11T06:48:41.414Z",
+  "lastPostedAt": "2024-05-28T07:34:55.604Z",
+  "postsCount": 36,
+  "excerpt": "Hello this is a minor question about the platform: while experimenting with boards and API access, I noticed that the columns keep their ID when renamed, and this is a correct behavior, in my opinion. \nThe downside of th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 30,
+  "views": 15816,
+  "posts": [
+    {
+      "id": 7010,
+      "postNumber": 1,
+      "createdAt": "2019-10-11T06:48:41.472Z",
+      "author": "gianluigi (Gianluigi)",
+      "cookedHtml": "<p>Hello this is a minor question about the platform: while experimenting with boards and API access, I noticed that the columns keep their ID when renamed, and this is a correct behavior, in my opinion.</p>\n<p>The downside of this design decision is that is a column is renamed because it has to be used for a whole different purpose (e.g. a text column renamed from “account” to “notes”), the column’s ID will remain the same, this could make writing a GraphQL query confusing and not self documenting (referring to my previous example: I’m writing to columns account, but I want to store annotations).</p>\n<p>Is there a way for the administrator of the board to rename column IDs <strong>voluntarily</strong> ?  This way the names used in queries could be be kept consistent. I understand that probably this is a corner case specific for my use case, but I’d like to get the community’s feedback.</p>"
+    },
+    {
+      "id": 7043,
+      "postNumber": 2,
+      "createdAt": "2019-10-14T08:19:08.744Z",
+      "author": "snicho (Stephen Nicholson)",
+      "cookedHtml": "<p>I had this exact same question a month ago.  My context arose when investigating the column ID anomalies in relation to using webhooks, and confirmed using the API interface, following the duplication or renaming of a column, or the duplication of a board.</p>\n<p>I ended up getting in contact Dipro on the help desk.  I’m sure that he would not mind me sharing his response here:</p>\n<blockquote>\n<p>Column IDs are immutable and generated when a column is created. To generate the ID, we take the column title at column creation, lowercase it and add underscores, and then add a random digit to the end (if the resulting ID is not unique).</p>\n<p>Since the ID comes from the title at creation, the column ID will be the column type when you add a column from the column center, and the column ID will be a custom title when you duplicate a board.</p>\n<p>And, because of the random digit at the end of the column, there is no way to set or predict the column ID of a column that’s been recently generated.</p>\n</blockquote>\n<p>I had originally thought that an administrator controlled code snippet to reset the column IDs may be an option.  But for now, I just note that column IDs will rarely align with the actual column titles, and that any explanation to others needs to include a note to ignore the column IDs as they are meaningless.</p>"
+    },
+    {
+      "id": 7057,
+      "postNumber": 3,
+      "createdAt": "2019-10-14T12:40:46.533Z",
+      "author": "gianluigi (Gianluigi)",
+      "cookedHtml": "<p>Thank you for your feedback <a class=\"mention\" href=\"/u/snicho\">@snicho</a>,  I won’t get further into this and treat column IDs as random strings.<br />\nHaving a nice column ID would have been a nice option for writing more readable addons. I assume that for Monday’s developers columns are just an end-user by-product, treated in code using general purpose code.</p>\n<p>From my point of view, I’m developing a domain specific app for our business use cases leveraging <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>’s platform as a sort of backend storage and collaboration platform. Considering my use case it would have been great to reference column ‘email’ instead of column ‘emailXX’, likewise column id ‘comments’ would beat a generic id ‘text8’ <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>An exception I’d like to report that if you want to update an item’s name, there’s a ‘special’ column with id: <strong>’name’</strong> in your item. Is an item’s name stored always in a column with a specific id?</p>"
+    },
+    {
+      "id": 7224,
+      "postNumber": 4,
+      "createdAt": "2019-10-17T19:02:13.040Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gianluigi\">@gianluigi</a> <a class=\"mention\" href=\"/u/snicho\">@snicho</a> – this kind of conversation is why I love the developer’s community!! <img src=\"https://emoji.discourse-cdn.com/apple/beers.png?v=9\" title=\":beers:\" class=\"emoji\" alt=\":beers:\" /></p>\n<p>Yes, generally speaking column IDs are just placeholders to ensure we can reference each column in a unique way. The item name is always stored in a column called “name” as well.</p>\n<p>If you need to keep track of your column IDs despite changing names, I’d suggest using the <code>columns</code> object on each board to keep track of which title corresponds to which ID. This is the approach I’ve used with some of my code as well <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Let me know if that makes sense! <img src=\"https://emoji.discourse-cdn.com/apple/brain.png?v=9\" title=\":brain:\" class=\"emoji\" alt=\":brain:\" /><br />\nDipro</p>"
+    },
+    {
+      "id": 9843,
+      "postNumber": 5,
+      "createdAt": "2020-01-02T13:50:11.000Z",
+      "author": "Zalayeta (Mathieu)",
+      "cookedHtml": "<p>Hi,</p>\n<p>Same problem here, I’m duplicating the columns to make them match an id that makes sense in my code. Its annoying having to do this but less annoying than dealing with date1, date2, date3 in my code.<br />\nIt would be nice to be able to edit the id though <a class=\"mention\" href=\"/u/dipro\">@dipro</a>.</p>"
+    },
+    {
+      "id": 19365,
+      "postNumber": 6,
+      "createdAt": "2020-06-06T23:17:42.851Z",
+      "author": "charliemolain (Carlos Molina)",
+      "cookedHtml": "<p>I would be a great feature. Doing some automations with webhooks (same) from different boards is next to imposible since I’m not able to map</p>"
+    },
+    {
+      "id": 19426,
+      "postNumber": 7,
+      "createdAt": "2020-06-08T08:44:45.682Z",
+      "author": "JeroenV (Jeroen V.)",
+      "cookedHtml": "<p>As a workaround you can set the title of the column to the desired name and then duplicate the column including all data.<br />\nThe duplicated column id is then named after the title you just set.</p>\n<p>So:</p>\n<ol>\n<li>rename existing column (or create a new one with the desired data type and name)</li>\n<li>duplicate column and data</li>\n<li>delete original column from step 1</li>\n<li>rename duplicate column to desired name</li>\n<li>id and title are now identical</li>\n<li>win!</li>\n</ol>"
+    },
+    {
+      "id": 19984,
+      "postNumber": 8,
+      "createdAt": "2020-06-12T10:57:03.238Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Great tip <a class=\"mention\" href=\"/u/jeroenv\">@JeroenV</a>.</p>\n<p>The column ID is currently set when the column is created, and follows these rules:</p>\n<ol>\n<li>\n<p>Column IDs are immutable and generated when a column is created.</p>\n</li>\n<li>\n<p>To generate the ID, we take the column title at column creation, lowercase it and add underscores for any special characters or whitespace, and then add a random digit to the end (if the resulting ID is not unique).</p>\n</li>\n<li>\n<p>Since the ID comes from the title at creation, the column ID will be the column type when you add a column from the column center, or a custom title when you duplicate a board.</p>\n</li>\n<li>\n<p>Because of the random digit at the end of the column, there is no way to set or predict the column ID of a column that’s been recently generated.</p>\n</li>\n</ol>\n<p>Hope that’s helpful for the folks who check out this thread later.</p>"
+    },
+    {
+      "id": 21198,
+      "postNumber": 9,
+      "createdAt": "2020-06-30T10:29:49.005Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>3 posts were split to a new topic: <a href=\"/t/can-you-change-the-item-id/8441\">Can you change the item ID?</a></p>"
+    },
+    {
+      "id": 27664,
+      "postNumber": 10,
+      "createdAt": "2020-09-03T16:59:28.764Z",
+      "author": "Kaz (Carl Rhoades)",
+      "cookedHtml": "<p>Just came across the need to rename columns for a complex G Suite &lt;&gt; <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> integration.<br />\nWhile this takes a bit to do on a larger board, it works perfectly.</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 32673,
+      "postNumber": 11,
+      "createdAt": "2020-11-03T14:58:52.917Z",
+      "author": "Anderson (Anderson Schulle)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" /> dipro:</div>\n<blockquote>\n<p>ng column IDs are just placeholders to ensure we can reference each column in a unique way. The item name is always stored in a column called “name” as well.</p>\n<p>If you need to keep track of your column IDs despite changing names, I’d suggest using the <code>columns</code> object on each board to keep track of which title corresponds to which ID. This is the approach I’ve used with some of my</p>\n</blockquote>\n</aside>\n<p>Thank you for this!! So helpful!</p>"
+    },
+    {
+      "id": 32711,
+      "postNumber": 12,
+      "createdAt": "2020-11-03T22:08:20.139Z",
+      "author": "barrycox (barry)",
+      "cookedHtml": "<p>this is an AMAZING hack.  100% required for my usecase (using a board with an app where the column names have to be exactly the same for all of our users).</p>\n<p>how the heck did you figure this out?? THANKS for sharing.  saved my bacon. did i mention THANKS!!</p>"
+    },
+    {
+      "id": 35933,
+      "postNumber": 13,
+      "createdAt": "2020-12-16T11:56:50.639Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>Hi there,  I read this after I had figured a different way to address this.</p>\n<p>I wanted consistent column names between two boards as I was programatically copying data.</p>\n<p>I found that if I export the borad to excel.  you can set the heading with the desired field names (following the lowercase  and underscore etc…)<br />\nCreate the new version from the excel file.  and column names are set…<br />\nBut I like the dup column for existing data.<br />\ncheers.</p>"
+    },
+    {
+      "id": 45056,
+      "postNumber": 14,
+      "createdAt": "2021-03-17T11:32:53.577Z",
+      "author": "ellis (Ellis)",
+      "cookedHtml": "<p>Hi <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>What do you mean by « <em>if the resulting ID is not unique</em> »<br />\nUnique to what context?<br />\nUnique in the board?<br />\nUnique in the workspace?<br />\nUnique in the Monday account?</p>"
+    },
+    {
+      "id": 45255,
+      "postNumber": 15,
+      "createdAt": "2021-03-18T16:40:23.686Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Good question! Column IDs must be unique on the board level.</p>"
+    },
+    {
+      "id": 47636,
+      "postNumber": 16,
+      "createdAt": "2021-04-12T15:46:45.814Z",
+      "author": "MSIlydia (Lydia Taylor)",
+      "cookedHtml": "<p>Changing the column title, then duplicating the column to make its column id match the column title (except lowercased with underscores, and a random digit at the end) worked beautifully until about a week ago.  Now if I give the column the title I want and duplicate it, the column id begins with dupl_of_[column title].  So if I name my column “account” and then duplicate it, where a week ago the column id would be account8, now it is dupl_of_account8.</p>\n<p>Way less  handy <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=9\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /></p>\n<p>Can you bring it back to the way that it was?  It is very helpful for my brain to have the column id reflect the purpose of the column, but the prefix dupl_of_ diminishes that benefit.</p>\n<p>Thanks for your thoughts <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 48086,
+      "postNumber": 17,
+      "createdAt": "2021-04-16T20:51:37.450Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/msilydia\">@MSIlydia</a>,</p>\n<p>I agree.</p>\n<p>You might be interested in this: <a href=\"https://community.monday.com/t/creating-columns-with-named-ids/18979\">Creating Columns with Named ID’s</a></p>"
+    },
+    {
+      "id": 51560,
+      "postNumber": 18,
+      "createdAt": "2021-05-17T12:16:37.567Z",
+      "author": "Dominic (Dominic)",
+      "cookedHtml": "<p>Thanks for explaining your use case - I have exactly the same issue here!</p>"
+    },
+    {
+      "id": 52585,
+      "postNumber": 19,
+      "createdAt": "2021-05-25T15:33:06.669Z",
+      "author": "MSIlydia (Lydia Taylor)",
+      "cookedHtml": "<p>I used a version JCorrell’s Integromat solution.  Essentially manually create the columns from Integromat using their Create Column module.</p>\n<p>It isn’t pretty, but it works very well for almost all column types.</p>"
+    },
+    {
+      "id": 52702,
+      "postNumber": 20,
+      "createdAt": "2021-05-26T12:23:26.820Z",
+      "author": "Dominic (Dominic)",
+      "cookedHtml": "<p>Ah, I understand now. Thanks.</p>"
+    },
+    {
+      "id": 65127,
+      "postNumber": 21,
+      "createdAt": "2021-10-02T20:09:54.927Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I do it with the API and postman.</p>\n<p>Unfortunately I can’t create board-relation columns with the API.</p>"
+    },
+    {
+      "id": 65129,
+      "postNumber": 22,
+      "createdAt": "2021-10-02T22:35:23.953Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>while its possible to lookup based on title, having the column id be “sitecontact” would be very useful on a board-relation column for example.</p>\n<p>why? because then in my code i dont have to make extra calls, iterate and match title in the returned data for the column ID , then use that column id. If i need to update a sitecontact on an item in a board - the column is always sitecontact.</p>"
+    },
+    {
+      "id": 112233,
+      "postNumber": 23,
+      "createdAt": "2023-01-25T15:57:01.351Z",
+      "author": "MyManMonday.com (Gideon Harris)",
+      "cookedHtml": "<p>Has the creation of the column ID’s changed recently?</p>\n<p>I used to be able to create “custom” column ID’s via the developers back-end by setting the name of the column to be what I wanted the Column ID to be and it worked for a long time.</p>\n<p>Now it generates a random Column ID and I’m not sure what to do about it. Super frustrating as it breaks a lot of integrations I normally setup for my clients.</p>"
+    },
+    {
+      "id": 112331,
+      "postNumber": 24,
+      "createdAt": "2023-01-26T06:16:30.123Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mymanmonday.com\">@MyManMonday.com</a>,</p>\n<p>Yes. The mechanism has changed and we now use one that is based on the column_type + ongoing index.</p>\n<p>Having said that, we are reviewing the change since we have a few requests to go back to how it used to work before.</p>\n<p>We will announce if we go back in our <a href=\"https://developer.monday.com/api-reference/changelog\">changelog</a>.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 124411,
+      "postNumber": 25,
+      "createdAt": "2023-04-18T23:22:17.425Z",
+      "author": "geeemaaan (G)",
+      "cookedHtml": "<p>Hi Monday,</p>\n<p>Rather than just rolling back the way columns were named to the way before, in order to re-enable the various hacks to this problem.</p>\n<p>Let me cast my vote that this Feature Request be implemented as per the name of this thread.</p>\n<p>Developers must be able to rename the ID of columns, I realise everything is a WIP - but this is basic bread and butter functionality.</p>\n<p>Cheers</p>"
+    },
+    {
+      "id": 124465,
+      "postNumber": 26,
+      "createdAt": "2023-04-19T06:43:46.318Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/geeemaaan\">@geeemaaan</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Please check <a href=\"https://developer.monday.com/api-reference/changelog/breaking-change-naming-column-ids-updates\">this update</a> about the mechanism.</p>\n<p>As for the ability to change the ID of a column, I will add your vote to this.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 124466,
+      "postNumber": 27,
+      "createdAt": "2023-04-19T06:43:53.095Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/4333328240\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 129777,
+      "postNumber": 28,
+      "createdAt": "2023-05-30T05:26:40.664Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>Add mine as well too please. I’m trying to do a backend integration across 4 boards so I really need the columns to be consistent across the boards as the data types are supposed to be the same.</p>"
+    },
+    {
+      "id": 129811,
+      "postNumber": 29,
+      "createdAt": "2023-05-30T10:04:59.785Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/paulmarshall\">@paulmarshall</a>,</p>\n<p>I have added your vote here!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 144253,
+      "postNumber": 30,
+      "createdAt": "2023-09-19T06:29:47.613Z",
+      "author": "wfc_woody (Woody)",
+      "cookedHtml": "<p>Please add my vote for this feature as well</p>"
+    },
+    {
+      "id": 144272,
+      "postNumber": 31,
+      "createdAt": "2023-09-19T09:33:23.098Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/wfc_woody\">@wfc_woody</a>,</p>\n<p>I added your vote <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 163130,
+      "postNumber": 32,
+      "createdAt": "2024-01-19T15:31:53.010Z",
+      "author": "dmenaker (Dave Menaker)",
+      "cookedHtml": "<p>Thank you for this! I have three boards with the same layout and not having the same column id’s on each makes the API more difficult (so I’m told, I’m not the developer). If we can’t edit the id’s as an admin, this is a great hack and so thankful I found it.</p>"
+    },
+    {
+      "id": 163246,
+      "postNumber": 33,
+      "createdAt": "2024-01-21T11:59:22.231Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 165657,
+      "postNumber": 34,
+      "createdAt": "2024-02-02T22:04:56.514Z",
+      "author": "DanielGarza (Daniel Garza)",
+      "cookedHtml": "<p>Please apply this, for ETL proccessed this is a Must when you add/remove/move columns <img src=\"https://emoji.discourse-cdn.com/apple/pensive.png?v=12\" title=\":pensive:\" class=\"emoji\" alt=\":pensive:\" width=\"20\" height=\"20\" /></p>\n<p>thanks</p>"
+    },
+    {
+      "id": 165680,
+      "postNumber": 35,
+      "createdAt": "2024-02-03T11:41:25.992Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Nothing prevents you from querying the board for column titles and getting the correct column ID to match. Assuming your titles are well known.</p>"
+    },
+    {
+      "id": 165733,
+      "postNumber": 36,
+      "createdAt": "2024-02-04T11:21:52.996Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 178325,
+      "postNumber": 37,
+      "createdAt": "2024-04-13T04:11:27.472Z",
+      "author": "MidasMike (Michael Stevens)",
+      "cookedHtml": "<p>I use integromat (<a href=\"http://make.com\" rel=\"noopener nofollow ugc\">make.com</a>) to create columns in the board exactly how i need them with specific Column name and ColumnID…</p>\n<p>1 - set a trigger in your <a href=\"http://make.com\" rel=\"noopener nofollow ugc\">make.com</a> scenario - I used the monday module ‘Watch Board’s Column Values’ and created a status column in the board I’m creating called Column Create). Link the module to the board you’re creating so that when you update the status of ‘Column Create’ in the board it will trigger the scenario. I’ll later delete this column in the board.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/b/2bb6c936a34acc169239a696cfcf6fdccb4ef316.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/b/2bb6c936a34acc169239a696cfcf6fdccb4ef316.png\" alt=\"image\" width=\"690\" height=\"395\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">758×434 23.4 KB</span></div></a></div><p></p>\n<p>2 - The next make module is Add a Column to the board</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/2/d2cf20a649181ffd8fd9f697ab0160dc2d17eb24.png\" title=\"SCR-20240413-hrjr\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/2/d2cf20a649181ffd8fd9f697ab0160dc2d17eb24_2_413x500.png\" alt=\"SCR-20240413-hrjr\" width=\"413\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">SCR-20240413-hrjr</span><span class=\"informations\">718×869 63.1 KB</span></div></a></div><p></p>\n<p>As you can see it allows you to name the Custom Column ID to whatever you want, in this case I’ve called it initialisation. No spaces, numbers or characters, all lower case.</p>\n<p>3 - Add as many of these modules as you want and you have a full board with column ids as you want them.</p>\n<p>Hope this makes sense and works for others</p>"
+    },
+    {
+      "id": 178426,
+      "postNumber": 38,
+      "createdAt": "2024-04-14T09:55:17.617Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 186044,
+      "postNumber": 39,
+      "createdAt": "2024-05-28T07:34:11.625Z",
+      "author": "Michael-PT (Michael Albers)",
+      "cookedHtml": "<p>I would add that administrators should be able to do that too.</p>"
+    },
+    {
+      "id": 186045,
+      "postNumber": 40,
+      "createdAt": "2024-05-28T07:34:55.604Z",
+      "author": "Michael-PT (Michael Albers)",
+      "cookedHtml": "<p>For us the column ID matters because we use Emails &amp; Activities app with extensive use of templates. In the templates you refer to the column IDs and this means we need an email template for each board. However, some emails that we send from different boards are the same on multiple boards, so 1 template should be enough.</p>\n<p>I don’t develop and don’t plan too because the lack of time. I just use <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> to streamline our workload and contact with clients. It would be best if we just could alter the colum ID, so no matter what board, we could use the same column ID for columns with the same data.</p>"
+    },
+    {
+      "id": 186057,
+      "postNumber": 41,
+      "createdAt": "2024-05-28T08:24:49.922Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

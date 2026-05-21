@@ -1,0 +1,57 @@
+{
+  "id": 105130,
+  "title": "Error 500 for all queries",
+  "slug": "error-500-for-all-queries",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-12-10T15:33:34.951Z",
+  "lastPostedAt": "2024-12-11T06:46:04.982Z",
+  "postsCount": 4,
+  "excerpt": "Since 11:00 UTC+0, all API queries have been failing with a 500 “Internal Server Error”. \nThese queries were working fine before. \nEverything appears normal on https://status.monday.com/. \nDo you have any idea what might&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 34,
+  "posts": [
+    {
+      "id": 213433,
+      "postNumber": 1,
+      "createdAt": "2024-12-10T15:33:35.052Z",
+      "author": "BPL (Baptiste P.)",
+      "cookedHtml": "<p>Since 11:00 UTC+0, all API queries have been failing with a 500 “Internal Server Error”.<br />\nThese queries were working fine before.<br />\nEverything appears normal on <a href=\"https://status.monday.com/\" rel=\"noopener nofollow ugc\">https://status.monday.com/</a>.<br />\nDo you have any idea what might be causing this?</p>"
+    },
+    {
+      "id": 213439,
+      "postNumber": 2,
+      "createdAt": "2024-12-10T15:41:29.820Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/bpl\">@BPL</a>,</p>\n<p>Welcome to the community!</p>\n<p>The API team is currently investigating - we will keep you updated!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 213543,
+      "postNumber": 3,
+      "createdAt": "2024-12-11T06:14:04.902Z",
+      "author": "hey_there_its_josh (not josh)",
+      "cookedHtml": "<p>hi rachel can you read my message to the <a class=\"mention-group\" href=\"/groups/moderators\">@moderators</a> team?</p>"
+    },
+    {
+      "id": 213547,
+      "postNumber": 4,
+      "createdAt": "2024-12-11T06:46:04.982Z",
+      "author": "BPL (Baptiste P.)",
+      "cookedHtml": "<p>Hi Rachel,</p>\n<p>I figured it out yesterday!<br />\nIt turns out you changed the way variables must be encoded in the HTTP request. Here’s an example:</p>\n<p>Before the update:</p>\n<pre><code class=\"lang-auto\">{\n  \"query\": \"query GetBoardsGroups($boardsIds: [ID!]) { boards(ids: $boardsIds) { groups { id title } } }\",\n  \"variables\": \"{ \\\"boardsIds\\\": [ 42] }\"\n}\n</code></pre>\n<p>After the update:</p>\n<pre><code class=\"lang-auto\">{\n  \"query\": \"query GetBoardsGroups($boardsIds: [ID!]) { boards(ids: $boardsIds) { groups { id title } } }\",\n  \"variables\": { \"boardsIds\": [ 42] }\n}\n</code></pre>\n<p>The strange thing is that only HTTP requests to <a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a> were affected. Requests to the <a href=\"https://api.monday.com/v2/file/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file/</a> endpoint, used for file updates, still worked fine.</p>"
+    },
+    {
+      "id": 213652,
+      "postNumber": 5,
+      "createdAt": "2024-12-12T05:18:50.134Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

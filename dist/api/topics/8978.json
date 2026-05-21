@@ -1,0 +1,95 @@
+{
+  "id": 8978,
+  "title": "Change Item Name value",
+  "slug": "change-item-name-value",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2020-07-14T05:40:47.468Z",
+  "lastPostedAt": "2020-10-21T15:27:32.000Z",
+  "postsCount": 11,
+  "excerpt": "Why isn’t it possible to adjust the item name from the API. It seems like a very basic feature that is missing.",
+  "solvedPostId": null,
+  "likeCount": 9,
+  "views": 10577,
+  "posts": [
+    {
+      "id": 22530,
+      "postNumber": 1,
+      "createdAt": "2020-07-14T05:40:47.645Z",
+      "author": "n.thijssen (Nick Thijssen)",
+      "cookedHtml": "<p>Why isn’t it possible to adjust the item name from the API. It seems like a very basic feature that is missing.</p>"
+    },
+    {
+      "id": 22595,
+      "postNumber": 2,
+      "createdAt": "2020-07-14T21:55:36.440Z",
+      "author": "Scott-monday.com (Scott Underwood)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/n.thijssen\">@n.thijssen</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>While I don’t have much of an answer as to <em>why</em> you cannot currently change an item’s name, I certainly agree that it’s a missing basic feature <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I’ve shared your feedback with the team here for review and consideration as we continue to make improvements to our API! <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=9\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" /></p>\n<p>-Scott</p>"
+    },
+    {
+      "id": 22623,
+      "postNumber": 3,
+      "createdAt": "2020-07-15T05:39:26.294Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>I don’t think it’s missing…</p>\n<p>mutation {change_multiple_column_values(item_id:123456789, board_id: 123456789, column_values: “{“name”:“XYZ”}”) {name} }</p>"
+    },
+    {
+      "id": 22626,
+      "postNumber": 4,
+      "createdAt": "2020-07-15T05:56:26.310Z",
+      "author": "n.thijssen (Nick Thijssen)",
+      "cookedHtml": "<p>You’re right that works! It’s simply missing from the documentation. Thank you JCorell!</p>"
+    },
+    {
+      "id": 25477,
+      "postNumber": 5,
+      "createdAt": "2020-08-14T06:36:09.236Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> man, you are literally a rockstar!  Just to share the impact that had on the community, other users are also referencing your solution even today <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/lalondesteve/48/3902_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/change-item-name/6386/10\">Change item name?</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span style=\"--category-badge-color:#00ca72;--category-badge-text-color:#FFFFFF\" class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Hey, I managed to do it using this solution : \n\nHere’s my function code in python  : \ndef change_item_name(board, item_id, new_name):\n    column_data = {'name': new_name}\n    query = f'''mutation($column_data: JSON!)\n            {{change_multiple_column_values (\n                board_id:{board},\n                item_id:{item_id},\n                column_values:$column_data)\n                {{name}}\n            }}'''\n    data = {'query': query,\n            'variables': {'column_data': json.dumps(c…\n  </blockquote>\n</aside>\n\n<p>Thanks so much for sharing. Love it!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25600,
+      "postNumber": 6,
+      "createdAt": "2020-08-15T14:17:56.666Z",
+      "author": "anderslyman (Anders Lyman)",
+      "cookedHtml": "<p>This is no longer working.<br />\nQuery (in the playground):<br />\n<code>mutation {   change_multiple_column_values(board_id: 646358992, item_id: 646359016, column_values: {\"name\": \"edit\"}) {     name   } }</code><br />\nReturns:<br />\n<code>{   \"errors\": [     {       \"message\": \"Parse error on \\\"name\\\" (STRING) at [2, 90]\",       \"locations\": [         {           \"line\": 2,           \"column\": 90         }       ]     }   ],   \"account_id\": 6625720 }</code></p>\n<p>Switching <code>\"name\"</code> in the query to <code>name</code> results in a 500 error.</p>"
+    },
+    {
+      "id": 25601,
+      "postNumber": 7,
+      "createdAt": "2020-08-15T14:23:04.969Z",
+      "author": "anderslyman (Anders Lyman)",
+      "cookedHtml": "<p>This was my own error - for reference, I missed that the entire <code>column_values</code> value needs to be a string, not an object.<br />\ne.g. this works:<br />\n<code>mutation { change_multiple_column_values(board_id: 646358992, item_id: 646359016, column_values: \"{\\\"name\\\": \\\"edit\\\"}\") { name } }</code><br />\nthis does not:<br />\n<code>mutation { change_multiple_column_values(board_id: 646358992, item_id: 646359016, column_values: {\"name\": \"edit\"}) { name } }</code></p>"
+    },
+    {
+      "id": 31552,
+      "postNumber": 8,
+      "createdAt": "2020-10-20T19:34:34.436Z",
+      "author": "Chelle (Michelle)",
+      "cookedHtml": "<p>NEWBIE here, how do I add that code to monday?</p>"
+    },
+    {
+      "id": 31554,
+      "postNumber": 9,
+      "createdAt": "2020-10-20T20:13:23.989Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/chelle\">@Chelle</a>,</p>\n<p>Can you give more detail on what you are looking for?</p>\n<p>This thread is about changing an item name using the API. If you just want to change an item name  from the app, just hover over the name, click on the pencil icon and type the new name.</p>"
+    },
+    {
+      "id": 31609,
+      "postNumber": 10,
+      "createdAt": "2020-10-21T15:27:32.000Z",
+      "author": "Chelle (Michelle)",
+      "cookedHtml": "<p>Hi Jim, Thank you for your help!<br />\nI know how to change the item name.<br />\nI’m looking to change the board the item is in, and when that happens also change the name of the item-</p>\n<p>The intention is so that the name will be more conducive to sync with the way we use google calendar.<br />\nTrying to add the phone number into the name too.<br />\nThank you!!!</p>"
+    },
+    {
+      "id": 50358,
+      "postNumber": 11,
+      "createdAt": "2021-05-06T11:07:02.292Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

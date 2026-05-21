@@ -1,0 +1,58 @@
+{
+  "id": 91977,
+  "title": "File Upload Via API using Power Automate",
+  "slug": "file-upload-via-api-using-power-automate",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-07-01T17:25:12.533Z",
+  "lastPostedAt": "2024-11-28T08:51:22.379Z",
+  "postsCount": 4,
+  "excerpt": "I am trying to upload a file to a column using Power Automate. I am using the HTTP action along with Graph QL in a compose Action and compose actions to map the parts, including File Content with Base64 decoding. The flo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 223,
+  "posts": [
+    {
+      "id": 191725,
+      "postNumber": 1,
+      "createdAt": "2024-07-01T17:25:12.613Z",
+      "author": "anthonyatcampbells (Anthony brown)",
+      "cookedHtml": "<p>I am trying to upload a file to a column using Power Automate. I am using the HTTP action along with Graph QL in a compose Action and compose actions to map the parts, including File Content with Base64 decoding. The flow works and I can upload the file to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> column, but the file is unreadable when in Base64. The content in the file is there, but it is as a .txt file. If I remove the base64 coding then the file will appear, as a pdf but it is blank.  Any suggestions?</p>\n<p>The upload works in postman.</p>\n<p>If I decode the pdf as base64 and add this in a compose action as a string of data, it still doesn’t work, which leads me to thing there’s an error with my coding or the conversion of the file into <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>.</p>\n<p>I am using a pdf, version 1.7.</p>\n<p>I have tried an image file png and jpeg with no success either (error with the image format).<br />\n<code>{   \"type\": \"Scope\",   \"actions\": {     \"Graphic_QL\": {       \"type\": \"Compose\",       \"inputs\": \"mutation add_file($file: File!) { add_file_to_column(item_id: 123456789, column_id: \\\"upload_file\\\", file: $file) { id } }\"     },     \"Compose_MAP\": {       \"type\": \"Compose\",       \"inputs\": {         \"image\": [           \"variables.file\"         ]       },       \"runAfter\": {         \"Graphic_QL\": [           \"Succeeded\"         ]       }     },     \"Compose_MultiPart\": {       \"type\": \"Compose\",       \"inputs\": {         \"$content-type\": \"multipart/form-data; boundary=---------------------------7da24f2e5004\",         \"$multipart\": [           {             \"headers\": {               \"Content-Disposition\": \"form-data; name=\\\"query\\\"\"             },             \"body\": \"@{outputs('Graphic_QL')}\"           },           {             \"headers\": {               \"Content-Disposition\": \"form-data; name=\\\"map\\\"\"             },             \"body\": \"@{outputs('Compose_MAP')}\"           },           {             \"headers\": {               \"Content-Disposition\": \"form-data; name=\\\"image\\\"; filename=\\\"3.pdf\\\"\",               \"Content-Type\": \"application/pdf\"             },             \"body\": \"@{variables('Content')}\"           }         ]       },       \"runAfter\": {         \"Compose_MAP\": [           \"Succeeded\"         ]       }     },     \"HTTP-copy\": {       \"type\": \"Http\",       \"inputs\": {         \"uri\": \"https://api.monday.com/v2/file\",         \"method\": \"POST\",         \"headers\": {           \"Content-Type\": \"multipart/form-data; boundary=---------------------------7da24f2e50046\",           \"Authorization\": \"Santised\"         },         \"body\": \"@outputs('Compose_MultiPart')\"       },       \"runAfter\": {         \"Compose_MultiPart\": [           \"Succeeded\"         ]       },       \"operationOptions\": \"DisableAutomaticDecompression\",       \"metadata\": {         \"operationMetadataId\": \"7353861e-17c7-4ba7-a7a2-bf69a669bbb6\"       }     }   },   \"runAfter\": {     \"Append_to_string_variable\": [       \"Succeeded\"     ]   } }</code></p>"
+    },
+    {
+      "id": 192003,
+      "postNumber": 2,
+      "createdAt": "2024-07-03T08:17:07.896Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/anthonyatcampbells\">@anthonyatcampbells</a>,</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it (such as account ID, board IDs, item IDs, timestamps, etc.) so that our team can take a look into it?</p>"
+    },
+    {
+      "id": 212015,
+      "postNumber": 3,
+      "createdAt": "2024-11-27T21:24:35.880Z",
+      "author": "muchou (DURAND)",
+      "cookedHtml": "<p>Hi,<br />\nI want make the same thing.<br />\nI think i have problem on my body.<br />\nCan you give an example pls ?</p>\n<p>Thanks in advance.<br />\nFranck</p>\n<p>–12345<br />\nContent-Disposition: form-data; name=“query”</p>\n<p>mutation ($file: File!) {<br />\nadd_file_to_column(<br />\nfile: $file,<br />\nitem_id: 1721979672,<br />\ncolumn_id: “files_1”<br />\n) {<br />\nid<br />\n}<br />\n}<br />\n–12345<br />\nContent-Disposition: form-data; name=“variables[file]”; filename=“NomDuFichier.pdf”<br />\nContent-Type: application/pdf</p>\n<p>@{body(‘Obtenir_le_contenu_du_fichier’)}<br />\n–12345–</p>"
+    },
+    {
+      "id": 212103,
+      "postNumber": 4,
+      "createdAt": "2024-11-28T08:51:22.379Z",
+      "author": "anthonyatcampbells (Anthony brown)",
+      "cookedHtml": "<p>Hi See below. I am using JSON.</p>\n<p>I am using the output of a word document directly into the pdf. I did not need to convert it into base64 as it was already formatted. You need to change the item id, column id, filename and then point to the output of the file you are trying to upload.</p>\n<p>{<br />\n“$content-type”: “multipart/form-data”,<br />\n“$multipart”: [<br />\n{<br />\n“headers”: {<br />\n“Content-Disposition”: “form-data; name=\"query\"”<br />\n},<br />\n“body”: “mutation add_file($file: File!) {add_file_to_column (item_id: 123456, column_id:\"files\", file: $file) {id}}”<br />\n},<br />\n{<br />\n“headers”: {<br />\n“Content-Disposition”: “form-data; name=\"map\"”<br />\n},<br />\n“body”: “{\"image\":[\"variables.file\"]}”<br />\n},<br />\n{<br />\n“headers”: {<br />\n“Content-Disposition”: “form-data; name=\"image\"; filename=\"filename.pdf\"”<br />\n},<br />\n“body”: linktothebodyofyourdocumentinbase64}<br />\n}<br />\n]<br />\n}</p>"
+    },
+    {
+      "id": 212338,
+      "postNumber": 5,
+      "createdAt": "2024-12-01T09:23:11.612Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

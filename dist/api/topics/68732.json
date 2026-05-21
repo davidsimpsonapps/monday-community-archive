@@ -1,0 +1,103 @@
+{
+  "id": 68732,
+  "title": "Move_item_to_board mutation",
+  "slug": "move-item-to-board-mutation",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-10-19T09:32:53.897Z",
+  "lastPostedAt": "2024-08-18T12:13:21.400Z",
+  "postsCount": 9,
+  "excerpt": "Can we get an example on how to use the move_item_to_board mutation especially when it comes to including column and subitem column mappings. \nWhen column mapping argument is not included it works, but when included I ge&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 627,
+  "posts": [
+    {
+      "id": 148950,
+      "postNumber": 1,
+      "createdAt": "2023-10-19T09:32:53.959Z",
+      "author": "WandileNxu (Wandile)",
+      "cookedHtml": "<p>Can we get an example on how to use the move_item_to_board mutation especially when it comes to including column and subitem column mappings.</p>\n<p>When column mapping argument is not included it works, but when included I get this error: ‘{“error_code”:“GraphqlGeneralError”,“status_code”:200,“error_message”:“Columns mapping is not in the expected format”,“error_data”:{}}’ and I did include ‘API-Version: 2023-10’ in the header.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 153616,
+      "postNumber": 2,
+      "createdAt": "2023-11-17T02:10:33.738Z",
+      "author": "nev (Neville Stehbens)",
+      "cookedHtml": "<p>Hi Wandile,<br />\nI don’t have any answers, I’m here to wait with you.<br />\nI am running a mutation as per below,</p>\n<pre><code class=\"lang-auto\">mutation {\n  move_item_to_board (board_id:5339528423, group_id: \"topics\", item_id:5528230293 , columns_mapping: [\n  {source:\"name\", target: \"name\"},\n  {source:\"board_relation\", target: \"connect_boards2\"},\n  {source:\"link\", target:null},\n  {source:\"link_to_accounts2\", target:null},\n  {source:\"mirror\", target:null},\n  {source:\"status2\", target:null},\n  {source:\"status\", target:null},\n  {source:\"text\", target:null},\n  {source:\"text8\", target:null},\n  {source:\"mirror6\", target:null},\n  {source:\"date1\", target:null},\n  {source:\"date3\", target:null},\n  {source:\"date15\", target:null},\n  {source:\"date_1\", target:null},\n  {source:\"date\", target:null},\n  {source:\"status9\", target:null},\n  {source:\"formula\", target:null}]) {\n    id\n  }\n}\n</code></pre>\n<p>and i’m getting</p>\n<pre><code class=\"lang-auto\">{\n  \"error_code\": \"GraphqlGeneralError\",\n  \"status_code\": 200,\n  \"error_message\": \"Columns mapping is not in the expected format\",\n  \"error_data\": {}\n}\n</code></pre>\n<p>But to me I feel like I have followed the api docs to the letter.</p>\n<blockquote>\n<p><strong>Please note</strong> that you must specify the mapping for every column when using this argument. You can specify the target as <code>null</code> if you don’t want to map a column, but doing so means that the column’s data will be lost.</p>\n</blockquote>\n<p>is it - null or “null” ?</p>\n<p>Do I need to include {source: “subitems”, target: null } ?</p>\n<p>Also, is it really necessary to force mapping every column? will my mutation be void if another user adds an additional column to the board?</p>"
+    },
+    {
+      "id": 197456,
+      "postNumber": 3,
+      "createdAt": "2024-08-14T21:52:44.417Z",
+      "author": "Kofi (Kofi FiftyTechSolutions.com)",
+      "cookedHtml": "<p>I am having the same issue same error, “columns mapping is not in the expected format”</p>\n<p>I tried this just mapping to a board with 1 text column and keep getting this error</p>\n<pre><code class=\"lang-auto\">mutation {\n  move_item_to_board(\n    board_id: 7229739249,\n    group_id: \"topics\",\n    item_id: 7229804428,\n    columns_mapping: \n      {source: \"text4\", target: \"text__1\"}\n    \n  ) {id}\n}\n</code></pre>"
+    },
+    {
+      "id": 197458,
+      "postNumber": 4,
+      "createdAt": "2024-08-14T22:38:08.760Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You query the board for all of the columns at runtime - then you always get all of them, and can use that to generate the object.</p>"
+    },
+    {
+      "id": 197503,
+      "postNumber": 5,
+      "createdAt": "2024-08-15T06:38:51.437Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 197545,
+      "postNumber": 6,
+      "createdAt": "2024-08-15T11:17:43.360Z",
+      "author": "Kofi (Kofi FiftyTechSolutions.com)",
+      "cookedHtml": "<p>I did this and it doesnt work! I made a board with 1 text column, and I get the same error as the others above.</p>\n<p>Workaround was to:</p>\n<ol>\n<li>Status change to trigger automation</li>\n<li>Get full item information and store</li>\n<li>Another status change to trigger the monday native move automation</li>\n<li>Wait a few seconds for item to be present on new board</li>\n<li>Update the missing values like connected columns, files on the new board via the API using the item ID and new board columns.</li>\n</ol>\n<p>Hopefully, someone confirms this issue is real, and the way to get it fixed, as the reference doesnt seem to work.</p>"
+    },
+    {
+      "id": 197556,
+      "postNumber": 7,
+      "createdAt": "2024-08-15T13:36:17.109Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Looking more closely - use GraphQL variables, don’t try to put objects into the query string. The query is a string, not an object like in REST.</p>\n<p>You can put placeholders for variables in the string, then provide the variable values alongside the string in the request.</p>\n<p><a href=\"https://graphql.org/learn/queries/#variables\" class=\"onebox\" target=\"_blank\" rel=\"noopener\">https://graphql.org/learn/queries/#variables</a></p>"
+    },
+    {
+      "id": 197779,
+      "postNumber": 8,
+      "createdAt": "2024-08-18T05:55:38.128Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 197887,
+      "postNumber": 9,
+      "createdAt": "2024-08-18T11:23:15.633Z",
+      "author": "Kofi (Kofi FiftyTechSolutions.com)",
+      "cookedHtml": "<p>Thanks how do you suggest the mutation should be written?</p>"
+    },
+    {
+      "id": 197890,
+      "postNumber": 10,
+      "createdAt": "2024-08-18T11:57:21.135Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>It is far more useful to learn the concept and pattern of GraphQL variables, than just get a prewritten query. Its a pattern that will get used repeatedly.</p>"
+    },
+    {
+      "id": 197892,
+      "postNumber": 11,
+      "createdAt": "2024-08-18T12:13:21.400Z",
+      "author": "Kofi (Kofi FiftyTechSolutions.com)",
+      "cookedHtml": "<p>Ok will test out, the link is very helpful!</p>"
+    },
+    {
+      "id": 197919,
+      "postNumber": 12,
+      "createdAt": "2024-08-19T04:51:27.709Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

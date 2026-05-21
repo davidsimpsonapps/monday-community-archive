@@ -1,0 +1,56 @@
+{
+  "id": 35940,
+  "title": "Change_multiple_column_values for connect_board results in { \"error_message\": \"Internal server error\", \"status_code\": 500 }",
+  "slug": "change-multiple-column-values-for-connect-board-results-in-error-message-internal-server-error-status-code-500",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    105,
+    206,
+    351
+  ],
+  "createdAt": "2022-05-07T09:13:37.191Z",
+  "lastPostedAt": "2022-05-08T22:14:39.224Z",
+  "postsCount": 5,
+  "excerpt": "Hello! \nI am running what I believe to be a simple mutation and I cannot get it to work, I keep getting {  “error_message”: “Internal server error”,   “status_code”: 500 }. I have tried both the change_multiple_column_va&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2251,
+  "posts": [
+    {
+      "id": 85223,
+      "postNumber": 1,
+      "createdAt": "2022-05-07T09:13:37.277Z",
+      "author": "mbalazs (Michael)",
+      "cookedHtml": "<p>Hello!</p>\n<p>I am running what I believe to be a simple mutation and I cannot get it to work, I keep getting {  “error_message”: “Internal server error”,   “status_code”: 500 }. I have tried both the change_multiple_column_values and change_column_value approaches. Searching the forums, I have seen folks say this can be caused by a malformed request string but I am unable to see that. Help is appreciated.</p>\n<pre><code class=\"lang-auto\">\tmutation {\n\t\tchange_multiple_column_values(\n\t\t\tboard_id: 2588471113,\n\t\t\titem_id: 2643558945,\n\t\t\tcolumn_values: \"{\\\"connect_boards30\\\":{\\\"item_ids\\\":\\\"2643558944\\\"}}\"\n\t\t) {\n\t\t\tid\n\t\t}\n\t}\n</code></pre>\n<p>This is generated programmatically from this:</p>\n<pre><code class=\"lang-auto\">\tlet mutation = `mutation {\n\t\t\t\tchange_multiple_column_values(\n\t\t\t\t\tboard_id: 2588471113,\n\t\t\t\t\titem_id: ${createdSubItemId},\n\t\t\t\t\tcolumn_values: ${JSON.stringify(updatedColumnValues)}\n\t\t\t) {\n\t\t\t\tid\n\t\t\t}\n\t\t}`\n</code></pre>\n<p>Of note:</p>\n<ol>\n<li>My board_id references a sub_items board if that makes a difference.</li>\n<li>I have tried the query both in my code and directly on the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API playground.</li>\n</ol>\n<p>Thanks!<br />\nMichael</p>"
+    },
+    {
+      "id": 85231,
+      "postNumber": 2,
+      "createdAt": "2022-05-07T12:05:16.443Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/mbalazs\">@mbalazs</a></p>\n<p>Welcome to the community! It looks like your value is wrong, try this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value(board_id: 2588471113, item_id: 2643558945, column_id:\"connect_boards30\", value: \"{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":2643558944}]}\") {\n    id\n  }\n}\n</code></pre>\n<p>And do not escape integer values (only strings).</p>"
+    },
+    {
+      "id": 85256,
+      "postNumber": 3,
+      "createdAt": "2022-05-07T21:27:03.406Z",
+      "author": "mbalazs (Michael)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/basdebruin/48/688_2.png\" class=\"avatar\" /> basdebruin:</div>\n<blockquote>\n<p><code>column_id:\"connect_boards</code></p>\n</blockquote>\n</aside>\n<p>Awesome thanks! That did it. I had tried to follow what I saw <a href=\"https://community.monday.com/t/post-data-to-mondays-api-question/18316\">here</a>.</p>"
+    },
+    {
+      "id": 85259,
+      "postNumber": 4,
+      "createdAt": "2022-05-08T00:33:02.029Z",
+      "author": "mbalazs (Michael)",
+      "cookedHtml": "<p>Following up, when I try in nodejs I get the following…</p>\n<pre><code class=\"lang-auto\">{\n  errors: [\n    {\n      message: 'Parse error on \":[{\" (STRING) at [5, 28]',\n      locations: [Array]\n    }\n  ],\n  account_id: 11715703\n}\n</code></pre>\n<p>…running this code…</p>\n<pre><code class=\"lang-auto\">\tlet mutation = `mutation {\n  change_column_value(board_id: 2588471113,\n    item_id: 2643558945,\n    column_id: \"connect_boards30\",\n    value: \"{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":2643558944}]}\") {\n    id\n  }\n}`\n\n\tconsole.log(mutation);\n\n\tmonday.api(mutation).then(res =&gt; {\n\t\tif (Object.keys(res).includes(\"errors\")) {\n\t\t\tconsole.log(res)\n\t\t}\n\t})\n</code></pre>"
+    },
+    {
+      "id": 85310,
+      "postNumber": 5,
+      "createdAt": "2022-05-08T22:14:39.224Z",
+      "author": "mbalazs (Michael)",
+      "cookedHtml": "<p>For future note, I found this worked:</p>\n<pre><code class=\"lang-auto\">\tlet x = {\n\t\t\"linkedPulseIds\": [{\n\t\t\t\"linkedPulseId\": 2643558944\n\t\t}]\n\t}\n\n\tlet mutation = `mutation {\n  change_column_value(board_id: 2588471113,\n    item_id: 2643558945,\n    column_id: \"connect_boards30\",\n    value: ${JSON.stringify(JSON.stringify(x))}) {\n    id\n    }\n  }\n</code></pre>\n<p>Got it from here: <a href=\"https://community.monday.com/t/parsing-error-no-error-on-playground-error-in-javascript/19147\" class=\"inline-onebox\">Parsing Error: No error on playground, error in JavaScript</a></p>"
+    }
+  ]
+}

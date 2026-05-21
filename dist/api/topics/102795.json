@@ -1,0 +1,58 @@
+{
+  "id": 102795,
+  "title": "Getting unexpected string from groups query",
+  "slug": "getting-unexpected-string-from-groups-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    115,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-11-11T07:34:17.104Z",
+  "lastPostedAt": "2024-11-11T18:21:48.898Z",
+  "postsCount": 4,
+  "excerpt": "Hello developers, \nI’m trying to query groups, noticing some unexpected values in response for id key. This I’ve been noticing only from yesterday and used to work fine before when I tried. Thus wanted to check if anythi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 13,
+  "posts": [
+    {
+      "id": 209436,
+      "postNumber": 1,
+      "createdAt": "2024-11-11T07:34:17.172Z",
+      "author": "mari-strivelabs (Mariappan)",
+      "cookedHtml": "<p>Hello developers,</p>\n<p>I’m trying to query groups, noticing some unexpected values in response for id key. This I’ve been noticing only from yesterday and used to work fine before when I tried. Thus wanted to check if anything wrong on my end (or) something breaking here.</p>\n<p>Here is my query,</p>\n<pre><code class=\"lang-auto\">getGroups ({ context, metadata }) {\n    return {\n      method: 'post',\n      url: 'https://api.monday.com/v2',\n      headers: getCommonHeaders(metadata),\n      data: {\n        query: `query {\n          boards (ids: ${context.boardId}) {\n            groups {\n              title\n              id\n            }\n          }\n        }`\n      }\n    };\n  },\n</code></pre>\n<p>And the response looks like this, (just attaching the group part of it)</p>\n<pre><code class=\"lang-auto\">[\n    {\n        \"title\": \"Group Title\",\n        \"id\": \"topics\" // expecting this to be something like 1210777 \n    }\n]\n</code></pre>\n<p>So when I try to make further calls with this id, it fails (say fetching items in a group)</p>\n<p>Can someone confirm if anything wrong on my end?</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 209449,
+      "postNumber": 2,
+      "createdAt": "2024-11-11T08:52:49.736Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>GroupIds are just strings (like columnIds). Nothing unexpected here.</p>"
+    },
+    {
+      "id": 209495,
+      "postNumber": 3,
+      "createdAt": "2024-11-11T13:22:46.031Z",
+      "author": "mari-strivelabs (Mariappan)",
+      "cookedHtml": "<p>Update:</p>\n<p>Sorry, from other community threads related to groups - I found group ids can be such strings. Correct me if I’m wrong.</p>\n<p>Then, when I pass these ids in query with double quotes (basically formatted as string) it works fine. Now that my blocker is resolved, I’m just curious to know why only group ids are returned in such format whereas ids of items, boards, etc seem to be valid integer kind of strings.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 209532,
+      "postNumber": 4,
+      "createdAt": "2024-11-11T18:21:48.898Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Think of <code>groupId</code>s similarly to <code>columnId</code>s - it’s a string that’s similar to the group title, but it is not the group title. There are not normally that many groups (or columns) so like the <code>columnId</code>, monday tries to make the <code>groupId</code> descriptive.</p>\n<p>There can be many board and items, so they just use an incrementing integer for the ids in these cases.</p>"
+    },
+    {
+      "id": 209791,
+      "postNumber": 5,
+      "createdAt": "2024-11-13T13:37:00.550Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

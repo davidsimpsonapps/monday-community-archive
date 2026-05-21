@@ -1,0 +1,77 @@
+{
+  "id": 21799,
+  "title": "Uploading a file to a column with the Api",
+  "slug": "uploading-a-file-to-a-column-with-the-api",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    154,
+    351
+  ],
+  "createdAt": "2021-06-29T11:06:17.344Z",
+  "lastPostedAt": "2021-06-30T10:52:14.846Z",
+  "postsCount": 7,
+  "excerpt": "I’m trying to upload a file to a column using the monday api through node app. I took an example from github and modified the query to upload to a column. I get this error when I run the program. \n{ error_message: ‘Unsup&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 6430,
+  "posts": [
+    {
+      "id": 56536,
+      "postNumber": 1,
+      "createdAt": "2021-06-29T11:06:17.518Z",
+      "author": "pwolter (Paul Wolter)",
+      "cookedHtml": "<p>I’m trying to upload a file to a column using the monday api through node app. I took an example from github and modified the query to upload to a column. I get this error when I run the program.</p>\n<p>{ error_message: ‘Unsupported query’, status_code: 400 }</p>\n<p>I can’t tell what the issue is with the query to monday or if there’s another issue in the code. The code I used is posted below.</p>\n<p>/// those are the main dependecies you’ll need to have installed in this example;<br />\nconst fs = require(‘fs’);<br />\nconst fetch = require(‘node-fetch’);</p>\n<p>/// Replace with your actual API Key<br />\nconst API_KEY= “XXXXXXXXXXXX”;</p>\n<p>/// Notice the /file/ endpoint - only this endpoint will support variables in this type of call<br />\nconst url = ‘<a href=\"https://api.monday.com/v2/file\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file</a>’;</p>\n<p>/// This is your mutation query - can also be adapted to send files to file columns instead<br />\nconst query = ‘mutation add_file($file: File!, $itemId: Int!) {add_file_to_column(item_id: $itemId, column_id: 'file', file: $file) {id}}’</p>\n<p>/// These are the variables you are sending. Can be adapted to a call that would add the file to a file oclumn instead;<br />\nvar vars = {“updateId”:1234};</p>\n<p>///This is the mapping for the API call, where you specify that a variable should be considered as the variables[file] of the request.<br />\n///This can be called “image”, or simply file - as long as it matches the name of the multipart request later down the line.<br />\nvar map = {“file”:“variables.file”};</p>\n<p>/// this is the path to the file you’d like to upload to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a><br />\nvar upfile  = <code>./test.xlsx</code>;</p>\n<p>var data = “”;<br />\nconst boundary = “xxxxxxxxxxxxxxx”;</p>\n<p>fs.readFile(upfile, function(err, content){</p>\n<pre><code>// simple catch error\nif(err){\n    console.error(err);\n}\n\n//below, we will construct a multipart request. Take a look at the \"name\" within each part, as those will refer to different parts of the API call.\n\n// construct query part\ndata += \"--\" + boundary + \"\\r\\n\";\ndata += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\ndata += \"Content-Type:application/json\\r\\n\\r\\n\";\ndata += \"\\r\\n\" + query + \"\\r\\n\";\n\n// construct variables part\ndata += \"--\" + boundary + \"\\r\\n\";\ndata += \"Content-Disposition: form-data; name=\\\"variables\\\"; \\r\\n\";\ndata += \"Content-Type:application/json \\r\\n\\r\\n\";\ndata += \"\\r\\n\" + JSON.stringify(vars)  + \"\\r\\n\";\n\n// construct map part\ndata += \"--\" + boundary + \"\\r\\n\";\ndata += \"Content-Disposition: form-data; name=\\\"map\\\"; \\r\\n\";\ndata += \"Content-Type:application/json\\r\\n\\r\\n\";\ndata += \"\\r\\n\" + JSON.stringify(map)+ \"\\r\\n\";\n\n// construct file part - the name needs to be the same as passed in the map part of the request. So if your map is {\"image\":\"variables.file\"}, the name should be image.\ndata += \"--\" + boundary + \"\\r\\n\";\ndata += \"Content-Disposition: form-data; name=\\\"file\\\"; filename=\\\"\" + upfile + \"\\\"\\r\\n\";\ndata += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\nvar payload = Buffer.concat([\n        Buffer.from(data, \"utf8\"), // data has update id and mutation query\n        new Buffer.from(content, 'binary'),\n        Buffer.from(\"\\r\\n--\" + boundary + \"--\\r\\n\", \"utf8\"),\n]);\n\n// construct request options\nvar options = {\n    method: 'post',\n    headers: {\n      \"Content-Type\": \"multipart/form-data; boundary=\" + boundary,\n      \"Authorization\" : API_KEY\n    },\n    body: payload,\n};\n\n// make request\nfetch(url, options)\n  .then(res =&gt; res.json())\n  .then(json =&gt; console.log(json));\n</code></pre>\n<p>});</p>"
+    },
+    {
+      "id": 56546,
+      "postNumber": 2,
+      "createdAt": "2021-06-29T13:07:34.033Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/pwolter\">@pwolter</a><br />\nWelcome to the community. Although I did not do file upload in any of my Node projects (yet) I struggled some time ago with a PHP project.</p>\n<blockquote>\n<p>$eol = “\\r\\n”;</p>\n<p>$header = array(<br />\n‘User-Agent’ =&gt; MONDAY_TEAM . ’ GraphQL Client’,<br />\n‘Authorization’ =&gt; get_field(‘mondaykey’, ‘user_’ . get_current_user_id()),<br />\n‘Content-Type’ =&gt; ‘multipart/form-data; boundary=’ . $boundary<br />\n);</p>\n<p>//We need to build the body from scratch because it is multipart with boundaries<br />\n//Take care of the extra empty lines (twice $eol) before the actual query and file, otherwise an error 500 is returned</p>\n<p>$body = ‘–’ . $boundary . $eol;<br />\n$body .= ‘Content-Disposition: form-data; name=“query”’ . $eol . $eol;<br />\n$body .= 'mutation ($file: File!) {add_file_to_column (item_id: ’ . $item_id . ‘, column_id: file, file: $file) {id}}’ . $eol;<br />\n$body .= ‘–’ . $boundary . $eol;<br />\n$body .= ‘Content-Disposition: form-data; name=“variables[file]”; filename=\"’ . $upload[‘name’] . ‘\"’ . $eol;<br />\n$body .= 'Content-Type: ’ . $upload[‘type’] . $eol . $eol;<br />\n$body .= file_get_contents($upload[‘value’]);<br />\n$body .= $eol . ‘–’ . $boundary . ‘–’;</p>\n<p>$response = wp_remote_post( MONDAY_URL . ‘file/’, [‘headers’ =&gt; $header, ‘body’ =&gt; $body] );</p>\n</blockquote>\n<p>Maybe this snippet help you.</p>\n<p>Are you trying to upload a JSON in the file column? (Content-Type)</p>"
+    },
+    {
+      "id": 56548,
+      "postNumber": 3,
+      "createdAt": "2021-06-29T13:27:57.784Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p>I’m hoping we can get more clarity from the Monday development team on this one.</p>\n<p>Most SDKs and APIs that allow for file transmission are specific in the documentation for how the file itself is transmitted.</p>\n<p>Especially knowing that Monday uses AWS for it’s file downloads, I’m assuming all files are posted to AWS.</p>\n<p>The format for pushing a file to AWS is fairly straight forwards using a buffer of the file, mime type, and title. I’m quite amazed this is such a difficult integration to create on Monday, and that we are stuck having to format parts of the body on our own. Updated documentation on uploading a file using a synchronous upload or a stream would go a long ways towards making this function useful.</p>"
+    },
+    {
+      "id": 56567,
+      "postNumber": 5,
+      "createdAt": "2021-06-29T16:40:47.394Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/pwolter\">@pwolter</a>!</p>\n<p>To troubleshoot your request, I would recommend starting from the basics and verifying that you have the correct file path, file, authorization token, etc.</p>\n<p>One thing I did see is that you’re using a “itemId” variable, but you’re not defining it anywhere (that I can see). Do you mind letting me know where you’re setting it? Could this be the error you’re running into?</p>\n<p>Please let us know if the issue persists and we can continue troubleshooting this together.</p>\n<p><a class=\"mention\" href=\"/u/morhriveion\">@morhriveion</a>, thanks for your feedback here! Perhaps this is a conversation for a separate thread, but I would love to learn more about the specific gaps in our documentation on file uploads. In any case, documentation on file uploads with our API is indeed something our team is looking on improving and making more robust.</p>\n<p>I was able to do some initial digging into the documentation for file uploads for Slack, AWS, and Spotify and there’s a lot of variance. In terms of what you would find the most helpful, would it be more specificity as to what happens in the backend when a file is uploaded?</p>\n<p>Or would you like more documentation as to what devs need to construct when making a file upload? We do have an example of constructing a file upload request from scratch as created by my colleague, I’m not sure if you’ve had a chance to check it out yet: <a href=\"https://gist.github.com/yuhgto/edb5d96e088599c2a6ea44860df9117b\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Uploading a file to the monday.com API, from basics · GitHub</a>.</p>\n<p>Let me know! I look forward to continuing the conversation.</p>"
+    },
+    {
+      "id": 56568,
+      "postNumber": 6,
+      "createdAt": "2021-06-29T16:40:51.057Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 56602,
+      "postNumber": 7,
+      "createdAt": "2021-06-30T02:22:36.189Z",
+      "author": "Shilpa (Shilpa N)",
+      "cookedHtml": "<p>Best way to try file uploads on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> in any code is to use Postman<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6f03baa4b3cbd4155605b72cb1e7fda1d287e72c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/6f03baa4b3cbd4155605b72cb1e7fda1d287e72c_2_690x210.png\" alt=\"image\" width=\"690\" height=\"210\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1527×466 46 KB</span>\n</div></a></div><p></p>\n<p>Once it works, Postman has code in most languages. Doing file uploads with Php and Python has been easy with this approach.</p>\n<p>For Node, i got the below code snippet.<br />\nvar request = require(‘request’);<br />\nvar fs = require(‘fs’);<br />\nvar options = {<br />\n‘method’: ‘POST’,<br />\n‘url’: ‘<a href=\"https://api.monday.com/v2/file\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file</a>’,<br />\n‘headers’: {<br />\n‘Authorization’: ‘Bearer XXX’<br />\n},<br />\nformData: {<br />\n‘variables[file]’: {<br />\n‘value’: fs.createReadStream(‘/C:/Users/rrr/Desktop/hall.jpg’),<br />\n‘options’: {<br />\n‘filename’: ‘/C:/Users/rrr/Desktop/hall.jpg’,<br />\n‘contentType’: null<br />\n}<br />\n},<br />\n‘query’: ‘mutation ($file: File!) { \\n  add_file_to_column (file: $file, item_id: XXXX, column_id: “files”) { \\n    id \\n  } \\n}’<br />\n}<br />\n};<br />\nrequest(options, function (error, response) {<br />\nif (error) throw new Error(error);<br />\nconsole.log(response.body);<br />\n});</p>"
+    },
+    {
+      "id": 56633,
+      "postNumber": 8,
+      "createdAt": "2021-06-30T10:52:14.846Z",
+      "author": "pwolter (Paul Wolter)",
+      "cookedHtml": "<p>I made a typo in the code I posted here. “updatedId” should be \"itemId. I was able to get the code to work by changing the single quotes on column_id:‘file’ to double quotation marks column_id:“file”. Thanks for your help!</p>"
+    },
+    {
+      "id": 57062,
+      "postNumber": 9,
+      "createdAt": "2021-07-07T10:52:40.764Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

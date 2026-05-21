@@ -1,0 +1,103 @@
+{
+  "id": 70378,
+  "title": "API 2023-10, updating items to items_page",
+  "slug": "api-2023-10-updating-items-to-items-page",
+  "categoryId": 8,
+  "tagIds": [
+    351,
+    406
+  ],
+  "createdAt": "2023-11-08T19:54:11.483Z",
+  "lastPostedAt": "2023-11-14T20:27:09.451Z",
+  "postsCount": 9,
+  "excerpt": "I tried to follow the guides but can’t get the new query to run in the Playground. Can I get an assist please? Here is the original that works in 2023-07: \nquery {\n  boards(ids: 0123456789) {\n    groups(ids: &quot;groupA&quot;) {\n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 432,
+  "posts": [
+    {
+      "id": 152331,
+      "postNumber": 1,
+      "createdAt": "2023-11-08T19:54:11.554Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>I tried to follow the guides but can’t get the new query to run in the Playground. Can I get an assist please? Here is the original that works in 2023-07:</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: 0123456789) {\n    groups(ids: \"groupA\") {\n      items(limit: 99) {\n        id\n        name\n        column_values(\n          ids: [\n            \"text2\"\n            \"text7\"\n            \"creation_log\"\n            \"item_id5\"\n            \"text5\"\n            \"dropdown1\"\n            \"text31\"\n            \"status\"\n          ]\n        ) {\n          title\n          text\n        }\n        subitems {\n          id\n          name\n          column_values(ids: [\"checkbox5\", \"numbers\", \"numbers7\", \"numbers9\"]) {\n            title\n            text\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 152344,
+      "postNumber": 2,
+      "createdAt": "2023-11-08T20:57:37.073Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Can you try:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    groups(ids: \"groupA\") {\n      items_page(limit: 99) {\n        items {\n          id\n          name\n          column_values(\n            ids: [\"text2\", \"text7\", \"creation_log\", \"item_id5\", \"text5\", \"dropdown1\", \"text31\", \"status\"]\n          ) {\n            text\n          }\n          subitems {\n            id\n            name\n            column_values(ids: [\"checkbox5\", \"numbers\", \"numbers7\", \"numbers9\"]) {\n              text\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Removed the column_values.title as title is not a supported field on column_values. Added the items_page for 2023-10. I did not test it but it should bring you very close.</p>"
+    },
+    {
+      "id": 152388,
+      "postNumber": 3,
+      "createdAt": "2023-11-09T06:19:30.781Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 152489,
+      "postNumber": 4,
+      "createdAt": "2023-11-09T16:40:20.330Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>That makes sense- title was specified in the error, but I couldn’t find mention of it’s demise in the API articles. My python script queries the board and works on the data based on the column title. I’m looking at the New Column Values <a href=\"https://developer.monday.com/api-reference/changelog/new-column-values-fields-and-typed-column-values\" rel=\"noopener nofollow ugc\">article</a> but scratching my head. How do I query the column title now in 2023-10?</p>"
+    },
+    {
+      "id": 152507,
+      "postNumber": 5,
+      "createdAt": "2023-11-09T18:27:22.142Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/basdebruin/48/688_2.png\" class=\"avatar\" /> Bas de Bruin:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    columns ids: [\"text2\", \"text7\", \"creation_log\", \"item_id5\", \"text5\", \"dropdown1\", \"text31\", \"status\"]{\n      id \n      title\n    }\n    groups(ids: \"groupA\") {\n      items_page(limit: 99) {\n        items {\n          id\n          name\n          column_values(\n            ids: [\"text2\", \"text7\", \"creation_log\", \"item_id5\", \"text5\", \"dropdown1\", \"text31\", \"status\"]\n          ) {\n            text\n          }\n          subitems {\n            id\n            name\n            column_values(ids: [\"checkbox5\", \"numbers\", \"numbers7\", \"numbers9\"]) {\n              text\n            }\n          }\n        }\n      }\n    }\n  }\n</code></pre>\n</blockquote>\n</aside>\n<p>The column title is a field of the columns structure underneath boards</p>"
+    },
+    {
+      "id": 152517,
+      "postNumber": 7,
+      "createdAt": "2023-11-09T19:00:53.451Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>I get an error on line 3: Expected Name found “[”.<br />\nHow would this work for the subitem titles? Is there any documentation on this?</p>"
+    },
+    {
+      "id": 152522,
+      "postNumber": 8,
+      "createdAt": "2023-11-09T19:37:17.568Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/basdebruin/48/688_2.png\" class=\"avatar\" /> Bas de Bruin:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    columns (ids: [\"text2\", \"text7\", \"creation_log\", \"item_id5\", \"text5\", \"dropdown1\", \"text31\", \"status\"]){\n      id \n      title\n    }\n    groups(ids: \"groupA\") {\n      items_page(limit: 99) {\n        items {\n          id\n          name\n          column_values(\n            ids: [\"text2\", \"text7\", \"creation_log\", \"item_id5\", \"text5\", \"dropdown1\", \"text31\", \"status\"]\n          ) {\n            text\n          }\n          subitems {\n            id\n            name\n            column_values(ids: [\"checkbox5\", \"numbers\", \"numbers7\", \"numbers9\"]) {\n              text\n            }\n          }\n        }\n      }\n    }\n  }\n</code></pre>\n</blockquote>\n</aside>\n<p>oops… typo<br />\nSee: <a href=\"https://developer.monday.com/api-reference/docs/columns\" class=\"inline-onebox\">Columns</a></p>"
+    },
+    {
+      "id": 152540,
+      "postNumber": 9,
+      "createdAt": "2023-11-09T20:55:59.641Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Ah, ok. Now the query results have two separate lists: one with the titles, and then one with the values. This would mean rewriting all my python code. I also can’t find any documentation on getting at the subitem title.</p>\n<p>Original (desired) result:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"groups\": [\n          {\n            \"items\": [\n              {\n                \"id\": \"5485065803\",\n                \"name\": \"Test Pallet\",\n                \"column_values\": [\n                  {\n                    \"title\": \"LPN\",\n                    \"text\": \"1234\"\n                  },\n                  {\n                    \"title\": \"Bin\",\n                    \"text\": \"E3E3\"\n                  },\n                  {\n                    \"title\": \"Status\",\n                    \"text\": \"Put Away\"\n                  },\n                  {\n                    \"title\": \"Staff\",\n                    \"text\": null\n                  },\n                  {\n                    \"title\": \"Invoice\",\n                    \"text\": \"ASDF1234\"\n                  },\n                  {\n                    \"title\": \"PutDate\",\n                    \"text\": \"2023-11-09 17:50:46 UTC\"\n                  },\n                  {\n                    \"title\": \"Item ID\",\n                    \"text\": \"5485065803\"\n                  },\n                  {\n                    \"title\": \"Item Type\",\n                    \"text\": \"\"\n                  }\n                ],\n                \"subitems\": [\n                  {\n                    \"id\": \"5485068084\",\n                    \"name\": \"300.TET\",\n                    \"column_values\": [\n                      {\n                        \"title\": \"Received\",\n                        \"text\": \"\"\n                      },\n                      {\n                        \"title\": \"Qty\",\n                        \"text\": \"321\"\n                      },\n                      {\n                        \"title\": \"Replenished\",\n                        \"text\": \"\"\n                      },\n                      {\n                        \"title\": \"Partial\",\n                        \"text\": \"\"\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n</code></pre>\n<p>And the result from your solution:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": [\n          {\n            \"title\": \"LPN\"\n          },\n          {\n            \"title\": \"Bin\"\n          },\n          {\n            \"title\": \"Status\"\n          },\n          {\n            \"title\": \"Staff\"\n          },\n          {\n            \"title\": \"Invoice\"\n          },\n          {\n            \"title\": \"PutDate\"\n          },\n          {\n            \"title\": \"Item ID\"\n          },\n          {\n            \"title\": \"Item Type\"\n          }\n        ],\n        \"groups\": [\n          {\n            \"items_page\": {\n              \"items\": [\n                {\n                  \"id\": \"5485065803\",\n                  \"name\": \"Test Pallet\",\n                  \"column_values\": [\n                    {\n                      \"text\": \"1234\"\n                    },\n                    {\n                      \"text\": \"E3E3\"\n                    },\n                    {\n                      \"text\": \"Put Away\"\n                    },\n                    {\n                      \"text\": \"\"\n                    },\n                    {\n                      \"text\": \"ASDF1234\"\n                    },\n                    {\n                      \"text\": \"2023-11-09 17:50:46 UTC\"\n                    },\n                    {\n                      \"text\": \"5485065803\"\n                    },\n                    {\n                      \"text\": null\n                    }\n                  ],\n                  \"subitems\": [\n                    {\n                      \"id\": \"5485068084\",\n                      \"name\": \"300.TET\",\n                      \"column_values\": [\n                        {\n                          \"text\": \"\"\n                        },\n                        {\n                          \"text\": \"321\"\n                        },\n                        {\n                          \"text\": null\n                        },\n                        {\n                          \"text\": null\n                        }\n                      ]\n                    }\n                  ]\n                }\n              ]\n            }\n          }\n        ]\n      }\n    ]\n  }\n\n</code></pre>"
+    },
+    {
+      "id": 152605,
+      "postNumber": 10,
+      "createdAt": "2023-11-10T07:21:27.227Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Alternatively you can do:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    groups(ids: \"groupA\") {\n      items_page(limit: 99) {\n        items {\n          id\n          name\n          column_values(\n            ids: [\"text2\", \"text7\", \"creation_log\", \"item_id5\", \"text5\", \"dropdown1\", \"text31\", \"status\"]\n          ) {\n            text\n            column {\n              title\n            }\n          }\n          subitems {\n            id\n            name\n            column_values(ids: [\"checkbox5\", \"numbers\", \"numbers7\", \"numbers9\"]) {\n              text\n              column {\n                title\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n</code></pre>\n<p>I believe this is working for subitems too.</p>"
+    },
+    {
+      "id": 152731,
+      "postNumber": 11,
+      "createdAt": "2023-11-12T12:21:35.558Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 153105,
+      "postNumber": 12,
+      "createdAt": "2023-11-14T20:27:09.451Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>This returns:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Query has depth of 7, which exceeds max depth of 6\",\n      \"locations\": [\n        {\n          \"line\": 22,\n          \"column\": 17\n        }\n      ],\n      \"extensions\": {\n        \"code\": \"maxDepthExceeded\",\n        \"depth\": 7,\n        \"maxDepth\": 6\n      }\n    }\n  ],\n  \"account_id\": 1618989\n}\n</code></pre>\n<p>FYI I have tried adding IntrospectionQuery from the 3 search results on this error, but to no success.</p>"
+    },
+    {
+      "id": 153188,
+      "postNumber": 13,
+      "createdAt": "2023-11-15T08:36:19.179Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

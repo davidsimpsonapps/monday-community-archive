@@ -1,0 +1,75 @@
+{
+  "id": 21425,
+  "title": "Programmatically get the actual text of a dropdown selection",
+  "slug": "programmatically-get-the-actual-text-of-a-dropdown-selection",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2021-06-17T14:29:00.134Z",
+  "lastPostedAt": "2021-06-18T22:40:24.449Z",
+  "postsCount": 7,
+  "excerpt": "I’m wondering how your dropdown menus are implemented. \nI’m looking for a way to save the state of a dropdown in a board, then hydrate that state back into the dropdown on page load using jquery. \nWith a regular HTML dro&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2212,
+  "posts": [
+    {
+      "id": 55081,
+      "postNumber": 1,
+      "createdAt": "2021-06-17T14:29:00.220Z",
+      "author": "mjgs (Mark)",
+      "cookedHtml": "<p>I’m wondering how your dropdown menus are implemented.</p>\n<p>I’m looking for a way to save the state of a dropdown in a board, then hydrate that state back into the dropdown on page load using jquery.</p>\n<p>With a regular HTML dropdown I would do something similar to in this codepen:</p>\n<p></p>\n<p>Is there a way to populate a dropdown from data stored in a board?</p>"
+    },
+    {
+      "id": 55116,
+      "postNumber": 2,
+      "createdAt": "2021-06-17T17:54:58.274Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 55117,
+      "postNumber": 3,
+      "createdAt": "2021-06-17T18:02:22.367Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mjgs\">@mjgs</a>!</p>\n<p>I’m wondering if you wouldn’t mind expanding a bit more on your use-case here. I’m getting that you want to save the dropdown columns selections of a board, but I guess I’m confused on when/where you would be “loading” this information.</p>\n<p>Are you just looking to automatically create dropdown label options for a board without assigning them to item(s) on said board?</p>\n<p>If so, at this time I’m afraid that you wouldn’t be able to add dropdown label options without also assigning them to a particular item. There are currently only two ways to create new labels in either a Status or a Dropdown column:</p>\n<ol>\n<li>Include the <code>create_labels_if_missing</code> argument to your mutation query as denoted in <a href=\"https://community.monday.com/t/released-creating-new-labels-with-the-api/19091/2\">this announcement post</a>. You can see that these methods require you to alter a value to include this new label.</li>\n<li>Create a new column and set pre-existing labels using the <code>settings_str</code> argument.</li>\n</ol>\n<p>Is this what you had in mind? And if so, could either one of these options work?</p>"
+    },
+    {
+      "id": 55123,
+      "postNumber": 4,
+      "createdAt": "2021-06-17T20:57:56.121Z",
+      "author": "mjgs (Mark)",
+      "cookedHtml": "<p>Perhaps this will be useful context.</p>\n<p>In the data I get from the API, the dropdown related stuff looks like this:</p>\n<p>“Classification”: {<br />\n“id”: “dropdown7”,<br />\n“title”: “Classification”,<br />\n“value”: {<br />\n“ids”: [<br />\n15<br />\n],<br />\n“changed_at”: “2021-06-15T20:44:41.989Z”<br />\n}<br />\n},</p>\n<p>The text selected in the dropdown is saved as:</p>\n<p>“ids”: [<br />\n15<br />\n],</p>\n<p>So how can I programmatically get the actual text of the dropdown selection?</p>"
+    },
+    {
+      "id": 55128,
+      "postNumber": 5,
+      "createdAt": "2021-06-18T01:09:16.979Z",
+      "author": "mjgs (Mark)",
+      "cookedHtml": "<p>Btw - this is the query I am using to pull data from the API:</p>\n<p>const jobsQuery = <code>{      items_by_column_values(board_id: ${cfg.jobBoardId}, column_id: \\\"name\\\", column_value: \\\"${cfg.companyId}\\\") {        id        name        column_values {          id         title         value        }      }    }</code>;</p>\n<p>I shuffle the data around a bit after getting it back from the API, so that’s why the structure of the classification item snippet I posted earlier might look a but unexpected.</p>\n<p>Ideally there would be some way to update the query so it knows to populate the dropdown items with the text version of the selection rather than the list of ids.</p>"
+    },
+    {
+      "id": 55198,
+      "postNumber": 6,
+      "createdAt": "2021-06-18T17:20:21.907Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mjgs\">@mjgs</a>,</p>\n<p>Thank you for the extra info and context! Definitely helped me better understand the issue you’re facing at this time.</p>\n<p>With regards to your question, it sounds like you’re looking to return only the labels that have been selected in a particular item, and not all of the possible labels available for selection on the board, right?</p>\n<p>If the answer is yes, what you’re looking for in this case would be the <code>text</code> field for <code>column_values</code> queries. This will output the text of each dropdown label that’s been selected in the item returned.</p>\n<p>Here is an example query:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/e/e48f3631779d18ba502f167ce48e2436ff1c17b7.png\" alt=\"image\" width=\"337\" height=\"202\" /></p>\n<p>with its resulting response:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/160745fa4fbf9631c0fb18165bcc9b0677c06376.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/160745fa4fbf9631c0fb18165bcc9b0677c06376_2_322x249.png\" alt=\"image\" width=\"322\" height=\"249\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">898×696 29.8 KB</span>\n</div></a></div><p></p>\n<p>Alternatively, if you’re looking to return <strong>all</strong> possible labels available in a dropdown column, you can query the <code>settings_str</code> field for a <code>columns</code> query.</p>\n<p>Here is an example of that:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/b/b4916edd828b03a724643cd7d3f3d3693a79219e.png\" alt=\"image\" width=\"285\" height=\"146\" /></p>\n<p>and the resulting response:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/42d89919b1bee072081f4ed406758dd681699676.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/42d89919b1bee072081f4ed406758dd681699676_2_345x138.png\" alt=\"image\" width=\"345\" height=\"138\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1310×524 26.7 KB</span>\n</div></a></div><p></p>\n<p>With regards to the actual jQuery you’re building, I found a few resources that might be helpful:</p>\n<ul>\n<li><a href=\"https://stackoverflow.com/questions/27431170/jquery-populate-dropdown-box-with-contents-of-array\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">html - Jquery - Populate DropDown box with contents of array - Stack Overflow</a></li>\n<li><a href=\"https://stackoverflow.com/questions/19725203/how-to-populate-dropdownlist-with-json-data-as-ajax-response-in-jquery\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">java - How to populate dropdownlist with JSON data as ajax response in jQuery - Stack Overflow</a></li>\n</ul>\n<p>The first one includes a really good example of how to populate a dropdown list dynamically, based off of the number of labels available. Definitely check it out as inspiration!</p>\n<p>By the way, my colleague was able to come up with an example of how this would look in CodePen, check it out here: <a href=\"https://codepen.io/dipro-b/pen/eYvXPyv?editors=1111\" rel=\"noopener nofollow ugc\">https://codepen.io/dipro-b/pen/eYvXPyv?editors=1111</a>.</p>"
+    },
+    {
+      "id": 55213,
+      "postNumber": 7,
+      "createdAt": "2021-06-18T22:40:24.449Z",
+      "author": "mjgs (Mark)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/helen\">@Helen</a> - I got it working just by adding the text field to my query:</p>\n<p>const jobsQuery = <code>{ items_by_column_values(board_id: ${cfg.jobBoardId}, column_id: \\\"name\\\", column_value: \\\"${cfg.companyId}\\\") { id name column_values { id title value text } } }</code> ;</p>\n<p>And the text field had the dropdown  selection <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 56334,
+      "postNumber": 8,
+      "createdAt": "2021-06-25T22:41:14.462Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

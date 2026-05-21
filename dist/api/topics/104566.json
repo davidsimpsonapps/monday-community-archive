@@ -1,0 +1,99 @@
+{
+  "id": 104566,
+  "title": "Newbie question - How do I get all the data in a board?",
+  "slug": "newbie-question-how-do-i-get-all-the-data-in-a-board",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    165,
+    166,
+    167
+  ],
+  "createdAt": "2024-12-02T14:45:03.304Z",
+  "lastPostedAt": "2024-12-09T14:16:48.200Z",
+  "postsCount": 8,
+  "excerpt": "Seasoned developer, but complete newbie to both monday.com and graphql, so please forgive me for what is probably a dumb question. Also, this is probably more a graphql question than monday, but I’ve searched around, and&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 59,
+  "posts": [
+    {
+      "id": 212531,
+      "postNumber": 1,
+      "createdAt": "2024-12-02T14:45:03.383Z",
+      "author": "Yossu (Yossu)",
+      "cookedHtml": "<p>Seasoned developer, but complete newbie to both <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> and graphql, so please forgive me for what is probably a dumb question. Also, this is probably more a graphql question than monday, but I’ve searched around, and none of the graphql code snippets that I’ve found work, so asking here in the hope that someone can help me.</p>\n<p>I want to be able to get hold of all the items in a board. I found some code that does part of the job…</p>\n<p>SyntaxEditor Code Snippet</p>\n<p>{“query”: “{ boards(ids: [00000000]) { items_page(limit: 100) { cursor items { id name column_values { id text value column { id type title settings_str } } } } } }”}</p>\n<p>This returns 100 items in JSON format, which I can parse.</p>\n<p>However, I’m stuck trying to order the results, and trying to get the rest of the data. The results of the above query start like this…</p>\n<pre><code class=\"lang-json\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items_page\": {\n          \"cursor\": \"abc\",\n          \"items\": [\n            {\n              \"id\": \"123456789\",\n              \"name\": \"Some name\",\n              \"column_values\": [\n                ...other stuff here, omitted for clarity\n</code></pre>\n<p>I’d like to order by name.</p>\n<p>Anyone able to help sort and page? Thanks</p>"
+    },
+    {
+      "id": 212542,
+      "postNumber": 2,
+      "createdAt": "2024-12-02T17:31:45.104Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Maybe something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [\"00000000\"]) {\n    items_page(\n      limit: 100, \n      query_params: {\n        order_by: [{\n          column_id: \"name\", \n          direction: desc # or asc\n        }]\n      }\n  ) {\n      cursor\n      items {\n        id\n        name\n        column_values {\n          id\n          text\n          value\n          column {\n            id\n            type\n            title\n            settings_str\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 212556,
+      "postNumber": 3,
+      "createdAt": "2024-12-02T20:41:56.149Z",
+      "author": "Yossu (Yossu)",
+      "cookedHtml": "<p>Thanks, but I get a response of…</p>\n<pre><code class=\"lang-json\">{\"errors\":[{\"message\":\"Invalid GraphQL request\",\"extensions\":{\"details\":\"failed to deserialize the request body into JSON: expected `,` or `}` at line 1 column 29\",\"code\":\"INVALID_GRAPHQL_REQUEST\"}}],\"account_id\":123456789}\n</code></pre>\n<p>Also, do you know how I would get the next 100 items and so on?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 212702,
+      "postNumber": 4,
+      "createdAt": "2024-12-04T05:54:04.575Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Is this the error when you copy/paste into the graphql playground?</p>\n<p>If not, it’s likely your logic that uses the query above.</p>"
+    },
+    {
+      "id": 212711,
+      "postNumber": 5,
+      "createdAt": "2024-12-04T08:28:14.322Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 212767,
+      "postNumber": 6,
+      "createdAt": "2024-12-04T12:55:30.480Z",
+      "author": "Yossu (Yossu)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/yossu/48/28722_2.png\" class=\"avatar\" /> Yossu:</div>\n<blockquote>\n<p>Is this the error when you copy/paste into the graphql playground?</p>\n</blockquote>\n</aside>\n<p>No, the playground runs it fine.</p>\n<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/yossu/48/28722_2.png\" class=\"avatar\" /> Yossu:</div>\n<blockquote>\n<p>If not, it’s likely your logic that uses the query above.</p>\n</blockquote>\n</aside>\n<p>Well, all I’m doing is sending the exact same query (with the new lines removed as that seems to choke the API), which works fine with other queries.</p>\n<p>I’m using C#, and the following code works fine for all other queries…</p>\n<pre><code class=\"lang-auto\">HttpClient client = new();\nusing (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, \"https://api.monday.com/v2\")) {\n  request.Content = new StringContent(&lt;JSON&gt;.Replace(Environment.NewLine, \" \"), Encoding.UTF8, \"application/json\");\n  request.Headers.Add(\"Authorization\", &lt;TOKEN&gt;);\n  using (HttpResponseMessage response = await client.SendAsync(request)) {\n    string responseBody = await response.Content.ReadAsStringAsync();\n    Console.WriteLine(responseBody);\n  }\n}\n</code></pre>\n<p>Any idea why this would be?</p>\n<p>However, getting the items in order is nice, but not essential. My main issue is with getting the subsequent pages. If you could show me how to do that I’d be very grateful.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 212783,
+      "postNumber": 7,
+      "createdAt": "2024-12-04T13:11:55.605Z",
+      "author": "manishaghosh (MG)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yossu\">@Yossu</a>  this is how I get the subsequent pages. I found it somewhere in the monday documentation. Not sure how to implement in C#</p>\n<pre><code class=\"lang-auto\"> const query = `query {\n        boards (ids: [${itemId}]) {\n          items_page (limit:500) {\n            cursor\n            items {\n              id\n              name\n              column_values\n              {\n                 ... &lt;Data&gt;\n                 \n              }\n            }\n          }\n        }\n        }`;\n    \n    const firstPage = await monday.api(query);\n    const firstPageItems = firstPage.data.boards[0].items_page.items;\n    let thisPage = [];\n    var cursor = firstPage.data.boards[0].items_page.cursor;\n    while (cursor) {\n      // loop will stop when cursor is null\n      const nextPage = await monday.api(\n        `query {\n          next_items_page (limit:500, cursor: \"${cursor}\") {\n            cursor\n            items {\n              id\n              name\n              column_values\n              {\n                 ... .. &lt;Data&gt;\n                }\n                 \n              }\n            }\n          }\n        }`\n      );\n   \n      thisPage = [...thisPage, ...nextPage.data.next_items_page.items];\n      cursor = nextPage.data.next_items_page.cursor;\n    }\n    const combinedA = firstPageItems.concat(thisPage);\n    setJsonData(combinedA);\n</code></pre>"
+    },
+    {
+      "id": 212867,
+      "postNumber": 8,
+      "createdAt": "2024-12-05T06:55:18.998Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 213340,
+      "postNumber": 9,
+      "createdAt": "2024-12-09T13:55:07.846Z",
+      "author": "Yossu (Yossu)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/manishaghosh\">@manishaghosh</a> Thanks very much for that. I managed to translate this into C# and have it working.</p>"
+    },
+    {
+      "id": 213341,
+      "postNumber": 10,
+      "createdAt": "2024-12-09T14:16:48.200Z",
+      "author": "manishaghosh (MG)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/yossu\">@Yossu</a> No worries. Happy to help!</p>"
+    },
+    {
+      "id": 213518,
+      "postNumber": 11,
+      "createdAt": "2024-12-11T05:25:09.821Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

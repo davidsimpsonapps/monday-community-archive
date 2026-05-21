@@ -1,0 +1,55 @@
+{
+  "id": 69327,
+  "title": "How to populate cells in board with filtered items from a connected board",
+  "slug": "how-to-populate-cells-in-board-with-filtered-items-from-a-connected-board",
+  "categoryId": 6,
+  "tagIds": [
+    20,
+    108,
+    196
+  ],
+  "createdAt": "2023-10-26T11:17:37.103Z",
+  "lastPostedAt": "2023-10-27T13:27:56.986Z",
+  "postsCount": 5,
+  "excerpt": "Hello everyone. \nI have an existing board containing sales opportunities. The board has two status columns, one for Opportunity Type and one for Sales Stage. I’ve been asked to create a table for a management report cont&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 749,
+  "posts": [
+    {
+      "id": 150160,
+      "postNumber": 1,
+      "createdAt": "2023-10-26T11:17:37.198Z",
+      "author": "stephen.meyer (Stephen Meyer)",
+      "cookedHtml": "<p>Hello everyone.<br />\nI have an existing board containing sales opportunities. The board has two status columns, one for Opportunity Type and one for Sales Stage. I’ve been asked to create a table for a management report containing the value of opportunities broken down by Type and Stage, and displaying summed figures for each combination.</p>\n<p>So I’ve created a new Report board with rows and columns as shown by sample data below:</p>\n<pre><code class=\"lang-auto\">\t\t\tStage 1\tStage 2\tStage 3\tStage 4\tStage Total\nType A\t\t£100\t£50\t\t£25\t\t£10\t\t£185\nType B\t\t£50\t\t£30\t\t£10\t\t£5\t\t£95\nType C\t\t£200\t£250\t£350\t£200\t£1000\nType D\t\t£50\t\t£70\t\t£0\t\t£10\t\t£130\nType Total\t£400\t£400\t£385\t£225\t£1410\n</code></pre>\n<p>The Type Total I get for free at the bottom of the table and the Stage Total is a simple formula column. Now I want to connect my new Report board to the Opportunities board and pull through the sum of the filtered items for each cell in my table. Eg populate the cell for Type A:Stage 1 with the SUM of the value for all opportunities WHERE Type = A AND Stage = 1.</p>\n<p>In my new Report board I’ve added a Connect Board column, connected to the Opportunities board, and then a Formula column. However in the Formula column I can only see Names and Count available from the Opportunities board, and have found no way to access other columns.</p>\n<p>How might I get this working? Do I need to do the filtering and sum in the Opportunities board in an extra column rather than trying to do it in the new Report board? And then how do I link to that value?</p>\n<p>Or is this scenario beyond the standard <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> functionality? I’m a software engineer and this would be straight forward to do with code. However I don’t know anything about the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API and custom apps, but could explore that path if required.</p>"
+    },
+    {
+      "id": 150177,
+      "postNumber": 2,
+      "createdAt": "2023-10-26T11:59:19.998Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Stephen,</p>\n<p>I’ve sampled your data structure and shown how you can use a Pivot Board to create what you’re looking for. Unfortunately this is an Enterprise feature.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/3/b30699902bf22c02db6a918712f78bb91abff73d.png\" title=\"Screenshot 2023-10-26 at 10.46.55\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/3/b30699902bf22c02db6a918712f78bb91abff73d_2_666x500.png\" alt=\"Screenshot 2023-10-26 at 10.46.55\" width=\"666\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-26 at 10.46.55</span><span class=\"informations\">1314×986 94.2 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/3/a3cce2e355e57fc84ade882162538b74cb6389b9.png\" title=\"Screenshot 2023-10-26 at 10.46.49\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/3/a3cce2e355e57fc84ade882162538b74cb6389b9_2_690x312.png\" alt=\"Screenshot 2023-10-26 at 10.46.49\" width=\"690\" height=\"312\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-26 at 10.46.49</span><span class=\"informations\">1460×662 45.4 KB</span></div></a></div><p></p>\n<hr />\n<p>For a non-enterprise solution, you could do something like:</p>\n<ol>\n<li>Create formula columns on your Opportunites Board for each Stage and populate them with formulas for that stage. i.e.</li>\n</ol>\n<pre><code class=\"lang-auto\">IF(\n    {Stage}=\"Stage 1\",\n    {Amount},\n    0\n)\n</code></pre>\n<ol>\n<li>Create <strong>2</strong> two-way connection columns between your Opportunities Board and your Report Board name them “Type Connection” and “Total Connection”.</li>\n<li>On the Reports Board, create items for each Type as you have done above, as well as a total.</li>\n<li>Set up automations (there is a connect board automation that is relatively intuitive—let me know if you need help with it) or manually connect items as follows: All Opportunity items connected to their corresponding type Report item via the Type Connection column; All Opportunity items connected to the total Report item via the Total Connection column.</li>\n<li>Create Mirror columns on your Reports board for each Stage. Connect the mirrors to the formula columns you created earlier and show summary as “SUM”.</li>\n</ol>\n<p>Alternative to the above would be to avoid the “Total” row and just use the group summary. Having a “Total” row is <em>very excel</em> and not very <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>—<a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> boards are databases rather than spreadsheets. In that case, you’d only need one connection column.</p>\n<p>An alternative non-enterprise solution could be to show the data as a graph. Create a dashboard and use bar charts for each type for instance.</p>\n<p>Hope that helps!</p>"
+    },
+    {
+      "id": 150274,
+      "postNumber": 3,
+      "createdAt": "2023-10-27T10:06:22.193Z",
+      "author": "stephen.meyer (Stephen Meyer)",
+      "cookedHtml": "<p>Aha - pivot tables! Pivot tables I understand. Thanks Francis, I didn’t know <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> had those and I’ve got access to them with my subscription. I’ll have a play with adding a pivot table to my opportunity data.</p>"
+    },
+    {
+      "id": 150305,
+      "postNumber": 4,
+      "createdAt": "2023-10-27T13:12:22.951Z",
+      "author": "stephen.meyer (Stephen Meyer)",
+      "cookedHtml": "<p>Unfortunately Pivot Boards in Monday seem to be a bit undercooked. I first set up a Pivot Board as a new view in my main Opportunities board using the Type and Stage columns. Then I selected Sum and the Total Net Rev column to populate the cells. But all values are returned as 0.00 despite the Total Net Rev column having non zero numbers in it.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/a/3a29589e402b86491afe61ec89bc08b357817b51.png\" title=\"Pivot table in board\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/3/a/3a29589e402b86491afe61ec89bc08b357817b51.png\" alt=\"Pivot table in board\" width=\"690\" height=\"316\" /><div class=\"meta\"><span class=\"filename\">Pivot table in board</span><span class=\"informations\">1287×590 11.2 KB</span></div></a></div><p></p>\n<p>Cells where it’s blank rather than 0.00 are correct, eg there currently are no Type 1/Stage 1 opportunities. If instead of Sum I set the cells to be Count then I do get the correct count values in the relevant cells. My suspicion is that Sum isn’t working because the Total Net Rev column is actually a Mirror column that is set to sum values from the child subitems.</p>\n<p>So then I tried instead adding a Pivot Board as a widget on a dashboard. Interestingly the behaviour of the Pivot Board dashboard widget is also broken but <em>different</em> to the behaviour of the Pivot Board view.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/a/5a5706a952439274b298e23a8d483e4f8c341e38.png\" title=\"Pivot table in dashboard\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/5/a/5a5706a952439274b298e23a8d483e4f8c341e38.png\" alt=\"Pivot table in dashboard\" width=\"690\" height=\"182\" /><div class=\"meta\"><span class=\"filename\">Pivot table in dashboard</span><span class=\"informations\">1494×396 11 KB</span></div></a></div><p></p>\n<p>Now the Total Net Rev values are non zero numbers which look about right (I haven’t done a thorough check), so the dashboard pivot board can in fact pull values from a mirror column. However the Pivot Board has placed all values in extra null columns for both axis. I checked and confirmed that there are no null values in the Stage and Type columns so no idea why those bonus columns are getting added. And further the bottom right Total/Total cell is double counting and twice the value it should be.</p>\n<p>So, next step is probably to contact Monday support to see what they suggest.</p>"
+    },
+    {
+      "id": 150310,
+      "postNumber": 5,
+      "createdAt": "2023-10-27T13:27:56.986Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Stephen,</p>\n<p>Yes, there are two different Pivot Boards. I believe <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> released one as an app, which they still support, before eventually releasing one as a widget.</p>\n<p>In my experience, the widget is better.</p>\n<p>If you’re having trouble with mirrored values, here are some suggestions:</p>\n<ol>\n<li>Try reversing and basing a pivot board off the subitems rather than the items if possible.</li>\n<li>Try using Formula columns. Even if it’s just to grab the data from the mirrored column and put it in a Formula column, the Pivot board may cooperate better with this data.</li>\n</ol>"
+    }
+  ]
+}

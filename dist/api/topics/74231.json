@@ -1,0 +1,97 @@
+{
+  "id": 74231,
+  "title": "Items_query complex filter (mix of AND/OR operators)",
+  "slug": "items-query-complex-filter-mix-of-and-or-operators",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2024-01-05T10:59:28.473Z",
+  "lastPostedAt": "2024-05-12T09:13:48.610Z",
+  "postsCount": 9,
+  "excerpt": "In the monday.com UI, I can filter items based on a combination of AND/OR criteria using the “Add new group” button. \n  \nHow can we do this via the API? There doesn’t seem to be documentation on how to combine predicates&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 736,
+  "posts": [
+    {
+      "id": 160402,
+      "postNumber": 1,
+      "createdAt": "2024-01-05T10:59:28.550Z",
+      "author": "anakic_querystorm (Antonio Nakic-Alfirevic)",
+      "cookedHtml": "<p>In the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> UI, I can filter items based on a combination of AND/OR criteria using the “Add new group” button.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/9/7976773bad7901f8a195f50adf0e583b9490d759.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/9/7976773bad7901f8a195f50adf0e583b9490d759_2_690x491.png\" alt=\"image\" width=\"690\" height=\"491\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1251×892 73.2 KB</span></div></a></div><p></p>\n<p>How can we do this via the API? There doesn’t seem to be documentation on how to combine predicates in the items_page.query_params.rules object.</p>\n<p>Is this not possible via the API? If it is possible, what would the <em>query_params</em> look like for a query like this one:</p>\n<p>(Name=“Jim” OR Name=“Ana”) AND Age = 35</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 160503,
+      "postNumber": 2,
+      "createdAt": "2024-01-05T19:46:44.059Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Antonio,</p>\n<p>You can use <code>items_page</code> and use the <code>operator</code> field in the <code>query_params</code> when setting the rules, as said in the documentation <a href=\"https://developer.monday.com/api-reference/docs/other-types#items-query\">here</a>.</p>\n<p>You can insert the <code>operator</code> inside a specific rule:<br />\n<code>query_params: {rules: {column_id: \"timeline\", compare_value: [\"2023-06-30\", \"2023-07-01\"], compare_attribute: \"START_DATE\", operator:between}</code></p>\n<p>You can also use the <code>operator</code> for rules themselves:<br />\n<code>query_params: {rules: [{column_id: \"people\", compare_value: [\"Person 1\", \"Person 2\"], operator:contains_text} {column_id: \"status\", compare_value: [1, 0]}]operator:and}</code></p>\n<p>Hope this helps with your queries!</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 160538,
+      "postNumber": 3,
+      "createdAt": "2024-01-06T11:47:10.549Z",
+      "author": "anakic_querystorm (Antonio Nakic-Alfirevic)",
+      "cookedHtml": "<p>Hi Joseph. Thanks for your response.</p>\n<p>I’m still unclear as to how I can combine both logical operators (AND/OR) in an items_query.</p>\n<p>For example, I can find projects that last less than 5 days OR more than 100 days (e.g. I’m looking for outliers) like so:</p>\n<blockquote>\n<p>query_params:<br />\n{<br />\nrules: [<br />\n{<br />\ncolumn_id: “duration__days_”,<br />\ncompare_value: 5,<br />\noperator: lower_than<br />\n},<br />\n{<br />\ncolumn_id: “duration__days_”,<br />\ncompare_value: 100,<br />\noperator: greater_than<br />\n}<br />\n],<br />\noperator: or<br />\n}<br />\n)</p>\n</blockquote>\n<p>How can I now add an extra criteria that says that the <em>Status</em> of the project is “Stuck”, i.e. find projects that are stuck, whose duration is either lower than 5 or higher than 100?</p>\n<p>In pseudo-code this would be an expression like:</p>\n<p><em>(DurationDays &lt; 5 OR DurationDays &gt; 100) AND Status = ‘Stuck’</em></p>\n<p>Notice I’m combining the OR operator with the AND operator. In the UI I would do this using the “Add new group” button, but I don’t know the equivalent way to do this via the API.</p>"
+    },
+    {
+      "id": 160748,
+      "postNumber": 4,
+      "createdAt": "2024-01-08T06:46:38.541Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Leaving for Joseph</p>"
+    },
+    {
+      "id": 160871,
+      "postNumber": 5,
+      "createdAt": "2024-01-08T18:10:19.597Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Antonio,</p>\n<p>I think you can do something like this:</p>\n<p>query_params:<br />\n{rules: [{[{column_id: “duration__days_”,compare_value: 5,operator: lower_than<br />\n},{column_id: “duration__days_”,compare_value: 100,operator: greater_than}],<br />\noperator: or}},<br />\n[{column_id:“status”,compare_value:“stuck”,operator:contains_text]operator: and}</p>\n<p>Essentially, you can create the list of rules and use an operator between the list of rules.</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 163332,
+      "postNumber": 6,
+      "createdAt": "2024-01-22T07:11:43.276Z",
+      "author": "anakic_querystorm (Antonio Nakic-Alfirevic)",
+      "cookedHtml": "<p>Hi Joseph,</p>\n<p>Nesting an array of rules inside a parent rule makes sense to me, for this requirement, but it doesn’t appear to work. I keep getting parse error and red squiggles in the API playground.</p>\n<p>Could you give it a try on your end? I might be messing something up with parentheses.</p>\n<p>I’d very much appreciate a working example query.</p>\n<p>Thanks,<br />\nAntonio</p>"
+    },
+    {
+      "id": 163519,
+      "postNumber": 7,
+      "createdAt": "2024-01-22T20:11:40.788Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Antonio,</p>\n<p>Can you share the <code>query_params</code> you have ended up with? I am guessing you’ve been playing around with it more than just the example I provided. I will try on my end as well.</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 177340,
+      "postNumber": 8,
+      "createdAt": "2024-04-08T03:30:43.352Z",
+      "author": "abdoulayesidibe (Abdoulaye Sidibé)",
+      "cookedHtml": "<p>Dear Antonio,</p>\n<p>I’ve reviewed your question regarding filtering items on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> via the API using “and” and “or” combination criteria, and I managed to find a solution that might be helpful to you.</p>\n<p>After exploring different approaches, I was able to craft a query that utilizes nested rules within groups to combine “and” and “or” logic as follows:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1452653689) {\n    groups(ids: [\"new_group29179\"]) {\n      items_page(\n        query_params: {\n          groups: {\n            rules: [\n              { column_id: \"numbers\", compare_value: [\"100\"], operator: any_of }\n            ],\n            operator: and,\n            groups: {\n              rules: [\n                { column_id: \"name\", compare_value: [\"Task 1\"], operator: any_of },\n                { column_id: \"name\", compare_value: [\"Task 3\"], operator: any_of }\n              ],\n              operator: or\n            }\n          }\n        }\n      ) {\n        cursor\n        items {\n          id\n          name\n          column_values(ids: [\"name\", \"numbers\"]) {\n            id\n            text\n          }\n        }\n      }\n    }\n  }\n}\n\n</code></pre>"
+    },
+    {
+      "id": 177777,
+      "postNumber": 9,
+      "createdAt": "2024-04-10T09:46:46.986Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 183264,
+      "postNumber": 10,
+      "createdAt": "2024-05-10T15:08:50.039Z",
+      "author": "sgdev (Steven)",
+      "cookedHtml": "<p>Has anyone been able to make this query work? when I put it in the playground I get an error message saying the query_params object doesn’t contain a groups field.</p>"
+    },
+    {
+      "id": 183439,
+      "postNumber": 11,
+      "createdAt": "2024-05-12T09:13:48.610Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/sgdev\">@sgdev</a>,</p>\n<p>Would you be able to please share the exact query you are using? (you can omit sensitive data).</p>"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "id": 34535,
+  "title": "Error : There are items that are not in the connected boards",
+  "slug": "error-there-are-items-that-are-not-in-the-connected-boards",
+  "categoryId": 58,
+  "tagIds": [
+    13,
+    94,
+    187
+  ],
+  "createdAt": "2022-04-11T12:46:14.789Z",
+  "lastPostedAt": "2023-12-11T05:20:18.763Z",
+  "postsCount": 9,
+  "excerpt": "hi all \ni’m trying to create an item with column value as linked ref. \nexample of existed item \n{\n  &quot;data&quot;: {\n    &quot;boards&quot;: [\n      {\n        &quot;items&quot;: [\n          {\n            &quot;id&quot;: &quot;1457000300&quot;,\n            &quot;name&quot;: &quot;ne&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1774,
+  "posts": [
+    {
+      "id": 82620,
+      "postNumber": 1,
+      "createdAt": "2022-04-11T12:46:14.900Z",
+      "author": "AntonL (Anton)",
+      "cookedHtml": "<p>hi all<br />\ni’m trying to create an item with column value as linked ref.</p>\n<p>example of existed item</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items\": [\n          {\n            \"id\": \"1457000300\",\n            \"name\": \"new item\",\n            \"column_values\": [\n              {\n                \"id\": \"connect_boards\",\n                \"title\": \"Partner\",\n                \"value\": \"{\\\"changed_at\\\":\\\"2021-07-06T23:03:30.192Z\\\",\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":1290737106}]}\"\n              }\n</code></pre>\n<p>and than i’m trying to create a new one at the same board to the same linked item</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 1457000226, \n    item_name: \"one new item\", \n    column_values: \"{\\\"connect_boards\\\": {\\\"linkedPulseIds\\\": [{\\\"linkedPulseId\\\": \\\"1290737106\\\"}]}}\"\n  \n  ) {\n    id\n  }\n}\n</code></pre>\n<p>but getting an error:</p>\n<pre><code class=\"lang-auto\">{\n  \"error_code\": \"ColumnValueException\",\n  \"status_code\": 200,\n  \"error_message\": \"There are items that are not in the connected boards\",\n  \"error_data\": {}\n}```</code></pre>"
+    },
+    {
+      "id": 82630,
+      "postNumber": 2,
+      "createdAt": "2022-04-11T13:27:03.074Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/antonl\">@AntonL</a></p>\n<p>I am wondering where you get the boardId 1457000226 in your create_item mutation from. If you want to create a subitem, there are two options:</p>\n<ul>\n<li>use the mutation create_subitem, which takes the parent itemId as an argument, so in this case the parent itemId is 1457000300</li>\n<li>use the mutation create_item but specify the board where the subitems live, this is not the same board where the parent items lives (although it looks like one board, you are viewing multiple board). To get hold of the board where the subitems live you can query the board for the parent items by querying the setting_str of the subitems column.</li>\n</ul>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0c09c8a7a9351c112a53f964d710291af4816330.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0c09c8a7a9351c112a53f964d710291af4816330_2_690x158.png\" alt=\"image\" width=\"690\" height=\"158\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2036×469 18.7 KB</span>\n</div></a></div><p></p>\n<p>As you can see I query a board and a column (i happen to know the columnId for the subitems column) for the  setting_str and get the boardId for the board where the subitems live. Now I can use that boardId to create an item with create_item.</p>\n<p>The first option is the easiest one to use.</p>"
+    },
+    {
+      "id": 82650,
+      "postNumber": 3,
+      "createdAt": "2022-04-11T14:55:19.995Z",
+      "author": "AntonL (Anton)",
+      "cookedHtml": "<p>Perhaps I made a mistake in the question.(seems i dont understand what is subitem)<br />\ni’m trying to create an item with column value which is linkedPulseIds</p>"
+    },
+    {
+      "id": 82667,
+      "postNumber": 4,
+      "createdAt": "2022-04-11T15:57:33.960Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Ahhh, I see. I got a little confused because of the subitems terminology which is something else.</p>\n<p>The error shows that the item (itemId: 1290737106) is found, but the board it lives in is not configured in your connect_boards column. You have to connect the boards where the item 1290737106 lives in your connect_boards column through the UI with: connect_boards column &gt; Settings &gt; Customize… &gt; Connect more boards. Unfortunatly this can’t be done throught the API as the API does not have access to the settings_str where this value is stored in. You can query it (but not change it) by:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d4af88aa94c4135f09fed7b3467cbfbb68e2c72a.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/d4af88aa94c4135f09fed7b3467cbfbb68e2c72a_2_690x165.png\" alt=\"image\" width=\"690\" height=\"165\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1799×432 13.4 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 82730,
+      "postNumber": 5,
+      "createdAt": "2022-04-12T05:55:36.111Z",
+      "author": "AntonL (Anton)",
+      "cookedHtml": "<p>thank you for you reply<br />\nbut other board is already connected in settings<br />\nand i can manually set reference to other board.<br />\ni’ve found solution</p>\n<p>result is received with next query:<br />\n“linkedpulseID” - replaced with “item_ids”</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(\n    board_id: 1457000226,\n    item_name: \"one another new item\",\n    column_values: \"{\\\"connect_boards\\\" : {\\\"item_ids\\\" : [2520632780]}}\"\n  ) {\n    id\n  }\n}\n\n</code></pre>"
+    },
+    {
+      "id": 82741,
+      "postNumber": 6,
+      "createdAt": "2022-04-12T07:59:29.395Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>ohh, ok</p>\n<p>But the create_item mutation is setting the value for connect_boards in a way I don’t think is correct. The mutation you show throws a 500 Internal server error, Try this one instead:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(\n    board_id: 1457000226,\n    item_name: \"one another new item\",\n    column_values: \"{\\\"connect_boards\\\": {\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":2520632780}]}}\"\n  ) {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 82743,
+      "postNumber": 7,
+      "createdAt": "2022-04-12T08:24:36.919Z",
+      "author": "AntonL (Anton)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/bb73d2/48.png\" class=\"avatar\" /> AntonL:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 1457000226, \n    item_name: \"one new item\", \n    column_values: \"{\\\"connect_boards\\\": {\\\"linkedPulseIds\\\": [{\\\"linkedPulseId\\\": \\\"1290737106\\\"}]}}\"\n  \n  ) {\n    id\n  }\n}\n</code></pre>\n</blockquote>\n</aside>\n<p>wow, cool, its working.<br />\nthanks!!!<br />\ni compared your with my query from first post<br />\nthe mistake was in quotes on linked ID</p>\n<pre><code class=\"lang-auto\">your variant: \"{\\\"connect_boards\\\": {\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":2520632780}]}}\"\nmy variant  : \"{\\\"connect_boards\\\": {\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":\\\"1290737106\\\"}]}}\"\n  \n</code></pre>\n<p>thanks again!!!</p>"
+    },
+    {
+      "id": 157161,
+      "postNumber": 8,
+      "createdAt": "2023-12-11T01:36:39.269Z",
+      "author": "hamid (HamidA)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, given the many updates to the APIs in past year, is it now possible to customize connected boards via the APIs?</p>"
+    },
+    {
+      "id": 157177,
+      "postNumber": 9,
+      "createdAt": "2023-12-11T05:20:18.763Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/hamid\">@hamid</a></p>\n<p>See <a href=\"https://developer.monday.com/api-reference/docs/connect#updating-the-connect-boards-column\" class=\"inline-onebox\">Connect boards</a> but take not of the warning on that page.</p>"
+    },
+    {
+      "id": 157213,
+      "postNumber": 10,
+      "createdAt": "2023-12-11T08:01:38.918Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

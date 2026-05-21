@@ -1,0 +1,27 @@
+{
+  "id": 28169,
+  "title": "Removing assigned people from item through API",
+  "slug": "removing-assigned-people-from-item-through-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2021-12-02T17:06:44.900Z",
+  "lastPostedAt": "2021-12-02T17:06:45.010Z",
+  "postsCount": 1,
+  "excerpt": "Hey Ya’ll, \nBuilding an integration with lots of Monday api calls &amp; webhooks. Usually when I can’t find documentation I scour the forums, or end up dumping monday webhooks to see how an item is dumped to see if feeding i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1277,
+  "posts": [
+    {
+      "id": 70328,
+      "postNumber": 1,
+      "createdAt": "2021-12-02T17:06:45.010Z",
+      "author": "LNLYDRD2018 (Breck Manwaring)",
+      "cookedHtml": "<p>Hey Ya’ll,</p>\n<p>Building an integration with lots of Monday api calls &amp; webhooks. Usually when I can’t find documentation I scour the forums, or end up dumping monday webhooks to see how an item is dumped to see if feeding it back to monday will give me the result I want.</p>\n<p>This however, has not been working with removing all assigned people from an item. Here <a href=\"https://api.developer.monday.com/docs/people\" rel=\"noopener nofollow ugc\">People (monday.com)</a> explains how to add assignees, but not remove.</p>\n<p>So from dumping a webhook from monday when I clikc to remove all assignees I get this payload:</p>\n<pre><code class=\"lang-auto\">{'event': {'userId': 22676521, 'originalTriggerUuid': None, 'boardId': 1973061092, 'groupId': 'topics', 'pulseId': 1973182044, 'pulseName': 'alex test', 'columnId': 'people', 'columnType': 'multiple-person', 'columnTitle': 'Assignees', 'value': {'personsAndTeams': [{'id': 22676521, 'kind': 'person'}], 'changed_at': '2021-12-02T18:56:21.478Z', 'column_settings': {'hide_footer': False}}, 'previousValue': {'column_settings': {'hide_footer': False}}, 'changedAt': 1638471382.0685995, 'isTopGroup': True, 'app': 'monday', 'type': 'update_column_value', 'triggerTime': '2021-12-02T18:56:22.793Z', 'subscriptionId': 89023319, 'triggerUuid': '4fddabedd12424a23fd4589a37b6d1a1'}}\n</code></pre>\n<p>From this it seems like {‘column_settings’: {‘hide_footer’: False}} is how I can remove an assignee…</p>\n<p>So I add it to my payload in python:</p>\n<pre><code class=\"lang-auto\">col_vals = json.dumps(json.dumps({\n            const.issue_assignee: {\"column_settings\": {\"hide_footer\": False}}, ###Its right here\n            const.issue_status: {\"labels\": [data['issue']['state']]},\n            const.issue_github_id: str(data['issue']['id']),\n            const.issue_github_labels: {\"labels\": labels},\n            const.issue_open_date: {\"date\": data['issue']['created_at'][0:10]},\n            const.issue_number: {\"url\": data['issue']['html_url'], \"text\": f\"#{data['issue']['number']}\"},\n            const.issue_github_org_repo: f'{url[3]}/{url[4]}'\n        }))\n</code></pre>\n<p>Then send my query off:</p>\n<pre><code class=\"lang-auto\">for boardId, pulseId in pulseIds:\n        query = f\"\"\"\n            mutation{{\n                change_multiple_column_values (\n                    item_id: {pulseId},\n                    board_id: {boardId},\n                    column_values: {col_vals}, \n                    create_labels_if_missing: true) \n                {{\n                    id\n                }}\n            }}\"\"\"\n        payload = {'query': query}\n        res = requests.post(url, headers=headers, data=json.dumps(payload)).json()\n</code></pre>\n<p>And I get a valid response:</p>\n<pre><code class=\"lang-auto\">{\n\"data\": {\n\"change_multiple_column_values\": {\n\"id\": \"1957458055\"\n   }\n },\n \"account_id\": 5931395\n }\n</code></pre>\n<p>Interestingly the last user gets removed for about 5 seconds, then re populates on the board again.</p>\n<p>Is there any way to make this work around permanent? I feel like it’s almost possible, so if it’s just a “its not supported, great suggestion, add it to the list”, I would at least like some insight into why monday webhook dumps {“column_settings”: {“hide_footer”: False}}.</p>\n<p>Thank you!</p>"
+    }
+  ]
+}

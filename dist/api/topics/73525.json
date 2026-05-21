@@ -1,0 +1,89 @@
+{
+  "id": 73525,
+  "title": "Fetch items that have a specific value in a connected board column",
+  "slug": "fetch-items-that-have-a-specific-value-in-a-connected-board-column",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-12-21T13:41:45.258Z",
+  "lastPostedAt": "2023-12-22T00:44:18.073Z",
+  "postsCount": 9,
+  "excerpt": "Is it possible to fetch items that contain a specific value from a connected board column inside a board? \nI would like to retrieve all items and the item info that have a specific value in the connected board column for&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 614,
+  "posts": [
+    {
+      "id": 158916,
+      "postNumber": 1,
+      "createdAt": "2023-12-21T13:41:45.328Z",
+      "author": "ggsheet (Luis)",
+      "cookedHtml": "<p>Is it possible to fetch items that contain a specific value from a connected board column inside a board?</p>\n<p>I would like to retrieve all items and the item info that have a specific value in the connected board column for example:</p>\n<p>Fetch all items that have “John Doe” in the connected column from a clients board.</p>"
+    },
+    {
+      "id": 158917,
+      "postNumber": 2,
+      "createdAt": "2023-12-21T13:52:50.491Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>It does not appear you can directly search it using items_page, and board_relation columns are not yet supported by items_page_by_column_value. But, you can use items_page to search a mirror column, so at least that works!</p>\n<p>You would need to do something like the following then manually filter client side on <code>items[].linked_items[].name</code> to find any items by name.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 5508116697){\n    items_page(limit: 50) {\n      items {\n        id\n        name\n        linked_items (linked_board_id: \"5508144514\",  link_to_item_column_id: \"link_to_board\") {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>An alternate if you don’t want to control which connected board’s items, but instead want every connected board’s items to be returned:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 5508116697){\n    items_page(limit: 50) {\n      items {\n        id\n        name\n        column_values (ids: \"link_to_board\") {\n          ... on BoardRelationValue {\n            linked_items {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 158921,
+      "postNumber": 3,
+      "createdAt": "2023-12-21T14:05:19.644Z",
+      "author": "ggsheet (Luis)",
+      "cookedHtml": "<p>Thank you so much for the response Cody. Yes I think that could work, I can just filter them on my end based on the item’s values returned I think. So the second query would retrieve all items from a board that have a connected column value in them correct?<br />\nAlso, the first query would fetch items based on the mirror column value?<br />\nPS: sorry for these questions without testing this first, I’m new to monday ap development I’m and trying to see if what I need is possible before I start creating an app.</p>"
+    },
+    {
+      "id": 158930,
+      "postNumber": 4,
+      "createdAt": "2023-12-21T14:59:20.554Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>both queries return all board items (no other way when you’re looking for the item name on a connect board column). The first query lets you pick which connected board AND which connect board column you want to see connected items from.</p>\n<p>Board A has a connect board column, this is the board you want to retrieve from. Query 1 will return all the connected items from board b (specified by id) that are connected to on the “link_to_board” column (by id).</p>\n<p>Query 2, will rather return all connected items on the “link_to_board” regardless of which board they are on, board B, or board C, D, E through ZE.</p>\n<p>If you want to search for a value on a mirror column, then you can use a regular item pages query. This will help out since it only returns items that have an actual match. Unfortunately today you can’t use board_relation columns in items page filters.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 5508116697) {\n    items_page(\n      query_params: {rules: [{column_id: \"mirror_1\", compare_value: [\"John Smith\"], operator: any_of}]}\n    ) {\n      items {\n        id\n        name\n        column_values(ids: \"mirror1\") {\n          ... on MirrorValue {\n            mirrored_items {\n              linked_item {\n                id\n                name\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Look at the documentation for items_page to understand how to paginate results since you will likely need it.</p>"
+    },
+    {
+      "id": 158970,
+      "postNumber": 5,
+      "createdAt": "2023-12-21T19:00:38.111Z",
+      "author": "ggsheet (Luis)",
+      "cookedHtml": "<p>Thank you so much for the help Cody, I eventually ended up with a structure that looks like this:</p>\n<pre><code class=\"lang-auto\">query GetConnectedItems {\n    boards(ids: &lt;id&gt;) {\n      items_page(limit: 50) {\n        items {\n          id\n          name\n          column_values(ids: \"link_to_board\") {\n            ... on BoardRelationValue {\n              linked_items {\n                id\n                name\n                column_values {\n                  text\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n</code></pre>\n<p>And I can succesfully retrieve all the column data from all connected items in every item within the main board.</p>\n<p>I jsut have one more question if I may. Is there a way I can separate the connected items by their corresponding connected board? Since items connected in my main board have 3 different sources, I would like to handle these separately since the column structure is different I may need to handle the incoming with the use of an id or something similar that can help me separate the items.</p>"
+    },
+    {
+      "id": 158977,
+      "postNumber": 6,
+      "createdAt": "2023-12-21T20:16:50.584Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yup</p>\n<pre><code class=\"lang-auto\">query GetConnectedItems {\n    boards(ids: &lt;id&gt;) {\n      items_page(limit: 50) {\n        items {\n          id\n          name\n          column_values(ids: \"link_to_board\") {\n            ... on BoardRelationValue {\n              linked_items {\n                id\n                name\n                board {\n                  id\n                }\n                column_values {\n                  text\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n</code></pre>"
+    },
+    {
+      "id": 159003,
+      "postNumber": 7,
+      "createdAt": "2023-12-21T21:24:30.077Z",
+      "author": "ggsheet (Luis)",
+      "cookedHtml": "<p>Excellent! Thank you so much.</p>"
+    },
+    {
+      "id": 159006,
+      "postNumber": 8,
+      "createdAt": "2023-12-21T21:33:16.839Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Just an FYI this query is as deep as you can go in a single query. Don’t try to get anything deeper on <code>linked_items[].board</code>, or  <code>linked_items[].column value</code> (like returning the <code>column{title,settings_str}</code> in addition).</p>\n<p>Also i would recommend always returning the id in column_values. If you request multiple column_values by ID (multiple BoardRelation columns?) you’ll need to be able to see which is which in your results.</p>\n<p>Also I’d keep the limit small (100?) instead of the max of 500, this is a pretty hefty query and you don’t want to have a timeout (60s) inadvertently.</p>"
+    },
+    {
+      "id": 159021,
+      "postNumber": 9,
+      "createdAt": "2023-12-22T00:44:18.073Z",
+      "author": "ggsheet (Luis)",
+      "cookedHtml": "<p>Thanks for the tips. I did see that monday has a limit on query depth so I did structure the query accordingly, plus its really not a dealbreaker since I can just hardcode those values if needed. Also yeah I’m not trying to overload the server with huge requests and reasonable limits will be placed for sure. Thanks again for the help!</p>"
+    },
+    {
+      "id": 159184,
+      "postNumber": 10,
+      "createdAt": "2023-12-24T08:16:55.278Z",
+      "author": "TomFri (Tom Fridman)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "id": 12356,
+  "title": "How to add a scope to an installed app",
+  "slug": "how-to-add-a-scope-to-an-installed-app",
+  "categoryId": 58,
+  "tagIds": [],
+  "createdAt": "2020-10-21T11:18:39.651Z",
+  "lastPostedAt": "2020-11-17T06:31:20.432Z",
+  "postsCount": 12,
+  "excerpt": "We have an app installed by various users, and as we’ve developed it has become necessary to add a scope (account:read to be specific). \nIn our testing, doing so uninstalls the app for everyone, presumably because it’s a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 4598,
+  "posts": [
+    {
+      "id": 31586,
+      "postNumber": 1,
+      "createdAt": "2020-10-21T11:18:39.742Z",
+      "author": "anderslyman (Anders Lyman)",
+      "cookedHtml": "<p>We have an app installed by various users, and as we’ve developed it has become necessary to add a scope (<code>account:read</code> to be specific).<br />\nIn our testing, doing so uninstalls the app for everyone, presumably because it’s a new permission they haven’t accepted yet:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/99adabb36e735c44cbabbf6e583d716c990c0bc8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/9/99adabb36e735c44cbabbf6e583d716c990c0bc8.png\" alt=\"image\" width=\"690\" height=\"441\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">721×461 15.3 KB</span>\n</div></a></div><p></p>\n<p>What’s the smoothest, least disruptive way we can add this needed scope to our app without angering all of our users?</p>"
+    },
+    {
+      "id": 31629,
+      "postNumber": 2,
+      "createdAt": "2020-10-21T18:44:16.606Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 31630,
+      "postNumber": 3,
+      "createdAt": "2020-10-21T18:50:05.848Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/anderslyman\">@anderslyman</a> -  let me check in with the team on this. I’ll let you know as soon as I know more.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 31637,
+      "postNumber": 4,
+      "createdAt": "2020-10-21T20:11:05.061Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a><br />\nI have the same issue because I need to extend the scope with me:read to overcome the issue using a stored (invallidated) token after a full delete / re-install cycle of my apps.</p>"
+    },
+    {
+      "id": 31718,
+      "postNumber": 5,
+      "createdAt": "2020-10-22T18:34:03.095Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/anderslyman\">@anderslyman</a> / <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> - thank you for waiting <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I checked in with the team - at this time if the application has already been submitted / is live on the marketplace, please shoot us an email if you need to update your OAuth permissions.</p>\n<p><a class=\"mention\" href=\"/u/anderslyman\">@anderslyman</a> in terms of the window you are seeing in that screenshot - right now when the permissions are changed it does require the users to reinstall the application. Essentially what happens in our testing is that the users will need to hit the re-install button from the apps page, however their data should not be deleted. We do this essentially because we need the admins on the account to reaccept the new permissions.</p>\n<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> in regards to the issue you were facing specifically - I followed up earlier on the email thread we have as we look into that issue.</p>"
+    },
+    {
+      "id": 31732,
+      "postNumber": 6,
+      "createdAt": "2020-10-22T19:39:42.255Z",
+      "author": "anderslyman (Anders Lyman)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a><br />\nWe’ll see what that flow looks like, and find a way to give our users a heads up.<br />\nWe don’t actually know who most of them are, any way to tell or would you just recommend firing off a message window inside the app to let them know?</p>"
+    },
+    {
+      "id": 32690,
+      "postNumber": 7,
+      "createdAt": "2020-11-03T18:42:12.047Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/anderslyman\">@anderslyman</a> - users should be notified of this when they try to access the application again.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 33068,
+      "postNumber": 8,
+      "createdAt": "2020-11-08T11:53:01.255Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a>, <a class=\"mention\" href=\"/u/anderslyman\">@anderslyman</a></p>\n<p>Let me try to explain where I have an issues with extending the scope of already installed apps.</p>\n<p>My app converts two dates into a timeline. In the new version I want to support times added to the dates as well. When working with dates I obviously need to take the TZ into account and therefore need access to the me:read scope.</p>\n<p>When I update the backend code (to read the TZ from the users profile) the existing users get an error during the API call because the token is not valid for the extended (me:read) scope. I managed to change the authorization flow so that when the owner of the board updates (or unsubscribe/subscribe) the recipe that scope is checked. If the scope of the (updated) app does not match the scope I have stored in my DB the token will be removed from my DB and the OAuth handshake will be initiated for the new scope.</p>\n<p>However I can’t seem to find a good method to intercept the event when a user (maybe even a different user from the one who subscribed the app to the board) triggers the event leading to the invalid scope error.</p>\n<p>Please advise the best possible solution for this.</p>"
+    },
+    {
+      "id": 33266,
+      "postNumber": 9,
+      "createdAt": "2020-11-10T20:23:09.238Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Bas!</p>\n<p>I understand your frustration here. To be honest, this is an issue that is affecting only a handful of developers who have a public app in the marketplace <em>and</em> want to change a scope.</p>\n<p>Potentially stupid question: why don’t you catch the invalid scope error and raise it to the user, for example through a notification? Or simply ignore the hour column when you’re converting the date to a timeline?</p>\n<p>I’m trying to understand better the specifics here so we can come up with a solution.</p>\n<p>By the way, in the future we want to add a versioning mechanism that will make it easier to test your integrations that are already live. I don’t have an exact ETA on this, but we’ve been discussing it internally and I’d like to say we’ll have something this quarter.</p>\n<p>CC <a class=\"mention\" href=\"/u/ben\">@Ben</a> <a class=\"mention\" href=\"/u/shay\">@Shay</a>  <a class=\"mention\" href=\"/u/amir\">@amir</a></p>"
+    },
+    {
+      "id": 33268,
+      "postNumber": 10,
+      "createdAt": "2020-11-10T20:57:03.277Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Dipro, hope all is safe and healthy at your side.</p>\n<p>TL;DR <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>It is not only a handful developers, it is affecting all my users (100+) too. There are no stupid questions <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> so I am glad to answer yours.</p>\n<p>Ignoring the time. That was what I originally did. But then I had a call from Australia for the issue that they are using time (let’s say 8.00 AM their time) and the values in the monday database (UTC) returned YESTERDAY 11 PM (UTC). So, when ignoring the time during the conversion you can end up with yesterday. I have solved it but for that I need the TZ of the user, hence a me:read scope added to the app.</p>\n<p>Catching the error and returning to the user is not really solving it because the actual user triggering the error is may not be the board owner who subscribed the recipe to the board.</p>\n<p>This is not the only issue I have with the tokens. I have seen users that delete the app from their account and add it again. Because the token was stored in my DB I ended up with unauthorized requests. I have solved that one by doing a light query in the authorization flow and deleted the token from the database if that query fails. I now use the same mechanism to check the scope (I also store the scope with the token) and compare it with the required scope which is set in the app’s environment. For those people who are interested, here it is:</p>\n<pre><code>//Check if we already have a token for this account / user and if it has correct scope\n    //If we have a token, do a test API call to check if it is valid\n  const myToken = await mySqlAccess.readToken(accountId, userId, envVars.appCode);\n  if (myToken) tokenValid = await mondayService.testToken(myToken);\n  if (tokenValid) {\n    const currentScope = await mySqlAccess.readScope(accountId, userId, envVars.appCode);\n    if (currentScope) {\n      const currentScopeArray = currentScope.split(\",\");\n      const requiredScopeArray = envVars.requiredScope.split(\",\");\n      scopeValid =\n        currentScopeArray.length == requiredScopeArray.length &amp;&amp;\n        currentScopeArray.every((v) =&gt; requiredScopeArray.indexOf(v) &gt;= 0)\n          ? true\n          : false;\n    } else {\n      //No current scope, new account\n      scopeValid = true;\n    }\n  }\n  if (scopeValid) return res.redirect(backToUrl);\n  await mySqlAccess.deleteToken(accountId, userId, envVars.appCode);\n  console.log(\"TOKEN: new token requested for account: \" + accountId + \" / user: \" + userId);\n</code></pre>\n<p>After this I start the OAuth handshake (invalid token).</p>\n<p>So, I covered almost everything except that the user who triggers the automation and generating the scope error might be another user than the board owner. I was looking for a method to (re)start the OAth flow anywhere from code (after receiving an “invalid scope” erro, but that is where I got stuck.</p>"
+    },
+    {
+      "id": 33455,
+      "postNumber": 11,
+      "createdAt": "2020-11-12T07:12:46.271Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>I was working on your cool tip for token checking and sending notifications, the issue here is that I need a token to send the notification so that is a dead end.</p>\n<p>A little off topic but I am wondering if there are reasons why existing tokens gets invalidated.  I do see message like these in my error log and it looks like that is because a token is not valid anymore. Can you elaborate on that?</p>\n<pre><code>App 1390700 output: Error: Should send 'token' as an option or call mondaySdk.setToken(TOKEN)\nApp 1390700 output:     at MondayServerSdk.api (/var/www/vhosts/excellent-team.nl/mondayapps.excellent-team.nl/monday-apps/node_modules/monday-sdk-js/src/server.js:22:23)</code></pre>"
+    },
+    {
+      "id": 33735,
+      "postNumber": 12,
+      "createdAt": "2020-11-15T11:07:14.396Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi all, <a class=\"mention\" href=\"/u/amir\">@amir</a></p>\n<p>Sorry to let you know the process for adding a scope to an existing app (in the marketplace) is not ready for a real production environment. I needed to upgrade my app and extended the OAuth scope. As I have paying customers who use the app in a production environment I planned this upgrade during the weekend (night).</p>\n<p>When I wanted to extend the scope the system refers met o monday support, so I did. The first answer was “thank you for your feature request”, the second answer was “we need our CX specialist to have a look, can take 2 days”. Needless to say that we need to have a process to upgrade the scope in parallel with upgrading the app (code).</p>\n<p>How will this be addressed?</p>"
+    },
+    {
+      "id": 33871,
+      "postNumber": 13,
+      "createdAt": "2020-11-17T06:31:20.432Z",
+      "author": "amir (Amir Blich)",
+      "cookedHtml": "<p>Hi Bas,</p>\n<p>Thanks for sharing your feedback! As <a class=\"mention\" href=\"/u/dipro\">@dipro</a> and I are in touch with you directly in the past couple of days to find a quick solution together with our dev team, I hope we can soon solve this issue.</p>\n<p>Indeed scope changes for published apps are currently handled by our team and cannot be changed directly by app developers.<br />\nSince security in a critical element in the app review process, material changes to published apps require a new review process. Changing a scope is regarded a material change and cannot be done automatically regardless of the actual scope requested.<br />\nWe recommend in such cases to reach out to us early to make sure we can support app changes efficiently.</p>\n<p>Even though your initial request was brought to our attention, the response you received when approaching our support could be clearer and more relevant - thanks again for the feedback.</p>\n<p>Best,<br />\nAmir.</p>"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "id": 60636,
+  "title": "Execute is not a function",
+  "slug": "execute-is-not-a-function",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2023-06-26T11:39:53.761Z",
+  "lastPostedAt": "2024-06-13T16:56:46.434Z",
+  "postsCount": 5,
+  "excerpt": "I’m trying to integrate with Express.js, and every time I encounter the following error: \nTypeError: mondayClient.execute is not a function \nat viewSecret (/home/ubuntu/quickstart-integrations/src/controllers/monday-cont&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 686,
+  "posts": [
+    {
+      "id": 132808,
+      "postNumber": 1,
+      "createdAt": "2023-06-26T11:39:53.869Z",
+      "author": "MiguelDiaz (Miguel Diaz)",
+      "cookedHtml": "<p>I’m trying to integrate with Express.js, and every time I encounter the following error:</p>\n<p>TypeError: mondayClient.execute is not a function<br />\nat viewSecret (/home/ubuntu/quickstart-integrations/src/controllers/monday-controller.js:51:36)<br />\nat Layer.handle [as handle_request] (/home/ubuntu/quickstart-integrations/node_modules/express/lib/router/layer.js:95:5)<br />\nat next (/home/ubuntu/quickstart-integrations/node_modules/express/lib/router/route.js:144:13)<br />\nat authenticationMiddleware (/home/ubuntu/quickstart-integrations/src/middlewares/authentication.js:14:5)<br />\nat Layer.handle [as handle_request] (/home/ubuntu/quickstart-integrations/node_modules/express/lib/router/layer.js:95:5)<br />\nat next (/home/ubuntu/quickstart-integrations/node_modules/express/lib/router/route.js:144:13)<br />\nat Route.dispatch (/home/ubuntu/quickstart-integrations/node_modules/express/lib/router/route.js:114:3)<br />\nat Layer.handle [as handle_request] (/home/ubuntu/quickstart-integrations/node_modules/express/lib/router/layer.js:95:5)<br />\nat /home/ubuntu/quickstart-integrations/node_modules/express/lib/router/index.js:284:15<br />\nat Function.process_params (/home/ubuntu/quickstart-integrations/node_modules/express/lib/router/index.js:346:12)</p>\n<p>I have the following code:<br />\nconst initMondayClient = require(“monday-sdk-js”);<br />\nconst mondayClient = initMondayClient();</p>\n<p>async function viewSecret(req, res) {<br />\nconst { authorization } = req.headers;<br />\nconsole.log(‘Entro en la ruta’)</p>\n<p>mondayClient.setToken(authorization);</p>\n<p>try {<br />\nconsole.log(‘entro en try de viewSecret’)<br />\nconst response = mondayClient .execute(“notice”, {<br />\nmessage: “AQUI QUIERO VER EL SECRETO”,<br />\ntype: “info”,<br />\ntimeout: 90000000,<br />\n});</p>\n<pre><code>return response;\n</code></pre>\n<p>} catch (err) {<br />\nconsole.error(err);<br />\nreturn res.status(500).send({ message: ‘internal server error’ });<br />\n}<br />\n}</p>\n<p>and I have installed “npm install monday-sdk-js”.</p>\n<p>Why is this happening to me?</p>"
+    },
+    {
+      "id": 132816,
+      "postNumber": 2,
+      "createdAt": "2023-06-26T13:19:26.482Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I’m no expert here, but it looks like you are mixing up server side and client side code.</p>\n<p>This is an example which works on the server:</p>\n<pre><code class=\"lang-auto\">monday.setToken('ac5eb492f8c...');\nmonday.api('query { users { name } }').then(res =&gt; {...})\n</code></pre>\n<p>On the other hand, I’m guessing that <code>monday.execute</code> is client side only as it updates the <a href=\"http://momday.com\" rel=\"noopener nofollow ugc\">momday.com</a> UI (rather than your app’s UI) with e.g. a message:</p>\n<pre><code class=\"lang-auto\">monday.execute(\"notice\", { \n   message: \"I'm a success message\",\n   type: \"success\", // or \"error\" (red), or \"info\" (blue)\n   timeout: 10000,\n});\n</code></pre>\n<p>gives:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/9/c94cb37b8429cbe97cb57aba9353dc6bc47727a7.png\" title=\"Screenshot 2023-06-26 at 17.16.22\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/9/c94cb37b8429cbe97cb57aba9353dc6bc47727a7_2_690x157.png\" alt=\"Screenshot 2023-06-26 at 17.16.22\" width=\"690\" height=\"157\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-06-26 at 17.16.22</span><span class=\"informations\">806×184 28.3 KB</span></div></a></div><p></p>\n<p>My guess is that <code>monday.execute</code> works on the client-side only by using <code>window.postMessage</code> or <code>BroadcastChannel</code> behind the scenes.</p>\n<ul>\n<li><a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Window: postMessage() method - Web APIs | MDN</a></li>\n<li><a href=\"https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">BroadcastChannel - Web APIs | MDN</a></li>\n</ul>\n<p>Make sure that you try the <code>monday.execute </code>  on the client-side.</p>"
+    },
+    {
+      "id": 132818,
+      "postNumber": 3,
+      "createdAt": "2023-06-26T13:27:56.973Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Actually, you should take a look at the <a href=\"https://github.com/mondaycom/monday-sdk-js/blob/master/src/monday-api-client/monday-api-client.js\" rel=\"noopener nofollow ugc\">source code</a> for <code>monday.execute</code>…</p>\n<p>This line:</p>\n<pre><code class=\"lang-auto\">async function execute(data, token, options = {}) {\n</code></pre>\n<p>…suggests that you can pass a token through from the server side.</p>"
+    },
+    {
+      "id": 133492,
+      "postNumber": 4,
+      "createdAt": "2023-07-02T10:57:05.787Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 188703,
+      "postNumber": 5,
+      "createdAt": "2024-06-13T16:29:47.157Z",
+      "author": "Binatica (Binatica)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a><br />\nSo it’s possible to use monday.execute from node server somehow?<br />\nThanks</p>"
+    },
+    {
+      "id": 188705,
+      "postNumber": 6,
+      "createdAt": "2024-06-13T16:56:46.434Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Oh, I don’t think so – I may have gotten my wires crossed, Its worth trying to understand the source anyway, as it might help you i other ways <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 188995,
+      "postNumber": 7,
+      "createdAt": "2024-06-16T08:38:07.779Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": 27756,
+  "title": "Push to next working day",
+  "slug": "push-to-next-working-day",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2021-11-22T18:16:14.465Z",
+  "lastPostedAt": "2022-10-12T13:48:15.431Z",
+  "postsCount": 7,
+  "excerpt": "i have a formula like this \nLEFT(FORMAT_DATE(ADD_DAYS(TODAY(), DIVIDE({Remaining time},8))),6) \nwhich is nothing if but , it will calculate the new delivery date from by adding , remaning number days to “TODAY”. \nnow if &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2905,
+  "posts": [
+    {
+      "id": 69503,
+      "postNumber": 1,
+      "createdAt": "2021-11-22T18:16:14.539Z",
+      "author": "karges (seetharaman)",
+      "cookedHtml": "<p>i have a formula like this</p>\n<p>LEFT(FORMAT_DATE(ADD_DAYS(TODAY(), DIVIDE({Remaining time},8))),6)<br />\nwhich is nothing if but , it will calculate the new delivery date from by adding , remaning number days to “TODAY”.<br />\nnow if  the result is SAT or SUN , i want it to be on monday.<br />\nand second question ,<br />\nif the result date falls under list of given dates(public holidays) it should move to the next working day.<br />\nabove second question is not mandatory or urgent</p>"
+    },
+    {
+      "id": 69512,
+      "postNumber": 2,
+      "createdAt": "2021-11-22T19:40:17.621Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/karges\">@karges</a></p>\n<p>For you first question… Here is one way:</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(ADD_DAYS(TODAY(), DIVIDE({Remaining Time}, 8 ) + SWITCH(FORMAT_DATE(ADD_DAYS(TODAY(), DIVIDE({Remaining Time}, 8)), \"E\"), \"6\", 2, \"7\", 1, 0)), \"MMM D\")\n</code></pre>\n<p>Jim - <a href=\"https://www.youtube.com/c/TheMondayMan?sub_confirmation=1\">Subscribe to The Monday Man</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/D7FeaBVxclU\">monday Formulas - Part 3: Dates/Times, Strings and Status</a></p>"
+    },
+    {
+      "id": 71310,
+      "postNumber": 3,
+      "createdAt": "2021-12-13T11:43:15.865Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/karges\">@karges</a></p>\n<p>… the REAL solution:</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(WORKDAY(TODAY(), DIVIDE({Remaining time}, 8), ARGS2ARRAY(\"2021/12/24\", \"2021/12/31\")), \"MMM DD\")\n</code></pre>\n<p>Of course, you can adjust the holidays however you want.</p>\n<p>Jim - <a href=\"https://www.youtube.com/c/TheMondayMan?sub_confirmation=1\">Subscribe to The Monday Man</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/o0OftTeAV54\">monday Formulas: the SECRET Functions</a></p>"
+    },
+    {
+      "id": 100160,
+      "postNumber": 4,
+      "createdAt": "2022-10-11T11:31:00.521Z",
+      "author": "eninyo (Eliah Ninyo)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/jcorrell/48/10443_2.png\" class=\"avatar\" /> Jim - The Monday Man:</div>\n<blockquote>\n<p><code>ARGS2ARRAY(\"2021/12/24\", \"2021/12/31\")</code></p>\n</blockquote>\n</aside>\n<p>Hi there,<br />\ni tried to use this:<br />\n<code>WORKDAYS({End Data},{Start Date},{Holidays})</code><br />\nwhere “holidays” is a list of dates. I created another board where each item is the holiday name with a column of day off. add this board to my task board and add all the holidays to it on a given task.<br />\nbut when i use the above formula i get the number of days and not working days. (start day is an holiday so i expect that the result to the end date will be smaller).<br />\ni also tried to use ARGS2ARRAY({Holidays}), but got the same results.</p>\n<p>where have i got wrong?</p>\n<p>after that, the problem is to calculate the end date since it depends on the working days. i have a start date and duration. how can i get the end date using that and working days?</p>"
+    },
+    {
+      "id": 100182,
+      "postNumber": 5,
+      "createdAt": "2022-10-11T15:32:34.261Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/eninyo\">@eninyo</a></p>\n<p>It’s not clear to me what you are describing with the holidays board.</p>\n<p>However, the main issue is the WORKDAYS() does not support the holidays parameter. Second, assuming that {Holidays} is a single string of dates delimited by “,” (commas)…<br />\nTry: <code>NETWORKDAYS({Start Date}, {End Data}, SPLIT({Holidays}, \",\"))</code></p>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a><br />\n<strong><a href=\"https://monday.com/marketplace/10000102\"><img src=\"https://emoji.discourse-cdn.com/apple/magic_wand.png?v=12\" title=\":magic_wand:\" class=\"emoji\" alt=\":magic_wand:\" width=\"20\" height=\"20\" /> Column Magic <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" /></a></strong>- the magical columns toolbox app</p>"
+    },
+    {
+      "id": 100341,
+      "postNumber": 6,
+      "createdAt": "2022-10-12T13:26:10.247Z",
+      "author": "eninyo (Eliah Ninyo)",
+      "cookedHtml": "<p>Thanks for the answer. unfortunately, this doesn’t work also.<br />\neven when i tried to do this:<br />\nNETWORKDAYS({Start Date},{End Data},ARGS2ARRAY(“2022/10/10”, “2022/12/1”))<br />\ni still get 3 (expected is 2 since Oct 10 is in the holiday parameter)<br />\nwhile start date is Oct 10 2022 and end data is Oct 12 2022.</p>"
+    },
+    {
+      "id": 100355,
+      "postNumber": 7,
+      "createdAt": "2022-10-12T13:48:15.431Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/eninyo\">@eninyo</a></p>\n<p>My only advice is to triple check everything. I just tested the exact formula and dates you gave, and it worked for me.</p>\n<hr />\n<p>Jim - <a href=\"https://themondayman.com/\">The Monday Man</a><br />\n<strong><a href=\"https://monday.com/marketplace/10000102\"><img src=\"https://emoji.discourse-cdn.com/apple/magic_wand.png?v=12\" title=\":magic_wand:\" class=\"emoji\" alt=\":magic_wand:\" width=\"20\" height=\"20\" /> Column Magic <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" /></a></strong>- the magical columns toolbox app</p>"
+    }
+  ]
+}

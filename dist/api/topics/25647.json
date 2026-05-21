@@ -1,0 +1,103 @@
+{
+  "id": 25647,
+  "title": "shortLivedToken is expired during a long process",
+  "slug": "shortlivedtoken-is-expired-during-a-long-process",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2021-10-04T15:45:01.408Z",
+  "lastPostedAt": "2021-10-05T12:03:34.175Z",
+  "postsCount": 11,
+  "excerpt": "hi there. \nfirst of all i want to say im not a 100% sure that my title is really whats happening, but im fairly convinced. \nim building an integration app in a node.js backend, once a month i need to make changes in the &hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 2175,
+  "posts": [
+    {
+      "id": 65238,
+      "postNumber": 1,
+      "createdAt": "2021-10-04T15:45:01.488Z",
+      "author": "stavYaarBar (Stav Yaar Bar)",
+      "cookedHtml": "<p>hi there.<br />\nfirst of all i want to say im not a 100% sure that my title is really whats happening, but im fairly convinced.<br />\nim building an integration app in a node.js backend, once a month i need to make changes in the account, make customize pdfs and excels and upload everything to a cloud etc…<br />\nmy point is its a long process and my token seems to expired.<br />\nthe reason im not sure is because something else is happening that i can’t really explain, i get the first request from monday’ after the trigger and everything is working fine. but midway during the process, after no response is being given back to monday’s servers, i get another request that triggers everything again, with a new shortLivedToken. Up until now i’ve dealt with that by using global variables and invoking res.end() and end the process if i was already in the middle of one, but now i need to make another monday api request at the end of the process and im getting “{ errors: [ ‘Not Authenticated’ ] }” back.</p>\n<p>i couldn’t find anything online about getting repeating request from monday’s integration, everything is just like a normal trigger, only there was no trigger. could it have something to do with it?  is the error because my token was expired or because it got reseted and got a new value during the second uncalled request from monday?</p>\n<p>ive tested it with both tokens and got the same error.<br />\nand of course when i was testing it with smaller boards (were everything was faster with no “phantom requests”) everything worked fine.</p>\n<p>thanks in advanced!</p>"
+    },
+    {
+      "id": 65276,
+      "postNumber": 2,
+      "createdAt": "2021-10-05T03:42:57.951Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/stavyaarbar\">@stavYaarBar</a><br />\nWelcome back <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />. Can you explain a little more what you are doing? Which side (monday or your app) is doing the scheduling? Ig it is monday your app will be triggered and in each call from monday there is a shortLivedToken. As the name suggest, this is short lived - I believe it is valid for 30 seconds and only within the agreed scope of the app.<br />\nIf you want a token that does not expire you have to get one through the OAuth flow and store that token safely in a database.</p>\n<p>Does that make sense?</p>"
+    },
+    {
+      "id": 65278,
+      "postNumber": 3,
+      "createdAt": "2021-10-05T04:48:06.898Z",
+      "author": "stavYaarBar (Stav Yaar Bar)",
+      "cookedHtml": "<p>hello <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> and thank you for the  reply and the nice welcome <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>what you said make sense, but im still missing something.</p>\n<p>i think i have a workaround solution to my problem, but still have some questions that maybe you can help me with them,</p>\n<p>monday is doing the scheduling, im using the “Every time period” trigger on monday in my recipe to trigger my backend once a month. theres no UI in the process, is there a way to get the token in another when fully automated like that?  i cant do a handshake because theres no active action from the user at any point.</p>\n<p>i would like to know for future use,  if im doing a monday integration and the shortLivedtToken is expired, is there any way to renew it? some kind of refresh token? or a different way to get a long use token without a handshake that require the user to actively approve my request everytime?</p>\n<p>also, i there a chance that i get a new req from monday integration because my token was expired in the first place? it feels like it might be the case, my token was my process is still going, but the token was expired and monday got no response back, so they send a new req automatically?</p>\n<p>again, thank you very much! i really appreciate this</p>"
+    },
+    {
+      "id": 65291,
+      "postNumber": 4,
+      "createdAt": "2021-10-05T05:58:32.465Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/stavyaarbar\">@stavYaarBar</a></p>\n<p>Let me try to answer to the best of my knowledge.</p>\n<p>Every request you get from monday (e.g. to your action endpoint) holds that shortLivedToken. There is no way to renew or extend the lifetime of that token. However, if you respond with a non 200 code (e.g. return res.status(429).send({})<img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /> monday will retry with a fresh token. That is probably what you see. If you are not able to do all the work in those 30 seconds <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /> I think you should consider getting a permanent token through OAuth.</p>\n<p>To do this, you need to configure the callback endpoint in your app.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e2859f9d22a5a45f1a55ce77bfe237428e61c09d.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e2859f9d22a5a45f1a55ce77bfe237428e61c09d_2_655x500.png\" alt=\"image\" width=\"655\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1003×765 60.3 KB</span>\n</div></a></div><p></p>\n<p>When the user adds the app to the account the OAuth handshake will start by calling the configured endpoint. A good reference is <a href=\"https://apps.developer.monday.com/docs/oauth\">https://apps.developer.monday.com/docs/oauth</a></p>"
+    },
+    {
+      "id": 65305,
+      "postNumber": 5,
+      "createdAt": "2021-10-05T06:47:18.565Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey hey <a class=\"mention\" href=\"/u/stavyaarbar\">@stavYaarBar</a> and <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> :wae</p>\n<p>Great discussion here! Thanks so much for shedding more light on this <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>.</p>\n<p>I do want to clarify a bit and confirm that the shortLivedToken is valid for 1 minute! Just wanted to be as precise as possible here, as it could be helpful to other developers. Otherwise, I also confirm that the shortLivedToken is generated when the trigger runs. In your case, when the scheduled trigger runs once a month, you will get a token that you could use to make API calls for 1 minute.</p>\n<p>As mentioned in our [Choosing an Authentication Method(<a href=\"https://apps.developer.monday.com/docs/choosing-auth\" rel=\"noopener nofollow ugc\">https://apps.developer.monday.com/docs/choosing-auth</a>) article, it does sound like your app would be much better suited to use an OAuth token instead.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/13530ae12458280131db3aad5ffdc75ccfeb5ede.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/13530ae12458280131db3aad5ffdc75ccfeb5ede_2_690x162.png\" alt=\"image\" width=\"690\" height=\"162\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1418×334 35.8 KB</span>\n</div></a></div><p></p>\n<p>What do you think? Let us know <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65306,
+      "postNumber": 6,
+      "createdAt": "2021-10-05T06:47:38.396Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 65319,
+      "postNumber": 7,
+      "createdAt": "2021-10-05T09:12:40.824Z",
+      "author": "stavYaarBar (Stav Yaar Bar)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>  and thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> !</p>\n<p>i understand now theres no work around the short live token in this case.<br />\ni took your advices and im using an OAuth token instead.<br />\nthe app im building is just for one account so my one time workaround was to build a new app that has only one button that takes to the monday authentication window, and an end point to give to monday for the callback function. ive deploy the app, than send it to my client, once he entered and approved everything i got the token in my callback function and saved it to my data base.</p>\n<p>it feels a little messy and makes me thing that im still missing something.  for example, what if my app is general and not only for one client that i can send him a link and have him do the handshake manually?</p>\n<p>there’s also a possibility that im asking too much <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> i also want to add that when printing the time difference using “jwtRes.exp” that i got<br />\nwith the shortLivedToken it shows 300s === 5 min.  if the expiration is after 1 minute than what’s that time stamp means?</p>\n<p>and again. thanks for the help <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 65320,
+      "postNumber": 8,
+      "createdAt": "2021-10-05T09:27:59.244Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/stavyaarbar\">@stavYaarBar</a></p>\n<p>I would not use an OAuth token from one app in another app as the scope of the app might be different. I would build the OAuth flow in the original app and store that token in a database (securely <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />). When your app is used by multiple clients you should store the token in a database with the accountId.</p>"
+    },
+    {
+      "id": 65322,
+      "postNumber": 9,
+      "createdAt": "2021-10-05T10:21:22.254Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/stavyaarbar\">@stavYaarBar</a></p>\n<p>I agree with what <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> is saying here! Instead of using 2 apps to really do the work of 1 app, why not implement the OAuth flow inside your original app instead? The user will be directed to the OAuth flow every time they try to create your app’s recipe. Your app’s Auth URL could also be used in order to check if the user creating the recipe has already gone through the OAuth process.</p>\n<p>In that case, you should allow the user to pick an existing connection, instead of asking them to go through the flow again and again.</p>\n<p>I’ve just tested the shortLivedToken generated by an app, and it did expire within a minute. Not quite sure what might be causing the discrepancy here.</p>\n<p>I hope this helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65330,
+      "postNumber": 10,
+      "createdAt": "2021-10-05T11:23:02.497Z",
+      "author": "stavYaarBar (Stav Yaar Bar)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> ,  <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a><br />\nhere’s a funny thing, i had no idea about the authorization checkbox inside the integration…  ive made dozens of integration by now and somehow was able to miss it…  everything is clicking now…<br />\nalso now i see why creating a different app sounds so bizzare <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /><br />\ni was missing the fact you can redirect the user when they install my apps recipe…</p>\n<p>so to get this straight,  i can redirect the user to my backend when they create a recipe, then i can redirect them again to my app OAuth authorization url, then they being redirected back to my  callback url and then i can finally get the permanent token and redirect them the to backToUrl i got from the first request? or something like that…  of course with more logic to see if they already exist or not.</p>\n<p>anyway i think i finally got it,<br />\ni learned a lot from both you so THANK you so much…  everything is clear now</p>"
+    },
+    {
+      "id": 65338,
+      "postNumber": 11,
+      "createdAt": "2021-10-05T12:03:34.175Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/stavyaarbar\">@stavYaarBar</a></p>\n<p>OH, amazing! I’m glad we were able to clarify and I’m happy to hear you’ve found yet another useful feature in the framework <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>In terms of the flow, I suppose you could put it this way:</p>\n<ul>\n<li>The Admin of the account installs the app first, and from there, users are able to add recipes to their boards, or widgets to their items/boards/dashboards;</li>\n<li>Then, when a user tries to create a recipe in your app, they will be sent to your app’s Auth URL.</li>\n<li>From there, you could ask the user to authorize the app and send them to your app’s OAuth URL, or, if your app’s database already has the token, they can use an existing connection;</li>\n<li>At that point, if the user approves your request, your app will redirect the user to one of the <code>redirect_uri</code>s specified.</li>\n<li>Finally, your app will receive a temporary authorization code, which you can exchange for the long-term API token.</li>\n</ul>\n<p>Either way, it seems like you are well on your way here!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65888,
+      "postNumber": 12,
+      "createdAt": "2021-10-12T12:04:00.614Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "id": 27431,
+  "title": "API Boards Excel",
+  "slug": "api-boards-excel",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    94,
+    351
+  ],
+  "createdAt": "2021-11-15T15:22:48.044Z",
+  "lastPostedAt": "2021-11-16T12:30:14.622Z",
+  "postsCount": 11,
+  "excerpt": "Hello, \nIm pulling monday.com board to excel with this but I am struggling to have the items grouped by a group name. \nCan anyone help? \n{“query”:“{ boards (ids: 00000000) { items { name column_values (ids: [&quot;status&quot;, &quot;s&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1967,
+  "posts": [
+    {
+      "id": 68830,
+      "postNumber": 1,
+      "createdAt": "2021-11-15T15:22:48.130Z",
+      "author": "dominika (dominika)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Im pulling <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> board to excel with this but I am struggling to have the items grouped by a group name.</p>\n<p>Can anyone help?</p>\n<p>{“query”:“{ boards (ids: 00000000) { items { name column_values (ids: [\"status\", \"status_1\", \"date\", \"long_text\"] ) { text }  } }}”}</p>"
+    },
+    {
+      "id": 68896,
+      "postNumber": 2,
+      "createdAt": "2021-11-16T07:33:56.360Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dominika\">@dominika</a>!</p>\n<p>Welcome to the community! I hope you like it here!</p>\n<p>Just to be sure we are on the same page here, what you are saying is that you want to retrieve the data of a board using a query and then use that data to populate an Excel spreadsheet?</p>\n<p>And when you say you want to have the “items grouped by a group name” do you mean you want to retrieve the items in batches where in each batch you retrieve all the items inside one specific group?</p>\n<p>If you answer this, I will have a better understanding of the context so I can help you find the best solution possible.</p>\n<p>Looking forward to hearing from you again!</p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 68899,
+      "postNumber": 3,
+      "createdAt": "2021-11-16T07:51:58.605Z",
+      "author": "dominika (dominika)",
+      "cookedHtml": "<p>Thank you Matias!</p>\n<p>Yes, I want them by grouped by group name or adjust the existing code to display one group only - both will work <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 68903,
+      "postNumber": 4,
+      "createdAt": "2021-11-16T08:11:44.360Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dominika\">@dominika</a> !</p>\n<p>For sure! Happy to help  <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=10\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" /></p>\n<p>You can retrieve the items in a specific group from a board using a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: YOUR_BOARD_ID_HERE) {\n    groups(ids: \"topics\") {\n      items {\n        name\n        column_values(ids: [\"status\", \"text\"]) {\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>You can check your groups’ IDs using a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: YOUR_BOARD_ID_HERE) {\n    groups {\n      id\n    }\n  }\n}\n</code></pre>\n<p>Please let me know if this works for you!</p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 68907,
+      "postNumber": 5,
+      "createdAt": "2021-11-16T08:41:17.427Z",
+      "author": "dominika (dominika)",
+      "cookedHtml": "<p>Thank you so much but it didn’t work, I got body error. I am using API Connector and I used this:</p>\n<p>{“query”:\"<br />\n{<br />\nboards(ids: MYBOARDID) {<br />\ngroups(ids: “Archive”) {<br />\nitems {<br />\nname<br />\ncolumn_values(ids: [“status”, “text”]) {<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n“<br />\n}</p>"
+    },
+    {
+      "id": 68927,
+      "postNumber": 6,
+      "createdAt": "2021-11-16T11:11:50.551Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/dominika\">@dominika</a>!</p>\n<p>I just installed API Connect to try this out, and I found out that this configuration works:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/2cf584db2396f557e30b6daffc7dc476aa7bbf6a.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/2cf584db2396f557e30b6daffc7dc476aa7bbf6a_2_223x500.png\" alt=\"image\" width=\"223\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">294×658 32.8 KB</span>\n</div></a></div><p></p>\n<p>My request body is:<br />\n<code>{\"query\":\"{boards(ids: MY_BOARD_ID_HERE) {groups {id}}}\"}</code></p>\n<p>And my spreadsheet is populated with the data<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/2/268f9cd59e0ef93bc08cf69aa51408127c21a1bf.png\" alt=\"image\" width=\"449\" height=\"120\" /></p>\n<p>Please note that the method should be POST. In headers you should put “Authorization” in the key and your API Key in the value.</p>\n<p>Please let me know if this works for you!</p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 68928,
+      "postNumber": 7,
+      "createdAt": "2021-11-16T11:35:22.117Z",
+      "author": "dominika (dominika)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>Thanks for your patience. The above code only gives me account id and the same stuff you have in your screenshot but I want to pull all tasks from this specific group into the spreadsheet…</p>\n<p>If you see the previous code had items, statuses etc…</p>\n<p>Thank you so much for looking into this</p>"
+    },
+    {
+      "id": 68930,
+      "postNumber": 8,
+      "createdAt": "2021-11-16T11:52:27.509Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again!</p>\n<p>No problem! I am here to help.</p>\n<p>The code that I sent was just to retrieve your groups’ IDs.</p>\n<p>You can replace that request body with this one and it should work:</p>\n<pre><code class=\"lang-auto\">{\"query\":\"{boards(ids: YOUR_BOARD_ID_HERE) {groups(ids: \\\"YOUR_GROUP_ID_HERE\\\") {items {name column_values(ids: [\\\"YOUR_COLUMN_ID_HERE\\\", \\\"YOUR_OTHER_COLUMN_ID_HERE\\\"]) {text}}}}}\"}\n</code></pre>\n<p>Of course you will have to change to your board ID, change the group ID to yours, and the columns’ IDs to yours as well.</p>\n<p>Please note that we use the backlash symbol before each double quote when using strings, to escape the outer quotes.</p>\n<p>Let me know how that works!</p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 68935,
+      "postNumber": 9,
+      "createdAt": "2021-11-16T12:12:30.189Z",
+      "author": "dominika (dominika)",
+      "cookedHtml": "<p>Hi again <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Unfortunately, this returns 1) <strong>mondaycom:</strong> Request failed: Invalid POST body data</p>"
+    },
+    {
+      "id": 68939,
+      "postNumber": 10,
+      "createdAt": "2021-11-16T12:30:14.622Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again!</p>\n<p>That is quite odd. This works for me. I will contact you directly to arrange a Zoom call if that is OK.</p>\n<p>Looking forward to talking to you!</p>\n<p>-Matias</p>"
+    },
+    {
+      "id": 69581,
+      "postNumber": 11,
+      "createdAt": "2021-11-23T12:30:58.388Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

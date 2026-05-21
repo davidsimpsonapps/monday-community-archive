@@ -1,0 +1,152 @@
+{
+  "id": 84419,
+  "title": "Unexpected changes to Monday API?",
+  "slug": "unexpected-changes-to-monday-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-18T10:01:53.608Z",
+  "lastPostedAt": "2024-05-20T06:24:24.489Z",
+  "postsCount": 15,
+  "excerpt": "Hello. \nUntil recent one of our application mechanisms relied on the complexity exception message looking like this: \n\n{\n  error_code: &#39;ComplexityException&#39;,\n  status_code: 429,\n  error_message: &#39;Complexity budget exhaus&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 456,
+  "posts": [
+    {
+      "id": 179520,
+      "postNumber": 1,
+      "createdAt": "2024-04-18T10:01:53.682Z",
+      "author": "RadekWroblewski (Radosław Wróblewski)",
+      "cookedHtml": "<p>Hello.</p>\n<p>Until recent one of our application mechanisms relied on the complexity exception message looking like this:</p>\n<pre><code class=\"lang-auto\">\n{\n  error_code: 'ComplexityException',\n  status_code: 429,\n  error_message: 'Complexity budget exhausted, query cost 30001 budget remaining 1772 out of 1000000 reset in 15 seconds',\n  error_data: {},\n  errors: [\n    'Complexity budget exhausted, query cost 30001 budget remaining 1772 out of 1000000 reset in 15 seconds'\n  ],\n  account_id: 12787730\n}\n</code></pre>\n<p>But now the error looks like this:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    \"Complexity budget exhausted, query cost 517020 budget remaining 176620 out of 10000000 reset in 42 seconds\"\n  ],\n  \"error_code\": \"complexityBudgetExhausted\",\n  \"status_code\": 429,\n  \"account_id\": 12787730\n}\n</code></pre>\n<p>As you can see the error_code is different and the redundant error_message is gone.</p>\n<p>Was that change announced anywhere? We haven’t made any API version switch, luckily we’ve noticed the changed error response in the logs.</p>"
+    },
+    {
+      "id": 179530,
+      "postNumber": 2,
+      "createdAt": "2024-04-18T10:30:01.297Z",
+      "author": "Bartcowski (Bartosz Ciućkowski)",
+      "cookedHtml": "<p>Hi, the same thing happened with board column IDs. Subitem column in any board used to have an ID of “subitems” but now when we add the first subitem to a board the column is created with an ID of “subitems__1”. That change broke some of our app’s functionalities and similarly we don’t recall seeing any announcement - did we miss something?</p>"
+    },
+    {
+      "id": 179959,
+      "postNumber": 3,
+      "createdAt": "2024-04-21T06:45:29.091Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I messaged Rachel about it.</p>"
+    },
+    {
+      "id": 180364,
+      "postNumber": 4,
+      "createdAt": "2024-04-23T13:29:30.494Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/radekwroblewski\">@RadekWroblewski</a>,</p>\n<p>Which API version are you using?</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 180387,
+      "postNumber": 5,
+      "createdAt": "2024-04-23T14:12:02.957Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>A trick here is:</p>\n<pre><code class=\"lang-auto\">query ($boardIds: [ID!]) {\n  boards(ids: $boardIds) {\n\t\tcolumns(types: subtasks){\n      id\n    }\n  }\n}\n</code></pre>\n<p>You can also do:</p>\n<pre><code class=\"lang-auto\">query ($itemIds: [ID!], $columnIds: [String!]) {\n  items(ids: $itemIds) {\n    subitems_value: column_values(types: subtasks) {\n      id\n      value\n    }\n    column_values(ids: $columnIds) {\n      id\n      value\n    }\n  }\n}\n</code></pre>\n<p>In this case you can get to the subitems value at <code>items[0].subitems_value[0].value</code></p>"
+    },
+    {
+      "id": 180636,
+      "postNumber": 6,
+      "createdAt": "2024-04-24T09:28:45.118Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 180684,
+      "postNumber": 7,
+      "createdAt": "2024-04-24T11:01:07.052Z",
+      "author": "RadekWroblewski (Radosław Wróblewski)",
+      "cookedHtml": "<p>Hi Rachel,<br />\nWe’re using 2024-01</p>"
+    },
+    {
+      "id": 180728,
+      "postNumber": 8,
+      "createdAt": "2024-04-24T13:17:25.351Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/radekwroblewski\">@RadekWroblewski</a>,</p>\n<p>Just heard back from our API team, and we will be deploying a fix on Tuesday to revert this change. So sorry for this!</p>\n<p>I will update the release notes when it is updated. It should only impact the complexity error, but please let me know if you see it for any others.</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 181345,
+      "postNumber": 9,
+      "createdAt": "2024-04-29T12:40:32.166Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi again <a class=\"mention\" href=\"/u/radekwroblewski\">@RadekWroblewski</a>,</p>\n<p>Just an update - the team is now saying it will be Wednesday morning. So sorry for the delay, but just wanted to keep you updated!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 181716,
+      "postNumber": 10,
+      "createdAt": "2024-05-01T12:03:06.491Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>The fix was deployed! Let me know if you’re still having issues.</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 181923,
+      "postNumber": 11,
+      "createdAt": "2024-05-02T14:58:23.702Z",
+      "author": "Nix0id (Sergey)",
+      "cookedHtml": "<p>Guys, why are you making changes to the API for all versions?<br />\nWe adapted our code for this error in the “complexityBudgetExhausted” format, we are using api version ‘2024-01’ and suddenly the api starts working differently?</p>\n<p>Currently our application on production does not work correctly due to this change.</p>"
+    },
+    {
+      "id": 181926,
+      "postNumber": 12,
+      "createdAt": "2024-05-02T15:14:39.520Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Checking in <a href=\"https://monday.slack.com/archives/C06A3UPLNVB/p1714673648896219\">Slack</a></p>"
+    },
+    {
+      "id": 182075,
+      "postNumber": 13,
+      "createdAt": "2024-05-03T12:54:12.136Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/nix0id\">@Nix0id</a> – really apologize for this change, sending <code>complexityBudgetExhausted</code> was a bug on our side that we then fixed. It took a few days because we deployed less during the holidays.</p>\n<p>Again, I’m really sorry to hear that you updated your app to account for this bug, only for it to break again.</p>\n<p><a href=\"https://community.monday.com/t/unexpected-changes-to-monday-api/84419/8\">Even though we posted in this topic</a>, in the future, we’ll use the announcements section to notify the whole community instead.</p>"
+    },
+    {
+      "id": 182930,
+      "postNumber": 14,
+      "createdAt": "2024-05-09T01:06:36.120Z",
+      "author": "WhyGraphQL (Dan)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’ve read about the change and rollback mentioned here. I’d like to ask whether the rollback has been applied to all API users, as even after moving up to API version 2024-07 I am seeing the same error message format as pre-rollout</p>\n<pre><code class=\"lang-auto\">\"errors\":[\"Complexity budget exhausted, query cost 30001 budget remaining 9667 out of 10000000 reset in 58 seconds\"],\n\"error_code\":\"ComplexityException\",\n\"status_code\":429,\n\"account_id\":5493834}\n</code></pre>\n<p>This error was seen on May 8 US time. Function operates in an Australian cloud service.</p>\n<p>We use the error_message field in the error response to automate a backoff-wait process and a reversion to the initial state (error_message field) would be good for us. While mentioning this, having a list of errors where the list is of variable length complicates the process, adding uncertainty.</p>\n<p>Please advise on the future state of the error message so we can adapt to the API behaviour.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 183409,
+      "postNumber": 16,
+      "createdAt": "2024-05-12T04:13:56.641Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Asking Rachel about it</p>"
+    },
+    {
+      "id": 183588,
+      "postNumber": 17,
+      "createdAt": "2024-05-13T13:10:32.375Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/whygraphql\">@WhyGraphQL</a>,</p>\n<p>Thanks for bringing this to our attention. I checked with the API team and the error should be fully reverted to its original format tomorrow.</p>\n<p><strong>Example taken from original post</strong></p>\n<pre><code class=\"lang-auto\">{\n  error_code: 'ComplexityException',\n  status_code: 429,\n  error_message: 'Complexity budget exhausted, query cost 30001 budget remaining 1772 out of 1000000 reset in 15 seconds',\n  error_data: {},\n  errors: [\n    'Complexity budget exhausted, query cost 30001 budget remaining 1772 out of 1000000 reset in 15 seconds'\n  ],\n  account_id: 12787730\n}\n</code></pre>\n<p>I apologize for any inconveniences/issues this has caused, but rest assured, it will be back to normal shortly!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 184337,
+      "postNumber": 18,
+      "createdAt": "2024-05-16T13:07:07.730Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/whygraphql\">@WhyGraphQL</a>,</p>\n<p>Just wanted to check in! Still having any issues?</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 184596,
+      "postNumber": 19,
+      "createdAt": "2024-05-18T09:27:06.958Z",
+      "author": "WhyGraphQL (Dan)",
+      "cookedHtml": "<p>Hi Rachel,</p>\n<p>Have checked and the issue has cleared. Thanks to you and the team.</p>"
+    },
+    {
+      "id": 184712,
+      "postNumber": 20,
+      "createdAt": "2024-05-20T06:24:24.489Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you for letting us know <a class=\"mention\" href=\"/u/whygraphql\">@WhyGraphQL</a> !</p>"
+    }
+  ]
+}

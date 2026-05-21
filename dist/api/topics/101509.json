@@ -1,0 +1,70 @@
+{
+  "id": 101509,
+  "title": "Unauthorised field or type error when calling create_notification mutation",
+  "slug": "unauthorised-field-or-type-error-when-calling-create-notification-mutation",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    11,
+    94,
+    351
+  ],
+  "createdAt": "2024-10-26T03:10:44.546Z",
+  "lastPostedAt": "2024-10-26T09:29:41.690Z",
+  "postsCount": 6,
+  "excerpt": "When I try to execute this mutation in my code, I get the following error: \nMutation: \n    const query = `mutation create_notification($userId: ID!, $targetId: ID!, $text: String!, $targetType: NotificationTargetType!) {&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 27,
+  "posts": [
+    {
+      "id": 207233,
+      "postNumber": 1,
+      "createdAt": "2024-10-26T03:10:44.641Z",
+      "author": "hellotimi (David Kalu (Formula Pro - Use formula column results in automations!))",
+      "cookedHtml": "<p>When I try to execute this mutation in my code, I get the following error:</p>\n<p>Mutation:</p>\n<pre><code class=\"lang-auto\">    const query = `mutation create_notification($userId: ID!, $targetId: ID!, $text: String!, $targetType: NotificationTargetType!) {\n      create_notification(user_id: $userId, target_id: $targetId, text: $text, target_type: $targetType) {\n        text\n      }\n    }`;\n\n      targetType = \"Post\",\n      userId = 12345678,\n      targetId = 2456768,\n      text = \"&lt;b&gt;test notification&lt;/b&gt;\"\n\n\n    const variables = { userId, targetId, text, targetType };\n\n    const response = await this.mondayClient.execute(query, variables);\n</code></pre>\n<p>Error</p>\n<pre><code class=\"lang-auto\">  {\n   \"text\": {\n       \"errors\": [\n             {\n                     \"message\": \"Unauthorized field or type\",\n                     \"path\": [\n                               \"create_notification\"\n                             ],\n                     \"extensions\": {\n                               \"code\": \"UNAUTHORIZED_FIELD_OR_TYPE\"\n                             }\n                   }\n           ],\n       \"account_id\": 12345678\n     }\n }\n</code></pre>\n<p>cc: <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>"
+    },
+    {
+      "id": 207260,
+      "postNumber": 2,
+      "createdAt": "2024-10-26T08:14:21.099Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>The targetType is not of type string, it is of type NotificationTargetType! which is an enum type (Project of Post)</p>"
+    },
+    {
+      "id": 207261,
+      "postNumber": 3,
+      "createdAt": "2024-10-26T08:15:58.101Z",
+      "author": "hellotimi (David Kalu (Formula Pro - Use formula column results in automations!))",
+      "cookedHtml": "<p>Yeah but that’s what I specified it as. Can you please provide an example of the correct way to pass the target type.</p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 207265,
+      "postNumber": 4,
+      "createdAt": "2024-10-26T08:37:37.186Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>You are specifying a string “double quotes”, try the <code>back ticks</code> instead.</p>"
+    },
+    {
+      "id": 207269,
+      "postNumber": 5,
+      "createdAt": "2024-10-26T09:12:50.275Z",
+      "author": "hellotimi (David Kalu (Formula Pro - Use formula column results in automations!))",
+      "cookedHtml": "<p>Now I get this error when I use backticks:</p>\n<pre><code class=\"lang-auto\">{\n  text: {\n    errors: [\n      {\n        message:\n          \"parsing error: syntax error: expected R_PAREN, got targetType\",\n        locations: [\n          {\n            line: 1,\n            column: 76,\n          },\n        ],\n        extensions: {\n          code: \"PARSING_ERROR\",\n        },\n      },\n      {\n        message: \"parsing error: syntax error: expected a Selection Set\",\n        locations: [\n          {\n            line: 1,\n            column: 76,\n          },\n        ],\n        extensions: {\n          code: \"PARSING_ERROR\",\n        },\n      },\n      {\n        message:\n          \"parsing error: syntax error: expected a StringValue, Name or OperationDefinition\",\n        locations: [\n          {\n            line: 1,\n            column: 86,\n          },\n        ],\n        extensions: {\n          code: \"PARSING_ERROR\",\n        },\n      },\n      {\n        message: \"parsing error: syntax error: expected definition\",\n        locations: [\n          {\n            line: 1,\n            column: 88,\n          },\n        ],\n        extensions: {\n          code: \"PARSING_ERROR\",\n        },\n      },\n      {\n        message:\n          \"parsing error: syntax error: expected a StringValue, Name or OperationDefinition\",\n        locations: [\n          {\n            line: 1,\n            column: 110,\n          },\n        ],\n        extensions: {\n          code: \"PARSING_ERROR\",\n        },\n      },\n      {\n        message:\n          \"parsing error: syntax error: expected a StringValue, Name or OperationDefinition\",\n        locations: [\n          {\n            line: 1,\n            column: 111,\n          },\n        ],\n        extensions: {\n          code: \"PARSING_ERROR\",\n        },\n      },\n    ],\n    account_id: 12345678,\n  },\n};\n</code></pre>"
+    },
+    {
+      "id": 207272,
+      "postNumber": 6,
+      "createdAt": "2024-10-26T09:29:41.690Z",
+      "author": "hellotimi (David Kalu (Formula Pro - Use formula column results in automations!))",
+      "cookedHtml": "<p>I was able to figure out the issue. I didn’t have the <code>notifications:write</code> scope.</p>\n<p>Thanks for your help <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>"
+    },
+    {
+      "id": 207873,
+      "postNumber": 7,
+      "createdAt": "2024-10-30T12:56:16.817Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

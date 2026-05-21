@@ -1,0 +1,49 @@
+{
+  "id": 25810,
+  "title": "Importing Multiple Boards to Databricks",
+  "slug": "importing-multiple-boards-to-databricks",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2021-10-07T12:20:48.476Z",
+  "lastPostedAt": "2021-10-15T08:17:17.210Z",
+  "postsCount": 4,
+  "excerpt": "Hi, Community. \nI’m currently trying to import the data of some boards into databricks. All of them have the same structure, and I wanted to get all the columns (if possible). \nIs there a way to make only one request and&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1376,
+  "posts": [
+    {
+      "id": 65532,
+      "postNumber": 1,
+      "createdAt": "2021-10-07T12:20:48.569Z",
+      "author": "renan.crepaldi (Renan Crepaldi)",
+      "cookedHtml": "<p>Hi, Community.</p>\n<p>I’m currently trying to import the data of some boards into databricks. All of them have the same structure, and I wanted to get all the columns (if possible).</p>\n<p>Is there a way to make only one request and get the data of all the boards?</p>\n<p>I’ll put down here the script of the first step, which is the one we define the boards’ ID.</p>\n<pre><code class=\"lang-auto\">%python\n\napiKey = \"censored\" ## API Key\n\napiUrl = \"https://api.monday.com/v2\"\nheaders = {\"Authorization\" : apiKey}\n\nquery = '''query {\n boards(ids:[1272092066,1615564124]) {\n  items {\n    id\n    name\n    column_values {\n      title\n      text\n} } } }'''\ndata = {'query' : query}\n\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request\ndata = r.json()\n</code></pre>\n<p>I tried putting the IDs separated by commas, but at the end it only got the data of one of these boards.</p>\n<p>Am I missing something? To be honest, I’ve never worked with APIs, so all of this is really new to me. I couldn’t find a part on the documentation that specified this type of integration.</p>\n<p>If anyone that’s willing to help need more informations, just let me know!</p>\n<p>Thanks a lot!</p>"
+    },
+    {
+      "id": 66130,
+      "postNumber": 2,
+      "createdAt": "2021-10-14T08:54:33.451Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/renan.crepaldi\">@renan.crepaldi</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Sorry for the delay here! It seems like your section was in the section for native <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> Automations and Integrations. The best place to ask questions related to using the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API and Apps Framework is the Monday apps &amp; Developers section <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>To be transparent with you, to me, your query seems correct and it should return the data of 2 different boards. Is there any chance the data output contains the info of the second board further in the data you receive?</p>\n<p>As for your questions here, I wouldn’t recommend querying the data of all boards and their column values in a single query. Instead, it would be best to query those boards in small, lightweight batches and run multiple focused queries instead. That way, you will avoid running into issues related to timeouts or complexity-related errors.</p>\n<p>I’d love to troubleshoot this further over email, so I’m going to follow up there with further questions to investigate this one. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 66158,
+      "postNumber": 3,
+      "createdAt": "2021-10-14T11:27:33.000Z",
+      "author": "renan.crepaldi (Renan Crepaldi)",
+      "cookedHtml": "<p>Hello, Alex.</p>\n<p>Thanks for answering! I’ve been trying to solve this problem since the day I posted it, and I think the problem is not on this first query indeed.</p>\n<p>Just to clarify, I’ve never used APIs as an origin on Databricks, so all of this is really new to me. The queries I’m using were made by a member of our team for another project, and I was trying to adapt them.</p>\n<p>Is it possible for you to show me what the ideal structure should be? I wanted to import all the columns of a group of boards (approximately 10).</p>\n<p>I read that for importing multiple boards the ideal should use a loop, right?</p>\n<p>Thanks again!</p>"
+    },
+    {
+      "id": 66256,
+      "postNumber": 4,
+      "createdAt": "2021-10-15T08:17:17.210Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/renan.crepaldi\">@renan.crepaldi</a></p>\n<p>Thank you for following up on this!</p>\n<p>Just to confirm, if you make the API call directly via the API playground in your account, or via Postman, do you get the data of both the boards you specified via the ID?</p>\n<p>In general, I do recommend going through the boards to get their columns in a loop. This way, you’ll ensure your queries are lightweight and low-complexity. This can help you avoid issues with timeouts. If you query 10 boards at once, and they are quite large with a high number of coolumns, this will likely take longer than 60 seconds to return the data and your call could be timed out.</p>\n<p>I also recommend making the calls in an async way. In JavaScript, you could use a <code>for await ... of </code> loop, as this would only attempt to query the next board once you get the data of the previous board you’ve queried. If you query all boards at once, this could lead to 500 errors due to race conditions.</p>\n<p>Let me know if this helps clarify!</p>\n<p>-Alex</p>"
+    }
+  ]
+}

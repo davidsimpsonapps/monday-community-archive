@@ -1,0 +1,32 @@
+{
+  "id": 107921,
+  "title": "Cannot return null for non-nullable field DropdownValueOption.label",
+  "slug": "cannot-return-null-for-non-nullable-field-dropdownvalueoption-label",
+  "categoryId": 98,
+  "tagIds": [
+    455
+  ],
+  "createdAt": "2025-01-19T16:42:44.437Z",
+  "lastPostedAt": "2025-01-21T09:29:06.276Z",
+  "postsCount": 2,
+  "excerpt": "Dear Monday.com team, \nWhen using the dropdown column API request to fetch the data label for each dropdown, we intermittently get following internal Monday.com error: \nCannot return null for non-nullable field DropdownV&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 38,
+  "posts": [
+    {
+      "id": 217998,
+      "postNumber": 1,
+      "createdAt": "2025-01-19T16:42:44.509Z",
+      "author": "haseeb1431 (haseeb1431@gmail.com)",
+      "cookedHtml": "<p>Dear <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">Monday.com</a> team,</p>\n<p>When using the <a href=\"https://developer.monday.com/api-reference/reference/dropdown\" rel=\"noopener nofollow ugc\">dropdown column</a> API request to fetch the data label for each dropdown, we intermittently get following internal <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">Monday.com</a> error:<br />\n<code>Cannot return null for non-nullable field DropdownValueOption.label</code></p>\n<p>This seems to be due to a validation done internally by <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">Monday.com</a> on the response against the GraphQL schema.</p>\n<p>Is this is a known bug? How often do others experience this?</p>\n<p>My query works fine but as soon as I add <code>... on DropdownValue { value values{label}}</code> I start getting intermittent errors since I am pulling 200 rows each. It doesn’t say show any issues on the board itself and here response doesn’t indicate the field which is causing the issue as well. The following is the error response</p>\n<pre><code class=\"lang-auto\">\"errors\": [\n        {\n            \"message\": \"Cannot return null for non-nullable field DropdownValueOption.label\",\n            \"path\": []\n        }\n    ]\n</code></pre>\n<p>Thanks in advance,</p>\n<p>Bests,</p>"
+    },
+    {
+      "id": 218224,
+      "postNumber": 2,
+      "createdAt": "2025-01-21T09:29:06.276Z",
+      "author": "SirEric (Eric Maranga)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/haseeb1431\">@haseeb1431</a> ,</p>\n<p>This error, <code>\"Cannot return null for non-nullable field DropdownValueOption.label\"</code>, typically occurs when <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>’s GraphQL API encounters a mismatch between the data and its schema validation. Specifically, it suggests that a dropdown option’s <code>label</code> is unexpectedly null, while the schema requires it to have a value.</p>\n<h3><a name=\"p-218224-possible-causes-1\" class=\"anchor\" href=\"#p-218224-possible-causes-1\"></a>Possible Causes:</h3>\n<ol>\n<li><strong>Null Data in Dropdown Values:</strong><br />\nThe dropdown column might contain items where the <code>label</code> field has not been properly assigned or was inadvertently left blank.</li>\n<li><strong>Batch Query Size:</strong><br />\nPulling 200 rows at a time may amplify the likelihood of encountering an item with incomplete data.</li>\n</ol>\n<h3><a name=\"p-218224-suggested-steps-to-resolve-2\" class=\"anchor\" href=\"#p-218224-suggested-steps-to-resolve-2\"></a>Suggested Steps to Resolve:</h3>\n<ol>\n<li><strong>Validate Dropdown Data:</strong></li>\n</ol>\n<ul>\n<li>Check the board directly for any dropdown columns containing unselected or invalid values. Ensure all options in your dropdown fields have valid labels assigned.</li>\n</ul>\n<ol>\n<li><strong>Adjust Your GraphQL Query:</strong></li>\n</ol>\n<ul>\n<li>To handle this issue programmatically, you can modify your query to check for the presence of <code>label</code> values before retrieving them.  However, since the API enforces non-nullable fields, you cannot bypass the error directly unless the data is corrected.</li>\n</ul>\n<ol>\n<li><strong>Implement Incremental Fetching:</strong></li>\n</ol>\n<ul>\n<li>Instead of pulling all 200 rows in one query, try splitting the request into smaller batches (e.g., 50 rows per query). This reduces the chances of encountering nulls in larger datasets.</li>\n</ul>\n<h3><a name=\"p-218224-is-this-a-known-bug-3\" class=\"anchor\" href=\"#p-218224-is-this-a-known-bug-3\"></a>Is This a Known Bug?</h3>\n<p>From the community perspective, this isn’t a frequent issue but is known to occur in edge cases where the dropdown data hasn’t been fully populated or managed. It’s good practice to ensure data integrity, especially when working with non-nullable fields in the GraphQL schema.</p>\n<p>If you have any questions or need further assistance, feel free to reach out to me via email at <a href=\"mailto:mail@creativebits.us\">mail@creativebits.us</a> or <a href=\"https://creativebits.us/contact-us/\" rel=\"noopener nofollow ugc\">Contact Creative Bits.</a> We’d be happy to help!</p>"
+    }
+  ]
+}

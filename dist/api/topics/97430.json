@@ -1,0 +1,71 @@
+{
+  "id": 97430,
+  "title": "Querying for additional custom columns in an items page",
+  "slug": "querying-for-additional-custom-columns-in-an-items-page",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-09-10T17:15:08.152Z",
+  "lastPostedAt": "2024-09-15T07:12:37.611Z",
+  "postsCount": 6,
+  "excerpt": "I’m needing to know what the method is to retrieve additional non-stock columns from an items page query. \nI have a text field that is storing an item id from a different system and need to include that column in the sel&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 39,
+  "posts": [
+    {
+      "id": 200757,
+      "postNumber": 1,
+      "createdAt": "2024-09-10T17:15:08.233Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>I’m needing to know what the method is to retrieve additional non-stock columns from an items page query.</p>\n<p>I have a text field that is storing an item id from a different system and need to include that column in the select, but whatever I’ve tried does not work and the API reference does not speak to it other than this…</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/4/7427afb6422121e6198f4bf1f975d560ae077ef3.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/4/7427afb6422121e6198f4bf1f975d560ae077ef3_2_690x256.png\" alt=\"image\" width=\"690\" height=\"256\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">814×303 23.3 KB</span></div></a></div><p></p>\n<p>I can run my query and it will return results fine with just the id and name columns as items…but the moment I add anything else, I can’t get any responses, just errors that my response variable is null.</p>\n<p>Here’s my query:</p>\n<p>query {<br />\nboards (ids: our_board_id){<br />\nitems_page (limit: 1, query_params: {rules: [{column_id: “text__1”, compare_value: [“’ . $accountid . '”]}], operator: and}) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>Like I said, that query will return items fine, but this situation is problematic as my source system is allowing item ids that may be the same strings but with a slight variation - for example, one item id might be 000011201OlJ and the second is 000011201Olj …so as far as letters the same but with case not at all and thus are unique.</p>\n<p>When I query with say the first value…if I set the limit to 1 to sample for an EXACT match…I can’t get one. It returns as if it’s doing a “like” or case insensitive query.</p>\n<p>So…my workaround was to just pull the source system item id from the account structure, then do a compare in my code. It’s more work than we should have to do, but if it fixes it, I can make it work.</p>\n<p>Any ideas/suggestions on how to get an additional custom column returned in the items? The custom column api name is text__1.</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 200799,
+      "postNumber": 2,
+      "createdAt": "2024-09-11T08:42:35.443Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/D07M0ES43GU/p1726054605392209\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 200802,
+      "postNumber": 3,
+      "createdAt": "2024-09-11T09:28:00.056Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a>,</p>\n<p>As you mentioned, the query is not case sensitive.</p>\n<p>I believe your workaround is the way to go here (getting the value of the IDs and comparing them with your database) <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 200853,
+      "postNumber": 6,
+      "createdAt": "2024-09-11T17:07:04.017Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>I just ended up dumping the account structure from Monday to an excel file and converted it to a csv. Trimmed it down to the columns I needed and am running the new import as I type this. It’s working perfectly as far as I can see so far, but will know far more after it’s done. We’ve got quite a few contacts to import, so it’s going to be chewing on that for a little minute… <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I still would like to know how I can return other columns in the items part of the fields in an items page, though (like I asked first - in other words, how can I return not only id and name, but also my custom column with id text__1).</p>\n<p>Thanks again!</p>"
+    },
+    {
+      "id": 200888,
+      "postNumber": 7,
+      "createdAt": "2024-09-12T06:38:46.538Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a> !</p>\n<p>To get the column values of any column (such as your text column), you can just get the column values from the items in the board like this (documentation <a href=\"https://developer.monday.com/api-reference/reference/items-page\">here</a>):</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890]) {\n    items_page(limit: 500) {\n      cursor\n      items {\n        column_values {\n          text\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Take into account that some column types will require specific syntax. You can find the documentation about each column type <a href=\"https://developer.monday.com/api-reference/reference/column-types-reference\">here</a> and examples <a href=\"https://www.postman.com/matiasdavidson/monday-com-queries-and-mutations/folder/5uhcbuh/api-version-2023-10\">here</a>.</p>\n<p>If you want to get only the values of specific columns, you can run something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890]) {\n    items_page(limit: 500) {\n      cursor\n      items {\n        column_values(ids: [\"text__1\", \"status\"]) {\n          text\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 200908,
+      "postNumber": 8,
+      "createdAt": "2024-09-12T10:51:35.658Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>Perfect.</p>\n<p>That’s exactly what I was looking  for.</p>\n<p>I’ll give that a try.</p>\n<p>That will hopefully let me finish up this integration and get it in motion.</p>\n<p>Thanks, Matias!</p>"
+    },
+    {
+      "id": 201281,
+      "postNumber": 9,
+      "createdAt": "2024-09-15T07:12:37.611Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a> !!</p>"
+    }
+  ]
+}

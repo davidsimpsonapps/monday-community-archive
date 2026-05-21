@@ -1,0 +1,48 @@
+{
+  "id": 38781,
+  "title": "Not getting parentItemId and parentItemBoardId info in Activity Log API response for subitems",
+  "slug": "not-getting-parentitemid-and-parentitemboardid-info-in-activity-log-api-response-for-subitems",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    129,
+    351
+  ],
+  "createdAt": "2022-07-06T01:46:55.707Z",
+  "lastPostedAt": "2022-07-08T08:00:18.612Z",
+  "postsCount": 4,
+  "excerpt": "Not getting parentItemId and parentItemBoardId info in Activity Log API response for subitems : \nquery {\n  boards (ids: 123456789) {\n    activity_logs (from: &quot;2022-07-05T06:05:00Z&quot;, to: &quot;2022-07-06T00:00:00Z&quot;) {\n      id&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 921,
+  "posts": [
+    {
+      "id": 90486,
+      "postNumber": 1,
+      "createdAt": "2022-07-06T01:46:55.808Z",
+      "author": "Yash (Yash Chaudhari)",
+      "cookedHtml": "<p>Not getting <code>parentItemId</code> and <code>parentItemBoardId</code> info in Activity Log API response for subitems :</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 123456789) {\n    activity_logs (from: \"2022-07-05T06:05:00Z\", to: \"2022-07-06T00:00:00Z\") {\n      id\n      event\n      data\n    }\n  }\n}\n</code></pre>\n<p>In the API doc where sample response example is given for Webhook - <a href=\"https://api.developer.monday.com/docs/webhooks-1#sample-payload-for-webhook-events\" rel=\"noopener nofollow ugc\">https://api.developer.monday.com/docs/webhooks-1#sample-payload-for-webhook-events</a> check sample response for <code>create_subitem</code>, there it’s mentioned that only difference between response for <strong>subitems</strong> is we get two additional fields/info mentioned below compared to activity logs response for items</p>\n<pre><code class=\"lang-auto\">\"parentItemId\": \"1771812716\",\n\"parentItemBoardId\": \"1771812698\"\n</code></pre>\n<p>Kindly help me know how I could differentiate if the activity log is for <code>Item</code> or <code>Subitem</code>.</p>\n<p>TIA !!</p>"
+    },
+    {
+      "id": 90491,
+      "postNumber": 2,
+      "createdAt": "2022-07-06T04:44:13.468Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/yash\">@Yash</a></p>\n<p>As far as I know changes to subitems are not available in the activity log. Probably because the technical implementation for subitems is that they live on another board. Have you tried to query the subitems board activity log?</p>"
+    },
+    {
+      "id": 90748,
+      "postNumber": 3,
+      "createdAt": "2022-07-08T07:28:50.618Z",
+      "author": "Yash (Yash Chaudhari)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> - Actually I could see we get event for subitems as well e.g as below when I added one more subitem I get below event in activity log resonse:</p>\n<pre><code class=\"lang-auto\">{\n     \"id\": \"547655cf-08a7-42c9-a91a-d1b82e4bce8a\",\n     \"event\": \"update_column_value\",\n     \"data\": \"{\\\"board_id\\\":1234567890,\\\"group_id\\\":\\\"new_group\\\",\\\"is_top_group\\\":false,\\\"pulse_id\\\":2895453702,\\\"pulse_name\\\":\\\"item1\\\",\\\"column_id\\\":\\\"subitems\\\",\\\"column_type\\\":\\\"subtasks\\\",\\\"column_title\\\":\\\"Subitems\\\",\\\"value\\\":{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":2896829705},{\\\"linkedPulseId\\\":2896837624}],\\\"column_settings\\\":{\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"allowMultipleItems\\\":true,\\\"boardIds\\\":[2895395961]}},\\\"previous_value\\\":{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":2896829705}],\\\"column_settings\\\":{\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"allowMultipleItems\\\":true,\\\"boardIds\\\":[2895395961]}},\\\"is_column_with_hide_permissions\\\":false,\\\"textual_value\\\":\\\"subitem1, subitem2\\\",\\\"previous_textual_value\\\":\\\"subitem1\\\"}\"\n}\n</code></pre>\n<p>Only issue with above response is we are not getting parentItemId and parentItemBoardId info.</p>\n<p>Also, when you say <code>Have you tried to query the subitems board activity log?</code> Could you please share sample query?</p>\n<p>TIA !!</p>"
+    },
+    {
+      "id": 90754,
+      "postNumber": 4,
+      "createdAt": "2022-07-08T08:00:18.612Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/yash\">@Yash</a></p>\n<p>The event output you are showing is from a “update_column_value” webhook and those event do not hold those values (they are only acting on changes in items, not in subitems). You want to change (or add another) the webhook type to “change_subitem_column_value” to get the event holding these values that are specific to subitems.</p>\n<p>If you want to see the activity_log from your subitems, just query as any other query for the activity_log, only change the boardId to the boardId where the subitems live.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: THE_BOARDID_OF_YOUR_SUBITEMS_BOARD) {\n    activity_logs {\n      event\n      data\n    }\n  }\n}\n</code></pre>\n<p>If I read your event response correctly that would be: 2895395961. Be aware that this activity_log ONLY shows the subitems activity, not the items. If you want to have a full activity of your board you should combine the two activity logs.</p>"
+    }
+  ]
+}

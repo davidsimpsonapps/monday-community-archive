@@ -1,0 +1,49 @@
+{
+  "id": 74881,
+  "title": "Calculating hours between 2 date/time columns",
+  "slug": "calculating-hours-between-2-date-time-columns",
+  "categoryId": 5,
+  "tagIds": [
+    9,
+    13,
+    108,
+    303
+  ],
+  "createdAt": "2024-01-11T13:08:38.309Z",
+  "lastPostedAt": "2024-01-19T11:29:56.018Z",
+  "postsCount": 4,
+  "excerpt": "Hi, I am struggling to find a formula that works across multiple scenarios trying to calculate the time between two date/time columns.  For each formula I have tried, it works on some, but not others.  Below are screen s&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2231,
+  "posts": [
+    {
+      "id": 161597,
+      "postNumber": 1,
+      "createdAt": "2024-01-11T13:08:38.402Z",
+      "author": "drumerjosh (Josh McLarty)",
+      "cookedHtml": "<p>Hi, I am struggling to find a formula that works across multiple scenarios trying to calculate the time between two date/time columns.  For each formula I have tried, it works on some, but not others.  Below are screen shots of the results and formulas used.</p>\n<p>What I actually need is to calculate work hours between two date/time columns.  Examples below.</p>\n<p>The number of work hours between Jan. 3, 1:30pm and Jan. 3, 3:00pm should be 1.5 hours.  In the picture below, that result is correct.  However, the time between Jan. 3, 3:00pm and Jan. 5 10:00am should be 12 hours, but the result is 15.33.  Formula in use for this example is,<br />\nDAYS({Resolved On},{Reported On}) * 8 + 1<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/d/e/decbbbfa1f24610cccac30d654a8124e7b72030f.png\" alt=\"image\" width=\"540\" height=\"276\" /></p>\n<p>If I use this formula, the results are a little different.</p>\n<p>(((HOUR({Resolved On})*60+MINUTE({Resolved On}))-(HOUR({Reported On})*60+MINUTE({Reported On})))/60)+((DAY({Resolved On})-DAY({Resolved On}))*24)</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/0/906ecde0a48e2869dd768ba75816ff3e4eccad18.png\" alt=\"image\" width=\"578\" height=\"425\" /></p>\n<p>I’ve tried using workdays and get similar results.  Results where one is accurate and others are not.   What am I missing here?</p>\n<p>I got to this formula, which works for everything that does NOT span a weekend day.</p>\n<p>((WORKDAYS({Resolved On},{Reported On}) -1 ) * 8) + (HOUR({Resolved On}) - HOUR({Reported On})) +<br />\n(MINUTE({Resolved On}) - MINUTE({Reported On})/60)</p>"
+    },
+    {
+      "id": 161914,
+      "postNumber": 2,
+      "createdAt": "2024-01-13T15:30:08.774Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Josh,</p>\n<p>Here is one way of doing it.</p>\n<p>First, you need to count the number of full days between the 2 dates. For this you remove the time portion of the dates and use the DAYS function to calculate the difference of days. To remove the time portion, you use FORMAT_DATE.</p>\n<pre><code class=\"lang-auto\">DAYS(FORMAT_DATE({Resolved On},\"YYYY-MM-DD\"),FORMAT_DATE({Reported On},\"YYYY-MM-DD\"))\n</code></pre>\n<p>So if both dates are on the same day, you get 0. If <em>Resolved On</em> is on the next day, you get 1.</p>\n<p>You now have the number of full days. To get the hours, you simply multiply it by 8 since you have a 8-hour workday.</p>\n<p>Then you need to take into account the time of the 2 dates, ie you need to add or substract hours based on them. For instance if <em>Resolved On</em> is 3:30PM and <em>Reported On</em> is 2PM, you need to add 1.5 hour. If the other way around you need to substract 1.5 hour.</p>\n<p>This part of the calculation can be done with TIMEVALUE a function that converts a time into a portion of a day <img src=\"https://emoji.discourse-cdn.com/apple/thinking.png?v=12\" title=\":thinking:\" class=\"emoji\" alt=\":thinking:\" width=\"20\" height=\"20\" />. Since we are looking for hours, you then convert this portion of a day into hours by multiplying it by 24 <img src=\"https://emoji.discourse-cdn.com/apple/bulb.png?v=12\" title=\":bulb:\" class=\"emoji\" alt=\":bulb:\" width=\"20\" height=\"20\" />.</p>\n<pre><code class=\"lang-auto\">(TIMEVALUE({Resolved On})-TIMEVALUE({Reported On}))*24\n</code></pre>\n<p>Now you add the 2 calculations together to get the desired result.</p>\n<pre><code class=\"lang-auto\">DAYS(FORMAT_DATE({Resolved On},\"YYYY-MM-DD\"),FORMAT_DATE({Reported On},\"YYYY-MM-DD\"))*8 + (TIMEVALUE({Resolved On})-TIMEVALUE({Reported On}))*24\n</code></pre>\n<p>This works… as long as there are no week-ends in between the 2 dates.</p>\n<p>What about week-ends? Week-ends only affect the full-day calculation. For this, you need to change the function to count the number of full days from DAYS to WORKDAYS.</p>\n<p>One more thing <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" />. I am not sure why but DAYS(“2024-01-10”,“2024-01-10”) returns 0 and WORKDAYS(“2024-01-10”,“2024-01-10”) returns 1, so you need to deduct 1 when using WORKDAYS.</p>\n<p>The final formula becomes:</p>\n<pre><code class=\"lang-auto\">(WORKDAYS(FORMAT_DATE({Resolved On},\"YYYY-MM-DD\"),FORMAT_DATE({Reported On},\"YYYY-MM-DD\")-1)*8 + (TIMEVALUE({Resolved On})-TIMEVALUE({Reported On}))*24\n</code></pre>\n<hr />\n<p><em>Looking for a simpler way to write complex formulas? Check out the Advanced Formula Booster at <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">https://mdboosters.com</a>. It’s a convenient third-party app that simplifies formula writing. With it, you can spread your formulas across several lines, utilize variables, and access dozens of functions not found in the standard formula column.</em></p>"
+    },
+    {
+      "id": 162865,
+      "postNumber": 3,
+      "createdAt": "2024-01-18T13:10:24.733Z",
+      "author": "drumerjosh (Josh McLarty)",
+      "cookedHtml": "<p>Hi, Gilles,</p>\n<p>Thanks so much for your reply.  I just tried it and unfortunately am getting a couple of errors.  I see in your final formula that you are calling out columns “Date 1” and “Date”.  I tried substituting my “Reported on” and “Resolved on” columns and get a general formula error (the red exclamation mark in the cell with no other details).   This is the formula I have applied and the results.</p>\n<p>This is what has happened on the ones I’ve reached so far, I can get it 90% of the way there, and then suddenly it breaks. <img src=\"https://emoji.discourse-cdn.com/apple/crazy_face.png?v=12\" title=\":crazy_face:\" class=\"emoji\" alt=\":crazy_face:\" width=\"20\" height=\"20\" /></p>\n<p>(WORKDAYS(FORMAT_DATE({Resolved On},“YYYY-MM-DD”),FORMAT_DATE({Reported On},“YYYY-MM-DD”)-1)*8 + (TIMEVALUE({Resolved On})-TIMEVALUE({Reported On}))*24</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/e/2e5beb6af2237262d8e4ad25be2687d18515eb41.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/e/2e5beb6af2237262d8e4ad25be2687d18515eb41.png\" alt=\"image\" width=\"594\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">694×584 24.9 KB</span></div></a></div><p></p>\n<p>I did modify the formula slightly and believe it is calculating time correctly, even if over the weekend.  I welcome any scrutiny of the formula.</p>\n<p>(WORKDAYS(FORMAT_DATE({Resolved On},“YYYY-MM-DD”),FORMAT_DATE({Reported On},“YYYY-MM-DD”))-1)*8 + ((TIMEVALUE({Resolved On})-TIMEVALUE({Reported On}))*24)</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/a/dae5118c4f9ff55d1956e2498e72c9562be73e1b.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/a/dae5118c4f9ff55d1956e2498e72c9562be73e1b_2_525x500.png\" alt=\"image\" width=\"525\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">630×600 27 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 163076,
+      "postNumber": 4,
+      "createdAt": "2024-01-19T11:29:56.018Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Josh,</p>\n<p>It breaks because there is no data in the date columns. Sincerely I don’t know how to avoid the red icon. You would have to take each part of the formula and try to add if statements to prevent it from breaking when the dates are not present. I tried it without success.</p>\n<p>This is one of the difficulties of the formula column and one of the reasons why I decided to create the Advanced Formula Booster. I just wrote a <a href=\"https://blog.mdboosters.com/en/a-simple-way-to-handle-empty-columns-and-avoid-errors-in-your-formulas-in-monday-com\" rel=\"noopener nofollow ugc\">blog article</a> on this because this is a pretty common issue.</p>"
+    }
+  ]
+}

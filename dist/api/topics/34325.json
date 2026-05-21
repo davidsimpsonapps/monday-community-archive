@@ -1,0 +1,46 @@
+{
+  "id": 34325,
+  "title": "Queries fail if there are multiple queries",
+  "slug": "queries-fail-if-there-are-multiple-queries",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-04-07T00:12:00.557Z",
+  "lastPostedAt": "2022-04-10T04:41:41.430Z",
+  "postsCount": 4,
+  "excerpt": "So I believe multi-operation documents are a thing in GraphQL, i.e. you can select one using an operation name.  When I do this I get an error response: “An operation name is required”; but I supplied the operation name. &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1439,
+  "posts": [
+    {
+      "id": 82198,
+      "postNumber": 1,
+      "createdAt": "2022-04-07T00:12:00.629Z",
+      "author": "alexking (Alex King)",
+      "cookedHtml": "<p>So I believe multi-operation documents are a thing in GraphQL, i.e. you can select one using an operation name.  When I do this I get an error response: “An operation name is required”; but I supplied the operation name.</p>\n<p>So in the developer’s playground I created a document with 2 queries:</p>\n<pre><code class=\"lang-auto\">query SingleBoard {\n  boards(limit:1) {\n    name\n    \n    columns {\n      title\n      id\n      type\n    }\n    \n    groups {\n    \ttitle\n      id\n    }\n    \n    items {\n      name\n      group {\n        id\n      }\n      \n      column_values {\n        id\n        value\n        text\n      }\n    }\n  }\n}\n\nquery AllBoards {\n  boards(limit:10) {\n    name\n  }\n}\n</code></pre>\n<p>Sure enough, even though I have a drop-down under the play button in the developer’s playground that allows me to select which query I want, I get “An operation name is required” error regardless of which query I pick.</p>\n<p>Is this a limitation of the Monday API?</p>"
+    },
+    {
+      "id": 82220,
+      "postNumber": 2,
+      "createdAt": "2022-04-07T04:51:54.393Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/alexking\">@alexking</a> !</p>\n<p>You can do what you want by changing the syntax a little bit.</p>\n<p>A simple example on how to accomplish this would be:</p>\n<pre><code class=\"lang-auto\">query {\n  checkBoard1: boards(ids:987654321){\n    id\n    name\n  }\n  checkBoard2: boards(ids:123456789){\n    id\n    name\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 82339,
+      "postNumber": 3,
+      "createdAt": "2022-04-08T01:15:46.583Z",
+      "author": "alexking (Alex King)",
+      "cookedHtml": "<p>Thanks Matias.</p>\n<p>I can’t perform both queries at once, since I need the output of one (actual query is <code>query BoardsQuery {boards (limit:100) {id name}}</code> ) to find the board id I need for the second query.  It may seem strange that I’m putting 2 queries in a document when I want to do them separately, but it’s just the way this library is structured.  A simple workaround is to put each query in a separate document, and I’ll proceed that way.</p>\n<p>(I’m doing this because I want to view a particular board, but would like to select it by name rather than id.  I can’t see a way to do that, so instead I’m doing an initial query to find id and name from all boards to find the id of the board I need.  That “BoardsQuery”, above, is successfully returning data.)</p>\n<p>The next problem I have is that the library (<a href=\"https://github.com/graphql-rust/graphql-client\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - graphql-rust/graphql-client: Typed, correct GraphQL requests and responses in Rust</a>) can’t compile my next query (query GetBoard {boards (ids: 560201143) {columns { title id type} items { name column_values { id value text }}}}) at all.  This query runs successfully in the playground.  However when compiling, I’m getting:</p>\n<p>error[E0412]: cannot find type <code>JSON</code> in module <code>super</code></p>\n<p>I suspect there may be a problem with types named JSON in the schema.</p>"
+    },
+    {
+      "id": 82462,
+      "postNumber": 4,
+      "createdAt": "2022-04-10T04:41:41.430Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/alexking\">@alexking</a>,</p>\n<p>Matias here!</p>\n<p>Oh. I understand. In that case (where you need the response from the first one so you can use it in the second one) you will need to use two separate calls.</p>\n<p>About the library you mentioned, it looks like it is a library that is not created or maintained by monday, so I could not say why you are encountering this issue. But if you see the same query working in your Playground, then the issue is probably on the library’s end.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

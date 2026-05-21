@@ -1,0 +1,58 @@
+{
+  "id": 7349,
+  "title": "API returns errors with status 200?",
+  "slug": "api-returns-errors-with-status-200",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-05-19T10:57:12.723Z",
+  "lastPostedAt": "2020-10-27T17:14:08.771Z",
+  "postsCount": 6,
+  "excerpt": "We are receiving error messages with the API, but the status returns as 200. For example, when we hit our complexity limit we get a status 200 with a response payload of \n{&#39;errors&#39;: [{&#39;message&#39;: &#39;Query has complexity of &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 6018,
+  "posts": [
+    {
+      "id": 18247,
+      "postNumber": 1,
+      "createdAt": "2020-05-19T10:57:12.865Z",
+      "author": "dturcanbbi (Dan Turcan)",
+      "cookedHtml": "<p>We are receiving error messages with the API, but the status returns as 200. For example, when we hit our complexity limit we get a status 200 with a response payload of</p>\n<pre><code>{'errors': [{'message': 'Query has complexity of 30001, which exceeds max complexity of 9473'}], 'account_id': 4440630}\n</code></pre>\n<p>Another example includes using the “change_multiple_column_values” mutation which reports an error when a column value isn’t properly formatted for its column type. This is an example of the response payload with a status 200:</p>\n<pre><code>{'error_code': 'ColumnValueException', 'status_code': 200, 'error_message': 'invalid value, \nplease check our API documentation for the correct data structure for this \ncolumn. https://monday.com/developers/v2#column-values-section', 'error_data': \n{'column_value': '2095 - Meat Product Manufacturing', 'column_type': 'NumericColumn'}}\n</code></pre>\n<p>Generally speaking, we would expect errors to return a 4XX or a 5XX status code. Receiving errors as a status 200 is misleading and it appears that the key for finding an error is inconsistent. IE, the complexity limit returns its errors within the “errors” key, but the ColumnValueException error has keys of “error_code”, “error_message”, and “error_data”. Would it be possible to make these errors return some non-200 status code instead to make them more identifiable?</p>"
+    },
+    {
+      "id": 18264,
+      "postNumber": 2,
+      "createdAt": "2020-05-19T14:27:11.935Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dturcanbbi\">@dturcanbbi</a> – thanks for posting!</p>\n<p>Sounds like you are bringing up two points here:</p>\n<ol>\n<li>\n<p><em>Error Status Codes:</em> If there are errors in your GraphQL query, the API will still return a 200 status code. This is a decision we made to ensure our API conforms with the GraphQL specification.</p>\n<p>The specification defines GraphQL as an application layer, but the status code reflects the status of a transport layer.</p>\n<p>For example, status of 400 or 500 means: “Something in the structure of your request is preventing our API from parsing your request at all”.</p>\n<p>While a 200 status on the ColumnValueException means: “The request was parsed successfully, but there was an issue with it. Your column values don’t look correct.”</p>\n</li>\n<li>\n<p><em>Inconsistent error keys</em>: Some exceptions return an array of errors in the “errors” key, while other exceiptions return an object that contains “error_code”, “error_message”, etc. This is definitely something that we can look at changing to make it more consistent.</p>\n</li>\n</ol>\n<p>Does that summarize the issue at hand? Let me know and I’ll go ahead and submit <span class=\"hashtag\">#2</span> to our dev team for review.</p>"
+    },
+    {
+      "id": 18265,
+      "postNumber": 3,
+      "createdAt": "2020-05-19T14:52:44.529Z",
+      "author": "dturcanbbi (Dan Turcan)",
+      "cookedHtml": "<p>Thank you for the reply dipro!  Your summarizations are accurate. Handling <span class=\"hashtag\">#2</span> would be a great step in the right direction. Once that consistent key is agreed upon, it would be helpful to be noted in the API documentation as well.</p>"
+    },
+    {
+      "id": 18267,
+      "postNumber": 4,
+      "createdAt": "2020-05-19T15:31:49.309Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dturcanbbi\">@dturcanbbi</a> – will do! I’ll add this feedback to our documentation backlog too.</p>"
+    },
+    {
+      "id": 32042,
+      "postNumber": 5,
+      "createdAt": "2020-10-27T17:14:08.771Z",
+      "author": "ellis (Ellis)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" /> dipro:</div>\n<blockquote>\n<p><em>Inconsistent error keys</em> : Some exceptions return an array of errors in the “errors” key, while other exceiptions return an object that contains “error_code”, “error_message”, etc. This is definitely something that we can look at changing to make it more consistent.</p>\n</blockquote>\n</aside>\n<p>Hi <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I would really appreciate you make it more consistent and also more specific.</p>\n<p>I have a system that needs to retry the action when the query is failing because of API Limit since the request itself is valid but the server don’t want to execute it for now, but should reject the action when the query is failing for any other reason.</p>"
+    },
+    {
+      "id": 43326,
+      "postNumber": 6,
+      "createdAt": "2021-03-03T15:09:16.769Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

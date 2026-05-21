@@ -1,0 +1,74 @@
+{
+  "id": 4674,
+  "title": "Update a column value c#",
+  "slug": "update-a-column-value-c",
+  "categoryId": 8,
+  "tagIds": [
+    137
+  ],
+  "createdAt": "2020-02-11T14:06:30.722Z",
+  "lastPostedAt": "2021-02-25T12:32:49.650Z",
+  "postsCount": 8,
+  "excerpt": "Hello I am trying to change a column value from c# application \ni make the following query \nstring query = @“{”“query”“:”“mutation{change_column_value(item_id:456191942, board_id: 454686247, column_id: ““numbers””, value&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 7446,
+  "posts": [
+    {
+      "id": 11887,
+      "postNumber": 1,
+      "createdAt": "2020-02-11T14:06:30.830Z",
+      "author": "taniamm2002 (Tanya)",
+      "cookedHtml": "<p>Hello I am trying to change a column value from c# application</p>\n<p>i make the following query</p>\n<p>string query = @“{”“query”“:”“mutation{change_column_value(item_id:456191942, board_id: 454686247, column_id: ““numbers””, value:”“”“123456\"”“”){ name}}“”}\";</p>\n<p>But it seems something in my escaping of the string is not right and  I get bad request!<br />\nI am begging for some help! I have been struggling with that for two days.<br />\nif someone has c# code to help me I will be so grateful.</p>"
+    },
+    {
+      "id": 11976,
+      "postNumber": 2,
+      "createdAt": "2020-02-12T14:43:44.903Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Tanya!</p>\n<p>We need to know a little more to get to the bottom of this.</p>\n<ol>\n<li>\n<p>Are you using the <a href=\"https://community.monday.com/t/basic-c-api-v2-example/3419\">helper class</a> that <a class=\"mention\" href=\"/u/grt-s\">@grt-s</a> shared to make this request?</p>\n</li>\n<li>\n<p>Have you successfully made any API requests via your C# code? Can you show an example of this, as well as the exact methods you’re using to make this request?</p>\n</li>\n</ol>\n<p>Thanks! <img src=\"https://emoji.discourse-cdn.com/apple/crystal_ball.png?v=12\" title=\":crystal_ball:\" class=\"emoji\" alt=\":crystal_ball:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 11980,
+      "postNumber": 3,
+      "createdAt": "2020-02-12T15:17:32.951Z",
+      "author": "taniamm2002 (Tanya)",
+      "cookedHtml": "<p>Hello, thank you so much  for your fast reply.</p>\n<ol>\n<li>\n<p>Yes  I have used the helper class - even I wasted time to make my own client service and  some modifications  <a class=\"mention\" href=\"/u/grt-s\">@grt-s</a> class but no matter if i use his helper class or my service  - the result is the same.</p>\n</li>\n<li>\n<p>of course  I have made some queries that were successful - 1. his query  2. I successfully get all the items and column values of my board.</p>\n</li>\n</ol>\n<p>But when It comes to modifying data</p>\n<pre><code>          string query = @\"{\"\"query\"\": \"\"mutation {create_item(board_id: 454686247, item_name: \\\"\"adding works\\\"\") { id} }\"\" }\";\n        MondayHelper helepr = new MondayHelper();\n        helepr.QueryMondayApiV2(query);\n</code></pre>\n<p>this works  - but you see how strangely I have escaped the item_name</p>\n<p>and as long as I try to add column values -</p>\n<pre><code>   string addingvaluesquery = @\"{\"\"query\"\": \"\"mutation {create_item(board_id: 454686247, item_name: \\\"\"changing  values item!\\\"\", column_values: \"\"{\\\"\"text\\\"\": \\\"\"changeee\\\"\"}\"\") { id} }\"\" }\";\n</code></pre>\n<p>or modify columns data 0- cannot do anything.  It just gives me bad request and the problem is that i don’t get any information further to see where is my mistake. My company wants to work with monday - but I should find a way to populate with data.<br />\nThank you so much in advance I have wasted two days already on this</p>"
+    },
+    {
+      "id": 11982,
+      "postNumber": 4,
+      "createdAt": "2020-02-12T16:17:53.030Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Tanya! Thanks for sending that context over. Glad you’ve gotten a create_item mutation to work. We can focus on the column values part now <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>First off, let me start by saying I’m not a C# expert. But I do know our API inside out so I’m sure we can put our heads together to solve this!</p>\n<ol>\n<li>Our API takes column values as string-ified JSON, which sometimes includes strings inside it.</li>\n<li>If we try to explicitly pass these strings-inside-strings, you will sometimes run into issues with bad requests. It’s beneficial to instead let a JSON library do the hard work <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /> I’ve heard <a href=\"https://www.newtonsoft.com/json\">Json.NET</a> is a good one to use.</li>\n<li>I would also recommend using <a href=\"https://graphql.org/learn/queries/#variables\">GraphQL variables</a> to pass your arguments. This way, you don’t have to escape anything and instead you can pass your arguments as part of a JSON object.</li>\n</ol>\n<p>Here’s a programming pattern that I’ve found helpful when making requests like this work in an environment that does not play nicely. It’s kind of a mix of psuedocode and C#, I’ll let you edit it to work in your environment <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<pre><code class=\"lang-auto\">// store query as a string, declaring the item name and column values as GraphQL variables\nstring myQuery = \"mutation ($name: String!, $values: JSON!) {create_item(board_id: 454686247, item_name: $name, column_values:$values) { id} }\" \n\n// store column values as a dictionary\nstring vals = @{\"text\" : \"This is a text value!\"}\n\n// convert column values into JSON string \nstring vals_json = JSON.SerializeObject(vals)\n\n// create variables dictionary using the item name \nstring myVariables = @{\"name\" : \"Item name\", \"values\" : vals_json}\n\n// construct payload for actual API request\nstring query = @{\"\"query\"\" : myQuery, \"\"variables\"\" : myVariables}\n</code></pre>\n<p>What do you think? Does that make sense? Let me know <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=12\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 12030,
+      "postNumber": 5,
+      "createdAt": "2020-02-13T08:28:20.149Z",
+      "author": "lucy.parry (Lucy Parry)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/taniamm2002\">@taniamm2002</a> I replied to your issue on my C# demo on GitHub but thought I’d post here too in case anyone else walks down this path! <a href=\"https://github.com/LucyParry/MondayAPIV2_BasicExample/issues/1\" rel=\"noopener nofollow ugc\">Here’s a link to the issue</a>.</p>\n<p>This is pretty ugly code I know with all of the string escaping! If you need to scale it up for several different mutations it is probably much easier to use a JSON library, use GraphQL variables, and build up the query as <a class=\"mention\" href=\"/u/dipro\">@dipro</a>  suggests. If I get some time at some point I’ll have a go at a nicer version and add it to the example repo.</p>\n<p>All that said the current one seems to work for me so it might get you unstuck for now <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 12032,
+      "postNumber": 6,
+      "createdAt": "2020-02-13T10:11:27.876Z",
+      "author": "taniamm2002 (Tanya)",
+      "cookedHtml": "<p>Thank you thank you so much I tried to follow the upper  pattern  and I have achieved creating an element. Again problem with the column values. but I am sure I will have a result.</p>"
+    },
+    {
+      "id": 12129,
+      "postNumber": 7,
+      "createdAt": "2020-02-14T15:26:46.393Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/taniamm2002\">@taniamm2002</a>!</p>\n<p>For the column values, you sometimes need to serialize the column data as JSON before putting them in the variables object, but in other situations the data gets passed fine without this step. For example, in my Python code I need to do double-serializing, but JS handles it with no issue.</p>\n<p>If you keep having issues with item creation, you can also simplify this call by first creating the item and then looping through the columns and updating them one at a time. <a class=\"mention\" href=\"/u/lucy.parry\">@lucy.parry</a>’s amazing example walks through this <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Good luck!!</p>"
+    },
+    {
+      "id": 42156,
+      "postNumber": 8,
+      "createdAt": "2021-02-25T12:32:49.650Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

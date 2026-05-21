@@ -1,0 +1,54 @@
+{
+  "id": 122087,
+  "title": "Time Zone Calculation Differences Between Boards and Docs",
+  "slug": "time-zone-calculation-differences-between-boards-and-docs",
+  "categoryId": 6,
+  "tagIds": [
+    489,
+    517
+  ],
+  "createdAt": "2025-12-01T18:53:38.392Z",
+  "lastPostedAt": "2025-12-08T13:01:36.725Z",
+  "postsCount": 5,
+  "excerpt": "I have a Date column (contains a date and start time) and an Hours column (contains a decimal number of hours (i.e. 1.5 = 90 minutes). \nA formula column (D/T Calc) concatenates that data into a string like, “Monday, Dece&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 19,
+  "posts": [
+    {
+      "id": 242521,
+      "postNumber": 1,
+      "createdAt": "2025-12-01T18:53:38.465Z",
+      "author": "sdimbert (Seth)",
+      "cookedHtml": "<p>I have a <strong>Date</strong> column (contains a date and start time) and an <strong>Hours</strong> column (contains a decimal number of hours (i.e. 1.5 = 90 minutes).</p>\n<p>A formula column (<strong>D/T Calc</strong>) concatenates that data into a string like, “Monday, December 1, 4:00 - 5:00 PM.” That formula works; here it is:</p>\n<blockquote>\n<p><code>CONCATENATE(FORMAT_DATE({Date}, \"dddd, MMMM D\"), \" from \", IF(MOD(HOUR({Date}) - 0, 12) = 0, 12, MOD(HOUR({Date}) - 0, 12)), \":\", IF(MINUTE({Date}) &lt; 10, CONCATENATE(\"0\", MINUTE({Date})), MINUTE({Date})), IF(HOUR({Date}) &gt;= 12, \" PM\", \" AM\"), \" – \", IF(MOD(FLOOR(({Hours} * 60 + (HOUR({Date}) - 0) * 60 + MINUTE({Date})) / 60), 12) = 0, 12, MOD(FLOOR(({Hours} * 60 + (HOUR({Date}) - 0) * 60 + MINUTE({Date})) / 60), 12)), \":\", IF(MOD(({Hours} * 60 + (HOUR({Date}) - 0) * 60 + MINUTE({Date})), 60) &lt; 10, CONCATENATE(\"0\", MOD(({Hours} * 60 + (HOUR({Date}) - 0) * 60 + MINUTE({Date})), 60)), MOD(({Hours} * 60 + (HOUR({Date}) - 0) * 60 + MINUTE({Date})), 60)), IF(MOD(({Hours} * 60 + (HOUR({Date}) - 0) * 60 + MINUTE({Date})), 1440) &gt;= 720, \" PM\", \" AM\"), \" ET.\")</code></p>\n</blockquote>\n<p>That all works fine. The resulting value is correct in the <strong>D/T Calc</strong> column.</p>\n<p>But when I generate a template-based Monday Doc that includes that Dynamic Value, the time(s) are wrong. Instead of a 1:00 PM start time, I get 6:00 PM. The five-hour discrepancy suggests a UTC-to-EST time difference.</p>\n<ol>\n<li>Why on earth would time calculations be different in the Board and Doc?</li>\n<li>What can I do to make this work correctly (other than just manually correct for this madness)?</li>\n</ol>"
+    },
+    {
+      "id": 242522,
+      "postNumber": 2,
+      "createdAt": "2025-12-01T18:58:02.044Z",
+      "author": "Clover_Gal (Desiree McCarthy | monday.com Ambassador)",
+      "cookedHtml": "<p>Have you reached out to support? I feel like that is a bug… <a href=\"mailto:support@monday.com\">support@monday.com</a></p>\n<p>Desiree - <a href=\"http://www.thecleverclovers.com\" rel=\"noopener nofollow ugc\">www.thecleverclovers.com</a></p>"
+    },
+    {
+      "id": 242523,
+      "postNumber": 3,
+      "createdAt": "2025-12-01T19:55:53.967Z",
+      "author": "sdimbert (Seth)",
+      "cookedHtml": "<p>No… I assumed it was “supposed” to work this way for some ancient reason.</p>\n<p>Will they see this post, or do I have to reach out directly?</p>"
+    },
+    {
+      "id": 242524,
+      "postNumber": 4,
+      "createdAt": "2025-12-01T20:07:21.088Z",
+      "author": "Clover_Gal (Desiree McCarthy | monday.com Ambassador)",
+      "cookedHtml": "<p>I’d recommend reaching out to them with your info so they can review directly.</p>"
+    },
+    {
+      "id": 242752,
+      "postNumber": 5,
+      "createdAt": "2025-12-08T13:01:36.725Z",
+      "author": "sdimbert (Seth)",
+      "cookedHtml": "<p>To follow up, I had a couple of lengthy chat sessions and video exchanges with Samuel D on the support team, and he confirmed and recreated the issue. His latest missive says, “I just wanted to let you know that our developers have confirmed that this monday doc/formula column issue is a known platform limitation. I am now inquiring if this limitation can be addressed and fixed, and I will continue to keep you updated!”</p>\n<p>So that’s something.</p>"
+    }
+  ]
+}

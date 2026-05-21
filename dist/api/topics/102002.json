@@ -1,0 +1,48 @@
+{
+  "id": 102002,
+  "title": "Monday storage persistent error",
+  "slug": "monday-storage-persistent-error",
+  "categoryId": 80,
+  "tagIds": [
+    94,
+    359,
+    428
+  ],
+  "createdAt": "2024-10-31T18:11:31.024Z",
+  "lastPostedAt": "2024-11-01T21:58:47.317Z",
+  "postsCount": 4,
+  "excerpt": "I’ve been having a consistent issue for the past couple of days. I have this code: \nimport { Storage } from &#39;@mondaycom/apps-sdk&#39;;\nconst storage = new Storage(shortLivedToken);\n\nconst now = Date.now();\nawait storage.set(&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 71,
+  "posts": [
+    {
+      "id": 208038,
+      "postNumber": 1,
+      "createdAt": "2024-10-31T18:11:31.119Z",
+      "author": "linhle (Linh Le)",
+      "cookedHtml": "<p>I’ve been having a consistent issue for the past couple of days. I have this code:</p>\n<pre><code class=\"lang-auto\">import { Storage } from '@mondaycom/apps-sdk';\nconst storage = new Storage(shortLivedToken);\n\nconst now = Date.now();\nawait storage.set(key, now);\n...\nconst response = await storage.get(key);\n</code></pre>\n<p>when I log response I see this often:</p>\n<pre><code class=\"lang-auto\">  \"response\": {\n    \"success\": true,\n    \"value\": \"[Undefined]\",\n    \"version\": \"[Undefined]\"\n  },\n</code></pre>\n<p>a normal good response looks like:</p>\n<pre><code class=\"lang-auto\">{\n  \"response\": {\n    \"success\": true,\n    \"value\": \"1730228717706\",\n    \"version\": \"3e283\"\n  },\n</code></pre>\n<p>Am I doing anything wrong here? This issue doesn’t happen 100% of the time but quite often.</p>"
+    },
+    {
+      "id": 208039,
+      "postNumber": 2,
+      "createdAt": "2024-10-31T18:13:27.987Z",
+      "author": "linhle (Linh Le)",
+      "cookedHtml": "<p>if shortLivedToken has expired, I would expect a thrown error or something explicit about it, not such a response indicating success.</p>"
+    },
+    {
+      "id": 208041,
+      "postNumber": 3,
+      "createdAt": "2024-10-31T18:43:24.946Z",
+      "author": "linhle (Linh Le)",
+      "cookedHtml": "<p>My suspicion is the key-value store implements eventual consistency, where successful reads might return undefined values while changes propagate across the distributed system. So the value is undefined.</p>"
+    },
+    {
+      "id": 208136,
+      "postNumber": 4,
+      "createdAt": "2024-11-01T21:58:47.317Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You are correct, its likely the eventual consistency.</p>"
+    }
+  ]
+}

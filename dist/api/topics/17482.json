@@ -1,0 +1,58 @@
+{
+  "id": 17482,
+  "title": "File upload SDK",
+  "slug": "file-upload-sdk",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2021-03-11T00:36:31.980Z",
+  "lastPostedAt": "2021-03-19T12:55:26.492Z",
+  "postsCount": 5,
+  "excerpt": "Hey Everyone! \nI’m sorry for making a duplicate of my old post, but this one is a bit different. ​ \nI found out that there’s now a SDK way of file upload rather than having an authentication flow which is what I have now&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 2358,
+  "posts": [
+    {
+      "id": 44357,
+      "postNumber": 1,
+      "createdAt": "2021-03-11T00:36:32.057Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hey Everyone!</p>\n<p>I’m sorry for making a duplicate of my old post, but this one is a bit different. ​</p>\n<p>I found out that there’s now a <a href=\"https://community.monday.com/t/announcement-uploading-files-to-monday-com-has-just-become-easier/16803\">SDK way of file upload</a> rather than having an authentication flow which is what I have now. I was excited to implement it, so I updated the package to: <code>\"monday-sdk-js\": \"^0.1.2\",</code><br />\n​but I ran into some issues.</p>\n<p>When trying to upload  a file  with the sdk I get:</p>\n<pre><code class=\"lang-auto\">Error: Invalid content-type on response from monday api graphql\n   ​at client.js:117\n   ​at client.js:137\n   ​at Array.forEach (&lt;anonymous&gt;)\n   ​at MondayClientSdk._receiveMessage (client.js:135)\n</code></pre>\n<p>This is for the <a href=\"https://monday.com/developers/v2#mutations-section-add-file-to-update\" rel=\"noopener nofollow ugc\">add_file_to_update</a> mutation. The update ID is indeed an Integer and file is a file, but maybe the file isn’t set up properly for upload?</p>\n<p>This is the file when I console log it:</p>\n<pre><code class=\"lang-auto\">{file: File, name: \"uploaded-file\", ext: \".png\"}\next: \".png\"\nfile: File\nlastModified: 1585754352396\nlastModifiedDate: Wed Apr 01 2020 11:19:12 GMT-0400 (Eastern Daylight Time)\n__proto__: Object\nname: \"donot1.png\"\nsize: 2250079\ntype: \"image/png\"\nwebkitRelativePath: \"\"\n__proto__: File\nname: \"uploaded-file\"\n</code></pre>\n<p>My mutation is written like this:</p>\n<pre><code class=\"lang-auto\">   ​const fileMutation = `mutation add_file($update_id:Int!, $file: File!) {\n           ​add_file_to_update(update_id: $update_id, file: $file) {\n                   ​id\n               ​}\n           ​}\n       ​`;\n\n   ​const variables = { file, update_id: parseInt(updateID) };\n\n   ​try {\n     ​monday.api(fileMutation, { variables })\n       ​.then((res) =&gt; {\n         ​if (res) {\n           ​console.log(res);\n         ​}\n       ​})\n       ​.catch((err) =&gt; console.log(err));\n   ​} catch (err) {\n     ​console.log(err);\n   ​}\n</code></pre>\n<p>I hope I’m not misunderstanding the new feature post as this feature was definitely needed for me. I currently have it working with a simple post request using the mutation using user’s token obtained from an auth flow. I would love to negate that extra step. I hope I can get someone to help me with this new awesome feature. Thank you in advance!</p>"
+    },
+    {
+      "id": 44414,
+      "postNumber": 2,
+      "createdAt": "2021-03-11T09:14:57.543Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 44416,
+      "postNumber": 3,
+      "createdAt": "2021-03-11T09:22:22.667Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a></p>\n<p>Glad to see you try out this new feature, and I’m really sorry to hear you’ve been having some issues with it. I’d love to take a further look on my end and investigate this further with you to get to the bottom of this.</p>\n<p>Just to make sure we’re on the same page here, does the file never get uploaded? It seems like the error occurs when the response from our API is received, is my understanding correct? Does this occur with any kind of file?</p>\n<p>Also, to clarify further, are you sending this query from within your server, or from within a Board View/Widget?</p>\n<p>Those will help us troubleshoot the behaviour a little further and hopefully resolve it <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 44502,
+      "postNumber": 4,
+      "createdAt": "2021-03-11T17:18:05.397Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> !</p>\n<p>Thank you for getting back to me on this!</p>\n<p>I got it to work!!! It was the file setup that was the issue. I set it up for the back-end communication and completely forgot about it. Which is why when I console log the file, it was this:</p>\n<pre><code class=\"lang-auto\">{\nfile: the actual file, \nname: 'uploaded-file', \next: '.png'\n}\n</code></pre>\n<p>My apologies! It was all my fault.</p>\n<p>It is working flawlessly now and I’m loving it!!!</p>"
+    },
+    {
+      "id": 44580,
+      "postNumber": 5,
+      "createdAt": "2021-03-12T12:55:13.358Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>I’m so glad to hear this is working well for you now, <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> That’s amazing news and great job troubleshooting this.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 45353,
+      "postNumber": 6,
+      "createdAt": "2021-03-19T12:55:26.492Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

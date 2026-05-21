@@ -1,0 +1,69 @@
+{
+  "id": 82466,
+  "title": "Help! How can I add nested IF statements to create a formula for a step-up commission fee structure?",
+  "slug": "help-how-can-i-add-nested-if-statements-to-create-a-formula-for-a-step-up-commission-fee-structure",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    13,
+    108
+  ],
+  "createdAt": "2024-03-29T12:50:55.521Z",
+  "lastPostedAt": "2024-03-29T14:23:17.569Z",
+  "postsCount": 7,
+  "excerpt": "I am trying to create a function in monday that automatically calculates a commission fee, however, the commission fees for “development” are structured in intervals instead of a flat fee for “PBSH” (see below): \nDevelop&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 353,
+  "posts": [
+    {
+      "id": 175750,
+      "postNumber": 1,
+      "createdAt": "2024-03-29T12:50:55.605Z",
+      "author": "mholt13 (Mitch Holot)",
+      "cookedHtml": "<p>I am trying to create a function in monday that automatically calculates a commission fee, however, the commission fees for “development” are structured in intervals instead of a flat fee for “PBSH” (see below):</p>\n<p>Development Fee structure:</p>\n<ul>\n<li>6% fee from $0-$1M</li>\n<li>5% fee from $1M-$2M</li>\n<li>4% from $2M-$3M</li>\n<li>3% from $3M-$4M</li>\n<li>2% from $4M-5M</li>\n<li>1% at &gt;$5M</li>\n<li>Example: an {Ask Price} of $5.5M would calculate out to (1M*.06)+(1M*.05)+(1M*.04)+(1M*.03)+(1M*.02)+(500K*.01) = $205,000</li>\n</ul>\n<p>This is my function of nested IF statements that I hoped would work but shows up as an illegal formula. Can anyone help me?</p>\n<p>IF({Type}=“PBSH”,{Ask Price}<em>{Rate}, (IF({Type}=“Development”, (IF({Ask Price}&lt;1000000,{Ask Price}</em>.06), IF(1000000&lt;{Ask Price}&lt;2000000,60000+(({Ask Price}-1000000)<em>.05), IF(2000000&lt;{Ask Price}&lt;3000000,110000+(({Ask Price}-2000000)</em>.04), IF(3000000&lt;{Ask Price}&lt;4000000,150000+(({Ask Price}-3000000)<em>.03), IF(4000000&lt;{Ask Price}&lt;50000000, 180000+(({Ask Price}-4000000)</em>.02), IF({Ask Price}&gt;5000000, 200000+(({Ask Price}-5000000)*.01), 0)))))))</p>"
+    },
+    {
+      "id": 175753,
+      "postNumber": 2,
+      "createdAt": "2024-03-29T13:07:23.590Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Mitch,</p>\n<p>You have more open parentheses than close parentheses. When you write formulas with so many nested functions, you may want to test it first: <a href=\"https://docs.mdboosters.com/check-your-formula\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Check your monday.com formula</a>.</p>\n<hr />\n<p><strong>Want to take your formulas to the next level?</strong> Try the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, the app that reinvents formulas in monday.</p>\n<ul>\n<li>Create formulas without using the Formula column (and avoid its limitations)</li>\n<li>Build formulas involving data from the previous item, the next item, the sub-items, the parent item, even items in the same group or the same board.</li>\n<li>In one formula, update multiple columns from multiple items.</li>\n</ul>\n<p>Check our blog for <a href=\"https://blog.mdboosters.com\" rel=\"noopener nofollow ugc\">real use cases</a>.</p>"
+    },
+    {
+      "id": 175756,
+      "postNumber": 3,
+      "createdAt": "2024-03-29T13:08:12.247Z",
+      "author": "MHaigh (Matthew Haigh)",
+      "cookedHtml": "<p>Try this…</p>\n<blockquote>\n<p>IF({askprice}&lt;1000001,6% * {askprice},6% * 1000000+IF({askprice}&lt;2000001,5% * ({askprice}-1000000),5% * 1000000+IF({askprice}&lt;3000001,4% * ({askprice}-2000000),4% *1000000+IF({askprice}&lt;4000001,3% * ({askprice}-3000000),3% * 1000000+IF({askprice}&lt;5000001,2% * ({askprice}-4000000),2% * 1000000+IF({askprice}&gt;5000000,1% * ({askprice}-5000000),0))))))</p>\n</blockquote>\n<p>I had to put some extra spaces at the multiply so it shows correctly above, but you can take them out in the formula</p>"
+    },
+    {
+      "id": 175760,
+      "postNumber": 4,
+      "createdAt": "2024-03-29T13:52:45.930Z",
+      "author": "mholt13 (Mitch Holot)",
+      "cookedHtml": "<p>Mathhew,</p>\n<p>Thank you for your help here. The function does not show any errors on the formula-check page, but it still shows “illegal formula” on my Monday table.</p>\n<p>Let me know if you can think of anything else that I can change.</p>"
+    },
+    {
+      "id": 175762,
+      "postNumber": 5,
+      "createdAt": "2024-03-29T14:10:41.825Z",
+      "author": "MHaigh (Matthew Haigh)",
+      "cookedHtml": "<p>In my formula I had the column name as {askprice}… I think you have {Ask Price}…<br />\nI have also incorporated the {Type} query…</p>\n<blockquote>\n<p>IF({Type}=“PBSH”,{Ask Price} * {Rate}, IF({Type}=“Development”, IF({Ask Price}&lt;1000001,6% * {Ask Price},6% * 1000000+IF({Ask Price}&lt;2000001,5% * ({Ask Price}-1000000),5% * 1000000+IF({Ask Price}&lt;3000001,4% * ({Ask Price}-2000000),4% *1000000+IF({Ask Price}&lt;4000001,3% * ({Ask Price}-3000000),3% * 1000000+IF({Ask Price}&lt;5000001,2% * ({Ask Price}-4000000),2% * 1000000+IF({Ask Price}&gt;5000000,1% * ({Ask Price}-5000000),0))))))))</p>\n</blockquote>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/e/6/e6230022ec2bf2ce3d030284f563832fa091132f.png\" alt=\"image\" width=\"356\" height=\"154\" /></p>"
+    },
+    {
+      "id": 175763,
+      "postNumber": 6,
+      "createdAt": "2024-03-29T14:11:33.190Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Try:</p>\n<pre><code class=\"lang-auto\">IF({Type}=\"PBSH\", {Ask Price}*{Rate}, \n IF({Type}=\"Development\", \n  IF({Ask Price}&lt;=1000000, {Ask Price}*0.06, \n   IF(AND({Ask Price}&gt;1000000, {Ask Price}&lt;=2000000), 60000+({Ask Price}-1000000)*0.05, \n    IF(AND({Ask Price}&gt;2000000, {Ask Price}&lt;=3000000), 110000+({Ask Price}-2000000)*0.04, \n     IF(AND({Ask Price}&gt;3000000, {Ask Price}&lt;=4000000), 150000+({Ask Price}-3000000)*0.03, \n      IF(AND({Ask Price}&gt;4000000, {Ask Price}&lt;=5000000), 180000+({Ask Price}-4000000)*0.02, \n       IF({Ask Price}&gt;5000000, 200000+({Ask Price}-5000000)*0.01\n       )\n      )\n     )\n    )\n   )\n  ), \n  \"\"\n )\n)\n</code></pre>\n<hr />\n<p><strong>What if we could break free of the Formula column?</strong> and write formulas that update any type of columns? What if a formula could update multiple columns at once? This is possible with the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a> app.</p>"
+    },
+    {
+      "id": 175765,
+      "postNumber": 7,
+      "createdAt": "2024-03-29T14:23:17.569Z",
+      "author": "mholt13 (Mitch Holot)",
+      "cookedHtml": "<p>THIS WORKS!</p>\n<p>Honestly can’t tell you why this worked and the other one didn’t but thanks to both of you!</p>"
+    }
+  ]
+}

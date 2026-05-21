@@ -1,0 +1,32 @@
+{
+  "id": 51145,
+  "title": "Zeitleiste in Verbindung mit einer Formel welche dann den Wert \"verfügbar\" oder \"gebucht\" anzeigt",
+  "slug": "zeitleiste-in-verbindung-mit-einer-formel-welche-dann-den-wert-verfugbar-oder-gebucht-anzeigt",
+  "categoryId": 64,
+  "tagIds": [
+    13
+  ],
+  "createdAt": "2023-02-08T08:48:33.209Z",
+  "lastPostedAt": "2023-07-03T05:11:54.218Z",
+  "postsCount": 2,
+  "excerpt": "Hallo liebe Mondayler, \nich verzweifle gerade an folgender Aufgabe: \nUnd zwar habe ich eine Zeitleiste mit einem Datum von-bis, was ja erstmal kein Problem ist. :grinning: \nNun benötige ich eine Formelspalte, welche in B&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 851,
+  "posts": [
+    {
+      "id": 114498,
+      "postNumber": 1,
+      "createdAt": "2023-02-08T08:48:33.286Z",
+      "author": "Dalibor (Jurisic)",
+      "cookedHtml": "<p>Hallo liebe Mondayler,<br />\nich verzweifle gerade an folgender Aufgabe:<br />\nUnd zwar habe ich eine Zeitleiste mit einem Datum von-bis, was ja erstmal kein Problem ist. <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=12\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" width=\"20\" height=\"20\" /><br />\nNun benötige ich eine Formelspalte, welche in Beziehung zum Tagesdatum einen Wert, nämlich “verfügbar” oder “gebucht” errechnet.<br />\nMeine Zeitleiste hat Beispielsweise den Wert 02.02.2023-08.02.2023. Abhängig vom heutigen Tagesdatum müsste in dieser Spalte “gebucht” stehen, da heute der 08.02.2023 ist morgen sollte aber dann die Formel “verfügbar” auswerfen. Genauso sollte sie “verfügbar” auswerfen, wenn die Zeitleiste gar keinen Wert enthält.<br />\nIch habe schon einen Knotem im Kopf und komme nicht mehr weiter. Eventuell kann mir jemand helfen?</p>\n<p>Beste Grüße<br />\nDalibor</p>"
+    },
+    {
+      "id": 133556,
+      "postNumber": 2,
+      "createdAt": "2023-07-03T05:11:54.218Z",
+      "author": "ChristianHa (Christian Harzl)",
+      "cookedHtml": "<p>Hallo Dalibor,</p>\n<p>das kannst du über zwei Wege lösen.</p>\n<p><strong>Option 1: Formel</strong></p>\n<p>Mit verschachtelten IF-Funktionen, kannst du dir die Werte entsprechend filtern.<br />\nDie Logik dahinter:<br />\nWenn Start-Datum UND End-Datum in Bezug auf heute größer als 0 sind, gib immer “Verfügbar” aus.<br />\nWenn Start-Datum ODER End-Datum in Bezug auf heute größer als 0 sind, gib “Gebucht” aus.<br />\nWenn Start-Datum keinen Wert enthält, gib “Verfügbar” aus und in allen anderen Fällen auch “Verfügbar”.<br />\nDie Formel kann so in der Art aussehen:</p>\n<p>IF(AND(DAYS(TODAY(),{Timeline#Start})&gt;0,DAYS(TODAY(),{Timeline#End})&gt;0),“Verfügbar”,<br />\nIF(OR(DAYS(TODAY(),{Timeline#Start})&gt;0,DAYS(TODAY(),{Timeline#End})&gt;0),“Gebucht”,<br />\nIF({Timeline#Start}=“”,“Verfügbar”,<br />\n“Verfügbar”)))</p>\n<p><strong>Option 2: Automatisierungen</strong></p>\n<p>Mit Automatisierungen kannst du auch das gleiche Ergebnis erzielen. Erstelle eine Status-Spalte mit den beiden Labels “Verfügbar” und “Gebucht”.<br />\nDazu noch zwei Automatisierungen:</p>\n<ol>\n<li>When date arrives (Timeline Start) then set status to “Gebucht”</li>\n<li>When date arrives (Timeline End) then set status to “Verfügbar”<br />\nDer einzige Nachteil gegenüber einer Formel: wenn du den Datumsbereich spontan verschiebst, wird die Statusänderung nicht getriggert.</li>\n</ol>\n<p>Viele Grüße,<br />\nChristian</p>"
+    }
+  ]
+}

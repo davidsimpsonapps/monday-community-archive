@@ -1,0 +1,49 @@
+{
+  "id": 88531,
+  "title": "🙋‍♀️ Trying but failing to use the pub/sub Queue in monday code",
+  "slug": "trying-but-failing-to-use-the-pub-sub-queue-in-monday-code",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    208,
+    351,
+    428
+  ],
+  "createdAt": "2024-05-30T09:15:24.696Z",
+  "lastPostedAt": "2024-05-30T09:23:20.083Z",
+  "postsCount": 3,
+  "excerpt": "I’m using this code to send a message to the queue, based on the documentation here: \nimport { Queue } from &#39;@mondaycom/apps-sdk&#39;;\n...\nconst sendToQueue = async (payload): Promise&lt;String&gt; =&gt; {\n\tconsole.log(&#39;Send this to &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 179,
+  "posts": [
+    {
+      "id": 186476,
+      "postNumber": 1,
+      "createdAt": "2024-05-30T09:15:24.779Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I’m using this code to send a message to the queue, based on <a href=\"https://developer.monday.com/apps/docs/monday-code-sdk#queue\" rel=\"noopener nofollow ugc\">the documentation here</a>:</p>\n<pre><code class=\"lang-auto\">import { Queue } from '@mondaycom/apps-sdk';\n...\nconst sendToQueue = async (payload): Promise&lt;String&gt; =&gt; {\n\tconsole.log('Send this to the queue', payload);\n\tconst queue = new Queue();\n\tconst messageContent = JSON.stringify(payload);\n\treturn queue.publishMessage(messageContent);\n};\n\n</code></pre>\n<p>It’s throwing the following error (when run locally through ngrok):</p>\n<pre><code class=\"lang-auto\">file:///path/to/my-project/node_modules/@mondaycom/apps-sdk/dist/esm/utils/env.js:9\n        throw new Error('En environment variable name \"MNDY_SERVER_ADDRESS\" is required, the value should be int the following format \"(protocol)://{server_name}:{port}\" e.g.: \"http://localhost:8080\".');\n              ^\n\nError: En environment variable name \"MNDY_SERVER_ADDRESS\" is required, the value should be int the following format \"(protocol)://{server_name}:{port}\" e.g.: \"http://localhost:8080\".\n    at localServerAddress (file:///path/to/my-project/node_modules/@mondaycom/apps-sdk/dist/esm/utils/env.js:9:15)\n    at QueueDev.&lt;anonymous&gt; (file:///path/to/my-project/node_modules/@mondaycom/apps-sdk/dist/esm/queue/queue.dev.js:57:33)\n    at step (file:///path/to/my-project/node_modules/@mondaycom/apps-sdk/dist/esm/queue/queue.dev.js:32:23)\n    at Object.next (file:///path/to/my-project/node_modules/@mondaycom/apps-sdk/dist/esm/queue/queue.dev.js:13:53)\n    at file:///path/to/my-project/node_modules/@mondaycom/apps-sdk/dist/esm/queue/queue.dev.js:7:71\n    at new Promise (&lt;anonymous&gt;)\n    at __awaiter (file:///path/to/my-project/node_modules/@mondaycom/apps-sdk/dist/esm/queue/queue.dev.js:3:12)\n    at QueueDev.publishMessage (file:///path/to/my-project/node_modules/@mondaycom/apps-sdk/dist/esm/queue/queue.dev.js:53:16)\n    at sendToQueue (/path/to/my-project/src/routes/integrations/actions/copy-sharepoint-folder/+server.ts:103:16)\n    at POST (/path/to/my-project/src/routes/integrations/actions/copy-sharepoint-folder/+server.ts:56:7)\n</code></pre>\n<p>Help!</p>\n<ul>\n<li>What’s going on with the error above?</li>\n<li>Where does <code>MNDY_SERVER_ADDRESS</code> come from?</li>\n<li>I’ve not seen  <code>MNDY_SERVER_ADDRESS</code>  anywhere in the docs</li>\n</ul>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/9/5912dc324b3de8b11c39f6fab1b5df74d95d3c5d.jpeg\" title=\"Screenshot 2024-05-30 at 13.13.57\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/9/5912dc324b3de8b11c39f6fab1b5df74d95d3c5d_2_690x451.jpeg\" alt=\"Screenshot 2024-05-30 at 13.13.57\" width=\"690\" height=\"451\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-05-30 at 13.13.57</span><span class=\"informations\">2052×1344 153 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 186478,
+      "postNumber": 2,
+      "createdAt": "2024-05-30T09:22:03.220Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Oh, it looks like there’s documentation missing.</p>\n<p>The dev queue simply sends a fetch to <code>/mndy-queue</code> on your dev server, but it looks for <code>MNDY_SERVER_ADDRESS</code> env variable to achieve this.</p>\n<p>See:</p>\n<ul>\n<li><a href=\"https://github.com/mondaycom/apps-sdk/blob/master/lib/queue/queue.dev.ts\" rel=\"noopener nofollow ugc\">apps-sdk/…/lib/queue/queue.dev.ts</a></li>\n<li><a href=\"https://github.com/mondaycom/apps-sdk/blob/master/lib/utils/env.ts\" rel=\"noopener nofollow ugc\">apps-sdk/…/lib/utils/env.ts</a></li>\n</ul>\n<p>I imagine it works a little differently on production <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>To get this working on Sveltekit, I had to adjust my <code>package.json</code>:</p>\n<pre><code class=\"lang-auto\">{\n  ...\n  \"scripts\": {\n    \"dev\": \"MNDY_SERVER_ADDRESS=http://localhost:5173 vite dev\",\n    ...\n  }\n  ...\n}\n</code></pre>\n<p>…because Sveltekit doesn’t load env vars from <code>.env</code> in quite the same manner as nodejs, so this is a convenient way around that problem.</p>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> perhaps details of <code>MNDY_SERVER_ADDRESS</code> could be added to the docs for using monday-code queue on a local development system?</p>"
+    },
+    {
+      "id": 186480,
+      "postNumber": 3,
+      "createdAt": "2024-05-30T09:23:20.083Z",
+      "author": "MCautreels (Maarten Cautreels - Tryve)",
+      "cookedHtml": "<p>Hi David,</p>\n<p>We’ve succesfully implemented the monday code queue system both locally and in production. In my local env file I have my local address set as MNDY_SERVER_ADDRESS:</p>\n<pre><code class=\"lang-auto\">MNDY_SERVER_ADDRESS=http://localhost:8080\n</code></pre>\n<p>On monday Code itself I can’t recall setting the env var but my colleague (who’s on holiday) has set it up initially so can’t be certain. However I did release a new version at a later time and didn’t have to change any env variable to update the queue to use the new url. And it’s not using the live url to process new events so monday code, somewhere handles it themselves.</p>\n<p>However we ran into an issue a few weeks ago where we had a bug in our code which resulted in the same event being retried forever (pub sub kept trying by calling our version url of the live version at that time).</p>\n<p>After fixing the issue and deploying/publishing a new version, the event kept being send to the old version url. New events were being send to the latest version url though. Support has fixed the issue but we haven’t gotten an explanation as to how, so it’s currently uncertain if it was a fix for this single “stuck” event or a permanent fix for future deploys as well.</p>\n<p>So somewhere, monday Code seems to take care of the MNDY_SERVER_ADDRESS env variable.</p>"
+    },
+    {
+      "id": 186818,
+      "postNumber": 4,
+      "createdAt": "2024-06-02T05:30:06.857Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

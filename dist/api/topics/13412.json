@@ -1,0 +1,88 @@
+{
+  "id": 13412,
+  "title": "Uploading files to board from Contact Form 7 with Zapier",
+  "slug": "uploading-files-to-board-from-contact-form-7-with-zapier",
+  "categoryId": 80,
+  "tagIds": [
+    5
+  ],
+  "createdAt": "2020-11-19T04:24:30.886Z",
+  "lastPostedAt": "2020-11-27T12:59:39.393Z",
+  "postsCount": 10,
+  "excerpt": "Hi all, \nI’ve searched and searched for a solution to my problem, and haven’t had any luck… \nI have a WordPress site collecting form submissions with Contact Form 7. I’m taking those submissions and creating a new board &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 3688,
+  "posts": [
+    {
+      "id": 34062,
+      "postNumber": 1,
+      "createdAt": "2020-11-19T04:24:30.962Z",
+      "author": "cccreative (Nico)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I’ve searched and searched for a solution to my problem, and haven’t had any luck…</p>\n<p>I have a WordPress site collecting form submissions with Contact Form 7. I’m taking those submissions and creating a new board item with them via webhook, using Zapier.</p>\n<p>So far, I have all of the data zapping correctly, except for one part. If the user uploads a file via Contact Form 7, I would like to attach it to the ‘files’ column on the board. So far everything I’ve tried has not worked.</p>\n<p>If I’m not mistaken, I have to use ‘add_file_to_column’, but I’m 99% sure I’m not formatting it correctly. I’ve also read through <a href=\"https://community.monday.com/t/upload-file-in-monday-zapier-integration/7738/3\">this thread</a>, but I don’t think it’s trying to achieve the same thing I am.</p>\n<p>The file uploads themselves are stored on my web server, so they have static URLs.</p>\n<p>Can someone please help?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 34067,
+      "postNumber": 2,
+      "createdAt": "2020-11-19T07:44:25.936Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/cccreative\">@cccreative</a>, Nico,</p>\n<p>Welcome to the community. I do see where you are coming from, I had the same need (to upload files from my WordPress site to monday). I was too struggling with Zapier and Integromat and  at the end I decided to build a PHP snippets that does this. If you are interested in such an approach, let me know and I can show you the snippet.</p>"
+    },
+    {
+      "id": 34128,
+      "postNumber": 3,
+      "createdAt": "2020-11-19T14:59:25.641Z",
+      "author": "cccreative (Nico)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>Thanks for the warm welcome – and yes, I am very interested in that approach, if you are willing to share. Thank you so much!</p>"
+    },
+    {
+      "id": 34131,
+      "postNumber": 4,
+      "createdAt": "2020-11-19T15:35:56.137Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/cccreative\">@cccreative</a></p>\n<p>It has become somewhat larger snippet <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> and in my case I use WordPress plugin WPForms that will handle the upload from my local PC to my webserver. After the file(s) are on my WordPress server the snippet below is called with a valid monday boardId and an array called upload. If I remember correctly the array has only name: filename and value: actual contents members.</p>\n<p>The snippet creates an item in the specified board and uploads the file to the file column. The challenge is that you need to post a multipart body and therefore you need to build from scracht, including a generated boudary to split the multipart.</p>\n<p>PS: my monday key is stored in my profile and is retrieved by the get_field call. MONDAY_TEAM and MONDAY_URL are defined in my wpconfig file.</p>\n<p>Have fun with it.</p>\n<pre><code>/************************************************************************************************************************************************************\n* Name:\t\t\tmonday_upload_files \n* Arguments:\t$board_id, $upload - board_id: DOCS board id where item needs to be created / $upload: array with file upload information\n* Returns:\t\tNone\n* Function:\t\tCreates an item in the given board (first group) and attaches the file to the file column\n*************************************************************************************************************************************************************/\n\nfunction monday_upload_files( $board_id, $upload) {\n\n\t//Create a new item in the board\n\t$header = array(\n\t\t'User-Agent' =&gt; MONDAY_TEAM . ' GraphQL Client',\n\t\t'Authorization' =&gt; get_field('mondaykey', 'user_' . get_current_user_id()),\n\t\t'Content-Type' =&gt; 'multipart/form-data' \n\t);\n\n\t//str_replace is used in an effort to get as close as possible to the original file name (sanitized by WPForms)\n\t$body = array(\n\t\t'query' =&gt; 'mutation {create_item (board_id: ' . $board_id . ', group_id: \"topics\", item_name: \"' . str_replace(\"-\",\" \",pathinfo($upload['name'], PATHINFO_FILENAME)) . '\") {id}}'\n\t);\n\n\t$response = wp_remote_post( MONDAY_URL, ['headers' =&gt; $header, 'body' =&gt; $body] );\n\t$arr1 = json_decode($response['body'], true);\n\t$item_id = $arr1['data']['create_item']['id'];\t\n\n\t//Generate a boundary, needed for the Header (Content-Type) and the Body (to split in multiple parts)\n\t$boundary = wp_generate_password(24);\n\t$eol = \"\\r\\n\";\n\n\t$header = array(\n\t\t'User-Agent' =&gt; MONDAY_TEAM . ' GraphQL Client',\n\t\t'Authorization' =&gt; get_field('mondaykey', 'user_' . get_current_user_id()),\n\t\t'Content-Type' =&gt; 'multipart/form-data; boundary=' . $boundary\n\t);\n\n\t//We need to build the body from scratch because it is multipart with boundaries\n\t//Take care of the extra empty lines (twice $eol) before the actual query and file, otherwise an error 500 is returned\n\n\t$body = '--' . $boundary . $eol;\n\t$body .= 'Content-Disposition: form-data; name=\"query\"' . $eol . $eol;\n\t$body .= 'mutation ($file: File!) {add_file_to_column (item_id: ' . $item_id . ', column_id: file, file: $file) {id}}' . $eol;\n\t$body .= '--' . $boundary . $eol;\n\t$body .= 'Content-Disposition: form-data; name=\"variables[file]\"; filename=\"' . $upload['name'] . '\"' . $eol;\n\t$body .= 'Content-Type: ' . $upload['type'] . $eol . $eol;\n\t$body .= file_get_contents($upload['value']);\n\t$body .= $eol . '--' . $boundary . '--';\n\n\t$response = wp_remote_post( MONDAY_URL . 'file/', ['headers' =&gt; $header, 'body' =&gt; $body] );\n\n\tunlink(ABSPATH . substr($upload['value'], 25));\n}</code></pre>"
+    },
+    {
+      "id": 34595,
+      "postNumber": 5,
+      "createdAt": "2020-11-25T22:14:52.010Z",
+      "author": "cccreative (Nico)",
+      "cookedHtml": "<p>Thanks for this <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, I think it’s a bit above my skillsets though. I understand the concept, but I don’t think I’d be able to get this to technically work properly. We’re trying to achieve this on 3 different forms, feeding data to 3 different boards, as well.</p>\n<p>I know you mentioned that you were struggling with this, but to the best of your knowledge, is there a way to handle the file upload via Zapier?</p>"
+    },
+    {
+      "id": 34609,
+      "postNumber": 6,
+      "createdAt": "2020-11-26T07:09:36.577Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I would be amazed if Zapier couldn’t handle that although I di not have experience with Zapier. I got it working with Integromat though.</p>"
+    },
+    {
+      "id": 34644,
+      "postNumber": 7,
+      "createdAt": "2020-11-26T13:47:21.888Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/cccreative\">@cccreative</a> – uploading a file isn’t possible using the current modules available in Zapier. However, as Bas mentioned, <a href=\"http://integromat.com/\">Integromat</a> does have a module for this.</p>"
+    },
+    {
+      "id": 34669,
+      "postNumber": 8,
+      "createdAt": "2020-11-26T17:35:08.656Z",
+      "author": "cccreative (Nico)",
+      "cookedHtml": "<p>FINALLY got this working via Integromat. For anyone who wants to achieve this in the future, here’s the scenario I set up. Keep in mind that this scenario works alongside the <a href=\"https://wordpress.org/plugins/contact-form-submissions/\" rel=\"noopener nofollow ugc\">Contact Form Submissions</a> and <a href=\"https://wordpress.org/plugins/cf7-to-zapier/\" rel=\"noopener nofollow ugc\">CF7 to Webhook</a> plugins, in order attach a webhook to the form, and get the static URL of the uploaded file.</p>\n<p>Many thanks to <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> and <a class=\"mention\" href=\"/u/dipro\">@dipro</a> for helping me figure this out!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/3807978be5015374fd09993c3fd99a027ed9de7f.png\" title=\"Screen Shot 2020-11-26 at 11.55.41 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/3807978be5015374fd09993c3fd99a027ed9de7f_2_690x296.png\" alt=\"Screen Shot 2020-11-26 at 11.55.41 AM\" width=\"690\" height=\"296\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2020-11-26 at 11.55.41 AM</span><span class=\"informations\">2056×883 94.8 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 34740,
+      "postNumber": 9,
+      "createdAt": "2020-11-27T12:59:39.393Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/cccreative\">@cccreative</a>,</p>\n<p>That’s awesome, and I am really happy to hear that you were able to get this to work!</p>\n<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> thanks so much for sharing your snippet and for your kind help here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I really appreciate that.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42951,
+      "postNumber": 10,
+      "createdAt": "2021-03-01T14:54:50.350Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

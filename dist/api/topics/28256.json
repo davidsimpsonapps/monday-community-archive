@@ -1,0 +1,70 @@
+{
+  "id": 28256,
+  "title": "How to get account id in webhook payload of integration recipe",
+  "slug": "how-to-get-account-id-in-webhook-payload-of-integration-recipe",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    144,
+    208
+  ],
+  "createdAt": "2021-12-05T23:10:45.220Z",
+  "lastPostedAt": "2021-12-13T14:13:12.609Z",
+  "postsCount": 7,
+  "excerpt": "Hey Community, \nI am creating an integration feature for my app, where a column change triggers an event and that event triggers a webhook. \nHow can I get the account ID in the payload? \nI was able to add user id, board &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2519,
+  "posts": [
+    {
+      "id": 70532,
+      "postNumber": 1,
+      "createdAt": "2021-12-05T23:10:45.320Z",
+      "author": "kthe4167 (Keenan)",
+      "cookedHtml": "<p>Hey Community,</p>\n<p>I am creating an integration feature for my app, where a column change triggers an event and that event triggers a webhook.</p>\n<p>How can I get the account ID in the payload?</p>\n<p>I was able to add user id, board id, and item id as output fields and I see them, but i really need to get the account id. Once i have the account id, I will be able to search my database to pull up the account record which contains the bearer access token adn other important data that I need to perform additional API calls.</p>\n<p>I saw a similar question on this closed topic</p>\n<aside class=\"quote\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/chandan/48/4896_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/account-id-in-webhook/13030\">Account id in Webhook</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Hi, \nI am working on a monday app integration,where a column change triggers an event and that event is sent to web url specified. I am receiving the event to url I have specified. Is there any way to identify from which account(account id) this event has been triggered from? \nI need this information as I have a custom requirement to identify which application has sent this event\n  </blockquote>\n</aside>\n\n<p>Which states that the board ID is unique across all accounts.</p>\n<p>This is incorrect according to the multitenancy guide which states the board id is: “Unique across the account. The same board ID may be used in different accounts.”</p>\n<p><a href=\"https://apps.developer.monday.com/docs/multitenancy\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://apps.developer.monday.com/docs/multitenancy</a></p>\n<p>Even if I could use the board ID, how can I then query the account ID from the board ID without knowing which bearer token to use? because my app needs to identify what account triggered the integration in order to tind the bearer token.</p>\n<p>How are other developers identifying which account triggered?</p>\n<p>Thanks so much for your time</p>"
+    },
+    {
+      "id": 70564,
+      "postNumber": 2,
+      "createdAt": "2021-12-06T07:23:53.511Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/kthe4167\">@kthe4167</a></p>\n<p>In every post monday sends to your apps endpoint you can retrieve the accountId.</p>\n<pre><code class=\"lang-auto\">async function recipeAction(req, res) {\n  const { payload } = req.body;\n  const { inputFields } = payload;\n  const { boardId, itemId } = inputFields;\n  const { authorization } = req.headers;\n\n  const { accountId, userId, aud, exp, iat, shortLivedToken } = jwt.verify(authorization, envVars.signingSecret);\n</code></pre>\n<p>All you need to do is to extract it from the authorization header using your apps signing secret.</p>"
+    },
+    {
+      "id": 70574,
+      "postNumber": 3,
+      "createdAt": "2021-12-06T11:24:34.701Z",
+      "author": "kthe4167 (Keenan)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, Really appreciate your response.</p>\n<p>If you dont mind me asking further;</p>\n<p>I am trying to avoid using js, is it possible to extract the account id using an HTTP request, and the Grapgh QL API endpoint <a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>?</p>"
+    },
+    {
+      "id": 70579,
+      "postNumber": 4,
+      "createdAt": "2021-12-06T11:42:13.307Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/kthe4167\">@kthe4167</a></p>\n<p>Not entirely sure I understand what you are trying to achieve. If you are making a request to the GraphQL you have to submit a token. That token has your accountId in it. Therefore I do not see the need to get the accountId queried through a GraphQL query as you are supplying the accountId already (through the used token).</p>\n<p>How do you get the token?</p>"
+    },
+    {
+      "id": 70583,
+      "postNumber": 5,
+      "createdAt": "2021-12-06T12:04:25.086Z",
+      "author": "kthe4167 (Keenan)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> I guess its not possible then to find the account ID, using only graphQL, since you have to use the bearer token to make a request.</p>\n<p>I can retrieve the bearer token when the client completes the Oauth process, and then do a “me” graphQL Query to get the account ID.</p>\n<p>I was hoping that when the user then Installs a recipe and triggers it, i will be able to match that event to an account ID in the database, but i guess it’s a bust since the event payload does not contain the account ID.</p>\n<p>I am going to set up a traditional environment and use your posted solution above.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 70597,
+      "postNumber": 6,
+      "createdAt": "2021-12-06T14:13:11.427Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/kthe4167\">@kthe4167</a><br />\nIt depends what kind of triggers and actions you use in the integration. A custom trigger will have the authorization in the post to the subscribe endpoint, a custom action will have the authorization in the action endpoint. I guess (not used it) the same authorization is available when you define an install endpoint.</p>\n<p>This is independent of JS (that was just an example) and I believe that every platform / language has something to encode and decode JSON Web Tokens (JWT). JWT is an open, industry-standard (<a href=\"https://tools.ietf.org/html/rfc7519\">RFC 7519</a>) for representing claims securely between two parties.</p>\n<p>When you make a call to the API you must supply a token and it is not possible to retrieve the accountId not having a token. It is some time ago I used OAuth as I always use the shortLivedTokens (no need to store these).</p>\n<p>If you want more specific help, please let me know the full setup of your app and your backend.</p>"
+    },
+    {
+      "id": 71329,
+      "postNumber": 7,
+      "createdAt": "2021-12-13T14:13:12.609Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

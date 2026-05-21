@@ -1,0 +1,58 @@
+{
+  "id": 29177,
+  "title": "HOURS_DIFF glitch",
+  "slug": "hours-diff-glitch",
+  "categoryId": 6,
+  "tagIds": [],
+  "createdAt": "2021-12-29T23:20:43.286Z",
+  "lastPostedAt": "2023-06-21T23:18:57.550Z",
+  "postsCount": 6,
+  "excerpt": "Lots of roadblocks lately. Here’s the one that currently has me stumped. HOURS_DIFF seems to be calculating only minutes - not hours. \nSample data: \n  \nCurrent formula is: \nif({TimerStatus}=“Stopped”,HOURS_DIFF({end2},{s&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2551,
+  "posts": [
+    {
+      "id": 72637,
+      "postNumber": 1,
+      "createdAt": "2021-12-29T23:20:43.352Z",
+      "author": "jscottsmith (Scott Smith)",
+      "cookedHtml": "<p>Lots of roadblocks lately. Here’s the one that currently has me stumped. HOURS_DIFF seems to be calculating only minutes - not hours.</p>\n<p>Sample data:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/4040a9377c9627dbe48036cec6d1de4fb35fad21.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/4040a9377c9627dbe48036cec6d1de4fb35fad21_2_518x500.png\" alt=\"image\" width=\"518\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">937×903 44.2 KB</span>\n</div></a></div><p></p>\n<p>Current formula is:<br />\nif({TimerStatus}=“Stopped”,HOURS_DIFF({end2},{start2}),“foo”)</p>\n<p>The only relevant part is:<br />\nHOURS_DIFF({end2},{start2})</p>\n<p>What’s going on?</p>"
+    },
+    {
+      "id": 72658,
+      "postNumber": 2,
+      "createdAt": "2021-12-30T12:12:12.609Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jscottsmith\">@jscottsmith</a></p>\n<p>HOURS_DIFF() prefers Hours columns.</p>\n<p>This will work (only considers the TIME portion):</p>\n<pre><code class=\"lang-auto\">HOURS_DIFF(FORMAT_DATE({Start Date},\"HH:mm\"), FORMAT_DATE({End Date},\"HH:mm\"))\n</code></pre>\n<p>Using the undocumented functions DATEVALUE() and TIMEVALUE(), you might also consider a variation of this (considers DATE portion as well):</p>\n<pre><code class=\"lang-auto\">((DATEVALUE({End Date}) + TIMEVALUE({End Date})) - (DATEVALUE({Start Date}) + TIMEVALUE({Start Date}))) * 24\n</code></pre>\n<p>You see more about other (previously) undocumented functions here: <a href=\"https://themondayman.com/hidden/\">The monday.com Hidden Functions</a></p>\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">Subscribe to The Monday Man</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/rP7Z2lMKym4\">The Power of the Right-Click</a></p>"
+    },
+    {
+      "id": 72665,
+      "postNumber": 3,
+      "createdAt": "2021-12-30T13:10:50.965Z",
+      "author": "jscottsmith (Scott Smith)",
+      "cookedHtml": "<p>Brilliant! I was actually searching through your undocumented functions yesterday looking for ideas.</p>\n<p>The time side of things is working but there appears to be a glitch in the date. Check out the middle Dec 28 results<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/d/d5a52067df19e4dd7a366697883a0c3515441116.png\" alt=\"image\" width=\"456\" height=\"218\" /></p>\n<p>It’s calculating different DATEVALUEs for the same day…  44559 and 44560</p>\n<p>The error seems to occur if the time span between start and end includes 7pm. Given that is 5 hours from midnight and I am in EST (UTC−5), I wonder if they are related. Is this a Monday calculation glitch, or do I need to make an offset calc in your formula?</p>"
+    },
+    {
+      "id": 72672,
+      "postNumber": 4,
+      "createdAt": "2021-12-30T13:41:16.959Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jscottsmith\">@jscottsmith</a></p>\n<p>Good catch!!</p>\n<p>Just goes to show you, even The Monday Man makes misstakes! <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>This should do the trick:</p>\n<pre><code class=\"lang-auto\">((DATEVALUE(FORMAT_DATE({End Date})) + TIMEVALUE({End Date})) - (DATEVALUE(FORMAT_DATE({Start Date})) + TIMEVALUE({Start Date}))) * 24\n</code></pre>\n<p>I’ll add that to my docs.</p>\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">Subscribe to The Monday Man</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/rP7Z2lMKym4\">The Power of the Right-Click</a></p>"
+    },
+    {
+      "id": 72674,
+      "postNumber": 5,
+      "createdAt": "2021-12-30T13:53:53.523Z",
+      "author": "jscottsmith (Scott Smith)",
+      "cookedHtml": "<p>Awesome. THANKS!!</p>\n<p>Onward I go…</p>"
+    },
+    {
+      "id": 132433,
+      "postNumber": 6,
+      "createdAt": "2023-06-21T23:18:57.550Z",
+      "author": "GillesEXO (Gilles BAULARD)",
+      "cookedHtml": "<p>Worked for me too</p>"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": 74789,
+  "title": "Power BI: Migrating from the Old API to the New API - How to Overcome the 500 row Limit?",
+  "slug": "power-bi-migrating-from-the-old-api-to-the-new-api-how-to-overcome-the-500-row-limit",
+  "categoryId": 8,
+  "tagIds": [
+    351,
+    406,
+    460
+  ],
+  "createdAt": "2024-01-10T18:23:44.635Z",
+  "lastPostedAt": "2024-01-11T12:23:28.288Z",
+  "postsCount": 6,
+  "excerpt": "I’m in the process of migrating my old Power BI API code to the new version. However, a significant challenge arises as Monday.com has imposed an API limit allowing the retrieval of no more than 500 rows at a time. This &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 510,
+  "posts": [
+    {
+      "id": 161395,
+      "postNumber": 1,
+      "createdAt": "2024-01-10T18:23:44.713Z",
+      "author": "SMac (Sean Mac)",
+      "cookedHtml": "<p>I’m in the process of migrating my old Power BI API code to the new version. However, a significant challenge arises as <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> has imposed an API limit allowing the retrieval of no more than 500 rows at a time. This limitation is frustrating because I aim for the new API to dynamically capture all rows, regardless of whether there are 500 or 2000 rows in my board. Is there a dynamic solution to overcome this restriction?</p>"
+    },
+    {
+      "id": 161396,
+      "postNumber": 2,
+      "createdAt": "2024-01-10T18:26:23.720Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Well that is what the cursor on items_page is for, the value of the cursor is used with a next_items_page query fetch the next page of items.</p>\n<p>Just an FYI the old version had a limit of 1000 items in a single request - if you were lucky enough to fetch that many before the request timed out and failed. Thats why pagination is utilized, so that you can fetch small enough batches to stay under 60s per request.</p>"
+    },
+    {
+      "id": 161397,
+      "postNumber": 3,
+      "createdAt": "2024-01-10T18:32:37.672Z",
+      "author": "SMac (Sean Mac)",
+      "cookedHtml": "<p>Thank you for your response. The issue is that, up to this point, I haven’t come across any instructions on how to implement dynamic cursor pagination in Power BI, given its restriction on loops. Here’s my straightforward API query. Do you have any suggestions on where to begin tweaking it to ensure the dynamic retrieval of all my rows? Your assistance is greatly appreciated! Thank you!</p>\n<p>let<br />\nMondayQuery1 = “{”“query”“: “”{boards(ids: “,<br />\nMondayQuery2 = “BOARD ID”,<br />\nMondayQuery3 = “) {items_page(limit: 100) {cursor items {id name column_values {text column {title}}}}}}””}”,<br />\nMondayFullQuery = MondayQuery1 &amp; MondayQuery2 &amp; MondayQuery3,<br />\nSource = Web.Contents(“<a href=\"https://api.monday.com/\" rel=\"noopener nofollow ugc\">https://api.monday.com/</a>”,<br />\n[<br />\nRelativePath=“v2”,<br />\nHeaders=<br />\n[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“MY API TOKEN”,<br />\n#“API-Version”=“2023-10”<br />\n],<br />\nContent=Text.ToBinary(MondayFullQuery)<br />\n]<br />\n),<br />\n#“JSON” = Json.Document(Source, 65001),<br />\ndata = JSON[data],<br />\nboards = data[boards],<br />\n#“Converted to Table” = Table.FromList(boards, Splitter.SplitByNothing(), null, null, ExtraValues.Error)<br />\nin<br />\n#“Converted to Table”</p>"
+    },
+    {
+      "id": 161400,
+      "postNumber": 4,
+      "createdAt": "2024-01-10T18:47:48.141Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I admit I am not a Power BI guru. To be honest, you may want to experiment with using an azure function to do all the monday work and then push the data into power BI from that.</p>\n<p>Simplest case is an azure function that Power BI makes a call to, the function does all the work, then returns the results to power BI.</p>\n<p>Having access to a more robust programming language than Power BI may be useful so you can do post processing of the data in azure where you copy mirror column display values to text for example.</p>"
+    },
+    {
+      "id": 161503,
+      "postNumber": 5,
+      "createdAt": "2024-01-11T07:07:45.652Z",
+      "author": "SMac (Sean Mac)",
+      "cookedHtml": "<p>Can you tell me more about the Azure function please, is there any web link where I could do some reading? Thanks.</p>"
+    },
+    {
+      "id": 161578,
+      "postNumber": 6,
+      "createdAt": "2024-01-11T12:23:28.288Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n\n      <a href=\"https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview?pivots=programming-language-javascript\" target=\"_blank\" rel=\"noopener\">learn.microsoft.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/f/df50ff207e6a6ce3b4d58cdf0195308a0fb1e170_2_690x362.png\" class=\"thumbnail\" width=\"690\" height=\"362\" /></div>\n\n<h3><a href=\"https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview?pivots=programming-language-javascript\" target=\"_blank\" rel=\"noopener\">Azure Functions Overview</a></h3>\n\n  <p>Learn how you can use Azure Functions to build robust serverless apps.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>Depends on your programming experience though.</p>\n<p>I just remembered though monday code is now a thing, and since that’s monday based you can get support from <a href=\"http://monday.com\">monday.com</a> on it.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/hosting-your-app-with-monday-code\" target=\"_blank\" rel=\"noopener\">Apps Framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/apps/docs/hosting-your-app-with-monday-code\" target=\"_blank\" rel=\"noopener\">Hosting your app with monday code</a></h3>\n\n  <p>monday-code is our low-code development platform that enables you to host and run server-side monday apps securely. The novel hosting infrastructure seamlessly integrates with our apps framework to provide a one-stop shop for your applications.It...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>But with time short you may be limited… if you’re using a personal token for the API go to monday.labs (in your accounts avatar icon menu) and activate the one month API extension for your account. Then your token will still support the old API as the default for an extra month until you sort stuff out.</p>"
+    },
+    {
+      "id": 161613,
+      "postNumber": 7,
+      "createdAt": "2024-01-11T14:16:27.894Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

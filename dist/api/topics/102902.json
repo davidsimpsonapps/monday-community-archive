@@ -1,0 +1,71 @@
+{
+  "id": 102902,
+  "title": "UNAUTHORIZED_FIELD_OR_TYPE on create_item mutation",
+  "slug": "unauthorized-field-or-type-on-create-item-mutation",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    22,
+    94,
+    351,
+    484
+  ],
+  "createdAt": "2024-11-12T13:51:06.214Z",
+  "lastPostedAt": "2024-11-19T06:57:41.486Z",
+  "postsCount": 7,
+  "excerpt": "I’ve been using the following to create an item on a board: \nexport const createItem = async (variables: any, shortLivedToken: string) =&gt; {\n\tconst monday = mondaySdk();\n\tmonday.setToken(shortLivedToken);\n\tconst query = `&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 48,
+  "posts": [
+    {
+      "id": 209639,
+      "postNumber": 1,
+      "createdAt": "2024-11-12T13:51:06.352Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I’ve been using the following to create an item on a board:</p>\n<pre><code class=\"lang-auto\">export const createItem = async (variables: any, shortLivedToken: string) =&gt; {\n\tconst monday = mondaySdk();\n\tmonday.setToken(shortLivedToken);\n\tconst query = `\n        mutation createItem (\n            $board_id: ID!\n            $group_id: String!\n            $item_name: String!\n            $column_values: JSON!\n        ){\n            create_item (\n                board_id: $board_id, \n                group_id: $group_id, \n                item_name: $item_name, \n                column_values: $column_values\n            ) {\n                id\n            }\n        }\n    `;\n\tconst options = { variables };\n\tconst response = await monday.api(query, options);\n\treturn response;\n};\n</code></pre>\n<p>When passing this data in:</p>\n<pre><code class=\"lang-auto\">\tconst variables = {\n\t\tboard_id: 7833822272,\n\t\tgroup_id: \"topics\",\n\t\titem_name: \"Project Pivot\",\n\t\tcolumn_values: JSON.stringify({\n\t\t\tstatus: \"14\", // aka `Approved`\n\t\t\tdate4: \"2024-07-29 11:00:00\",\n\t\t\tlong_text: \"Pivot demo\",\n\t\t\tnumbers3: 40\n\t\t})\n\t};\n\tconst item = await createItem(variables, shortLivedToken);\n\t\n\tconsole.log(`Created item? \"${itemName}\":`, item );\n\tconsole.log(`variables:`, variables );\n\n</code></pre>\n<p>It gives me the following errors from the <code>console.log</code> lines:</p>\n<pre><code class=\"lang-auto\">Created item? \"Project Pivot\": {\n\t\"errors\": [\n\t\t{\n\t\t\t\"message\": \"Unauthorized field or type\",\n\t\t\t\"path\": [\n\t\t\t\t\"create_item\"\n\t\t\t],\n\t\t\t\"extensions\": {\n\t\t\t\t\"code\": \"UNAUTHORIZED_FIELD_OR_TYPE\"\n\t\t\t}\n\t\t}\n\t],\n\t\"account_id\": 11749326\n}\n\nvariables: {\n\t\"board_id\": 7833822272,\n\t\"group_id\": \"topics\",\n\t\"item_name\": \"Project Pivot\",\n\t\"column_values\": \"{\\\"status\\\":\\\"14\\\",\\\"date4\\\":\\\"2024-07-29 11:00:00\\\",\\\"long_text\\\":\\\"Pivot demo\\\",\\\"numbers3\\\":40}\"\n}\n\n</code></pre>\n<p>I think that this suggests there’s something odd about one of the fields <code>UNAUTHORIZED_FIELD_OR_TYPE</code>.</p>\n<p>But when I look at the columns, using:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [7833822272]) {\n    columns {\n      id\n      type\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>I get the following:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": [\n          {\n            \"id\": \"name\",\n            \"type\": \"name\",\n            \"settings_str\": \"{}\"\n          },\n          {\n            \"id\": \"person\",\n            \"type\": \"people\",\n            \"settings_str\": \"{}\"\n          },\n          {\n            \"id\": \"status\",\n            \"type\": \"status\",\n            \"settings_str\": \"{\\\"done_colors\\\":[1],\\\"hide_footer\\\":true,\\\"color_mapping\\\":{\\\"1\\\":14,\\\"14\\\":1},\\\"labels\\\":{\\\"0\\\":\\\"Under consideration\\\",\\\"2\\\":\\\"Rejected\\\",\\\"7\\\":\\\"New request\\\",\\\"14\\\":\\\"Approved\\\"},\\\"labels_positions_v2\\\":{\\\"0\\\":1,\\\"2\\\":3,\\\"5\\\":4,\\\"7\\\":0,\\\"14\\\":2},\\\"labels_colors\\\":{\\\"0\\\":{\\\"color\\\":\\\"#fdab3d\\\",\\\"border\\\":\\\"#e99729\\\",\\\"var_name\\\":\\\"orange\\\"},\\\"2\\\":{\\\"color\\\":\\\"#df2f4a\\\",\\\"border\\\":\\\"#ce3048\\\",\\\"var_name\\\":\\\"red-shadow\\\"},\\\"7\\\":{\\\"color\\\":\\\"#579bfc\\\",\\\"border\\\":\\\"#4387e8\\\",\\\"var_name\\\":\\\"bright-blue\\\"},\\\"14\\\":{\\\"color\\\":\\\"#00c875\\\",\\\"border\\\":\\\"#00b461\\\",\\\"var_name\\\":\\\"green-shadow\\\"}}}\"\n          },\n          {\n            \"id\": \"date4\",\n            \"type\": \"date\",\n            \"settings_str\": \"{}\"\n          },\n          {\n            \"id\": \"long_text\",\n            \"type\": \"long_text\",\n            \"settings_str\": \"{}\"\n          },\n          {\n            \"id\": \"long_text9\",\n            \"type\": \"long_text\",\n            \"settings_str\": \"{}\"\n          },\n          {\n            \"id\": \"anticipated_outcomes\",\n            \"type\": \"long_text\",\n            \"settings_str\": \"{}\"\n          },\n          {\n            \"id\": \"numbers3\",\n            \"type\": \"numbers\",\n            \"settings_str\": \"{\\\"unit\\\":{\\\"symbol\\\":\\\"$\\\",\\\"custom_unit\\\":\\\"\\\",\\\"direction\\\":\\\"left\\\"}}\"\n          },\n          {\n            \"id\": \"button__1\",\n            \"type\": \"button\",\n            \"settings_str\": \"{}\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": ...\n}\n</code></pre>\n<p>All column types and values look perfectly reasonable.</p>\n<p>What could be the reason for the <code>UNAUTHORIZED_FIELD_OR_TYPE</code> error message?</p>"
+    },
+    {
+      "id": 209789,
+      "postNumber": 2,
+      "createdAt": "2024-11-13T13:29:05.335Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>What makes this weirder is when I get the mutation:</p>\n<pre><code class=\"lang-auto\">mutation createItem($board_id: ID!, $group_id: String!, $item_name: String!, $column_values: JSON!) {\n  create_item(\n    board_id: $board_id\n    group_id: $group_id\n    item_name: $item_name\n    column_values: $column_values\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>and the variables:</p>\n<pre><code class=\"lang-auto\">{\n  \"board_id\": 7843759455,\n  \"group_id\": \"topics\",\n  \"item_name\": \"Project Pivot\",\n  \"column_values\": \"{\\\"status\\\":\\\"14\\\",\\\"date4\\\":\\\"2024-07-29 11:00:00\\\",\\\"long_text9\\\":\\\"This Pivot demo\\\",\\\"numbers3\\\":40}\"\n}\n</code></pre>\n<p>and push it through the api playground ui, the item is created fine.</p>\n<p>It also works with the exact same data on my dev and staging accounts, just not on my production account when using the code in the original post.</p>"
+    },
+    {
+      "id": 210378,
+      "postNumber": 3,
+      "createdAt": "2024-11-17T10:41:02.521Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>,</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it so that our team can take a look into it?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 210452,
+      "postNumber": 4,
+      "createdAt": "2024-11-17T14:27:24.620Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Done. (<span class=\"hashtag-raw\">#3719361</span>)</p>"
+    },
+    {
+      "id": 210537,
+      "postNumber": 5,
+      "createdAt": "2024-11-18T10:41:43.367Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> !</p>"
+    },
+    {
+      "id": 210583,
+      "postNumber": 6,
+      "createdAt": "2024-11-18T16:31:14.335Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Just to update you.</p>\n<p>I added the missing <code>board:write</code> <strong>OAuth scope</strong> and now everything works just fine.</p>\n<p>Thanks so much for your help on this one.</p>\n<p>– David</p>"
+    },
+    {
+      "id": 210629,
+      "postNumber": 7,
+      "createdAt": "2024-11-19T06:57:41.486Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> !!!</p>"
+    }
+  ]
+}

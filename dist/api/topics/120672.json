@@ -1,0 +1,29 @@
+{
+  "id": 120672,
+  "title": "How to update subitems using API calls in VBA",
+  "slug": "how-to-update-subitems-using-api-calls-in-vba",
+  "categoryId": 6,
+  "tagIds": [
+    53,
+    94,
+    132,
+    187,
+    484
+  ],
+  "createdAt": "2025-10-06T13:32:23.662Z",
+  "lastPostedAt": "2025-10-06T13:32:23.761Z",
+  "postsCount": 1,
+  "excerpt": "Hi \nI’m trying to create subitems via the monday api in VBA but coming up with some issues with formatting the JSON payload for the api request. I have no problems retrieving items so something is working, but making cha&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 9,
+  "posts": [
+    {
+      "id": 239788,
+      "postNumber": 1,
+      "createdAt": "2025-10-06T13:32:23.761Z",
+      "author": "Roger (Roger Brook)",
+      "cookedHtml": "<p>Hi</p>\n<p>I’m trying to create subitems via the monday api in VBA but coming up with some issues with formatting the JSON payload for the api request. I have no problems retrieving items so something is working, but making changes is causing my some headaches. I should also say, I can do this perfectly in python but my workplace won’t allow me to have that, or spend any money on other codeless environments such as Zapier, so i’m stuck with Excel and VBA.</p>\n<p>I use an externally sourced JsonConverter that allegedly sorts out any VBA issues with escaping quotes.</p>\n<p>My code:</p>\n<p>Sub PostMondaySubitems()<br />\nDim http As Object<br />\nDim url As String<br />\nDim apiKey As String<br />\nDim mutation As String<br />\nDim colVals1 As String, colValsJson As String<br />\nDim body As String</p>\n<pre><code class=\"lang-auto\">' --- Column values as JSON strings ---\ncolVals1 = \"{\"\"color_mkw58znm\"\":\"\"AR\"\",\"\"numeric_mkrz1ykt\"\":\"\"12\"\",\"\"numeric_mkrz1crk\"\":\"\"9\"\"}\"\n\n' --- Escape quotes for GraphQL ---\ncolValsJson = ConvertToJson(colVals1)\n\n' --- Build mutation string ---\nmutation = \"mutation { \" &amp; _\n           \"s1: create_subitem(parent_item_id: \"\"9945618885\"\", item_name: \"\"Net CV\"\", column_values: \" &amp; colValsJson &amp; \") { id } \" &amp; _\n           \"}\"\n    \n' --- Wrap mutation in JSON body ---\nbody = \"{\"\"query\"\":\"\"\" &amp; mutation &amp; \"\"\"}\"\nbody = ConvertToJson(body)\n\n' --- Debug ---\nDebug.Print body\n\n' --- Send request ---\nSet http = CreateObject(\"MSXML2.XMLHTTP\")\nhttp.Open \"POST\", Constants.API_URL, False\nhttp.setRequestHeader \"Content-Type\", \"application/json\"\nhttp.setRequestHeader \"Authorization\", Constants.API_KEY\nhttp.send body\nDebug.Print (\"status: \" &amp; http.Status &amp; \", response: \" &amp; http.responseText)\n\n'Debug.Print body          ' Check final JSON\nDebug.Print (\"status: \" &amp; http.Status &amp; \", response: \" &amp; http.responseText)\n</code></pre>\n<p>End Sub</p>\n<p>The output:</p>\n<p>“{“query”:“mutation { s1: create_subitem(parent_item_id: “9945618885”, item_name: “Net CV”, column_values: “{\\“color_mkw58znm\\”:\\“AR\\”,\\“numeric_mkrz1ykt\\”:\\“12\\”,\\“numeric_mkrz1crk\\”:\\“9\\”}”) { id } }”}”<br />\nstatus: 400, response: {“errors”:[{“message”:“Invalid GraphQL request”,“extensions”:{“code”:“INVALID_GRAPHQL_REQUEST”,“details”:“Expected object, received string”}}],“extensions”:{“request_id”:“a0adc561-c784-92d2-b838-a6a016fd9aa3”}}</p>\n<p>I have tries many combinations of quotes and slashes, double quotes etc but never arrived at a correctly formatted request.</p>\n<p>Many thanks in advance, this is driving me nuts!</p>"
+    }
+  ]
+}

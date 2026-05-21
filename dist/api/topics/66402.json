@@ -1,0 +1,62 @@
+{
+  "id": 66402,
+  "title": "Filtering by date is not working for me",
+  "slug": "filtering-by-date-is-not-working-for-me",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    406
+  ],
+  "createdAt": "2023-09-20T06:44:56.490Z",
+  "lastPostedAt": "2023-09-28T06:00:17.033Z",
+  "postsCount": 6,
+  "excerpt": "Hi, \nI am building a query that I want to use for fetching items from a board with two conditions. The problem is that API rejects my query when I want to use operator between for date column type. \nInitially I wanted to&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 612,
+  "posts": [
+    {
+      "id": 144446,
+      "postNumber": 1,
+      "createdAt": "2023-09-20T06:44:56.571Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I am building a query that I want to use for fetching items from a board with two conditions. The problem is that API rejects my query when I want to use operator <em>between</em> for date column type.</p>\n<p>Initially I wanted to make a query that would basically say: “<strong>Give me all items that have checkbox checked and that have start date greater than some_date</strong>”.<br />\nBut I couldn’t make it work so I decided to ask it in the way: “<strong>Give me all items that have checkbox checked and that have start date between date_1 - date_2</strong>”.</p>\n<p>This works great when I write dates directly but doesn’t work when I use variables.</p>\n<pre><code class=\"lang-auto\">query AllItemsFiltered(\n$boardId: ID!,\n$checkboxColumnId: ID!,\n$startDateColumnId: ID!,\n$limit: Int!,\n$columnValuesIds: [String!]!) {\n\n    boards(ids: [$boardId]) {\n        ...BoardItem\n        items_page (limit: $limit, query_params: {\n            rules: [\n                {\n                    column_id: $checkboxColumnId,\n                    compare_value: [null],\n                    operator: is_not_empty\n                \n                },\n                {\n                    column_id: $startDateColumnId,\n                    compare_value: [\"2023-03-04\", \"2024-02-02\"], **# THIS WORKS**\n                    operator: between\n                },\n            ],\n            operator: and\n            }) {\n            cursor\n            items {\n                ...ItemFragment\n                column_values(ids: $columnValuesIds) {\n                    ...ColumnValueItem\n                }\n            }\n        }\n    }\n}\n</code></pre>\n<p>On the other hand when I pass start and end dates as variables then I am getting API error saying: “<em>List dimension mismatch on variable $startDate1 and argument compare_value ([CompareValue!]! / CompareValue!)</em>”</p>\n<pre><code class=\"lang-auto\">query AllItemsFiltered(\n$boardId: ID!,\n$checkboxColumnId: ID!,\n$startDateColumnId: ID!,\n$startDate1: CompareValue!,\n$startDate2: CompareValue!,\n$limit: Int!,\n$columnValuesIds: [String!]!) {\n\n    boards(ids: [$boardId]) {\n        ...BoardItem\n        items_page (limit: $limit, query_params: {\n            rules: [\n                {\n                    column_id: $checkboxColumnId,\n                    compare_value: [null],\n                    operator: is_not_empty\n                \n                },\n                {\n                    column_id: $startDateColumnId,\n                    compare_value: [$startDate1, $startDate2], **# THIS DOESN'T WORK**\n                    operator: between\n                },\n            ],\n            operator: and\n            }) {\n            cursor\n            items {\n                ...ItemFragment\n                column_values(ids: $columnValuesIds) {\n                    ...ColumnValueItem\n                }\n            }\n        }\n    }\n}\n</code></pre>\n<p>I would appreciate any help with this one. Btw. I am using v2023-10 API.</p>"
+    },
+    {
+      "id": 144795,
+      "postNumber": 2,
+      "createdAt": "2023-09-21T05:31:08.888Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/josipbernat\">@josipbernat</a>,</p>\n<p>You can pass the dates as this:</p>\n<p><code>$datesBetween: CompareValue!</code></p>\n<p>And then add the dates as an array in the variables:   <code>\"datesBetween\" : [\"2022-03-04\", \"2023-08-21\"]</code></p>\n<p>Then inside items_page: <code>compare_value: $datesBetween</code></p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 144897,
+      "postNumber": 3,
+      "createdAt": "2023-09-21T12:56:58.216Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>“datesBetween” : [“2022-03-04”, “2023-08-21”]</p>\n</blockquote>\n</aside>\n<p>Looks like it’s working this way, thanks! It would be awesome if you could update docs with more examples like this.</p>\n<p>Best,<br />\nJosip</p>"
+    },
+    {
+      "id": 145077,
+      "postNumber": 4,
+      "createdAt": "2023-09-22T05:34:41.216Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<p>Well not so fast!</p>\n<p>It turns out that CompareValue type is SCALAR but the solution you provided works with Array of Strings.<br />\nBelow is a code snippet of variables from Postman and I don’t know why Postman allows that $datesBetween is Array when it must be Scalar and array isn’t Scalar.<br />\nI checked GraphQL schema and there is no part that would define Array as new custom scalar.</p>\n<pre><code class=\"lang-auto\">{\n    \"boardId\":\"some_board_id\",\n    \"columnValuesIds\":[\"name\",\"checkbox7\",\"date4\"],\n    \"datesBetween\":[\"2023-09-08\", \"2026-09-22\"],\n    \"limit\":100,\n    \"checkboxColumnId\":\"checkbox7\",\n    \"startDateColumnId\":\"date4\"\n}\n</code></pre>\n<p>When I use <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API Playground I am getting underlined variable with warning saying: “Expected value of type CompareValue”. But it in the end allows me to make the request.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/6/b695e8f817d72ee919f7b1e10a83c62531c18aad.png\" title=\"Screenshot 2023-09-22 at 10.29.48\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/6/b695e8f817d72ee919f7b1e10a83c62531c18aad_2_690x322.png\" alt=\"Screenshot 2023-09-22 at 10.29.48\" width=\"690\" height=\"322\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-09-22 at 10.29.48</span><span class=\"informations\">1160×542 51.7 KB</span></div></a></div><p></p>\n<p>On the other hand, the Apollo iOS client won’t accept Array as $datesBetween because CompareValue is String in the end. And Apollo generated this by consuming GraphQL schema. So it’s not something that I came up with.</p>\n<p><code>typealias CompareValue = String</code></p>\n<p>Schema that I used for generating Apollo support states following for CompareValue:</p>\n<pre><code>{\n  \"kind\": \"SCALAR\",\n  \"name\": \"CompareValue\",\n  \"description\": null,\n  \"fields\": null,\n  \"inputFields\": null,\n  \"interfaces\": null,\n  \"enumValues\": null,\n  \"possibleTypes\": null\n},\n</code></pre>\n<p>Do you know how can I overcome this?</p>"
+    },
+    {
+      "id": 145775,
+      "postNumber": 5,
+      "createdAt": "2023-09-27T09:32:49.437Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<p>Can anybody help me with this, please?</p>"
+    },
+    {
+      "id": 145946,
+      "postNumber": 6,
+      "createdAt": "2023-09-28T06:00:17.033Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/josipbernat\">@josipbernat</a>,</p>\n<p>Sorry for the late reply!</p>\n<p>We will need you to please send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with all this information so that we can take this as a ticket and look into this to find a solution for you.</p>\n<p>Looking forward to hearing from you via email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

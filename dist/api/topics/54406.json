@@ -1,0 +1,54 @@
+{
+  "id": 54406,
+  "title": "Copy the Item and add it as a subitem to another",
+  "slug": "copy-the-item-and-add-it-as-a-subitem-to-another",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-03-22T12:17:40.149Z",
+  "lastPostedAt": "2023-03-23T13:21:50.809Z",
+  "postsCount": 5,
+  "excerpt": "Has anyone had such a case where they had to make a copy of an element and place it as a subitem to another element? \nMaybe someone has a query for this case, I will be grateful. Of course, if this is not possible, I wil&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 305,
+  "posts": [
+    {
+      "id": 120755,
+      "postNumber": 1,
+      "createdAt": "2023-03-22T12:17:40.215Z",
+      "author": "mpsujek (Mateusz)",
+      "cookedHtml": "<p>Has anyone had such a case where they had to make a copy of an element and place it as a subitem to another element?<br />\nMaybe someone has a query for this case, I will be grateful. Of course, if this is not possible, I will be grateful for an answer.</p>\n<p>The second question is - is it possible to add elements via the API as mirrored fields?</p>"
+    },
+    {
+      "id": 120947,
+      "postNumber": 2,
+      "createdAt": "2023-03-23T05:25:13.421Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mpsujek\">@mpsujek</a>,</p>\n<p>In this case I believe you would need to query for the column values of the subitem and then create the subitem from scratch under the new parent item via “create_subitem”.</p>\n<p>Because you can duplicate subitems but the duplicate will appear under the same parent item as the original subitem. And then you can not “move it” to a different parent item.</p>\n<p>Regarding the second question, what would an example of this be?</p>"
+    },
+    {
+      "id": 120974,
+      "postNumber": 3,
+      "createdAt": "2023-03-23T08:47:41.636Z",
+      "author": "mpsujek (Mateusz)",
+      "cookedHtml": "<p>So, how to manage that?<br />\nvia query mutation <code>create_new_subitem</code> i get only 3 columns → Owner,Status,Date<br />\nIn the documentation, there is also information about <code>column_values</code> but no sample of how to use that.</p>\n<p>I’ve tried that but its only create item with name New Subitem<br />\n<code>mutation {   create_subitem(     parent_item_id: [my_item_id]     item_name: \"New Subitem\"     column_values: \"{\\\"New Column\\\": \\\"Column Value\\\", \\\"Another Column\\\": \\\"Another Value\\\"}\"   ) {     id   } }</code></p>\n<p>About mirrored fields, I’d like to match 2 different boards data via API. It’s possible?</p>"
+    },
+    {
+      "id": 121024,
+      "postNumber": 4,
+      "createdAt": "2023-03-23T13:20:20.546Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/mpsujek\">@mpsujek</a>,</p>\n<p>Regarding the first question, you would get the column values from the subitem with a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids:1234567890){\n    name\n    column_values{\n      id\n      title\n      text\n      value\n    }\n  }\n}\n</code></pre>\n<p>You could then use that information to create the new subitem:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_subitem(\n    parent_item_id: 1234567890\n    item_name: \"My subitem\"\n    column_values: \"{\\\"person\\\":\\\"someemail@example.com\\\", \\\"status\\\":\\\"Done\\\", \\\"date0\\\": {\\\"date\\\" : \\\"1993-08-27\\\", \\\"time\\\" : \\\"18:00:00\\\"}}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>You have to use the column’s IDs and not their names. To get the column IDs, you can do so by clicking on your profile picture or initials at the bottom left of the screen, then clicking on monday.labs and then enabling developer mode. After that if you go to your board and click on the three dots next to your columns’ titles, you will see each ID.</p>\n<p>You can also check them out with a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids:1234567890){\n    columns{\n      title\n      id\n    }\n  }\n}\n</code></pre>\n<p>You will need to pass the column values of each column in a different format depending on each column type. You can find the documentation <a href=\"https://developer.monday.com/api-reference/docs/guide-to-changing-column-data\">here</a>.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 121025,
+      "postNumber": 5,
+      "createdAt": "2023-03-23T13:21:50.809Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>You can check the documentation about the connect boards column (which would affect the mirror column for it) <a href=\"https://developer.monday.com/api-reference/docs/connect#updating-the-connect-boards-column\">here</a>.</p>\n<p>Let me know if you have any questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

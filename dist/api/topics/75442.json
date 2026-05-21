@@ -1,0 +1,47 @@
+{
+  "id": 75442,
+  "title": "UPDATE: Bug/Schema non-conformance in ... on DependencyValue",
+  "slug": "update-bug-schema-non-conformance-in-on-dependencyvalue",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-17T19:01:19.741Z",
+  "lastPostedAt": "2024-01-27T13:46:25.075Z",
+  "postsCount": 3,
+  "excerpt": "Here is the example query. \n{\n  items(ids: &quot;123123123&quot;) {\n    column_values {\n      ... on BoardRelationValue {\n        linked_item_ids\n      }\n      ... on DependencyValue {\n        linked_item_ids\n      }\n    }\n  }\n}\n\nT&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 350,
+  "posts": [
+    {
+      "id": 162698,
+      "postNumber": 1,
+      "createdAt": "2024-01-17T19:01:19.826Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Here is the example query.</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: \"123123123\") {\n    column_values {\n      ... on BoardRelationValue {\n        linked_item_ids\n      }\n      ... on DependencyValue {\n        linked_item_ids\n      }\n    }\n  }\n}\n</code></pre>\n<p>There is a problem here because according to the schema <code>linked_item_ids</code> on <code>BoardRelationValue</code> is of type <code>[ID!]</code> and <code>DependencyValue</code> is <code>ID!</code>. This means the two fragments cannot be used together technically.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/b/7befd92d67422eea6fe3f7057f6d834fd1fa7888.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/b/7befd92d67422eea6fe3f7057f6d834fd1fa7888_2_690x246.png\" alt=\"image\" width=\"690\" height=\"246\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">774×276 22.4 KB</span></div></a></div><p></p>\n<p>Although in an practice it works because the two column types never overlap. The real problem is the return values:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"items\": [\n      {\n        \"column_values\": [\n          {\n            \"id\": \"connect_boards\",\n            \"type\": \"board_relation\",\n            \"linked_item_ids\": [\n              \"555555555\"\n            ]\n          },\n          {\n            \"id\": \"dependency\",\n            \"type\": \"dependency\",\n            \"linked_item_ids\": \"[555555555]\"\n          }\n        ]\n      }\n    ]\n  }\n}\n</code></pre>\n<p>You will notice, <code>BoardRelationValue</code> returns <code>[ID!]</code> in conformance with the schema <strong>The schema for <code>DependencyValue</code> says it will return <code>ID!</code> which is the ID itself as a string - yet it returns a serialized <code>[Int!]</code></strong></p>\n<p>Ideally, since the property is called <code>linked_item_ids</code> it would return <code>[ID!]</code> - which would not match the current schema, but be consistent with <code>BoardRelationValue</code>, and would support multiple dependencies. (The schema should be updated)</p>\n<p>This issue is present in 2023-10 and 2024-01, I also already submitted the form to report this. This post is just because the form is hard to format everything in plus I wanted to make community aware of the apparent discrepency.</p>"
+    },
+    {
+      "id": 163233,
+      "postNumber": 2,
+      "createdAt": "2024-01-21T11:15:13.253Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>Thank you for bringing this to us! We will continue this in the ticket <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 164449,
+      "postNumber": 3,
+      "createdAt": "2024-01-27T13:46:25.075Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Support informed me that this will be addressed in the next API version (Which I assume will be 2024-04). Adding this so other devs can be aware this fix may break their workarounds to the existing error. (If you were JSON.parse() the linked_item_ids string and using the resulting [Int!])</p>"
+    },
+    {
+      "id": 164524,
+      "postNumber": 4,
+      "createdAt": "2024-01-28T13:50:37.116Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

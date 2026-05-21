@@ -1,0 +1,63 @@
+{
+  "id": 76298,
+  "title": "Api v2 - get item data with fourmula and linked cell board/itemid",
+  "slug": "api-v2-get-item-data-with-fourmula-and-linked-cell-board-itemid",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    351,
+    410
+  ],
+  "createdAt": "2024-01-27T08:22:55.370Z",
+  "lastPostedAt": "2024-01-29T15:21:07.099Z",
+  "postsCount": 4,
+  "excerpt": "Hey, \nim trying to create a query where i can get the item coulms_values. \ni have the item id and board it, and i would like to get the columnes value. and if one of the cell are linked to other board , i would like to g&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 324,
+  "posts": [
+    {
+      "id": 164433,
+      "postNumber": 1,
+      "createdAt": "2024-01-27T08:22:55.456Z",
+      "author": "snirben (snir)",
+      "cookedHtml": "<p>Hey,<br />\nim trying to create a query where i can get the item coulms_values.<br />\ni have the item id and board it, and i would like to get the columnes value. and if one of the cell are linked to other board , i would like to get the item id in the other board is it possible?<br />\ni think it called : <strong>linkedPulseId?</strong></p>\n<pre><code class=\"lang-auto\">        query = f\"\"\"\n  query {{\n  items (ids:[{item_id}]) {{\n    id\n    name\n    column_values {{\n\t\ttext\n      id\n      value\n      type\n    }}\n  }}\n}}\n</code></pre>\n<p>i tired this, but its only giving me the value , and i dont see the linked cell name and item id.</p>\n<p>i used to use but its not working any more.</p>\n<pre><code class=\"lang-auto\">        query = f\"\"\"\n  query {{\n    boards(ids: [{board_id}]) {{\n      items(ids: [{item_id}]) {{\n        id\n        name\n        column_values {{\n          title\n          text\n        }}\n      }}\n    }}\n  }}\n\"\"\"\n</code></pre>"
+    },
+    {
+      "id": 164448,
+      "postNumber": 2,
+      "createdAt": "2024-01-27T13:36:50.139Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Welcome to the Developer Community!</p>\n<p>You’ve got two things going on here, first with API 2023-10 and later, the <code>items</code> query on <code>boards</code> and <code>groups</code> is no longer directly available, and must be nested in <code>items_page</code> which it the pagination controller. See <a href=\"https://developer.monday.com/api-reference/docs/items_page\">items_page</a> for more details.</p>\n<p>Next you need to look into <a href=\"https://developer.monday.com/api-reference/docs/column-values-v2\">column values v2</a> which allows you to use GraphQL fragments to return detailed column value information that depends on the column type.</p>\n<p>In this case you’re looking at a <a href=\"https://developer.monday.com/api-reference/docs/connect\">connect boards</a> column.</p>\n<p>Since it sounds like you just need for one item, we don’t need the boards query, it just slows things down and adds API complexity.</p>\n<pre><code class=\"lang-auto\">query ($itemIds: [ID!], $columnIds: [String!]) {\n  items(ids: $itemIds) {\n    id\n    column_values(ids: $columnIds) {\n      id\n      ... on BoardRelationValue {\n        linked_item_ids\n        linked_items {\n          id\n          name\n          column_values {\n            id\n            value\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p><em>note, I used GraphQL variables, rather than f-strings because then you don’t have to worry about escaping quotes and formatting things just right. Simple string, and you pass your variable values alongside it. The specifics are out of scope for this message.</em></p>\n<p>I’ve included both <code>linked_item_ids</code> and <code>linked_items</code> in the query, the first just returns an array of item IDs. The second one actually lets you access the items directly, including their column values, but that may not be the most efficient way since it will consume extra API complexity points so rate limit you sooner. Sometimes splitting queries is faster in overall to avoid API rate limits.</p>"
+    },
+    {
+      "id": 164523,
+      "postNumber": 3,
+      "createdAt": "2024-01-28T13:50:13.415Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 164713,
+      "postNumber": 4,
+      "createdAt": "2024-01-29T15:18:21.429Z",
+      "author": "snirben (snir)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> Cody:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">query ($itemIds: [ID!], $columnIds: [String!]) {\n  items(ids: $itemIds) {\n    id\n    column_values(ids: $columnIds) {\n      id\n      ... on BoardRelationValue {\n        linked_item_ids\n        linked_items {\n          id\n          name\n          column_values {\n            id\n            value\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n</blockquote>\n</aside>\n<p>it didnt work for me,<br />\nall i need is to pull item data and the connected board for given item. and i also have board id if it helps.</p>\n<p>with the connected board item id, i then will need to pull the data of this item to.</p>\n<p>is there a way of doing it easy and optmized? i dont care if i send 2-3 api requests to get what i need. but i do want it to be efficent to not exeeced the rate limit.</p>\n<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> Thank you!</p>"
+    },
+    {
+      "id": 164715,
+      "postNumber": 5,
+      "createdAt": "2024-01-29T15:21:07.099Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I am unsure what you are needing.</p>\n<p>I thought you wanted the item IDs that the item is connected to on a particular connect boards column. Do you just want the board ID that its connected to and not the items it is connected to?</p>"
+    },
+    {
+      "id": 164870,
+      "postNumber": 6,
+      "createdAt": "2024-01-30T08:05:27.280Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

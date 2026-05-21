@@ -1,0 +1,78 @@
+{
+  "id": 95764,
+  "title": "Hi, I'm trying to fetch data from my monday.com dashboard under leave request",
+  "slug": "hi-im-trying-to-fetch-data-from-my-monday-com-dashboard-under-leave-request",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-08-20T11:42:49.002Z",
+  "lastPostedAt": "2024-08-26T05:27:00.327Z",
+  "postsCount": 8,
+  "excerpt": "I’m trying to get data from sub items from one of the Leave Forms.",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 32,
+  "posts": [
+    {
+      "id": 198135,
+      "postNumber": 1,
+      "createdAt": "2024-08-20T11:42:49.093Z",
+      "author": "karl.arboiz (Karl James Arboiz)",
+      "cookedHtml": "<p>I’m trying to get data from sub items from one of the Leave Forms.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/f/f/ffe75a5da3c1604fe8efb138ff001513abb8ad34.png\" alt=\"Screenshot 2024-08-20 210151\" width=\"327\" height=\"234\" /></p>"
+    },
+    {
+      "id": 198137,
+      "postNumber": 2,
+      "createdAt": "2024-08-20T11:45:10.033Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/karl.arboiz\">@karl.arboiz</a>,</p>\n<p>Welcome to the community! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>You can query the subitems on a board once they’re submitted through the form. Is that what you’re looking to do?</p>\n<p>If so, check out our subitems API reference documentation <a href=\"https://developer.monday.com/api-reference/reference/subitems\">here</a> for more info!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 198197,
+      "postNumber": 3,
+      "createdAt": "2024-08-21T05:40:34.679Z",
+      "author": "karl.arboiz (Karl James Arboiz)",
+      "cookedHtml": "<p>Yes, that’s correct.  But i have a problem with using API Beta Request. Upon testing the step the response body is empty array. Attached below are the screenshots of the query and the test Data out<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/5/6/56bea4549147722263aa40827e027a1a127caa38.png\" alt=\"Screenshot 2024-08-21 141842\" width=\"566\" height=\"345\" /><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/7/778888cbb5e088aaeea9a3c62678ffa2cc5767de.png\" title=\"Screenshot 2024-08-21 141928\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/7/778888cbb5e088aaeea9a3c62678ffa2cc5767de_2_690x138.png\" alt=\"Screenshot 2024-08-21 141928\" width=\"690\" height=\"138\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-08-21 141928</span><span class=\"informations\">1170×235 19.4 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 198211,
+      "postNumber": 4,
+      "createdAt": "2024-08-21T08:26:02.391Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/karl.arboiz\">@karl.arboiz</a>,</p>\n<p>I have two questions about this that may help:</p>\n<ol>\n<li>Are you sure that the item ID you are using is correct?</li>\n<li>Does the user whose API token is being used in Zapier  (or the platform you are using) have access to said item via the UI?</li>\n</ol>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 198486,
+      "postNumber": 5,
+      "createdAt": "2024-08-22T13:25:17.363Z",
+      "author": "karl.arboiz (Karl James Arboiz)",
+      "cookedHtml": "<p>Hi Matias. This is all good now, I just need help with updating the owner column in the subitems using post method in API request beta</p>"
+    },
+    {
+      "id": 198740,
+      "postNumber": 6,
+      "createdAt": "2024-08-25T05:42:38.851Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/karl.arboiz\">@karl.arboiz</a>,</p>\n<p>You can use a query like this one to get the ID of the subitems board (which is different from the main board):</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: MAINBOARDIDHERE) {\n    columns(ids: \"subitems__1\") {\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>Then you can use a query like this one to look for the ID of the “owner” column:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: IDOFTHESUBITEMSBOARDHERE) {\n    columns {\n      id\n      title\n    }\n  }\n}\n</code></pre>\n<p>Then you can populate that column with a mutation like this one (as shown <a href=\"https://developer.monday.com/api-reference/reference/people#update-the-people-column\">here</a>):</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:SUBITEMIDHERE, board_id:SUBITEMBOARDIDHERE, column_values: \"{\\\"people\\\" : {\\\"personsAndTeams\\\":[{\\\"id\\\":\\\"4616627\\\",\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":\\\"4616666\\\",\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":\\\"51166\\\",\\\"kind\\\":\\\"team\\\"}]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 198794,
+      "postNumber": 7,
+      "createdAt": "2024-08-26T05:02:46.321Z",
+      "author": "karl.arboiz (Karl James Arboiz)",
+      "cookedHtml": "<p>Actually, Matias, the goal is like this: after I ran the Code by Zapier: Run Javascript, I will get this value :</p>\n<ul>\n<li>[</li>\n</ul>\n<p>{subItemID: “12345671”, subItemBoardID: “12345678”, columnID: “person”, columnValue: “123456”},</p>\n<p>{subItemID: “12345672”, subItemBoardID: “12345678”, columnID: “person”, columnValue: “123456”},</p>\n<p>{subItemID: “12345673”, subItemBoardID: “12345678”, columnID: “person”, columnValue: “123456”},</p>\n<p>{subItemID: “12345674”, subItemBoardID: “12345678”, columnID: “person”, columnValue: “123456”}</p>\n<p>]</p>\n<p>I will then use API Request Beta to make a post method. I will simply have to update the person column of the sub item IDs with the column value.</p>"
+    },
+    {
+      "id": 198808,
+      "postNumber": 8,
+      "createdAt": "2024-08-26T05:27:00.327Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/karl.arboiz\">@karl.arboiz</a>,</p>\n<p>That’s great!</p>\n<p>Then all you need at that point is a mutation like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:SUBITEMIDHERE, board_id:SUBITEMBOARDIDHERE, column_values: \"{\\\"PEOPLECOLUMNIDHERE\\\" : {\\\"personsAndTeams\\\":[{\\\"id\\\":\\\"4616627\\\",\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":\\\"4616666\\\",\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":\\\"51166\\\",\\\"kind\\\":\\\"team\\\"}]}}\") {\n    id\n  }\n}\n</code></pre>"
+    }
+  ]
+}

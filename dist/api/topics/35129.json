@@ -1,0 +1,68 @@
+{
+  "id": 35129,
+  "title": "Query Does Not Work Past Couple Hundred Items!",
+  "slug": "query-does-not-work-past-couple-hundred-items",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-04-23T15:02:11.655Z",
+  "lastPostedAt": "2022-04-25T11:02:31.292Z",
+  "postsCount": 7,
+  "excerpt": "I’m getting an error when running a query. The query works for 500 items, but when I jump up to 1000 items it seems to be giving some kind of error. I ran a complexity query just to be sure I wasn’t reaching any API limi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1165,
+  "posts": [
+    {
+      "id": 83780,
+      "postNumber": 1,
+      "createdAt": "2022-04-23T15:02:11.730Z",
+      "author": "christian.lee (Christian Lee)",
+      "cookedHtml": "<p>I’m getting an error when running a query. The query works for 500 items, but when I jump up to 1000 items it seems to be giving some kind of error. I ran a complexity query just to be sure I wasn’t reaching any API limitations and it doesn’t appear that I am. I’m really not sure what is going on here. Please Help!</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/8/82d02755cbf8783af6087e3d68f6056f0da9ad81.png\" alt=\"image\" width=\"211\" height=\"344\" /></p>\n<p>It spits out this error sometimes. My board has 2800 items on it. The complexity when I query 100 items is 1420 and returns results. But when I up the limit to around 500 it gives me this error. I’ve tried this in the api playground as well as a custom written python script and both return the same error. I kept thinking my query was wrong, so I went to the playground but got the same problem.</p>\n<pre><code class=\"lang-auto\">{\n  \"message\": \"Unexpected token u in JSON at position 0\",\n  \"stack\": \"SyntaxError: Unexpected token u in JSON at position 0\"\n}\n</code></pre>\n<p>EDIT:</p>\n<p>I just ran 200 item limit and got this result for complexity. If this is for 200 items, how is 500 even close to the API limitations???<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/9/9a9603249f107de9dec4ce0b0398a420587f9572.png\" alt=\"image\" width=\"253\" height=\"155\" /></p>"
+    },
+    {
+      "id": 83804,
+      "postNumber": 2,
+      "createdAt": "2022-04-24T04:53:40.556Z",
+      "author": "galmog (gal a)",
+      "cookedHtml": "<p>I am getting the same error!</p>"
+    },
+    {
+      "id": 83808,
+      "postNumber": 3,
+      "createdAt": "2022-04-24T05:26:09.343Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/galmog\">@galmog</a> and <a class=\"mention\" href=\"/u/christian.lee\">@christian.lee</a> !</p>\n<p>I do not think this is related to the complexity limit.</p>\n<p>Having said that, I could not reproduce the issue myself.</p>\n<p>Would you be able to send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with a screen recording of the issue so that we can take a look into it and give it some following?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 83809,
+      "postNumber": 4,
+      "createdAt": "2022-04-24T05:55:57.029Z",
+      "author": "galmog (gal a)",
+      "cookedHtml": "<p>It seems that for me the error occurs when I have in the query:</p>\n<p>column_values {id value text}</p>\n<p>but when I remove the text to have only:</p>\n<p>column_values {id value}</p>\n<p>It works…(without the column text of course).<br />\nAs well, if I limit the query to 100 it runs as well regardless…</p>"
+    },
+    {
+      "id": 83816,
+      "postNumber": 5,
+      "createdAt": "2022-04-24T11:24:33.725Z",
+      "author": "christian.lee (Christian Lee)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nJust emailed a screen recording over. I tried to click around the developer tools too to see if you guys needed any information from there.</p>\n<p>Interesting that someone else was able to reproduce the issue. I thought I was going to go crazy yesterday trying to make my query work. For a while I thought I was writting the query wrong, but realized that it was only happening after querying about 500 items or so.</p>"
+    },
+    {
+      "id": 83817,
+      "postNumber": 6,
+      "createdAt": "2022-04-24T11:27:19.669Z",
+      "author": "christian.lee (Christian Lee)",
+      "cookedHtml": "<p>Yes, I noticed that as well. I wish I could do without the text query, but some columns do not have all the information you need in just the column values unfortunately. I’m glad I am not alone here. Hopefully it is just a simple bug in the API that can be easily resolved.</p>"
+    },
+    {
+      "id": 83871,
+      "postNumber": 7,
+      "createdAt": "2022-04-25T11:02:31.292Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/christian.lee\">@christian.lee</a> and <a class=\"mention\" href=\"/u/galmog\">@galmog</a></p>\n<p>I believe the issue here is a timeout error. When the server takes more than 60 seconds to retrieve information, it stops and shows that error message.</p>\n<p>This is why it works for fewer items. Because the amount of data being retrieved is smaller.</p>\n<p>You might notice that getting rid of the “text” field might make it work, but that is because in that case, you would be retrieving less data.</p>\n<p>I think if you keep the “text” field and lower the limit to 50 (for example), it will work, and that would confirm my suspicion.</p>\n<p>In this case you can use <a href=\"https://api.developer.monday.com/docs/rate-limits#pagination\">pagination</a> in order to avoid the issue.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

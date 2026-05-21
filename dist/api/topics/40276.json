@@ -1,0 +1,54 @@
+{
+  "id": 40276,
+  "title": "Complexity query exhausted",
+  "slug": "complexity-query-exhausted",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94
+  ],
+  "createdAt": "2022-08-02T10:57:26.385Z",
+  "lastPostedAt": "2022-08-04T09:16:50.828Z",
+  "postsCount": 5,
+  "excerpt": "Hi Folks, \nWe are trying to execute API queries in our cron, it is working fine for short queries but it breaks when we try to execute it in sequence queue and throw complexity exhausted query error. We have tried to sol&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 825,
+  "posts": [
+    {
+      "id": 93300,
+      "postNumber": 1,
+      "createdAt": "2022-08-02T10:57:26.470Z",
+      "author": "Ept_dev (Ept dev)",
+      "cookedHtml": "<p>Hi Folks,</p>\n<p>We are trying to execute API queries in our cron, it is working fine for short queries but it breaks when we try to execute it in sequence queue and throw complexity exhausted query error. We have tried to solve it but no luck.</p>\n<p>Please help us if you have any solution.</p>\n<p>Thank you in advance!</p>"
+    },
+    {
+      "id": 93301,
+      "postNumber": 2,
+      "createdAt": "2022-08-02T11:11:39.318Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ept_dev\">@Ept_dev</a><br />\nThere are two ways to solve this problem:</p>\n<ol>\n<li>\n<a href=\"https://api.developer.monday.com/docs/complexity-queries\">monitor your complexity threshold</a> and slow down (or wait) as soon as you are reaching the limit;</li>\n<li>simplify your query (e.g. no nested objects)</li>\n</ol>"
+    },
+    {
+      "id": 93390,
+      "postNumber": 3,
+      "createdAt": "2022-08-03T10:02:47.584Z",
+      "author": "Ept_dev (Ept dev)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rob\">@rob</a></p>\n<p>I’m using query mutation with curl in cron job. There are only simple queries no nested queries but, all they are executing in bulk. Like item creation and change item value queries are executing one by one in loop.</p>\n<p>One more thing, I have checked documentation and found that <strong>All queries made through an API token belonging to a specific user must not exceed 10,000,000 points per minute (1M for trial and free accounts)</strong> So what is query point limit for subscription/paid account?</p>\n<p>I have tried some query changes but still facing same. Can you help me about this?</p>\n<p>Thank you in advance!</p>"
+    },
+    {
+      "id": 93400,
+      "postNumber": 4,
+      "createdAt": "2022-08-03T10:45:52.940Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/e/cc9497/48.png\" class=\"avatar\" /> Ept_dev:</div>\n<blockquote>\n<p>So what is query point limit for subscription/paid account?</p>\n</blockquote>\n</aside>\n<p>As said, just <a href=\"https://api.developer.monday.com/docs/complexity-queries\">monitor the complexity</a>.<br />\nFor example, if you add the <code>complexity</code> field to your mutations you’ll be able to check your current level (that will be rest every minute).</p>\n<pre><code class=\"lang-auto\">mutation {\n  complexity {\n    query\n    before\n    after\n  }\n  create_item(board_id:12345, item_name:\"test item\") {\n    id\n  }\n}\n</code></pre>\n<p>Just return a HTTP code different from <code>200</code>, for example <code>429 Too many requests</code>, to tell monday to repeat the request after 30 secs.</p>\n<p>For bulk operations, there’s no other solution.</p>"
+    },
+    {
+      "id": 93543,
+      "postNumber": 5,
+      "createdAt": "2022-08-04T09:16:50.828Z",
+      "author": "Ept_dev (Ept dev)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rob\">@rob</a></p>\n<p>Our application creates boards, groups, columns, and items at runtime. For this, it’s required to send multiple requests, and it stops after executing 25+ requests and we have more than 200 requests.</p>\n<p>If there is no way to handle this API limitation then it means we can not use Monday API for applications that execute bulk queries Or sequences in queue.</p>\n<p>I couldn’t find any solution for this, it is very disappointing.</p>\n<p>Thanks for your support and help.</p>"
+    }
+  ]
+}

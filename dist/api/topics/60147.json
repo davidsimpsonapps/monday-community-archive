@@ -1,0 +1,69 @@
+{
+  "id": 60147,
+  "title": "Complexity limits for app using users token",
+  "slug": "complexity-limits-for-app-using-users-token",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    234,
+    351
+  ],
+  "createdAt": "2023-06-16T07:22:42.580Z",
+  "lastPostedAt": "2023-06-16T13:07:20.447Z",
+  "postsCount": 7,
+  "excerpt": "Hello, \nWe have an app in monday.com and are using users token that we get from oauth to make request to the monday.com graphql service, We make query for each specific users request with token we get for specific user. &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 224,
+  "posts": [
+    {
+      "id": 131701,
+      "postNumber": 1,
+      "createdAt": "2023-06-16T07:22:42.667Z",
+      "author": "yolo (yolo)",
+      "cookedHtml": "<p>Hello,<br />\nWe have an app in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> and are using users token that we get from oauth to make request to the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> graphql service, We make query for each specific users request with token we get for specific user. Does this mean each user request will be treated separately for complexity limits for our app or do we use up our apps complexity limits?</p>"
+    },
+    {
+      "id": 131702,
+      "postNumber": 2,
+      "createdAt": "2023-06-16T07:25:48.562Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/yolo\">@yolo</a></p>\n<p>Complexity limits are working on a per app basis (5M read + 5M write per minute).</p>"
+    },
+    {
+      "id": 131703,
+      "postNumber": 3,
+      "createdAt": "2023-06-16T07:27:23.393Z",
+      "author": "yolo (yolo)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> so if my app will have multiple (thousands) request within a minute for different users will my app be using up all the complexity limits?</p>"
+    },
+    {
+      "id": 131706,
+      "postNumber": 4,
+      "createdAt": "2023-06-16T07:30:13.238Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/yolo\">@yolo</a></p>\n<p>Correct. Complexity is per app, not per user</p>"
+    },
+    {
+      "id": 131707,
+      "postNumber": 5,
+      "createdAt": "2023-06-16T07:43:35.094Z",
+      "author": "yolo (yolo)",
+      "cookedHtml": "<p>Is this scalable if app’s integration recipe starts to get tens of thousands of requests per minute? is this limit based on each account and app?</p>"
+    },
+    {
+      "id": 131711,
+      "postNumber": 6,
+      "createdAt": "2023-06-16T07:57:19.769Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>It all depends how you write your app. We are using a queueing mechanism that accepts any number of request (burst mode) and then drips the request to monday at a rate the will not give you complexity limits. If you action through the monday API is just updating one item (complexity cost is 30.001) the dripping rate need to be set to (5M / 30.001) 166 request per minute to avoid complexity.</p>"
+    },
+    {
+      "id": 131740,
+      "postNumber": 7,
+      "createdAt": "2023-06-16T13:07:20.447Z",
+      "author": "yolo (yolo)",
+      "cookedHtml": "<p>Yea found out the actual cause was due to not using pagination in query, it seems like even if there is less item to fetch if we don’t paginate it will be treated as higher complexity.</p>"
+    }
+  ]
+}

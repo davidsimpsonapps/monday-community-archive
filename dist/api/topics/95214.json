@@ -1,0 +1,54 @@
+{
+  "id": 95214,
+  "title": "Having a really hard time wrapping my head around Recipe Builder",
+  "slug": "having-a-really-hard-time-wrapping-my-head-around-recipe-builder",
+  "categoryId": 5,
+  "tagIds": [
+    6,
+    157
+  ],
+  "createdAt": "2024-08-13T06:40:45.609Z",
+  "lastPostedAt": "2024-08-14T16:28:35.078Z",
+  "postsCount": 5,
+  "excerpt": "Hey guys, \nI am a developer tasked to implement some automations with leads. Stuff that has probably been done 1,000 times over. \nIn my situation I have an Action. When a status is changed, it sends out an appointment re&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 55,
+  "posts": [
+    {
+      "id": 197168,
+      "postNumber": 1,
+      "createdAt": "2024-08-13T06:40:45.681Z",
+      "author": "SmithSonian (Smith)",
+      "cookedHtml": "<p>Hey guys,</p>\n<p>I am a developer tasked to implement some automations with leads. Stuff that has probably been done 1,000 times over.</p>\n<p>In my situation I have an <code>Action</code>. When a status is changed, it sends out an appointment request via WhatsApp. It was painful to setup (I didn’t realize I had to connect the dots in the builder) but, I got there.</p>\n<p>Now, I’m stuck at the triggers.</p>\n<p>I have everything setup. When the appointment is sent it’s tracked for the delivery status.</p>\n<p>When the message is read, failed, etc. I send these updates to the given webhook URL using the following payload:</p>\n<pre><code class=\"lang-auto\">{\n  \"item_id\": u64,\n  \"new_value\": String\n}\n</code></pre>\n<p>To me, this seems straightforward. The user can now select which column receives this text update. My trigger is setup. All looks good.</p>\n<p>But when it comes to the Action, I am completely lost. I want the user to simply select the column to receive the update. Yet, there is no option for this. The closest I can find is <code>Status Update</code>. Which I connect my two values: <code>ItemId</code>, and <code>NewValue</code>.</p>\n<p>But once the user has the recipe sentence builder they are forced to choose the Status, and the value.</p>"
+    },
+    {
+      "id": 197178,
+      "postNumber": 2,
+      "createdAt": "2024-08-13T08:48:34.806Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/smithsonian\">@SmithSonian</a></p>\n<p>Welcome to the community!</p>\n<p>It looks like you are trying to have the possibility for the user to specify a column in the integration recipe. For that you can define the column field in the action as an input field and specify it comes from the recipe. Then you need to include that field in the recipe. You action will now receive the values you are sending and the value (columnId in this case) of the column selected by the user.</p>"
+    },
+    {
+      "id": 197334,
+      "postNumber": 3,
+      "createdAt": "2024-08-14T09:48:17.468Z",
+      "author": "SmithSonian (Smith)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>For my case it’s a trigger that returns the mentioned payload. I am unsure which Action to use, as the payload in the trigger contains all the necessary data to fill a <code>status</code> column or <code>text</code>, whichever is easier.</p>\n<p>But when I look at the action <code>Status Update</code> the status column adds what should be redundant information to the sentence builder, and I don’t require an endpoint for the action.</p>"
+    },
+    {
+      "id": 197342,
+      "postNumber": 4,
+      "createdAt": "2024-08-14T10:02:17.790Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I advise to build a custom action that ask for the column as input. If you ask for that column input inside the trigger you need to store the columnId somewhere locally.</p>"
+    },
+    {
+      "id": 197421,
+      "postNumber": 5,
+      "createdAt": "2024-08-14T16:28:35.078Z",
+      "author": "SmithSonian (Smith)",
+      "cookedHtml": "<p>Thank you for your input.</p>\n<p>I believe I have it setup correctly now, can you please advise if this is the most efficient method?</p>\n<p><strong>[Trigger Happens]</strong> - Payload sent to webhook URL described in database</p>\n<p><strong>[Monday receives trigger and transforms it into an <code>Action</code>]</strong> - Same server that sent the payload receives the same payload, but with additional context provided by the specific recipe</p>\n<p><strong>[Server performs request via API]</strong> - The server then performs a request using GraphQL. In my case a <code>mutation</code> request using the payload data</p>"
+    }
+  ]
+}

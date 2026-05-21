@@ -1,0 +1,39 @@
+{
+  "id": 58245,
+  "title": "Formula column to show as blank if a date is missing",
+  "slug": "formula-column-to-show-as-blank-if-a-date-is-missing",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-05-15T12:56:37.701Z",
+  "lastPostedAt": "2023-05-19T06:10:53.699Z",
+  "postsCount": 3,
+  "excerpt": "I am using this formula to show status of an item of it is past it’s target date, on target or completed before it’s target date. I also want the column to be “blank” if one of the dates was missing (Legals Completed). S&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1052,
+  "posts": [
+    {
+      "id": 127998,
+      "postNumber": 1,
+      "createdAt": "2023-05-15T12:56:37.798Z",
+      "author": "afash (Anthony)",
+      "cookedHtml": "<p>I am using this formula to show status of an item of it is past it’s target date, on target or completed before it’s target date. I also want the column to be “blank” if one of the dates was missing (Legals Completed). See formula below:</p>\n<p>IF({Legals Completed}&lt;{Timeline#End},“Within Target”, IF({Legals Completed}&gt;{Timeline#End},“Past Target Date”, IF({Legals Completed}={Timeline#End},“On Target”, “”)))</p>\n<p>Are there any experts out there?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 128150,
+      "postNumber": 2,
+      "createdAt": "2023-05-16T08:57:43.263Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Firstly, when you start using more complex formulas, it’s definitely worth using indentation to visualize what’s happening.</p>\n<p>It’s not always necessary but generally good practice to use “FORMAT_DATE” when working with dates, just so that you can guarantee consistent results.</p>\n<p>For showing as blank when a date is missing, that’s just a case of nesting another IF statement.</p>\n<pre><code class=\"lang-auto\">IF(\n    OR(\n        {Legals Completed}=\"\",\n        {Timeline#End}=\"\"\n    ),\n    \"\",\n    IF(\n        FORMAT_DATE({Legals Completed},\"YYYY-MM-DD\")&lt;FORMAT_DATE({Timeline#End},\"YYYY-MM-DD\"),\n        \"Within Target\",\n        IF(\n            FORMAT_DATE({Legals Completed},\"YYYY-MM-DD\")&gt;FORMAT_DATE({Timeline#End},\"YYYY-MM-DD\"),\n            \"Past Target Date\",\n            IF(\n                FORMAT_DATE({Legals Completed},\"YYYY-MM-DD\")=FORMAT_DATE({Timeline#End},\"YYYY-MM-DD\"),\n                \"On Target\",\n                \"\"\n            )\n        )\n    )\n)\n</code></pre>\n<p>If you’re considering adding further complexity to this formula, you might want to use CONCATENATE, as this command will prevent you from nesting statements too deep. You can easily combine mutually exclusive statements such as these in that way, returning a blank value when the statements are false.</p>\n<p>Feel free to reach out if you need help. <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=12\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 128655,
+      "postNumber": 3,
+      "createdAt": "2023-05-19T06:10:53.699Z",
+      "author": "afash (Anthony)",
+      "cookedHtml": "<p>Thank you so much for this.</p>"
+    }
+  ]
+}

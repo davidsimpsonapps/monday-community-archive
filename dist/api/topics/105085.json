@@ -1,0 +1,51 @@
+{
+  "id": 105085,
+  "title": "How do I get the full data for a single item?",
+  "slug": "how-do-i-get-the-full-data-for-a-single-item",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-12-09T20:49:45.050Z",
+  "lastPostedAt": "2024-12-15T06:42:14.532Z",
+  "postsCount": 4,
+  "excerpt": "Thanks to some great help here, I can get all the data in my board with the following query… \nquery {\n    boards (ids: [123456789]) {\n      items_page (limit: 50) {\n        cursor\n        items {\n          id\n          n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 19,
+  "posts": [
+    {
+      "id": 213368,
+      "postNumber": 1,
+      "createdAt": "2024-12-09T20:49:45.144Z",
+      "author": "Yossu (Yossu)",
+      "cookedHtml": "<p>Thanks to some great help here, I can get all the data in my board with the following query…</p>\n<pre><code class=\"lang-auto\">query {\n    boards (ids: [123456789]) {\n      items_page (limit: 50) {\n        cursor\n        items {\n          id\n          name\n          column_values {\n            id\n            text\n            value\n            column {\n              id\n              type\n              title\n              settings_str\n            }\n          }\n        }\n      }\n    }\n}\n</code></pre>\n<p>The data that comes back look like this…</p>\n<pre><code class=\"lang-json\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items_page\": {\n          \"cursor\": \"some-long-string-of-chars\",\n          \"items\": [\n            {\n              \"id\": \"987654321\",\n              \"name\": \"Company name\",\n              \"column_values\": [\n                {\n                  \"id\": \"subitems__1\",\n                  \"text\": null,\n                  \"value\": \"{}\",\n                  \"column\": {\n                    \"id\": \"subitems__1\",\n                    \"type\": \"subtasks\",\n                    \"title\": \"Subitems\",\n                    \"settings_str\": \"...\"\n                  }\n                }\n              ]\n            }\n            // more items here\n          ]\n        }\n      }\n    ]\n  }\n}\n</code></pre>\n<p>As you can see, the second property for each item is <code>\"name\"</code>, which in my case contains the name of the company.</p>\n<p>I now want to get the same data, but just for a single company. I found the following code in <a href=\"https://community.monday.com/t/retrieve-an-item-by-specifying-its-itemid/71461\">another post here</a>…</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: 123456789) {\n    column_values {\n      id\n      value\n      type\n      text\n      column {\n        title\n      }\n    }\n  }\n}\n</code></pre>\n<p>However, whilst this returns most of the data for the item, it misses out the name…</p>\n<pre><code class=\"lang-json\">{\n  \"data\": {\n    \"items\": [\n      {\n        \"column_values\": [\n          // Other data here...\n        ]\n      }\n    ]\n  },\n  \"account_id\": 123123123\n}\n</code></pre>\n<p>As you can see, this is missing the <code>id</code> (which I don’t need as I know that to make the query) and the <code>name</code>.</p>\n<p>How can I get the same data as I did in the first query, but just for a single item?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 213520,
+      "postNumber": 2,
+      "createdAt": "2024-12-11T05:34:55.359Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/yossu\">@Yossu</a> !</p>\n<p>You can use something like this:</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: 123456789) {\n    name\n    id\n    column_values {\n      id\n      value\n      type\n      text\n      column {\n        title\n      }\n    }\n  }\n}\n</code></pre>\n<p>Or if you want to keep the original query, you can filter by the name of the items like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [123456789]) {\n    items_page(\n      limit: 50\n      query_params: {rules: [{column_id: \"name\", compare_value: [\"Item 1\"]}]}\n    ) {\n      cursor\n      items {\n        id\n        name\n        column_values {\n          id\n          text\n          value\n          column {\n            id\n            type\n            title\n            settings_str\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 213578,
+      "postNumber": 3,
+      "createdAt": "2024-12-11T12:52:21.770Z",
+      "author": "Yossu (Yossu)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias\">@Matias</a> Thanks for the reply. Your query as shown works fine, however it searches on the name. I want to search on the Id.</p>\n<p>I tried changing it as follows…</p>\n<pre><code class=\"lang-auto\">query_params: {rules: [{column_id: \"id\", compare_value: [\"123456879\"]}]}\n</code></pre>\n<p>…but this gave a message “Column not found”.</p>\n<p>I don’t really understand this, as your query clearly has a column named “id” right below the “name” column, and the results show it.</p>\n<p>Any idea what I’m doing wrong? Thanks again</p>"
+    },
+    {
+      "id": 213969,
+      "postNumber": 4,
+      "createdAt": "2024-12-15T06:42:14.532Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Matias here!</p>\n<p>You can not use the second query to filter by ID.</p>\n<p>The “id” you see is not a column. It is a field that can be retrieved via API.</p>\n<p>You would need to use the first one I sent with the ID in the arguments.</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: 123456789) {\n    name\n    id\n    column_values {\n      id\n      value\n      type\n      text\n      column {\n        title\n      }\n    }\n  }\n}\n</code></pre>"
+    }
+  ]
+}

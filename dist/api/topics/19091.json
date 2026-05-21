@@ -1,0 +1,137 @@
+{
+  "id": 19091,
+  "title": "[RELEASED] Creating new labels with the API",
+  "slug": "released-creating-new-labels-with-the-api",
+  "categoryId": 70,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2021-04-21T12:26:54.813Z",
+  "lastPostedAt": "2023-12-21T11:36:27.891Z",
+  "postsCount": 15,
+  "excerpt": ":sparkles::sparkles:Hi everyone! \nAfter much anticipation, you are now able to create new Status and Dropdown labels using our API! \nTo do so, use the create_labels_if_missing boolean argument to create any missing label&hellip;",
+  "solvedPostId": null,
+  "likeCount": 17,
+  "views": 6273,
+  "posts": [
+    {
+      "id": 48437,
+      "postNumber": 1,
+      "createdAt": "2021-04-21T12:26:54.915Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p><img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=9\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" /><img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=9\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" />Hi everyone!</p>\n<p>After much anticipation, you are now able to create new Status and Dropdown labels using our API!</p>\n<p>To do so, use the <code>create_labels_if_missing</code> boolean argument to create any missing labels in your Status and Dropdown columns. This argument will default to false, so if you don’t define it as true the missing labels will not get created and your API calls will fail.</p>\n<p>Because creating new labels changes a board’s structure, you must have the permissions to change board structure in order to successfully use this argument.</p>\n<p>Here is an example query using this argument:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item (board_id: 12345678, item_name: \"New item\", column_values: \"{\\\"status\\\" : \\\"New Label\\\"}\", create_labels_if_missing: true) {\n    id\n  }\n}\n</code></pre>\n<p>Currently, this parameter has been added to the following mutations:</p>\n<ul>\n<li><code>create_item()</code></li>\n<li><code>change_simple_column_value()</code></li>\n<li><code>change_column_value()</code></li>\n<li><code>change_multiple_column_values()</code></li>\n<li><code>create_subitem()</code></li>\n</ul>\n<p>Thanks everyone and happy building!</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 68569,
+      "postNumber": 2,
+      "createdAt": "2021-11-11T17:48:02.331Z",
+      "author": "THDMonday.com (Andrew)",
+      "cookedHtml": "<p>Hey Helen - Has the ability to delete the default labels like “done” or “stuck” via the API been implemented yet? My team loves using the “status” column but the default values don’t always make sense.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 114901,
+      "postNumber": 3,
+      "createdAt": "2023-02-10T12:08:43.903Z",
+      "author": "RogerLovato (Roger Lovato)",
+      "cookedHtml": "<p>Hi Helen, I’m new here.</p>\n<p>Is there a way to create a status column and add custom labels without having to create items?</p>\n<p>I am having an issue where I need to create two status columns in more than 500 boards and in all cases, the labels must follow a standard of our company so that users can choose a status that we have defined. Is there a possibility of creating the columns by configuring the status option types, colors, etc.?</p>\n<p>Something like:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_column(board_id: BOARD_ID, column_type: status, title: \"Column Name\", labels: [\"Label 1\", \"Label 2\", \"Label 3\"]) {\n    id\n  }\n}\n</code></pre>\n<p>Note: this is only an example that doesn’t work.</p>\n<p>Regards,</p>"
+    },
+    {
+      "id": 115244,
+      "postNumber": 4,
+      "createdAt": "2023-02-13T19:44:32.828Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rogerlovato\">@RogerLovato</a>,</p>\n<p>You will need an item when you add the labels.</p>\n<p>You’ll need two operations to achieve this:</p>\n<p>Create the status column</p>\n<pre><code class=\"lang-auto\">mutation{\n  create_column(board_id: 12345678, title:\"Work Status\", description: \"This is my work status column\", column_type:status) {\n    id\n    title\n    description\n  }\n}\n</code></pre>\n<p>and then update the column to include the labels</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:11111, board_id:22222, column_values: \"{\\\"status15\\\" : {\\\"label\\\" : \\\"Done\\\"}}\") {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 142586,
+      "postNumber": 5,
+      "createdAt": "2023-09-08T12:33:49.757Z",
+      "author": "Dev (dev@trujay.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alessandra\">@alessandra</a>.<br />\nHow to create a status column and specify colors to labels. I tried smth like this:</p>\n<pre><code class=\"lang-auto\">{\n    \"query\": \"mutation ( $title: String!, $description: String!, $defaults: JSON!, $column_type: ColumnType!, $board_id: Int!,  ) { create_column ( title: $title, description: $description, defaults: $defaults, column_type: $column_type, board_id: $board_id,  ) { id } }\",\n    \"variables\": {\n        \"title\": \"Custom Status\",\n        \"description\": \"Description\",\n        \"defaults\": \"{\\\"labels\\\":{\\\"0\\\":\\\"Working on it\\\",\\\"1\\\":\\\"Done\\\",\\\"2\\\":\\\"Stuck\\\",\\\"3\\\":\\\"Custom Label\\\",\\\"4\\\":\\\"Almost Done\\\",\\\"6\\\":\\\"test3\\\",\\\"7\\\":\\\"test2\\\",\\\"8\\\":\\\"test4\\\"},\\\"labels_colors\\\":{\\\"0\\\":{\\\"color\\\":\\\"#fdab3d\\\"},\\\"1\\\":{\\\"color\\\":\\\"#00c875\\\"},\\\"2\\\":{\\\"color\\\":\\\"#e2445c\\\"},\\\"3\\\":{\\\"color\\\":\\\"#ffadad\\\"},\\\"4\\\":{\\\"color\\\":\\\"#9CD326\\\"},\\\"6\\\":{\\\"color\\\":\\\"#FF158A\\\"},\\\"7\\\":{\\\"color\\\":\\\"#579bfc\\\"},\\\"8\\\":{\\\"color\\\":\\\"#CAB641\\\"}}}\",\n        \"column_type\": \"status\",\n        \"board_id\": 1258885613\n    }\n}\n</code></pre>\n<p>Labels were created successfully, but colors didn’t.</p>"
+    },
+    {
+      "id": 142741,
+      "postNumber": 6,
+      "createdAt": "2023-09-10T08:28:43.598Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dev\">@Dev</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>As explained in <a href=\"https://developer.monday.com/api-reference/docs/status#index-values-and-color-mapping\">this article</a>:</p>\n<p><strong>By default</strong>, every index value matches a specific color. For example, the Green status has the index 1. Here’s a <a href=\"https://view.monday.com/1073554546-ad9f20a427a16e67ded630108994c11b?r=use1\">full list</a> of the indexes and matching values.</p>\n<p>When you create a new Status label, it will follow the <strong>default</strong> index value and its index will not change. However, the color of a status label can be changed. Therefore, you cannot assume a label’s color and index will always match.</p>\n<p>Take the following example:</p>\n<p><code>Index: 2</code> will have a color value of <code>#e2445c</code>. Thus, using this index value will set the Status column value to a Red-shadow color, as shown below:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/9/99d52fa02adc779502ccbc3785e1fca73eee52d1.png\" alt=\"512|smartxauto\" title=\"image (64).png\" width=\"512\" height=\"139\" /></p>\n<p>And on the board, this will appear as such:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/0/209ce13586f7d1d5d7bf2471934631202e6d2a4f.png\" alt=\"|autoxauto\" title=\"unnamed (2).png\" width=\"512\" height=\"44\" /></p>\n<p>The color values are not static and can be changed within the Status column labels. You can find more info on this <a href=\"https://support.monday.com/hc/en-us/articles/360001269685-The-Status-Column\">here</a>.</p>\n<p>Then, the index value will remain the same, but the color value will be changed. For example, if I chose Black as the new color, this is how the color value would appear in the API:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/9/99d52fa02adc779502ccbc3785e1fca73eee52d1.png\" alt=\"|autoxauto\" title=\"unnamed (3).png\" width=\"512\" height=\"139\" /></p>\n<p>And this is how the item would appear on the board:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/b/9bc80fa2ce318a4c83e00dd17baaa5a8d03816f2.png\" alt=\"|autoxauto\" title=\"unnamed (4).png\" width=\"512\" height=\"58\" /></p>\n<p>As such, using index values does not guarantee that you will populate the same color values across multiple boards.</p>\n<p>If you encounter a mismatch of index values when sending data between boards in your account, we recommend changing the color of the labels back to the <a href=\"https://view.monday.com/1073554546-ad9f20a427a16e67ded630108994c11b?r=use1\">default values</a> manually.</p>\n<p>So in this case, you can use the given indexes to select a color according to the table.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 142885,
+      "postNumber": 7,
+      "createdAt": "2023-09-11T05:13:26.523Z",
+      "author": "Dev (dev@trujay.com)",
+      "cookedHtml": "<p>Looks like a bot answer. Actually it’s not an answer to my question. It’s just a copy-paste from documentation page. Not what I need.<br />\nCan you show here a sample of request how to create e.g. label “Custom label” with color “sky” via API?</p>"
+    },
+    {
+      "id": 142890,
+      "postNumber": 8,
+      "createdAt": "2023-09-11T05:46:31.814Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I am sorry if that was not clear, here is an example where I am using the index of “sky” (153) to create a new column with a label called “Custom label” and the color “sky”:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_column(\n    board_id: 1234567890\n    title: \"My status column\"\n    column_type: status\n    defaults: \"{\\\"labels\\\":{\\\"153\\\": \\\"Custom label\\\"}}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Is that what you needed?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 142900,
+      "postNumber": 9,
+      "createdAt": "2023-09-11T06:46:04.813Z",
+      "author": "Dev (dev@trujay.com)",
+      "cookedHtml": "<p>Yep, great. Thank you very much.</p>"
+    },
+    {
+      "id": 142908,
+      "postNumber": 10,
+      "createdAt": "2023-09-11T08:48:00.485Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/dev\">@Dev</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 142991,
+      "postNumber": 11,
+      "createdAt": "2023-09-11T17:42:18.698Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Haha <a class=\"mention\" href=\"/u/dev\">@Dev</a> your post made me laugh! <img src=\"https://emoji.discourse-cdn.com/apple/laughing.png?v=12\" title=\":laughing:\" class=\"emoji\" alt=\":laughing:\" width=\"20\" height=\"20\" /> <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> is definitely not a bot – but you never know these days!!!</p>"
+    },
+    {
+      "id": 154644,
+      "postNumber": 12,
+      "createdAt": "2023-11-24T09:21:23.409Z",
+      "author": "BenWC (Ben Warwick-Champion)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Is there a way to modify the labels of an existing Status column via API?</p>\n<p>For example:<br />\nA board has a status column with only the default values (0 - Working on it, 1 - Done, 2 - Stuck). If I want to modify the “Working on it” label to say “In progress” but keep the same index and colour, is that possible?</p>\n<p>I have tried something like below, but this creates a new label with an index +1 above the current highest value which is a different colour (e.g. blue or purple instead of orange)</p>\n<pre><code class=\"lang-gql\">mutation {\n  change_column_value(\n    board_id: 123456789, \n    item_id: 123456789, \n    column_id: \"status\", \n    value: \"{\\\"index\\\":0,\\\"label\\\":\\\"In review\\\"}\", \n    create_labels_if_missing: true\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Any guidance would be appreciated!</p>"
+    },
+    {
+      "id": 154666,
+      "postNumber": 13,
+      "createdAt": "2023-11-24T15:15:18.823Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Currently there is not a way to modify existing labels, only create brand new ones.</p>"
+    },
+    {
+      "id": 154763,
+      "postNumber": 14,
+      "createdAt": "2023-11-26T13:45:25.625Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 158893,
+      "postNumber": 15,
+      "createdAt": "2023-12-21T10:01:55.980Z",
+      "author": "Yossef (Yossef)",
+      "cookedHtml": "<p>Hi everyone, I’m new here and I really like what I read. I have a question. I have a board that I use as a model for other boards (in general I just duplicate this board).<br />\nIs there a way that if I add a new label on a category of this board, it will automatically be added to every other boards that look the same? (I have a 100s of them) same for deleting…<br />\nI really trouble with this</p>"
+    },
+    {
+      "id": 158901,
+      "postNumber": 16,
+      "createdAt": "2023-12-21T11:36:27.891Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You can add a new label when you mutate an item on a board, but there is no way to delete them today.</p>\n<p>Additionally when a board is created from a template its not linked to the template anymore. This means no changes to the template are reflected on the boards created from it - every board has to be manually updated with the new labels (or an item changed to the new value by API). Removing labels is 100% a manual task today - since you also can’t remove a label thats in use.</p>\n<p>I know the 2024 roadmap has linked templates though, where changes to the structure of the template board will be reflected on the deployed boards. I do not know if that includes labels. (nor how they would handle removing a label thats in use)</p>"
+    },
+    {
+      "id": 159326,
+      "postNumber": 17,
+      "createdAt": "2023-12-27T11:29:40.044Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

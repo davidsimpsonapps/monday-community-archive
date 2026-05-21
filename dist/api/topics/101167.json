@@ -1,0 +1,84 @@
+{
+  "id": 101167,
+  "title": "Query Error: Fetching Checkbox Values with GraphQL API",
+  "slug": "query-error-fetching-checkbox-values-with-graphql-api",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    351,
+    466
+  ],
+  "createdAt": "2024-10-22T12:39:09.383Z",
+  "lastPostedAt": "2024-10-25T16:03:57.512Z",
+  "postsCount": 8,
+  "excerpt": "Hi, \nI have been successfully using the following GraphQL query to fetch records where the checkbox value is ‘true’, but it suddenly stopped working today. Here’s the request API body: \nquery {\n  boards (ids: 1924842771)&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 33,
+  "posts": [
+    {
+      "id": 206677,
+      "postNumber": 1,
+      "createdAt": "2024-10-22T12:39:09.477Z",
+      "author": "Hardik1301 (Hardik Parejiya)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I have been successfully using the following GraphQL query to fetch records where the checkbox value is ‘true’, but it suddenly stopped working today. Here’s the request API body:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 1924842771) {\n    items_page (limit: 2, query_params: {\n      rules: [\n        {column_id: \"checkbox\", compare_value: [null], operator: is_not_empty}\n      ]\n    }) {\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>However, now I am getting the following error:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"CompareValue cannot represent value: null\",\n      \"locations\": [\n        {\n          \"line\": 5,\n          \"column\": 48\n        }\n      ],\n      \"extensions\": {\n        \"code\": \"GRAPHQL_VALIDATION_FAILED\"\n      }\n    }\n  ],\n  \"account_id\": 25960244\n}\n</code></pre>\n<p>This query was working until yesterday, and nothing was changed on my end. Has there been any recent update to the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API, or is there something I need to modify in my query to resolve this issue?</p>\n<p>Thank you for your help!</p>\n<p>**Regards,  **<br />\n<strong>Hardik P</strong></p>"
+    },
+    {
+      "id": 206679,
+      "postNumber": 2,
+      "createdAt": "2024-10-22T12:40:08.115Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/hardik1301\">@Hardik1301</a>,</p>\n<p>Welcome to the community!</p>\n<p>Just as a head’s up, I changed the category of this post so it is in the monday apps &amp; developers queue. We direct all API questions there <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 206803,
+      "postNumber": 3,
+      "createdAt": "2024-10-22T21:05:39.294Z",
+      "author": "matcamp.alab (Mat Camp)",
+      "cookedHtml": "<p>I was getting a similar error this morning.  I tend to agree it feels like something has changed in the last 24-48 hours as have had a series of our automations all go to pot.</p>\n<p>Anywho, I had something similar but checking for items with a blank text field.</p>\n<p>Previously this is what I had:</p>\n<pre><code class=\"lang-auto\">{ column_id: \"text5\", compare_value: [null], operator: is_empty }\n</code></pre>\n<p>I removed the explicit <code>null</code> reference to this and it is now working (and returning correctly):</p>\n<pre><code class=\"lang-auto\">{ column_id: \"text5\", compare_value: [], operator: is_empty }\n</code></pre>\n<p>I think the change/issue might be with the <code>null</code>.  Try simply stripping that out and leaving an empty array.  I just tried this in the playground with a board where I have checkbox values and this worked:</p>\n<pre><code class=\"lang-auto\">{ column_id: \"checkbox\", compare_value: [], operator: is_not_empty }\n</code></pre>"
+    },
+    {
+      "id": 206856,
+      "postNumber": 4,
+      "createdAt": "2024-10-23T01:54:16.482Z",
+      "author": "Hardik1301 (Hardik Parejiya)",
+      "cookedHtml": "<p>Thanks Mat I done the same changes and it is working fine.</p>"
+    },
+    {
+      "id": 206857,
+      "postNumber": 5,
+      "createdAt": "2024-10-23T01:54:19.306Z",
+      "author": "Hardik1301 (Hardik Parejiya)",
+      "cookedHtml": "<p>Thanks for the clarification</p>"
+    },
+    {
+      "id": 206931,
+      "postNumber": 6,
+      "createdAt": "2024-10-23T13:52:21.039Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>checking in <a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1729702279953829\">Slack</a></p>"
+    },
+    {
+      "id": 207061,
+      "postNumber": 7,
+      "createdAt": "2024-10-24T14:29:25.543Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/hardik1301\">@Hardik1301</a> and <a class=\"mention\" href=\"/u/matcamp.alab\">@matcamp.alab</a>,</p>\n<p>Thanks for flagging this issue! We’ve investigated the matter and discovered that it is related to a small change on our side to the component responsible for parsing GraphQL queries.</p>\n<p>The new component adheres more strictly to the GraphQL specification compared to our previous parser. Specifically, the <code>compare_value</code> argument, which is required and non-nullable, was previously accepted with a <code>[null]</code> value due to a leniency in the old parser. The new parser, however, enforces the specification more precisely, and as a result, passing <code>[null]</code> for the <code>compare_value</code> field is no longer valid.</p>\n<p>Since this is a specification adherence issue, you may need to adjust your query parameters to comply with the strict requirements of the new parser. I see that you both found a query that works, but please let us know if you encounter any other issues.</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 207184,
+      "postNumber": 8,
+      "createdAt": "2024-10-25T15:18:09.390Z",
+      "author": "matcamp.alab (Mat Camp)",
+      "cookedHtml": "<p>Hey Rachel,</p>\n<p>Thanks for the acknowledgement of the change!  Can I ask also; around the same time this change happened, all my requests from our automation platform that were pushing on a GET method stopped working.  Changing them to POST fixed the issues across the board.  The error response advising of invalid GraphQL so would that indicate it was a change in how string encoding is being handled, or has GET been disabled?  Any light you can shed on that?</p>"
+    },
+    {
+      "id": 207189,
+      "postNumber": 9,
+      "createdAt": "2024-10-25T16:03:57.512Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matcamp.alab\">@matcamp.alab</a> – yes, you’re right it’s part of the same change.</p>\n<p>We never officially supported GET requests, your requests have always had to be POSTs. It was just something we weren’t enforcing.</p>"
+    }
+  ]
+}

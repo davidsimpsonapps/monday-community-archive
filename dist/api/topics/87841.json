@@ -1,0 +1,54 @@
+{
+  "id": 87841,
+  "title": "Query specific columns in multiple boards",
+  "slug": "query-specific-columns-in-multiple-boards",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-05-22T20:25:35.061Z",
+  "lastPostedAt": "2024-05-23T23:21:15.258Z",
+  "postsCount": 4,
+  "excerpt": "Any help is appreciated - please be patient with me as I am new to this. I am trying to do something that I think can probably be done easily, but can’t figure out how to do it. Basically I want to search 2 different boa&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 201,
+  "posts": [
+    {
+      "id": 185308,
+      "postNumber": 1,
+      "createdAt": "2024-05-22T20:25:35.132Z",
+      "author": "SuperSamGalaxy (Sam)",
+      "cookedHtml": "<p>Any help is appreciated - please be patient with me as I am new to this. I am trying to do something that I think can probably be done easily, but can’t figure out how to do it. Basically I want to search 2 different boards for a specific value in a specific column, and return any items that match. For example, order number 12345678; in one board, this may be in the column with column ID “text0” and on the other board it may be under column ID “text24”  -so I want to return:</p>\n<p>any items on <strong>board 1</strong> where the value of <strong>text0</strong> is <strong>12345678</strong><br />\nand<br />\nany items on <strong>board 2</strong> where the value of <strong>text24</strong> is <strong>12345678</strong></p>\n<p>When I only try to query a single board, it works with no problems (see below)</p>\n<pre><code class=\"lang-auto\">query {  \n  boards (ids:[MY_BOARD_1]){\n    items_page (\n      query_params: {\n        rules: [\n          {            \n            column_id: \"text0\",\n            compare_value: \"12345678\",\n            operator: any_of\n          }\n        ]\n        # will have other rules here, but have removed them to keep this example simple\n        operator: or\n      },\n      \n    ) {\n      items{id board {\n        id\n      } column_values (ids: [\"creation_log\",\"status\",\"status2\"]){text}}\n    }   \n  }  \n}\n</code></pre>\n<p>This, however, does not work:</p>\n<pre><code class=\"lang-auto\">query {  \n  boards (ids:[MY_BOARD_1, MY_BOARD_2]) { \n    items_page (\n      query_params: {\n        rules: [\n          {            \n            column_id: \"text0\",    #this is meant to be queried from the first board\n            compare_value: \"12345678\",\n            operator: any_of\n          },\n          {\n            column_id: \"text24\",    #this is meant to be queried from the second board\n            compare_value: \"12345678\",\n            operator: any_of\n          }\n        ],\n        operator: or\n      },\n      \n    ) {\n      items{id board {\n        id\n      } column_values (ids: [\"creation_log\",\"status\",\"status2\"]){text}}\n    }   \n  }  \n}\n</code></pre>\n<p>My expected output for the second bit of code is that it would return the details for the item(s) on board 1 with a “text0” value of “12345678” and that it would return the item(s) on board 2 with a “text24” value of “12345678” - and that it would not even attempt to return values for “text24” on board 1 and “text0” on board 2 because these columns do not exist on those boards.</p>\n<p>However, I get the error “Column not found” which seems to be because it is searching <em>both boards</em> for <em>both fields</em> and stopping if both fields don’t exist on both boards - in other words it is searching board 1 by “text0” and “text24” and then searching board 2 by “text0” and “text24”. Since the boards don’t use all the same column names, this will not work; I need it to search board 1 <em>only</em> by “text0” and board 2 <em>only</em> by “text24” (or if it has to search by both columns on both boards, I just need it <em>not</em> to return anything for a particular column when that column doesn’t exist on the board in question, rather than giving an error that stops any part of the process from working). I’m not sure how a multi-board query would even work if it relies on both boards having the same set of column IDs, which is often not the case.</p>\n<p>I have searched extensively for solutions, but any examples of something similar only search a single board. However, it seems like there must be a way to do what I need to do, as it accepts the argument board (ids: ) and not board_id or some other phrasing that indicates it would need to be singular. It also recognizes, when testing, that 2 boards have been specified, and the only issue seems to be that just can’t find both columns on both boards (which again, they don’t both need to be on both boards for my needs, it just needs to skip over columns it can’t find rather than breaking).</p>\n<p>I am really stuck on this, so suggestions would be very helpful. Thanks for reading this!</p>"
+    },
+    {
+      "id": 185531,
+      "postNumber": 2,
+      "createdAt": "2024-05-23T18:00:11.625Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Sam,</p>\n<p>Welcome to the community! At this time, it is not available to query for different columns on different boards within the same query. You can query for multiple boards in a <code>boards</code> query, but <code>query_params</code> will look for the <code>column_id</code> in both boards, which in your case, is not true. So this is expected behavior. Thank you for your understanding.</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 185544,
+      "postNumber": 3,
+      "createdAt": "2024-05-23T19:26:50.659Z",
+      "author": "SuperSamGalaxy (Sam)",
+      "cookedHtml": "<p>Thanks for taking the time to reply. That’s disappointing, but good to know so I don’t keep spending time on trying to figure out out to do it.</p>\n<p>I suppose I could return every item on every board I wish to search, and manipulate the returned values (outside of Monday API) to exclude the ones I don’t need; this seems like it is doing a lot more processing than what I need. To make sure I’m understanding clearly though, there’s no other method or workaround that would allow me to search more than board for a specific value? (Even one that is not based on my code, but takes a different approach entirely, would be fine if there is some way this can be accomplished.) Anyway, thanks again for your help.</p>\n<p>Edit: I think I found a solution. I didn’t know that you could run more than one query in sequence. This seems like it will work for  me. Once I have something functional I will post back here in case it might be helpful to anyone else.</p>\n<p>Update: this seems to work for me. Thanks again for your help Joseph!</p>\n<pre><code class=\"lang-auto\">query{    \n  firstQuery: boards (ids: MY_BOARD_1) { \n    items_page (\n      query_params: {\n        rules: [\n          {            \n           column_id: \"text0\",\n            compare_value: \"12345678\",\n            operator: any_of\n          },\n          #{            \n          #  more criteria will go here\n          #}\n        ],\n        operator: or\n      },\n      \n    ) {\n      items{id board {\n        id\n      } column_values (ids: [\"creation_log\",\"status\",\"status2\"]){text}}\n    }   \n  }\n  secondQuery:  boards (ids: MY_BOARD_2) {  \n    items_page (\n      query_params: {\n        rules: [\n          #{            \n          #  more criteria will go here\n          #},\n          {\n            column_id: \"text24\",\n            compare_value: \"12345678\",\n            operator: any_of\n          }\n        ],\n        operator: or\n      },\n      \n    ) {\n      items{id board {\n        id\n      } column_values (ids: [\"creation_log\",\"status\",\"status2\"]){text}}\n    }  \n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 185562,
+      "postNumber": 4,
+      "createdAt": "2024-05-23T23:21:15.258Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Where you landed is a solution. But my question is if the load is so heavy that cutting the number of requests this way vs just making requests for each board is worth it?</p>\n<p>Just challenging you if this is premature optimization.</p>"
+    },
+    {
+      "id": 185811,
+      "postNumber": 5,
+      "createdAt": "2024-05-26T07:21:14.952Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": 42036,
+  "title": "Why am I getting this error with Google Apps Scripts?",
+  "slug": "why-am-i-getting-this-error-with-google-apps-scripts",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    105,
+    125,
+    239
+  ],
+  "createdAt": "2022-09-05T06:54:56.177Z",
+  "lastPostedAt": "2022-09-23T09:01:10.533Z",
+  "postsCount": 3,
+  "excerpt": "Hi all, \nI am trying to get column IDs on GAS (google apps script) with the code below. But I am getting an error with below. \nCould you please help me out? Thank you! \n  \n\nfunction getBoardDataClicked() { \n// This funct&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2166,
+  "posts": [
+    {
+      "id": 96903,
+      "postNumber": 1,
+      "createdAt": "2022-09-05T06:54:56.297Z",
+      "author": "ryoma (Ryoma Inoue)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I am trying to get column IDs on GAS (google apps script) with the code below. But I am getting an error with below.</p>\n<p>Could you please help me out? Thank you!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/bf17efcc990b3af42b34df4c9a38cfe9e86ff127.png\" title=\"Screenshot 2022-09-05 at 18.54.36\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/bf17efcc990b3af42b34df4c9a38cfe9e86ff127_2_690x158.png\" alt=\"Screenshot 2022-09-05 at 18.54.36\" width=\"690\" height=\"158\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2022-09-05 at 18.54.36</span><span class=\"informations\">1598×366 46.9 KB</span>\n</div></a></div><p></p>\n<hr />\n<p>function getBoardDataClicked() {<br />\n// This function is run when the “Get Board Data” button is clicked<br />\nconst boardId = getBoardId()<br />\n// Get board-specific group data from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> and set it to sheet:<br />\nconst boardName = getAndSetData(boardId, ‘groups’, ‘A6’)<br />\n// Get board-specific column data from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> and set it to sheet:<br />\ngetAndSetData(boardId, ‘columns’, ‘D6’)<br />\n// Set board name to sheet:<br />\nsetboardName(boardName)<br />\n// Redetermine column widths:<br />\nautoResizeColumns()<br />\n}</p>\n<p>function getAndSetData(boardId, type, startCellAddress) {<br />\n// This function gets board-specific data from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> and set it to sheet.<br />\n// The type of the retrieved data is specified by the “type” parameter.<br />\n// “startCellAddress” determines the location in which the data is to be pasted on the sheet.<br />\n// Make HTTP request:<br />\nconst resData = getData(boardId, type)<br />\n// Set the data on the sheet:<br />\nsetData(resData.items, startCellAddress)<br />\n// Return the board name:<br />\nreturn resData.boardName<br />\n}</p>\n<p>function getData(boardId, type) {<br />\n// This function gets the specified data from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>.</p>\n<p>// Get request payload, which in this case is the GraphQL query:<br />\nconst payload = getPayload(boardId, type)<br />\n// make the HTTP request:<br />\nconst resData = makeAPIrequest(payload)<br />\n// Return the relevant data as an object:<br />\nreturn {<br />\nboardName: resData[‘boards’][0].name,<br />\nitems: resData[‘boards’][0][type]<br />\n}<br />\n}</p>\n<p>function makeAPIrequest(payload) {<br />\n// This function makes a HTTP request to Monday</p>\n<p>const url = ‘<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>’<br />\n// Get api key from script variables:<br />\nconst apiKey = getEnvVar(‘MONDAY_API_KEY’)</p>\n<p>const options = {<br />\n‘method’: ‘POST’,<br />\n‘payload’ : JSON.stringify(payload),<br />\n‘headers’: {<br />\n‘Content-Type’: ‘application/json’,<br />\n‘Authorization’ : apiKey<br />\n}<br />\n}<br />\nconst res = UrlFetchApp.fetch(url, options)<br />\n// Return response prsed as JSON:<br />\nreturn JSON.parse(res).data<br />\n}</p>\n<p>function getPayload(boardId, type) {<br />\n// This function creates the GraphQL query used in the HTTP request<br />\nreturn {<br />\nquery: <code>{       boards(ids: ${boardId}) {         name         ${type} {           id           title         }       }     }</code><br />\n}<br />\n}</p>\n<p>function getBoardId() {<br />\n// This function retrieves the board ID defined by the user:<br />\nreturn SpreadsheetApp.getActive().getSheetByName(‘Get Monday Data’).getRange(‘B1’).getValue()<br />\n}</p>\n<p>function setData(items, startCellAddress) {<br />\n// This function sets the retrieved data on the sheet. The location is determined by “startCellAddress” parameter</p>\n<p>const sh = SpreadsheetApp.getActive().getSheetByName(‘Get Monday Data’)<br />\nsh.getRange(startCellAddress).offset(0, 0, getLastRow(), 2).clear()<br />\nconst startCell = sh.getRange(startCellAddress)<br />\n// Add each of the retrieved data points onto the sheet as (title, id) pairs:<br />\nfor (let i=0;i&lt;items.length;i++) {<br />\nstartCell.offset(i, 0).setValue(items[i].title)<br />\nstartCell.offset(i, 1).setValue(items[i].id)<br />\n}<br />\n}</p>\n<p>function setboardName(boardName) {<br />\n// Sets the board name on the sheet.</p>\n<p>SpreadsheetApp<br />\n.getActive()<br />\n.getSheetByName(‘Get Monday Data’)<br />\n.getRange(‘D1’)<br />\n.setValue(boardName)<br />\n}</p>\n<p>function getLastRow() {<br />\n// Returns the last populated row of the “Get Monday Data” sheet:<br />\nreturn SpreadsheetApp.getActive().getSheetByName(‘Get Monday Data’).getLastRow()<br />\n}</p>\n<p>function autoResizeColumns() {<br />\n// Automatically resizes certain column widths based on their content.</p>\n<p>const sh = SpreadsheetApp.getActiveSheet()<br />\nsh.autoResizeColumns(1, 2)<br />\nsh.autoResizeColumns(4, 2)<br />\n}</p>\n<p>function setEnvVar(key, value) {<br />\n// Sets script-level environment variables.<br />\nconst scriptProperties = PropertiesService.getScriptProperties()<br />\nscriptProperties.setProperty(key, value)<br />\n}</p>\n<p>function getEnvVar(key) {<br />\n// Gets script-level environment variables.<br />\nreturn PropertiesService.getScriptProperties().getProperty(key)<br />\n}</p>"
+    },
+    {
+      "id": 96967,
+      "postNumber": 2,
+      "createdAt": "2022-09-06T04:19:05.754Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ryoma\">@ryoma</a>!</p>\n<p>I do not have any experience using Google Apps Script but it looks to me like that error is coming from GAS and not from our server. I am guessing from the error message that you are passing a “Header” somewhere that needs to have a different value than “null”, but again, this is just what I can see from what you sent since I do not have experience with it.</p>\n<p>Let’s hope someone in the community has worked with it and can give some insights!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 98496,
+      "postNumber": 3,
+      "createdAt": "2022-09-23T09:01:10.533Z",
+      "author": "ryoma (Ryoma Inoue)",
+      "cookedHtml": "<p>Hey Matias,</p>\n<p>Sorry for the late reply! Thank you so much for your help!</p>"
+    }
+  ]
+}

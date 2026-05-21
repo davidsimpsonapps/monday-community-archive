@@ -1,0 +1,47 @@
+{
+  "id": 6856,
+  "title": "A Basic PHP Webhook Example",
+  "slug": "a-basic-php-webhook-example",
+  "categoryId": 8,
+  "tagIds": [
+    144,
+    155
+  ],
+  "createdAt": "2020-05-03T13:59:01.260Z",
+  "lastPostedAt": "2020-07-29T12:57:46.995Z",
+  "postsCount": 4,
+  "excerpt": "Hello All, \nI had a heck of a time getting started on this so hopefully this is helpful to someone… \nA couple notes: \n\n\nI put double brackets {{}} around everything you’d want to change/update for your specific use \n\n\nTh&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 21574,
+  "posts": [
+    {
+      "id": 17169,
+      "postNumber": 1,
+      "createdAt": "2020-05-03T13:59:01.397Z",
+      "author": "robzinn (Rob Zinn)",
+      "cookedHtml": "<p>Hello All,</p>\n<p>I had a heck of a time getting started on this so hopefully this is helpful to someone…</p>\n<p>A couple notes:</p>\n<ol>\n<li>\n<p>I put double brackets {{}} around everything you’d want to change/update for your specific use</p>\n</li>\n<li>\n<p>This probably won’t work as-is because its a bastardized version of my real script so its certainly not plug-and-play.</p>\n</li>\n<li>\n<p>I know my formatting is weird.</p>\n</li>\n<li>\n<p>the PHP below should be put on your server at the URI you specify in the Webhook on Monday when setting it up.</p>\n<pre><code> &lt;?php\n //return monday challenge\n echo file_get_contents('php://input');\n\n // capture second response which should be JSON payload\n $php_event = json_decode(file_get_contents('php://input'), true)['event'];\n\n // init\n ini_set(\"log_errors\", 1);\n ini_set('error_reporting', E_ALL);\n ini_set(\"error_log\", \"monday.log\"); // this is an empty file you should create to monitor/debug your webhook\n\n // a function to dump large arrays etc to the log\n function error_log_dump( $object=null ){\n \tob_start();                    // start buffer capture\n \tvar_dump( $object );           // dump the values\n \t$buffer_contents = ob_get_contents(); // put the buffer into a variable\n \tob_end_clean();                // end capture\n \terror_log(\"-------------------------\\n\".print_r($buffer_contents, true), 3, \"monday.log\");\n }\n\n // function to make queries and mutaions via Monday API v2\n function ping_api($query){\n \t$data = @file_get_contents(\n \t\t\"https://api.monday.com/v2/\",\n \t\tfalse,\n \t\tstream_context_create(\n \t\t\t[\n \t\t\t\t'http' =&gt; [\n \t\t\t\t\t'method' =&gt; 'POST',\n \t\t\t\t\t'header' =&gt; [\n \t\t\t\t\t\t'Content-Type: application/json',\n \t\t\t\t\t\t'User-Agent: [MYTEAM] GraphQL Client',\n \t\t\t\t\t\t'Authorization: {{YOUR TOKEN HERE}}'\n \t\t\t\t\t],\n \t\t\t\t\t'content' =&gt; json_encode($query)\n \t\t\t\t]\n \t\t\t]\n \t\t)\n \t);\n\n \t// decode the response back to PHP\n \t$response = json_decode(\n \t\t$data,\n \t\ttrue\n \t);\n\n \t// error reporting\n \tif(is_null($response)){\n \t\terror_log(\"query error: no response from server\");\n \t\texit();\n \t} elseif (isset($response[\"errors\"])) {\n \t\terror_log(\"query error: \".$response[\"errors\"][0][\"message\"]);\n \t\texit();\n \t} elseif (isset($response[\"data\"])) {\n \t\t//error_log(\"query success\");\n \t\treturn $response;\n \t}\n \t//error_log_dump($response);\n }\n\n // debug response\n error_log_dump($php_event);\n\n if($php_event['boardId'] == \"{{ID OF CERTAIN BOARD YOU WANT TO WATCH - DON'T FORGET TO GIVE THE BOARD A WEBHOOK AUTOMATION IN MONDAY}}\"){\n\n \tif($php_event['type'] == \"update_column_value\"){ // change was an update (not a new item - that's below)\n\n \t\t// code here\n\n \t\t// here is something I found useful using \"watch arrays\" to monitor only certain columns\n\n \t\t// create an array of column ids to watch\n \t\t$watch_array = [\"{{ID OF FIRST_COLUMN YOU WANT TO WATCH}}\", \"{{ID OF FIRST_COLUMN YOU WANT TO WATCH}}\", \"{{AND DO ON}}\"];\n \t\tif(in_array($php_event['columnId'], $watch_array)){\n\n \t\t\t// get more info about the item that changed\n \t\t\t$item_that_changed_query = [\"query\" =&gt;\n \t\t\t\t\"\n \t\t\t\t\t{\n \t\t\t\t\t\titems(ids: [\".$php_event[\"pulseId\"].\"]){\n \t\t\t\t\t\t\tcolumn_values(ids:[link_to_item0]) {\n \t\t\t\t\t\t\t\tid\n \t\t\t\t\t\t\t\ttext\n \t\t\t\t\t\t\t\ttitle\n \t\t\t\t\t\t\t\tvalue\n \t\t\t\t\t\t\t}\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n \t\t\t\t\"\n \t\t\t];\n \t\t\t$item_that_changed_response = ping_api($item_that_changed_query);\n\n \t\t\t// if you want the name of the item...\n \t\t\t$item_that_changed_name = $project_response[\"data\"][\"items\"][0][\"name\"];\n\n \t\t\t// if you want the meat of the response, you probably want the column values which is an array\n \t\t\t$item_that_changed_column_values = $item_that_changed_response[\"data\"][\"items\"][0][\"column_values\"];\n\n \t\t\t// then you can loop the array to scrub the data or whatever\n \t\t\tforeach ($project_array as $key =&gt; $val) {\n\n \t\t\t\tif($val['id'] == \"{{THE ID OF A CERTAIN COLUMN}}\"){\n \t\t\t\t\t\n \t\t\t\t}\n \t\t\t\telseif($val['title'] == \"{{THE TILE OF A CERTAIN COLUMN}}\"){ // probably not advisable because titles can change so easily\n \t\t\t\t\tif($val['text'] == \"\"){\n \t\t\t\t\t\t$my_text = \"THIS STUPID VALUE WAS EMPTY!\";\n \t\t\t\t\t}\n \t\t\t\t}\n \t\t\t\telseif($val['title'] == \"{{MULTILINE TEXT}}\"){\n \t\t\t\t\tif($val['text'] != \"\"){\n \t\t\t\t\t\t$scope = nl2br($val['text']); //reformat line breaks\n \t\t\t\t\t}\n \t\t\t\t}\n \t\t\t}\n\n \t\t\t// if you have linked columns you can get the id for the linked item then us it to make another query\n \t\t\t$linked_item_id = json_decode($item_that_changed_response[\"data\"][\"items\"][0][\"column_values\"][0][\"value\"], true)[\"linkedPulseIds\"][0][\"linkedPulseId\"];\n \t\t\t$linked_item_query = [\"query\" =&gt;\n \t\t\t\t\"\n \t\t\t\t\t{\n \t\t\t\t\t\titems(ids: [\".$linked_item_id.\"]){\n \t\t\t\t\t\t\tboard {\n \t\t\t\t\t\t\t\tid\n \t\t\t\t\t\t\t}\n \t\t\t\t\t\t\tcolumn_values(ids:[{{A COMMA SEPARATED LIST OF IDS YOU WANT TO GRAB}}]) {\n \t\t\t\t\t\t\t\tid\n \t\t\t\t\t\t\t\ttext\n \t\t\t\t\t\t\t\ttitle\n \t\t\t\t\t\t\t\tvalue\n \t\t\t\t\t\t\t}\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n \t\t\t\t\"\n \t\t\t];\n \t\t\t$linked_item_response = ping_api($linked_item_query);\n\n \t\t\t// to mutate an item I've been using arraysa because the JSON escaping is really confusing!\n \t\t\t// yes its wierd that I'm encodeing the array twice... IDK it works!\n \t\t\t$column_values = json_encode(\n \t\t\t\t[\n \t\t\t\t\t\"{{ID OF A 'LONG TEXT' COLUMN YOU WANT TO CHANGE}}\" =&gt; [\n \t\t\t\t\t\t\"text\" =&gt; \"{{SOME LONG TEXT YOU WANT TO WRITE}}\"\n \t\t\t\t\t],\n \t\t\t\t\t\"{{ID OF A 'NUMBER' COLUMN IS LESS COMPLICATED}}\" =&gt; \"150\"\n \t\t\t\t]\n \t\t\t);\n \t\t\t$item_i_want_to_change_query = [\"query\" =&gt;\n \t\t\t\t\"\n \t\t\t\t\tmutation{\n \t\t\t\t\t\tchange_multiple_column_values (\n \t\t\t\t\t\t\tboard_id: {{ID OF BOARD WHERE YOU WANT TO CHANGE THE ITEM}},\n \t\t\t\t\t\t\titem_id: {{ID OF ITEM YOU WANT TO CHANGE}},\n \t\t\t\t\t\t\tcolumn_values: \".json_encode($column_values).\",\n \t\t\t\t\t\t)\n \t\t\t\t\t\t{\n \t\t\t\t\t\t\tid\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n \t\t\t\t\"\n \t\t\t];\n \t\t\t$item_i_want_to_change_response = ping_api($item_i_want_to_change_query);\n \t\t}\n \t}\n \telseif ($php_event[\"type\"] == \"create_pulse\") { // item created as opposed to changed\n\n \t\t// code here\n\n \t}\n } // end of that board's webhooks\n elseif($php_event['boardId'] == \"{{SOME OTHER BOARD ID}}\"){ // another board you want to watch\n\n \t// code here\n\n }\n</code></pre>\n<p>?&gt;</p>\n</li>\n</ol>"
+    },
+    {
+      "id": 19884,
+      "postNumber": 2,
+      "createdAt": "2020-06-11T08:11:44.231Z",
+      "author": "cecin (Marcelo Cecin)",
+      "cookedHtml": "<pre><code class=\"lang-php\">$json = file_get_contents('php://input');\n$data = json_decode($json,true);\n\nswitch ($data) {\n  case $data[\"challenge\"]!=\"\":\n    header('Content-Type: application/json');\n    echo $json;\n    break;\n}\n</code></pre>"
+    },
+    {
+      "id": 23995,
+      "postNumber": 3,
+      "createdAt": "2020-07-29T12:57:46.995Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/robzinn\">@robzinn</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Sorry that it took us a while to recognize this gem! Thank you so much for helping the community by sharing this, I do hope it will carve a path for other users to get this to work and have an easier time with it.</p>\n<p>I appreciate your effort here and keeping the community spirit!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42225,
+      "postNumber": 4,
+      "createdAt": "2021-02-25T13:58:26.516Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

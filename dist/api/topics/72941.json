@@ -1,0 +1,83 @@
+{
+  "id": 72941,
+  "title": "Storage not accessible from view",
+  "slug": "storage-not-accessible-from-view",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351,
+    428
+  ],
+  "createdAt": "2023-12-13T12:18:58.480Z",
+  "lastPostedAt": "2023-12-15T16:44:50.535Z",
+  "postsCount": 9,
+  "excerpt": "I’ve been trying to use Storage in a Monday Code endpoint. \nLet’s say some app configuration needs to be selected by the user in a Board View, and we want to store that config via Storage.set. That config will be used wi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 466,
+  "posts": [
+    {
+      "id": 157704,
+      "postNumber": 1,
+      "createdAt": "2023-12-13T12:18:58.561Z",
+      "author": "danlester (Dan Lester)",
+      "cookedHtml": "<p>I’ve been trying to use <a href=\"https://developer.monday.com/apps/docs/quickstart-guide-for-monday-code#storage-api\" rel=\"noopener nofollow ugc\">Storage</a> in a Monday Code endpoint.</p>\n<p>Let’s say some app configuration needs to be selected by the user in a Board View, and we want to store that config via <code>Storage.set</code>. That config will be used within an automation integration.</p>\n<p>The board view has a sessionToken via <code>monday.get('sessionToken')</code> which is used to authenticate within the endpoint. But using that as an access token for Storage doesn’t seem to be allowed (it says “You need to log in or sign up before continuing” in the logs).</p>\n<p>It would probably be fine to call <code>Storage.get</code> within the integration handler because we have a shortLivedToken available.</p>\n<p>But there isn’t a way to call <code>Storage.set</code> within the board view in the first place.</p>\n<p>The app shouldn’t require a more complex OAuth flow. Ultimately, this would be easy using a database in a custom backend, but just doesn’t seem possible in Monday Code unless I’m missing something…</p>"
+    },
+    {
+      "id": 157933,
+      "postNumber": 2,
+      "createdAt": "2023-12-14T11:58:19.452Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Caution: speculation ahead…</p>\n<p>If I remember correctly, the global storage that you can use on the client-side is also accessible via monday code’s storage API. But let me double check and get back to you…</p>"
+    },
+    {
+      "id": 157989,
+      "postNumber": 3,
+      "createdAt": "2023-12-14T18:12:55.206Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/danlester\">@danlester</a> – yes you can!</p>\n<h2><a name=\"p-157989-using-global-storage-in-the-client-1\" class=\"anchor\" href=\"#p-157989-using-global-storage-in-the-client-1\"></a>Using global storage in the client</h2>\n<p>You can use our “global storage” in the client with the following methods (in the <code>monday-sdk-js</code> package) -</p>\n<ul>\n<li><code>monday.storage.getItem(key)</code></li>\n<li><code>monday.storage.setItem(key, value)</code></li>\n<li><code>monday.storage.deleteItem(key)</code></li>\n</ul>\n<p><a href=\"https://developer.monday.com/apps/docs/mondaystorage#global-level\">Docs here.</a></p>\n<h2><a name=\"p-157989-accessing-storage-on-the-server-2\" class=\"anchor\" href=\"#p-157989-accessing-storage-on-the-server-2\"></a>Accessing storage on the server</h2>\n<p>If you use global storage in the client, your backend can access this data using the <code>apps-sdk</code> package (built for monday code).</p>\n<p>You initalize it like this:</p>\n<pre><code class=\"lang-auto\">import { Storage } from '@mondaycom/apps-sdk';\nconst storage = new Storage('&lt;ACCESS_TOKEN&gt;');\n</code></pre>\n<p>And use it like this:</p>\n<pre><code class=\"lang-auto\">const value = await storage.get(key, { shared: true });\n</code></pre>\n<p>The <code>shared</code> option controls if a given record can be accessed in the client (or not). This can only be controlled from the backend. AKA the frontend can’t choose to store a value only for the client-side, but the backend can.</p>\n<p>Let me know if that makes sense!</p>"
+    },
+    {
+      "id": 158006,
+      "postNumber": 4,
+      "createdAt": "2023-12-14T20:00:32.121Z",
+      "author": "danlester (Dan Lester)",
+      "cookedHtml": "<p>Thank you for setting this out. The problem is that it’s not entirely clear what can be used as <code>ACCESS_TOKEN</code>.</p>\n<p>The client storage works fine for me (the session is implicit here anyway).</p>\n<p>In the backend, we only have the sessionToken which was obtained via <code>monday.get('sessionToken')</code> when the Board View called <code>fetch</code> to send a request to the backend.</p>\n<p>In an automation (workflow action) handler, we only have <code>shortLivedToken</code> passed by Monday when it called our endpoint.</p>\n<p>In both scenarios, the storage API doesn’t seem to work - I just get “You need to log in or sign up before continuing” in the logs.</p>\n<p>It doesn’t make sense for the app to obtain an OAuth2 token for the user (and in any case, I’d want to store this in Storage!). The point is that we can store this data fine in our own database, but it doesn’t seem to work using Storage with the usual tokens that are available to my app.</p>\n<p>Maybe there’s another way to create a token that I’m missing.</p>"
+    },
+    {
+      "id": 158026,
+      "postNumber": 5,
+      "createdAt": "2023-12-14T21:48:58.514Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Good questions. Let me lay out some recommendations for each scenario:</p>\n<p><strong>Client-side API calls or accessing storage</strong> – Use the SDK methods for seamless/implicit authentication.</p>\n<p><strong>Backend of fullstack app</strong> - The sessionToken cannot be used as an API key, it should only be used to authenticate between your frontend and backend. You need to use OAuth in this case. You can store the tokens in our <a href=\"https://developer.monday.com/apps/docs/monday-code-sdk#secure-storage\">Secure Storage.</a></p>\n<p><strong>Automation/workflow block</strong> – you can use the shortLivedToken for this. I have never seen that error before, to be honest…</p>\n<p>Side note – why doesn’t it make sense to need an OAuth token on your backend? I’m not disagreeing, just want to understand what other options you are envisioning.</p>"
+    },
+    {
+      "id": 158099,
+      "postNumber": 6,
+      "createdAt": "2023-12-15T10:32:35.882Z",
+      "author": "danlester (Dan Lester)",
+      "cookedHtml": "<p>OK this helps, and I’ve made some progress, but still have some concerns about whether there are compromises if we’re trying to build an app entirely hosted within Monday Code. So I really appreciate your feedback, as that would be a worthy goal!</p>\n<p>First of all, in the <strong>Automation/workflow block</strong>, this was denied because I only had <code>board:write/read</code> scopes set in the app. I’ve added <code>user:write</code> and <code>user:read</code> in the OAuth panel of the app settings, and this now works. (It would be great to indicate those scopes are required for storage, in the docs.)</p>\n<p><strong>Backend of fullstack app</strong> - this is still an issue really. I certainly <em>could</em> add a redirect URL to the workflow, and redirect the user via my own OAuth flow (which wouldn’t need any input from the user - it would just flash through the redirects, storing the access token on the way).</p>\n<p>But this seems like an unnecessary step, creating an unnecessary token, essentially just to enable database functionality within Monday Code. To reiterate, I do not need the OAuth token here other than to make use of Storage in place of a database - and a database works fine, and securely, on my own infrastructure.</p>\n<p>This encourages some undesirable workarounds:</p>\n<ul>\n<li>Setting storage values on the client side, where they are susceptible to user interference.</li>\n<li>Using Secure Storage throughout, and having to explicitly index keys with account ids, rather than segregated by account as is intended using regular Storage.</li>\n<li>Using a database on separate infrastructure, with communications running over the public internet.</li>\n</ul>\n<p>If your strategy is for apps hosted on Code to be more secure by design then I do think something is missing here (or maybe I’m missing something…). Thanks again.</p>"
+    },
+    {
+      "id": 158136,
+      "postNumber": 7,
+      "createdAt": "2023-12-15T14:43:46.870Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Thank you for that writeup! Now I understand what you’re saying.</p>\n<p>The global storage methods are actually a wrapper for our own storage REST API behind the scenes. You need the OAuth token to authenticate to it. We’re in the process of releasing &amp; documenting this as a standalone API but it’s still a few weeks out.</p>\n<p>Even though that’s the technical reason, I think your point still stands:</p>\n<ul>\n<li>it’s not clear that you are using another API behind the scenes, and</li>\n<li>you want to be call the API without auth as long as you’re using the trusted monday code environment</li>\n</ul>\n<p>Makes total sense. I’ll push this with our product team.</p>\n<p>In the meantime, do you mind if I recategorize this as a feature request?</p>"
+    },
+    {
+      "id": 158146,
+      "postNumber": 8,
+      "createdAt": "2023-12-15T15:58:51.307Z",
+      "author": "danlester (Dan Lester)",
+      "cookedHtml": "<p>Yes, sure, this can be a feature request. Thank you.</p>\n<p>It’s not entirely clear that being within the Monday Code environment is enough. It could make sense, e.g. for the sessionToken to be required, to ensure the storage request is tied to a particular account.</p>\n<p>But that’s perhaps a product decision for your team to make…</p>"
+    },
+    {
+      "id": 158154,
+      "postNumber": 9,
+      "createdAt": "2023-12-15T16:44:50.535Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Agree, we’ll need to figure out how to 1) authenticate appropriately and 2) flag which account’s data you’re trying to access.</p>\n<p>But either way, now you know why you need an OAuth token to access the storage! I’ll take it from here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

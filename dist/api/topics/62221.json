@@ -1,0 +1,68 @@
+{
+  "id": 62221,
+  "title": "Seeking Help for the API using the items_page object to filter MORE THAN 100 items",
+  "slug": "seeking-help-for-the-api-using-the-items-page-object-to-filter-more-than-100-items",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-07-24T08:31:08.329Z",
+  "lastPostedAt": "2023-08-06T06:14:23.678Z",
+  "postsCount": 7,
+  "excerpt": "Hi All, \nI’m using monday API documentation, Items Page to filter results the data from specific date range. \nBut I found the maximum number of items to return is 100. \n  \nI would like the query can return more than 100 &hellip;",
+  "solvedPostId": null,
+  "likeCount": 10,
+  "views": 1120,
+  "posts": [
+    {
+      "id": 136204,
+      "postNumber": 1,
+      "createdAt": "2023-07-24T08:31:08.426Z",
+      "author": "JiaTang (Jia Tang)",
+      "cookedHtml": "<p>Hi All,</p>\n<p>I’m using monday API documentation, <a href=\"https://developer.monday.com/api-reference/docs/items_page\" rel=\"noopener nofollow ugc\">Items Page</a> to filter results the data from specific date range.</p>\n<p>But I found the maximum number of items to return is 100.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/6/e6e7d65a3b5764c306acae94d4ea4e136328bf5e.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/6/e6e7d65a3b5764c306acae94d4ea4e136328bf5e_2_690x39.png\" alt=\"image\" width=\"690\" height=\"39\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1108×64 8.21 KB</span></div></a></div><p></p>\n<p>I would like the query can return more than 100 items with filtering function.</p>\n<p>Could anyone suggest it?</p>\n<p>Thanks very much in advance:)</p>\n<p>Best Regards,<br />\nJia Tang</p>"
+    },
+    {
+      "id": 136210,
+      "postNumber": 2,
+      "createdAt": "2023-07-24T08:53:26.305Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>The docs say…</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 1234567890){\n    items_page (limit: 1, query_params: {rules: [{column_id: \"status\", compare_value: [1]}], operator: and}) {\n      cursor\n      items {\n        id \n        name \n      }\n    }\n  }\n}\n</code></pre>\n<p>Note the <code>cursor</code> :</p>\n<blockquote>\n<p>An opaque token representing the position in a set of results to fetch items from. Use this to paginate through large result sets. <strong>Please note</strong> that you can’t use <code>query_params</code> and <code>cursor</code> in the same request. We recommend using <code>query_params</code> for the initial request and <code>cursor</code> for paginated requests.</p>\n</blockquote>\n<p>Set the limit to <code>100</code> , execute the query, then to get the next 100, use the value of <code>cursor</code> given in the previous result set. Rinse &amp; repeat until you have all the data needed.</p>\n<p>You’ll need to pass the <code>cursor</code> in on each subsequent call to the API.</p>"
+    },
+    {
+      "id": 136332,
+      "postNumber": 3,
+      "createdAt": "2023-07-25T01:28:57.569Z",
+      "author": "JiaTang (Jia Tang)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> ,</p>\n<p>Thank you very much!<br />\nI did test that use the value of <code>cursor</code>, it’s working properly! <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 136442,
+      "postNumber": 4,
+      "createdAt": "2023-07-25T22:33:16.462Z",
+      "author": "JiaTang (Jia Tang)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>,</p>\n<p>This is Jia again <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" />!<br />\nSorry for asking another question. It’s appreciated if you could help this.</p>\n<p>For my next step, I’m using the query including cursor to get more column’s data not only for ‘id’ and ‘name’. I’ve tried 2 version of code below, but it all gave me the errors.</p>\n<p>Could you please advise it?</p>\n<p>Version 1:<br />\nquery = ‘’'query {<br />\nboards (ids: ******) {<br />\nitems_page (limit: 100, %s) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\ntext<br />\ntext1<br />\ndate<br />\nhour<br />\nhour_1<br />\nstatus<br />\n}<br />\n}<br />\n}</p>\n<p>Version 2:<br />\nquery = ‘’‘query {<br />\nboards (ids: ******) {<br />\nitems_page (limit: 100, %s) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\ntext<br />\ntext1<br />\ndate<br />\nhour<br />\nhour_1<br />\nstatus<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}’‘’</p>\n<p>Looking forward to your reply.<br />\nThank you very much!</p>"
+    },
+    {
+      "id": 136900,
+      "postNumber": 5,
+      "createdAt": "2023-07-30T07:09:32.406Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>It looks like you are trying to get the column values for your items.</p>\n<p>If that is the case, you can use a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 100) {\n      cursor\n      items {\n        id\n        name\n        column_values{\n          value\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Is this the information you needed?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 137745,
+      "postNumber": 6,
+      "createdAt": "2023-08-03T20:54:01.088Z",
+      "author": "JiaTang (Jia Tang)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ,</p>\n<p>Thanks very much!</p>\n<p>Just a follow-up question, how can I get item id from board filter by an item name and a date column?</p>\n<p>Looking forward to your reply:)</p>"
+    },
+    {
+      "id": 137925,
+      "postNumber": 7,
+      "createdAt": "2023-08-06T06:14:23.678Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/jiatang\">@JiaTang</a>,</p>\n<p>If you want to get the item’s ID and you only have the item’s name and date, you can use a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  items_by_column_values(\n    board_id: 1234567890\n    column_id: \"name\"\n    column_value: \"Item 1\"\n  ) {\n    id\n    name\n  }\n}\n</code></pre>\n<p>If you need BOTH the name and date to be taken into account, you will need to then send a second query using the desired date:</p>\n<pre><code class=\"lang-auto\">{\n  items_by_column_values(\n    board_id: 1234567890\n    column_id: \"date\"\n    column_value: \"2019-02-06\"\n  ) {\n    id\n    name\n  }\n}\n</code></pre>\n<p>You would then check for the ID that is present in both results.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": 114702,
+  "title": "Importing data from Google Sheets using AppScripts",
+  "slug": "importing-data-from-google-sheets-using-appscripts",
+  "categoryId": 5,
+  "tagIds": [
+    5,
+    22
+  ],
+  "createdAt": "2025-05-16T11:42:36.659Z",
+  "lastPostedAt": "2025-05-16T11:42:36.732Z",
+  "postsCount": 1,
+  "excerpt": "Hi, I wanted to use App Scripts to migrate my Google sheets data to my Monday board. I have multiple rows with common identifiers that I want to group together in one parent item, while their data will be shown as subite&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 12,
+  "posts": [
+    {
+      "id": 229756,
+      "postNumber": 1,
+      "createdAt": "2025-05-16T11:42:36.732Z",
+      "author": "jess-yc (Jessel)",
+      "cookedHtml": "<p>Hi, I wanted to use App Scripts to migrate my Google sheets data to my Monday board. I have multiple rows with common identifiers that I want to group together in one parent item, while their data will be shown as subitems. But I keep getting the same error:</p>\n<p>Exception: Request failed for <a href=\"https://api.monday.com\" rel=\"noopener nofollow ugc\">https://api.monday.com</a> returned code 400. Truncated server response: {“errors”:[{“message”:“Unknown argument \"board_id\" on field \"Query.items\".”,“locations”:[{“line”:3,“column”:14}],“extensions”:{“code”:\"GRAPHQL_… (use muteHttpExceptions option to examine full response)</p>\n<p>This is the part that causes the error:<br />\nfunction createOrGetParentItem(name, data) {<br />\nconst query = <code>     query ($boardId: [ID!]!) {       boards(ids: $boardId) {         items {           id           name         }       }     }</code>;</p>\n<p>const res = callMondayAPI(query, { boardId: [MONDAY_BOARD_ID] });<br />\nconst existing = res?.data?.boards?.[0]?.items.find(i =&gt; i.name === name);<br />\nif (existing) return existing.id;</p>\n<p>const mutation = <code>     mutation ($boardId: ID!, $itemName: String!, $columnValues: JSON!) {       create_item (board_id: $boardId, item_name: $itemName, column_values: $columnValues) {         id       }     }</code>;</p>\n<p>const variables = {<br />\nboardId: MONDAY_BOARD_ID,<br />\nitemName: name,<br />\ncolumnValues: JSON.stringify(data)<br />\n};</p>\n<p>const response = callMondayAPI(mutation, variables);<br />\nreturn response?.data?.create_item?.id;<br />\n}</p>"
+    }
+  ]
+}

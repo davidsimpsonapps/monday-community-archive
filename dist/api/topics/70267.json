@@ -1,0 +1,75 @@
+{
+  "id": 70267,
+  "title": "Mirrors Columns and API New Versions",
+  "slug": "mirrors-columns-and-api-new-versions",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-07T16:36:15.744Z",
+  "lastPostedAt": "2023-11-08T11:12:19.754Z",
+  "postsCount": 7,
+  "excerpt": "Hi! \nI am updating my codes considering the new version of the API. However, something very odd happened. Versions 2023-10 and 2024-01 did not load any data in mirror columns for the boards: \n5087161303 \n5074524960 \n5082&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 1130,
+  "posts": [
+    {
+      "id": 152088,
+      "postNumber": 1,
+      "createdAt": "2023-11-07T16:36:15.841Z",
+      "author": "gregorymelo (Gregory Melo)",
+      "cookedHtml": "<p>Hi!</p>\n<p>I am updating my codes considering the new version of the API. However, something very odd happened. Versions 2023-10 and 2024-01 did not load any data in mirror columns for the boards:</p>\n<p>5087161303</p>\n<p>5074524960</p>\n<p>5082043087</p>\n<p>5074430711</p>\n<p>5074427222</p>\n<p>5124516984</p>\n<p>5124256345</p>\n<p>5124251433</p>\n<p>5124243595</p>\n<p>5124213277</p>\n<p>5123837747</p>\n<p>4988499062</p>\n<p>5124220711</p>\n<p>5087402995</p>\n<p>5074527029</p>\n<p>5082045015</p>\n<p>5074431667</p>\n<p>5074428913</p>\n<p>5096754394</p>\n<p>5096743547</p>\n<p>5096751022</p>\n<p>5096733887</p>\n<p>4993087356</p>\n<p>My domain on Monday is <a href=\"http://fractaledu.monday.com/\" rel=\"noopener nofollow ugc\">http://fractaledu.monday.com/</a>.</p>\n<p>It tried to retrieve data using the value field, however, this dimension was null too.</p>\n<p>Version 2023-07 is retrieving data normally, but I know that column_values_v1 will be deprecated. So, this is why I am very worried about this.</p>\n<p>Here is an example of one of my queries: {“query”: “{ items (ids: 5208402082 ) { id name column_values { column { title } text } } } }”}</p>\n<p>Thanks for your support.</p>"
+    },
+    {
+      "id": 152095,
+      "postNumber": 2,
+      "createdAt": "2023-11-07T16:48:07.006Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The text field is no longer populated for mirror columns.</p>\n<p>However, see the docs for the new API… <a href=\"https://developer.monday.com/api-reference/docs/mirror\" class=\"inline-onebox\">Mirror</a></p>\n<p>column_values v2 uses fragments for the different column types which can return more data. In this case, with <code>... on MirrorValue{display_value}</code> returns a text string of the values like the older text value. The reason for this, is it no longer has to lookup the text value of all connected items if the developer doesn’t need it.</p>\n<p>The fragment only executes on MirrorValues. So if you only include id inside the fragment, id only gets returned for mirror columns.</p>\n<p>You can have many fragment types in one query that will only execute on their respective types. Anything outside of fragments (or in a <code>... on ColumnValue</code> fragment) will always execute. (ColumnValue is the base type for all other value types).</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids:[1234567890, 9876543210]) {\n    column_values {\n      ... on MirrorValue {\n        id\n        display_value\n      }\n    }\n  }\n}\n</code></pre>\n<p>All column types have a V2 fragment that can provide detail that the old v1 value property never included.</p>"
+    },
+    {
+      "id": 152122,
+      "postNumber": 3,
+      "createdAt": "2023-11-07T18:42:20.009Z",
+      "author": "gregorymelo (Gregory Melo)",
+      "cookedHtml": "<p>Thanks.</p>\n<p>I read the documentation and I did not understand this situation. However, considereing the field value, is it correct that it came empty?</p>"
+    },
+    {
+      "id": 152123,
+      "postNumber": 4,
+      "createdAt": "2023-11-07T18:43:54.538Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yes it should be empty for mirror columns.</p>\n<p>You can get mirror values using the <code>... on MirrorValue{display_value}</code> inside column_values as I showed, mirror columns will return their value then as “display_value”. You will also want to include the column type in the query to see if it is a mirror so you can account for reading the alternate field.</p>"
+    },
+    {
+      "id": 152188,
+      "postNumber": 5,
+      "createdAt": "2023-11-08T06:32:01.966Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!!</p>"
+    },
+    {
+      "id": 152202,
+      "postNumber": 6,
+      "createdAt": "2023-11-08T07:25:20.202Z",
+      "author": "gregorymelo (Gregory Melo)",
+      "cookedHtml": "<p>Great, thanks again!</p>\n<p>I believe that If I use the value outside the MirrorValue, the API will send me the JSON, but after your message and reading the documentation, I believe this will happen only if I put it inside.</p>"
+    },
+    {
+      "id": 152238,
+      "postNumber": 7,
+      "createdAt": "2023-11-08T11:12:19.754Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Even the value field will be returned as null. As it stands in 2023-07 the value field is always null on mirrors, and only text ever has anything.</p>\n<p>In 2023-10, text is now also always null, and you must use the <code>... on MirrorValue{display_value}</code> to get what used to be in the text field in 2023-07.</p>\n<p>In 2023-10, <code>... on MirrorValue{value}</code> will still return null for value - as value has always been null on mirror columns.</p>\n<p>I typically have a function that I call on the item.column_values that is something like this:</p>\n<pre><code class=\"lang-auto\">items.forEach((item) =&gt; {\n item.column_values.forEach((cv) =&gt; {\n   if (cv.type != \"mirror\") return;\n   cv.text = cv.display_value;\n }\n}\n</code></pre>\n<p>This way for processing farther down the pipeline, everything is in text and I don’t have to put if statements throughout everything to check for mirror column.</p>"
+    },
+    {
+      "id": 152263,
+      "postNumber": 8,
+      "createdAt": "2023-11-08T13:11:03.268Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

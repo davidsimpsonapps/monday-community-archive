@@ -1,0 +1,228 @@
+{
+  "id": 5997,
+  "title": "Accessing and upload files using the GraphQL API",
+  "slug": "accessing-and-upload-files-using-the-graphql-api",
+  "categoryId": 70,
+  "tagIds": [
+    105
+  ],
+  "createdAt": "2020-03-30T15:27:59.547Z",
+  "lastPostedAt": "2020-05-23T19:00:09.202Z",
+  "postsCount": 30,
+  "excerpt": "Hey community! :crystal_ball: \nYou can now access files that are on your board via our API, and also upload them. Here’s the documentation. \nModerator Note: Check out the following announcement for examples that upload a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 14,
+  "views": 28444,
+  "posts": [
+    {
+      "id": 14987,
+      "postNumber": 1,
+      "createdAt": "2020-03-30T15:27:59.635Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey community! <img src=\"https://emoji.discourse-cdn.com/apple/crystal_ball.png?v=12\" title=\":crystal_ball:\" class=\"emoji\" alt=\":crystal_ball:\" width=\"20\" height=\"20\" /></p>\n<p>You can now access files that are on your board via our API, and also upload them. Here’s the <a href=\"https://monday.com/developers/v2#queries-section-files\">documentation</a>.</p>\n<p><strong>Moderator Note</strong>: Check out the following announcement for examples that upload a file from the client-side: <a href=\"https://community.monday.com/t/announcement-uploading-files-to-monday-com-has-just-become-easier/16803\" class=\"inline-onebox\">Announcement: Uploading files to monday.com has just become easier :)</a></p>\n<p><strong>Reading Files using the API</strong></p>\n<p>The <code>assets</code> field represents a file that is uploaded to <a href=\"http://monday.com\">monday.com</a>. You can query the title of the file, the URL, and also generate a public URL that can be used to download the file. Learn more <a href=\"https://monday.com/developers/v2#queries-section-files\">here</a>.</p>\n<p><strong>Uploading Files using the API</strong></p>\n<p>Our API also supports uploading files to a file column or update. To do this, you need to send your data as a multipart request (Content-Type: multipart/form-data) with the file in a variable. Here’s <a href=\"https://monday.com/developers/v2#mutations-section-files\">more info.</a></p>\n<p>Do note that we have a separate endpoint for files (<a href=\"http://api.monday.com/v2/file\">api.monday.com/v2/file</a>). This endpoint has a higher size limit for requests (20MB, which will be increased to 500MB in the coming weeks).</p>\n<p>An example query:</p>\n<pre><code class=\"lang-auto\">mutation ($file: File!) { \n  add_file_to_column (file: $file, item_id: 256180125, column_id: \"files\") { \n    id \n  } \n}\n</code></pre>\n<p>Here’s what such a request would look like in <a href=\"https://www.postman.com/\">Postman</a>:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/4155039898c9c946d5feb5546f0af594940f90ca.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/4155039898c9c946d5feb5546f0af594940f90ca_2_690x377.png\" alt=\"image\" width=\"690\" height=\"377\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2398×1312 247 KB</span>\n</div></a></div><p></p>\n<p>And here’s what that would look like in cURL:</p>\n<pre><code class=\"lang-auto\">curl \\\n  -F query='mutation ($file: File!) { add_file_to_column(file: $file, item_id: 118607269, column_id: \"files\") { id } }'\\\n  -F variables[file]=@/Users/diprobhowmik/screenshots/image.png\\\n  -H \"Authorization: APIKEYHERE\" \\\n  https://api.monday.com/v2/file\n</code></pre>"
+    },
+    {
+      "id": 15164,
+      "postNumber": 2,
+      "createdAt": "2020-04-02T08:27:37.754Z",
+      "author": "Jean-DenisCaissie (jean-denis caissie)",
+      "cookedHtml": "<p>can you upload files into monday via the API?</p>"
+    },
+    {
+      "id": 15167,
+      "postNumber": 3,
+      "createdAt": "2020-04-02T09:45:17.555Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>, Dipro,</p>\n<p>Great stuff, I was able to upload a file to the file column using the Postman example. The next step for me is to upload a file to a file column from my WordPress website using php. I do make successful API V2 call from php for normal queries and mutations but I am wondering how to use FILE! variable as shown in the Postman example.</p>\n<p>Do you have any hints to share with regards to php?</p>"
+    },
+    {
+      "id": 15177,
+      "postNumber": 4,
+      "createdAt": "2020-04-02T12:02:58.548Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jean-deniscaissie\">@Jean-DenisCaissie</a> and <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>!</p>\n<p>Bas, you should be able to do it via PHP (but I’m not an expert on how). I found a couple of resources that might be able to help though:</p>\n<ol>\n<li>\n<p>The Lighthouse-PHP (a GraphQL server) has a <a href=\"https://lighthouse-php.com/3.1/guides/file-uploads.html#client-side-usage\">client-side example that users cURL</a> and might be helpful. It is built for their implementation of GraphQL, but the cURL syntax might give you some ideas.</p>\n</li>\n<li>\n<p>There is a cURL example above, you should be able to adapt this to your PHP environment.</p>\n</li>\n<li>\n<p>You could also go back to basics and look at the <a href=\"https://github.com/jaydenseric/graphql-multipart-request-spec#client\">GraphQL specification</a>…</p>\n</li>\n</ol>\n<p>I hope this is helpful! If you find a solution, let us know. I’d love for you to post it on our community so others can learn from it.</p>"
+    },
+    {
+      "id": 15206,
+      "postNumber": 5,
+      "createdAt": "2020-04-02T19:24:26.470Z",
+      "author": "Carlos-i (Carlos Garcia)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>Great update! We were waiting a long time for this. I already did a test with the curl command, I had no problems and it return the id of the asset , but I tried to do it with python, but I had the next error:</p>\n<p>GraphQL query failed with 1 errors<br />\n{‘errors’: [{‘message’: ‘Variable file of type File! was provided invalid value’, ‘locations’: [{‘line’: 1, ‘column’: 11}], ‘value’: None, ‘problems’: [{‘path’: <span class=\"chcklst-box fa fa-square-o fa-fw\"></span>, ‘explanation’: ‘Expected value to not be null’}]}], ‘account_id’: 4}</p>\n<p>I tried several things with the variables argument, but with no success,  any suggestions about what  could I be doing wrong?</p>\n<p>Thanks !!</p>"
+    },
+    {
+      "id": 15270,
+      "postNumber": 6,
+      "createdAt": "2020-04-03T16:28:15.050Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/carlos-i\">@Carlos-i</a> – we need a bit more information to get to the bottom of this.</p>\n<p>Can you <em>create a new topic</em> with a description fo the error (what you have above is fine), your code, and the troubleshooting steps you tried?</p>\n<p>This way we have the full context and either I or someone else on the community can give you some tips.</p>"
+    },
+    {
+      "id": 15297,
+      "postNumber": 7,
+      "createdAt": "2020-04-05T15:41:07.153Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>, <a class=\"mention\" href=\"/u/carlos-i\">@Carlos-i</a>, <a class=\"mention\" href=\"/u/jean-deniscaissie\">@Jean-DenisCaissie</a>   and others interested,</p>\n<p>I experienced the same kind of errors Carlos is mentioning. Depending on the language / environment you are using you really need to find out how to exactly send a multipart request. I am using WordPress/PHP and sending a multipart request can only be done when you build the body of the request by concatenating strings. This is because you need to define a boundary in the header and use the boundary (preceded by ‘–’) in the body. The boundary in my case is a WordPress generated password, but it can be any unique string. Make sure it is really unique because you will run into problems when this string is part of the file contents.</p>\n<p>In this piece of code (WordPress/PHP) you see how I use “normal queries” - here to create a new item with the name of the file as it’s item name. When I have the item_id I will then upload the file to the file column and as you can see the body needs to be build by concatenating the correct strings.<br />\nDon’t forget to determine the MIME type as monday’s file viewer needs to know. Also you need to make sure that there is an empty line in the body before the actual query and the contents of the file to be uploaded. If you omit these you will get a 500 error returned. See also the comments in the code.</p>\n<p>In my WordPress environment MONDAY_TEAM and MONDAY_URL are constants defined in my wp-config file. My secret monday key is stored in the user’s profile field and retrieved by get_field(‘mondaykey’, ‘user_42’). You need to replace those variables with your own to be able to test this yourself.</p>\n<p>The code is just the beginning of a larger project, so the full path of the file (on my WordPress server) and the board_id are fixed values for now.</p>\n<p>This is the result on the board.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/ea7b9c74606e30e31e73177f6cdcf3a47155ec37.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/ea7b9c74606e30e31e73177f6cdcf3a47155ec37_2_690x39.png\" alt=\"image\" width=\"690\" height=\"39\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1495×86 12.9 KB</span></div></a></div><p></p>\n<p>Have fun!</p>\n<blockquote>\n<p>//the board id will be derived from another piece of code, just for now it is fixed<br />\n$boardid = ‘515108235’;</p>\n<p>//full filepath will be derived from another piece of code, just for now it is fixed<br />\n$filepath = ‘/var/www/vhosts/101/292674/webspace/siteapps/WordPress-515402/htdocs/wp-content/uploads/monday/How to use Excellent Monday - 0.8.pdf’;</p>\n<p>//fill fparts with [basename] and [filename] and determine the MIME type<br />\n$fparts = pathinfo($filepath);<br />\n$finfo = finfo_open(FILEINFO_MIME_TYPE);<br />\n$fmime = finfo_file($finfo, $filepath);</p>\n<p>//create a new item in the board<br />\n$header = array(<br />\n‘User-Agent’ =&gt; MONDAY_TEAM . ’ GraphQL Client’,<br />\n‘Authorization’ =&gt; get_field(‘mondaykey’, ‘user_42’),<br />\n‘Content-Type’ =&gt; ‘multipart/form-data’<br />\n);</p>\n<p>$body = array(<br />\n‘query’ =&gt; 'mutation {create_item (board_id: ’ . $boardid . ‘, group_id: “topics”, item_name: \"’ . $fparts[‘filename’] . ‘\") {id}}’<br />\n);</p>\n<p>$response = wp_remote_post( MONDAY_URL, [‘headers’ =&gt; $header, ‘body’ =&gt; $body] );<br />\n$arr1 = json_decode($response[‘body’], true);<br />\n$itemid = $arr1[‘data’][‘create_item’][‘id’];</p>\n<p>//generate a boundary, needed for the Header (Content-Type) and the Body (to split in multiple parts)<br />\n$boundary = wp_generate_password(24);<br />\n$eol = “\\r\\n”;</p>\n<p>$header = array(<br />\n‘User-Agent’ =&gt; MONDAY_TEAM . ’ GraphQL Client’,<br />\n‘Authorization’ =&gt; get_field(‘mondaykey’, ‘user_42’),<br />\n‘Content-Type’ =&gt; ‘multipart/form-data; boundary=’ . $boundary //mind the boundary here<br />\n);</p>\n<p>//we need to build the body from scratch because it is multipart with boundaries<br />\n//take care of the extra empty line (twice $eol) before the actual query and file, otherwise an error 500 is returned<br />\n$body = ‘–’ . $boundary . $eol;<br />\n$body .= ‘Content-Disposition: form-data; name=“query”’ . $eol . $eol;<br />\n$body .= 'mutation ($file: File!) {add_file_to_column (item_id: ’ . $itemid . ‘, column_id: file, file: $file) {id}}’ . $eol;<br />\n$body .= ‘–’ . $boundary . $eol;<br />\n$body .= ‘Content-Disposition: form-data; name=“variables[file]”; filename=\"’ . $fparts[‘basename’] . ‘\"’ . $eol;<br />\n$body .= 'Content-Type: ’ . $fmime . $eol . $eol;<br />\n$body .= file_get_contents($filepath);<br />\n$body .= $eol . ‘–’ . $boundary . ‘–’;</p>\n<p>$response = wp_remote_post( MONDAY_URL, [‘headers’ =&gt; $header, ‘body’ =&gt; $body] );</p>\n</blockquote>"
+    },
+    {
+      "id": 15395,
+      "postNumber": 8,
+      "createdAt": "2020-04-07T02:06:35.792Z",
+      "author": "abasappa (Avi Basappa)",
+      "cookedHtml": "<p>Hello All,<br />\nIn the API is there is possibility to upload the PDF using the binary data.  where the contentType is application/pdf. so you do not need to decode into file and then upload the document.</p>\n<p>Thanks<br />\nAvi Basappa</p>"
+    },
+    {
+      "id": 15405,
+      "postNumber": 9,
+      "createdAt": "2020-04-07T08:39:58.038Z",
+      "author": "zeljko-romanovic-mst (Željko Romanović)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>,</p>\n<p>Thank you for this update. At the moment we have a problem with uploading bigger files than 2MB, but if we try to upload files using the web app those files are upload without problems. The error which the server returns when we are using the API is: <strong>413 Request Entity Too Large</strong>.  Do you have in plan to change the limit for uploading files?</p>\n<p>Thanks,<br />\nŽeljko</p>"
+    },
+    {
+      "id": 15417,
+      "postNumber": 10,
+      "createdAt": "2020-04-07T11:30:18.837Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><strong>Allow files as binary data:</strong> <a class=\"mention\" href=\"/u/abasappa\">@abasappa</a>, this is a great point. It isn’t possible at the moment but I’ll pass this along as feedback.</p>\n<p><strong>Increase file upload limit:</strong> <a class=\"mention\" href=\"/u/zeljko-romanovic-mst\">@zeljko-romanovic-mst</a>, at the moment we don’t have plans for this, but I’ll pass this along as feedback as well! If you have larger files than 2MB, you will need to upload them through the web UI.</p>"
+    },
+    {
+      "id": 15450,
+      "postNumber": 11,
+      "createdAt": "2020-04-07T16:37:50.190Z",
+      "author": "abasappa (Avi Basappa)",
+      "cookedHtml": "<p>I want to understand how the outlook integration in the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> works. How does the attachments data load into <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>.</p>\n<p>Thanks<br />\nAvi Basappa</p>"
+    },
+    {
+      "id": 16934,
+      "postNumber": 12,
+      "createdAt": "2020-04-28T19:29:01.062Z",
+      "author": "Omry (Omry Lieber)",
+      "cookedHtml": "<p>Hi,<br />\nIs it possible to upload a file to an update?<br />\nI connected the whatsapp API so now all the messages insert into the client as an item.<br />\nIts really cool!</p>\n<p>In additon, Is it possible to send an hook after an update?</p>"
+    },
+    {
+      "id": 16935,
+      "postNumber": 13,
+      "createdAt": "2020-04-28T19:45:58.672Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/omry\">@Omry</a> – that’s super cool! If you have time, it would be awesome if you could create a new topic sharing your Whatsapp use case <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>And yes, you can add a file to an update. Check our documentation for more information on this mutation: <a href=\"https://monday.com/developers/v2#mutations-section-add-file-to-update\">https://monday.com/developers/v2#mutations-section-add-file-to-update</a></p>\n<p>As for sending a webhook when an update is posted, this is also possible!</p>"
+    },
+    {
+      "id": 17030,
+      "postNumber": 14,
+      "createdAt": "2020-04-30T16:06:41.002Z",
+      "author": "Norbert (Norbert Szolnoki)",
+      "cookedHtml": "<p>Hi Dipro,</p>\n<p>Can you please write an example, how I can download all files from an item.</p>\n<p>Thank you!<br />\nNorbert</p>"
+    },
+    {
+      "id": 18152,
+      "postNumber": 15,
+      "createdAt": "2020-05-18T02:40:53.937Z",
+      "author": "moumitapaul (Moumita Paul)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, I tried this method in my wordpress environment, I am getting error “No query string was present”. I am using the same code as yours…only mine is to upload file to an item. Can you help? Also, I would like to know what the constant 'MONDAY_TEAM ’ is?</p>"
+    },
+    {
+      "id": 18158,
+      "postNumber": 16,
+      "createdAt": "2020-05-18T06:38:49.437Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/moumitapaul\">@moumitapaul</a>, the constant MONDAY_TEAM is just the name of my organization as known in <a href=\"http://monday.com\">monday.com</a>. Later I recognized this is rdeundant information in the header, so you can leave it out completely.</p>\n<p>I tested the below code and it uploads my file to the update. Don’t forget that the update_id is the id of an existing update,  you can found the id by clicking the upper right circle down arrow in any update and do “Copy link to update”, the last value in the URL copied is the update_id (in my case 708406624).</p>\n<p>All “No query string was present” messages I got in the past (quite a few <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />) were related to the contents of the body. This is kind of strict.</p>\n<pre><code>\t//Generate a boundary, needed for the Header (Content-Type) and the Body (to split in multiple parts)\n\t$boundary = wp_generate_password(24);\n\t$eol = \"\\r\\n\";\n\n\t$header = array(\n\t\t'Authorization' =&gt; get_field('mondaykey', 'user_' . get_current_user_id()),\n\t\t'Content-Type' =&gt; 'multipart/form-data; boundary=' . $boundary\n\t);\n\n\t//We need to build the body from scratch because it is multipart with boundaries\n\t//Take care of the extra empty lines (twice $eol) before the actual query and file, otherwise an error 500 is returned\n\n\t$body = '--' . $boundary . $eol;\n\t$body .= 'Content-Disposition: form-data; name=\"query\"' . $eol . $eol;\n\t$body .= 'mutation ($file: File!) {add_file_to_update (update_id: 708406624, file: $file) {id}}' . $eol;\n\t$body .= '--' . $boundary . $eol;\n\t$body .= 'Content-Disposition: form-data; name=\"variables[file]\"; filename=\"' . $upload['name'] . '\"' . $eol;\n\t$body .= 'Content-Type: ' . $upload['type'] . $eol . $eol;\n\t$body .= file_get_contents($upload['value']);\n\t$body .= $eol . '--' . $boundary . '--';\n\n\t$response = wp_remote_post( MONDAY_URL, ['headers' =&gt; $header, 'body' =&gt; $body] );\n</code></pre>\n<p>The screenshot shows the update with the file I attached.</p>\n<p>Have fun with it!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/f6bb05e243d52515a3ae93c5cff0c3db2dd35ca4.png\" title=\"2020-05-18 11_35_24-Microsoft Edge\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/f6bb05e243d52515a3ae93c5cff0c3db2dd35ca4_2_263x500.png\" alt=\"2020-05-18 11_35_24-Microsoft Edge\" width=\"263\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">2020-05-18 11_35_24-Microsoft Edge</span><span class=\"informations\">866×1641 63.2 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 18161,
+      "postNumber": 17,
+      "createdAt": "2020-05-18T07:17:07.537Z",
+      "author": "moumitapaul (Moumita Paul)",
+      "cookedHtml": "<p>Hi,<br />\nMany thanks for this. I forgot to mention I was trying to upload an image file.<br />\nIs there something different in the code for image files?</p>"
+    },
+    {
+      "id": 18163,
+      "postNumber": 18,
+      "createdAt": "2020-05-18T08:02:38.995Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Do a PM because of some URL’s exposed here</p>\n<p>Should be the same for image file (I think). Hard for me to test because I filter on file type in another piece of code and do not allow images. Did you recognize the $upload in my code is an array, this is a dump of the array</p>\n<pre><code>[18-May-2020 10:58:09 UTC] Array\n(\n    [name] =&gt; How-to-use-Excellent-Monday-0.9.pdf\n    [value] =&gt; https://excellent-bid.nl/wp-content/uploads/wpforms/47888-c1ec2663446f6d779b5da6991ca9506b/How-to-use-Excellent-Monday-0.9-13a3a57873a27868a751f541df91f6f1.pdf\n    [file] =&gt; How-to-use-Excellent-Monday-0.9-13a3a57873a27868a751f541df91f6f1.pdf\n    [file_original] =&gt; How-to-use-Excellent-Monday-0.9.pdf\n    [ext] =&gt; pdf\n    [attachment_id] =&gt; 0\n    [id] =&gt; 3\n    [type] =&gt; application/pdf\n)\n</code></pre>\n<p>It is not very relevant, as long as you understand that you need to replace $upload[‘xxx’] with either the name and the full path on your website.</p>"
+    },
+    {
+      "id": 18241,
+      "postNumber": 19,
+      "createdAt": "2020-05-19T09:38:26.413Z",
+      "author": "SerhiiDiukarev (Serhii)",
+      "cookedHtml": "<p>Hello, dear Monday’s support team,</p>\n<p>I try to reproduce the upper steps (upload images from my PC via postman request) but unfortunately getting a response with a message: “<a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> is having some technical issues”.</p>\n<p>Did I do something wrong or it is a real problem on your side now?</p>"
+    },
+    {
+      "id": 18244,
+      "postNumber": 20,
+      "createdAt": "2020-05-19T10:29:03.091Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/serhiidiukarev\">@SerhiiDiukarev</a> – we aren’t seeing any systemwide issues about this. Can you open a new topic in the community about this issue so we can take a look?</p>"
+    },
+    {
+      "id": 18251,
+      "postNumber": 21,
+      "createdAt": "2020-05-19T11:24:10.659Z",
+      "author": "SerhiiDiukarev (Serhii)",
+      "cookedHtml": "<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/s/839c29/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/error-500-upload-images-from-my-pc-via-postman-request/7351\">ERROR 500: Upload images from my PC via postman request</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span style=\"--category-badge-color:#00ca72;--category-badge-text-color:#FFFFFF\" class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    variables[file]:@/Users/serhiidiukarev/Desktop/20190527_164158.jpg\nquery:mutation ($file: File!) { add_file_to_column(file: $file, item_id: 571979072, column_id: \"files\") { id } }\n\n <a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/30926a25dcfaa007fa1441ebe4fdf54287fb56f0.png\" title=\"Screenshot 2020-05-19 at 17.22.48\" rel=\"noopener nofollow ugc\">[Screenshot 2020-05-19 at 17.22.48]</a> \nwhole response from the server: \n \n \n&lt;head&gt;\n\t&lt;title&gt;monday.com is having some technical issues&lt;/title&gt;\n\t&lt;link href='//fonts.googleapis.com/css?family=Roboto:300,500' rel='stylesheet' type='text/css'&gt;\n\t&lt;style type=\"text/css\"&gt;\n\t\thtml {\n\t\t\tbackground-color: #575fcd;\n\t\t\theight: 100%;\n…\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 18391,
+      "postNumber": 22,
+      "createdAt": "2020-05-21T06:44:56.086Z",
+      "author": "juan1 (Juan Andrés Osorio Escobar)",
+      "cookedHtml": "<p>Dear monday Team and community.</p>\n<p>I am somewhat confused by this example, seeing that the endpoint you are using for the example is <a href=\"http://api.monday.com/v2\" rel=\"noopener nofollow ugc\">api.monday.com/v2</a> and not <a href=\"http://api.monday.com/v2/file\" rel=\"noopener nofollow ugc\">api.monday.com/v2/file</a>, as described in <a href=\"https://monday.com/developers/v2#mutations-section-files\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#mutations-section-files</a>. I followed your postman example and it worked just as expected, yay! but I want to clarify, which endpoint am I really supposed to use? I am confused by the documentation…</p>\n<p>On another note: has someone been able to do this using an apollo client? have been struggling with this for a few days already, I would really appreciate any help</p>"
+    },
+    {
+      "id": 18394,
+      "postNumber": 23,
+      "createdAt": "2020-05-21T08:02:34.642Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/juan1\">@juan1</a></p>\n<p>I am using endpoint api.monday.com.v2 from the beginning, also for manipulating files.  I overlooked the specific endpoint for files and now I am as puzzled as you are?</p>\n<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a>, can you shine your light on this?</p>"
+    },
+    {
+      "id": 18410,
+      "postNumber": 24,
+      "createdAt": "2020-05-21T14:30:34.983Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey folks! <a class=\"mention\" href=\"/u/juan1\">@juan1</a> <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Good catch, I’ve gone ahead and updated the post above to include the new “/v2/file” endpoint. We recommend using the “v2/file” endpoint because it has a larger size limit than the normal “/v2” endpoint.</p>"
+    },
+    {
+      "id": 18457,
+      "postNumber": 25,
+      "createdAt": "2020-05-22T06:33:09.638Z",
+      "author": "juan1 (Juan Andrés Osorio Escobar)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> Thank you for clarifying this point <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I have a problem getting graphQL errors with “no query string was present”.  This is how my body looks like, as im using <a href=\"https://github.com/jaydenseric/apollo-upload-client\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - jaydenseric/apollo-upload-client: A terminating Apollo Link for Apollo Client that fetches a GraphQL multipart request if the GraphQL variables contain files (by default FileList, File, or Blob instances), or else fetches a regular GraphQL POST or GET request (depending on the config and GraphQL operation).</a> for my project, which bases the request on this spec: <a href=\"https://github.com/jaydenseric/graphql-multipart-request-spec#multipart-form-field-structure\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - jaydenseric/graphql-multipart-request-spec: A spec for GraphQL multipart form requests (file uploads).</a>.</p>\n<blockquote>\n<p>------WebKitFormBoundary7657beqttyUsEIOi<br />\nContent-Disposition: form-data; name=“operations”<br /><br />\n{“operationName”:“add_file_to_update”,“variables”:{“update_id”:711276905,“file”:null},“query”:“mutation add_file_to_update($update_id: Int!, $file: File!) {\\n  add_file_to_update(update_id: $update_id, file: $file) {\\n    id\\n    __typename\\n  }\\n}\\n”} <br /><br />\n------WebKitFormBoundary7657beqttyUsEIOi<br />\nContent-Disposition: form-data; name=“map” <br /><br />\n{“1”:[“variables.file”]}<br />\n------WebKitFormBoundary7657beqttyUsEIOi<br />\nContent-Disposition: form-data; name=“1”; filename=“dummy.pdf”<br />\nContent-Type: application/pdf <br /><br />\n------WebKitFormBoundary7657beqttyUsEIOi–</p>\n</blockquote>\n<p>this would be equivalent to doing something similar to</p>\n<blockquote>\n<p>curl ‘<a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a>’ <br />\n-H ‘content-type: multipart/form-data; boundary=----WebKitFormBoundary3bZRDO8h9FUHFNb8’ <br />\n-H ‘origin: <a href=\"http://localhost:3000\" rel=\"noopener nofollow ugc\">http://localhost:3000</a>’ <br />\n-H ‘sec-fetch-site: cross-site’ <br />\n-H ‘sec-fetch-mode: cors’ <br />\n-H ‘sec-fetch-dest: empty’ <br />\n-H ‘referer: <a href=\"http://localhost:3000/\" rel=\"noopener nofollow ugc\">http://localhost:3000/</a>’ <br />\n-H ‘accept-language: en-US,en;q=0.9’ <br />\n–data-binary $'------WebKitFormBoundary3bZRDO8h9FUHFNb8\\r\\nContent-Disposition: form-data; name=“operations”<br />\n{“operationName”:“add_file_to_update”,“variables”:{“update_id”:711286426,“file”:null},“query”:“mutation add_file_to_update($update_id: Int\\u0021, $file: File\\u0021) {\\n  add_file_to_update(update_id: $update_id, file: $file) {\\n    id\\n    __typename\\n  }\\n}\\n”}<br />\n------WebKitFormBoundary3bZRDO8h9FUHFNb8\\r\\nContent-Disposition: form-data; name=“map”<br />\n<br />\n{“1”:[“variables.file”]}<br />\n------WebKitFormBoundary3bZRDO8h9FUHFNb8<br />\nContent-Disposition: form-data; name=“1”; filename=“dummy.pdf”<br />\nContent-Type: application/pdf<br />\n<br />\n<br />\n------WebKitFormBoundary3bZRDO8h9FUHFNb8–<br />\n–compressed</p>\n</blockquote>\n<p>I think most importantly why this is failing with this error, is because of the way file is set to null.</p>\n<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a>  do you know if this would be a cause for this type of error?</p>"
+    },
+    {
+      "id": 18460,
+      "postNumber": 26,
+      "createdAt": "2020-05-22T08:46:10.759Z",
+      "author": "juan1 (Juan Andrés Osorio Escobar)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>Now that I see your mention to the repo, I am honestly quite lost and frustrated as to why I am receiving this types of errors. In my perspective, the way the postman example works generates a somewhat different  kind of cURL command to the one  the multipart request you mentioned here, if you could help me clarify this I would be extremely grateful.</p>\n<p>compare, taken directly from jaydenseric’s spec:</p>\n<blockquote>\n<p>curl localhost:3001/graphql <br />\n-F operations=‘{ “query”: “mutation ($file: Upload!) { singleUpload(file: $file) { id } }”, “variables”: { “file”: null } }’ <br />\n-F map=‘{ “0”: [“variables.file”] }’ <br />\n-F 0=@a.txt</p>\n</blockquote>\n<p>with</p>\n<blockquote>\n<p>curl <br />\n-F query=‘mutation ($file: File!) { add_file_to_column(file: $file, item_id: 118607269, column_id: “files”) { id } }’<br />\n-F variables[file]=@/Users/diprobhowmik/screenshots/image.png<br />\n-H “Authorization: APIKEYHERE” <br />\n<a href=\"https://api.monday.com/v2/file\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file</a></p>\n</blockquote>\n<p>according to jaydenseric, the file field is supposed to be replaced by null. <a href=\"https://github.com/jaydenseric/apollo-upload-client/issues/185\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Client sending query with files as null · Issue #185 · jaydenseric/apollo-upload-client · GitHub</a></p>\n<p>I highly suspect this is the reason why I get the no string was present error…</p>"
+    },
+    {
+      "id": 18474,
+      "postNumber": 27,
+      "createdAt": "2020-05-22T10:36:34.165Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/juan1\">@juan1</a> – this is a specific way that our file uploads don’t conform exactly to the GraphQL spec, and is a known issue. You can still upload files, but you should use the key <code>variables[file]</code> for your file data. More generally, you should use <code>variables[variable_name]</code>(it doesn’t need to be “file”,</p>\n<p><a href=\"https://gist.github.com/yuhgto/edb5d96e088599c2a6ea44860df9117b\">Here is some example code</a> that uploads a file “the hard way” (by constructing the multipart from scratch). I hope you find it helpful!</p>\n<h3><a name=\"p-18474-side-note-about-this-thread-1\" class=\"anchor\" href=\"#p-18474-side-note-about-this-thread-1\"></a>Side note about this thread:</h3>\n<p>I’m noticing that this thread has a lot of different topics in it, and will be closing it in 24 hours. If you have a side topic related to file uploads, I would recommend opening a <strong>new thread</strong> in the community (don’t be shy).</p>\n<p>While I love the discussion, I want to ensure our community stays organized. Opening new threads will ensure no one’s questions get lost – and new members of the community can get value out of the discussion here without getting sidetracked! <img src=\"https://emoji.discourse-cdn.com/apple/crystal_ball.png?v=15\" title=\":crystal_ball:\" class=\"emoji\" alt=\":crystal_ball:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 18481,
+      "postNumber": 28,
+      "createdAt": "2020-05-22T11:07:33.722Z",
+      "author": "juan1 (Juan Andrés Osorio Escobar)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>oh my <img src=\"https://emoji.discourse-cdn.com/apple/see_no_evil.png?v=9\" title=\":see_no_evil:\" class=\"emoji\" alt=\":see_no_evil:\" />. Is there any chance you have a javascript client-side example? I would be very grateful for that and I think many people could profit form this <img src=\"https://emoji.discourse-cdn.com/apple/innocent.png?v=9\" title=\":innocent:\" class=\"emoji\" alt=\":innocent:\" /></p>"
+    },
+    {
+      "id": 18486,
+      "postNumber": 29,
+      "createdAt": "2020-05-22T11:39:23.225Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>I don’t think you can upload files from the client side, since it’ll be blocked by CORS.</p>\n<p>If you’re building a client side app though, I’d highly recommend our Javascript SDK (<a href=\"https://github.com/mondaycom/monday-sdk-js\">documentation</a>). It contains methods to make API requests and alongside our new apps framework you can <a href=\"https://monday.com/developers/apps/quickstart-view\">do cool stuff</a>  with native board views and widgets. <img src=\"https://emoji.discourse-cdn.com/apple/raised_hands.png?v=12\" title=\":raised_hands:\" class=\"emoji\" alt=\":raised_hands:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 18549,
+      "postNumber": 30,
+      "createdAt": "2020-05-23T19:00:09.202Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>This topic was automatically closed after 32 hours. New replies are no longer allowed.</p>"
+    }
+  ]
+}

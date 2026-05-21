@@ -1,0 +1,68 @@
+{
+  "id": 75320,
+  "title": "What does app-subscription-cancelled-by-user mean?",
+  "slug": "what-does-app-subscription-cancelled-by-user-mean",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    433
+  ],
+  "createdAt": "2024-01-17T00:22:15.065Z",
+  "lastPostedAt": "2024-01-17T11:12:59.190Z",
+  "postsCount": 6,
+  "excerpt": "When we get a webhook event from monday.com that app_subscription_cancelled_by_user, does this mean the account should not have a subscription anymore? Or should we wait for the app_subscription_cancelled event?",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 179,
+  "posts": [
+    {
+      "id": 162453,
+      "postNumber": 1,
+      "createdAt": "2024-01-17T00:22:15.180Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>When we get a webhook event from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> that app_subscription_cancelled_by_user, does this mean the account should not have a subscription anymore? Or should we wait for the app_subscription_cancelled event?</p>"
+    },
+    {
+      "id": 162514,
+      "postNumber": 2,
+      "createdAt": "2024-01-17T08:33:02.828Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/samicaracand\">@samicaracand</a><br />\nThe <code>app_subscription_cancelled_by_user</code> event means that the subscription is still active but won’t renew at the end of the current period.</p>"
+    },
+    {
+      "id": 162531,
+      "postNumber": 3,
+      "createdAt": "2024-01-17T09:59:03.510Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/rob\">@rob</a><br />\nTwo more questions:</p>\n<ol>\n<li>Can the user who canceled later ‘uncancel’? If so, how would we know – it doesn’t seem to be an event for this.</li>\n<li>How about app_subscription_cancelled → does this mean the subscription is cancelled at the time of the event, regardless of the next renewal?</li>\n</ol>"
+    },
+    {
+      "id": 162533,
+      "postNumber": 4,
+      "createdAt": "2024-01-17T10:00:11.538Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Also – I was looking for a way to query the API for the status of the subscription of any arbitrary account. I couldn’t find this. It seems the only reference we have are the webhooks and the monthly payment statements. This is a bit like the bank telling us here are your transactions for the month, now you figure out your account balance!</p>"
+    },
+    {
+      "id": 162555,
+      "postNumber": 5,
+      "createdAt": "2024-01-17T11:12:03.756Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/samicaracand/48/18558_2.png\" class=\"avatar\" /> Sami Caracand (DocuGen):</div>\n<blockquote>\n<ol>\n<li>Can the user who canceled later ‘uncancel’? If so, how would we know – it doesn’t seem to be an event for this.</li>\n</ol>\n</blockquote>\n</aside>\n<p>Yes they can uncancel - <code>app_subscription_cancellation_revoked_by_user</code> is the webhook received.</p>\n<p>Most of your questions will be answered here as well: <a href=\"https://developer.monday.com/apps/docs/webhooks\" class=\"inline-onebox\">App life cycle events</a></p>"
+    },
+    {
+      "id": 162556,
+      "postNumber": 6,
+      "createdAt": "2024-01-17T11:12:59.190Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/samicaracand/48/18558_2.png\" class=\"avatar\" /> Sami Caracand (DocuGen):</div>\n<blockquote>\n<p>Can the user who canceled later ‘uncancel’? If so, how would we know – it doesn’t seem to be an event for this.</p>\n</blockquote>\n</aside>\n<p>Yes, there’s an event for that: <code>app_subscription_cancellation_revoked_by_user</code>.</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/samicaracand/48/18558_2.png\" class=\"avatar\" /> Sami Caracand (DocuGen):</div>\n<blockquote>\n<p>How about app_subscription_cancelled → does this mean the subscription is cancelled at the time of the event, regardless of the next renewal?</p>\n</blockquote>\n</aside>\n<p>The <code>app_subscription_cancelled</code> is sent when the subscription ends and doesn’t renew.<br />\nOr after 45 days from the first <code>app_subscription_renewal_attempt_failed</code>.<br />\nPlease note that if the user uninstalls the app, no more events are sent.</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/samicaracand/48/18558_2.png\" class=\"avatar\" /> Sami Caracand (DocuGen):</div>\n<blockquote>\n<p>I was looking for a way to query the API for the status of the subscription of any arbitrary account.</p>\n</blockquote>\n</aside>\n<p>Unfortunately there’s no way to do it outside of the app.<br />\nYou can query the <code>app_subscription</code> object (see <a href=\"https://developer.monday.com/apps/docs/api-reference#app-subscription\">https://developer.monday.com/apps/docs/api-reference#app-subscription</a>) but you need to use the auth token specifically generated for the app (OAuth2 or shortLivedToken).</p>"
+    },
+    {
+      "id": 162636,
+      "postNumber": 7,
+      "createdAt": "2024-01-17T13:45:49.018Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

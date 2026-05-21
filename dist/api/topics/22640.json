@@ -1,0 +1,62 @@
+{
+  "id": 22640,
+  "title": "Group mutation API parameter inconsistencies",
+  "slug": "group-mutation-api-parameter-inconsistencies",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    115,
+    351
+  ],
+  "createdAt": "2021-07-21T09:03:25.999Z",
+  "lastPostedAt": "2021-07-21T12:32:39.621Z",
+  "postsCount": 5,
+  "excerpt": "I’ve notices that there are inconsistencies in the documentation for the create_group and duplicate_group mutations, and I’m trying to understand what the reality is: \nIn the create group mutation, the API lists group_na&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1179,
+  "posts": [
+    {
+      "id": 58430,
+      "postNumber": 1,
+      "createdAt": "2021-07-21T09:03:26.108Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>I’ve notices that there are inconsistencies in the documentation for the create_group and duplicate_group mutations, and I’m trying to understand what the reality is:</p>\n<p>In the create group mutation, the API lists group_name (!string) as the name of the group.  In the duplicate group mutation, the API lists group_title (string) as the title, and group_id (!string) as the “unique identifier”.  In the other 2 mutations (archive, delete), only group_id is listed.</p>\n<p>So I’m trying to understand what exactly group_name, group_title and group_id are and what they are used for.  Is one of these a typo, does one serve the same purpose as another?  Or is there really a unique purpose for each one of them, and if so, what is it?</p>"
+    },
+    {
+      "id": 58438,
+      "postNumber": 2,
+      "createdAt": "2021-07-21T09:40:39.891Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>I seem to have answered my own question, but for all those reading pay attention because things can get confusing.  group_id is just that, a unique (string) ID for the group.  According to the API, the group_id is mandatory when creating a new group.  BUUUUTTTTT…if a new group is created without the group id, the system will call it “Group Title” as a default.  Fine for the first time.  But if this is done more than once, there will be multiple groups with the title “Group Title” in the board.</p>\n<p>Don’t be fooled…they’re not the same.  When I look at the id in my DB, it seems that if there is a group created with an already existing id specified (in this case “Group Title” for the title (or name?) and “group_title” for the id, on the board they will appear the same (2 groups called “Group Title”, but as for the actual group_id (which is not shown on the UI), the system uses it and automatically adds 5 random numbers to make it unique (i.e. “group_title34567”).</p>\n<p>So if we create 2 groups named “mygroup”, one will have the id “mygroup” and the other may have the id “mygroup12345”, but both will have the title “mygroup” in the UI.  If we try to duplicate via the API specifying “mygroup”, it will be the group with the actual ID “mygroup” duplicated, and not the group “mygroup12345”.</p>\n<p>Maybe there can be some way of making this clearer to the user, or check for duplicate names (titles) and block them, to avoid problems down the line?</p>\n<p>I’m still hoping to hear what the difference is between the title and name.</p>"
+    },
+    {
+      "id": 58442,
+      "postNumber": 3,
+      "createdAt": "2021-07-21T10:00:19.940Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>Update: seems like changing the group title on the UI does not actually change the group_id, so if a group is created with a duplicate id, things could be tricky.  This may need attention.</p>"
+    },
+    {
+      "id": 58480,
+      "postNumber": 4,
+      "createdAt": "2021-07-21T12:28:28.879Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 58481,
+      "postNumber": 5,
+      "createdAt": "2021-07-21T12:32:39.621Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/msh\">@Msh</a>!</p>\n<p>Yes it looks like you did solve your own question. I will add that <code>group_name</code> and <code>group_title</code> are the same.</p>\n<p><code>group_id</code> however, functions much like <code>column_id</code>. A good analogy would be: every time you add a status column to your board, the names will be slightly different (“status” vs. “status 1” vs. “status 2”). However, if you query these status IDs, you will see that these are not the same (“status15” can be the column ID for the “status” column, “status_160” can be the column ID for the “status 1” column, etc). These two functions are not the same at all.</p>\n<p>This is true for groups as well. Group names and group IDs are distinct, though they are both strings. This means that group and column IDs will be unique within the board they are in (i.e. you would never have two groups on a board that have the same group IDs).</p>\n<p>Is this not the behavior that you’re seeing? Are you seeing group IDs that are the same within a board?</p>"
+    },
+    {
+      "id": 59210,
+      "postNumber": 6,
+      "createdAt": "2021-07-28T12:33:17.229Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

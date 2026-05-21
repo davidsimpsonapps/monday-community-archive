@@ -1,0 +1,46 @@
+{
+  "id": 90226,
+  "title": "Divide by Zero Error - help needed",
+  "slug": "divide-by-zero-error-help-needed",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-06-18T04:20:29.575Z",
+  "lastPostedAt": "2024-06-26T10:48:48.199Z",
+  "postsCount": 4,
+  "excerpt": "I have searched the community and tried the IF &amp; AND solutions mentioned but i still get what i think are divide by Zero Errors for the formulas below; \nFirst Formula - To show the percentage difference between two value&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 218,
+  "posts": [
+    {
+      "id": 189213,
+      "postNumber": 1,
+      "createdAt": "2024-06-18T04:20:29.661Z",
+      "author": "Leigh_73 (Leigh Skilton)",
+      "cookedHtml": "<p>I have searched the community and tried the IF &amp; AND solutions mentioned but i still get what i think are divide by Zero Errors for the formulas below;</p>\n<p>First Formula - To show the percentage difference between two values (i have removed the IF &amp; AND from the formula)</p>\n<p>ROUNDUP(({Agreed Claim Value}-{Total Claim Value})/{Total Claim Value}*100,0)</p>\n<p>Where Total Claim Value is another formula as shown below. I think it is this formula that is giving me the problem as even with the IF &amp; AND statements (removed here) the result always shows ‘0’ (i want the result to be blank if the cells in the formula have no entries / are blank. I think this will then fix the formula above)</p>\n<p>Second Formula - Sum of all the items to show the ‘Total Claim Value’</p>\n<p>(({Hours A}+{Hours B}+{Hours C}+{Hours D})*{Hourly Rate})+({Equipment &amp; Material Costs}*1.1)+({Third Party Costs}*1.1)+{Miscellaneous Costs}</p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 189291,
+      "postNumber": 2,
+      "createdAt": "2024-06-18T09:25:44.502Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Leigh,</p>\n<p>Not sure why you removed the Ifs as it makes difficult to understand what your problem is. I’ll give it a show anyway.</p>\n<p>To avoid errors, try replacing {Total Claim Value} in the divider by</p>\n<p><code>IF({Total Claim Value}=\"0\",1,{Total Claim Value})</code></p>\n<p>So, you end up with:</p>\n<pre><code class=\"lang-auto\">ROUNDUP(({Agreed Claim Value}-{Total Claim Value})/IF({Total Claim Value}=\"0\",1,{Total Claim Value})*100,0)\n</code></pre>\n<p>Which will not generate any error, but will get you a 0 if values are not filled in.</p>\n<p>Since you don’t want zeros, all you have to do is add an IF statement like this:</p>\n<pre><code class=\"lang-auto\">IF(code_above=0,\"\",code_above)\n</code></pre>\n<p>i.e,:</p>\n<pre><code class=\"lang-auto\">IF(ROUNDUP(({Agreed Claim Value}-{Total Claim Value})/IF({Total Claim Value}=\"0\",1,{Total Claim Value})*100,0)=0,\"\",ROUNDUP(({Agreed Claim Value}-{Total Claim Value})/IF({Total Claim Value}=\"0\",1,{Total Claim Value})*100,0))\n</code></pre>\n<p>Hope it helps.</p>\n<hr />\n<p><strong>Want to take your formulas to the next level?</strong> Try the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, the app that reinvents formulas in monday.</p>\n<ul>\n<li>Create formulas without using the Formula column (and avoid its limitations)</li>\n<li>Build formulas involving data from the previous item, the next item, the sub-items, the parent item, even items in the same group or the same board.</li>\n<li>In one formula, update multiple columns from multiple items.</li>\n</ul>\n<p>Check our blog for <a href=\"https://blog.mdboosters.com\" rel=\"noopener nofollow ugc\">real use cases</a>.</p>"
+    },
+    {
+      "id": 189350,
+      "postNumber": 3,
+      "createdAt": "2024-06-18T12:02:37.006Z",
+      "author": "Leigh_73 (Leigh Skilton)",
+      "cookedHtml": "<p>Hi Gilles,</p>\n<p>Thanks for your input, I removed the IF &amp; AND Statements as they weren’t giving me the expected answer so went back to basics.</p>\n<p>I have tried both of the formulas you kindly shared but the result is the same as mine, when the, when ‘Total Claim Value’ is 0 i get an error “One of the parameters is invalid”.</p>\n<p>I think the solution lies in fixing the second formula in my original post so that when all the cells are blank, and therefore ‘Total Claim Value’ should also be blank, i.e. not showing 0.</p>\n<p>The following variation of the (second) formula also results in the cell being populated with “0” even when all the cells are blank/empty, so im baffled;</p>\n<p>IF(<br />\nAND(<br />\nISBLANK({Hours A}),<br />\nISBLANK({Hours B}),<br />\nISBLANK({Hours C}),<br />\nISBLANK({Hours D}),<br />\nISBLANK({Hourly Rate}),<br />\nISBLANK({Equipment &amp; Material Costs}),<br />\nISBLANK({Third Party Costs}),<br />\nISBLANK({Miscellaneous Costs})<br />\n),<br />\n“”,<br />\n(({Hours A} + {Hours B} + {Hours C} + {Hours D}) * {Hourly Rate}) + ({Equipment &amp; Material Costs} * 1.1) + ({Third Party Costs} * 1.1) + {Miscellaneous Costs}<br />\n)</p>"
+    },
+    {
+      "id": 190844,
+      "postNumber": 4,
+      "createdAt": "2024-06-26T10:48:48.199Z",
+      "author": "christinakelley (Christina Kelley)",
+      "cookedHtml": "<p>To resolve the issue you’re experiencing with the formula, you can use logical functions to handle cases where the cells are blank. Here’s how you can adjust your formulas:</p>\n<h3><a name=\"p-190844-first-formula-1\" class=\"anchor\" href=\"#p-190844-first-formula-1\"></a>First Formula</h3>\n<p>To show the percentage difference between two values and ensure the result is blank when cells are empty, use the following formula:</p>\n<p>IF(AND({Agreed Claim Value}&lt;&gt;“”,{Total Claim Value}&lt;&gt;“”), ROUNDUP(({Agreed Claim Value}-{Total Claim Value})/{Total Claim Value}*100,0), “”)</p>\n<h3><a name=\"p-190844-second-formula-2\" class=\"anchor\" href=\"#p-190844-second-formula-2\"></a>Second Formula</h3>\n<p>To compute the ‘Total Claim Value’ ensuring it shows blank when relevant cells are empty, you can use:</p>\n<p>IF(OR({Hours A}&lt;&gt;“”,{Hours B}&lt;&gt;“”,{Hours C}&lt;&gt;“”,{Hours D}&lt;&gt;“”,{Hourly Rate}&lt;&gt;“”,{Equipment &amp; Material Costs}&lt;&gt;“”,{Third Party Costs}&lt;&gt;“”,{Miscellaneous Costs}&lt;&gt;“”),<br />\n(({Hours A}+{Hours B}+{Hours C}+{Hours D})*{Hourly Rate})+<br />\n({Equipment &amp; Material Costs}*1.1)+<br />\n({Third Party Costs}*1.1)+<br />\n{Miscellaneous Costs},<br />\n“”)</p>\n<p>These formulas include <code>IF</code> and <code>AND</code>/<code>OR</code> functions to check if the required fields are not blank before performing calculations, ensuring that the result will be blank if any of the cells are empty.</p>\n<p>Hope it works out for you.<br />\nChristina</p>"
+    }
+  ]
+}

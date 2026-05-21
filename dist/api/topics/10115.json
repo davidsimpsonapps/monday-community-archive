@@ -1,0 +1,76 @@
+{
+  "id": 10115,
+  "title": "Getting error when trying to mutate or execute, using React App",
+  "slug": "getting-error-when-trying-to-mutate-or-execute-using-react-app",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2020-08-15T06:27:00.981Z",
+  "lastPostedAt": "2021-02-25T14:24:18.498Z",
+  "postsCount": 8,
+  "excerpt": "Hi, \nI am trying to \n\n\nOpen an item using monday.execute(‘openItemCard’, { itemId: props.id }) \nI get “Uncaught TypeError: Cannot read property ‘board_id’ of undefined” error \n\n\nChange Status of an item using following c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2057,
+  "posts": [
+    {
+      "id": 25577,
+      "postNumber": 1,
+      "createdAt": "2020-08-15T06:27:01.086Z",
+      "author": "ksholla20 (Sharath Holla)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I am trying to</p>\n<ol>\n<li>\n<p>Open an item using monday.execute(‘openItemCard’, { itemId: props.id })<br />\nI get “Uncaught TypeError: Cannot read property ‘board_id’ of undefined” error</p>\n</li>\n<li>\n<p>Change Status of an item using following code<br />\nconst valueString = <code>{'label': ${dStatusLabel}}</code><br />\nmonday.api(<code>mutation ($boardId: Int!, $itemId: Int, $valueString: JSON!) {change_column_value (board_id: $boardId, item_id: $itemId, column_id: \"status\", value: $valueString) {id}}</code>, {variables:{boardId: this.state.boardData.boards[0].id, itemId: parseInt(itemId), valueString: valueString}}).</p>\n</li>\n</ol>\n<p>I get “Error: There was an error in response from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> graphql API” and a 500 network response.</p>\n<p>I am totally stuck on these. Can someone please help me out?</p>"
+    },
+    {
+      "id": 25579,
+      "postNumber": 2,
+      "createdAt": "2020-08-15T06:39:04.195Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/ksholla20\">@ksholla20</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>A very warm welcome to the community and I hope you enjoy your stay. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Let’s try and tackle those points together!</p>\n<p>It seems like in the 1st request you are trying to execute, you are missing the Board ID and the platform is not able to pull in the appropriate data for you. I am basing this on this part of the error:</p>\n<p>Uncaught TypeError: Cannot read property ‘board_id’ of undefined</p>\n<p>For the 2nd point, in my personal experience and for many users within the community, a 500 server error is usually caused by the request you are trying to send not being formatted in the way that the API can recognize. Can you please make sure that:</p>\n<ol>\n<li>Your query is sent as a JSON body and a POST request?</li>\n<li>The column values you are trying to send are JSON-escaped correctly?</li>\n</ol>\n<p>Those are the usual culprits for the 500 error to come up for our users. Do you think those could apply to your case as well?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25582,
+      "postNumber": 3,
+      "createdAt": "2020-08-15T08:14:52.921Z",
+      "author": "ksholla20 (Sharath Holla)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> Thanks a lot for quick response.</p>\n<p>For first one: The board_id missing is coming somewhere from inside the sdk library. I am not sure How to provide that information. Attaching the screen shot of error line<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/57e0269698d58565018e2684cbc8010e3b810ba9.png\" title=\"Screenshot 2020-08-15 at 4.43.18 PM\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/57e0269698d58565018e2684cbc8010e3b810ba9_2_572x500.png\" alt=\"Screenshot 2020-08-15 at 4.43.18 PM\" width=\"572\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2020-08-15 at 4.43.18 PM</span><span class=\"informations\">822×718 85.7 KB</span></div></a></div><p></p>\n<p>For 2nd one, I printed out column value and what I have is “{“label”: “Done”}”. Is there any React sample code to change the column value. I tried the same query on the graphql testbench provided and it works fine there. Hence, like you, I too suspect the react implementation by me</p>"
+    },
+    {
+      "id": 25583,
+      "postNumber": 4,
+      "createdAt": "2020-08-15T08:38:10.574Z",
+      "author": "ksholla20 (Sharath Holla)",
+      "cookedHtml": "<p>Some experiments for 2nd error:<br />\nI tried with example in <a href=\"https://github.com/mondaycom/welcome-apps/blob/master/apps/quickstart-integrations/src/services/monday-service.js\" rel=\"noopener nofollow ugc\">this example app</a></p>\n<p>For following data: <code>\"{\"label\": \"Working on it\"}\"</code>, I get following error message somewhere deep in sdk<br />\n<code>\"This status label doesn't exist, possible statuses are: {0: Working on it, 1: Done, 2: Stuck, 7: Waiting for review}\"</code></p>\n<p>I changed it to <code>{\"label\": \"Working on it\"}</code>, i.e. removing outer quotes in the string, I get 500 error</p>"
+    },
+    {
+      "id": 25585,
+      "postNumber": 5,
+      "createdAt": "2020-08-15T09:06:01.550Z",
+      "author": "ksholla20 (Sharath Holla)",
+      "cookedHtml": "<p>Update on First one:<br />\nThe error was in Local setup on ngrocks only. This was not seen in the build version. Hence we can treat this as closed.<br />\nThe second one still persists though</p>"
+    },
+    {
+      "id": 25587,
+      "postNumber": 6,
+      "createdAt": "2020-08-15T09:56:15.349Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ksholla20\">@ksholla20</a></p>\n<p>Thank you for getting back to me on this!  I am really glad you were able to troubleshoot the first error on your own and get a result that works for you, that’s awesome.</p>\n<p>As for the second error you are experiencing, could you please try parsing this as the column_values parameter in your mutation for the status column?</p>\n<p>“{“label”: {“Done”}}”)</p>\n<p>I still believe the main reason you are not able to send the values properly is the JSON formatting in your case. Do you think that could be the root cause too?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25596,
+      "postNumber": 7,
+      "createdAt": "2020-08-15T13:36:11.786Z",
+      "author": "ksholla20 (Sharath Holla)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> That worked. Thanks</p>"
+    },
+    {
+      "id": 42296,
+      "postNumber": 8,
+      "createdAt": "2021-02-25T14:24:18.498Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

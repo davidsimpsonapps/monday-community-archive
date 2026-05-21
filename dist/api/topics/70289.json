@@ -1,0 +1,90 @@
+{
+  "id": 70289,
+  "title": "Cursor used for Pagination Expires - Alternate way to Paginate?",
+  "slug": "cursor-used-for-pagination-expires-alternate-way-to-paginate",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    418
+  ],
+  "createdAt": "2023-11-07T20:01:17.946Z",
+  "lastPostedAt": "2023-11-09T07:21:38.302Z",
+  "postsCount": 9,
+  "excerpt": "Hello All, \nI currently have the below graphQL query which extracts all items in board. \nPlease note in the below example that the board id is not a real board. The cursor is also not a real cursor. \n{\n  boards(ids: 1234&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 780,
+  "posts": [
+    {
+      "id": 152134,
+      "postNumber": 1,
+      "createdAt": "2023-11-07T20:01:18.032Z",
+      "author": "christopher.matthews (Chris matthews)",
+      "cookedHtml": "<p>Hello All,</p>\n<p>I currently have the below graphQL query which extracts all items in board.</p>\n<p>Please note in the below example that the board id is not a real board. The cursor is also not a real cursor.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    items_page (limit: 500, cursor: \"fhakahdfyiewhalfhdsanhdfsfwefewwfeM\" ) {\n      cursor\n      items {\n        name\n        column_values {\n          column {\n            title\n          }\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>I have about 700 items in the board. The items_page has a maximum limit of returning 500 items.</p>\n<p>I previously used the above query to return all the remaining items (after the 1st 500).</p>\n<p>However today, we encountered the below message</p>\n<pre><code class=\"lang-auto\">    \"error_code\": \"CursorException\",\n    \"status_code\": 200,\n    \"error_message\": \"CursorExpiredError: The cursor provided for pagination has expired. Please refresh your query and obtain a new cursor to continue fetching items\",\n    \"error_data\": {}\n}\n</code></pre>\n<p>For our specific use case, we are not looking to refresh the cursor every 60 minutes. I am wondering if it’s possible to have a cursor that would not expire or somehow increase the query limit from like 500 to 1,000.</p>\n<p>If that’s not possible, is there an alternate GraphQL that we can use to reliably grab all the items in the boards. Without having to worry about expiring cursor?</p>\n<p>e.g. maybe something like page where 1st page gets 500 and 2nd page gets remaining items</p>\n<p>Thanks,<br />\nChris</p>"
+    },
+    {
+      "id": 152136,
+      "postNumber": 2,
+      "createdAt": "2023-11-07T20:35:55.924Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I’m a bit confused, its taking you over an hour to retrieve all the items from the board?</p>"
+    },
+    {
+      "id": 152138,
+      "postNumber": 3,
+      "createdAt": "2023-11-07T21:03:35.252Z",
+      "author": "christopher.matthews (Chris matthews)",
+      "cookedHtml": "<p>Hey Cody,</p>\n<p>Thanks for responding. For my use case, the limitation is not the length of time the query takes.</p>\n<p>The limitation is more about only being able to return 500 items with a single item_page query.</p>\n<p>We would either want to somehow return all 700 items with a single query, or come up with two queries (like below)</p>\n<p>The first query would return the 1st 500 items</p>\n<p>The 2nd query would return the remaining items.</p>\n<p>Unfortunately for our use case we can’t really support dynamically refreshing the cursor token from our end. In theory yes we could manually refresh the cursor token, but we we are looking for something more automated.</p>"
+    },
+    {
+      "id": 152139,
+      "postNumber": 4,
+      "createdAt": "2023-11-07T21:11:44.019Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I still don’t understand, if you have the cursor from the first query (that uses your criteria, not a cursor, and returns the cursor) and its still valid (since its only 60 seconds old at the max) why are you unable to immediately execute a second query to retrieve the next page of results using the cursor? Then in the second query, it returns a new cursor, that you use for the third query, and so on.</p>"
+    },
+    {
+      "id": 152140,
+      "postNumber": 5,
+      "createdAt": "2023-11-07T21:30:44.252Z",
+      "author": "christopher.matthews (Chris matthews)",
+      "cookedHtml": "<p>Hi Cody,</p>\n<p>The internal system that we use can’t grab the Cursor token that’s initially generated.</p>\n<p>In Postman:</p>\n<p>I can run the initial query, grab the cursor token, paste it in the subsequent query and get the the remaining results.</p>\n<p>But unfortunately our internal system doesn’t have that capability to automatically  grab that initial cursor token and then use it for the subsequent query.</p>\n<p>So I’m wondering if there are workarounds.</p>\n<p>If not, no worries.</p>\n<p>Chris</p>"
+    },
+    {
+      "id": 152141,
+      "postNumber": 6,
+      "createdAt": "2023-11-07T21:39:21.038Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You will need to implement an external system/process that performs the monday interactions, and your internal system makes a call to that and waits for it to get all the results.</p>\n<p>May I ask if this is a proprietary system or something off the beaten path? What language is this in that it cant store a variable and pass to another function call?</p>"
+    },
+    {
+      "id": 152148,
+      "postNumber": 7,
+      "createdAt": "2023-11-07T23:03:37.835Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There is also monday code (which is based on nodejs) which is in beta but lets you run code in the monday infrastructure within the apps framework. It may be entirely possible to write something there in javascript which your internal system sends data to, and queries from. That would act as an abstraction layer, where you can preprocess or handle the complex work, and your system just passes data in and out.</p>"
+    },
+    {
+      "id": 152203,
+      "postNumber": 8,
+      "createdAt": "2023-11-08T07:35:09.312Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 152348,
+      "postNumber": 9,
+      "createdAt": "2023-11-08T21:52:11.340Z",
+      "author": "christopher.matthews (Chris matthews)",
+      "cookedHtml": "<p>Have one follow up question here.</p>\n<p>Is there a way to edit the below query, so that I sort on name by descending order?</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    items_page(limit: 500) {\n      cursor\n      items {\n        name\n        column_values {\n          column {\n            title\n          }\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>The above query looks to by default sort on the name field by ascending order.</p>\n<p>Wondering if there is a way to adjust the above query so we sort on the name field by descending order (Z-A).</p>\n<p>I saw some references to query_params and sort by, but not sure how to incorporate into the query.</p>\n<p>Best,<br />\nChris</p>"
+    },
+    {
+      "id": 152394,
+      "postNumber": 10,
+      "createdAt": "2023-11-09T07:21:38.302Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hi there <a class=\"mention\" href=\"/u/christopher.matthews\">@christopher.matthews</a>,</p>\n<p>Can you please try something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    items_page(\n      limit: 500\n      query_params: {order_by: [{column_id: \"name\", direction: desc}]}\n    ) {\n      cursor\n      items {\n        name\n        column_values {\n          column {\n            title\n          }\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

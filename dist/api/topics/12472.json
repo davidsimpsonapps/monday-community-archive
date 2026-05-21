@@ -1,0 +1,135 @@
+{
+  "id": 12472,
+  "title": "Why am I getting a 400: Unsupported query with the files API?",
+  "slug": "why-am-i-getting-a-400-unsupported-query-with-the-files-api",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-10-23T17:24:08.929Z",
+  "lastPostedAt": "2020-11-09T19:07:22.038Z",
+  "postsCount": 16,
+  "excerpt": "I’m trying to test requests made to the Monday.com files API, and so far, I can’t any queries to successfully go through. I keep getting a 400: Unsupported query with all my attempts. \nHere’s what I have in Postman: \n \n  &hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 3555,
+  "posts": [
+    {
+      "id": 31814,
+      "postNumber": 1,
+      "createdAt": "2020-10-23T17:24:08.993Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>I’m trying to test requests made to the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> files API, and so far, I can’t any queries to successfully go through. I keep getting a <code>400: Unsupported query</code> with all my attempts.</p>\n<p>Here’s what I have in Postman:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5a6740ae1ffe7d75385f7e4aea2ea7313cb268bf.png\" alt=\"image\" width=\"321\" height=\"54\" /></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/1032cdc4fe40c8fffcc722aec833f7d06373b795.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/1032cdc4fe40c8fffcc722aec833f7d06373b795.png\" alt=\"image\" width=\"690\" height=\"41\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1061×64 1.38 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/7b5879c9ed4ff3aec9340bda1dfbca4d3f78a89d.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7b5879c9ed4ff3aec9340bda1dfbca4d3f78a89d.png\" alt=\"image\" width=\"690\" height=\"71\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1068×110 3.12 KB</span>\n</div></a></div><p></p>\n<p>And here’s the full query in text:<br />\n<code>mutation ($file: File!) { add_file_to_column (file: $file, item_id: 8..., column_id: \"files\") { id } }</code></p>\n<p>Yet when I run that (and any variations I can think of), I get the following response:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/3/3c3acb43f15feb5d36be59c6e760490effa98aee.png\" alt=\"image\" width=\"336\" height=\"117\" /></p>\n<p>Also, for what it’s worth, I’m 100% sure that an item with the specified ID exists in our <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> system. I’m also sure that the <code>Authorization</code> token is fine because I’ve been using it to make valid requests to the regular <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API.</p>\n<p>Can anyone please point out what I’m doing wrong? Thank you.</p>"
+    },
+    {
+      "id": 31928,
+      "postNumber": 2,
+      "createdAt": "2020-10-26T12:26:19.645Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>For what it’s worth, I was able to get this to work by manually assembling the POST data in PHP with POST <code>multipart/form-data</code> boundaries and cURL. It wasn’t fun, but it worked.</p>\n<p>What I can’t understand is why that method worked, but posting from Postman with the exact same data doesn’t and also trying to use Guzzle in Laravel with the same parameters didn’t work. Very strange.</p>\n<p>I’m probably overlooking something obvious, but for anyone else using PHP that gets stuck, try manually assembling the POST fields with cURL to send the file request.</p>\n<p>I used this SO post for reference purposes: <a href=\"https://stackoverflow.com/questions/17862004/send-file-using-multipart-form-data-request-in-php\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">curl - Send file using multipart/form-data request in php - Stack Overflow</a></p>\n<p>Good luck! And let’s hope that the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API team makes this easier in the future (without breaking the currently working method) for all of our sakes.</p>"
+    },
+    {
+      "id": 32052,
+      "postNumber": 3,
+      "createdAt": "2020-10-27T18:41:27.952Z",
+      "author": "ellis (Ellis)",
+      "cookedHtml": "<p>Is there a missing permission somewhere that could explain this?<br />\nIn the account there is an option for that :<br />\nhttps://YOUR_ACCOUNT_NAME.monday.com/admin/permissions/permissions</p>"
+    },
+    {
+      "id": 32227,
+      "postNumber": 5,
+      "createdAt": "2020-10-28T19:48:14.840Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 32228,
+      "postNumber": 6,
+      "createdAt": "2020-10-28T19:50:16.176Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/loijon\">@LOIJon</a> - welcome to the community!</p>\n<p>That’s a bit odd…I just tried running this in Postman and the query worked:</p>\n<p><code>mutation ($file: File!) {add_file_to_column (file: $file, item_id: xxxx, column_id: \"files\") {id}}</code></p>\n<p>You’ll want to make sure the ‘<code>variables</code>’ key is set to file, and that you are uploading as ‘<code>form-data</code>’:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/a7fc0f9a533f0af62765ffb8e4fbce43c64a71c5.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/a/a7fc0f9a533f0af62765ffb8e4fbce43c64a71c5.png\" alt=\"image\" width=\"690\" height=\"182\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">702×186 6.18 KB</span></div></a></div><p></p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 32238,
+      "postNumber": 7,
+      "createdAt": "2020-10-28T23:15:47.824Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>Perhaps permissions are an issue, but I’m not sure how they could be if the token works for other API requests and I was able to use the token for the files by manually assembling the POST data in PHP.</p>"
+    },
+    {
+      "id": 32239,
+      "postNumber": 8,
+      "createdAt": "2020-10-28T23:17:45.843Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>Thanks for the reply, Daniel. I legitimately don’t know either. I cut it off in the screenshot, but I was attempting <code>form-data</code> and the <code>variables[file]</code> key was definitely set to an actual file. In other words, not sure why it didn’t work for me.</p>"
+    },
+    {
+      "id": 32297,
+      "postNumber": 9,
+      "createdAt": "2020-10-29T16:25:43.390Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/loijon\">@LOIJon</a> - just to confirm, is this working now?</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 32886,
+      "postNumber": 10,
+      "createdAt": "2020-11-05T12:20:31.812Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>No, sadly, Daniel, it’s still not working. I tried exactly what you said, and I get an unsupported query error. Here’s the exact query I’m using (with the item ID removed):</p>\n<p><code>mutation ($file: File!) {add_file_to_column (file: $file, item_id: xxxxxxxxx, column_id: \"files\") {id}}</code></p>\n<p>I’m using <code>form-data</code> for the body data type in Postman, I’m posting to the correct URL, I’ve got the <code>variables[file]</code> parameter set to an actual file as you suggested, etc., etc. and it just doesn’t work.</p>\n<p>It still works when I manually assemble a cURL query in PHP, but it doesn’t work in Postman. Sorry.</p>"
+    },
+    {
+      "id": 32941,
+      "postNumber": 11,
+      "createdAt": "2020-11-05T21:25:11.130Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/loijon\">@LOIJon</a> - this is really odd. I’m wondering if perhaps Postman is / isn’t doing something in the headers. Could you send us a screenshot of the full config (with the API key blurred out)?</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 32983,
+      "postNumber": 12,
+      "createdAt": "2020-11-06T11:05:09.872Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>Sure, Daniel. This is what I’m doing:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/7d2d5795a940c98c1f6ba9e458fe91f6f569baaa.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/7d2d5795a940c98c1f6ba9e458fe91f6f569baaa_2_690x138.png\" alt=\"image\" width=\"690\" height=\"138\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1606×323 9.08 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d6e772caba35a8ba52804b149d208795e358a256.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/d6e772caba35a8ba52804b149d208795e358a256_2_690x155.png\" alt=\"image\" width=\"690\" height=\"155\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1607×363 11.6 KB</span></div></a></div><p></p>\n<p>And the response:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/2/27f04344f2c7ec06270a0081f3a005a8c825a4e4.png\" alt=\"image\" width=\"382\" height=\"219\" /></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0072e35c867807d15ab75cf163272f942b578136.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0072e35c867807d15ab75cf163272f942b578136_2_690x351.png\" alt=\"image\" width=\"690\" height=\"351\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1584×808 32.6 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 33006,
+      "postNumber": 13,
+      "createdAt": "2020-11-06T16:53:30.801Z",
+      "author": "ellis (Ellis)",
+      "cookedHtml": "<p>Hi <img src=\"https://emoji.discourse-cdn.com/apple/raising_hand_man/2.png?v=9\" title=\":raising_hand_man:t2:\" class=\"emoji\" alt=\":raising_hand_man:t2:\" /><br />\nI notice that your version of Postman does not have a dedicated GraphQL radio-button for your post data.<br />\nMaybe you could try to run the query on a more recent version of Postman that have this feature and see if it helps.<br />\nit could be something with the headers, like <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a> pointed out <img src=\"https://emoji.discourse-cdn.com/apple/thinking.png?v=9\" title=\":thinking:\" class=\"emoji\" alt=\":thinking:\" /></p>"
+    },
+    {
+      "id": 33009,
+      "postNumber": 14,
+      "createdAt": "2020-11-06T17:16:28.302Z",
+      "author": "ellis (Ellis)",
+      "cookedHtml": "<p>I’m sorry for my last post about GraphQL radio-button in Postman.<br />\nActually I tried what is described here <a href=\"https://community.monday.com/t/why-am-i-getting-a-400-unsupported-query-with-the-files-api/12472/6\" class=\"inline-onebox\">Why am I getting a 400: Unsupported query with the files API? - #6 by dsilva</a> and it work perfectly.</p>\n<p>I had 500 error until i changed the <code>variables[file]</code> dropdown from <code>text</code> to <code>file</code>.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0bcda394ec02f1e869a84d9ca1a35554be9ab232.png\" title=\"Capture d’écran, le 2020-11-06 à 14.14.51\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0bcda394ec02f1e869a84d9ca1a35554be9ab232_2_690x161.png\" alt=\"Capture d’écran, le 2020-11-06 à 14.14.51\" width=\"690\" height=\"161\" /><div class=\"meta\">\n<span class=\"filename\">Capture d’écran, le 2020-11-06 à 14.14.51</span><span class=\"informations\">849×199 12.8 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 33011,
+      "postNumber": 15,
+      "createdAt": "2020-11-06T18:22:04.034Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>Thanks, ellis. While it wasn’t clear in the screenshot, the <code>variables[file]</code> param value is being set via File, not Text. I selected File, and then searched my PC for a random image I wanted to upload. Still doesn’t work. I will try upgrading Postman and see if that matters, but I can’t imagine why it would and I have run out of ideas for why it’s not working for me.</p>"
+    },
+    {
+      "id": 33150,
+      "postNumber": 16,
+      "createdAt": "2020-11-09T19:01:24.340Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>ellis, thanks for your input. I upgraded Postman and that did indeed solve my problem. I left everything else the same and it worked. Thank you.</p>"
+    },
+    {
+      "id": 33152,
+      "postNumber": 17,
+      "createdAt": "2020-11-09T19:07:22.038Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Great catch <a class=\"mention\" href=\"/u/ellis\">@ellis</a>! I’m glad this resolved the problem.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 44270,
+      "postNumber": 18,
+      "createdAt": "2021-03-10T14:28:27.745Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

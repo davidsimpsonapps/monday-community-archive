@@ -1,0 +1,46 @@
+{
+  "id": 75572,
+  "title": "Items_page query takes too long",
+  "slug": "items-page-query-takes-too-long",
+  "categoryId": 6,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-01-18T19:01:55.384Z",
+  "lastPostedAt": "2024-01-18T19:45:13.812Z",
+  "postsCount": 4,
+  "excerpt": "I am trying to get all the item IDs and names for a board by using items_page (limit:100) with the cursor to get 100 items at a time, and each query can take anywhere from 3-5 seconds. I only have ~1200 entries right now&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 803,
+  "posts": [
+    {
+      "id": 162938,
+      "postNumber": 1,
+      "createdAt": "2024-01-18T19:01:55.470Z",
+      "author": "JoshGuyer (Josh Guyer)",
+      "cookedHtml": "<p>I am trying to get all the item IDs and names for a board by using items_page (limit:100) with the cursor to get 100 items at a time, and each query can take anywhere from 3-5 seconds. I only have ~1200 entries right now, but if it is this slow right now, I am worried that it won’t scale. Using the deprecated {boards (ids: $boardID) {items {}} was much faster and accomplished the same thing.</p>\n<p>Anyone else having this problem or know a better way of getting all the item IDs and names?</p>"
+    },
+    {
+      "id": 162956,
+      "postNumber": 2,
+      "createdAt": "2024-01-18T19:30:06.850Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Try upping the limit to 500 per items_page, since this will minimize overhead making the requests.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/1/21333f16745097345d7b68c241d7c3ff1ac6b6e2.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/1/21333f16745097345d7b68c241d7c3ff1ac6b6e2.png\" alt=\"image\" width=\"690\" height=\"59\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">820×71 3.41 KB</span></div></a></div><p></p>\n<p>Then for subsequent queries use the root query <a href=\"https://developer.monday.com/api-reference/docs/items_page#cursor-based-pagination-using-next_items_page\">next_items_page</a> rather than <code>items_page</code> within a board to reduce API complexity and cut out the boards resolver (which adds time and API complexity usage).</p>"
+    },
+    {
+      "id": 162961,
+      "postNumber": 3,
+      "createdAt": "2024-01-18T19:38:17.610Z",
+      "author": "JoshGuyer (Josh Guyer)",
+      "cookedHtml": "<p>I don’t understand how, but the 500 limit query is faster than a 100 limit query. It executes in &lt; 1 second!</p>\n<p>Thanks for the recommendation. For some reason I was under the impression that items_page had a 100 item limit.</p>"
+    },
+    {
+      "id": 162966,
+      "postNumber": 4,
+      "createdAt": "2024-01-18T19:45:13.812Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You could also have just hit a bad time where there was a lot of platform load during your previous testing. Sometimes it happens.</p>\n<p>The limit of 100 was during the preview period because they had not deployed servers for full capacity yet. Also all root queries have a limit of 100, so thats the root <code>items</code> query as well. <code>next_items_page</code> is a single object returned with 500 items within in it.</p>\n<p>Definitely use <code>next_items_page</code>, it reduces API complexity, which means your app is less likely to get rate limited for an account.</p>"
+    }
+  ]
+}

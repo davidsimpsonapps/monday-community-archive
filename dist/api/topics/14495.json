@@ -1,0 +1,54 @@
+{
+  "id": 14495,
+  "title": "File upload 500 Server Error",
+  "slug": "file-upload-500-server-error",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-12-30T14:42:43.653Z",
+  "lastPostedAt": "2021-01-22T17:14:42.467Z",
+  "postsCount": 4,
+  "excerpt": "I am calling the monday api from an AWS lambda function using the node axios client.  I am getting 500 responses from monday servers when uploading PDF files to an item. \nRequest Info:\n2020-12-30T06:34:39.597Z\t8dab0df3-9&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1654,
+  "posts": [
+    {
+      "id": 36603,
+      "postNumber": 1,
+      "createdAt": "2020-12-30T14:42:43.758Z",
+      "author": "CognitiveWalter (Walter Moore)",
+      "cookedHtml": "<p>I am calling the monday api from an AWS lambda function using the node axios client.  I am getting 500 responses from monday servers when uploading PDF files to an item.</p>\n<h1><a name=\"p-36603-request-info-1\" class=\"anchor\" href=\"#p-36603-request-info-1\"></a>Request Info:</h1>\n<pre><code>2020-12-30T06:34:39.597Z\t8dab0df3-9f83-4ed2-8a0c-d4353f9f2bbc\tINFO\t{ AcceptRanges: 'bytes',  LastModified: 2020-12-30T06:34:36.000Z,  ContentLength: 409600,  ETag: '\"16a3e0cfa739c02f46713efb57edab2d\"',  ContentType: 'application/pdf',  Metadata: {},  Body:   &lt;Buffer 25 50 44 46 2d 31 2e 35 0a 25 d0 d4 c5 d8 0a 34 20 30 20 6f 62 6a 0a 3c 3c 0a 2f 54 79 70 65 20 2f 58 4f 62 6a 65 63 74 0a 2f 53 75 62 74 79 70 65 20 ... &gt; }\n\n2020-12-30T06:34:39.978Z\t8dab0df3-9f83-4ed2-8a0c-d4353f9f2bbc\tINFO\t{ url: 'https://api.monday.com/v2/file',  method: 'post',  data:   FormData {     _overheadLength: 287,     _valueLength: 409719,     _valuesToMeasure: [],     writable: false,     readable: true,     dataSize: 0,     maxDataSize: 2097152,     pauseStreams: true,     _released: true,     _streams: [],     _currentStream: null,     _insideLoop: false,     _pendingNext: false,     _boundary: '--------------------------007355632934804322566963',     _events:      [Object: null prototype] { error: [Function: handleStreamError] },     _eventsCount: 1 },  headers:   { Accept: 'application/pdf',     'Content-Type':      'multipart/form-data; boundary=--------------------------007355632934804322566963',     Authorization:      'REDACTED',     'User-Agent': 'axios/0.21.0' },  transformRequest: [ [Function: transformRequest] ],  transformResponse: [ [Function: transformResponse] ],  timeout: 0,  adapter: [Function: httpAdapter],  xsrfCookieName: 'XSRF-TOKEN',  xsrfHeaderName: 'X-XSRF-TOKEN',  maxContentLength: -1,  maxBodyLength: -1,  validateStatus: [Function: validateStatus] }\n</code></pre>\n<h1><a name=\"p-36603-response-info-2\" class=\"anchor\" href=\"#p-36603-response-info-2\"></a>Response Info:</h1>\n<pre><code>2020-12-30T06:34:39.957Z 8dab0df3-9f83-4ed2-8a0c-d4353f9f2bbc INFO { error_message: ‘Internal server error’, status_code: 500 }\n\n2020-12-30T06:34:39.957Z 8dab0df3-9f83-4ed2-8a0c-d4353f9f2bbc INFO { date: ‘Wed, 30 Dec 2020 06:34:39 GMT’, ‘content-type’: ‘application/json; charset=utf-8’, ‘transfer-encoding’: ‘chunked’, connection: ‘close’, ‘set-cookie’: [ ‘__cfduid=ddcb94f19de4d6e3da7cf587a083c52091609310079; expires=Fri, 29-Jan-21 06:34:39 GMT; path=/; domain=.monday.com; HttpOnly; SameSite=Lax; Secure’ ], ‘cache-control’: ‘no-cache’, ‘x-request-id’: ‘14094649-377c-90be-9d27-20cd64c53ce0’, ‘x-runtime’: ‘0.136303’, ‘x-envoy-upstream-service-time’: ‘138’, ‘content-security-policy’: ‘removed.because.this.forum.limits.number.of.links.com; worker-src ‘self’ ‘unsafe-inline’ blob:’, ‘x-xss-protection’: ‘1; mode=block’, vary: ‘Accept-Encoding’, ‘x-monday-rgn’: ‘use1’, ‘cf-cache-status’: ‘DYNAMIC’, ‘cf-request-id’: ‘0753f422fa0000ea30743ec000000001’, ‘expect-ct’: ‘max-age=604800, report-uri=“https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct”’, ‘strict-transport-security’: ‘max-age=15552000; includeSubDomains; preload’, server: ‘cloudflare’, ‘cf-ray’: ‘6099bc7e5d54ea30-IAD’ }\n</code></pre>\n<h1><a name=\"p-36603-my-lambda-code-looks-like-3\" class=\"anchor\" href=\"#p-36603-my-lambda-code-looks-like-3\"></a>My lambda code looks like:</h1>\n<pre><code>function uploadReportToMonday(buffer, mondaySyncRecord, exhibitRecord){\nconst form = new FormData();\n// Second argument can take Buffer or Stream (lazily read during the request) too.\n// Third argument is filename if you want to simulate a file upload. Otherwise omit.\n\nconst query = `mutation ($file: File!) { add_file_to_column (file: $file, item_id: ${mondaySyncRecord.itemId}, column_id: \"${mondaySyncRecord.columnId}\") { id } }`;\nform.append(‘variables[file]’, buffer, exhibitRecord.filename);\nform.append(‘query’, query);\nconst headers = form.getHeaders();\nheaders[‘Authorization’] = mondaySyncRecord.token;\nheaders[‘Accept’] = ‘application/pdf’;\nreturn axios.create({\nheaders\n})\n.post(‘https://api.monday.com/v2/file’, form);\n}\n</code></pre>\n<h1><a name=\"p-36603-any-suggestions-4\" class=\"anchor\" href=\"#p-36603-any-suggestions-4\"></a>Any Suggestions?</h1>\n<p>I don’t seem to have any issues DOWNLOADING files from the monday api in my lambda environment, only UPLOADING.</p>"
+    },
+    {
+      "id": 37206,
+      "postNumber": 2,
+      "createdAt": "2021-01-08T13:52:18.119Z",
+      "author": "CognitiveWalter (Walter Moore)",
+      "cookedHtml": "<p>It turns out that this ended up being an item_id mapping issue on our side.  The Monday 500 error response information could be much more helpful!</p>"
+    },
+    {
+      "id": 38489,
+      "postNumber": 3,
+      "createdAt": "2021-01-22T17:14:42.467Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>Thank you for sharing your feedback!</p>\n<p>I agree that our 500 server response doesn’t provide much info. In full transparency, I think that it might be better to rely on testing within your own code bring up any error messages.</p>\n<p>However, I would be more than happy to forward your feedback to our Product team so that they may take this into consideration for future iterations of our product.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 38490,
+      "postNumber": 4,
+      "createdAt": "2021-01-22T17:14:49.437Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 42231,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T14:05:30.263Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

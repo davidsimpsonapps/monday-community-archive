@@ -1,0 +1,53 @@
+{
+  "id": 79763,
+  "title": "Subitems in my query",
+  "slug": "subitems-in-my-query",
+  "categoryId": 58,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-03-01T12:08:37.889Z",
+  "lastPostedAt": "2024-03-10T12:52:24.656Z",
+  "postsCount": 5,
+  "excerpt": "Dear Mondayers! \nI have my Power Query almost in place… but the last part is killing me… \ncan someone please tell me how I include the subitems in my query? What I get now is only the multipe values in 1 display_values c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 136,
+  "posts": [
+    {
+      "id": 170885,
+      "postNumber": 1,
+      "createdAt": "2024-03-01T12:08:37.963Z",
+      "author": "rikwanders (rik)",
+      "cookedHtml": "<p>Dear Mondayers!<br />\nI have my Power Query almost in place… but the last part is killing me…<br />\ncan someone please tell me how I include the subitems in my query? What I get now is only the multipe values in 1 display_values cell on item level, not useful ofcourse. How should I amend my code?</p>\n<p>let<br />\nKey = “…”,<br />\nBoard = “…”,<br />\nSource = Web.Contents(“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[ Headers = [ #“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“API-Version”=“2023-10”,<br />\n#“Authorization”=“Bearer \" &amp; Key ],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) {items_page (limit: 500) {items {id, name, updated_at, group {title} column_values {column{title} text …on MirrorValue {display_value} …on BoardRelationValue {display_value}}}}}}””}”)]),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items_page][items], Record.FieldValues, {“ID”, “Title”, “UpdatedAt”, “Group”, “Columns_Values”}),<br />\n#“Expanded Group” = Table.ExpandRecordColumn(Data, “Group”, {“title”}, {“Group”}),<br />\n#“Expanded Columns_Values” = Table.ExpandListColumn(#“Expanded Group”, “Columns_Values”),<br />\n#“Expanded Columns_Values2” = Table.ExpandRecordColumn(#“Expanded Columns_Values”, “Columns_Values”, {“column”, “text”, “display_value”}, {“column”, “text”, “display_value”}),<br />\n#“Expanded column” = Table.ExpandRecordColumn(#“Expanded Columns_Values2”, “column”, {“title”}, {“title.1”}),<br />\n#“Filtered Rows” = Table.SelectRows(#“Expanded column”, each ([title.1] = “Hours expected”)),<br />\n#“Added Custom Column” = Table.AddColumn(#“Filtered Rows”, “Custom”, each Text.Combine({[text], [display_value]}), type text)<br />\nin<br />\n#“Added Custom Column”</p>"
+    },
+    {
+      "id": 170896,
+      "postNumber": 2,
+      "createdAt": "2024-03-01T12:31:49.438Z",
+      "author": "rikwanders (rik)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/9/3950fafac06cb77940ef63801bc95a3cd3703bf9.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/3/9/3950fafac06cb77940ef63801bc95a3cd3703bf9.png\" alt=\"image\" width=\"690\" height=\"84\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1001×122 8.32 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 171906,
+      "postNumber": 3,
+      "createdAt": "2024-03-07T02:40:57.626Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/rikwanders\">@rikwanders</a> and welcome to the community!</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> so our team can take a look into this? Please add as much detail about your case as possible.</p>\n<p>Looking forward to hearing from you via the form!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 172148,
+      "postNumber": 4,
+      "createdAt": "2024-03-08T10:30:45.061Z",
+      "author": "rikwanders (rik)",
+      "cookedHtml": "<p>I fixed it. But it cost me so much time… hope you guys never change the API again.</p>"
+    },
+    {
+      "id": 172374,
+      "postNumber": 5,
+      "createdAt": "2024-03-10T12:52:24.656Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/rikwanders\">@rikwanders</a> !</p>\n<p>This was a particular case with many breaking changes, but future releases should not have so many of them.</p>\n<p>I recommend checking our docs periodically to be up to date <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

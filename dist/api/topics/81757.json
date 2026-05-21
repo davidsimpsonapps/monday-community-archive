@@ -1,0 +1,40 @@
+{
+  "id": 81757,
+  "title": "API Playground -Copy_items_to_group error",
+  "slug": "api-playground-copy-items-to-group-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-03-21T12:31:40.185Z",
+  "lastPostedAt": "2024-04-02T10:20:17.452Z",
+  "postsCount": 3,
+  "excerpt": "Hi, \nI am kind of new to GraphQL. I am trying to create items in my board 6187373144 after the creating a new group in this board. The items that I want to create is the items resulting from a filter column from board 61&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 129,
+  "posts": [
+    {
+      "id": 174449,
+      "postNumber": 1,
+      "createdAt": "2024-03-21T12:31:40.279Z",
+      "author": "norma0485 (Norma)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I am kind of new to GraphQL. I am trying to create items in my board 6187373144 after the creating a new group in this board. The items that I want to create is the items resulting from a filter column from board 6187370124. I have created the new group and fetched the items that I want to create in the board 6187373144. But I am struggling with the creation of the items on this board.</p>\n<p>This is the code I have so far.</p>\n<p><strong># 1. Execute the CreateGroup mutation to create a new group in board 6187373144</strong></p>\n<p>mutation CreateGroup($groupName: String!) {<br />\ncreate_group(<br />\nboard_id: 6187373144,<br />\ngroup_name: $groupName<br />\n) {<br />\nid<br />\ntitle<br />\n}<br />\n}</p>\n<p><strong># 2. Execute the GetItems query to fetch items based on the filter values in board 6187370124.</strong></p>\n<p>query GetItems($filter: [String!]!) {<br />\nitems_page_by_column_values (<br />\nboard_id: 6187370124,<br />\ncolumns: [<br />\n{ column_id: “status4”, column_values: $filter }<br />\n]<br />\n) {<br />\nitems {<br />\nid<br />\nname<br />\n}<br />\n}<br />\n}</p>\n<p><strong># 3. For each fetched item into the newly created group - NOT WORKING</strong></p>\n<p>mutation CopyItemsToGroup($groupId: ID!, $itemIds: [ID!]!) {<br />\ncopy_item_to_group(<br />\ngroup_id: $groupId,<br />\nitems_ids: $itemIds<br />\n) {<br />\nid<br />\n}<br />\n}</p>\n<p>This is the error I am getting.</p>\n<p>Please, help!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/8/f81edd786c7ae8ec3bb9dbbce4ae8e1461dd1694.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/f/8/f81edd786c7ae8ec3bb9dbbce4ae8e1461dd1694.png\" alt=\"image\" width=\"155\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">366×1177 17.5 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 174808,
+      "postNumber": 2,
+      "createdAt": "2024-03-24T10:30:12.763Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/norma0485\">@norma0485</a>,</p>\n<p>That mutation does not exist.</p>\n<p>You can use something like <a href=\"https://developer.monday.com/api-reference/reference/items#duplicate-an-item\">this</a>:</p>\n<pre><code class=\"lang-auto\">mutation {\n  duplicate_item (board_id: 1234567890, item_id: 9876543210, with_updates: true) {\n    id\n  }\n}\n</code></pre>\n<p>The item_id would be the item you want to copy. The board_id would be the board in which the new item will be created.</p>\n<p>If the target board is a different board from the source board, if you want, you can then move the item with a mutation like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  move_item_to_group (item_id: 1234567890, group_id: \"group_one\") {\n    id\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 176407,
+      "postNumber": 3,
+      "createdAt": "2024-04-02T10:20:17.452Z",
+      "author": "norma0485 (Norma)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>The code you provided will only work for a specific item selected. I want to duplicate sorted items in board (6187370124) and then move them to the next board (6187373144).</p>\n<p>mutation {<br />\nduplicate_item (board_id: 6187370124, item_id: $itemIds, with_updates: true) {<br />\nid<br />\n}<br />\n}</p>\n<p>I am trying this mutation, but I am getting the following error:</p>\n<p>{<br />\n“errors”: [<br />\n{<br />\n“message”: “Variable $itemIds is used by anonymous mutation but not declared”,<br />\n“locations”: [<br />\n{<br />\n“line”: 70,<br />\n“column”: 50<br />\n}<br />\n],<br />\n“path”: [<br />\n“mutation”,<br />\n“duplicate_item”,<br />\n“item_id”<br />\n],<br />\n“extensions”: {<br />\n“code”: “variableNotDefined”,<br />\n“variableName”: “itemIds”<br />\n}<br />\n},<br />\n{<br />\n“message”: “Operation name is required when multiple operations are present”,<br />\n“locations”: [<br />\n{<br />\n“line”: 69,<br />\n“column”: 1<br />\n}<br />\n],<br />\n“path”: <span class=\"chcklst-box fa fa-square-o fa-fw\"></span>,<br />\n“extensions”: {<br />\n“code”: “uniquelyNamedOperations”<br />\n}<br />\n}<br />\n],<br />\n“account_id”: 3491933<br />\n}</p>\n<p>Thanks for your support.</p>"
+    }
+  ]
+}

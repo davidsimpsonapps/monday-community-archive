@@ -1,0 +1,65 @@
+{
+  "id": 97860,
+  "title": "Retrieving Mirror Items Values",
+  "slug": "retrieving-mirror-items-values",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    103,
+    165,
+    166,
+    167,
+    203
+  ],
+  "createdAt": "2024-09-17T13:49:57.005Z",
+  "lastPostedAt": "2024-11-21T12:55:32.226Z",
+  "postsCount": 5,
+  "excerpt": "When sending this query to the API \n**query($boardId:[ID!], $groupId:[String], $limit: Int!) { \nboards (ids: $boardId) { \ngroups (ids: $groupId) { \nitems_page (limit: $limit){ \ncursor \nitems { \nid \nname \ncolumn_values { \n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 30,
+  "posts": [
+    {
+      "id": 201487,
+      "postNumber": 1,
+      "createdAt": "2024-09-17T13:49:57.078Z",
+      "author": "WandileNxu (Wandile)",
+      "cookedHtml": "<p>When sending this query to the API</p>\n<p>**query($boardId:[ID!], $groupId:[String], $limit: Int!) {<br />\nboards (ids: $boardId) {<br />\ngroups (ids: $groupId) {<br />\nitems_page (limit: $limit){<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\n… on MirrorValue {<br />\ndisplay_value<br />\nid<br />\n}</p>\n<pre><code>                                        }\n                                    }\n                                }\n                            }\n                        }        \n                    }**\n</code></pre>\n<p>I get Complexity Budget Exhausted error both in sandbox and production environments.</p>\n<p>I am trying to retrieve mirror items values.</p>\n<p>Running this query on the API playground there’s no complexity budget exhausted error.</p>\n<p>The limit is 200. I tried limits of 2, 5, 10, 50, 100 and even 1 still get the complexity budget exhausted error.</p>\n<p>Has anything changed when it comes to retrieve mirror items values?</p>"
+    },
+    {
+      "id": 201499,
+      "postNumber": 2,
+      "createdAt": "2024-09-17T14:24:04.701Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/wandilenxu\">@WandileNxu</a>,</p>\n<p>A few follow-up questions:</p>\n<ol>\n<li>Are you making any other calls within the same 60 seconds?</li>\n<li>What specifically are you trying to retrieve with this query? I’m trying to determine if there might be a more efficient way to do it.</li>\n<li>Are you checking the complexity of each query?</li>\n</ol>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 201577,
+      "postNumber": 3,
+      "createdAt": "2024-09-17T23:29:35.411Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The issiue is you are running items_page within groups instead of boards.</p>\n<p>Using it within groups will result in the complexity growing drastically as it multiplies it by all of the groups specified (and 1000X if don’t specify specific group ids)</p>\n<p>If you want to display your items by group, I advise returning the group as part of the items, and then grouping them into groups on the client side. you can return all of the groups within boards (with items_page also in the board, but not in groups) to get the structure to process the items into.</p>"
+    },
+    {
+      "id": 201628,
+      "postNumber": 4,
+      "createdAt": "2024-09-18T10:05:43.839Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 210882,
+      "postNumber": 5,
+      "createdAt": "2024-11-20T19:53:39.584Z",
+      "author": "WandileNxu (Wandile)",
+      "cookedHtml": "<p>Silly mistake <img src=\"https://emoji.discourse-cdn.com/apple/upside_down_face.png?v=12\" title=\":upside_down_face:\" class=\"emoji\" alt=\":upside_down_face:\" width=\"20\" height=\"20\" /> there was a typo with the argument name and just like that got fixed.</p>"
+    },
+    {
+      "id": 210980,
+      "postNumber": 6,
+      "createdAt": "2024-11-21T12:55:32.226Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Those are the best and worst mistakes because they are easily solvable but man, we wish we saw it before <img src=\"https://emoji.discourse-cdn.com/apple/upside_down_face.png?v=12\" title=\":upside_down_face:\" class=\"emoji\" alt=\":upside_down_face:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

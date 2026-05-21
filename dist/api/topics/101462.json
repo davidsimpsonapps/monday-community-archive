@@ -1,0 +1,64 @@
+{
+  "id": 101462,
+  "title": "Fetch an image/file from a Monday board",
+  "slug": "fetch-an-image-file-from-a-monday-board",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    152,
+    154,
+    351
+  ],
+  "createdAt": "2024-10-25T12:49:57.844Z",
+  "lastPostedAt": "2024-11-05T11:56:38.979Z",
+  "postsCount": 6,
+  "excerpt": "I developed a Monday app that integrates with a third-party service. \nMy recipe is structured as follows: \nWhen the ‘status’ changes to ‘something’, create *** with ‘attachment’, and then change the ‘status’ to ‘somethin&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 28,
+  "posts": [
+    {
+      "id": 207161,
+      "postNumber": 1,
+      "createdAt": "2024-10-25T12:49:57.938Z",
+      "author": "Oded282 (Oded)",
+      "cookedHtml": "<p>I developed a Monday app that integrates with a third-party service.</p>\n<p>My recipe is structured as follows:</p>\n<p>When the ‘status’ changes to ‘something’, create *** with ‘attachment’, and then change the ‘status’ to ‘something’.</p>\n<p>The attachment is a column ID that the user selects when setting up the recipe on their board. This attachment column contains a file. I’m curious about how to retrieve the file content so that I can include it in my API call to the third party.</p>\n<p>The following JS function gave me only metadata of the image uploaded to this file column:</p>\n<pre><code class=\"lang-auto\">export async function getFileContent(token, itemId, fileColumnId) {\n  // Set the token for the Monday SDK client\n  const mondayClient = initMondayClient();\n  mondayClient.setApiVersion('2024-01');\n  mondayClient.setToken(token);\n\n  try {\n      // Step 1: Query for the column value containing the file URL\n      const response = await mondayClient.api(\n          `query {\n              items(ids: ${itemId}) {\n                  column_values(ids: \"${fileColumnId}\") {\n                      value\n                  }\n              }\n          }`\n      );\n\n      // Parse the file URL from the column value\n      const columnValue = response.data.items[0].column_values[0];\n      // The response I got: '{\"files\":[{\"name\":\"***.png\",\"assetId\":***,\"isImage\":\"true\",\"fileType\":\"ASSET\",\"createdAt\":***,\"createdBy\":\"***\"}]}'\n\n  } catch (error) {\n      console.error(\"Error fetching file content:\", error);\n      throw new Error(\"Could not retrieve file content.\");\n  }\n}\n</code></pre>\n<p>Thanks in advance!!!</p>"
+    },
+    {
+      "id": 208344,
+      "postNumber": 2,
+      "createdAt": "2024-11-03T12:59:02.851Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/oded282\">@Oded282</a>,</p>\n<p>You can use a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1234567890) {\n    assets(column_ids: \"column_id_here\") {\n      name\n      id\n      public_url\n    }\n  }\n}\n</code></pre>\n<p>What do you think?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 208414,
+      "postNumber": 3,
+      "createdAt": "2024-11-04T06:29:50.977Z",
+      "author": "Oded282 (Oded)",
+      "cookedHtml": "<p>Great! thanks for your reply <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\nCan I use a GraphQL query to directly retrieve the image binaries, or would I need to make a separate API call to the URL for that?</p>"
+    },
+    {
+      "id": 208567,
+      "postNumber": 4,
+      "createdAt": "2024-11-04T12:59:52.569Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/oded282\">@Oded282</a> if you are talking about the binary code for the file, you can not get that via the API. You can only get the public_url to download the file. Once you have the file, you can manipulate it at will <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 208659,
+      "postNumber": 5,
+      "createdAt": "2024-11-05T07:14:26.491Z",
+      "author": "Oded282 (Oded)",
+      "cookedHtml": "<p>Thanks you for the quick response!</p>"
+    },
+    {
+      "id": 208696,
+      "postNumber": 6,
+      "createdAt": "2024-11-05T11:56:38.979Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help!!</p>"
+    }
+  ]
+}

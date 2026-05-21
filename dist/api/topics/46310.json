@@ -1,0 +1,49 @@
+{
+  "id": 46310,
+  "title": "Dynamic mapping returns 'Failed to load fields'",
+  "slug": "dynamic-mapping-returns-failed-to-load-fields",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    351
+  ],
+  "createdAt": "2022-11-25T11:42:26.749Z",
+  "lastPostedAt": "2022-12-13T06:37:06.636Z",
+  "postsCount": 4,
+  "excerpt": "Hi, I’m working on a Monday app that returns data from another app every 24 hours. \nEverything is going well so far, but when I try to create the recipe and click on ‘Item’, it returns ‘Failed to load fields’. \n \nI am re&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1031,
+  "posts": [
+    {
+      "id": 105214,
+      "postNumber": 1,
+      "createdAt": "2022-11-25T11:42:26.838Z",
+      "author": "patrick7 (Patrick Kool)",
+      "cookedHtml": "<p>Hi, I’m working on a Monday app that returns data from another app every 24 hours.</p>\n<p>Everything is going well so far, but when I try to create the recipe and click on ‘Item’, it returns ‘Failed to load fields’.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/9/9f930106d7a80d0f6c5f46d0429071c99552e169.png\" alt=\"image\" width=\"669\" height=\"253\" /></p>\n<p>I am receiving 3 POST requests when I click on ‘item’, so it’s very likely that I’m not returning the right data.</p>\n<p>I’m receiving this in the POST request (changed the numbers):<br />\n{‘payload’: {‘side’: ‘source’, ‘recipeId’: 12345678, ‘integrationId’: 12345678, ‘dependencyData’: {‘fieldTypeId’: 12345678}}}</p>\n<p>I followed all steps of <a href=\"https://developer.monday.com/apps/docs/dynamic-mapping\" rel=\"noopener nofollow ugc\">this article</a></p>\n<p>At the ‘Call your trigger’ part, it says I need to return:<br />\n{<br />\n“trigger”: {<br />\n“outputFields”: { ///values of all output fields, which were configured for your custom trigger<br />\n“myEntity”: {<br />\n“field1” : “Hello world!”,<br />\n“field2” : “This is another field”<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>My code looks like this.<br />\nI tried it with normal ‘return data’ as well (and 100 other tries haha)<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5b15a3ce0b0604b611b3f49a1f0d7297f1a75cbf.png\" alt=\"image\" width=\"605\" height=\"428\" /></p>\n<p>Field type:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/fc4e89e6b427b6127e7547167f7915a2187d5c88.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/fc4e89e6b427b6127e7547167f7915a2187d5c88_2_690x280.png\" alt=\"image\" width=\"690\" height=\"280\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1693×688 38.5 KB</span>\n</div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/77d7aa85bc7541d465b136052adc1174cf42111f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/77d7aa85bc7541d465b136052adc1174cf42111f_2_690x298.png\" alt=\"image\" width=\"690\" height=\"298\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1667×720 37.5 KB</span>\n</div></a></div><p></p>\n<p>Workflow block<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/dd44572e983671b8ec1bc6ecfa9ac9beb9c8c5f9.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/dd44572e983671b8ec1bc6ecfa9ac9beb9c8c5f9_2_690x291.png\" alt=\"image\" width=\"690\" height=\"291\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1791×757 52.6 KB</span>\n</div></a></div><p></p>\n<p>Recipe:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/eca2ca105990b80799d26e3cd6ac8f498d900753.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/eca2ca105990b80799d26e3cd6ac8f498d900753_2_690x444.png\" alt=\"image\" width=\"690\" height=\"444\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">854×550 9.31 KB</span>\n</div></a></div><p></p>\n<p>Help would be greatly appreciated!</p>"
+    },
+    {
+      "id": 105299,
+      "postNumber": 2,
+      "createdAt": "2022-11-27T08:20:48.721Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/patrick7\">@patrick7</a>!</p>\n<p>I believe you might be confusing the fields definition with the request you need to send to trigger your trigger.</p>\n<p>Your <a href=\"https://developer.monday.com/apps/docs/dynamic-mapping#example-code\">fields definitions</a> endpoint should like something like this:</p>\n<pre><code class=\"lang-auto\">async function getRemoteFieldDefs(req, res) {\n  return res.status(200).send([\n    { id: 'name', title: 'Name', outboundType: 'text', inboundTypes: ['text'] },\n    { id: 'desc', title: 'Description', outboundType: 'text', inboundTypes: ['empty_value', 'text', 'text_array'] },\n    { id: 'dueDate', title: 'Due Date', outboundType: 'date', inboundTypes: ['empty_value', 'date', 'date_time'] },\n    { id: 'people', title: 'People', outboundType: 'user_emails', inboundTypes: 'user_emails' },\n    { id: 'creationDate', title: 'CreateDate', outboundType: 'date_time', inboundTypes: ['date', 'date_time'] },\n  ]);\n}\n</code></pre>\n<p>Then you are going to get a webhookUrl when the recipe is added. And to that webhookUrl you need to send a request when you want the trigger to be triggered:</p>\n<pre><code class=\"lang-auto\">{\n  \"trigger\": {\n    \"outputFields\": { ///values of all output fields, which were configured for your custom trigger\n      \"myEntity\": {\n        \"field1\" : \"Hello world!\",\n        \"field2\" : \"This is another field\"\n      }\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 107172,
+      "postNumber": 3,
+      "createdAt": "2022-12-13T04:57:33.474Z",
+      "author": "patrick7 (Patrick Kool)",
+      "cookedHtml": "<p>Worked for me! Thanks!</p>\n<p>For everyone who wants to see how I made it work in Python (I use Flask)</p>\n<p><span class=\"mention\">@app.route</span>(‘/dynamic’, methods=[‘POST’])<br />\ndef dynamic_test():<br />\ntest = [<br />\n{ ‘id’: ‘name’, ‘title’: ‘Name’, ‘outboundType’: ‘text’, ‘inboundTypes’: [‘text’] },<br />\n{ ‘id’: ‘desc’, ‘title’: ‘Description’, ‘outboundType’: ‘text’, ‘inboundTypes’: [‘empty_value’, ‘text’, ‘text_array’] },<br />\n{ ‘id’: ‘dueDate’, ‘title’: ‘Due Date’, ‘outboundType’: ‘date’, ‘inboundTypes’: [‘empty_value’, ‘date’, ‘date_time’] },<br />\n{ ‘id’: ‘people’, ‘title’: ‘People’, ‘outboundType’: ‘user_emails’, ‘inboundTypes’: ‘user_emails’ },<br />\n{ ‘id’: ‘creationDate’, ‘title’: ‘CreateDate’, ‘outboundType’: ‘date_time’, ‘inboundTypes’: [‘date’, ‘date_time’] },<br />\n]</p>\n<pre><code>return test\n</code></pre>"
+    },
+    {
+      "id": 107183,
+      "postNumber": 4,
+      "createdAt": "2022-12-13T06:37:06.636Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/patrick7\">@patrick7</a>,</p>\n<p>I am very glad it is working for you now!</p>\n<p>Thank you for that example <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

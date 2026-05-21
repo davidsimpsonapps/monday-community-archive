@@ -1,0 +1,44 @@
+{
+  "id": 106178,
+  "title": "Subscription manager API",
+  "slug": "subscription-manager-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    208,
+    351
+  ],
+  "createdAt": "2024-12-27T14:03:12.205Z",
+  "lastPostedAt": "2025-01-03T17:27:18.913Z",
+  "postsCount": 3,
+  "excerpt": "Hi community, I am new to monday app development and need a help regarding app_subscription_operations quaries. \nFor a feature based app with monthly subscriptions and usage limits (here after refer as credits) usage of &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 17,
+  "posts": [
+    {
+      "id": 215350,
+      "postNumber": 1,
+      "createdAt": "2024-12-27T14:03:12.277Z",
+      "author": "Shamika (Shamika Kumarasinghe)",
+      "cookedHtml": "<p>Hi community, I am new to monday app development and need a help regarding app_subscription_operations quaries.</p>\n<p>For a feature based app with monthly subscriptions and usage limits (here after refer as credits) usage of the app need to be manually updated by the developer using the increase_app_subscription_operations. And as per the my current undestanding I can compare this incremental value with a hard coded package credit value in my app to see whether the user has more credits or not for that given period. Based on that can grant access to resourses. (If this approch is not ideal pl let me know).</p>\n<p>Now the issue in a case if the user upgrade or downgrade the subscription then according to the docs monday will handle this in a prorate manner. But in such a case as the developer how can I know the prorated value. Do I have to do the calculation my self and keep track of it or is there a better approch for this kind of a situation.</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 215619,
+      "postNumber": 2,
+      "createdAt": "2025-01-02T06:18:45.247Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/shamika\">@Shamika</a>,</p>\n<p>For monthly subscriptions, the counter resets monthly based on the renewal date. For example, if a subscription renews annually on the 15th of the month, the counter will reset on the 15th of each month.</p>\n<p>As a possible scenario, let’s say you have an app with two plans (a basic plan for 100 operations a month, and a gold plan for 200 operations a month). Let’s say an account purchases the Basic plan on April 1st. They use 80 operations (out of 100) until April 15th. And on April 15th, they purchase the Gold plan. In this scenario:</p>\n<ol>\n<li>The account started with the basic plan (100 operations) on April 1st.</li>\n<li>They used 80 operations until April 15th.</li>\n<li>On April 15th, they upgraded to the gold plan (200 operations).</li>\n</ol>\n<p>In this case, the renewal date changes to April 15th when they upgrade to the gold plan.</p>\n<ol>\n<li>The new renewal date becomes April 15th.</li>\n<li>The account can be given an extra 200 operations on April 15th.</li>\n<li>The 20 unused operations from the basic plan can roll over (meaning, that in total, after they purchase the new gold plan, the account can have 220 operations)</li>\n</ol>\n<p>Again, on April 15th, you can give the account 220 operations in total (200 from the new gold plan + 20 rolled over from the basic plan). The new cycle will renew on the 15th of each month going forward (giving them 200 operations each month).</p>\n<p>It’s important to note that the operations counter resets monthly based on the renewal date. So, on May 15th, they will receive 200 operations again, as per their gold plan subscription.</p>\n<p>What do you think?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 215794,
+      "postNumber": 3,
+      "createdAt": "2025-01-03T17:27:18.913Z",
+      "author": "Shamika (Shamika Kumarasinghe)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> thanks for the reply</p>\n<p>This made me clear on the counter reset part. But I do have a another issue attached with that.</p>\n<p>I got that as a developer I have to manage the counter (manage in the sense incrementing based on usage, I did not find any other operation).</p>\n<ol>\n<li>I compare the the counter val [the value set by this operation increase_app_subscription_operations(kind: “${kind}”, increment_by: 1)]  stored in monday storage with a hardcoded package details in my code (EX: If counter val from storage &gt; hard coded val → revoke access ). Please feel free to correct me if this is wrong.</li>\n<li>According to doc this counter var name can be defined and its for the developer to decide.</li>\n<li>In a usual flow I know exactly when to increase this counter var per usage.</li>\n<li><strong>But in a upgrade downgrade scenario who should alter the counter is it done by Monday internally for each var defined per tier per user or do I have to listen to each upgrade downgrade subscription webhook and change the counter accordingly.</strong></li>\n<li>According to your example after upgrade on 15th the total credits need to be 220. This need to be the value of the counter in Monday storage. Who is going to add the remaining 20 to the new quota is the developer by listening to webhooks or will Monday do it.</li>\n<li>The reason for this confusion is the AI chat in the Monday dev always output results in a tone “not to change counter on upgrades and downgrades let monday handle it”. And I tested a upgrade scenario using the mock subscription API, there every time a change happens the counter fully resets.</li>\n</ol>\n<p>Let me know if anything is not clear.</p>\n<p>Cheers.</p>"
+    }
+  ]
+}

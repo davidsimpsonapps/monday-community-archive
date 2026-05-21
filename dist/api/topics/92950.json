@@ -1,0 +1,67 @@
+{
+  "id": 92950,
+  "title": "SUM $ Volume by Person",
+  "slug": "sum-volume-by-person",
+  "categoryId": 81,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-07-14T07:16:33.166Z",
+  "lastPostedAt": "2024-07-17T11:33:05.961Z",
+  "postsCount": 7,
+  "excerpt": "Hey gang!  I’m building out a CRM that tracks all my leads.  They are on my “Buyers” board.  For each lead they have a $$$ amount associated with their loan amount.  I have referrals partners that connect me with the lea&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 80,
+  "posts": [
+    {
+      "id": 193257,
+      "postNumber": 1,
+      "createdAt": "2024-07-14T07:16:33.226Z",
+      "author": "nick.steinhauer (Nick Steinhauer)",
+      "cookedHtml": "<p>Hey gang!  I’m building out a CRM that tracks all my leads.  They are on my “Buyers” board.  For each lead they have a $$$ amount associated with their loan amount.  I have referrals partners that connect me with the leads.  Those are tracked on my “Partners” board.  On my “Partners” board, is there a way to sum up the volume they refer and a way to count the number of leads they send from data on the “Buyers” board?</p>"
+    },
+    {
+      "id": 193285,
+      "postNumber": 2,
+      "createdAt": "2024-07-14T12:28:06.067Z",
+      "author": "shayan.moussawi (Shayan Moussawi)",
+      "cookedHtml": "<p>Yes, depending on how Buyers are created there is also a way to automate this.</p>\n<p>But the setup I‘d go for in your scenario is as follows:</p>\n<ol>\n<li>\n<p>Have a connect Boards column in the Partners Board that connects Partners to Buyers</p>\n</li>\n<li>\n<p>When a Buyer is created and was submitted by a Partner, the Buyer should be linked to that Partner</p>\n</li>\n<li>\n<p>Now in the Partners Board you can simply mirror the $$ Amt from the Buyers Connect Board Column - it will summarize it from all connected Buyers</p>\n</li>\n<li>\n<p>You can see the count of referred Buyers in the Connect Board column. Alternately if you want this in a more visible way: create a formula column in the Partners Board and reference the Buyers connect Boards column - you can select to display the count directly this way.</p>\n</li>\n</ol>"
+    },
+    {
+      "id": 193343,
+      "postNumber": 3,
+      "createdAt": "2024-07-15T04:28:53.348Z",
+      "author": "nick.steinhauer (Nick Steinhauer)",
+      "cookedHtml": "<p>Thanks!  I expected it to behave more like a SUMIF formula from Excel.  On the Buyer’s board, I have the real estate agent listed in one of columns.  If “Nick S” is the agent on 3 deals, is there way to sum or count the number of deals next to Nick S on the Partner board?  There has to be something easier than assigning each buyer to the agent.</p>"
+    },
+    {
+      "id": 193439,
+      "postNumber": 4,
+      "createdAt": "2024-07-15T20:42:47.797Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Nick,</p>\n<p>You may want to consider the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, a 3rd-party app that allows you to create formulas that go far beyond whatever is available in monday or other apps.</p>\n<p>Here is how I would handle this case.</p>\n<p>You have a <em>Buyers</em> board. I assumed your Partner information is stored in a dropdown column.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/8/f8b33b34d4adda24a7c62bc711e41564506a371c.jpeg\" title=\"buyers\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/f/8/f8b33b34d4adda24a7c62bc711e41564506a371c.jpeg\" alt=\"buyers\" width=\"690\" height=\"172\" /><div class=\"meta\"><span class=\"filename\">buyers</span><span class=\"informations\">755×189 23.9 KB</span></div></a></div><p></p>\n<p>You have a <em>Partners</em> board:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/8/a869b66efca4d2d2f23b13667872cac96af9c352.jpeg\" title=\"partners\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/a/8/a869b66efca4d2d2f23b13667872cac96af9c352.jpeg\" alt=\"partners\" width=\"690\" height=\"147\" /><div class=\"meta\"><span class=\"filename\">partners</span><span class=\"informations\">706×151 18 KB</span></div></a></div><p></p>\n<p> <br />\n<strong>Here is the formula that would give you what you want:</strong></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/2/42a4ba3275a6c98e07ea417c27dc093a9e1e175e.jpeg\" title=\"formula\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/2/42a4ba3275a6c98e07ea417c27dc093a9e1e175e_2_689x225.jpeg\" alt=\"formula\" width=\"689\" height=\"225\" /><div class=\"meta\"><span class=\"filename\">formula</span><span class=\"informations\">1299×425 287 KB</span></div></a></div><p></p>\n<p>In the left pane (1), the syntax. In the right pane (2), the simulation for Nick S (You can simulate formulas directly within the app, which allows you to test without affecting your board data).</p>\n<p><strong>Here is the formula’s full explanation:</strong></p>\n<ul>\n<li>Line 2 gets the name of the Partner from the Referred By column (we use the LABELNAME function because the partner’s name is a Label, not just plain text).</li>\n<li>Line 4 gets all the values of that same <em>Referred By</em> column for all items in the board (the board having 3 items, we get 3 names, separated by | which is the list separator). <em>See how we prefix the {Referred By} column with ‘BoardItems’. This is what gets us the list of all values in the board, instead of only the current item’s value.</em></li>\n<li>Line 6 filters that list and keeps only the positions of the Referral Partner. There are 3 names, in the list, the 1st and 3rd are ‘Nick S’, so we get a list of 2 positions: 1|3</li>\n<li>Line 8 counts the number of positions in the list. There are 2, that’s what we want to appear in the <em>Referred Deals</em> column of the <em>Partners</em> board.</li>\n<li>Line 10:  {BoardItems.Amount} would get us all the amounts of the board (same principle used in Line 4). But this time, we use a position indicator to limit the items we want to take into account. A typical position indicator is <span class=\"hashtag-raw\">#1:</span> it gets you only the value of the 1st item. Here we use #[ReferrerPositions] which gives us items <span class=\"hashtag-raw\">#1</span> and <span class=\"hashtag-raw\">#3</span> which we sum up using the SUM function.</li>\n</ul>\n<p>We’ve calculated the 2 values we need to write in the other board.</p>\n<p><em>A formula can be linked to 2 boards other than the current board. So we need to link it to the Partners board. Once done, the Partners board is accessed by using the <em>PartnersItems</em> prefix.</em></p>\n<ul>\n<li>Line 12 gets us the partner’s position in the <em>Partners</em> board.</li>\n<li>Now that we know which position occupies our partner in the <em>Partners</em> board, we can write the calculated count and total amount by targeting the appropriate columns followed by a position indicator. In this case, the position indicator instructs the app to only update the specified row.</li>\n</ul>\n<p><strong>Automations necessary to run the formula automatically</strong><br />\nAll we have to do is create 2 automations in the Buyers board.</p>\n<ul>\n<li>When Referred By changes, Run the formula</li>\n<li>When Amount changes, Run the formula</li>\n</ul>\n<p>I know this is advanced stuff, I know you may not want to use a 3rd-party app, but this is an interesting use case, so I thought I’d explain how this could be done in details.</p>\n<p>Any question or help needed, let me know.</p>"
+    },
+    {
+      "id": 193441,
+      "postNumber": 5,
+      "createdAt": "2024-07-15T21:12:33.949Z",
+      "author": "shayan.moussawi (Shayan Moussawi)",
+      "cookedHtml": "<p>There are several options here - though I believe connect boards column is your best way to go. (if you don’t want to use third party app hacks)</p>\n<p>If you already have the agent listed in the Buyers Board (I assume in a text column) you could create a Dashboard view and add a chart widget to display the number of buyers per Partner. (This would not display in the Partners Board but it would solve the business requirement)</p>\n<p>Alternatively, you could still use the connect Boards column. I assume why you are hesitant to use it, is because you already have a bunch of buyers who you don’t want to manually assign now.<br />\nThis is in my opinion the most sophisticated way of doing this):<br />\nSimply add a Match Automation (When column changes and Partner Name matches Name in the Partners Board connect items)</p>\n<p>You can choose a status column or any other column as a trigger for the change.<br />\nAfter doing that - change the column value on all existing Buyers, this will automatically assign all buyers to their respective Partners in the Partners Board.</p>\n<p>Going forward you can the assign the Buyers when creating them (instead of manually typing in the Partner name you can use the connect Boards column search function to assign a buyer).</p>"
+    },
+    {
+      "id": 193553,
+      "postNumber": 6,
+      "createdAt": "2024-07-16T11:54:52.142Z",
+      "author": "nick.steinhauer (Nick Steinhauer)",
+      "cookedHtml": "<p>You put some work into this reply!  I really appreciate it.  I’ll digest this and see but this is exactly the use case I need.</p>"
+    },
+    {
+      "id": 193732,
+      "postNumber": 7,
+      "createdAt": "2024-07-17T11:33:05.961Z",
+      "author": "VicenteDominguez (Vicente Domínguez [Decadis AG])",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/nick.steinhauer\">@nick.steinhauer</a>,</p>\n<p>I am part of the Decadis team and our app <a href=\"https://apps.decadis.net/display/SUMMON\" rel=\"noopener nofollow ugc\">sumUp for monday</a> features a widget that can group items and sum numeric columns based on the users from a People column. I believe that this widget, namely the <a href=\"https://apps.decadis.net/display/SUMMON/Group+by+widget\" rel=\"noopener nofollow ugc\">Group by widget</a>, could help you to address this requirement in a Dashboard.</p>\n<p>If you need more information about it, please, do not hesitate to contact us!</p>\n<p>Best regards,<br />\nVicente</p>"
+    }
+  ]
+}

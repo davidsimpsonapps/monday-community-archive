@@ -1,0 +1,44 @@
+{
+  "id": 101832,
+  "title": "Uploading File Attachments on Monday.com Board via API",
+  "slug": "uploading-file-attachments-on-monday-com-board-via-api",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-10-29T13:49:09.079Z",
+  "lastPostedAt": "2024-11-04T06:19:34.783Z",
+  "postsCount": 2,
+  "excerpt": "I’m automating item creation on a Monday board using responses from Microsoft Forms via Power Automate. The item and updates work smoothly, but I’m stuck on getting file attachments (images, Word, Excel, etc.) added to t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 52,
+  "posts": [
+    {
+      "id": 207748,
+      "postNumber": 1,
+      "createdAt": "2024-10-29T13:49:09.165Z",
+      "author": "Amrutha (Amrutha)",
+      "cookedHtml": "<p>I’m automating item creation on a Monday board using responses from Microsoft Forms via Power Automate. The item and updates work smoothly, but I’m stuck on getting file attachments (images, Word, Excel, etc.) added to the item. The files appear on the board but in an unreadable format—I’ve tried both Base64 and binary without luck. Any tips or tricks to make these attachments viewable?</p>\n<p>HTTP part from Power Automate<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/c/4c651dfaee57ca2377019dfeb5b57251752d02d7.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/c/4c651dfaee57ca2377019dfeb5b57251752d02d7_2_292x500.png\" alt=\"image\" width=\"292\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">481×821 21.8 KB</span></div></a></div><p></p>\n<p>Output:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/b/1bc47c27dba37fec33688132da6de0b19a79f2cf.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/1/b/1bc47c27dba37fec33688132da6de0b19a79f2cf.png\" alt=\"image\" width=\"666\" height=\"451\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">666×451 16.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 207893,
+      "postNumber": 2,
+      "createdAt": "2024-10-30T14:58:27.376Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Checking in <a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1730299530160869\">Slack</a></p>"
+    },
+    {
+      "id": 208411,
+      "postNumber": 3,
+      "createdAt": "2024-11-04T06:19:34.783Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/amrutha\">@Amrutha</a> and welcome to the community!</p>\n<p>I am not familiar with Power Automate, but I wonder if the issue might lie in the body. I see you are passing multiple headers with different content types. I do not know how that works in Power Automate.</p>\n<p>For reference here is a working example on a column (it works basically in the same way):</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/file' \\\n--header 'Authorization: APITOKENHERE' \\\n--form 'query=\"mutation add_file(\\$file: File\\!) {add_file_to_column(item_id: 1234567890, column_id:\\\"files__1\\\" file: \\$file) {id}}\n\"' \\\n--form 'map=\"{\\\"image\\\":\\\"variables.file\\\"}\n\"' \\\n--form 'image=@\"/Users/matias/Documents/myDocument.xlsx\"'\n</code></pre>\n<p>JS:</p>\n<pre><code class=\"lang-auto\">const myHeaders = new Headers();\nmyHeaders.append(\"Authorization\", \"APITOKENHERE\");\nconst formdata = new FormData();\nformdata.append(\"query\", \"mutation add_file($file: File!) {add_file_to_column(item_id: 1234567890, column_id:\\\"files__1\\\" file: $file) {id}}\\n\");\nformdata.append(\"map\", \"{\\\"image\\\":\\\"variables.file\\\"}\\n\");\nformdata.append(\"image\", fileInput.files[0], \"myDocument.xlsx\");\n\nconst requestOptions = {\n  method: \"POST\",\n  headers: myHeaders,\n  body: formdata,\n  redirect: \"follow\"\n};\n\nfetch(\"https://api.monday.com/v2/file\", requestOptions)\n  .then((response) =&gt; response.text())\n  .then((result) =&gt; console.log(result))\n  .catch((error) =&gt; console.error(error));\n</code></pre>"
+    }
+  ]
+}

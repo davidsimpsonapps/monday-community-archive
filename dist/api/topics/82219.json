@@ -1,0 +1,48 @@
+{
+  "id": 82219,
+  "title": "Need Help with Monday.com SDK File Upload",
+  "slug": "need-help-with-monday-com-sdk-file-upload",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    351
+  ],
+  "createdAt": "2024-03-27T11:05:51.768Z",
+  "lastPostedAt": "2024-04-04T10:12:56.217Z",
+  "postsCount": 4,
+  "excerpt": "Hi everyone, I’ve hit a snag while trying to upload a file to a column using the Monday SDK. Below is the snippet I’m working with: \nimport initMondayClient from &#39;monday-sdk-js&#39;;\nimport { Logger } from &#39;@mondaycom/apps-s&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 240,
+  "posts": [
+    {
+      "id": 175328,
+      "postNumber": 1,
+      "createdAt": "2024-03-27T11:05:51.863Z",
+      "author": "ethanolle1 (Ethan Sayagh)",
+      "cookedHtml": "<p>Hi everyone, I’ve hit a snag while trying to upload a file to a column using the Monday SDK. Below is the snippet I’m working with:</p>\n<pre><code class=\"lang-auto\">import initMondayClient from 'monday-sdk-js';\nimport { Logger } from '@mondaycom/apps-sdk';\nimport path from 'path';\nimport fs from 'fs';\nimport FormData from 'form-data';\n\nexport async function changeColumnValue(token, itemId, columnId) {\n  const formData = new FormData();\n  const filePath = path.join(__dirname, 'test.txt');\n  formData.append('variables[file]', fs.createReadStream(filePath), 'test.txt');\n  formData.append(\n    'query',\n    `mutation ($file: File!) {\n      add_file_to_column (item_id: ${itemId}, column_id: \"${columnId}\", file: $file) {\n        id\n      }\n    }`,\n  );\n\n  try {\n    const response = await fetch('https://api.monday.com/v2/file', {\n      method: 'POST',\n      headers: {\n        Authorization: token,\n        ...formData.getHeaders(),\n      },\n      body: formData,\n    });\n\n    const data = await response.json();\n    console.log(data);\n  } catch (error) {\n    console.error(error);\n    throw new Error(error.message);\n  }\n}\n</code></pre>\n<p>When I run this, I encounter the following error:<br />\n{ “error_message”: “Unsupported query”, “status_code”: 400 }</p>\n<p>I’m using Node v18.0.0 and have taken this code as a base from the quickstart-integrations-monday documentation, with minor adjustments to test some functionalities. The goal here is to craft a function that receives <code>itemId</code>, <code>columnId</code>, and a <code>token</code>, and uploads a file located on my server to the specified column/item.</p>\n<p>Would appreciate any insights or suggestions on what I might be doing wrong or missing. Thanks in advance!</p>"
+    },
+    {
+      "id": 175945,
+      "postNumber": 2,
+      "createdAt": "2024-03-31T09:34:06.842Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ethanolle1\">@ethanolle1</a>,</p>\n<p>I replied in the ticket you opened <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 176516,
+      "postNumber": 3,
+      "createdAt": "2024-04-02T14:15:13.194Z",
+      "author": "ethanolle1 (Ethan Sayagh)",
+      "cookedHtml": "<p>For anyone interested, here is a working function thanks to <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> help.</p>\n<pre><code class=\"lang-auto\">export async function changeColumnValue(token, boardId, itemId, columnId) {\n  // make string item id and column id\n  itemId = JSON.stringify(itemId);\n  // columnId = JSON.stringify(columnId);\n  // set filename current path images.png\n  var upfile = path.join(__dirname, 'images.png');\n  // set query\n  var query = `mutation ($file: File!) { add_file_to_column (file: $file, item_id: \"${itemId}\", column_id: \"${columnId}\") { id } }`;\n  // set URL and boundary\n  var url = 'https://api.monday.com/v2/file';\n  var boundary = 'xxxxxxxxxx';\n\n  try {\n    const content = await fs.promises.readFile(upfile);\n    var data = '';\n\n    // construct query part\n    data += '--' + boundary + '\\r\\n';\n    data += 'Content-Disposition: form-data; name=\"query\"; \\r\\n';\n    data += 'Content-Type:application/json\\r\\n\\r\\n';\n    data += '\\r\\n' + query + '\\r\\n';\n    data += '--' + boundary + '\\r\\n';\n    data += 'Content-Disposition: form-data; name=\"variables[file]\"; filename=\"' + upfile + '\"\\r\\n';\n    data += 'Content-Type:application/octet-stream\\r\\n\\r\\n';\n    var payload = Buffer.concat([Buffer.from(data, 'utf8'), new Buffer.from(content, 'binary'), Buffer.from('\\r\\n--' + boundary + '--\\r\\n', 'utf8')]);\n\n    // construct request options\n    var options = {\n      method: 'post',\n      headers: {\n        'Content-Type': 'multipart/form-data; boundary=' + boundary,\n        Authorization: token,\n      },\n      body: payload,\n    };\n\n    // make request\n    const response = await fetch(url, options);\n    const json = await response.json();\n    console.log(json);\n  } catch (err) {\n    console.error(err);\n  }\n}\n\n</code></pre>"
+    },
+    {
+      "id": 176917,
+      "postNumber": 4,
+      "createdAt": "2024-04-04T10:12:56.217Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/ethanolle1\">@ethanolle1</a> !!!</p>"
+    }
+  ]
+}

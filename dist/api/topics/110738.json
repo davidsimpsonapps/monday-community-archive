@@ -1,0 +1,64 @@
+{
+  "id": 110738,
+  "title": "What is the integration recipe authorization header format?",
+  "slug": "what-is-the-integration-recipe-authorization-header-format",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    351,
+    352
+  ],
+  "createdAt": "2025-03-02T13:24:10.385Z",
+  "lastPostedAt": "2025-03-10T13:37:35.398Z",
+  "postsCount": 6,
+  "excerpt": "Hi all, I’ve been working on an app with integration actions and I’ve been struggling to find a comprehensive description of the format of the Authorization header passed through. This would come in very helpful as the a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 26,
+  "posts": [
+    {
+      "id": 222892,
+      "postNumber": 1,
+      "createdAt": "2025-03-02T13:24:10.466Z",
+      "author": "sam-evans (Sam Evans)",
+      "cookedHtml": "<p>Hi all, I’ve been working on an app with integration actions and I’ve been struggling to find a comprehensive description of the format of the Authorization header passed through. This would come in very helpful as the app needs to validate the subscription of the account performing the action but there is no defined subscription field in the example format <a href=\"https://developer.monday.com/apps/docs/integration-authorization\" rel=\"noopener nofollow ugc\">here</a> despite me knowing it exists from testing.</p>\n<p>Is there more comprehensive documentation on the valid format of the JWT anywhere?</p>"
+    },
+    {
+      "id": 222988,
+      "postNumber": 2,
+      "createdAt": "2025-03-03T16:02:21.166Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The subscription object (which will be on the subscription key in the jwt) has the following typescript type:</p>\n<pre><code class=\"lang-auto\">type Subscription = {\n  plan_id: string;\n  is_trial: boolean;\n  renewal_date: string: //ISO timestamp with offset\n  pricing_version: number;\n  billing_period: \"monthly\" | \"yearly\" | null;\n  days_left: number\n}\n</code></pre>\n<p>if billing_period is null that means the subscription is your free plan or a plan in trial (with is_trial being true if its a trial, or false if its the paid version of that plan)</p>\n<p>Note that for free plans renewal_date and days_left is always today + 10 years. It advances each day. Beware of this <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/279d6c49c26dd38347d668ffb26c0ba4637a6ce5.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/reference/app-subscription\" target=\"_blank\" rel=\"noopener\">monday.com Platform API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/e/a/ea281669d330e520359c38121e76433683502de2.png\" class=\"thumbnail\" width=\"358\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/api-reference/reference/app-subscription\" target=\"_blank\" rel=\"noopener\">App subscription</a></h3>\n\n  <p>Learn how to query app subscription data using the monday.com platform API</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>That query will return the same result. Do note you can set a mock subscription as described on that page, and you’ll now get a subscription in the JWT - with the caveat that setting a mock subscription does not permit you to set billing_period to null (it errors) so you can’t quite validate the free/trial scenario as you’d expect.</p>"
+    },
+    {
+      "id": 223091,
+      "postNumber": 3,
+      "createdAt": "2025-03-04T13:52:21.341Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>This is an important undocumented gotcha:</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p>Note that for free plans renewal_date and days_left is always today + 10 years. It advances each day. Beware of this <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=13\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n</blockquote>\n</aside>"
+    },
+    {
+      "id": 223098,
+      "postNumber": 4,
+      "createdAt": "2025-03-04T15:31:37.688Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yes you wouldn’t want to rely on the days_left minus a certain number of days to fake a trial duration or anything.</p>"
+    },
+    {
+      "id": 223411,
+      "postNumber": 5,
+      "createdAt": "2025-03-07T15:55:07.242Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Thanks for pointing this out!</p>\n<p>As a follow-up, we have the renewal date behavior documented <a href=\"https://developer.monday.com/apps/docs/subscriptions-payments-and-billing#tracking-subscriptions\">here</a>. I’ll work on adding it in the other locations!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 223721,
+      "postNumber": 6,
+      "createdAt": "2025-03-10T13:37:35.398Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>So do you have any suggestion for handling functionalities offered in a Free plan which resets every 30 days without relying on an external database?</p>"
+    }
+  ]
+}

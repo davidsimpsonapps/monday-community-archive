@@ -1,0 +1,60 @@
+{
+  "id": 55033,
+  "title": "Getting the logged-in user on the server",
+  "slug": "getting-the-logged-in-user-on-the-server",
+  "categoryId": 8,
+  "tagIds": [
+    5
+  ],
+  "createdAt": "2023-03-30T09:25:54.123Z",
+  "lastPostedAt": "2023-04-03T05:03:08.872Z",
+  "postsCount": 4,
+  "excerpt": "Hi all, \nI’m working on an app which can be installed on a board by one person, and then used by anybody in the same account.  The problem I’m having is that no matter which account I try to use the board from, my app th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 708,
+  "posts": [
+    {
+      "id": 122019,
+      "postNumber": 1,
+      "createdAt": "2023-03-30T09:25:54.207Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I’m working on an app which can be installed on a board by one person, and then used by anybody in the same account.  The problem I’m having is that no matter which account I try to use the board from, my app thinks that it’s the user who originally installed the app on the board who is trying to do the action.</p>\n<p>I’ve seen discussions here about getting the user thru the userId option in the trigger (“when column is changed”), but this just returns the installer’s userId.  I’ve also seen advice to use the sdk api function to call “me”, but it returns an error, saying that I need to set a token first (and the only auth token I’m able to have access to is one that has the installer’s userId recorded in it).</p>\n<p>It seems like there should be a simple solution…I’m on the monday board, I see my picture on the bottom left of the screen indicating that I’m logged in…I change a column…and I should be able to have the system read my userId.  But I can’t find how to do this…the only one available is the app installer’s.</p>\n<p>Any ideas here?</p>\n<p>Thanks,</p>\n<p>Moshe</p>"
+    },
+    {
+      "id": 122171,
+      "postNumber": 2,
+      "createdAt": "2023-03-31T04:18:47.862Z",
+      "author": "xatxat (Simon Kusterer @ Gorilla Apps)",
+      "cookedHtml": "<p>hi!</p>\n<p>what you need to do is to get the sessionToken in the frontend and then pass that to your backend (typically in an http header) when you do requests. here is an example code snippet:</p>\n<pre><code class=\"lang-auto\">import mondaySdk from 'monday-sdk-js';\n\nconst monday = mondaySdk();\n\nasync function getSessionToken() {\n  return (await monday.get('sessionToken')).data;\n}\n\nasync function getFoo() {\n  const sessionToken = await getSessionToken();\n\n  const response = await fetch(`https://YOUR-BACKEND.COM/api/foo`, {\n    method: 'GET',\n    headers: {\n      Authorization: `Bearer ${sessionToken}`,\n    },\n  });\n\n  return await response.json();\n}\n</code></pre>\n<p>your backend then needs to extract the sessionToken from the http headers and verify it. the extracted sessionToken also contains the userId. here is an example:</p>\n<pre><code class=\"lang-auto\">const jwt = require('jsonwebtoken');\n\nconst { userId } = jwt.verify(\n  getSessionTokenFromHeaders(), // you need to implement this function\n  process.env.MONDAY_SIGNING_SECRET\n);\n\nconsole.log('current user id', userId);\n</code></pre>\n<p>hope that helps.</p>\n<p>simon</p>"
+    },
+    {
+      "id": 122340,
+      "postNumber": 3,
+      "createdAt": "2023-04-02T03:58:03.338Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>Hi, thanks for your reply.</p>\n<p>In my case, I’m not trying to get the user on a client, but on the board itself (I’m not sure if this is what you were thinking when you said frontend).</p>\n<p>The session token gives the user that originally installed the app, not the user who is currently logged in.  I heard that the trigger (using the user output) would give this logged in user (the user that actually triggered the change), but when I try, even that is returning the user that installed the app instead of the user that made the change/logged-in user.</p>\n<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> (<a href=\"https://community.monday.com/t/current-logged-in-user/38484\" class=\"inline-onebox\">Current logged In user</a>) had a post where he said that the token behavior was to be expected, as it was responding with the info from the app installation.  But it’s the trigger response of that user instead of the user triggering the change that has me puzzled.</p>\n<p>Moshe</p>"
+    },
+    {
+      "id": 122446,
+      "postNumber": 4,
+      "createdAt": "2023-04-03T04:13:36.220Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C018J3C259C/p1680506001314559\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 122458,
+      "postNumber": 5,
+      "createdAt": "2023-04-03T05:03:08.872Z",
+      "author": "xatxat (Simon Kusterer @ Gorilla Apps)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/msh\">@Msh</a>,</p>\n<p>i just double-checked this: i logged in as a test user and opened up a board view (provided by a test app) and the userId stored in the sessionToken was the one of the test-user. i then switched back to my main user and opened the board view there and the sessionToken contained the userId of that user. so i was not able to reproduce the behavior you are describing.</p>\n<p>in the thread you linked, it’s not clear if they are actually talking about the sessionToken or another token.</p>\n<p>simon</p>"
+    },
+    {
+      "id": 123141,
+      "postNumber": 6,
+      "createdAt": "2023-04-07T16:58:40.482Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

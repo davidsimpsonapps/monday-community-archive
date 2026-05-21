@@ -1,0 +1,194 @@
+{
+  "id": 76502,
+  "title": "Upload file example in google app script?",
+  "slug": "upload-file-example-in-google-app-script",
+  "categoryId": 7,
+  "tagIds": [
+    41,
+    94
+  ],
+  "createdAt": "2024-01-30T03:04:58.451Z",
+  "lastPostedAt": "2024-02-15T14:56:42.339Z",
+  "postsCount": 25,
+  "excerpt": "Hi All, \nOk, next challenge!  I’d like to be able to upload a file via the Monday API from google app script (Googles javascript environment).  I have basic infrastructure in place in google app script that is working we&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2930,
+  "posts": [
+    {
+      "id": 164846,
+      "postNumber": 1,
+      "createdAt": "2024-01-30T03:04:58.534Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Hi All,</p>\n<p>Ok, next challenge!  I’d like to be able to upload a file via the Monday API from google app script (Googles javascript environment).  I have basic infrastructure in place in google app script that is working well to create and modify Monday items. (Thanks to all that helped with some of the questions I had figuring this all out over the last few days!)</p>\n<p>Looking at the Monday docs, I do see a javascript example that I don’t totally understand for uploading a file to an item. It looks like it uses</p>\n<p>require(‘fs’);<br />\nrequire(‘node-fetch’)</p>\n<p>which doesn’t exist in google’s javascript environment as fas as I can tell.  So, anybody else written a complete app script example of how to upload a file?  Any help appreciated!</p>"
+    },
+    {
+      "id": 165296,
+      "postNumber": 2,
+      "createdAt": "2024-02-01T01:40:04.056Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Struggling through this by referencing and piecing together what I can. Any thoughts on this so far?  compiles at least now without dependencies above that are not available in google app script. Returns {“error_message”:“Unsupported query”,“status_code”:400}.</p>\n<pre><code class=\"lang-auto\">function testMondayFileUpload() {\n\n  var files = DriveApp.getFilesByName(\"test.rtf\");\n  var file = files.next();\n\n  // set filename\n  var upfile = 'test.rtf';\n\n  var query = 'mutation ($file: File!) { add_file_to_column (file: $file, item_id: 1234567890, column_id: \"files\") { id } }';\n\n  var boundary = \"xxxxxxxxxx\";\n  var data = \"\";\n\n\n    // construct query part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n    data += \"Content-Type:application/json\\r\\n\\r\\n\";\n    data += \"\\r\\n\" + query + \"\\r\\n\";\n\n    // construct file part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"variables[file]\\\"; filename=\\\"\" + upfile + \"\\\"\\r\\n\";\n    data += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\n    var payload = Utilities.newBlob(data).getBytes()\n    .concat(file.getBlob().getBytes())\n    .concat(Utilities.newBlob(\"\\r\\n--\" + boundary + \"--\").getBytes());\n\n\n    var response = UrlFetchApp.fetch(\"https://api.monday.com/v2/file\", {\n    method: 'post',\n    headers: {\n      'Content-Type': \"multipart/form-data; boundary=\" + boundary,\n      'Authorization': API_KEY,\n      'API-Version' : '2024-01'\n    },\n    payload: JSON.stringify({\n      'body': payload,\n    })\n  })\n\n  Logger.log(response);\n\n}\n</code></pre>"
+    },
+    {
+      "id": 165443,
+      "postNumber": 3,
+      "createdAt": "2024-02-01T18:05:44.686Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Also, adding muteHttpExceptions : true does not seem to return anything more useful for debugging…</p>"
+    },
+    {
+      "id": 165457,
+      "postNumber": 4,
+      "createdAt": "2024-02-01T19:06:46.489Z",
+      "author": "imjoaofernandes (João Fernandes)",
+      "cookedHtml": "<p>I am having issues as well when using add_file_to_column… 2 days ago it was working perfectly, suddenly it stopped working and it returns “400 Unsupported query” everytime. If you actually find any solution, I would appreciate you sharing it, I’ll do my best too. <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 165463,
+      "postNumber": 5,
+      "createdAt": "2024-02-01T19:16:17.173Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>are you using javascript?  If so can you share your code?</p>"
+    },
+    {
+      "id": 165466,
+      "postNumber": 6,
+      "createdAt": "2024-02-01T19:31:01.484Z",
+      "author": "imjoaofernandes (João Fernandes)",
+      "cookedHtml": "<p>Yeah, a few seconds ago, I was able to make it work using Node.js! It will prompt you for a image path, and for a ID. Here is the complete file, just to make the call and send a simple image to a Monday table:</p>\n<pre><code class=\"lang-auto\">const express = require('express');\nconst multer = require('multer');\nconst FormData = require('form-data');\nconst fs = require('fs');\nconst axios = require('axios');\nconst path = require('path');\n\nconst app = express();\nconst port = 3000;\n\nconst storage = multer.diskStorage({\n  destination: function (req, file, cb) {\n    cb(null, 'uploads/');\n  },\n  filename: function (req, file, cb) {\n    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);\n    const extension = path.extname(file.originalname);\n    cb(null, file.fieldname + '-' + uniqueSuffix + extension);\n  }\n});\n\nconst upload = multer({ storage: storage });\n\napp.post('/upload', upload.single('file'), async (req, res) =&gt; {\n  const itemId = req.body.itemId;\n  const filePath = req.file.path;\n\n  let data = new FormData();\n  data.append('query', `mutation add_file($file: File!) {add_file_to_column (item_id: ${itemId}, column_id:\"arquivos\", file: $file) {id}}\\n`);\n  data.append('map', '{\"image\":\"variables.file\"}\\n');\n  data.append('image', fs.createReadStream(filePath));\n\n  let config = {\n    method: 'post',\n    url: 'https://api.monday.com/v2/file',\n    headers: { \n      'Authorization': 'Bearer YOUR_MONDAY_API_KEY', \n      ...data.getHeaders()\n    },\n    data: data,\n    maxBodyLength: 'Infinity'\n  };\n\n  try {\n    const response = await axios.request(config);\n    console.log(\"Upload successful:\", JSON.stringify(response.data));\n    res.json({ message: \"Upload successful\", data: response.data });\n  } catch (error) {\n    console.error(\"Upload failed:\", error);\n    res.status(500).json({ message: \"Upload failed\", error: error.toString() });\n  }\n});\n\napp.listen(port, () =&gt; {\n  console.log(`Ligado: http://localhost:${port}`);\n});\n</code></pre>\n<p>Now, I’m trying to use it on my original API, if I fix it, I’ll say something! But yeah, that code that I just sent you works, just replace it with your key!</p>"
+    },
+    {
+      "id": 165468,
+      "postNumber": 7,
+      "createdAt": "2024-02-01T19:46:46.345Z",
+      "author": "imjoaofernandes (João Fernandes)",
+      "cookedHtml": "<p>Yeah, somehow I was able to fix it, can’t really explain to you why cuz I really don’t know, here is my endpoint and the necessary stuff for it:</p>\n<pre><code class=\"lang-auto\">import express from 'express';\nimport fs from 'fs';\nimport cors from 'cors';\nimport path from 'path';\nimport jwt from 'jsonwebtoken';\nimport lockfile from 'proper-lockfile';\nimport { expressjwt as expressJwt } from 'express-jwt';\nimport multer from 'multer';\nimport fetch from 'node-fetch';\nimport FormData from 'form-data';\n\n// Additional changes for __dirname and __filename as they are not available in ES module scope\nimport { fileURLToPath } from 'url';\nimport { dirname } from 'path';\n\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = dirname(__filename);\n\nconst uploadsDir = path.join(__dirname, 'uploads');\nif (!fs.existsSync(uploadsDir)){\n    fs.mkdirSync(uploadsDir, { recursive: true });\n}\n\nconst storage = multer.diskStorage({\n    destination: function (req, file, cb) {\n        cb(null, uploadsDir)\n    },\n    filename: function (req, file, cb) {\n        // Use the MIME type to determine the correct file extension\n        const ext = file.mimetype.split('/')[1];\n        cb(null, file.fieldname + '-' + Date.now() + '.' + ext);\n    }\n});\n\nconst JWT_SECRET = 'MY_SECRET_JWT';\n\nconst app = express();\n\napp.use(cors());\napp.use(express.json());\n// Initialize multer with the defined storage engine\nconst upload = multer({ storage: storage });\n\nfunction logWithTimestamp(...args) {\n    const date = new Date();\n    const formattedDate = `[${date.getDate()} ${date.toLocaleString('default', { month: 'short' })} ${date.getHours()}:${date.getMinutes()}]`;\n    console.log(formattedDate, ...args);\n}\n\napp.post('/upload-file', upload.single('file'), async (req, res) =&gt; {\n    if (!req.file) {\n        return res.status(400).send('No file uploaded.');\n    }\n\n    // Extract partId from the query string\n    const partId = req.query.peca; // Assuming 'peca' is the query parameter for part ID\n    if (!partId) {\n        return res.status(400).send('Part ID is missing.');\n    }\n\nconst formData = new FormData();\n\n// Adjust the GraphQL mutation if necessary to match variable names\nconst mutation = `\n    mutation ($file: File!) {\n        add_file_to_column (item_id: ${partId}, column_id: \"arquivos\", file: $file) {\n            id\n        }\n    }\n`;\n\n// Add the 'map' field to correctly map the file to the mutation variable\nformData.append('query', mutation);\nformData.append('map', '{\"file\":\"variables.file\"}\\n'); // Adjust the key here as needed\nformData.append('file', fs.createReadStream(req.file.path), { // Ensure this key matches the 'map'\n    filename: req.file.filename,\n    contentType: req.file.mimetype,\n});\n\n    try {\n        const response = await fetch('https://api.monday.com/v2/file', {\n            method: 'POST',\n            body: formData,\n            headers: {\n                ...formData.getHeaders(),\n                'Authorization': 'Bearer MONDAY_API_TOKEN',\n            },\n        });\n\n        const result = await response.json();\n        if (result.data) {\n            logWithTimestamp('File uploaded successfully to Monday.com', result);\n            res.send('File uploaded successfully');\n        } else {\n            logWithTimestamp('Error uploading file to Monday.com', JSON.stringify(result.errors));\n            res.status(500).send('Error uploading file to Monday.com');\n        }\n    } catch (error) {\n        logWithTimestamp('Error in file upload', error.message);\n        res.status(500).send('Error in file upload');\n    } finally {\n        // Delete the file after uploading to Monday.com\n        fs.unlink(req.file.path, (err) =&gt; {\n            if (err) logWithTimestamp('Error deleting file:', err);\n        });\n    }\n});\n</code></pre>"
+    },
+    {
+      "id": 165486,
+      "postNumber": 8,
+      "createdAt": "2024-02-01T23:17:42.430Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>thanks for posting.  I’m not really able to translate most of that to google app script.  So still just shooting in the dark here, which no real strategy on how to debug from here…</p>"
+    },
+    {
+      "id": 165489,
+      "postNumber": 9,
+      "createdAt": "2024-02-01T23:27:48.952Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Also, just tried using google app script library FetchApp to help with form formatting. But same results <img src=\"https://emoji.discourse-cdn.com/apple/frowning_face.png?v=12\" title=\":frowning_face:\" class=\"emoji\" alt=\":frowning_face:\" width=\"20\" height=\"20\" /></p>\n<pre><code class=\"lang-auto\">var boundary = \"xxxxxxxxxx\";\n  var query = 'mutation ($file: File!) { add_file_to_column (file: $file, item_id: 5668458954, column_id: \"files\") { id } }';\n\n  var url = \"https://api.monday.com/v2/file\";\n  var blob = Utilities.newBlob(\"sample value\", MimeType.PLAIN_TEXT, \"sample.txt\");\n  var form = FetchApp.createFormData();\n  form.append(\"query\", Utilities.newBlob(query));\n  form.append('variables[file]', blob);\n\n\n  var params = {\n    method: \"POST\",\n    headers: {\n      'Content-Type': \"multipart/form-data; boundary=\" + boundary,\n      'Authorization': API_KEY,\n      'API-Version' : '2024-01'\n    },\n    body: form,\n  };\n  var res = FetchApp.fetch(url, params);\n  console.log(res.getContentText());\n</code></pre>"
+    },
+    {
+      "id": 165490,
+      "postNumber": 10,
+      "createdAt": "2024-02-01T23:29:12.198Z",
+      "author": "imjoaofernandes (João Fernandes)",
+      "cookedHtml": "<p>Well, if you want, you can leave here a little bit of your code or send it to me, I can try to help you debugging it, but never messed with Google App Scripts <img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=12\" title=\":confused:\" class=\"emoji\" alt=\":confused:\" width=\"20\" height=\"20\" /> Maybe try giving ChatGPT or some free models around a try, maybe some can help you!</p>"
+    },
+    {
+      "id": 165491,
+      "postNumber": 11,
+      "createdAt": "2024-02-01T23:31:36.972Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>thats a nice offer.  The key parts are all above. I believe that query is correct because it seems to be consistent with your example and the others that I have found in the documentation.</p>\n<p>I don’t think the body payload is correct.  It doesn’t seem like the examples are consistent.</p>"
+    },
+    {
+      "id": 165494,
+      "postNumber": 12,
+      "createdAt": "2024-02-01T23:35:37.268Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/i/cab0a1/48.png\" class=\"avatar\" /> João Fernandes:</div>\n<blockquote>\n<p><code>'map', '{\"file\":\"variables.file\"}\\n'</code></p>\n</blockquote>\n</aside>\n<p>This seems different from other examples.  Where is this coming from?</p>"
+    },
+    {
+      "id": 165495,
+      "postNumber": 13,
+      "createdAt": "2024-02-01T23:56:16.768Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Looks like Monday updated their docs on Assets.  I updated my code to match.  Still does not work. Here is the latest try.</p>\n<pre><code class=\"lang-auto\">function testMondayFileUpload() {\n\n  var files = DriveApp.getFilesByName(\"test.txt\");\n  var file = files.next();\n  Logger.log(file.getBlob().getDataAsString());\n  // set filename\n  var upfile = './test.txt';\n\n  var query = 'mutation ($file: File!) { add_file_to_column (file: $file, item_id: 5668458954, column_id: \"files\") { id } }';\n\n  var boundary = \"xxxxxxxxxx\";\n  var data = \"\";\n  var map = {\"file\":\"variables.file\"};\n\n    // construct query part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n    data += \"Content-Type:application/json\\r\\n\\r\\n\";\n    data += \"\\r\\n\" + query + \"\\r\\n\";\n\n        // construct map part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"map\\\"; \\r\\n\";\n    data += \"Content-Type:application/json\\r\\n\\r\\n\";\n    data += \"\\r\\n\" + JSON.stringify(map)+ \"\\r\\n\";\n\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"file\\\"; filename=\\\"\" + upfile + \"\\\"\\r\\n\";\n    data += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\n\n    var payload = Utilities.newBlob(data).getBytes()\n    .concat(file.getBlob().getBytes())\n    .concat(Utilities.newBlob(\"\\r\\n--\" + boundary + \"--\\r\\n\").getBytes());\n\nLogger.log(payload);\n\n    var response = UrlFetchApp.fetch(\"https://api.monday.com/v2/file\", {\n    method: 'post',\n    headers: {\n      'Content-Type': \"multipart/form-data; boundary=\" + boundary,\n      'Authorization': API_KEY,\n      'API-Version' : '2024-01'\n    },\n    'body': payload\n  })\n\n  Logger.log(response);\n  var result = JSON.parse(response.getContentText());\n  Logger.log(result);\n\n}\n</code></pre>"
+    },
+    {
+      "id": 165558,
+      "postNumber": 14,
+      "createdAt": "2024-02-02T10:23:32.539Z",
+      "author": "imjoaofernandes (João Fernandes)",
+      "cookedHtml": "<p>Were you able to fix it?<br />\nAll I know is that I used Postman, because Monday has an official collection to it, where they have the add_file_to_column API call working, and they have that “map” thing included, I guess it’s what they use to map correctly the uploaded file to the file variable on the query!</p>"
+    },
+    {
+      "id": 165670,
+      "postNumber": 15,
+      "createdAt": "2024-02-03T03:11:36.625Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>No. And the error returned from the post is no help.  See my code above with the updated map tag per their updated docs. Still doesn’t work.</p>\n<p>I have many other post requests working fine, so this issue is something related to this complicated multi part file upload.</p>"
+    },
+    {
+      "id": 166775,
+      "postNumber": 16,
+      "createdAt": "2024-02-08T16:25:07.789Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dlicc\">@dlicc</a> – I wasn’t able to reproduce this “Unsupported query” error, was able to get it working in Postman.</p>\n<p>Can you share a few more things so we can check the logs –</p>\n<ul>\n<li>When did you try this last?</li>\n<li>Your board/item ID</li>\n<li>The full response body</li>\n</ul>\n<p>If I don’t find anything in the logs I’ll also try running this in AppsScript… But will probably only get to it next week.</p>"
+    },
+    {
+      "id": 166839,
+      "postNumber": 17,
+      "createdAt": "2024-02-08T22:56:51.000Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Thanks for helping Dipro.</p>\n<p>Its doesn’t seem like muteHttpExceptions : true does anything different….  So all I am getting is this result.  Ran again just now, so this is from 4:50:19 PM pacific time today.</p>\n<p>Exception: Request failed for <a href=\"https://api.monday.com\" rel=\"noopener nofollow ugc\">https://api.monday.com</a> returned code 400. Truncated server response: {“error_message”:“Unsupported query”,“status_code”:400} (use muteHttpExceptions option to examine full response)</p>\n<p>Here is my full test code, based off of the javascript example from the docs:</p>\n<p>var files = DriveApp.getFilesByName(“test.txt”);<br />\nvar file = files.next();<br />\nLogger.log(file.getBlob().getDataAsString());<br />\n// set filename<br />\nvar upfile = ‘./test.txt’;</p>\n<p>var query = ‘mutation ($file: File!) { add_file_to_column (file: $file, item_id: 5668458954, column_id: “files”) { id } }’;</p>\n<p>var boundary = “xxxxxxxxxx”;<br />\nvar data = “”;<br />\nvar map = {“file”:“variables.file”};</p>\n<pre><code>// construct query part\ndata += \"--\" + boundary + \"\\r\\n\";\ndata += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\ndata += \"Content-Type:application/json\\r\\n\\r\\n\";\ndata += \"\\r\\n\" + query + \"\\r\\n\";\n\n    // construct map part\ndata += \"--\" + boundary + \"\\r\\n\";\ndata += \"Content-Disposition: form-data; name=\\\"map\\\"; \\r\\n\";\ndata += \"Content-Type:application/json\\r\\n\\r\\n\";\ndata += \"\\r\\n\" + JSON.stringify(map)+ \"\\r\\n\";\n\ndata += \"--\" + boundary + \"\\r\\n\";\ndata += \"Content-Disposition: form-data; name=\\\"file\\\"; filename=\\\"\" + upfile + \"\\\"\\r\\n\";\ndata += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\n\nvar payload = Utilities.newBlob(data).getBytes()\n.concat(file.getBlob().getBytes())\n.concat(Utilities.newBlob(\"\\r\\n--\" + boundary + \"--\\r\\n\").getBytes());\n</code></pre>\n<p>Logger.log(payload);</p>\n<pre><code>var response = UrlFetchApp.fetch(\"https://api.monday.com/v2/file\", {\nmethod: 'post',\nheaders: {\n  'Content-Type': \"multipart/form-data; boundary=\" + boundary,\n  'Authorization': API_KEY,\n  'API-Version' : '2024-01'\n},\n'body': payload\n</code></pre>\n<p>})</p>\n<p>Logger.log(response);<br />\nvar result = JSON.parse(response.getContentText());<br />\nLogger.log(result);</p>\n<p>Cheers,<br />\nDarren Liccardo<br />\nCofounder &amp; Managing Director<br />\n+1.408.564.1601<br />\nCatapult Ventures | <span class=\"mention\">@dliccardo</span> | <span class=\"mention\">@catapultseed</span></p>"
+    },
+    {
+      "id": 167578,
+      "postNumber": 18,
+      "createdAt": "2024-02-13T13:44:26.649Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> :  Any updates here?</p>"
+    },
+    {
+      "id": 167911,
+      "postNumber": 19,
+      "createdAt": "2024-02-14T15:56:06.000Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Any updates here Monday team?  I could really use some help getting debug visibility into this issue…</p>\n<p>Cheers,<br />\nDarren</p>"
+    },
+    {
+      "id": 167913,
+      "postNumber": 20,
+      "createdAt": "2024-02-14T16:02:50.345Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dlicc\">@dlicc</a> – couldn’t find anything interesting in our logs, sorry!</p>\n<p>I do want to reproduce it in my account though. I haven’t gotten to it yet, I have been working on this big API migration we have. Will try and poke around today.</p>"
+    },
+    {
+      "id": 167943,
+      "postNumber": 21,
+      "createdAt": "2024-02-14T18:32:37.744Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dlicc\">@dlicc</a> – The unsupported query error is super weird; I was able to reproduce it and don’t really know what the reason is. But I got it to work in apps script!</p>\n<p>Try this:</p>\n<pre><code class=\"lang-javascript\">function uploadFileFetch() {\n  var url = \"https://api.monday.com/v2/file\";\n  var form = {\n    query : 'mutation ($file: File!, $item: ID!) { add_file_to_column (file: $file, item_id: $item, column_id: \"files\") { id } }',\n    variables: JSON.stringify({\"item\" : \"373547130\"}),\n    map: JSON.stringify({\"file\":\"variables.file\"}),\n    file : DriveApp.getFilesByName(\"test.txt\").next().getBlob()\n  };\n  var options = {\n    method : \"POST\",\n    payload : form,\n    headers : {\n      'Authorization': 'eyJhbGciOiJIUzI1NiJ9.thisisasecret',\n      'API-Version' : '2024-01'\n    }\n  };\n  var request = UrlFetchApp.getRequest(url,options);   // (OPTIONAL) generate the request so you\n  console.info(\"Request payload: \" + request.payload); // can examine it (useful for debugging)\n  var response = UrlFetchApp.fetch(url,options);\n  console.info(\"Response body: \" + response.getContentText());\n}\n</code></pre>\n<p>It also works if you put the item ID in the query itself (instead of using the variables object).</p>\n<p>Good luck!</p>\n<p><a href=\"https://stackoverflow.com/questions/24340340/urlfetchapp-upload-file-multipart-form-data-in-google-apps-script\">EDIT: Credit to this stackoverflow post for the solution!</a></p>"
+    },
+    {
+      "id": 167970,
+      "postNumber": 22,
+      "createdAt": "2024-02-14T21:27:27.045Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Thanks for the attention <a class=\"mention\" href=\"/u/dipro\">@dipro</a> !  Unfortunately, I’m still getting the same error using your script (with my API key and item id of course).</p>\n<pre><code class=\"lang-auto\">Exception: Request failed for https://api.monday.com returned code 500. Truncated server response: &lt;!doctypehtml&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;@font-face{font-family:Roboto;font-style:normal;font-weight:500;font-display:swap;src:url(data:font/woff2;base64,d... (use muteHttpExceptions option to examine full response)\n</code></pre>\n<p>All of my other API calls are still working fine right now as well.</p>"
+    },
+    {
+      "id": 167971,
+      "postNumber": 23,
+      "createdAt": "2024-02-14T21:33:26.641Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Just tried again and it worked for the first time!   Maybe something intermittent going on with the API for file upload?   … I will keep going and report back on further API calls of this type…</p>"
+    },
+    {
+      "id": 167981,
+      "postNumber": 24,
+      "createdAt": "2024-02-14T22:30:51.967Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Successfully uploaded 30 files to various items on a board.  Consider this solved. Thanks for the help!</p>\n<p>I would recommend updating the docs as I don’t believe the existing javascript example in the docs is functional.</p>"
+    },
+    {
+      "id": 168145,
+      "postNumber": 25,
+      "createdAt": "2024-02-15T14:56:42.339Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Yeah… I think it overcomplicates things, and we’ll remove it!</p>"
+    }
+  ]
+}

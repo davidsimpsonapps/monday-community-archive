@@ -1,0 +1,104 @@
+{
+  "id": 10895,
+  "title": "Can't change column value(s)",
+  "slug": "cant-change-column-value-s",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    38,
+    94
+  ],
+  "createdAt": "2020-09-04T06:10:41.241Z",
+  "lastPostedAt": "2021-02-25T14:38:37.078Z",
+  "postsCount": 12,
+  "excerpt": "The column values are updated successfully when I run the following mutations in Playground. But when called in code, these same mutations throw Graphql Validation errors. All board scope permissions are set. \n  \nworks i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 15,
+  "views": 3939,
+  "posts": [
+    {
+      "id": 27706,
+      "postNumber": 1,
+      "createdAt": "2020-09-04T06:10:41.321Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>The column values are updated successfully when I run the following mutations in Playground. But when called in code, these same mutations throw Graphql Validation errors. All board scope permissions are set.<br />\n<br /><br />\nworks in playground <img src=\"https://emoji.discourse-cdn.com/apple/ballot_box_with_check.png?v=12\" title=\":ballot_box_with_check:\" class=\"emoji\" alt=\":ballot_box_with_check:\" width=\"20\" height=\"20\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/8/845ef61421cc6e4c88815b4f5961d4b41b498846.png\" alt=\"graphql-1\" width=\"157\" height=\"74\" />        <img src=\"https://global.discourse-cdn.com/monday/original/2X/e/ebe196cead015cfa624e0c442c3f4e98c56ebc54.png\" alt=\"graphql-2\" width=\"198\" height=\"74\" /><br />\n<br /><br />\ndoesn’t work in code <img src=\"https://emoji.discourse-cdn.com/apple/x.png?v=12\" title=\":x:\" class=\"emoji\" alt=\":x:\" width=\"20\" height=\"20\" /></p>\n<pre><code>const query1 = `mutation {\nchange_column_value (board_id: 726291451, item_id: 726291453, column_id: \"status\", value: \"{\\\"index\\\": 1}\") {id}}`\n\nconst query2 = `mutation { change_multiple_column_values (board_id: 726291451, item_id: 726291453, column_values: \"{\\\"url\\\":\\\"urlVal0\\\",\\\"name1\\\":\\\"nameVal0\\\"}\") {id}}`\n\n\n// also no good\nconst val = {\"index\": 1};\nconst query = `mutation {\nchange_column_value (board_id: 726291451, item_id: 726291453, column_id: \"status\", value: ${JSON.stringify(val)}) {id}}`\n</code></pre>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/grey_question.png?v=12\" title=\":grey_question:\" class=\"emoji only-emoji\" alt=\":grey_question:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 27716,
+      "postNumber": 2,
+      "createdAt": "2020-09-04T10:37:14.584Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/supernova\">@supernova</a> ,</p>\n<p>remove the curly braces after “mutation”.</p>\n<p>Tell me if that helped</p>\n<p>Greetings</p>"
+    },
+    {
+      "id": 27718,
+      "postNumber": 3,
+      "createdAt": "2020-09-04T11:13:30.391Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<pre><code>const query = \n\n`mutation change_column($value: JSON!) {\n\n     change_column_value(board_id: 726291451, item_id: 726291453, column_id: \"status\", value: $value) {\n          id\n     }\n\n}`;\n</code></pre>\n<p><code> const value =  { \"value\": \"{\\\"index\\\": 1}\"};</code></p>\n<p>And this should work also, if I’m not mistaken.</p>"
+    },
+    {
+      "id": 27742,
+      "postNumber": 4,
+      "createdAt": "2020-09-04T14:57:35.385Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/supernova\">@supernova</a>!</p>\n<p>Phew! You found a bug!!</p>\n<p>I tried it myself and I got the same problem error.<br />\nIf you want it working, you have to use variables, unfortunately. Here’s how I have it working:</p>\n<pre><code class=\"lang-auto\">      const query = `mutation changeValues($board_id: Int!, $item_id: Int, $column_id: String!, $value: JSON!) {\n        change_column_value (board_id: $board_id, item_id: $item_id , column_id: $column_id, value: $value) {\n          id\n        } \n      }`\n\n      monday.api(query, {variables: {\"board_id\": boardId, \"item_id\": itemId, \"column_id\": \"status\", \"value\": \"{\\\"index\\\": 1}\"}}).then((res) =&gt; console.log(res)).catch((e) =&gt; console.log(e))\n\n\n</code></pre>\n<p>Hope that helps.</p>"
+    },
+    {
+      "id": 27880,
+      "postNumber": 5,
+      "createdAt": "2020-09-08T07:37:58.087Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>You got it <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=9\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" /> !! This works yay you’ve helped A LOT <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=9\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=9\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/100.png?v=9\" title=\":100:\" class=\"emoji\" alt=\":100:\" /></p>"
+    },
+    {
+      "id": 27881,
+      "postNumber": 6,
+      "createdAt": "2020-09-08T07:52:17.008Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> , I tried both ways that you suggested, but they didn’t work for me. However, <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a>’s solution of using variables worked! I just checked monday’s API doc &amp; now I see that using variables is specified. Just something that I skipped over… ( nothing crucial /s )</p>"
+    },
+    {
+      "id": 27925,
+      "postNumber": 7,
+      "createdAt": "2020-09-08T13:30:05.643Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/supernova\">@supernova</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>I’m so glad that you’ve found a working solution in the community here!</p>\n<p><a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a> a plate of chillis to this very helpful man! Jokes aside, thanks so much for helping out here!</p>\n<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> thanks for chiming in as well <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p><a class=\"mention\" href=\"/u/supernova\">@supernova</a></p>\n<p>You can definitely disregard this completely since you’ve got this to work already <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>That said, I do see one more thing that sticks out to me in the queries you are sending:</p>\n<p>“{\"url\":\"urlVal0\",\"name1\":\"nameVal0\"}”</p>\n<p>To my mind, that should be formatted as such instead:</p>\n<p>{“url”: “<a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">http://monday.com</a>”, “text”: “go to monday!”}</p>\n<p>Do you think that could be part of what was causing the errors before?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27933,
+      "postNumber": 8,
+      "createdAt": "2020-09-08T14:00:20.714Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> , I don’t think so cause for this test case “url” &amp; “name1” are the column IDs &amp; url col is type “text” so the value can be any string - doesn’t have to be url string</p>"
+    },
+    {
+      "id": 28031,
+      "postNumber": 9,
+      "createdAt": "2020-09-09T09:28:09.049Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Nice solution <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a> !</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 28039,
+      "postNumber": 10,
+      "createdAt": "2020-09-09T11:47:10.245Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/supernova\">@supernova</a></p>\n<p>Thank you for getting back to me on this! Ah, I had assumed that the “URL” key was meant to update a Link column and not a text column. Thank you for clarifying further!</p>\n<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> thanks for spreading the good vibes <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 28070,
+      "postNumber": 11,
+      "createdAt": "2020-09-09T13:39:26.993Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Actually, I didn’t realize monday supported Link columns. Thanks to your comment <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> I just discovered a bunch of other column types! Pleasantly surprised by all the options available <img src=\"https://emoji.discourse-cdn.com/apple/astonished.png?v=9\" title=\":astonished:\" class=\"emoji\" alt=\":astonished:\" /></p>"
+    },
+    {
+      "id": 42495,
+      "postNumber": 12,
+      "createdAt": "2021-02-25T14:38:37.078Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": 67309,
+  "title": "Deprecation of the Groups field Items",
+  "slug": "deprecation-of-the-groups-field-items",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-09-29T09:37:56.696Z",
+  "lastPostedAt": "2023-10-01T05:15:28.319Z",
+  "postsCount": 3,
+  "excerpt": "Hi \nI am doing some work in the dev playground and am getting a circular error. If I try this query: \n{ \n  boards(ids: 4036050693) { \n    groups (ids:&quot;Q3 2023 Engineering Squads&quot;) { \n      title \n      id\n      items {\n &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 437,
+  "posts": [
+    {
+      "id": 146123,
+      "postNumber": 1,
+      "createdAt": "2023-09-29T09:37:56.772Z",
+      "author": "KargoTechComms (Steve Suranie)",
+      "cookedHtml": "<p>Hi</p>\n<p>I am doing some work in the dev playground and am getting a circular error. If I try this query:</p>\n<pre><code class=\"lang-auto\">{ \n  boards(ids: 4036050693) { \n    groups (ids:\"Q3 2023 Engineering Squads\") { \n      title \n      id\n      items {\n        id\n        name\n      }\n     \n    } \n  } \n}\n</code></pre>\n<p>I get an error response indicating it is a deprecated field. (Which we were told was going to happen)</p>\n<pre><code class=\"lang-auto\"> \"extensions\": {\n    \"warnings\": [\n      {\n        \"message\": \"Replaced by Group.items_page in 2023-10\",\n        \"locations\": [\n          {\n            \"line\": 6,\n            \"column\": 7\n          }\n        ],\n</code></pre>\n<p>However, when I change the query to this:</p>\n<pre><code class=\"lang-auto\">{ \n  boards(ids: 4036050693) { \n    groups (ids:\"Q3 2023 Engineering Squads\") { \n      title \n      id\n      items_page {\n        id\n        name\n      }\n     \n    } \n  } \n} \n</code></pre>\n<p>I get an error message that reads the items_page is not available for this version of the API.</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Field 'items_page' doesn't exist on type 'Group'\",\n      \"locations\": [\n        {\n          \"line\": 6,\n          \"column\": 7\n        }\n</code></pre>\n<p>Per the docs here, items_page should be available as a field under Groups</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/9/e9a024aed5404e96573ffbb81463b5a9a78a7ca8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/9/e9a024aed5404e96573ffbb81463b5a9a78a7ca8_2_690x219.png\" alt=\"image\" width=\"690\" height=\"219\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">811×258 27.8 KB</span></div></a></div><p></p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/groups\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/groups\" target=\"_blank\" rel=\"noopener nofollow ugc\">Groups</a></h3>\n\n  <p>Items are housed together in units called groups. Each board contains one or multiple groups, and each can hold one or many items.As a developer working with monday.com, it is important to familiarize yourself with the groups API so you know how to...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>Did your dev team put out the deprecated field check before you switched the API over to the right version or am I doing something wrong?</p>"
+    },
+    {
+      "id": 146181,
+      "postNumber": 2,
+      "createdAt": "2023-09-29T14:33:15.094Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>You can set the API version in the API playground. If younset it to 2023-10 the items_page filed exists.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/5/5590b777f4b01637c78fb18076e7ce5b46bd09b6.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/5/5590b777f4b01637c78fb18076e7ce5b46bd09b6_2_690x289.png\" alt=\"image\" width=\"690\" height=\"289\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1734×728 36.4 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 146273,
+      "postNumber": 3,
+      "createdAt": "2023-10-01T05:15:28.319Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/kargotechcomms\">@KargoTechComms</a>,</p>\n<p>As <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> well mentioned, you need to use the latest API version for that.</p>\n<p>Please try changing the version and using a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    groups(ids: \"topics\") {\n      title\n      id\n      items_page {\n        items{\n          id\n          name\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Please take into account that it looks like you were trying to pass a group’s name as its ID and what you need is the group’s ID.</p>\n<p>You can get the IDs of your groups with a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    groups {\n      title\n      id\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

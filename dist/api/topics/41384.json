@@ -1,0 +1,47 @@
+{
+  "id": 41384,
+  "title": "Monday Server Cache",
+  "slug": "monday-server-cache",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94
+  ],
+  "createdAt": "2022-08-22T23:15:16.196Z",
+  "lastPostedAt": "2022-08-23T10:05:26.317Z",
+  "postsCount": 4,
+  "excerpt": "I make an API request to Monday to get all items with a specified email, if there are no matching items, I add a new item to a Monday board via our API and then shortly after (&lt; 1 minute), I make a subsequent request via&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 1245,
+  "posts": [
+    {
+      "id": 95684,
+      "postNumber": 1,
+      "createdAt": "2022-08-22T23:15:16.282Z",
+      "author": "noah.h (noah hornak)",
+      "cookedHtml": "<p>I make an API request to Monday to get all items with a specified email, if there are no matching items, I add a new item to a Monday board via our API and then shortly after (&lt; 1 minute), I make a subsequent request via the API to get the column values of the item just created in the previous API call and the response doesn’t contain the item. If I wait a few minutes, then send the same API request, then the previously created item and it’s values are returned.</p>\n<p>So, I’m thinking that either the server isn’t updated by the time I make the second API request or the response is being cached. I tried sending the second request with ‘cache-control: no-store’ header hoping that it would get me the freshest result from the Monday board bu that didn’t seem to work and the result still did not contain the newly created item.</p>\n<p><strong>The use case for this workflow is to prevent duplicate items from being added to the board so I would like to know if there is anything that I can do either through code or the Monday dashboard to prevent the duplicate records from being created.</strong></p>\n<p>First API call to get item by email:</p>\n<pre><code class=\"lang-auto\">getClientByEmail(email, callback) {\n    let query = `query { items_by_column_values (board_id: 2551802522, column_id: \"email\", column_value: \"${email}\") { id column_values {\n        id\n        value\n      } } }`;\n\n    fetch(\"https://api.monday.com/v2\", {\n      method: \"post\",\n      headers: {\n        \"Content-Type\": \"application/json\",\n        Authorization: process.env.MONDAY_KEY,\n        \"cache-control\": \"no-store\",\n      },\n      body: JSON.stringify({\n        query: query,\n      }),\n    })\n      .then((res) =&gt; res.json())\n      .then((res) =&gt; {\n        // error handling\n        callback(null, res);\n      })\n      .catch((mondayErr) =&gt; callback(mondayErr, null));\n  }\n</code></pre>\n<p>If the above request returns no items, then I add a new item via this method:</p>\n<pre><code class=\"lang-auto\">addRecordToLeadBoard(leadInfo, callback) {\n    let newLeadObject = {\n      status: \"New Lead\",\n      email: { email: leadInfo.email, text: leadInfo.email },\n      location: { lat: 0, lng: 0, address: leadInfo.address_1 },\n      phone_1: {\n        phone: leadInfo.phone_number.replace(/\\D+/g, \"\"),\n        countryShortName: \"US\",\n      },\n      long_text2: { text: leadInfo.notes },\n      status_1: \"Interior\",\n      text5: \"Website\",\n    };\n    let vars = {\n      myItemName: leadInfo.name,\n      columnValues: JSON.stringify(newLeadObject),\n      boardId: 2551802522,\n    };\n\n    let query =\n      \"mutation ($myItemName: String!, $boardId: Int! ,$columnValues: JSON! ) { create_item (board_id:$boardId, item_name:$myItemName, column_values: $columnValues) { id } }\";\n\n    fetch(\"https://api.monday.com/v2\", {\n      method: \"post\",\n      headers: {\n        \"Content-Type\": \"application/json\",\n        Authorization: process.env.MONDAY_KEY,\n        \"cache-control\": \"no-cache\",\n      },\n      body: JSON.stringify({\n        query: query,\n        variables: JSON.stringify(vars),\n      }),\n    })\n      .then((res) =&gt; res.json())\n      .then((res) =&gt; {\n        // Error Handling\n        callback(null, res);\n      })\n      .catch((mondayErr) =&gt; callback(mondayErr, null));\n  }\n</code></pre>\n<p>After the item is created, I then shortly after make pretty much the same request but the ‘leadInfo’ object I use to populate the Monday item has different data. So in order to prevent a duplicate item, I make the first API call again (getClientByEmail) with the hopes that the response from Monday will give me the newly created item however it’s not been returning the newly created item until I retry sending the request again after a minute or two</p>"
+    },
+    {
+      "id": 95700,
+      "postNumber": 2,
+      "createdAt": "2022-08-23T04:37:33.822Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/noah.h\">@noah.h</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>The <code>items_by_column_values</code> method will give you the items with the desired value in the specified column when that value has been there for at least 32 seconds. This might take a few more seconds in times where the server traffic is very high.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 95743,
+      "postNumber": 3,
+      "createdAt": "2022-08-23T10:05:26.317Z",
+      "author": "noah.h (noah hornak)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> thanks for the quick reply!</p>\n<p>That makes sense and is very good to know.</p>\n<p>Thanks for the help!</p>"
+    },
+    {
+      "id": 96340,
+      "postNumber": 4,
+      "createdAt": "2022-08-30T10:06:16.221Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

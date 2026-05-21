@@ -1,0 +1,53 @@
+{
+  "id": 67771,
+  "title": "Mix of conditions on the formula column",
+  "slug": "mix-of-conditions-on-the-formula-column",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-10-05T10:08:43.891Z",
+  "lastPostedAt": "2023-10-09T13:38:03.207Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nI’m trying to clean my columns from the exclamation point/“error message”. \nI have four columns where I’m calculating the forecast from 2023 to 2026 but if the timeline is empty, I receive the error message. \nI’ve t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 620,
+  "posts": [
+    {
+      "id": 147053,
+      "postNumber": 1,
+      "createdAt": "2023-10-05T10:08:43.963Z",
+      "author": "Lfer (leo)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m trying to clean my columns from the exclamation point/“error message”.<br />\nI have four columns where I’m calculating the forecast from 2023 to 2026 but if the timeline is empty, I receive the error message.</p>\n<p>I’ve teste this formula and it works when it’s by itself: IF({Timeline}=“”,“A”,“B”).<br />\nOnce I add the other conditions if comes back with exclamation: IF({Timeline}=“”,“A”,IF(AND(YEAR({Timeline#Start})&lt;2023, YEAR({Timeline#End})=2023), WORKDAYS({Timeline#End}, “01/01/2023”)*({Approx $}/{Duration})),0)</p>\n<p>I also have a Duration column so I tried to connect my condition to the Duration column but again, it stops working when I add the other conditions. Formula below:<br />\nIF({Duration}=“0”,“A”,IF(AND(YEAR({Timeline#Start})&lt;2023, YEAR({Timeline#End})=2023), WORKDAYS({Timeline#End}, “01/01/2023”)*({Approx $}/{Duration})),0)</p>\n<p>And don’t get me wrong. I’m successfully calculating 4 conditions on the same formula column, the only issue is making the “blank column situation” work with them.</p>\n<p>Any help will be welcomed,</p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 147329,
+      "postNumber": 2,
+      "createdAt": "2023-10-06T12:16:30.583Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Leo,</p>\n<p>Difficult to figure out what you’re trying to accomplish but if your original IF statement works as in</p>\n<pre><code class=\"lang-auto\">IF(Cond,A,B)\n</code></pre>\n<p>when you add another IF statement in lieu of B, you should end up with 2 closing parentheses at the end. In your formulas, you don’t.</p>\n<pre><code class=\"lang-auto\">IF(Cond,A,IF(Cond,A,B))\n</code></pre>\n<p>And if you repeat you should end up with 3, etc.</p>\n<pre><code class=\"lang-auto\">IF(Cond,A,IF(Cond,A,IF(Cond,A,B)))\n</code></pre>\n<p>It might be helpful to write it like this to check if the parentheses are right:</p>\n<pre><code class=\"lang-auto\">IF(Cond,A,\n   IF(Cond,A,B)\n)\n</code></pre>"
+    },
+    {
+      "id": 147545,
+      "postNumber": 3,
+      "createdAt": "2023-10-09T12:40:44.065Z",
+      "author": "Lfer (leo)",
+      "cookedHtml": "<p>Hi Gilles,</p>\n<p>Thank you. I will try that.</p>\n<p>This formula is to split my forecast accordingly to the timeline.<br />\nI have variable $, variable starts and ends, variable durations. I’m using the same formula for for the needed years, just changing the year in the formula to match the column. Don’t bother the column called “Formula”.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/a/6/a6d83ecf7fbf0de8ef22f0c4b01365260209eb1a.png\" alt=\"Screenshot 2023-10-09 114225\" width=\"643\" height=\"182\" /></p>"
+    },
+    {
+      "id": 147546,
+      "postNumber": 4,
+      "createdAt": "2023-10-09T13:00:56.718Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Then I would test your formula when there is a duration first. Looks like this would work:</p>\n<pre><code class=\"lang-auto\">IF(AND(YEAR({Timeline#Start})&lt;2023, YEAR({Timeline#End})=2023)), WORKDAYS({Timeline#End}, \"01/01/2023\")*{Approx $}/{Duration},0)\n</code></pre>\n<p>Once you got it working,</p>\n<pre><code class=\"lang-auto\">IF({Duration}=\"0\", \"A\",\n     paste the formula that works here\n)\n</code></pre>"
+    },
+    {
+      "id": 147552,
+      "postNumber": 5,
+      "createdAt": "2023-10-09T13:38:03.207Z",
+      "author": "Lfer (leo)",
+      "cookedHtml": "<p>Unfortunately they don’t seem to work together…</p>\n<p>This is the entire formula:<br />\nIF(AND(YEAR({Timeline#Start})&lt;2023, YEAR({Timeline#End})=2023), WORKDAYS({Timeline#End}, “01/01/2023”)<em>({Approx $}/{Duration}), IF(AND(YEAR({Timeline#Start})=2023, YEAR({Timeline#End})=2023), WORKDAYS({Timeline#End},{Timeline#Start})</em>({Approx $}/{Duration}), IF(AND(YEAR({Timeline#Start})=2023, YEAR({Timeline#End})&gt;2023), WORKDAYS(“12/31/2023”, {Timeline#Start})<em>({Approx $}/{Duration}), IF(AND(YEAR({Timeline#Start})&lt;2023, YEAR({Timeline#End})&gt;2023), WORKDAYS(“12/31/2023”, “01/01/2023”)</em>({Approx $}/{Duration}),0))))</p>\n<p>If I add the Duration or Timeline condition it doesn’t work.</p>"
+    }
+  ]
+}

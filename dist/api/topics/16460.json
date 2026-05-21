@@ -1,0 +1,83 @@
+{
+  "id": 16460,
+  "title": "Creating a new item with color columns updated",
+  "slug": "creating-a-new-item-with-color-columns-updated",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    139
+  ],
+  "createdAt": "2021-02-18T11:18:11.496Z",
+  "lastPostedAt": "2021-02-22T18:01:45.483Z",
+  "postsCount": 8,
+  "excerpt": "I have a dashboard in which I am creating new items with a Python script. \nThe group I am creating items in has columns I would like to be populated with data as soon as an item is created. \nThis is an example of how i’d&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2938,
+  "posts": [
+    {
+      "id": 41184,
+      "postNumber": 1,
+      "createdAt": "2021-02-18T11:18:11.662Z",
+      "author": "Yuval_C (Yuval Cohen)",
+      "cookedHtml": "<p>I have a dashboard in which I am creating new items with a Python script.</p>\n<p>The group I am creating items in has columns I would like to be populated with data as soon as an item is created.</p>\n<p>This is an example of how i’d like one of the columns to look after creating the item (This was done manually):</p>\n<pre><code class=\"lang-auto\"> \"column_values\": [\n      {\n        \"id\": \"status_2\",\n        \"title\": \"Who has the ball\",\n        \"text\": \"Customer\",\n        \"value\": \"{\\\"index\\\":7,\\\"post_id\\\":null,\\\"changed_at\\\":\\\"2021-02-17T09:16:52.085Z\\\"}\",\n        \"type\": \"color\",\n        \"additional_info\": \"{\\\"label\\\":\\\"Customer\\\",\\\"color\\\":\\\"#fdab3d\\\",\\\"changed_at\\\":\\\"2021-02-17T09:16:52.085Z\\\"}\"\n      },\n</code></pre>\n<p>This is the code, which is obviously not working:</p>\n<pre><code class=\"lang-auto\">query = 'mutation ($myItemName: String!, $columnVals: JSON!) ' \\\n        '{ create_item (board_id:%s, group_id:\"%s\", ' \\\n        'item_name:$myItemName, column_values:$columnVals) { id } }' % (\n            board_id, group_id)\n\ndata = {'query': query, 'variables':\n    {'myItemName': task_name,\n     'columnVals': json.dumps([{'date4': {'date': str(date.today())}},\n                               {\"status_2\": \"{\\\"label\\\":\\\"Customer\\\",\\\"color\\\":\\\"#fdab3d\\\"}\"}])}\n        }\n\nres = requests.post(url=MONDAY_API_URL, json=data, headers={\"Authorization\": MONDAY_API_TOKEN})\n</code></pre>\n<p>It creates an item with the columns i’d like updated blank (The date4 is created Ok).</p>\n<p>Any help would be appreciated.</p>"
+    },
+    {
+      "id": 41217,
+      "postNumber": 2,
+      "createdAt": "2021-02-18T13:34:27.607Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/yuval_c\">@Yuval_C</a></p>\n<p>Unfortunately the API does not support adding labels and/or colors to status (color) columns. When you query a status column you can see it has a settings_str value, but you can’t change that value with an API call.</p>"
+    },
+    {
+      "id": 41222,
+      "postNumber": 4,
+      "createdAt": "2021-02-18T13:45:36.156Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yuval_c\">@Yuval_C</a>!</p>\n<p>Hmm strange. Not sure why only the Status column would not be pulling through, but can we try a few things to see if it helps, in addition to Bas’s suggestion?</p>\n<ol>\n<li>The column values need to be separated by only a comma, and it looks like you’re performing json.dumps() on an array of column values you’re hoping to change. Maybe try performing separate dumps methods on date4 and status_2 that are only separated by a comma?</li>\n<li>Make sure the formatting between date4 and status_2 match exactly – so I see date4 is single, not double quotations, and also you did not include quotation marks around the outside of the value of the date4 key-value pair.</li>\n<li>It looks like your status_2 values are already in JSON formatting-- why are you converting it again?</li>\n</ol>\n<p>Wasn’t sure if all of these would be helpful, but this is what I’m thinking about.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41224,
+      "postNumber": 5,
+      "createdAt": "2021-02-18T13:46:08.774Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 41516,
+      "postNumber": 6,
+      "createdAt": "2021-02-21T12:07:12.385Z",
+      "author": "Yuval_C (Yuval Cohen)",
+      "cookedHtml": "<p>If this can’t be done while creating a new item, how can I do it using mutations? I tried but couldn’t get it to work and documentation is very basic.</p>"
+    },
+    {
+      "id": 41624,
+      "postNumber": 7,
+      "createdAt": "2021-02-22T15:22:49.419Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yuval_c\">@Yuval_C</a>,</p>\n<p>Are you specifically looking to set the color when mutating the status column?</p>\n<p>If not, you can just reference the status label itself, and the color will likewise be set because it’s associated with the status label itself.</p>\n<p>Do you mind expanding on why you were looking to alter the color specifically?</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41639,
+      "postNumber": 8,
+      "createdAt": "2021-02-22T15:59:06.576Z",
+      "author": "Yuval_C (Yuval Cohen)",
+      "cookedHtml": "<p>I have an automation in python that creates items when external events occur. All these items should be tasked to the same person (I know I didn’t ask this but I need to set this too) and have the same status.<br />\nThe column for setting the person:</p>\n<pre><code class=\"lang-auto\">{\n     \"id\": \"person\",\n     \"value\": \"{\\\"personsAndTeams\\\":[{\\\"id\\\":172342122,\\\"kind\\\":\\\"person\\\"}],\\\"changed_at\\\":\\\"2021-02-17T09:14:22.336Z\\\"}\",\n     \"title\": \"Owner\"\n}\n</code></pre>\n<p>I will try setting the status and see if that works.<br />\nIs there a way to set the person column as well?</p>\n<p>Thank you Helen.</p>"
+    },
+    {
+      "id": 41646,
+      "postNumber": 9,
+      "createdAt": "2021-02-22T18:01:45.483Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yuval_c\">@Yuval_C</a>,</p>\n<p>You can mutate the value of a People column by entering the person Id only.</p>\n<p>It might help for you to check out the API section explaining our People column: <a href=\"https://monday.com/developers/v2#mutations-section-columns-change-column-value\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#mutations-section-columns-change-column-value</a>.</p>\n<p>Hope this helps!</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 42989,
+      "postNumber": 10,
+      "createdAt": "2021-03-01T18:02:07.480Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

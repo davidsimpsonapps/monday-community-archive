@@ -1,0 +1,76 @@
+{
+  "id": 110786,
+  "title": "Date formula - Proximity to today between two dates",
+  "slug": "date-formula-proximity-to-today-between-two-dates",
+  "categoryId": 6,
+  "tagIds": [
+    104,
+    108,
+    303
+  ],
+  "createdAt": "2025-03-03T13:52:02.738Z",
+  "lastPostedAt": "2025-03-09T11:26:25.332Z",
+  "postsCount": 8,
+  "excerpt": "Hello - \nI have a calendar board I am using to track our team’s PTO and would like to display a grouping by when the PTO is occurring.  I initially tried grouping by my timeline field which works fine if the PTO is a sin&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 34,
+  "posts": [
+    {
+      "id": 222968,
+      "postNumber": 1,
+      "createdAt": "2025-03-03T13:52:02.815Z",
+      "author": "lakerfaninflorida (Bill)",
+      "cookedHtml": "<p>Hello -<br />\nI have a calendar board I am using to track our team’s PTO and would like to display a grouping by when the PTO is occurring.  I initially tried grouping by my timeline field which works fine if the PTO is a single day, but for multiple days, it looks at the end date so an entry for M-F looks like it isn’t happening until Friday.  I’d like to create a formula that provides similar values to the out of the box grouping by timeline (today, this week, last week, last month, past, etc.) by querying the proximity to today between the start and end date of the timeline field.  Once I have that, I can then group by that formula field.</p>\n<p>Is this something someone can help with?</p>"
+    },
+    {
+      "id": 223003,
+      "postNumber": 2,
+      "createdAt": "2025-03-03T19:50:14.339Z",
+      "author": "Clover_Gal (Desiree McCarthy | monday.com Ambassador)",
+      "cookedHtml": "<p>This is not a great fix, but what about a formula column that it pulling the weeknum of the timeline? I can only get it to pull the ‘start’ date’s weeknum but it might help?<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/7/273199917cec6f7470af5f5194a0260985e305bd.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/273199917cec6f7470af5f5194a0260985e305bd.png\" alt=\"image\" width=\"344\" height=\"177\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">344×177 6.27 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/f/0f497beb6f4b72630af28cb718d4d45c1da83ff2.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/0/f/0f497beb6f4b72630af28cb718d4d45c1da83ff2.png\" alt=\"image\" width=\"344\" height=\"177\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">344×177 3.88 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 223039,
+      "postNumber": 3,
+      "createdAt": "2025-03-04T10:18:42.397Z",
+      "author": "trevor13 (Trevor Chauvin-DeCaro)",
+      "cookedHtml": "<p>Hi Bill! What if you gave this a try?</p>\n<p>You can create a <strong>Formula Column</strong> and use the following formula:</p>\n<pre><code class=\"lang-auto\">IF(AND(TODAY() &gt;= {Start Date}, TODAY() &lt;= {End Date}), \"Today\",\n   IF(AND(TODAY() &gt;= {Start Date}, TODAY() &lt;= DATE_ADD(TODAY(), 7, \"days\")), \"This Week\",\n   IF(AND(TODAY() &gt;= DATE_SUB(TODAY(), 7, \"days\"), TODAY() &lt; {Start Date}), \"Last Week\",\n   IF(AND(TODAY() &gt;= DATE_SUB(TODAY(), 30, \"days\"), TODAY() &lt; {Start Date}), \"Last Month\",\n   IF(TODAY() &lt; {Start Date}, \"Future\", \n   \"Past\")))))\n</code></pre>\n<p>Breakdown of Formula:</p>\n<ol>\n<li>If today is between the start and end date → “Today”</li>\n<li>If PTO starts within the next 7 days → “This Week”</li>\n<li>If PTO started in the last 7 days but before today → “Last Week”</li>\n<li>If PTO started in the last 30 days but before today → “Last Month”</li>\n<li>If the PTO start date is in the future → “Future”</li>\n<li>If none of the above apply, it must be in the past → “Past”</li>\n</ol>\n<p>Here are the steps for implementation:</p>\n<ol>\n<li>Add a Formula Column to your board.</li>\n<li>Copy &amp; paste the formula above.</li>\n<li>Rename the column to something like “PTO Timeframe.”</li>\n<li>Group your board by this column.</li>\n</ol>\n<p>Now, PTO requests will group logically based on when they actually occur, instead of relying only on the end date.</p>\n<p>Lemme know if that works!</p>\n<p>T</p>"
+    },
+    {
+      "id": 223086,
+      "postNumber": 4,
+      "createdAt": "2025-03-04T13:18:42.882Z",
+      "author": "lakerfaninflorida (Bill)",
+      "cookedHtml": "<p>Hi Trevor,<br />\nThanks so much, this looks like what I was looking for.  I am getting an unrecognized function when applying this with the sample start and end date columns replaced with my own.  Can you look at the modified code below and let me know if there is any modifications I missed?</p>\n<p>IF(AND(TODAY() &gt;= {Start Date}, TODAY() &lt;= {End Date}), “Today”,<br />\nIF(AND(TODAY() &gt;= {Start Date}, TODAY() &lt;= DATE_ADD(TODAY(), 7, “days”)), “This Week”,<br />\nIF(AND(TODAY() &gt;= DATE_SUB(TODAY(), 7, “days”), TODAY() &lt; {Start Date}), “Last Week”,<br />\nIF(AND(TODAY() &gt;= DATE_SUB(TODAY(), 30, “days”), TODAY() &lt; {Start Date}), “Last Month”,<br />\nIF(TODAY() &lt; {Start Date}, “Future”,<br />\n“Past”)))))</p>\n<p>Thanks,<br />\nBill</p>"
+    },
+    {
+      "id": 223087,
+      "postNumber": 5,
+      "createdAt": "2025-03-04T13:20:15.960Z",
+      "author": "lakerfaninflorida (Bill)",
+      "cookedHtml": "<p>Sorry, here is the modified code:</p>\n<p>IF(AND(TODAY() &gt;= {Timeline#Start}, TODAY() &lt;= {Timeline#End}), “Today”,<br />\nIF(AND(TODAY() &gt;= {Timeline#Start}, TODAY() &lt;= DATE_ADD(TODAY(), 7, “days”)), “This Week”,<br />\nIF(AND(TODAY() &gt;= DATE_SUB(TODAY(), 7, “days”), TODAY() &lt; {Timeline#Start}), “Last Week”,<br />\nIF(AND(TODAY() &gt;= DATE_SUB(TODAY(), 30, “days”), TODAY() &lt; {Timeline#Start}), “Last Month”,<br />\nIF(TODAY() &lt; {Timeline#Start}, “Future”,<br />\n“Past”)))))</p>"
+    },
+    {
+      "id": 223088,
+      "postNumber": 6,
+      "createdAt": "2025-03-04T13:22:12.550Z",
+      "author": "lakerfaninflorida (Bill)",
+      "cookedHtml": "<p>Thanks Desiree.  I wasn’t aware of the WEEKNUM.  I may use this in a different board.</p>"
+    },
+    {
+      "id": 223239,
+      "postNumber": 7,
+      "createdAt": "2025-03-05T17:13:34.330Z",
+      "author": "trevor13 (Trevor Chauvin-DeCaro)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/l/8491ac/48.png\" class=\"avatar\" /> Bill:</div>\n<blockquote>\n<p>I am getting an unrecognized function when applying this with the sample start and end date columns replaced with my own. Can you look at the modified code below and let me know if there is any modifications I missed?</p>\n</blockquote>\n</aside>\n<p>Hey Bill!</p>\n<p>I <em>think</em> we are getting close! Your formula structure is <strong>mostly correct</strong>, but the error is likely due to <strong>incorrect function usage</strong>. T</p>\n<p>he functions <code>DATE_ADD</code> and <code>DATE_SUB</code> <strong>do not exist</strong> in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>’s formula language from what I believe. Instead, could your try to use <code>DAYS</code> to compare dates.</p>\n<p>IF(AND(TODAY() &gt;= {Timeline#Start}, TODAY() &lt;= {Timeline#End}), “Today”,<br />\nIF(AND(TODAY() &gt;= {Timeline#Start}, {Timeline#Start} &lt;= ADD_DAYS(TODAY(), 7)), “This Week”,<br />\nIF(AND(TODAY() &gt;= ADD_DAYS(TODAY(), -7), TODAY() &lt; {Timeline#Start}), “Last Week”,<br />\nIF(AND(TODAY() &gt;= ADD_DAYS(TODAY(), -30), TODAY() &lt; {Timeline#Start}), “Last Month”,<br />\nIF(TODAY() &lt; {Timeline#Start}, “Future”,<br />\n“Past”)))))</p>\n<p>We are getting close, I can feel it! hahah!</p>"
+    },
+    {
+      "id": 223609,
+      "postNumber": 8,
+      "createdAt": "2025-03-09T11:26:25.332Z",
+      "author": "lakerfaninflorida (Bill)",
+      "cookedHtml": "<p>Hi Trevor -<br />\nThanks so much.  While this version didn’t work, I was able to get some additional help on another variation using a simplified current, past and future categorization.  Here is where it shook out.</p>\n<p>IF(AND(DAYS(TODAY(), {Timeline#Start}) &gt; 1, DAYS(TODAY(), {Timeline#End}) &gt; 1), “Past”, IF(OR(OR(AND(DAYS(TODAY(), {Timeline#End}) &gt; 0, DAYS(TODAY(), {Timeline#End}) &lt; 1), AND(DAYS(TODAY(), {Timeline#Start}) &gt; 0, DAYS(TODAY(), {Timeline#Start}) &lt; 1)), AND(DAYS(TODAY(), {Timeline#Start}) &gt; 0, DAYS(TODAY(), {Timeline#End}) &lt; 0)), “Current”,<br />\nIF(AND(DAYS(TODAY(), {Timeline#Start}) &lt; 0, DAYS(TODAY(), {Timeline#End}) &lt; 0), “Future”, “”)))</p>\n<p>I was then able to group by the new formula and here’s what that looks like:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/9/0958001d2e279799428ebfaf0b43e168047634ed.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/9/0958001d2e279799428ebfaf0b43e168047634ed_2_690x336.png\" alt=\"image\" width=\"690\" height=\"336\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1125×548 45.2 KB</span></div></a></div><p></p>\n<p>Thanks again!</p>"
+    }
+  ]
+}

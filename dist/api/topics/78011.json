@@ -1,0 +1,61 @@
+{
+  "id": 78011,
+  "title": "Deleting items query not working",
+  "slug": "deleting-items-query-not-working",
+  "categoryId": 8,
+  "tagIds": [
+    351,
+    406
+  ],
+  "createdAt": "2024-02-13T10:41:32.413Z",
+  "lastPostedAt": "2024-02-20T11:55:47.646Z",
+  "postsCount": 6,
+  "excerpt": "Hello there, I am experiencing problems since today and I have not migrated yet. I am trying to migrate but I keep getting errors and I cannot seem to find the solutions. \nThis is the error i am getting: &quot; \n\nFout bij het&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 243,
+  "posts": [
+    {
+      "id": 167515,
+      "postNumber": 1,
+      "createdAt": "2024-02-13T10:41:32.516Z",
+      "author": "Brian1 (Brian1)",
+      "cookedHtml": "<p>Hello there, I am experiencing problems since today and I have not migrated yet. I am trying to migrate but I keep getting errors and I cannot seem to find the solutions.</p>\n<p>This is the error i am getting: \"</p>\n<blockquote>\n<p>Fout bij het ophalen van items: [{‘message’: ‘List dimension mismatch on variable $boardId and argument ids (ID! / [ID!])’, ‘locations’: [{‘line’: 3, ‘column’: 28}], ‘path’: [‘query’, ‘boards’, ‘ids’], ‘extensions’: {‘code’: ‘variableMismatch’, ‘variableName’: ‘boardId’, ‘typeName’: ‘ID!’, ‘argumentName’: ‘ids’, ‘errorMessage’: ‘List dimension mismatch’}}, {‘message’: ‘List dimension mismatch on variable $groupId and argument ids (String! / [String])’, ‘locations’: [{‘line’: 4, ‘column’: 32}], ‘path’: [‘query’, ‘boards’, ‘groups’, ‘ids’], ‘extensions’: {‘code’: ‘variableMismatch’, ‘variableName’: ‘groupId’, ‘typeName’: ‘String!’, ‘argumentName’: ‘ids’, ‘errorMessage’: ‘List dimension mismatch’}}]</p>\n</blockquote>\n<p>\"</p>\n<p>My script is there to delete all the items in a group when a scripts run through python/selenium. This is my code: \"</p>\n<blockquote>\n<p>def delete_item(api_key, item_id):<br />\napi_url = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {<br />\n“Authorization”: api_key,<br />\n“Content-Type”: “application/json”,<br />\n“API-Version”: “2023-10”<br />\n}</p>\n<pre><code># GraphQL-mutatie voor het verwijderen van een item\nquery = \"\"\"\nmutation deleteItem($itemId: ID!) {\n    delete_item (item_id: $itemId) {\n        id\n    }\n}\n\"\"\"\n\n# De body voor de HTTP POST request\ndata = {\n    \"query\": query,\n    \"variables\": {\"itemId\": item_id}\n}\n\nresponse = requests.post(api_url, json=data, headers=headers)\n\nif response.status_code == 200 and 'errors' not in response.json():\n    print(f\"Item {item_id} succesvol verwijderd.\")\n    return True\nelse:\n    print(f\"Fout bij het verwijderen van item {item_id}: {response.text}\")\n    return False\n</code></pre>\n<p>def delete_all_items_in_group(api_key, board_id, group_id):<br />\napi_url = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {<br />\n“Authorization”: api_key,<br />\n“Content-Type”: “application/json”,<br />\n“API-Version”: “2023-10”<br />\n}</p>\n<pre><code># Aangepaste query met expliciete type definitie\nquery = \"\"\"\n            query ($boardId: ID!, $groupId: String!) {\n                boards(ids: $boardId) {\n                    groups(ids: $groupId) {\n                        items_page {\n                            items {\n                                id\n                            }\n                        }\n                    }\n                }\n            }\n        \"\"\"\n\n# Zorg ervoor dat de variabelen als lijsten van ID's worden doorgegeven\nresponse = requests.post(api_url, json={\n    'query': query,\n    'variables': {\n        'boardId': [board_id],  # Verzeker dat dit als een lijst wordt doorgegeven\n        'groupId': [group_id],  # Verzeker dat dit als een lijst wordt doorgegeven\n    }\n}, headers=headers)\n\nif response.status_code == 200 and 'errors' not in response.json():\n    items_data = response.json()['data']['boards'][0]['groups'][0]['items_page']['items']\n    item_ids = [item['id'] for item in items_data]\n\n    for item_id in item_ids:\n        delete_item(api_key, item_id)\nelse:\n    print(f\"Fout bij het ophalen van items: {response.json().get('errors')}\")\n</code></pre>\n</blockquote>\n<p>I am not that experienced in coding, thats probably the reason. I was hoping to get some help, so that my script is working again.</p>"
+    },
+    {
+      "id": 168119,
+      "postNumber": 2,
+      "createdAt": "2024-02-15T13:55:10.236Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/brian1\">@Brian1</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>What are you passing as an example of a boardId value? (no need for the actual ID).</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 168177,
+      "postNumber": 3,
+      "createdAt": "2024-02-15T17:57:34.057Z",
+      "author": "Brian1 (Brian1)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Thank you for getting back to me.</p>\n<p>I must admit that I am not an expert, but I’ll do my best to understand and address your question accurately.</p>\n<p>My goal is to delete every item within a specific group. For this purpose, I’m using the following values:</p>\n<ul>\n<li>Group ID: “nieuwe_groep8945”</li>\n<li>Board ID: 1344967475</li>\n</ul>\n<p>I hope this information assists in diagnosing the issue. I look forward to any guidance you can provide on how to resolve this problem.</p>\n<p>Best regards,</p>"
+    },
+    {
+      "id": 168532,
+      "postNumber": 4,
+      "createdAt": "2024-02-18T11:01:11.943Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/brian1\">@Brian1</a>,</p>\n<p>Would you be able to please try this?</p>\n<pre><code class=\"lang-auto\">query ($boardId: [ID!], $groupId: [String]) {\n                boards(ids: $boardId) {\n                    groups(ids: $groupId) {\n                        items_page {\n                            items {\n                                id\n                            }\n                        }\n                    }\n                }\n            }\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 168950,
+      "postNumber": 5,
+      "createdAt": "2024-02-20T11:42:38.323Z",
+      "author": "Brian1 (Brian1)",
+      "cookedHtml": "<p>Its working <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>.</p>\n<p>Thank you very much!!</p>"
+    },
+    {
+      "id": 168954,
+      "postNumber": 6,
+      "createdAt": "2024-02-20T11:55:47.646Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/brian1\">@Brian1</a> !!!</p>"
+    }
+  ]
+}

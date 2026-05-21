@@ -1,0 +1,68 @@
+{
+  "id": 98134,
+  "title": "Connected column values",
+  "slug": "connected-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    351
+  ],
+  "createdAt": "2024-09-22T11:43:25.644Z",
+  "lastPostedAt": "2024-09-26T12:05:45.156Z",
+  "postsCount": 5,
+  "excerpt": "So, I have a simple query \nquery GetBoardItems{  \n  boards(ids: 7144577487) {  \n    items_page(limit: 5) {  \n      items {  \n        name  \n        column_values {  \n          text\n        }  \n      }  \n    }  \n  }  \n}\n\nW&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 18,
+  "posts": [
+    {
+      "id": 201990,
+      "postNumber": 1,
+      "createdAt": "2024-09-22T11:43:25.710Z",
+      "author": "crushtest (Kostya)",
+      "cookedHtml": "<p>So, I have a simple query</p>\n<pre><code class=\"lang-auto\">query GetBoardItems{  \n  boards(ids: 7144577487) {  \n    items_page(limit: 5) {  \n      items {  \n        name  \n        column_values {  \n          text\n        }  \n      }  \n    }  \n  }  \n}\n</code></pre>\n<p>Which provides me with values of 5 lines in a board. Problem is that I receive <strong>null</strong> where this column is connected with different board.<br />\ne.g:</p>\n<pre><code class=\"lang-auto\">[\n    '006',\n    null,\n    'number',\n    '436911',\n    '12/40',\n    'Open',\n    null,\n    null,\n    '15 transactions per 24 h',\n    'photo',\n    '',\n    'Owner'\n  ]\n</code></pre>\n<p>and all those nulls are values from a different board, there are names of employees, and I wanted to filter that data to get only one’s employee line, but since there is no name, I can’t get only that value.<br />\nThe only thing I found is a linkedPulseId, that gives me some number, but I still couldn’t find how to get the text value of those mirror columns.</p>"
+    },
+    {
+      "id": 202014,
+      "postNumber": 2,
+      "createdAt": "2024-09-22T14:00:46.817Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/crushtest\">@crushtest</a></p>\n<p>Welcome to the community! I assume you want to get the values for a mirror column (connected to a connect_boards column). To do that you must explicitly request this type of column value with:</p>\n<pre><code class=\"lang-auto\">query GetBoardItems{  \n  boards(ids: 7144577487) {  \n    items_page(limit: 5) {  \n      items {  \n        name  \n        column_values {  \n          text\n        }  \n        ... on MirrorValue {\n          display_value\n        }  \n    }  \n  }  \n}\n</code></pre>\n<p>See also: <a href=\"https://developer.monday.com/api-reference/reference/mirror\" class=\"inline-onebox\">Mirror</a>. This will display the text value of the mirror column but you can’t filter on this type co column.</p>"
+    },
+    {
+      "id": 202086,
+      "postNumber": 3,
+      "createdAt": "2024-09-23T11:38:47.462Z",
+      "author": "crushtest (Kostya)",
+      "cookedHtml": "<p>thank you, but I think you misplaced it. it should be inside the column { }<br />\nbut, anyway, thank you. it now shows some values, but still not all.<br />\nI have also a connected column, but I see now where to watch…<br />\nBut still this answer from api creates more confusion, since the order of columns now is messed a bit… but anyway, we can work with that.</p>"
+    },
+    {
+      "id": 202157,
+      "postNumber": 4,
+      "createdAt": "2024-09-23T17:11:01.654Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>You ar correct, I misplaced it. Below one should also give you the connected itemIds</p>\n<pre><code class=\"lang-auto\">query GetBoardItems{  \n  boards(ids: 7144577487) {  \n    items_page(limit: 5) {  \n      items {  \n        name  \n        column_values {  \n          text\n          ... on MirrorValue {\n            display_value\n          }\n          ... on BoardRelationValue {\n            linked_item_ids\n            linked_items\n          }  \n        }  \n    }  \n  }  \n}\n</code></pre>"
+    },
+    {
+      "id": 202274,
+      "postNumber": 5,
+      "createdAt": "2024-09-24T11:27:56.027Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 202630,
+      "postNumber": 6,
+      "createdAt": "2024-09-26T12:05:45.156Z",
+      "author": "crushtest (Kostya)",
+      "cookedHtml": "<p>yes, thank you. I already implemented it.</p>"
+    },
+    {
+      "id": 202633,
+      "postNumber": 7,
+      "createdAt": "2024-09-26T12:07:38.324Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

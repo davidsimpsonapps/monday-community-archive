@@ -1,0 +1,110 @@
+{
+  "id": 73272,
+  "title": "API help required",
+  "slug": "api-help-required",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-12-18T03:05:57.637Z",
+  "lastPostedAt": "2023-12-22T11:40:21.176Z",
+  "postsCount": 12,
+  "excerpt": "Hello, \nI am working with a firm where I am working on the different CRMs for data sync process from different ERPs. and for that approach, we have developed the backend routines using API for the respective CRMs. I have&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 374,
+  "posts": [
+    {
+      "id": 158333,
+      "postNumber": 1,
+      "createdAt": "2023-12-18T03:05:57.702Z",
+      "author": "sanketcommercient (sanket commercient)",
+      "cookedHtml": "<p>Hello,<br />\nI am working with a firm where I am working on the different CRMs for data sync process from different ERPs. and for that approach, we have developed the backend routines using API for the respective CRMs. I have just started with the Monday CRM, and I am done with the Oath process using the backend Api call. I am still looking for the Apis for all standard object’s Apis. by using those Apis, we can create/update different standard object records to the CRM. Kindly help me with this.</p>"
+    },
+    {
+      "id": 158453,
+      "postNumber": 2,
+      "createdAt": "2023-12-18T14:56:07.480Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>It is a GraphQL API , not REST. There aren’t individual endpoints for each object type.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs\" target=\"_blank\" rel=\"noopener\">monday.com GraphQL API</a></h3>\n\n  <p>The monday GraphQL API allows developers to programmatically access and update data inside a monday.com account. It is part of the monday apps framework.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 158571,
+      "postNumber": 3,
+      "createdAt": "2023-12-19T07:24:52.627Z",
+      "author": "sanketcommercient (sanket commercient)",
+      "cookedHtml": "<p>Using GraphQL API, Can’t We create/update the accounts?</p>"
+    },
+    {
+      "id": 158588,
+      "postNumber": 4,
+      "createdAt": "2023-12-19T12:03:39.427Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a href=\"http://monday.com\">monday.com</a> is very generic, what you see in the CRM product is built on the <a href=\"http://monday.com\">monday.com</a> generic platform (with some special UI things).  The CRM is an implementation of a CRM on <a href=\"http://monday.com\">monday.com</a>, it is not something specifically a CRM.</p>\n<p>In the CRM, the accounts are just “items” on boards. Every row you see on a board regardless of what the row represents is an “item” in <a href=\"http://monday.com\">monday.com</a>. Boards have  a “terminology” setting that controls what Items are called on that board such as an account, client, contact, deal, lead, etc.</p>\n<p>The API works with the underlying items, boards, columns, groups, etc. directly - not what they are called in the UI</p>\n<p>Using the API, a board is a collection of items, simple as that. There are no “account” objects. Just “items” representing accounts on the board that has been configured to call items “accounts” (of which there could be many boards this way!). Each board has “columns”, which are again flexible, not “first name” “last name” “phone number” entities. Columns have types (text, phone, number, etc.) for the kind of data they hold, but you access that data through the “column_values” field on an item, which returns values, along with the type. You can query for specific columns, and update specific columns.</p>\n<p>In the API, look at the items objects, and creating them. You specify the board id for accounts you want to create them on. (or any other board for that matter, its all the same)</p>\n<p>In the board for example, this is how the “terminology” gets changed.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/a/4abb03e7600c6ea612399e951fcd387ad9aecfd4.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/a/4abb03e7600c6ea612399e951fcd387ad9aecfd4_2_564x500.png\" alt=\"image\" width=\"564\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">569×504 33.3 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 158594,
+      "postNumber": 5,
+      "createdAt": "2023-12-19T12:52:10.715Z",
+      "author": "sanketcommercient (sanket commercient)",
+      "cookedHtml": "<p>Ok got It.<br />\nI have started with the GraphQL playground.<br />\nI just want to know that how We can fetch the linked items.<br />\nI just want to check some of the examples on it.<br />\nKindly help me with this.</p>"
+    },
+    {
+      "id": 158598,
+      "postNumber": 6,
+      "createdAt": "2023-12-19T13:01:15.961Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I would start with this query which will return the first 50 boards, and the boards columns. It will also include the board ID and board name.</p>\n<pre><code class=\"lang-auto\">{\n  boards (limit: 50){\n    id\n    name\n    columns {\n      id\n      title\n    }\n  }\n}\n</code></pre>\n<p>Then you can use the below, with one of the board IDs returned from the above. This will return the first 100 items of the board, along with their ID and name. It will also return the column values, with the column ID, type and text value of the column.</p>\n<pre><code class=\"lang-auto\">{\n  boards (ids: \"123324234\" ){\n    id\n    name\n     items_page(limit: 100){\n      items {\n        id\n        name\n        column_values {\n           id\n           text\n           type\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Beyond this, experiment in the playground. CTRL+Space brings up the suggestions of available fields at that point in building a query. Being GraphQL you can build almost any structure you need, it is not fixed.</p>"
+    },
+    {
+      "id": 158717,
+      "postNumber": 7,
+      "createdAt": "2023-12-20T09:17:43.682Z",
+      "author": "sanketcommercient (sanket commercient)",
+      "cookedHtml": "<p>I can’t see the newly created board which was created using GraphQL playground.<br />\nI have used the below query.</p>\n<p>mutation {<br />\ncreate_board (board_name: “my board”, board_kind: public) {<br />\nid<br />\n}<br />\n}</p>\n<p>Please let me know what I am missing?</p>"
+    },
+    {
+      "id": 158743,
+      "postNumber": 8,
+      "createdAt": "2023-12-20T12:22:02.268Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>this would have been created in the main workspace of the account, are you sure you’re looking at the main workspace? You may need to switch out of the CRM product to the Work Management product, using the nine-dots menu in the top left of the site. In Work Management there is a “Main Workspace”.</p>\n<p>When creating boards, it is best to specify the workspace ID you want it created in.</p>"
+    },
+    {
+      "id": 159065,
+      "postNumber": 9,
+      "createdAt": "2023-12-22T09:43:47.023Z",
+      "author": "sanketcommercient (sanket commercient)",
+      "cookedHtml": "<p>Is it possible to create item card in trial version?<br />\nI am looking to update an item at once place instead of inline table.<br />\nPlease guide me that how I can create an item card for the respective board.</p>"
+    },
+    {
+      "id": 159090,
+      "postNumber": 10,
+      "createdAt": "2023-12-22T11:18:09.250Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You should be able to do any development on a trial account, including an item view.</p>\n<p>Did you sign up for a dev account using the link in the first paragraph here? <a href=\"https://developer.monday.com/api-reference/docs/getting-started-1\" class=\"inline-onebox\">Making your first request</a> or a trial account? I recommend using a dev account for doing actual development then if you use <a href=\"http://monday.com\">monday.com</a> for actual business purposes, use a separate account.</p>\n<p>You can reach out to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> if you need account assistance to ensure all features you need are enabled.</p>\n<p>Creation of item cards themselves on the board is not possible by API. But you can create item views as apps, and then a user (yourself) can add them to a board. The API only works with data/structure but not the UI itself.</p>"
+    },
+    {
+      "id": 159095,
+      "postNumber": 11,
+      "createdAt": "2023-12-22T11:35:43.427Z",
+      "author": "sanketcommercient (sanket commercient)",
+      "cookedHtml": "<p>I don’t want to do it through the API.<br />\nI just want to setup GUI for editing an item and I have found there is an item card option available.<br />\nCan You provide me the steps or the documentation for the same?<br />\nso, I can create an item card.</p>"
+    },
+    {
+      "id": 159098,
+      "postNumber": 12,
+      "createdAt": "2023-12-22T11:40:21.176Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Is the item card you want to create going to be several of the column from the board to edit? <a href=\"https://support.monday.com/hc/en-us/articles/360017143959-The-Item-Card-\">https://support.monday.com/hc/en-us/articles/360017143959-The-Item-Card-</a></p>\n<p>This will not require development at all, and should really be a separate topic in the Platform Discussions.</p>"
+    },
+    {
+      "id": 159186,
+      "postNumber": 13,
+      "createdAt": "2023-12-24T08:53:20.007Z",
+      "author": "TomFri (Tom Fridman)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

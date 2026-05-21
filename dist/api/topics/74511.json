@@ -1,0 +1,89 @@
+{
+  "id": 74511,
+  "title": "Parallelizing new cursor pagination",
+  "slug": "parallelizing-new-cursor-pagination",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    410
+  ],
+  "createdAt": "2024-01-08T17:31:39.839Z",
+  "lastPostedAt": "2024-01-18T15:52:14.762Z",
+  "postsCount": 8,
+  "excerpt": "While I’m pretty late to the party, I’ve finally found the time to update an app that is using the API that would have broken with the 2023-10 changes specifically to items_page and pagination. \nAt first glance it is a n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 649,
+  "posts": [
+    {
+      "id": 160866,
+      "postNumber": 1,
+      "createdAt": "2024-01-08T17:31:39.918Z",
+      "author": "mgmcs (Myles)",
+      "cookedHtml": "<p>While I’m pretty late to the party, I’ve finally found the time to update an app that is using the API that would have broken with the 2023-10 changes specifically to items_page and pagination.</p>\n<p>At first glance it is a nice addition, however upon closer inspection I realized my fairly fast method for getting all the items in a board will no longer work.</p>\n<p>Before, I would spin up a worker pool and start handing out page fetch requests to the workers.  I could do perhaps 8 simultaneous page fetches, with each page having its own error tracking and retry logic.  Any page that came up empty or less than the limit signaled the whole worker queue to finish up or abandon any pages greater than the “last page” that was discovered.</p>\n<p>This was fairly elegant and sent minimal junk requests (a few pages past the last could happen).  With the new system, it looks like there is absolutely no way to fetch pages in parallel any more, being entirely locked into the serial interface of waiting for the next cursor.</p>\n<p>Anyone have any ideas on how to speed this up?  Should I just go for much larger pages?  Before I would do anywhere from 25 to 60 items per page as more than that seemed to cause increased errors and worse overall time.</p>"
+    },
+    {
+      "id": 160914,
+      "postNumber": 2,
+      "createdAt": "2024-01-08T21:41:45.848Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>first, this is the wrong section of the community, you want this one: <a href=\"https://community.monday.com/c/developers/8\" class=\"inline-onebox\">monday Apps &amp; Developers - monday Community Forum</a></p>\n<p>one thing can do the first request use <code>items_page</code> then for subsequent requests use <code>next_items_page</code> which skips resolving the whole board, and returns items directly. This is faster than the resolving the board each time.</p>\n<p>Depending on size of boards, you could also return just the item ID for each item (returning the limit of 500 items should be fine when its just the ID, low risk of errors there), then spin up worker threads that fetch batches of 100 from those 500 IDs returned with a simple <code>items</code> query (not inside board.items_page). You can fetch the second batch of IDs while the worker threads are fetching the items. At this point since you don’t want an infinite pool of worker threads anyway, your “cost” in performance is the short delay of fetching the first batch of IDs, I suspect getting your second batch of IDs will take less time than getting 100 items will so at this point your queue is unlikely to drain.</p>\n<p>The advantage of the second strategy over your current is you also don’t need any of your logic for junk requests or cancelling at the end - you’ll only be fetching valid items, so it may be simpler in that regard.</p>"
+    },
+    {
+      "id": 160940,
+      "postNumber": 3,
+      "createdAt": "2024-01-09T01:55:51.991Z",
+      "author": "mgmcs (Myles)",
+      "cookedHtml": "<p>This is a great idea, thanks.  The primary board is not absurdly big, but still fairly large at ~4000 items.  I definitely want to try out your second idea, and like that it eliminates the extraneous requests.</p>\n<p>I much appreciate you finding this in the wrong section and helping out.</p>"
+    },
+    {
+      "id": 161039,
+      "postNumber": 4,
+      "createdAt": "2024-01-09T13:41:44.613Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Glad that makes sense to you.</p>\n<p>I’d combine both strategies, the <code>next_items_page</code> with just IDs will be faster and also uses less API complexity than <code>items_page</code> so you will hopefully be able to make more requests per minute. (I assume you may run into complexity limits)</p>"
+    },
+    {
+      "id": 161051,
+      "postNumber": 5,
+      "createdAt": "2024-01-09T14:04:16.071Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 162859,
+      "postNumber": 6,
+      "createdAt": "2024-01-18T12:53:30.984Z",
+      "author": "mgmcs (Myles)",
+      "cookedHtml": "<p>Yes that is what I ended up doing, Initial board query spawns off a request for each <code>items_page</code> getting item ids only, marching through the cursors getting 500 item ids at a time.  These requests then spawn off batches of <code>items</code> requests with 100 explicit item ids requested in each.  All of these requests are fed into a worker pool asynchronously.  The cursor requests stay just ahead of the item details requests.</p>\n<p>Overall, it is faster than the method I had before, and I think much cleaner as well logically.  Thanks for the suggestion!</p>"
+    },
+    {
+      "id": 162875,
+      "postNumber": 7,
+      "createdAt": "2024-01-18T14:39:56.338Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>was this in node.js? Just curious about platform details.</p>\n<p>I also couldn’t tell if you used <a href=\"https://developer.monday.com/api-reference/docs/items_page#cursor-based-pagination-using-next_items_page\">next_items_page</a> to get subsequent pages.</p>"
+    },
+    {
+      "id": 162882,
+      "postNumber": 8,
+      "createdAt": "2024-01-18T15:02:06.892Z",
+      "author": "mgmcs (Myles)",
+      "cookedHtml": "<p>It’s in python, all async/await, no threads.  Yes, I’m using <code>next_items_page</code>.  First query queries a <code>board_id</code> with info about groups, columns and 500 items via <code>items_page</code>:</p>\n<pre><code class=\"lang-auto\">boards (ids:[{boards}] ) {{\n            name\n            id\n            columns{{\n                id\n                title\n                type\n            }}\n            groups {{\n                id\n                title\n            }}\n            items_page (limit: {limit}){{\n                cursor\n                items {{\n                    id\n                }}\n            }}\n        }}\n</code></pre>\n<p>Then subsequence requests are spawned off via next_items_page:</p>\n<pre><code class=\"lang-auto\">next_items_page (limit:{limit}, cursor: \"{cursor}\") {{\n            cursor\n            items {{\n                id\n            }}\n        }}\n</code></pre>\n<p>Meanwhile, the item ids retrieved in <code>items_page</code> from the first request, and the <code>next_items_page</code> requests get fed into queries directly to the items endpoint:</p>\n<pre><code class=\"lang-auto\">items (ids:[{items}], limit:{limit}) {{\n            id\n            name\n            group {{ id }}\n            column_values {{\n                id\n                text\n                value\n            }}\n        }}\n</code></pre>\n<p>Ignore the double curly braces, these are the string templates I made for my queries in python, they are needed to escape the braces since python uses braces for template variables.</p>"
+    },
+    {
+      "id": 162894,
+      "postNumber": 9,
+      "createdAt": "2024-01-18T15:52:14.762Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yup, get the  {{}} part. That said, I’d research GraphQL variables. You can created a primitive (not template) string, and just pass a variables object along with the query and the server takes care of substitution. Saves you all the heartache of trying to escape and quote things.</p>\n<p>But nto sure your use case is big enough to do this since your only variable data is the boards and items, and boards is just a single ID.</p>\n<p>FYI right now IDs are numeric strings from the API and can be provided as an Int in the query. But I would not count on this forever, I suspect eventually IDs will be required to be a true string. May as well write with that assumption in mind today.</p>"
+    },
+    {
+      "id": 163222,
+      "postNumber": 10,
+      "createdAt": "2024-01-21T08:56:40.395Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

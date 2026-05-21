@@ -1,0 +1,40 @@
+{
+  "id": 109043,
+  "title": "What’s the best way to optimize GraphQL queries for handling deeply nested board structures?",
+  "slug": "what-s-the-best-way-to-optimize-graphql-queries-for-handling-deeply-nested-board-structures",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2025-02-05T11:25:03.988Z",
+  "lastPostedAt": "2025-02-12T23:42:42.997Z",
+  "postsCount": 3,
+  "excerpt": "Hi everyone, \nI’m working with Monday’s GraphQL API and need some guidance on structuring queries for complex board structures. When dealing with multiple layers of data—like boards, groups, items, subitems, and column v&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 27,
+  "posts": [
+    {
+      "id": 220051,
+      "postNumber": 1,
+      "createdAt": "2025-02-05T11:25:04.085Z",
+      "author": "MarcusTaylor (Marcus Taylor)",
+      "cookedHtml": "<p>Hi everyone,</p>\n<p>I’m working with Monday’s GraphQL API and need some guidance on structuring queries for complex board structures. When dealing with multiple layers of data—like boards, groups, items, subitems, and column values—my queries sometimes feel inefficient or return more data than needed.</p>\n<p>What’s the best way to optimize GraphQL queries for handling deeply nested board structures? Are there any best practices to avoid performance issues while ensuring I retrieve all necessary data?</p>\n<p>Would love to hear any recommendations or insights from those who have tackled this before! Thanks in advance.</p>"
+    },
+    {
+      "id": 220827,
+      "postNumber": 2,
+      "createdAt": "2025-02-10T20:59:29.939Z",
+      "author": "Billchenau (Bill)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/marcustaylor\">@MarcusTaylor</a></p>\n<p>Bill here from <a href=\"http://monday.com\">monday.com</a> - welcome to the community! <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>As a general suggestion, we recommend using the query arguments to provide specific IDs and only query what you know you need and also to use the limits and paginate through the responses.</p>\n<p>Nesting multiple queries also increases the complexity of the query so we also recommend avoiding nesting too many queries together.</p>\n<p>Cheers,<br />\nBill</p>"
+    },
+    {
+      "id": 221057,
+      "postNumber": 3,
+      "createdAt": "2025-02-12T23:42:42.997Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Something else to remember is nesting can cause exponential growth.</p>\n<p>One common solution though is to get the items of a board, and in the item return the group - rather than try to get groups in boards and return the items from the group. Massive difference in calculated complexity.</p>\n<p>Another thing to do is on the board, is to get the column of the type “subtasks”, this is your subitem column. The settings_str of that will contain the board ID that is the subitem board. Now while you iterate your items from the board, you can do a second query on the subitems board. Those items you return from the subitem board include the parent_item {id} for them.  Unlike the subitems on an item - which is not deterministic in size (hence it treats it as though there are 1000 subitems) getting the parent is always one item.</p>\n<p>Now you have an array of your items with their groups, and all your subitems with their parent. You can then reorganize everything back together into a board=&gt;groups=&gt;items=&gt;subitems structure.</p>\n<p>This method is just two iterations of a board with almost no extra depth and no exponential growth in complexity.</p>"
+    }
+  ]
+}

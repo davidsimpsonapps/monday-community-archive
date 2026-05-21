@@ -1,0 +1,34 @@
+{
+  "id": 80342,
+  "title": "Monday API version 2024 - updating gql",
+  "slug": "monday-api-version-2024-updating-gql",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    351,
+    406
+  ],
+  "createdAt": "2024-03-06T17:41:18.411Z",
+  "lastPostedAt": "2024-03-10T11:38:52.355Z",
+  "postsCount": 2,
+  "excerpt": "Error: “errors”:[{“extensions”:{“argumentName”:“column_values”,“code”:“variableMismatch”,“errorMessage”:“List dimension mismatch”,“typeName”:“String!”,“variableName”:“value”} \nHere is my code snippet - I am trying to mig&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 192,
+  "posts": [
+    {
+      "id": 171829,
+      "postNumber": 1,
+      "createdAt": "2024-03-06T17:41:18.493Z",
+      "author": "frankie (frank)",
+      "cookedHtml": "<p>Error: “errors”:[{“extensions”:{“argumentName”:“column_values”,“code”:“variableMismatch”,“errorMessage”:“List dimension mismatch”,“typeName”:“String!”,“variableName”:“value”}</p>\n<p>Here is my code snippet - I am trying to migrate my existing code to the new api.</p>\n<pre><code class=\"lang-auto\">const getItemId = async (payload) =&gt; {\n  const { board_id, column, value } = payload;\n\n  const query = gql`\n    query GetItems($board_id: ID!, $column: String!, $value: String!) {\n      items_page_by_column_values(limit: 50, board_id: $board_id, columns:[{column_id: $column, column_values: $value}]) {\n        id\n      }\n    }\n  `;\n\n  const variables = {\n    board_id,\n    column,\n    value,\n  };\n\n  const { data } = await mondayApi.post('', { query, variables });\n  logger.info({\n    function: 'getItemId',\n    message: 'Get item id - Monday',\n    data,\n  });\n\n  return data?.data?.items_page_by_column_values?.[0]?.id;\n};\n</code></pre>"
+    },
+    {
+      "id": 172364,
+      "postNumber": 3,
+      "createdAt": "2024-03-10T11:38:52.355Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/frankie\">@frankie</a>,</p>\n<p>It looks like it is probably an issue with the data you are passing as variables. I just tried this and it worked well:</p>\n<pre><code class=\"lang-auto\">query GetItems($board_id: ID!, $column: String!, $date: String!) {\n      items_page_by_column_values(limit: 50, board_id: $board_id, columns:[{column_id: $column, column_values: [$date]}]) {\n        items{\n          id\n        }\n      }\n    }\n</code></pre>\n<pre><code class=\"lang-auto\">{\n  \"board_id\": 1234567890,\n  \"date\": \"2024-01-01\",\n  \"column\": \"date4\"\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

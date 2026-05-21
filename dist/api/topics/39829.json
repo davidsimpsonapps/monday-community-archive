@@ -1,0 +1,99 @@
+{
+  "id": 39829,
+  "title": "Monday governance - design principles",
+  "slug": "monday-governance-design-principles",
+  "categoryId": 5,
+  "tagIds": [
+    35,
+    234,
+    237,
+    240,
+    243
+  ],
+  "createdAt": "2022-07-25T18:10:37.185Z",
+  "lastPostedAt": "2023-10-23T11:16:46.661Z",
+  "postsCount": 11,
+  "excerpt": "Hi all \nOur organisation has been on a journey with Monday the last couple of years, in which we slowly expanded it from a project management system to a full WorkOS, which handles everything from CRM, Resourcing, Projec&hellip;",
+  "solvedPostId": null,
+  "likeCount": 30,
+  "views": 5499,
+  "posts": [
+    {
+      "id": 92497,
+      "postNumber": 1,
+      "createdAt": "2022-07-25T18:10:37.314Z",
+      "author": "carolinem (Caroline McKinnon)",
+      "cookedHtml": "<p>Hi all</p>\n<p>Our organisation has been on a journey with Monday the last couple of years, in which we slowly expanded it from a project management system to a full WorkOS, which handles everything from CRM, Resourcing, Projects, Finance, etc.</p>\n<p>I am finishing up in my role with the organisation soon, so I had to write a guide for the incoming Monday Admin who is replacing me. I wanted to share a small excerpt of the content of the guide with this community, in case it’s useful to anyone else.</p>\n<p>I have previously made other posts with more detail about some of the challenges I have encountered in designing our Monday framework - see my post history if you are curious. But essentially, things got messy and chaotic as it grew and evolved, which led me to blow everything up and start again from scratch with a clean, elegant design a few months back. Going forward, these are essentially the principles by which we now live in Monday. Apologies if it’s a bit hard to follow - I wasn’t able to do nested headings so the hierarchy is probably a bit unclear, but hopefully you get the gist.</p>\n<p><strong>Design principles for our Monday environment</strong></p>\n<p>The following principles guided the design of our Monday environment. As you continue to build and maintain the environment, please keep these principles in mind.</p>\n<p><strong>Follow database normalisation rules</strong></p>\n<p>The first and most important principle for Monday is that the design should conform to database normalisation rules where possible.</p>\n<p>Normalisation is the process of organising data in a database. This includes creating tables and establishing relationships between those tables according to rules designed both to protect the data and to make the database more flexible by eliminating redundancy and inconsistent dependency.</p>\n<p>Redundant data should be avoided because it wastes processing time and storage space and creates maintenance problems. If data exists in more than one place, this creates extra work because the data must be changed in exactly the same way in all locations. For example, a change to a project’s name is much easier to implement if that data is entered only in the Projects board and nowhere else in Monday (any other appearances of the project name should be a <a href=\"https://support.monday.com/hc/en-us/articles/360001733859-The-Mirror-Column\" rel=\"noopener nofollow ugc\">mirror column</a> from the Projects board, rather than entered manually).</p>\n<p>Inconsistent dependencies should be avoided because they can make data difficult to access, because the path to find the data may be missing or broken. For example, while it is intuitive for a user to look in the Projects board for the deal value of a particular project, it may not make sense to look there for the postal address of the partner who referred the project. The partner’s address is related to, or dependent on, the partner, and thus should be moved to the Accounts board.</p>\n<p>Each rule of database normalisation is called a “normal form.” If the first rule is observed, the database is said to be in “first normal form.” If the first AND second rules are followed, the database is said to be in “second normal form”.</p>\n<p>As with many formal rules and specifications, real world scenarios do not always allow for perfect compliance. In general, normalisation requires additional tables and sometimes this can be cumbersome. If you decide to violate one of the rules of normalisation, make VERY sure that your design anticipates any problems that could occur, such as redundant data and inconsistent dependencies.</p>\n<p><strong>First normal form</strong></p>\n<ul>\n<li>\n<p>Eliminate repeating groups in individual boards.</p>\n</li>\n<li>\n<p>Create a separate board for each set of related data.</p>\n</li>\n<li>\n<p>Join related data with a <a href=\"https://support.monday.com/hc/en-us/articles/360000635139-The-Connect-Boards-Column\" rel=\"noopener nofollow ugc\">Connect Boards</a> column.</p>\n</li>\n</ul>\n<p>Do not use multiple fields in a single board to store similar data. For example, for a project whose funding may come from two possible funding sources, an item <em>could</em> contain fields for Funding Source 1 and Funding Source 2. But what happens when you add a third funding source? Adding another column is not the answer; it requires program and table modifications and does not smoothly accommodate a dynamic number of funding sources. Instead, place all funding source information in a separate table called Funding Sources, then link Projects to Funding Sources with a Connect Boards column.</p>\n<p><strong>Second normal form</strong></p>\n<ul>\n<li>\n<p>Create separate boards for sets of values that apply to multiple items.</p>\n</li>\n<li>\n<p>Relate these boards with a Connect Boards column.</p>\n</li>\n</ul>\n<p>Items should not depend on anything other than the item name. The item name should be the unique key for each item. For example, consider the Project ID. The ID is needed by the Projects board, but also by the Tasks, Budgets, Quotes, Invoices, and Purchase Orders boards (and probably others too). Instead of storing the project ID as a separate entry in each of these boards, store it in one place, in the Projects board.</p>\n<p>See here for more information on database normalisation: <a href=\"https://docs.microsoft.com/en-us/office/troubleshoot/access/database-normalization-description\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Database normalization description - Office | Microsoft Learn</a></p>\n<p><strong>Build only what is necessary</strong></p>\n<p>There should only be as many boards and workspaces as strictly necessary, without violating database normalisation rules. Boards should only have as many columns and views as strictly necessary. If you create a new board, it will come with some template columns (person, date, status). Feel free to delete these unless you are definitely going to use them for meaningful data that you will need to store or gain insights from.</p>\n<p><strong>Choose column types wisely</strong></p>\n<p>Monday has a vast array of column types, and the type you select will govern what you can do with that data. Familiarise yourself with the options here: <a href=\"https://support.monday.com/hc/en-us/articles/115005310285-What-are-the-column-choices-\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/115005310285-What-are-the-column-choices-</a>. It’s especially important for you to get your head around the difference between a one-way and a two-way Connect Boards column, and the difference between a Connect Boards and a Mirror column. This can be confusing initially, but our environment uses them a lot, and getting them mixed up can cause everyone a lot of headaches.</p>\n<p>Some column types may seem like a logical choice, but will constrain you later. For example:</p>\n<ul>\n<li>\n<p>While the same purpose can usually be achieved with either a status column or a drop-down list, many more automations can act on a status column than on a drop-down list.</p>\n</li>\n<li>\n<p>Creating a text field and putting numbers in it will prevent Monday from recognising those numbers as such, and will not allow you to do things like sum the total of the column or use the column in a formula.</p>\n</li>\n<li>\n<p>If you plan to use data in one board to automatically create connected items in another board via an automation, there are certain column types for which this is not supported. For example, formula columns, Connect Board columns, and mirror columns. Think about how and where you might need to use the information in that column when you create it, and choose the column type accordingly.</p>\n</li>\n<li>\n<p>Be aware that the values of Formula columns, Connect Board columns, and Mirror columns cannot be accessed by the API (in the sense that the API cannot read the data in these columns). This is relevant if you plan to, for example, connect an app that does an automatic backup/restore, or connect data in Monday to another external application using an integration.</p>\n</li>\n</ul>\n<p><strong>Name everything clearly</strong></p>\n<p>Every board, group, and column should be labeled in a way that the user can clearly discern its purpose. Do not use acronyms, initialisms, or abbreviations (even if it means that the whole column name cannot be seen without hovering over or expanding the column). When naming boards, groups, and columns, put yourself in the user’s shoes and think about the most logical name to give it based on how they will use it or what it represents to them.</p>\n<p><strong>Minimise governance with automation</strong></p>\n<p>Workflows in Monday should be intuitive, and require as little manual intervention by an administrator as possible. Regular manual data entry should be as minimal as possible, and everything that can be automated should be, in as few steps as possible. Manual transferring of information from one place to another should be avoided where possible by using a combination of Connect Board columns, mirror columns, and automations so that it shows up where people need to see it without them needing to re-enter it or look in multiple places. Where data cannot be connected with Connect Board or mirror columns, use an integration such as <a href=\"https://jetpackapps.co/?page_id=5666\" rel=\"noopener nofollow ugc\">Vlookup Autolink</a> to make sure that changes in one place are reflected in the other and replicated data does not get out of sync.</p>\n<p>Familiarise yourself with automations here: <a href=\"https://support.monday.com/hc/en-us/articles/360001222900-monday-com-Automations\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/360001222900-monday-com-Automations</a></p>\n<p><strong>Keep the live environment clean and fully functioning at all times</strong></p>\n<p>If you are in the process of building something, make sure it is not seen by anyone until you have fully tested it and communicated it to the users. To prevent users from seeing half-built things, you should try any of the following:</p>\n<ul>\n<li>\n<p>Create a private test board with the same columns as the real board. Create sample data in it. Only when you are satisfied that everything works and you are ready to communicate it, THEN implement the changes on the real board.</p>\n</li>\n<li>\n<p>Do not duplicate boards that have connected items and then make the duplicated board private for your testing. This will cause the connected columns in the original board to disappear for any users who do not have access to your private workspace. If you do this accidentally though, you can resolve it by going to the original board, finding all the connected columns, and disconnecting the duplicate board. Make sure you don’t disconnect the board it’s meant to be connected to, because this is irreversible.</p>\n</li>\n<li>\n<p>Hide the column using View or Edit restrictions, or make sure it is only showing in the Main Table and not any other views that users regularly use. Note that the latter involves going through every view on the board and manually unchecking any newly created columns.</p>\n</li>\n<li>\n<p>If you created test data or columns that are not strictly necessary in the process of building, delete them as soon as possible so that only usable columns and legitimate data remain in the live board. If a temporary column has to stay on a board for more than a day and it must be visible to users, make a post in the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> users space to let everyone know what it’s doing there and when it will be removed.</p>\n</li>\n</ul>\n<p><strong>Keep documentation up to date</strong></p>\n<p>It is absolutely crucial that this documentation is updated every time something is added, deleted, or changed about the Monday design. This is the only way to avoid “key man risk” - in other words, ensuring that someone other than the person who made the change knows what the design looks like and how it should work. It also reduces your workload if you can refer users to accurate documentation instead of spending time explaining how to do things.</p>"
+    },
+    {
+      "id": 92499,
+      "postNumber": 2,
+      "createdAt": "2022-07-25T19:08:43.937Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Superb!! <img src=\"https://emoji.discourse-cdn.com/apple/ok_hand.png?v=12\" title=\":ok_hand:\" class=\"emoji\" alt=\":ok_hand:\" width=\"20\" height=\"20\" /><br />\nGreat write up <a class=\"mention\" href=\"/u/carolinem\">@carolinem</a> and very good lessons. Wishing you all the very best as you proceed in your career.</p>"
+    },
+    {
+      "id": 92947,
+      "postNumber": 3,
+      "createdAt": "2022-07-29T03:48:31.662Z",
+      "author": "zentgraf (Philipp Zentgraf)",
+      "cookedHtml": "<p>This is great! Thank you so much for sharing!</p>"
+    },
+    {
+      "id": 93053,
+      "postNumber": 4,
+      "createdAt": "2022-07-30T08:30:39.647Z",
+      "author": "JWILZCPA (Jeff Wilson)",
+      "cookedHtml": "<p>Well written and very helpful and it stresses the true importance of maintaining the integrity of the OS</p>"
+    },
+    {
+      "id": 93154,
+      "postNumber": 5,
+      "createdAt": "2022-08-01T10:21:39.561Z",
+      "author": "Dani (Dani Lester)",
+      "cookedHtml": "<p>Thanks so much for sharing this <a class=\"mention\" href=\"/u/carolinem\">@carolinem</a>!</p>\n<p>We’re sure this will be really useful for other teams using the platform <img src=\"https://emoji.discourse-cdn.com/apple/tada.png?v=12\" title=\":tada:\" class=\"emoji\" alt=\":tada:\" width=\"20\" height=\"20\" /><br />\nThere are some great tips and rules here and we really appreciate you taking the time to share your knowledge - this is what the Community is all about.</p>\n<p>All the best from all of us here at monday!</p>"
+    },
+    {
+      "id": 94034,
+      "postNumber": 6,
+      "createdAt": "2022-08-08T11:20:49.226Z",
+      "author": "Jgriffin2440 (James Harold Griffin)",
+      "cookedHtml": "<p>Great Information <a class=\"mention\" href=\"/u/carolinem\">@carolinem</a> . We are a new user of Monday and looking for someone to help us development a framework.  We are a construction company but would like to incorporate all aspects of the company into Monday. Do you do consulting or know someone who does?<br />\nThanks,</p>"
+    },
+    {
+      "id": 94085,
+      "postNumber": 7,
+      "createdAt": "2022-08-08T18:56:59.597Z",
+      "author": "peta (Peta Bolger)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jgriffin2440\">@Jgriffin2440</a></p>\n<p><a href=\"https://www.upstreamtech.io/monday-com\" rel=\"noopener nofollow ugc\">upstream </a>can help. We are Platinum Partners, <a href=\"http://monday.com/\" rel=\"noopener nofollow ugc\">monday.com</a> Preferred Partners and APAC Partner of the Year for 2020. Based in Australia, we have a global staff network encompassing dedicated teams.</p>\n<p>You’ll have access to our Solutions Engineers as well as our full stack Development Team who specialize in integrations and custom requirements. We have several construction clients and have plenty of experience!</p>\n<p>Please feel free to return by email directly via <a href=\"mailto:peta@upstreamtech.io\">peta@upstreamtech.io</a> alternatively you can book straight into my calendar for a meeting using the below link. I would be very interested to meet with you and better understand your use case.</p>\n<p><a href=\"https://meetings.hubspot.com/peta8/chat-with-peta\" rel=\"noopener nofollow ugc\">Meet with Peta</a></p>\n<p>If you’re based in Europe/USA, please use this link for more accommodating meeting times: <a href=\"https://meetings.hubspot.com/peta8/overseas-clients-discovery\" rel=\"noopener nofollow ugc\">international clients - special hours</a></p>\n<p>I had sent you a message directly back in early June but never heard back - can you check you received it and let me know please?</p>\n<p>Kind regards,<br />\nPeta - <a href=\"https://blog.upstreamtech.io/customer-success-stories\" rel=\"noopener nofollow ugc\">upstream</a></p>"
+    },
+    {
+      "id": 94096,
+      "postNumber": 8,
+      "createdAt": "2022-08-08T23:31:14.768Z",
+      "author": "carolinem (Caroline McKinnon)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jgriffin2440\">@Jgriffin2440</a></p>\n<p>Thanks - glad it was helpful! I do indeed consult. I work in partnership with Upstream, who have responded above. Drop me a line at <a href=\"mailto:carolinemckinnon@outlook.com\">carolinemckinnon@outlook.com</a> or connect with me on LinkedIn and send me a PM and we can set up a time to chat <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 97713,
+      "postNumber": 9,
+      "createdAt": "2022-09-14T09:02:45.338Z",
+      "author": "iammachele (Michele)",
+      "cookedHtml": "<p>I wish I would have found your post about 2 weeks ago, you would have answered so many questions and saved me days worth of redoing my work.</p>\n<p>Thank you for for sharing!</p>"
+    },
+    {
+      "id": 114550,
+      "postNumber": 10,
+      "createdAt": "2023-02-08T14:30:09.075Z",
+      "author": "richpeers (Rich Peers)",
+      "cookedHtml": "<p>I’ve found post really useful and will try and apply these rules to our implementation</p>"
+    },
+    {
+      "id": 149460,
+      "postNumber": 11,
+      "createdAt": "2023-10-23T11:16:46.661Z",
+      "author": "DrGerry (Gerald)",
+      "cookedHtml": "<p>Where do you put the Account Governance info? In a new Board?</p>"
+    }
+  ]
+}

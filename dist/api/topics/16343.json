@@ -1,0 +1,86 @@
+{
+  "id": 16343,
+  "title": "Google Sheets API - Not creating column content",
+  "slug": "google-sheets-api-not-creating-column-content",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2021-02-16T11:04:36.722Z",
+  "lastPostedAt": "2021-03-04T01:22:13.063Z",
+  "postsCount": 9,
+  "excerpt": "Hi, \nI’ve used some of the examples on here to develop an API load for data to a new board (the final location will change) and I’ve got the script creating the new item but it won’t load the content we want for the colu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1600,
+  "posts": [
+    {
+      "id": 40852,
+      "postNumber": 1,
+      "createdAt": "2021-02-16T11:04:36.812Z",
+      "author": "robbo1975 (Ian Roberts)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’ve used some of the examples on here to develop an API load for data to a new board (the final location will change) and I’ve got the script creating the new item but it won’t load the content we want for the columns.</p>\n<p>EG Item Name, Text Column, Date</p>\n<p>Script happily creates the item but that is all. Board is mapped to the same structure etc so I’m not sure why this won’t run. Script is in Google App Script as we intend to use it to update regularly from a sheet, but we’re falling at thefirst hurdle.</p>\n<p>I’ve looked at all the topics on here and the Quickstart guides.</p>\n<p>function makeAPICall(key, query, variables) {</p>\n<p>var url = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”;</p>\n<p>var options = {</p>\n<p>“method” : “post”,</p>\n<p>“headers” : {</p>\n<pre><code>\"Authorization\" : key,\n</code></pre>\n<p>},</p>\n<p>“payload” : JSON.stringify({</p>\n<pre><code>\"query\" : query,\n\n\"variables\" : variables\n</code></pre>\n<p>}),</p>\n<p>“contentType” : “application/json”</p>\n<p>};</p>\n<p>var response = UrlFetchApp.fetch(url, options);</p>\n<p>Logger.log(\"API results: \" + response.getContentText());</p>\n<p>return response;</p>\n<p>}</p>\n<p>function Create_Line() {</p>\n<p>var mondayAPIkey = “YOUR KEY”</p>\n<p>var boardID = YOUR BOARD</p>\n<p>var variables = {</p>\n<p>“myItemName” : “Hello, world!”,</p>\n<p>“columnVals” : JSON.stringify({</p>\n<pre><code>\"status\" : {\"label\" : \"Done\"},\n\n\"date4\" : {\"date\" : \"1993-08-27\"}\n</code></pre>\n<p>})</p>\n<p>};</p>\n<p>var query = ‘mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:’+boardID+‘, item_name:$myItemName, column_values:$columnVals) { id } }’;</p>\n<p>makeAPICall(mondayAPIkey, query, variables);</p>\n<p>}</p>"
+    },
+    {
+      "id": 40863,
+      "postNumber": 2,
+      "createdAt": "2021-02-16T12:41:06.727Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 40865,
+      "postNumber": 3,
+      "createdAt": "2021-02-16T12:52:27.955Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/robbo1975\">@robbo1975</a>, welcome to the community!</p>\n<p>Sorry to see that you’re running into some trouble setting up this integration. Just to clarify: you’re pulling data from your Google Sheet into your <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> board, is that right?</p>\n<p>Do you mind sending along any error messages you’re seeing? It would also help to see the payload you’re receiving from Sheets, and what that looks like.</p>\n<p>Additionally, I would try parseing your makeAPICall to see if that helps at all! Something like this (from Dipro’s example code):</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/a/a1b34d86e62dcb5cd3ee1ae49218fbb0be514789.png\" alt=\"image\" width=\"593\" height=\"90\" /></p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 40868,
+      "postNumber": 4,
+      "createdAt": "2021-02-16T13:44:38.230Z",
+      "author": "robbo1975 (Ian Roberts)",
+      "cookedHtml": "<p>Hi,</p>\n<p>Yes I want to get data from a google sheet into <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> every time the sheet is updated. The script is in the Google Sheet itself, so it’s a <strong>push</strong> rather than <strong>pull</strong> function.</p>\n<p>If I wrap the column values in “” I get this error</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/4/41e5db32b30b5dffa4f73df9ea9c1d945c8174dc.png\" alt=\"image\" width=\"635\" height=\"95\" /></p>\n<p>I can create a new item, just not the column values.</p>"
+    },
+    {
+      "id": 40880,
+      "postNumber": 5,
+      "createdAt": "2021-02-16T14:10:34.566Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Sorry! I updated my last message after some internal testing.</p>\n<p>Does wrapping in parse() help at all?</p>\n<p>Helen</p>"
+    },
+    {
+      "id": 40885,
+      "postNumber": 6,
+      "createdAt": "2021-02-16T14:11:54.792Z",
+      "author": "robbo1975 (Ian Roberts)",
+      "cookedHtml": "<p>Haha, no worries.</p>\n<p>No, the function runs but the columns aren’t impacted. I just get a new item with “Hello, world!” and all other columns are blank (apart from the ID)</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e9e24cdb83b8835bdf2ddc9a24fb9d426c9eadc1.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e9e24cdb83b8835bdf2ddc9a24fb9d426c9eadc1_2_690x149.png\" alt=\"image\" width=\"690\" height=\"149\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1498×324 17.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 40892,
+      "postNumber": 7,
+      "createdAt": "2021-02-16T14:48:36.446Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hmm that’s so weird-- I just tested this out and it worked for me!</p>\n<p>It looks like you may not be calling the correct column Ids. I see that in the screenshot you sent over, you don’t have a Date column added to this board. Do you mind adding one in, and then activating Developer’s Mode in your monday.labs section to find the relevant column Ids?</p>\n<p>Here is more information on how to find and verify these column Ids: <a href=\"https://support.monday.com/hc/en-us/articles/360000225709-Where-to-find-board-item-and-column-IDs\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/360000225709-Where-to-find-board-item-and-column-IDs</a>.</p>\n<p>Let me know if this helps!</p>\n<p>Helen</p>"
+    },
+    {
+      "id": 40895,
+      "postNumber": 8,
+      "createdAt": "2021-02-16T14:58:21.493Z",
+      "author": "robbo1975 (Ian Roberts)",
+      "cookedHtml": "<p>Oh I could kiss oyu right now (sorry I realise that’s tots inaprops) but that worked. It needed the column Ids to be defined as status9 and date8 (!!!)</p>\n<p>Works great now.</p>\n<p>Thank you <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=9\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=9\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=9\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" /></p>"
+    },
+    {
+      "id": 40896,
+      "postNumber": 9,
+      "createdAt": "2021-02-16T14:58:53.481Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>I’m so glad to hear that <a class=\"mention\" href=\"/u/robbo1975\">@robbo1975</a>!</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 43390,
+      "postNumber": 10,
+      "createdAt": "2021-03-04T01:22:13.063Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

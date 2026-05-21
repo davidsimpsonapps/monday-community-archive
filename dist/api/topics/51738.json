@@ -1,0 +1,60 @@
+{
+  "id": 51738,
+  "title": "Date and Time design is incorrect",
+  "slug": "date-and-time-design-is-incorrect",
+  "categoryId": 8,
+  "tagIds": [
+    5
+  ],
+  "createdAt": "2023-02-16T01:34:31.494Z",
+  "lastPostedAt": "2023-02-27T06:54:20.813Z",
+  "postsCount": 5,
+  "excerpt": "I’ve hit a wall with trying to get action via the support team so I’m trying here. \nThe Date and Times for the Date columns are being returned from the api in the format: yyyy-mm-dd ##:## \nThis is a big problem consideri&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 1637,
+  "posts": [
+    {
+      "id": 115755,
+      "postNumber": 1,
+      "createdAt": "2023-02-16T01:34:31.580Z",
+      "author": "Mitch.Poyser (Mitch)",
+      "cookedHtml": "<p>I’ve hit a wall with trying to get action via the support team so I’m trying here.</p>\n<p>The Date and Times for the Date columns are being returned from the api in the format: yyyy-mm-dd #<span class=\"hashtag\">#:</span>##</p>\n<p>This is a big problem considering date/times standards have been around for over 20 years:<br />\n<a href=\"https://www.rfc-editor.org/rfc/rfc3339\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://www.rfc-editor.org/rfc/rfc3339</a></p><aside class=\"onebox wikipedia\">\n  <header class=\"source\">\n\n      <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\" rel=\"noopener nofollow ugc\">en.wikipedia.org</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/f/df0d83548e2bf0a12df1f2d0dce27182eb9c344c.jpeg\" class=\"thumbnail\" width=\"220\" height=\"192\" /></div>\n\n<h3><a href=\"https://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\" rel=\"noopener nofollow ugc\">ISO 8601</a></h3>\n\n<p>ISO 8601 is an international standard covering the worldwide exchange and communication of date and time-related data. It is maintained by the Geneva-based International Organization for Standardization (ISO) and was first published in 1988, with updates in 1991, 2000, 2004, and 2019, and an amendment in 2022. The standard provides a well-defined, unambiguous method of representing calendar dates and times in worldwide communications, especially to avoid misinterpreting numeric dates and times IS...</p>\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p><a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> is accepting (only) UTC values, then converting them in a mixture between UI and API (without the ability for the user to intercept it before then) to the loosey-goosey format above that is impossible to tell what it actually is without having to query further context, without the ability to intercept it.</p>\n<p>This is super strange and becomes a real issue when it is coupled by the next strange idea of <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> automatically changing your time zone on your profile to match your physical location. With no opt-out or opt-in ability.</p>\n<p>I set up integrations (webhook to a JS script) on a service account and then went overseas. I was setting different integrations up when I was alerted to the fact our entire payroll and numerous other things were 2 hours out of sync. This is because I logged in to a time zone with a two hour difference and therefore all values across the entire integration setup were being silently delivered yyyy-mm-dd #<span class=\"hashtag\">#:</span>## (-2) due to referencing my profile value that was automatically updated.</p>\n<p>It is a kick in the teeth that in the api returns the updated time of the date field in ISO8601 standard but the actual date is in a format derived by someone who has never met the internet before.</p>\n<p>As I type this I can see that a first pass of corrections were performed on the application to make it more (ISO8601) standard but inexplicitly the most important column seems to have been missed (?): <a href=\"https://community.monday.com/t/date-time-api-change/18465\" class=\"inline-onebox\">Date-time API change</a></p>\n<p>At a minimum can we please have the API returning ISO (even just in a new key pair or additional info to allow a light touch roll out)? Or even just access to the UTC date for the date/time columns so that I can build out the applications knowing what time the column is actually referring to.</p>\n<p>There should also be an opt in option for the profile time zone as an interim measure.<br />\nIt doesn’t make any sense that it is both a selectable dropdown and automatically updated by location.<br />\nBecause what is the point of selecting something that will be overridden at log in, it just creates confusion.</p>\n<p>I don’t like the idea of never being able to log into an account (that owns the integrations) in a different time zone, nor do I like the idea of my code going to the profile of the account and reading the time zone and converting every date and time I extract according to whatever the time zone difference is from where I am to the organisations location (only ever the one location).</p>\n<p>Thanks,<br />\nMitch</p>"
+    },
+    {
+      "id": 115765,
+      "postNumber": 2,
+      "createdAt": "2023-02-16T06:27:35.851Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Totally agree with you here as I am currently facing a similar issue with the date and time.<br />\nI find the current implementation of the date and time very flawed and presents so many issues than it was intended to solve.<br />\nThe devs might have had good intentions on converting a date to the current user’s timezone but it current state through the API is difficult to work with if not dangerous.</p>\n<p>For example, if you change the timezone in your profile to another timezone (for test purposes) and then query the date in the playground, <a href=\"http://monday.com\">monday.com</a> not only takes into consideration your timezone in your profile but also your current device location.<br />\nThis results in a very confusing set of dates.</p>\n<p>Proposed solution. Give dates and times “as is” in the board in UTC format and update dates “as is” in UTC format. If a developer wants to do any conversion, they will do it themselves anyway and there is no need for <a href=\"http://monday.com\">monday.com</a> to convert dates based on user’s device location or timezone</p>"
+    },
+    {
+      "id": 117166,
+      "postNumber": 3,
+      "createdAt": "2023-02-27T06:06:33.183Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>Thank you for the feedback about how our system handles dates and times.</p>\n<p>I understand your frustration and I have prepared a report for our team to take a look into it that includes your comments and suggestions.</p>\n<p>I will share any feedback I get from the team with you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 117167,
+      "postNumber": 4,
+      "createdAt": "2023-02-27T06:07:02.880Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Feedback <a href=\"https://monday.monday.com/boards/2444564946/pulses/4049358855\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 117170,
+      "postNumber": 5,
+      "createdAt": "2023-02-27T06:26:18.269Z",
+      "author": "Mitch.Poyser (Mitch)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Thank you for taking this seriously and the time to understand it and compile a report.</p>\n<p>I would have been very happy for it to be handled via the internal support channel instead of having to post here, but I wasted about a day in effort trying to convince the support team that it is actually a problem and a serious one at that.</p>\n<p>I am looking forward to a speedy fix and who knows, a legit date/time storage method might even open the door to making the simple but long outstanding change of adding and times to timelines, a start and end time to date fields, or even a proper calendar in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>.</p>\n<p>Thanks,<br />\nMitch</p>"
+    },
+    {
+      "id": 117181,
+      "postNumber": 6,
+      "createdAt": "2023-02-27T06:54:20.813Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/mitch.poyser\">@Mitch.Poyser</a>,</p>\n<p>I am sorry that was your experience. I am not sure who you reached out to previously, but just in case, you can always send us an email regarding the API or the apps framework to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a>. That will get you to our tech support team directly.</p>\n<p>I will share any updates I have regarding this here!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

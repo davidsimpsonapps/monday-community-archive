@@ -1,0 +1,46 @@
+{
+  "id": 71461,
+  "title": "Retrieve an item by specifying its itemId",
+  "slug": "retrieve-an-item-by-specifying-its-itemid",
+  "categoryId": 98,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-11-24T13:46:18.120Z",
+  "lastPostedAt": "2023-12-18T04:49:35.988Z",
+  "postsCount": 4,
+  "excerpt": "hi Devs, \nI am stuck.  I know my boardId and I know my itemId. \nUsing the api, I would like to retrieve the item from the board using the boardId and the itemId. \nI cannot figure it out. \nI can use a different column on &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 1900,
+  "posts": [
+    {
+      "id": 154659,
+      "postNumber": 1,
+      "createdAt": "2023-11-24T13:46:18.214Z",
+      "author": "caoimhinmacg (Kevin)",
+      "cookedHtml": "<p>hi Devs,<br />\nI am stuck.  I know my boardId and I know my itemId.<br />\nUsing the api, I would like to retrieve the item from the board using the boardId and the itemId.<br />\nI cannot figure it out.</p>\n<p>I can use a different column on the item and use that to retrieve the specific item (graphql api using items_page_by_column_values) - no probs.</p>\n<p>However, I feel it must be faster to retrieve the information by specifying the boardId and the itemId but I cannot figure it out.<br />\nMy intial thought was to do something like this:<br />\nquery = ‘’’<br />\n{<br />\nboards(ids: %s) {<br />\nname<br />\nid<br />\nitems_page (limit:%s) {<br />\ncursor<br />\nitems (ids: “%s”) {<br />\nid<br />\nname<br />\ncolumn_values {<br />\nid<br />\ntype<br />\nvalue<br />\ntext<br />\ncolumn {<br />\ntitle<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n‘’’ % (boardId, maxLimit, itemId)</p>\n<p>but the ‘ids’ is not allowed on the ‘items’.</p>\n<p>I tried to use items_page_by_column_values but it does not recognise “id” as a column name.</p>\n<p>Any help/ideas appreciated?</p>\n<p>thanks loads,<br />\nKevin</p>"
+    },
+    {
+      "id": 154662,
+      "postNumber": 2,
+      "createdAt": "2023-11-24T14:59:57.611Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/caoimhinmacg\">@caoimhinmacg</a></p>\n<p>The ids argument need to go to items_page (not to items). There is a faster way to achieve this as you don’t need the boardId when querying just one item.</p>\n<p>Like:</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: 123456789) {\n    column_values {\n      id\n      value\n      type\n      text\n      column {\n        title\n      }\n    }\n  }\n}\n</code></pre>\n<p>Don’t forget that some column types do not return value and text without explicitly asking for it with fragments inside the column_values, like <code>...on MirrorValue{id value display_value}</code></p>"
+    },
+    {
+      "id": 154673,
+      "postNumber": 3,
+      "createdAt": "2023-11-24T16:24:32.174Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The reason they say <code>boards</code> is faster is that when you use <code>items_page</code> you can get up to 500 items at a time from the single board.</p>\n<p>If you use <code>items</code> as the root, and are specifying the item IDs, you are limited to 100 items at a time. So you’d need to make more queries, which is obviously slower - assuming you have that many IDs to get!</p>\n<p>BUT if you already have one item ID, just using the <code>items</code> root query is actually faster than <code>boards</code> because the resolver doesn’t have to resolve the board first. Plus, the API complexity score is lower this way too.</p>"
+    },
+    {
+      "id": 158349,
+      "postNumber": 4,
+      "createdAt": "2023-12-18T04:49:35.988Z",
+      "author": "caoimhinmacg (Kevin)",
+      "cookedHtml": "<p>thanks a million folks - apologies - thought I had replied earlier!</p>"
+    }
+  ]
+}

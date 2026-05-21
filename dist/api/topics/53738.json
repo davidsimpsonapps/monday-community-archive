@@ -1,0 +1,50 @@
+{
+  "id": 53738,
+  "title": "Reading notifications from the API",
+  "slug": "reading-notifications-from-the-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    208,
+    209,
+    249,
+    351
+  ],
+  "createdAt": "2023-03-14T12:34:26.486Z",
+  "lastPostedAt": "2023-03-21T16:52:11.340Z",
+  "postsCount": 4,
+  "excerpt": "Hello all! \nI’ve been tasked to develop something that displays how many unread Monday notifications a user has, but display it in our company intranet when they login. We all assumed there would be a “get notifications &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 477,
+  "posts": [
+    {
+      "id": 119535,
+      "postNumber": 1,
+      "createdAt": "2023-03-14T12:34:26.578Z",
+      "author": "ablosser (Aj Blosser)",
+      "cookedHtml": "<p>Hello all!<br />\nI’ve been tasked to develop something that displays how many unread Monday notifications a user has, but display it in our company intranet when they login. We all assumed there would be a “get notifications for user” endpoint or something similar but I can’t seem to find one.</p>\n<p>Any ideas on how to best handle this approach?  We’d be ok with small tweaks to the idea too like number of open assignments or something instead of notifications specifically.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 119668,
+      "postNumber": 2,
+      "createdAt": "2023-03-15T06:46:21.922Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/ablosser\">@ablosser</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>There is no way of retrieving that information via API (the notifications that have not been opened).</p>\n<p>As an idea, if each item of the board is a task, you could have a status column that indicates if the task is open or not. Then you could query for all the items in which that user is assigned (in a people column) and check how many of them have a “open task” status. You could count them on your end and display the number in your platform.</p>\n<p>I hope that helps!</p>\n<p>Let me know if you have any questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 120362,
+      "postNumber": 3,
+      "createdAt": "2023-03-20T11:16:08.210Z",
+      "author": "ablosser (Aj Blosser)",
+      "cookedHtml": "<p>Hey thanks!  I think that would be acceptable but I can’t figure out how to query items by assignee.   Looks like the item endpoint requires item IDs as the parameter?</p>\n<p>Any idea how I’d send a query for items by a people column like you suggested?</p>"
+    },
+    {
+      "id": 120563,
+      "postNumber": 4,
+      "createdAt": "2023-03-21T16:52:11.340Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ablosser\">@ablosser</a>,</p>\n<p>To query for items by a people column, you could use the items_by_column_values query:</p>\n<pre><code class=\"lang-auto\">query {\n    items_by_column_values (board_id: 1234567890, column_id: \"person\", column_value: \"Patrick Star\") {\n        id\n        name\n    }\n}\n</code></pre>\n<p>Keep in mind that we only offer <a href=\"https://developer.monday.com/api-reference/docs/items-by-column-values-queries#limited-support-columns\">limited support</a> for the <code>items_by_column_values()</code> “People” queries.</p>\n<p>The people column query in this case will only return results for items where a single user is assigned. This query doesn’t support arrays of users, will only return results based on actual user name and not User ID.</p>"
+    }
+  ]
+}

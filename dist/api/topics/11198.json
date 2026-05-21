@@ -1,0 +1,75 @@
+{
+  "id": 11198,
+  "title": "Internal Server Error:500 (Week Column)",
+  "slug": "internal-server-error-500-week-column",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94
+  ],
+  "createdAt": "2020-09-15T03:29:19.927Z",
+  "lastPostedAt": "2021-02-25T14:38:38.065Z",
+  "postsCount": 8,
+  "excerpt": "I am using change_multiple_column_values mutation for updating column values but while updating the “week” column value through API, I am continuously getting internal server error, it is blocking development. Can anyone&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 1512,
+  "posts": [
+    {
+      "id": 28490,
+      "postNumber": 1,
+      "createdAt": "2020-09-15T03:29:19.994Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>I am using <strong>change_multiple_column_values</strong> mutation for updating column values but while updating the “week” column value through API, I am continuously getting internal server error, it is blocking development. Can anyone please clarify what is wrong with the following query.</p>\n<p><code>mutation{change_multiple_column_values (board_id:xxxxx,item_id:xxxxx,column_values:\"{\\\"week\\\":{\\\"week\\\":{\\\"startDate\\\":\\\"2020-12-12\\\",\\\"endDate\\\":\\\"2020-12-19\\\"}}}\") {id}}</code></p>\n<p>Thank you.</p>"
+    },
+    {
+      "id": 28491,
+      "postNumber": 2,
+      "createdAt": "2020-09-15T03:46:29.248Z",
+      "author": "upitchika (Uday)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/krishna\">@krishna</a></p>\n<p>Seems like <code>{\\\"week\\\"</code> is added twice in the mutation</p>\n<blockquote>\n<p>mutation{change_multiple_column_values (board_id:xxxxx,item_id:xxxxx,column_values:“{\"week\":{\"week\":{\"startDate\":\"2020-12-12\",\"endDate\":\"2020-12-19\"}}}”) {id}}</p>\n</blockquote>\n<p>Please try this instead -</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(board_id: xxxxx, item_id: xxxxx, column_values: \"{\\\"week\\\":{\\\"startDate\\\":\\\"2020-12-12\\\",\\\"endDate\\\":\\\"2020-12-19\\\"}}\") {\n    id\n  }\n}\n</code></pre>\n<p>Thank you !!</p>"
+    },
+    {
+      "id": 28492,
+      "postNumber": 3,
+      "createdAt": "2020-09-15T03:59:34.415Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/upitchika\">@upitchika</a>,</p>\n<p>Thanks for the response but first “week” is column_id and next complete week object is it’s value.</p>\n<p>I might be wrong…because by removing week…did not receive any error but the column value is not getting updated(it is storing empty value).</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/5/527117c44dce409967c4a2f6b6c02fa96996def2.png\" alt=\"image\" width=\"275\" height=\"80\" /></p>"
+    },
+    {
+      "id": 28549,
+      "postNumber": 4,
+      "createdAt": "2020-09-15T12:36:54.275Z",
+      "author": "upitchika (Uday)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/krishna\">@krishna</a>,</p>\n<p>You are correct, you should include “week” twice, as one represents the id.</p>\n<p>I just reviewed the API guide and here’s the catch to mutate week column -</p>\n<blockquote>\n<p>Date must be 7 days apart (inclusive of the first and last date) and start at the beginning of the work week defined in the account.</p>\n</blockquote>\n<p>As per these rules, please check the following items in your mutation -</p>\n<ol>\n<li>Is the account’s work week between “2020-12-12” and “2020-12-19” (unlikely)</li>\n<li>In those 7 days, first &amp; last days are inclusive. Seems like you are counting an extra day.</li>\n</ol>\n<p>I tried this with my test account and following these 2 rules successfully updated the week column.</p>\n<p>This is the query I used</p>\n<pre><code>mutation {\n  change_multiple_column_values(board_id: xxxx, item_id: xxxx, column_values: \"{\\\"week\\\":{\\\"week\\\":{\\\"startDate\\\":\\\"2020-09-14\\\",\\\"endDate\\\":\\\"2020-09-20\\\"}}}\") {\n    id\n  }\n}\n</code></pre>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/1f5b2ef912a925c6f65a1ef8384450cce2f683f0.png\" alt=\"image\" width=\"172\" height=\"116\" /></p>\n<p>When I didn’t follow those 2 rules I got HTTP 500 Internal Server Error which isn’t ideal. This definitely needs a better error message. Hey <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>, FYI, do you think you can convey this to the dev team ?</p>\n<p>Thank you !!</p>"
+    },
+    {
+      "id": 28614,
+      "postNumber": 5,
+      "createdAt": "2020-09-16T02:00:57.036Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/upitchika\">@upitchika</a> It worked!! <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=9\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" />   However as you said a better error message would have made things easy.</p>"
+    },
+    {
+      "id": 28649,
+      "postNumber": 6,
+      "createdAt": "2020-09-16T12:00:07.833Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/krishna\">@krishna</a> and <a class=\"mention\" href=\"/u/upitchika\">@upitchika</a></p>\n<p>Really nice job resolving this together! That’s an awesome mutual effort from both of you and I appreciate your help with this one, <a class=\"mention\" href=\"/u/upitchika\">@upitchika</a>.</p>\n<p>The 500 Errors are definitely a confusing point for a lot of our users, and I appreciate your feedback about this particular column type too. I’ve passed the case on to the team and we’ll take it into further account when planning the next steps from here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 28832,
+      "postNumber": 7,
+      "createdAt": "2020-09-18T06:51:56.006Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>I agree with <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>, very good job <a class=\"mention\" href=\"/u/upitchika\">@upitchika</a> and <a class=\"mention\" href=\"/u/krishna\">@krishna</a>. <img src=\"https://emoji.discourse-cdn.com/apple/ok_hand.png?v=9\" title=\":ok_hand:\" class=\"emoji\" alt=\":ok_hand:\" /></p>"
+    },
+    {
+      "id": 42506,
+      "postNumber": 8,
+      "createdAt": "2021-02-25T14:38:38.065Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

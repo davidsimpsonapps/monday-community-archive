@@ -1,0 +1,75 @@
+{
+  "id": 29128,
+  "title": "Time-our error 504 for inserting records to a monday board",
+  "slug": "time-our-error-504-for-inserting-records-to-a-monday-board",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107
+  ],
+  "createdAt": "2021-12-28T11:13:39.351Z",
+  "lastPostedAt": "2022-10-06T08:48:25.576Z",
+  "postsCount": 8,
+  "excerpt": "Lately, I have a persistent problem caused when I try to upload data to a Monday Board via the GraphQL API. \nI know a similar problem when reading a board’s content, and using the “limit” param to overcome it. However, i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2313,
+  "posts": [
+    {
+      "id": 72511,
+      "postNumber": 1,
+      "createdAt": "2021-12-28T11:13:39.432Z",
+      "author": "orblatt-AF (Or Blatt)",
+      "cookedHtml": "<p>Lately, I have a persistent problem caused when I try to upload data to a Monday Board via the GraphQL API.</p>\n<p>I know a similar problem when reading a board’s content, and using the “limit” param to overcome it. However, it happens not for reading content, but writing to the board.</p>\n<p>When I try to render a json response as I used to do for the past months, I receive an HTML snippet with the following strings:</p>\n<pre><code class=\"lang-auto\">\"cf-error-details cf-error-504\"&gt;\n  &lt;h1&gt;Gateway time-out&lt;/h1&gt;\n  &lt;p&gt;The web server reported a gateway time-out error.&lt;/p&gt;\n  &lt;ul&gt;\n    &lt;li&gt;Ray ID: XXX &lt;/li&gt;\n    &lt;li&gt;Your IP address: XXX &lt;/li&gt;\n</code></pre>\n<p>I use the following query to upload data:</p>\n<pre><code class=\"lang-auto\">\"mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:\" + board_id + \", item_name:$myItemName, column_values:$columnVals, create_labels_if_missing: true) { id } }\"\n</code></pre>\n<p>Update:<br />\nLikely I had to use group_id as well, as documented here:<br />\n<a href=\"https://api.developer.monday.com/docs/items-queries\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://api.developer.monday.com/docs/items-queries</a></p>"
+    },
+    {
+      "id": 72519,
+      "postNumber": 2,
+      "createdAt": "2021-12-28T12:22:39.627Z",
+      "author": "orblatt-AF (Or Blatt)",
+      "cookedHtml": "<p>Solved.<br />\nThe way you retrieve the group_id is:</p>\n<pre><code class=\"lang-auto\">\nquery {\n  me {\n    name\n  }\n  \n  boards(ids:[XXXX]) {\n    name\n    \n    groups {\n    \ttitle\n      id\n  \n    }\n  }\n}\n</code></pre>\n<p>Solution:</p>\n<pre><code class=\"lang-auto\">query = \"mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:\" \\\n                    + board_id \\\n                    + \", group_id: \"\\\n                    + group_id \\\n                    + \", item_name:$myItemName, column_values:$columnVals, create_labels_if_missing: true) { id } }\"\n</code></pre>"
+    },
+    {
+      "id": 72839,
+      "postNumber": 3,
+      "createdAt": "2022-01-03T08:07:55.703Z",
+      "author": "orblatt-AF (Or Blatt)",
+      "cookedHtml": "<p>Error still persists after that few records are successfully uploaded.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6d1494b02b70ed1f199f30beb7a881c349c47244.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/6d1494b02b70ed1f199f30beb7a881c349c47244_2_690x420.png\" alt=\"image\" width=\"690\" height=\"420\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1190×725 105 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 72963,
+      "postNumber": 4,
+      "createdAt": "2022-01-04T11:26:49.767Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/orblatt-af\">@orblatt-AF</a>!</p>\n<p>Matias  here.</p>\n<p>It looks like the issue might lie in the amount of data that is being retrieved. Just to be sure, would you please send this information to our email address so we can take a closer look?</p>\n<p>Our email address is <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a></p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 74915,
+      "postNumber": 5,
+      "createdAt": "2022-01-25T08:40:37.481Z",
+      "author": "Tieme (Tieme)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Is there any update on this?<br />\nI am updating a lot of records and this problem happens multiple times a week now.<br />\nThere is still no option to update multiple items at once and therefore I loop trough my array and update / insert about 200 to 400 items on a single Monday board. It would be nice if there would be a API error instead of a snippet of HTML.</p>\n<p>Thanks for the reply</p>\n<p>Cheers</p>\n<ul>\n<li>Tieme</li>\n</ul>"
+    },
+    {
+      "id": 74917,
+      "postNumber": 6,
+      "createdAt": "2022-01-25T09:25:06.693Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/tieme\">@Tieme</a>!</p>\n<p>This does not seem to be a generalized issue but rather something particular with the other account, and now you experiencing something similar, but probably not related.</p>\n<p>You can update many items at once by using a mutation like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  item1: create_item(item_name: \"New item 1\", board_id: 12345678) {\n    id\n    name\n  }\n  item2: create_item(item_name: \"New item 2\", board_id: 12345678) {\n    id\n    name\n  }\n}\n</code></pre>\n<p>About the error you are experiencing, I would love to know more about it. Could you send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so we can take a closer look?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 98814,
+      "postNumber": 7,
+      "createdAt": "2022-09-27T22:37:19.450Z",
+      "author": "mariok (Mario)",
+      "cookedHtml": "<p>Could you provide an example of this with the use of parameters?  I am getting an TimeoutError sending over 2,000 single mutation requests.  See below.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/fb2b1d69ed2f2842a73b01fcd6382255752c71ad.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/f/fb2b1d69ed2f2842a73b01fcd6382255752c71ad.png\" alt=\"image\" width=\"690\" height=\"55\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1315×106 6.36 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 99710,
+      "postNumber": 8,
+      "createdAt": "2022-10-06T08:48:25.576Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mariok\">@mariok</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>If you are getting a timeout error, then your syntax is probably correct. You just need to use much less data in your request, to avoid that error. If our server can not perform the action you are asking in 60 seconds, it will time out. Using less data/less mutations will probably solve the issue.</p>\n<p>Hope this helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

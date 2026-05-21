@@ -1,0 +1,54 @@
+{
+  "id": 80988,
+  "title": "Attempting basic JWT validation on board views",
+  "slug": "attempting-basic-jwt-validation-on-board-views",
+  "categoryId": 8,
+  "tagIds": [
+    209,
+    351
+  ],
+  "createdAt": "2024-03-13T13:09:26.446Z",
+  "lastPostedAt": "2024-12-13T05:13:33.770Z",
+  "postsCount": 3,
+  "excerpt": "I’m trying to do some basic JWT validation on board views/item views etc. \nI have a board view at say: \nhttps://xxxx.example.app/my-board-view\n\nWhen the board view is displayed, it has a sessionToken request parameter (a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 351,
+  "posts": [
+    {
+      "id": 173051,
+      "postNumber": 1,
+      "createdAt": "2024-03-13T13:09:26.541Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I’m trying to do some basic JWT validation on board views/item views etc.</p>\n<p>I have a board view at say:</p>\n<pre><code class=\"lang-auto\">https://xxxx.example.app/my-board-view\n</code></pre>\n<p>When the board view is displayed, it has a <code>sessionToken</code> request parameter (actually a JWT token) passed through to it from monday:</p>\n<pre><code class=\"lang-auto\">https://xxxx.example.app/my-board-view?sessionToken={sessionToken}\n</code></pre>\n<p>…which I should be able to validate against the “Signing secret” from “Basic information” here (for my app):</p>\n<pre><code class=\"lang-auto\">https://myinstance.monday.com/apps/manage/:app_id/app_versions/:app_version/sections/appDetails\n</code></pre>\n<p>I have this as <code>MONDAY_SIGNING_SECRET</code> in my javascript server side code.</p>\n<p>So basic validation should look something like this:</p>\n<pre><code class=\"lang-typescript\">import jwt from 'jsonwebtoken';\n\n...\n\nconst sessionToken = new URLSearchParams(location.search).get('sessionToken') || null;\n\nif (!sessionToken) {\n\t// throw error(401, 'No token found.');\n}\n\ntry {\n\n\tconst payload = await jwt.verify(sessionToken, MONDAY_SIGNING_SECRET);\n\t\n\t// all good, continue \n\t// now add all the logic here...\n\t\n} catch (err: any) {\n\t// throw error(401, 'Token is invalid.');\n}\n</code></pre>\n<p>I’m finding that if I use this code with the signing secret, it always fails.</p>\n<p>I get this error:</p>\n<pre><code class=\"lang-auto\">error JsonWebTokenError: invalid signature\n    at /path/to/node_modules/jsonwebtoken/verify.js:171:19\n    at getSecret (/path/to/node_modules/jsonwebtoken/verify.js:97:14)\n    at module.exports [as verify] (/path/to/node_modules/jsonwebtoken/verify.js:101:10)\n    ...\n</code></pre>\n<ul>\n<li><strong>Does the signing secret work with board views etc?</strong></li>\n<li><strong>Or am I doing something fundamentally wrong?</strong></li>\n</ul>"
+    },
+    {
+      "id": 173052,
+      "postNumber": 2,
+      "createdAt": "2024-03-13T13:17:33.718Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Oh, here’s the answer, use the OAuth secret instead</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/rbabayoff/48/4210_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/invalid-signature-of-board-view-sessiontoken/10418\">Invalid signature of board view sessionToken</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span style=\"--category-badge-color:#00ca72;--category-badge-text-color:#FFFFFF\" class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Hey, \nI’m getting an invalid signature error when verifying the session token my board view gets. The token looks ok when I’m logging it. I also regenerated the signing secret, didn’t fix it. Here’s a summary of my code: \nimport jwt from \"jsonwebtoken\";\nimport mondaySdk from \"monday-sdk-js\";\nconst monday = mondaySdk();\n\nasync function init() {\n  const sessionToken = (await monday.get(\"sessionToken\")).data;\n  const MONDAY_SIGNING_SECRET = \"My signing secret (in client for debug purposes only)\";\n …\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 173203,
+      "postNumber": 3,
+      "createdAt": "2024-03-14T08:05:13.526Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 213806,
+      "postNumber": 4,
+      "createdAt": "2024-12-13T05:13:33.770Z",
+      "author": "AnishJ (Anish)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<a href=\"https://community.monday.com/t/invalid-signature-of-board-view-sessiontoken/10418/1\">Invalid signature of board view sessionToken</a></div>\n<blockquote>\n<p>Hey, I’m getting an invalid signature error when verifying the session token my board view gets. The token looks ok when I’m logging it. I also regenerated the signing secret, didn’t fix it. Here’s a summary of my code: import jwt from “jsonwebtoken”; import mondaySdk from “monday-sdk-js”; const monday = mondaySdk(); async function init(</p>\n</blockquote>\n</aside>\n<p>To be Specific here please use</p>\n<p>Client Secret to verify your session token<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/8/d8b631caf23b40a1858fff80be58867b361f3243.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/8/d8b631caf23b40a1858fff80be58867b361f3243_2_690x54.png\" alt=\"image\" width=\"690\" height=\"54\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2045×162 9.28 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 213978,
+      "postNumber": 5,
+      "createdAt": "2024-12-15T06:57:20.049Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "id": 28204,
+  "title": "Counting Months of Employment Formula",
+  "slug": "counting-months-of-employment-formula",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2021-12-03T10:40:47.084Z",
+  "lastPostedAt": "2021-12-10T15:58:21.296Z",
+  "postsCount": 9,
+  "excerpt": "Hi! \nI’m trying to use a formula to give the employment duration for current &amp; past employee’s. If there is no end date set then I would like it to calculate up until the current date, otherwise It would calculate up to &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2480,
+  "posts": [
+    {
+      "id": 70400,
+      "postNumber": 1,
+      "createdAt": "2021-12-03T10:40:47.164Z",
+      "author": "Formula_Choice (Antony Titley)",
+      "cookedHtml": "<p>Hi!</p>\n<p>I’m trying to use a formula to give the employment duration for current &amp; past employee’s. If there is no end date set then I would like it to calculate up until the current date, otherwise It would calculate up to the end date.</p>\n<p>IF({End Date}=“”,ROUND((Days(FORMAT_DATE(TODAY()),{Start date})/30),1),ROUND((Days({End Date},{Start date})/30),1))</p>\n<p>I’ve tried the IF function, replacing the end results with 1 &amp; 2 respectively and that works:<br />\nIF({End Date}=“”,1,2)</p>\n<p>I can also get it to work by replace either of the end results with a single number;<br />\nIF({End Date}=“”,ROUND((Days(FORMAT_DATE(TODAY()),{Start date})/30),1),2)<br />\nIF({End Date}=“”,1,ROUND((Days({End Date},{Start date})/30),1))</p>\n<p>When I put them all together it seems to break. Can anyone figure out why?</p>"
+    },
+    {
+      "id": 70401,
+      "postNumber": 2,
+      "createdAt": "2021-12-03T11:05:50.503Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/formula_choice\">@Formula_Choice</a></p>\n<p>It looks like you want the time in terms of months rounded to 1 decimal place.</p>\n<p>This will work:</p>\n<pre><code class=\"lang-auto\">ROUND(YEARFRAC({Start Date},IF({End Date},{End Date},TODAY()))*12,1)\n</code></pre>\n<p>Jim - <a href=\"https://www.youtube.com/c/TheMondayMan?sub_confirmation=1\">Subscribe to The Monday Man</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/Xwahm7tkHoA\">A Killer Combo: monday.com, Integromat &amp; Google Sheets - Recurring Tasks Example</a></p>"
+    },
+    {
+      "id": 70418,
+      "postNumber": 3,
+      "createdAt": "2021-12-03T12:57:01.918Z",
+      "author": "Formula_Choice (Antony Titley)",
+      "cookedHtml": "<p>Hi Jim,</p>\n<p>Thanks for getting back to me! The rounding function is working as intended. Perhaps I wasn’t clear enough on my main post.</p>\n<p>The issue comes when adding the IF portion of the formula. If both Rounding formulas are contained in the IF Function then it spits out the Red Exclamation Mark unless the end date is filled.</p>\n<p>I can’t figure out why the first part (below) works on its own, but not when paired with the other formula under the IF.<br />\nROUND((Days(FORMAT_DATE(TODAY()),{Start date})/30),1),</p>"
+    },
+    {
+      "id": 70422,
+      "postNumber": 4,
+      "createdAt": "2021-12-03T13:37:38.801Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/formula_choice\">@Formula_Choice</a></p>\n<p>Ok, I’ll take another shot… give me the formula that doesn’t work. Exactly as in the formula column.</p>"
+    },
+    {
+      "id": 70423,
+      "postNumber": 5,
+      "createdAt": "2021-12-03T13:40:33.073Z",
+      "author": "Formula_Choice (Antony Titley)",
+      "cookedHtml": "<p>Thank you!</p>\n<p>The formula is:<br />\nIF({End Date}=\"\",ROUND((Days(FORMAT_DATE(TODAY()),{Start date})/30),1),ROUND((Days({End Date},{Start date})/30),1))</p>"
+    },
+    {
+      "id": 70424,
+      "postNumber": 6,
+      "createdAt": "2021-12-03T14:14:08.951Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/formula_choice\">@Formula_Choice</a></p>\n<p>monday functions are inconsistent with regard to giving an error on portions of formulas that are not needed; e.g.: IF(FALSE, 1/0, 1) will always give a divide by zero error. IF(FALSE, DIVIDE(1, 0), 1) will not.</p>\n<p>IF(FALSE, DAYS{End Date}, TODAY()), 1) will return an “invalid parameter” error whenever {End Date} is empty.</p>\n<p>In your formula, the portion that reads “…ROUND((Days({End Date},{Start date})/30),1)…” is returning an error whenever {End Date} is empty.</p>\n<p>To avoid the error, you could change your formula to this:</p>\n<pre><code class=\"lang-auto\">IF({End Date}=\"\",ROUND((Days(FORMAT_DATE(TODAY()),{Start Date})/30),1),ROUND((Days(IF({End Date}=\"\",\"1/1/1\",{End Date}),{Start Date})/30),1))\n</code></pre>"
+    },
+    {
+      "id": 70428,
+      "postNumber": 7,
+      "createdAt": "2021-12-03T14:49:48.393Z",
+      "author": "Formula_Choice (Antony Titley)",
+      "cookedHtml": "<p>That worked perfectly, thank you so much!</p>"
+    },
+    {
+      "id": 70434,
+      "postNumber": 8,
+      "createdAt": "2021-12-03T15:57:32.274Z",
+      "author": "rorynowlin (Rory)",
+      "cookedHtml": "<p>Didn’t know I needed this but it works perfectly! Thanks for the addition to my board.</p>"
+    },
+    {
+      "id": 71133,
+      "postNumber": 9,
+      "createdAt": "2021-12-10T15:58:21.296Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

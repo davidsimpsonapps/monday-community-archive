@@ -1,0 +1,82 @@
+{
+  "id": 69691,
+  "title": "How to Extract All Items from Board using Latest API Version",
+  "slug": "how-to-extract-all-items-from-board-using-latest-api-version",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-10-31T22:22:19.002Z",
+  "lastPostedAt": "2024-04-10T11:58:32.141Z",
+  "postsCount": 8,
+  "excerpt": "Hello All, \nI currently have the below GraphQL query, which extracts all items in a board. It works for API version 2023-07, but that one is being deprecated. Note the board number in the example below is not a real boar&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 3410,
+  "posts": [
+    {
+      "id": 150855,
+      "postNumber": 1,
+      "createdAt": "2023-10-31T22:22:19.079Z",
+      "author": "christopher.matthews (Chris matthews)",
+      "cookedHtml": "<p>Hello All,</p>\n<p>I currently have the below GraphQL query, which extracts all items in a board. It works for API version 2023-07, but that one is being deprecated. Note the board number in the example below is not a real board.</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: 123456789) {\n    items(limit: 20, page: 1) {\n      name\n      column_values {\n        title\n        text\n      }\n    }\n  }\n}\n</code></pre>\n<p>I am wondering if there is an equivalent GraphQL query that will pull all items from the board using the latest API version.</p>\n<p>On another note, wondering if the new query could have the data structured a little differently.</p>\n<p>The existing query returns the data like this:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items\": [\n          {\n            \"name\": \"Client_One\",\n            \"column_values\": [\n              {\n                \"title\": \"Board_Column_1\",\n                \"text\": \"10 Hours\"\n              },\n              {\n                \"title\": \"Board_Column_2\",\n                \"text\": \"Jon Doe\"\n              },\n              {\n                \"title\": \"Board_Column_3\",\n                \"text\": \"Sarah Jane\"\n              }\netc...\n</code></pre>\n<p>Wondering if it’s possible to structure the JSON so that the column_text under each column title has its own brackets. Basically the column_text would get nested under each respective column title. The reasoning is if the column order gets changed, we can still refer to the column title rather than the order of the columns.</p>\n<p>something like the below (although it’s not properly formattted)</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items\": [\n          {\n            \"name\": \"Client_One\",\n            \"column_values\": [\n              {\n                \"title\": \"Board_Column_1\",\n                           [\"column_text\": \"10 Hours\"]\n              },\n              {\n                \"title\": \"Board_Column_2\",\n                \t[\"column_text\": \"Jon Doe\"]\n              },\n              {\n                \"title\": \"Board_Column_3\",\n                \t[\"column_text\": \"Sarah Jane\"]\n              }\n\n</code></pre>\n<p>Thanks,<br />\nChris</p>"
+    },
+    {
+      "id": 150911,
+      "postNumber": 2,
+      "createdAt": "2023-11-01T06:57:19.592Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/christopher.matthews\">@christopher.matthews</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can get the items of your board using version 2023-10 by utilizing items_page as explained <a href=\"https://developer.monday.com/api-reference/docs/items_page\">here</a>.</p>\n<p>I think the closest you can get to that output would be using something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 100) {\n      cursor\n      items {\n        id\n        name\n        column_values {\n          column {\n            title\n          }\n          text\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 150951,
+      "postNumber": 3,
+      "createdAt": "2023-11-01T12:23:56.666Z",
+      "author": "sl1nna (Sami Linnanvuo)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> Does it return archived items also?</p>"
+    },
+    {
+      "id": 150974,
+      "postNumber": 4,
+      "createdAt": "2023-11-01T13:25:51.831Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/sl1nna\">@sl1nna</a>,</p>\n<p>No. Archived items will not be returned.</p>\n<p>I have added your vote for a request we have for that <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 150975,
+      "postNumber": 5,
+      "createdAt": "2023-11-01T13:25:58.843Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/3722124523\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 177623,
+      "postNumber": 6,
+      "createdAt": "2024-04-09T16:23:23.328Z",
+      "author": "JoseDaher (Jose Daher)",
+      "cookedHtml": "<p>Hi, this helped a little… With the new API, without a “limit” the query returns only about 30 items… But the boards that I used to query in the old API had over a thousend items, and it worked fine… Now, defining a limit, I have 500 max… It won’t work for me.</p>\n<p>Is there a way to pull all items, even if they are over 1000?</p>"
+    },
+    {
+      "id": 177758,
+      "postNumber": 7,
+      "createdAt": "2024-04-10T08:52:09.688Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/josedaher\">@JoseDaher</a>,</p>\n<p>There is no way to pull all of the items together.</p>\n<p>But if you use cursor-based pagination (as shown <a href=\"https://developer.monday.com/api-reference/reference/items-page#cursor-based-pagination-using-next_items_page\">here</a>), you will arrive to the same result (al items being retrieved, only in batches) <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 177771,
+      "postNumber": 8,
+      "createdAt": "2024-04-10T09:17:47.510Z",
+      "author": "JoseDaher (Jose Daher)",
+      "cookedHtml": "<p>Thanks! I never used “cursor-based pagination”, I’ll try!</p>"
+    },
+    {
+      "id": 177810,
+      "postNumber": 9,
+      "createdAt": "2024-04-10T11:58:32.141Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Let us know if you have questions <a class=\"mention\" href=\"/u/josedaher\">@JoseDaher</a> !!</p>"
+    }
+  ]
+}

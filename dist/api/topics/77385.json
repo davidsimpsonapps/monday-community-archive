@@ -1,0 +1,61 @@
+{
+  "id": 77385,
+  "title": "Updates: Result window is too large, limit * page must be less than or equal to 10,000",
+  "slug": "updates-result-window-is-too-large-limit-page-must-be-less-than-or-equal-to-10-000",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-02-07T16:37:52.184Z",
+  "lastPostedAt": "2024-02-09T11:35:24.314Z",
+  "postsCount": 4,
+  "excerpt": "If I execute a query where page * limit is greater than 10,000 I receive the following error: \n  \nIs this expected behavior? Is there a limit to the number of updates an instance can have? What’s the suggested solution i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 238,
+  "posts": [
+    {
+      "id": 166443,
+      "postNumber": 1,
+      "createdAt": "2024-02-07T16:37:52.278Z",
+      "author": "EricM (Eric)",
+      "cookedHtml": "<p>If I execute a query where <em>page * limit</em> is greater than 10,000 I receive the following error:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/2/129343cad132b11ae4da49ccbba64cc2f446a4bd.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/2/129343cad132b11ae4da49ccbba64cc2f446a4bd_2_690x211.png\" alt=\"image\" width=\"690\" height=\"211\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1705×522 36.7 KB</span></div></a></div><br />\nIs this expected behavior? Is there a limit to the number of updates an instance can have? What’s the suggested solution if there can be more updates than this limit? The Updates object does not seem to support filters besides ID.<p></p>\n<p>I did find that this a common error for a Elasticsearch backend:<br />\n<a href=\"https://discuss.elastic.co/t/result-window-is-too-large-from-size-must-be-less-than-or-equal-to-10000-but-was-10050/124392\" rel=\"noopener nofollow ugc\">Result window is too large, from + size must be less than or equal to: [10000] but was [10050] - Elastic Stack / Elasticsearch - Discuss the Elastic Stack</a><br />\nThere were workarounds specific to Elasticsearch (search after, search with date filters), but they do not seem to be applicable in this situation.</p>"
+    },
+    {
+      "id": 166457,
+      "postNumber": 2,
+      "createdAt": "2024-02-07T17:50:14.210Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>This is because you’re retrieving a single update (limit: 1) per page. You’re getting to page 10000 trying to get all of the updates by looping 10000 times?</p>\n<p>If you increase the limit to something reasonable, you’ll need far fewer pages.</p>"
+    },
+    {
+      "id": 166630,
+      "postNumber": 3,
+      "createdAt": "2024-02-08T06:51:38.302Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 166633,
+      "postNumber": 4,
+      "createdAt": "2024-02-08T06:55:34.290Z",
+      "author": "EricM (Eric)",
+      "cookedHtml": "<p>This is more of a technical/development question. I understand the limit and that it is likely not a problem in most cases. This is a finite series - meaning there is a theoretical limit to the number of updates I can retrieve from the API. Something like:</p>\n<p>S=1 page * 10000 limit + 2 page * 5000 limit + 3 page * 3333 limit + 4 page * 2500 limit …<br />\n100,000,000 updates I believe?</p>\n<p>Is there a reason behind this limit for this specific object? The other objects seem to work with page * limit beyond 10,000. I’m asking for the worst-case scenario where a client might have more updates than this, or is that not possible?</p>"
+    },
+    {
+      "id": 166938,
+      "postNumber": 5,
+      "createdAt": "2024-02-09T11:35:24.314Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There is also a hard limit of 1000 updates per item. Which is why I’m shaking my head here, you’re trying to account for an impossibility.</p>\n<p>Another thing, the limit is just how many updates to return. Lets assume there are 100 updates.</p>\n<p>limit: 50, page: 1 returns updates 1-50<br />\nlimit: 50, page: 2 returns updates 51-100<br />\nlimit: 200: page: 3 returns nothing, there are no updates 401-600 (it assumes pages 1 &amp; 2 were also 200 updates in size, 1-200, and 201-400)</p>\n<p>Just because other ones don’t throw an error with a limit over 10000 doesn’t mean they can return more than 10000. Most are limited to 1000 actual items. you specify 10000 and they just return 1000. Thats if the query doesn’t error/timeout at 1000 (your query must return in 60s or less).</p>\n<p>items_page is limited to 500 items, even if you specify a higher limit. Most root queries are limited to 100 I believe.</p>"
+    },
+    {
+      "id": 167837,
+      "postNumber": 6,
+      "createdAt": "2024-02-14T13:38:09.968Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

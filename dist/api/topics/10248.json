@@ -1,0 +1,65 @@
+{
+  "id": 10248,
+  "title": "500 - Internal Server Error Creating a Link Column",
+  "slug": "500-internal-server-error-creating-a-link-column",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-08-19T08:58:16.941Z",
+  "lastPostedAt": "2021-02-25T14:32:55.838Z",
+  "postsCount": 7,
+  "excerpt": "Hi All, \ni am trying to mutate a board using the API, but a im getting a 500 - Internal Server Error when i try to set the value for a link column \nhere is the api code: \nmutation {\n\tcreate_item (board_id: 659846591, gro&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2386,
+  "posts": [
+    {
+      "id": 25881,
+      "postNumber": 1,
+      "createdAt": "2020-08-19T08:58:17.008Z",
+      "author": "fgmanfredini (Fabio Manfredini)",
+      "cookedHtml": "<p>Hi All,</p>\n<p>i am trying to mutate a board using the API, but a im getting a 500 - Internal Server Error when i try to set the value for a link column</p>\n<p>here is the api code:</p>\n<pre><code>mutation {\n\tcreate_item (board_id: 659846591, group_id: \"backlog\", item_name: \"Teste SCI\", column_values: \"{ \\\"texto0\\\": \\\"teste\\\" , \\\"texto4\\\":\\\"BIBI\\\",  \\\"link2\\\":\\\"{\\\"url\\\":\\\"http://monday.com\\\",\\\"text\\\":\\\"go to monday!\\\"}\\\"      }\") {\nid\n}\n}\n</code></pre>\n<p>if i remove the link column value, the it works…</p>\n<p>Any Idea on what am i doing wrong?</p>\n<p>Thank You</p>"
+    },
+    {
+      "id": 25886,
+      "postNumber": 2,
+      "createdAt": "2020-08-19T09:21:39.890Z",
+      "author": "fgmanfredini (Fabio Manfredini)",
+      "cookedHtml": "<p>i noticed that i need to scape the inner \\ in the value… but now i am getting another error:</p>\n<p>i am using now:</p>\n<pre><code>mutation {\n\tcreate_item (board_id: 659846591, group_id: \"backlog\", item_name: \"Teste SCI\", column_values: \"{ \\\"texto0\\\": \\\"fabio\\\" , \\\"texto4\\\":\\\"BIBI\\\",  \\\"link\\\":\\\"{\\\\\\\"url\\\\\\\":\\\\\\\"http://www.monday.com\\\\\\\",\\\\\\\"text\\\\\\\":\\\\\\\"Hello\\\\\\\"}\\\"}\") {\nid\n} \n}\n</code></pre>\n<p>an now getting the error:</p>\n<pre><code>{\n  \"error_code\": \"ColumnValueException\",\n  \"status_code\": 200,\n  \"error_message\": \"invalid value, please check our API documentation for the correct data structure for this column. https://monday.com/developers/v2#column-values-section\",\n  \"error_data\": {\n    \"column_value\": \"{\\\"url\\\":\\\"http://www.monday.com\\\",\\\"text\\\":\\\"Hello\\\"}\",\n    \"column_type\": \"LinkColumn\"\n  }\n}</code></pre>"
+    },
+    {
+      "id": 25887,
+      "postNumber": 3,
+      "createdAt": "2020-08-19T09:32:26.571Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/fgmanfredini\">@fgmanfredini</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks for reaching out to our community and creating this opportunity to help <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> Congratulations on your first post with us and I hope you enjoy your stay.</p>\n<p>I’ve just tried to test this on my end and it did seem like the first error you have received was related to your JSON formatting. As for the 200 error, I am not quite sure what might have caused it in your code specifically, but it seems like the value is being blocked because of the formatting again. Would you be able to try out the following instead?</p>\n<p>mutation {<br />\ncreate_item (board_id: REPLACEWITHYOURID, group_id: “REPLACEWITHYOURID”, item_name: “Teste SCI”, column_values: “{\"\"texto0\": \"taste\", \"texto4\" : \"BIBI\",  \"link\" : {\"url\":\"<a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">http://monday.com</a>\",\"text\":\"go to monday!\"}”)<br />\n{id}<br />\n}</p>\n<p>This seems to have worked for me on my end after further testing <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25902,
+      "postNumber": 4,
+      "createdAt": "2020-08-19T09:55:45.712Z",
+      "author": "fgmanfredini (Fabio Manfredini)",
+      "cookedHtml": "<p>Hi Alex, thank you for the reply. I could not test your code, i am using the monday developers TryItYourself UI, and i need to scape the quotes and backslashes, i copied and pasted your code (replacing the IDs), but get lots of formatting errors…  I think the problem with my code is exactly some issues regarding the scapes that i am using…</p>\n<p>Could you please test it on the monday developers UI and paste the code that works using the pre formatted text option here in the forum editor?</p>\n<p>Thank You Again!</p>"
+    },
+    {
+      "id": 25909,
+      "postNumber": 5,
+      "createdAt": "2020-08-19T10:16:39.684Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/fgmanfredini\">@fgmanfredini</a></p>\n<p>I’m sorry to hear that didn’t seem to work for you! I’ll do some further testing and setup on my end and get back to you as soon as I can with a working example <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 25913,
+      "postNumber": 6,
+      "createdAt": "2020-08-19T10:34:58.973Z",
+      "author": "fgmanfredini (Fabio Manfredini)",
+      "cookedHtml": "<p>I got it to work using an update column after the insert… for some reason, when using it inside the column_values, it does not work, but when updating, it works…</p>\n<p>here is the code that works:</p>\n<pre><code>mutation {\nchange_column_value (board_id: 659846591, item_id: 699278976, column_id: \"link\", value: \"{\\\"url\\\":\\\"http://localhost:59266/sci/19644\\\",\\\"text\\\":\\\"19644\\\"}\") {\nid\n}\n}</code></pre>"
+    },
+    {
+      "id": 42416,
+      "postNumber": 7,
+      "createdAt": "2021-02-25T14:32:55.838Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

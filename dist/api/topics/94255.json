@@ -1,0 +1,44 @@
+{
+  "id": 94255,
+  "title": "Question about the \"subscription\" object sent in the integration request",
+  "slug": "question-about-the-subscription-object-sent-in-the-integration-request",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    144,
+    209,
+    351,
+    433
+  ],
+  "createdAt": "2024-07-31T06:35:15.950Z",
+  "lastPostedAt": "2024-08-05T04:25:09.148Z",
+  "postsCount": 2,
+  "excerpt": "Hi monday team. \nI have a question about how the subscription object behaves when a subscription is cancelled and the user keeps using our integrations. \nWhen an app is installed, monday sends a install webhook containin&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 30,
+  "posts": [
+    {
+      "id": 195489,
+      "postNumber": 1,
+      "createdAt": "2024-07-31T06:35:16.054Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi monday team.</p>\n<p>I have a question about how the <code>subscription</code> object behaves when a subscription is cancelled and the user keeps using our integrations.</p>\n<p>When an app is installed, monday sends a <code>install</code> webhook containing the default plan Id and the renewal date.</p>\n<pre><code class=\"lang-auto\">(object) array(\n    'plan_id' =&gt; 'free_plan_id',\n    'renewal_date' =&gt; '2034-06-04T23:07:50+00:00',\n    'is_trial' =&gt; false,\n    'billing_period' =&gt; NULL,\n    'days_left' =&gt; 3652,\n    'pricing_version' =&gt; 1\n)\n</code></pre>\n<p>When the customer purchases or renews a plan, monday sends a <code>app_subscription_created</code> or <code>app_subscription_renewed</code> webhook containing the purchased plan Id and the new renewal date.</p>\n<pre><code class=\"lang-auto\">(object) array(\n    'plan_id' =&gt; 'paid_plan_id',\n    'renewal_date' =&gt; '2024-07-14T00:00:00+00:00',\n    'is_trial' =&gt; false,\n    'billing_period' =&gt; 'monthly',\n    'days_left' =&gt; 30,\n    'pricing_version' =&gt; 1\n)\n</code></pre>\n<p>The same object above is sent in the payload of every integration call.<br />\nAs we offer plans with ops per month, we rely on the <code>renewal_date - days_left</code> propertie to calculate the corresponding time window.</p>\n<p>When the subscription is cancelled, monday sends a <code>app_subscription_cancelled</code> webhook containing the paid plan Id and no renewal date.</p>\n<pre><code class=\"lang-auto\">(object) array(\n    'plan_id' =&gt; 'gc_plan_s',\n    'renewal_date' =&gt; 'nil',\n    'is_trial' =&gt; false,\n    'billing_period' =&gt; 'monthly',\n    'days_left' =&gt; NULL,\n    'pricing_version' =&gt; 1\n   )\n</code></pre>\n<p>After the subscription cancellation what does the payload contains?<br />\nI expect to receive the default plan Id and a new renewal date.</p>\n<p>In my example above:</p>\n<ul>\n<li>on 2024-06-05 the user installs our app and starts using it on the free plan;</li>\n<li>(the free plan resets on 2024-07-05);</li>\n<li>on 2024-06-14, before the first free period ends, the user purchases a paid plan;</li>\n<li>on 2024-07-14 the subscription is renewed;</li>\n<li>on 2024-07-30 the subscription is cancelled.</li>\n</ul>\n<p>Can I assume that, after 2024-07-30, the integration payload contains the <code>free_plan_id</code> and <code>2024-08-30</code> as renewal date?</p>\n<p>Thanks for your help.</p>\n<p>cc <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>"
+    },
+    {
+      "id": 195506,
+      "postNumber": 2,
+      "createdAt": "2024-07-31T09:20:00.176Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Double-checking with Anton Rubin via Slack</p>"
+    },
+    {
+      "id": 196074,
+      "postNumber": 3,
+      "createdAt": "2024-08-05T04:25:09.148Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/rob\">@rob</a>,</p>\n<p>I checked this with our monetization team and this is what they mentioned:</p>\n<p>In the event where an app that has a free plan and a paid plan, has as a customer an account that has paid plan, when you get the JWT you will see the paid plan subscription object. After the account cancels the paid subscription:</p>\n<ol>\n<li>Until renewal date (from 2024-07-30 until 2024-08-14), you should still get the paid plan in the subscription object, with the renewal date of the last day that the paid subscription will be active.</li>\n<li>After renewal date, you should get the free plan in the subscription object, with, in this case, 2034-08-14 as the renewal date.</li>\n</ol>\n<p>Let me know if you have any questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

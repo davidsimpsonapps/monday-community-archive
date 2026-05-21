@@ -1,0 +1,76 @@
+{
+  "id": 101242,
+  "title": "Formula to produce days worked on - days in pending, and days to completion date",
+  "slug": "formula-to-produce-days-worked-on-days-in-pending-and-days-to-completion-date",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    108,
+    115
+  ],
+  "createdAt": "2024-10-22T21:07:08.479Z",
+  "lastPostedAt": "2024-10-29T21:49:35.550Z",
+  "postsCount": 8,
+  "excerpt": "Hello! I’m hoping someone can help me out with this formula I’m trying to create. \nI have two columns that are labeled Date Opened and Complete Date. I’m using this formula to produce the number of days it’s been getting&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 35,
+  "posts": [
+    {
+      "id": 206820,
+      "postNumber": 1,
+      "createdAt": "2024-10-22T21:07:08.552Z",
+      "author": "erika_gomez (Erika Gomez)",
+      "cookedHtml": "<p>Hello! I’m hoping someone can help me out with this formula I’m trying to create.</p>\n<p>I have two columns that are labeled Date Opened and Complete Date. I’m using this formula to produce the number of days it’s been getting worked on.<br />\nIF(DAYS(TODAY(), {Date Opened}) &lt;= 30, “0-30 days”,</p>\n<p>IF(DAYS(TODAY(), {Date Opened}) &lt;= 60, “31-60 days”,</p>\n<p>IF(DAYS(TODAY(), {Date Opened}) &lt;= 90, “61-90 days”,</p>\n<p>IF(DAYS(TODAY(), {Date Opened}) &lt;= 120, “91-120 days”,</p>\n<p>IF(DAYS(TODAY(), {Date Opened}) &lt;= 150, “121-150 days”,</p>\n<p>IF(DAYS(TODAY(), {Date Opened}) &lt;= 180, “151-180 days”,</p>\n<p>IF(DAYS(TODAY(), {Date Opened}) &lt;= 210, “181-210 days”, “210+ days”)))))))</p>\n<p>This formula, however, does not recognize the completed items. It will assume that the completed items are still being worked on. How can I make the formula recognize that if it is complete it needs to calculate between date opened and complete date. Or how do I make the formula recognize that if there is a complete date, it needs to calculate between those two dates.</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 206979,
+      "postNumber": 2,
+      "createdAt": "2024-10-23T22:58:16.729Z",
+      "author": "Bree (Bree)",
+      "cookedHtml": "<p>Use the following formula. But use straight quotation marks.</p>\n<p>IF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 30,DAYS({Complete Date}, {Date Opened}) &lt;= 30), “0-30 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 60,DAYS({Complete Date}, {Date Opened}) &lt;= 60), “31-60 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 90,DAYS({Complete Date}, {Date Opened}) &lt;= 90), “61-90 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 120,DAYS({Complete Date}, {Date Opened}) &lt;= 120), “91-120 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 150,DAYS({Complete Date}, {Date Opened}) &lt;= 150), “121-150 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 180,DAYS({Complete Date}, {Date Opened}) &lt;= 180), “151-180 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 210,DAYS({Complete Date}, {Date Opened}) &lt;= 210), “181-210 days”,<br />\n“210+ days”)))))))</p>"
+    },
+    {
+      "id": 207181,
+      "postNumber": 3,
+      "createdAt": "2024-10-25T15:08:36.874Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/erika_gomez\">@erika_gomez</a>,</p>\n<p>You actually don’t need any if statement, <em>except if you really want to group all dates above 210 days into a single category</em>.</p>\n<p>The following will return: 1-30 days, 31-60 days,…, 211-240 days, 241-270 days, etc.</p>\n<pre><code>CONCATENATE(\n    1 + FLOOR(DAYS(TODAY(), {Date Opened}),30),\n    \"-\",\n   CEILING(DAYS(TODAY(), {Date Opened}),30),\n   \" days\"\n)\n</code></pre>\n<p>If you really want to group all above 210 days into a single category, then use this syntax:</p>\n<pre><code>IF(DAYS(TODAY(),{Date Opened})&gt;210,\n  \"210+ days\",\n  CONCATENATE(\n     1+FLOOR(DAYS(TODAY(),{Date Opened}),30),\n     \"-\",\n     CEILING(DAYS(TODAY(),{Date Opened}),30),\n     \" days\"\n   )\n )\n</code></pre>\n<hr />\n<p><strong>Want to take your formulas to the next level?</strong> Try the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, the app that reinvents formulas in monday.</p>\n<ul>\n<li>Create formulas without using the Formula column (and avoid its limitations)</li>\n<li>Build formulas involving data from the previous item, the next item, the sub-items, the parent item, even items in the same group or the same board.</li>\n<li>In one formula, update multiple columns from multiple items.</li>\n</ul>\n<p>Check our blog for <a href=\"https://blog.mdboosters.com\" rel=\"noopener nofollow ugc\">real use cases</a>.</p>"
+    },
+    {
+      "id": 207476,
+      "postNumber": 4,
+      "createdAt": "2024-10-27T22:58:58.496Z",
+      "author": "erika_gomez (Erika Gomez)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/b/7bcc69/48.png\" class=\"avatar\" /> Bree:</div>\n<blockquote>\n<p>IF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 30,DAYS({Complete Date}, {Date Opened}) &lt;= 30), “0-30 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 60,DAYS({Complete Date}, {Date Opened}) &lt;= 60), “31-60 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 90,DAYS({Complete Date}, {Date Opened}) &lt;= 90), “61-90 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 120,DAYS({Complete Date}, {Date Opened}) &lt;= 120), “91-120 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 150,DAYS({Complete Date}, {Date Opened}) &lt;= 150), “121-150 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 180,DAYS({Complete Date}, {Date Opened}) &lt;= 180), “151-180 days”,<br />\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 210,DAYS({Complete Date}, {Date Opened}) &lt;= 210), “181-210 days”,<br />\n“210+ days”)))))))</p>\n</blockquote>\n</aside>\n<p>Hello! Thank you for taking the time, the formula still shows up as “Illegal Formula”</p>"
+    },
+    {
+      "id": 207546,
+      "postNumber": 5,
+      "createdAt": "2024-10-28T11:45:13.226Z",
+      "author": "Bree (Bree)",
+      "cookedHtml": "<p>Do the column titles match yours exactly? Are you using straight quotation marks?</p>"
+    },
+    {
+      "id": 207691,
+      "postNumber": 6,
+      "createdAt": "2024-10-28T23:33:26.775Z",
+      "author": "erika_gomez (Erika Gomez)",
+      "cookedHtml": "<p>Good Morning!</p>\n<p>The column titles match mine exactly. I copied and pasted directly from your message as well.</p>"
+    },
+    {
+      "id": 207726,
+      "postNumber": 7,
+      "createdAt": "2024-10-29T11:49:38.158Z",
+      "author": "Bree (Bree)",
+      "cookedHtml": "<p>My message had directional quotation marks. They need to be unidirectional. Try this one:</p>\n<pre><code class=\"lang-auto\">IF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 30,DAYS({Complete Date}, {Date Opened}) &lt;= 30), \"0-30 days\",\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 60,DAYS({Complete Date}, {Date Opened}) &lt;= 60), \"31-60 days\",\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 90,DAYS({Complete Date}, {Date Opened}) &lt;= 90), \"61-90 days\",\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 120,DAYS({Complete Date}, {Date Opened}) &lt;= 120), \"91-120 days\",\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 150,DAYS({Complete Date}, {Date Opened}) &lt;= 150), \"121-150 days\",\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 180,DAYS({Complete Date}, {Date Opened}) &lt;= 180), \"151-180 days\",\nIF(OR(DAYS(TODAY(), {Date Opened}) &lt;= 210,DAYS({Complete Date}, {Date Opened}) &lt;= 210), \"181-210 days\",\n\"210+ days\")))))))\n</code></pre>"
+    },
+    {
+      "id": 207788,
+      "postNumber": 8,
+      "createdAt": "2024-10-29T21:49:35.550Z",
+      "author": "erika_gomez (Erika Gomez)",
+      "cookedHtml": "<p>This worked perfectly! Thank you so much!</p>"
+    }
+  ]
+}

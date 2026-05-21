@@ -1,0 +1,41 @@
+{
+  "id": 61075,
+  "title": "Creating webhook with Javascript gets error \"jwt must be provided\"",
+  "slug": "creating-webhook-with-javascript-gets-error-jwt-must-be-provided",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    351
+  ],
+  "createdAt": "2023-07-05T08:23:28.430Z",
+  "lastPostedAt": "2025-03-30T19:49:06.071Z",
+  "postsCount": 3,
+  "excerpt": "I’m trying to make a custom Monday trigger for an integration app. However, I’m getting an error when creating the webhook using the MondaySDK. Error: “jwt must be provided”. I already have the access_token in monday.set&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 795,
+  "posts": [
+    {
+      "id": 133841,
+      "postNumber": 1,
+      "createdAt": "2023-07-05T08:23:28.537Z",
+      "author": "effex07 (Mike Atilano)",
+      "cookedHtml": "<p>I’m trying to make a custom Monday trigger for an integration app. However, I’m getting an error when creating the webhook using the MondaySDK. Error: “jwt must be provided”. I already have the access_token in monday.setToken() but still getting the same error.</p>\n<p>Wanted to confirm if its because the mutation for webhook only accepts API Key as authorization? So I can’t create it using the SDK?</p>\n<p>Would appreciate your help. Thank you!</p>\n<pre><code class=\"lang-auto\">router.post(\"/subscribe\", async (req, res) =&gt; {\n  const { subscriptionId, webhookUrl, inputFields } = req.body.payload;\n\n  const { userId, accountId, aud, exp, iat } = jwt.verify(\n    req.headers.authorization,\n    process.env.MONDAY_SIGNING_SECRET\n  );\n\n  try {\n    await SubscriptionController.createSubscription(\n      subscriptionId,\n      webhookUrl,\n      accountId,\n      userId,\n      inputFields.boardId\n    );\n\n    const MondayToken = await UserController.findOneMondayToken(userId);\n    console.log(MondayToken);\n    monday.setToken(MondayToken.token.access_token);\n    const mondayEventsWebhook = await monday.api(\n      `mutation {\n        create_webhook (board_id: ${inputFields.boardId}, url: \"${process.env.BASE_URL}/${subscriptionId}/status-change\", event: change_status_column_value) {\n            id\n            board_id\n        }\n    }`\n    );\n\n    return res.status(200).send({ webhookId: subscriptionId });\n  } catch (error) {\n    console.log(error);\n    return res.status(500).send({ message: \"internal server error\" });\n  }\n});\n</code></pre>"
+    },
+    {
+      "id": 134242,
+      "postNumber": 2,
+      "createdAt": "2023-07-09T05:12:54.791Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/effex07\">@effex07</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Would you be able to please send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so we can take a closer look into this and give this some following?</p>\n<p>Looking forward to hearing from you via email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 225575,
+      "postNumber": 3,
+      "createdAt": "2025-03-30T19:49:06.071Z",
+      "author": "EdwardNjogu (Edward Njogu)",
+      "cookedHtml": "<p>Hey, were you able to resolve this?</p>\n<p>I am getting the same error as well and need to figure out what to do next.</p>"
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "id": 47410,
+  "title": "Assistance with API connection",
+  "slug": "assistance-with-api-connection",
+  "categoryId": 6,
+  "tagIds": [
+    5,
+    94
+  ],
+  "createdAt": "2022-12-14T14:38:30.414Z",
+  "lastPostedAt": "2023-02-02T06:14:05.135Z",
+  "postsCount": 15,
+  "excerpt": "How to connect Equals and Monday.com via Javascript \nHi everyone - I’ve written a Javascript connection to bring data from a Monday board into Equals (a spreadsheet), so that I can better analyze some of the data that I &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3748,
+  "posts": [
+    {
+      "id": 107386,
+      "postNumber": 1,
+      "createdAt": "2022-12-14T14:38:30.507Z",
+      "author": "abbey-equals (Abbey)",
+      "cookedHtml": "<p>How to connect Equals and <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> via Javascript</p>\n<p>Hi everyone - I’ve written a Javascript connection to bring data from a Monday board into Equals (a spreadsheet), so that I can better analyze some of the data that I track in Monday. Can someone help me with the code? Here’s what I have so far, and I’m getting feedback that indicates that something is wrong (I know my API key and Board ID are correct):</p>\n<p>I’m trying to do as you say and write an API connection to Monday using your open API. I’ve tried with the following command (see below) and am getting feedback that there’s an issue with my <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> board permissions. Can you help point me in the right direction?</p>\n<p>Thank you kindly,<br />\nAbbey</p>\n<p>const equals = require(“equals”);<br />\nconst axios = require(“axios”);<br />\nconst luxon = require(“luxon”);</p>\n<p>// Replace with your <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API key<br />\nconst apiKey = equals.getSecret(“monday_api_key”);<br />\n// Replace with the ID of your board<br />\nconst boardId = equals.getSecret(“monday_board_id”);</p>\n<p>const unixToDateTime = (unixTimestamp) =&gt;<br />\nluxon.DateTime.fromSeconds(unixTimestamp).toFormat(‘yyyy-LL-dd HH:mm:ss’);</p>\n<p>const getBoardData = async () =&gt; {<br />\n// Make a GET request to the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API to get the data for the board<br />\nconst response = await axios({<br />\nmethod: “get”,<br />\nurl: <code>https://api.monday.com/v2/boards/${boardId}</code>,<br />\nheaders: {<br />\nAuthorization: <code>Bearer ${apiKey}</code>,<br />\nAccept: “application/json”<br />\n}<br />\n});</p>\n<p>return response.data;<br />\n}</p>\n<p>const boardData = await getBoardData();</p>\n<p>// Add the desired columns as headers<br />\nequals.addHeaders([“project”, “person”, “status”, “date”]);</p>\n<p>// Loop through the items on the board and add each one as a row<br />\nboardData.items.forEach((item) =&gt; {<br />\n// You can customize this to add the desired data for each row<br />\nconst rowData = {<br />\nproject: item.columns.project.title,<br />\nperson: item.columns.person.title,<br />\nstatus: item.columns.status.title,<br />\ndate: unixToDateTime(item.columns.date.value)<br />\n};</p>\n<p>equals.addRow(rowData);<br />\n})</p>"
+    },
+    {
+      "id": 107446,
+      "postNumber": 2,
+      "createdAt": "2022-12-15T05:50:33.359Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/abbey-equals\">@abbey-equals</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You are sending a GET request and being our API a GraphQL API, you need to send a POST request always (both for queries and mutations).</p>\n<p>It seems as you are trying to use our API as if it was a REST API.</p>\n<p>With our API, you always use the same endpoint with POST requests and what changes when you want to get or update different information is the body of the request.</p>\n<p>You can find our documentation with some great examples <a href=\"https://developer.monday.com/api-reference/docs\">here</a>.</p>\n<p>Also, as a reference, here is a valid request:</p>\n<pre><code class=\"lang-auto\">\t\tfetch (\"https://api.monday.com/v2\", {\n \t\tmethod: 'post',\n \t\theaders: {\n \t\t\t'Content-Type': 'application/json',\n \t\t\t'Authorization' : 'MY_API_KEY'\n \t\t},\n \t\tbody: JSON.stringify({\n \t\t\t'query' : `mutation {change_simple_column_value (board_id: 1234567890 item_id: 1122334455, column_id: \"text\", value: \"This is text\") {id}}`,\n \t\t})\n \t})\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 107474,
+      "postNumber": 3,
+      "createdAt": "2022-12-15T14:18:35.520Z",
+      "author": "abbey-equals (Abbey)",
+      "cookedHtml": "<p>Thanks Matias for the help here! I know this is asking a lot, but I’m having a hard time figuring out where I’m going wrong. I’ve modified my script to use POST instead of GET, but still running into trouble. Really appreciate any help you can provide!</p>\n<p>const equals = require(“equals”);<br />\nconst axios = require(“axios”);</p>\n<p>const apiKey = equals.getSecret(“monday_api_key”);<br />\nconst boardId = “3644616881”; // The ID of my <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> board<br />\nconst columns = [“project”, “person”, “status”, “date”]; // The names of the columns in my <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> board</p>\n<p>const getBoardItems = async () =&gt; {<br />\nconst response = await axios({<br />\nmethod: “post”,<br />\nurl: <code>https://api.monday.com/v2/boards/${boardId}/items/all.json</code>,<br />\nheaders: {<br />\n“Content-Type”: “application/json”,<br />\nAuthorization: apiKey,<br />\n},<br />\ndata: {<br />\npagination: { per_page: 150 },<br />\n},<br />\n});<br />\nreturn response.data.data;<br />\n};</p>\n<p>const boardItems = await getBoardItems();</p>\n<p>equals.addHeaders(columns);<br />\nboardItems.forEach((item) =&gt; {<br />\nconst itemData = {};<br />\ncolumns.forEach((column) =&gt; {<br />\nitemData[column] = item[column] &amp;&amp; item[column].text;<br />\n});<br />\nequals.addRow(itemData);<br />\n})</p>"
+    },
+    {
+      "id": 107666,
+      "postNumber": 4,
+      "createdAt": "2022-12-18T05:38:44.105Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/abbey-equals\">@abbey-equals</a>!</p>\n<p>The endpoint you are using is incorrect. Please take into account that this is GraphQL. Not REST API.</p>\n<p>You have to always use the same endpoint <a href=\"https://api.monday.com/v2/\">https://api.monday.com/v2/</a></p>\n<p>Also, pagination does not work with a “per_page” parameter.</p>\n<p>Please check our API documentation <a href=\"https://developer.monday.com/api-reference/docs\">here</a> and learn more about how to use pagination <a href=\"https://developer.monday.com/api-reference/docs/rate-limits#pagination\">here.</a></p>\n<p>Also take into account that our API will expect column IDs and not their names. You can check the IDs by going to your admin section, then to “monday.labs”, enabeling developer mode, and then checking the ID of each column in the board by clicking on the 3 dots next to the column’s name.</p>\n<p>You can also check our Postman examples <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/collection/17637789-b18ebc66-bc27-49b5-a950-3dfa4bfb3a21?ctx=documentation\">here</a>.</p>\n<p>Please follow this documentation and those examples in order to send the request correctly.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 107700,
+      "postNumber": 5,
+      "createdAt": "2022-12-18T19:51:04.000Z",
+      "author": "abbey-equals (Abbey)",
+      "cookedHtml": "<p>Thanks - totally get it, appreciate the link to the right endpoints!</p>\n<p>Abbey</p>"
+    },
+    {
+      "id": 107727,
+      "postNumber": 6,
+      "createdAt": "2022-12-19T07:05:40.795Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/abbey-equals\">@abbey-equals</a>,</p>\n<p>Glad to help!</p>\n<p>Let us know if you need anything <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 111254,
+      "postNumber": 7,
+      "createdAt": "2023-01-19T01:12:28.703Z",
+      "author": "suriyapong (suriyapong)",
+      "cookedHtml": "<p>Hi Matias.</p>\n<p>I have simple question. I have 1 parent board and subitem inside.</p>\n<p>I want to query parent board 1 table and subitem board with parent’s ID 1 table.</p>\n<p>I want to connect to Power BI. I follow this <a href=\"https://github.com/DataMuallem/PowerBI/blob/308233441ac17b72e817280753eb3bc6d6b18ddb/Monday.com%20M%20Query\" rel=\"noopener nofollow ugc\">PowerBI/Monday.com M Query at 308233441ac17b72e817280753eb3bc6d6b18ddb · DataMuallem/PowerBI · GitHub </a>and it can connect api but don’t have parent id and don’t have subitem list.</p>\n<p>How can I do that ? I don’t have basic coding so can you share me some example.</p>\n<p>Thank you very much.</p>"
+    },
+    {
+      "id": 111671,
+      "postNumber": 8,
+      "createdAt": "2023-01-22T05:45:32.533Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/suriyapong\">@suriyapong</a>,</p>\n<p>You can use a query like this one to get the ID of one of the subitems in your board:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items {\n      subitems {\n\t\t\t\tid\n      }\n    }\n  }\n}\n</code></pre>\n<p>Then you can use that ID in another call to get the ID of the subitem’s board:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1112223334) {\n    board {\n      id\n    }\n  }\n}\n</code></pre>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 111747,
+      "postNumber": 9,
+      "createdAt": "2023-01-23T01:19:28.471Z",
+      "author": "suriyapong (suriyapong)",
+      "cookedHtml": "<p>Hi, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Got it. I can get subitem board’s ID and get list subitems and value already.</p>\n<p>But there is no parent ID in subitem so I can’t link subitem to parent.</p>\n<p>Can you suggest ?<br />\nThank you</p>"
+    },
+    {
+      "id": 111759,
+      "postNumber": 10,
+      "createdAt": "2023-01-23T05:16:49.316Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/suriyapong\">@suriyapong</a>,</p>\n<p>You can get the ID of the parent item of any subitem with a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1234567890) {\n    parent_item {\n      id\n    }\n  }\n}\n</code></pre>\n<p>Is this what you were looking for?</p>"
+    },
+    {
+      "id": 111777,
+      "postNumber": 11,
+      "createdAt": "2023-01-23T08:27:59.852Z",
+      "author": "suriyapong (suriyapong)",
+      "cookedHtml": "<p>Yes, It will be like this but can you suggest PowerBI query. Which I will query the table of subitems with have column like this</p>\n<p>parent id, subitem name, subitemvalue1,subitemvalue2,subitemvalue3.</p>\n<p>this is I really want.  Because I tested it before with</p>\n<p><code>Content=Text.ToBinary(\"{\"\"query\"\": \"\"{ boards (ids: Enter Id) { items {  id name column_values { title text  } } } }\"\"}\")</code></p>\n<p>and id isn’t show after I query it.</p>\n<p>the code source I get is from <a href=\"https://github.com/DataMuallem/PowerBI/blob/308233441ac17b72e817280753eb3bc6d6b18ddb/Monday.com%20M%20Query\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">PowerBI/Monday.com M Query at 308233441ac17b72e817280753eb3bc6d6b18ddb · DataMuallem/PowerBI · GitHub</a></p>\n<p>Thank you</p>"
+    },
+    {
+      "id": 111779,
+      "postNumber": 12,
+      "createdAt": "2023-01-23T08:32:16.624Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/suriyapong\">@suriyapong</a>,</p>\n<p>I do not have experience with Power BI but on our API’s end, you can use something like this, which will give you the subitem’s name, parent ID and column values.</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: YOURSUBITEMID) {\n    name\n    parent_item {\n      id\n    }\n    column_values {\n      title\n      value\n      text\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 111781,
+      "postNumber": 13,
+      "createdAt": "2023-01-23T08:41:18.443Z",
+      "author": "suriyapong (suriyapong)",
+      "cookedHtml": "<p>Thank you so much I will try and come back to you. you are really kind. Thank you</p>"
+    },
+    {
+      "id": 113452,
+      "postNumber": 14,
+      "createdAt": "2023-02-02T02:23:21.092Z",
+      "author": "suriyapong (suriyapong)",
+      "cookedHtml": "<p>I got it !!</p>\n<p>Thank you very much.</p>"
+    },
+    {
+      "id": 113478,
+      "postNumber": 15,
+      "createdAt": "2023-02-02T06:14:05.135Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/suriyapong\">@suriyapong</a>,</p>\n<p>I am very glad this is working for you!</p>\n<p>You are very welcome <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Let us know if you need anything else in the future!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

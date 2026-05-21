@@ -1,0 +1,142 @@
+{
+  "id": 9633,
+  "title": "Monday API SDK Not Authenticated or Graphql validation errors",
+  "slug": "monday-api-sdk-not-authenticated-or-graphql-validation-errors",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-07-31T17:10:49.121Z",
+  "lastPostedAt": "2021-02-25T14:32:55.096Z",
+  "postsCount": 18,
+  "excerpt": "Hi! \nI just started the quickstart guide and wanted to start querying right away, but instantly hit a wall with GraphQL. BTW I love graphql and use it for my own projects and was excited to see that graphql querying and &hellip;",
+  "solvedPostId": null,
+  "likeCount": 13,
+  "views": 7560,
+  "posts": [
+    {
+      "id": 24265,
+      "postNumber": 1,
+      "createdAt": "2020-07-31T17:10:49.192Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hi!<br />\nI just started the quickstart guide and wanted to start querying right away, but instantly hit a wall with GraphQL. BTW I love graphql and use it for my own projects and was excited to see that graphql querying and mutations are allowed.</p>\n<p>When running</p>\n<pre><code class=\"lang-auto\">monday.api(`query { users { id, name } }`).then((res) =&gt; {console.log(res)})\n</code></pre>\n<p>I get: <code>Error: Graphql validation errors</code></p>\n<p>It said I didn’t need a token but I tried a token anyway<br />\nI’ve tried <code>monday.setToken('apiKey')</code><br />\nand I get <code>errors: [\"Not Authenticated\"]</code><br />\nI also tried <code>monday.api(query, {token: \"apiKey\"}).then((res) =&gt; console.log(res))</code><br />\nand I get the same error: <code>errors: [\"Not Authenticated\"]</code></p>\n<p>I tested my token in <a href=\"https://monday.com/developers/v2/try-it-yourself\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com</a> and it works great. I can query just fine.</p>\n<p>Note: I haven’t added any code to the quickstart guide at all except for converting class to react-hooks and then adding the query in a useEffect.</p>\n<p>Hope someone can help with me with this issue.<br />\nThank you in advance.</p>"
+    },
+    {
+      "id": 24292,
+      "postNumber": 2,
+      "createdAt": "2020-08-01T02:33:55.811Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hi there <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=15\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Great user name, I love spicy food too <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=15\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> Thanks for reaching out to us with this.</p>\n<p>To be transparent with you, it looks like you are not sending the API request to us correctly. From my understanding (and I’m afraid I could be wrong on this as well), you will need to send your whole API request to us towards “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>” as a POST request in JSON string, as seen here in the quickstart:</p>\n<h1><a name=\"p-24292-structuring-your-api-requests-1\" class=\"anchor\" href=\"#p-24292-structuring-your-api-requests-1\"></a><strong>Structuring your API requests</strong></h1>\n<p>There are a few things to keep in mind when you’re building your first API call:</p>\n<ul>\n<li><strong>Request Structure:</strong> all requests to the API must be POST requests. Queries must conform to our GraphQL schema</li>\n<li><strong>Authentication:</strong> all requests to the API should include an authentication token in the request header. Learn how to get your API key <a href=\"https://support.monday.com/hc/en-us/articles/360005144659-Does-monday-com-have-an-API-\" rel=\"noopener nofollow ugc\">here</a>.</li>\n<li><strong>Request Body:</strong> all requests to the API should have a JSON-formatted body. The only exception is file uploads, which should be multipart requests.</li>\n</ul>\n<p>Do you think this could be causing the issue you are having? Since the Query works correctly in the test try-it-yourself environment, it seems like the code is correct to me. Does that make sense?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 24309,
+      "postNumber": 3,
+      "createdAt": "2020-08-01T13:25:15.615Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>!</p>\n<p>Thank you so much for getting back to me and helping me with this issue.  And also <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=12\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=12\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" width=\"20\" height=\"20\" /> mmm</p>\n<p>I was able to get the query to work with a post fetch request:</p>\n<pre><code class=\"lang-auto\">    fetch('https://api.monday.com/v2', {\n      method: \"POST\",\n      body:JSON.stringify({query: \"{users {id, name}}\"}),\n      headers: {\n        \"Content-Type\": \"application/json\",\n        \"Authorization\": \"apiKey\"\n      }\n    }).then((res) =&gt; res.json()).then((response) =&gt; console.log(response)).catch((err) =&gt; console.log(err))\n</code></pre>\n<p>Success! Everything’s working great. Thank you <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> ! Now I’m able to move forward.</p>\n<p>Though I do want to loop back around to my original problem using the SDK. I might have posted this problem on the wrong forum.</p>\n<p>Here’s the SDK info:  <a href=\"https://monday.com/developers/apps/sdk\" rel=\"noopener nofollow ugc\">https://monday.com/developers/apps/sdk</a><br />\nIn <code>monday.api()</code> it says:</p>\n<pre><code class=\"lang-auto\">`monday.api` Performing queries against the monday.com API on behalf of the connected user\n</code></pre>\n<p>I was able to use <code>monday.get()</code> with no issue, but <code>monday.api()</code>is where my initial problem is from. It would be nice to use monday’s SDK for this GraphQL requests rather than a fetch request since I have the SDK installed in the quick start guide: <a href=\"https://monday.com/developers/apps/quickstart-view\" rel=\"noopener nofollow ugc\">https://monday.com/developers/apps/quickstart-view</a> for Views &amp; Widgets</p>\n<p>My main issue is the apiKey/token. Using the token will only give data for my platform.  If this app is shared, it would be nice to give info to other user’s platform.</p>\n<p>I’ve tried monday.api() with React Hooks and React Components and I still get the same errors as the one above.</p>\n<p>Thank you for helping and at least now I can use the data and get started. But I believe I need this working with the SDK rather than a post request.</p>"
+    },
+    {
+      "id": 24312,
+      "postNumber": 4,
+      "createdAt": "2020-08-01T18:30:08.129Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a></p>\n<p>What I understand is that you wan to be able  share your app with other accounts. In that case you need to ask the user in the other account to authorize your app. In your app enable OAuth authorization and specify an endpoint in your backend. within this endpoint you need to:</p>\n<ul>\n<li>redirect to <a href=\"https://auth.monday.com/oauth2/authorize\">https://auth.monday.com/oauth2/authorize</a> with your app’s client id and specify a redirectUrl (callback)</li>\n<li>the specified callback will receive a code</li>\n<li>with this code you do a request to <a href=\"https://auth.monday.com/oauth2/token\">https://auth.monday.com/oauth2/token</a>, which will give you a token for a specific user within a specific account.<br />\nThe required permissions are specified in your app.</li>\n</ul>\n<p>You probably want to store the token to prevent asking authorization over and over. In my case I store them in a backend database with an accountid / userid key pair.</p>"
+    },
+    {
+      "id": 24317,
+      "postNumber": 5,
+      "createdAt": "2020-08-01T21:50:21.448Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>!</p>\n<p>Thank you! This may be what I need if I have to stick with post requests for querying.</p>\n<p>I am still wondering why monday’s SDK <code>monday.api()</code> isn’t working for me. I thought it was going to be great since I wouldn’t have to deal with callbacks to a server, redirects and storing.<br />\nIt does state right here in the SDK:</p>\n<blockquote>\n<p>Seamless authentication</p>\n<p>When used for client-side development, SDK methods that require to act on behalf of the connected user will work out-of-the-box by communicating with the parent <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> running application. You’re not required to initialize the SDK client with any explicit credentials.</p>\n<p>Methods that use seamless authentication (including  <code>monday.api</code>  and  <code>monday.storage</code> ) offer capabilities that are scoped based on the permissions of the logged in user and the scopes you have configured in your app.</p>\n</blockquote>\n<p>I hope I can get some help to get monday.api() working correctly, otherwise I’ll have to use the post request way with authentication and callbacks which I hope I don’t have to.  I appreciate you taking the time in helping me and this tip will definitely help if I can’t get monday.api() to work.</p>"
+    },
+    {
+      "id": 24318,
+      "postNumber": 6,
+      "createdAt": "2020-08-01T22:16:45.817Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a></p>\n<p>I am not sure what you are trying to achieve. You are building a monday app, right? Do you want to build (dash)board view or an integration? My experience is more on the integration part and monday.api sure needs a token there and you have to do intiMondayClient, see snippet</p>\n<blockquote>\n<p>static async getBoardColumns(token, boardId) {<br />\ntry {<br />\nconst mondayClient = initMondayClient();<br />\nmondayClient.setToken(token);<br />\nconst query = <code>query($boardId: [Int]) {boards (ids: $boardId) {columns {             id             title           } } }</code>;<br />\nconst variables = { boardId };<br />\nconst response = await mondayClient.api(query, { variables });<br />\nreturn response.data.boards[0].columns;<br />\n} catch (err) {<br />\nconsole.log(err);<br />\n}<br />\n}</p>\n</blockquote>\n<p>In this scenario the monday.storage and other are not working as this is all server based. The backend runs on a (dedicated or ngrok’d) server and is not aware of the monday’s user context.</p>\n<p>What I understand from (dash)board views is that they don’t need authorization as they live in an iframe within monday itself. Does that make sense?</p>"
+    },
+    {
+      "id": 24320,
+      "postNumber": 7,
+      "createdAt": "2020-08-01T23:58:24.228Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>!</p>\n<p>Thank you for getting back to me and helping me with this issue.</p>\n<p>(dash)board views/widgets does seem like an iframe thing. I have experience developing Atlassian plugins and it seems to work the same way.<br />\nWhen connected to Monday, the API works which is expected. I can use monday.get() with no issues. However, my problem is that monday.api() isn’t working for me which is where I’m stuck. Without my token I get <em>validation error</em>, with token I get <em>not authenticated</em>.</p>\n<p>As for Monday’s app development, I literally started a few days ago so I’m not sure what mondayClient is yet. You may need to step back to level beginner which is where I’m at haha.<br />\nI got started with <a href=\"https://monday.com/developers/apps/quickstart-view\" rel=\"noopener nofollow ugc\">https://monday.com/developers/apps/quickstart-view</a> tutorial and everything is working great, but couldn’t get <code>monday.api()</code> to work following these directions: <a href=\"https://monday.com/developers/apps/sdk\" rel=\"noopener nofollow ugc\">https://monday.com/developers/apps/sdk</a></p>\n<p>I created a repository real fast to show where I’m stuck.<br />\n<a href=\"https://github.com/PepperAddict/monday-get-started-help/blob/master/src/App.js\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://github.com/PepperAddict/monday-get-started-help/blob/master/src/App.js</a></p>\n<p>As you can see it’s literally a fresh app and I’m at the start. It’s just a create react app so feel free to ngrok it yourself for a widget setup if you would like to see the error (if you get the same error).  If you do go that route, i created an env file with API2 with the token and the widget has a background color field.</p>\n<p>The solutions given feels more like a workaround which I can definitely resort to, but I would like to get the SDK monday.api() working to save time.</p>\n<p>Thank you and I appreciate having someone help me with this issue.</p>"
+    },
+    {
+      "id": 24324,
+      "postNumber": 8,
+      "createdAt": "2020-08-02T03:52:43.472Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a></p>\n<p>I am afraid I am as new as you are when it comes to widget and views. From the developers webinairs I understand the view is really rendered in an iframe within the board or dashboard.</p>\n<p>When you are in you monday developer environment can you click on “API background” and enter your GraphQL query there? That should give you a good indication what is happening. Just try query {users {name}} in the API playground.</p>"
+    },
+    {
+      "id": 24338,
+      "postNumber": 9,
+      "createdAt": "2020-08-02T13:14:11.224Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Thanks for getting back to me!</p>\n<p>The API playground works great inside my environment and I’m able to query just fine. I also went to <a href=\"https://monday.com/developers/v2/try-it-yourself\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com</a> to check if my token is valid and I’m able to get in and query just fine.</p>\n<p>The code<br />\n<code>monday.api('query { users { name } }').then(res =&gt; console.log(res))</code><br />\nis basically just a copy and paste from the SDK guide hoping it would work but no luck. <img src=\"https://emoji.discourse-cdn.com/apple/frowning_face.png?v=12\" title=\":frowning_face:\" class=\"emoji\" alt=\":frowning_face:\" width=\"20\" height=\"20\" /><br />\nWith the whole <a href=\"https://graphql.org/learn/validation/\" rel=\"noopener nofollow ugc\">https://graphql.org/learn/validation/</a> rules and copying and pasting the query, I’m not sure how I was supposed to write it.</p>\n<p>The strange thing is that I haven’t found anyone with this issue. So knowing myself I may have left out a step or messed something up or the dev gods have doomed me and I’m not allowed to have an out of the box success.<br />\nI’ve tried searching around and I haven’t found anybody else with the same issue except for the newToken issue that I had earlier: <a href=\"https://community.monday.com/t/having-trouble-using-monday-settoken-within-the-apps-sdk/9498\" class=\"inline-onebox\">Having trouble using monday.setToken within the Apps SDK</a> but now my problem isn’t consistent. I’m no longer getting <code>not authenticated</code> when I enter a token and now I’m just getting <code>Graphql validation error</code> in every monday.ap() execution token or not.</p>\n<p>Anyway, this is a total head scratcher for me. It’s only that command that doesn’t work. The rest of the SDK doesn’t seem to have any issue.</p>\n<p>Once again thanks for trying to help me resolve this. In the meantime I’m using the data from the standard post request to work on my front-end.</p>"
+    },
+    {
+      "id": 24339,
+      "postNumber": 10,
+      "createdAt": "2020-08-02T13:27:13.738Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Okay</p>\n<p>I decided to try a different query for the hell of it</p>\n<p><code>monday.api('query { me { id, name } }').then(res =&gt; console.log(res))</code><br />\nThis works!!! Yay!</p>\n<p>Unfortunately</p>\n<p><code>monday.api('query { users {  name } }').then(res =&gt; console.log(res))</code></p>\n<p>doesn’t work but works in playground I get:</p>\n<pre><code class=\"lang-auto\">  {\n  \"data\": {\n    \"users\": [\n      {\n        \"name\": \"Yenith LianTyHao\"\n      },\n      {\n        \"name\": \"Pepper Addict\"\n      }\n    ]\n  },\n  \"account_id\": //id\n}\n</code></pre>\n<p>Ack… Unfortunately the thing I want is the query that isn’t working. haha</p>"
+    },
+    {
+      "id": 24341,
+      "postNumber": 11,
+      "createdAt": "2020-08-02T14:34:53.658Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>interesting… the only thing I can think of is the token itself. Who os it issued for. Remember monday tokens are <strong>personal</strong>, so if this token if issued to somebody that does not have necessary rights the query will fail. I understand you already tried the token on <a href=\"https://monday.com/developers/v2/try-it-yourself\" class=\"inline-onebox\">monday.com</a> so I am kind of lost here.</p>\n<p>I suggest to use the monday support team for this one.</p>"
+    },
+    {
+      "id": 24345,
+      "postNumber": 12,
+      "createdAt": "2020-08-02T16:53:08.486Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for sticking around to help me with this issue.</p>\n<p>You may be right, it could be a token issue. I’ve regenerated my token and I still get the same problem.<br />\nI noticed that any query request that results in a list has this <code>graphql validation error</code> in Monday.api() so it’s not just a problem with the <code>users</code> query.</p>\n<p>Anyway, this may be a problem with my token not allowed to access certain information or there is something wrong with the Monday.api() and lists. I have to wait till Monday for Monday to take a look at this. haha</p>"
+    },
+    {
+      "id": 24431,
+      "postNumber": 13,
+      "createdAt": "2020-08-03T20:26:43.564Z",
+      "author": "stackpond (Sushant Kumar)",
+      "cookedHtml": "<p>The following works for me</p>\n<p><code>this.monday.api(query, {options: { token: &lt;your token&gt; }})</code></p>"
+    },
+    {
+      "id": 24433,
+      "postNumber": 14,
+      "createdAt": "2020-08-03T20:46:34.458Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/stackpond\">@stackpond</a></p>\n<p>Thanks, but no luck. Out of curiosity, what is your query? Are you attempting the same one as me? The <code>me</code> type query works no problem for me, but queries that result in a list I get the error.</p>\n<pre><code class=\"lang-auto\">monday.api(`query { users { id, name } }`, {options: {token: apiKey}}).then((res) =&gt; {\n      console.log(res)\n    })\n</code></pre>\n<p>This is the error I’m getting:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/1e566c40b227169a2b392c9c1d5b9e15af298cd0.png\" title=\"mondayapierror\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/1e566c40b227169a2b392c9c1d5b9e15af298cd0.png\" alt=\"mondayapierror\" width=\"510\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">mondayapierror</span><span class=\"informations\">692×678 19.5 KB</span></div></a></div><p></p>\n<p>It would be nice to have someone else attempt the same query as I am and see if they’re getting data.</p>"
+    },
+    {
+      "id": 24436,
+      "postNumber": 15,
+      "createdAt": "2020-08-03T22:25:16.256Z",
+      "author": "stackpond (Sushant Kumar)",
+      "cookedHtml": "<p>Hope the scopes are correctly set in your case. For you I think only <code>users:read</code> scope need to be enabled.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e806a48074deeb77ead7fd660dd1bf79bb1249a5.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e806a48074deeb77ead7fd660dd1bf79bb1249a5_2_510x500.png\" alt=\"image\" width=\"510\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">787×771 45.7 KB</span></div></a></div><p></p>\n<p>Let me know how you go.<br />\nThanks</p>"
+    },
+    {
+      "id": 24437,
+      "postNumber": 16,
+      "createdAt": "2020-08-03T22:27:52.965Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/stackpond\">@stackpond</a></p>\n<p>Yep, that was it! Thank you thank you!</p>"
+    },
+    {
+      "id": 24530,
+      "postNumber": 17,
+      "createdAt": "2020-08-04T12:59:12.216Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/stackpond\">@stackpond</a> and <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> - you guys are amazing! Thank you so much for jumping in and helping out here, this is the stuff that will the community an awesome place for all developers <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p><a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a>  I’m glad I was able to help with the POST request, at least :D. Stay spicy!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42408,
+      "postNumber": 18,
+      "createdAt": "2021-02-25T14:32:55.096Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

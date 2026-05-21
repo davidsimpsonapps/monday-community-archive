@@ -1,0 +1,79 @@
+{
+  "id": 16854,
+  "title": "Activity Logs and updates",
+  "slug": "activity-logs-and-updates",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2021-02-26T06:24:01.970Z",
+  "lastPostedAt": "2021-03-14T16:50:36.438Z",
+  "postsCount": 8,
+  "excerpt": "Hi guys, \nIs it possible to get updates through activity logs? Currently I am syncing board item data using from/to through Activity Logs. Something like: \n“query”: &quot;{ boards (ids: xxxxxxxxxx){ activity_logs(from: &quot;2021-&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 2069,
+  "posts": [
+    {
+      "id": 42685,
+      "postNumber": 1,
+      "createdAt": "2021-02-26T06:24:02.072Z",
+      "author": "milosh (Milos)",
+      "cookedHtml": "<p>Hi guys,</p>\n<p>Is it possible to get updates through activity logs? Currently I am syncing board item data using from/to through Activity Logs. Something like:<br />\n“query”: \"{ boards (ids: xxxxxxxxxx){ activity_logs(from: \"2021-02-19T11:33:23.000000Z\") { id event created_at data entity event user_id }  }}  \"</p>\n<p>And I am successfully syncing those data, BUT I cant sync updates (comments, attachments…) related to specific items. I did try:<br />\n“query”: \"{ boards (ids: xxxxxxxx){ activity_logs(from: \"2021-02-19T11:33:23.000000Z\") { id event created_at data entity event user_id } <strong>updates { id item_id body text_body creator {id name } created_at assets{id name url created_at}}</strong> }}  \"<br />\nBut that part returns all updates - and regarding monday API documentation I cant set parameter from or to.</p>\n<p>Please let me know what I am missing and how can I achieve that.<br />\nThanks,<br />\nMilosh</p>"
+    },
+    {
+      "id": 42759,
+      "postNumber": 2,
+      "createdAt": "2021-02-26T17:31:23.586Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 42760,
+      "postNumber": 3,
+      "createdAt": "2021-02-26T17:41:44.184Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/milosh\">@milosh</a>, welcome to our community!</p>\n<p>Just to confirm: are you looking to get the content within your Updates? If so, I’m wondering if it might not just be a better idea to query all of the Updates on a board?</p>\n<p>Is there a reason why you’re looking to query Updates through the activity_log call?</p>\n<p>Thanks for walking me through it!</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 43225,
+      "postNumber": 4,
+      "createdAt": "2021-03-03T05:44:57.085Z",
+      "author": "milosh (Milos)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a> ,<br />\nYes, you are right, I am looking to get the content within Updates.</p>\n<p>I am collecting data - sync data - per board. So at first, there is initial sync which collect all data from the board. And after initial sync I am collecting only the data that have been changed. Its much faster and less resource consuming to use Activity logs + some other benefits related to our platform.</p>\n<p>So I need parameter from/to for Updates so I can sync only latest updates and compare with stored data (but it does not exist in documentation) OR to have updates inside Activity Log (so only updates from Activity Log will be updated  through our system)… If that’s possible please let me know.</p>"
+    },
+    {
+      "id": 43261,
+      "postNumber": 5,
+      "createdAt": "2021-03-03T11:07:49.050Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hiya <a class=\"mention\" href=\"/u/milosh\">@milosh</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks for providing further detail.</p>\n<p>In that case, since you are looking only for newest changes at that point, would it make any sense for you to use <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> webhooks? That way, you can get info about a new update as soon as it is posted, and the webhook will contain useful payload to keep your data in sync:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/047693c00ae0633c042e473926ebaee8831376ed.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/047693c00ae0633c042e473926ebaee8831376ed_2_690x475.png\" alt=\"image\" width=\"690\" height=\"475\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">740×510 20.7 KB</span>\n</div></a></div><br />\nI’m afraid that at the time, it is not possible to sync updates via the Activity Log, as the Activity Log will only sore board events, and doesn’t reference the Updates section.<p></p>\n<p>I hope this helps <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /> What do you think?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 43268,
+      "postNumber": 6,
+      "createdAt": "2021-03-03T11:36:50.414Z",
+      "author": "milosh (Milos)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> ,<br />\nI already try to use them (they worked perfectly), but we are afraid that webhooks are not 100% reliable (for example if server is down for some reason etc…).<br />\nI think that I will use slow solution (get board updates and compare then with existing one).<br />\nIf you have some ideas how can I handle this without “pain” <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Please let me know.</p>\n<p>Btw,  Activity Logs are ~20 minutes slower now - they used to update ASAP (until today / about 1PM) but now, content is updated in Activity Logs only after few minutes?</p>\n<p>UPDATE: Activity Log is updating live again. I dont know what happened but it works now</p>"
+    },
+    {
+      "id": 43295,
+      "postNumber": 7,
+      "createdAt": "2021-03-03T14:15:07.380Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/milosh\">@milosh</a> glad to hear!</p>\n<p>I think the solution you have at this time would be the only viable way to retrieve the data within your Updates.</p>\n<p>Hopefully this will change in the future.</p>"
+    },
+    {
+      "id": 43758,
+      "postNumber": 8,
+      "createdAt": "2021-03-07T16:49:52.888Z",
+      "author": "milosh (Milos)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/helen\">@Helen</a> <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>"
+    },
+    {
+      "id": 44698,
+      "postNumber": 9,
+      "createdAt": "2021-03-14T16:50:36.438Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

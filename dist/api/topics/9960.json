@@ -1,0 +1,88 @@
+{
+  "id": 9960,
+  "title": "Formulas: \"doesn't equal\", \"is number\", \"is blank/null\", nested IFs",
+  "slug": "formulas-doesnt-equal-is-number-is-blank-null-nested-ifs",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2020-08-11T15:24:55.264Z",
+  "lastPostedAt": "2021-05-14T08:25:34.534Z",
+  "postsCount": 10,
+  "excerpt": "Hi everyone! \nThis is a question related to formulas on Monday.com. \nUse case\nI have a column (Col 1) that will either contain a number, or nothing. The presence of a number is a visual signal to the human users, so I do&hellip;",
+  "solvedPostId": null,
+  "likeCount": 17,
+  "views": 28604,
+  "posts": [
+    {
+      "id": 25173,
+      "postNumber": 1,
+      "createdAt": "2020-08-11T15:24:55.338Z",
+      "author": "Ash (Ash)",
+      "cookedHtml": "<p>Hi everyone!</p>\n<p>This is a question related to formulas on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>.</p>\n<h1><a name=\"p-25173-use-case-1\" class=\"anchor\" href=\"#p-25173-use-case-1\"></a>Use case</h1>\n<p>I have a column (Col 1) that will either contain a number, or nothing. The presence of a number is a visual signal to the human users, so I don’t want to default to <code>0</code>.</p>\n<p>I might have a formula column (Col 2) looking at Col 1 with this formula:</p>\n<pre><code class=\"lang-auto\">IF({Col 1} &gt; 7, TRUE, FALSE)\n</code></pre>\n<p>There’s no issue <em>if the cell being evaluated in Col 1 contains a number</em>. If the cell is blank, I get an “Illegal formula” error with a little info icon in the affected cells.</p>\n<p>This isn’t show-stopping, but it adds visual clutter that I’d like to reduce for my users.</p>\n<p>I know how I’d deal with this in a spreadsheet, but am not sure what Monday provides to help in this situation.</p>\n<h1><a name=\"p-25173-solutions-ive-looked-for-2\" class=\"anchor\" href=\"#p-25173-solutions-ive-looked-for-2\"></a>Solutions I’ve looked for</h1>\n<p>With formulas on Monday, is there support for any of the following:</p>\n<ul>\n<li>doesn’t equal</li>\n<li>is number</li>\n<li>is blank/null</li>\n<li>nested IFs</li>\n</ul>\n<p>I browsed through these documents, but haven’t found what I’m looking for:</p>\n<ol>\n<li><a href=\"https://support.monday.com/hc/en-us/articles/360001235445-The-Formula-Column-Explanation-and-Use-Cases\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/360001235445-The-Formula-Column-Explanation-and-Use-Cases</a></li>\n<li><a href=\"https://support.monday.com/hc/en-us/articles/360001276465-List-of-all-available-formulas\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/360001276465-List-of-all-available-formulas</a></li>\n</ol>"
+    },
+    {
+      "id": 25236,
+      "postNumber": 2,
+      "createdAt": "2020-08-12T12:30:08.041Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>In general, avoiding errors in monday formulas can sometimes be tricky.</p>\n<p>For example, to eliminate divide by zero errors, something like this would make sense:</p>\n<pre><code>IF({number}&lt;&gt;0,1/{number},\"\")\n</code></pre>\n<p>But this does not work. All portions of the formula must ALWAYS be valid. This DOES work:</p>\n<pre><code>IF({number}&lt;&gt;0,1/IF({number}&lt;&gt;0,{number},1),\"\")\n</code></pre>\n<p>However, I suspect that the issue you are currently experiencing may be related to how you are accessing the board. I ran into a similar situation where one of our users was seeing an error like this when no one else was. The issue was that she was using the “old” version of Microsoft Edge. When we had her update to using the new chrome based version of Edge, everything worked.</p>"
+    },
+    {
+      "id": 25238,
+      "postNumber": 3,
+      "createdAt": "2020-08-12T12:41:53.891Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>Another note… With regard to the is it zero or is it null/blank:<br />\n“IF({Col1}=0,TRUE,FALSE)” will return TRUE when the value of {Col1} is 0 AND when the value of {Col1} is null/blank.<br />\n“IF({Col1}=“0”,TRUE,FALSE)” will return TRUE <strong>ONLY</strong> when the value of {Col1} is 0 .</p>\n<p>*** EDIT ***<br />\nAs of October 2021…<br />\nFor Numbers columns:<br />\n{Col1} = “0” is TRUE if and only if {Col1} is empty<br />\n{Col1} = 0 is TRUE if and only if {Col1} contains a zero<br />\n{Col1} = “” is FALSE always</p>\n<p>For Formula columns:<br />\n{Col1} = “0” is TRUE if and only if {Col1} returns “0” as a string<br />\n{Col1} = “” is TRUE if and only if {Col1} returns empty<br />\n{Col1} = 0 is TRUE if and only if {Col1} returns a zero (numeric value)</p>"
+    },
+    {
+      "id": 25271,
+      "postNumber": 4,
+      "createdAt": "2020-08-12T14:42:32.496Z",
+      "author": "Ash (Ash)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>! I’ll try these out.</p>\n<p>Interesting note about browser support. For the record, I’m always running the latest version of Safari.</p>"
+    },
+    {
+      "id": 25273,
+      "postNumber": 5,
+      "createdAt": "2020-08-12T14:52:43.463Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>My first computer was an Apple. I know next to nothing about them now. You might want to have one of your MS based users try viewing the formula. I did try your initial formula on my system and it worked without problem. Currently, all formula functions on monday are evaluated on the client side. So, it can be a bit more susceptible to browser issues and differences.</p>"
+    },
+    {
+      "id": 40109,
+      "postNumber": 6,
+      "createdAt": "2021-02-09T06:10:07.511Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>  and <a class=\"mention\" href=\"/u/ash\">@Ash</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Sorry this was giving you a bit of trouble! I’ve decided to test this a bit further on my end, and it seems like the error relates to using math operators, and not the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> functions like DIVIDE, for example.</p>\n<p>To illustrate this further, the following formula will work correctly:</p>\n<p>IF({Value Budget}&lt;&gt;“0”,MULTIPLY(MINUS({Value Budget},{Cost of Sale}),DIVIDE(12,{Repeat Months})),0)</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c77d02b6b4e935cb42a7c004eefac1d5309b1106.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c77d02b6b4e935cb42a7c004eefac1d5309b1106_2_690x208.png\" alt=\"image\" width=\"690\" height=\"208\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1034×312 13.3 KB</span>\n</div></a></div><p></p>\n<p>The formula below will send an error:<br />\nIF({Value Budget} &lt;&gt; 0,({Value Budget}-{Cost of Sale})*(12/{Repeat Months}),0)</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/1112f1a9a8a7d8432d7308840ab4a8121a112590.png\" alt=\"image\" width=\"252\" height=\"282\" /></p>\n<p>I hope this helps <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 46357,
+      "postNumber": 7,
+      "createdAt": "2021-03-30T18:02:16.585Z",
+      "author": "Paul_Adams (Paul Adams)",
+      "cookedHtml": "<p>Hi, how do i return a Zero from a blank cell. Currently i get a red illegal formula “!” displayed when a number is not present.  I need to default the column to “0” when its first created, is this possible?<br />\nThanks</p>"
+    },
+    {
+      "id": 50349,
+      "postNumber": 8,
+      "createdAt": "2021-05-06T10:33:54.029Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/paul_adams\">@Paul_Adams</a>,</p>\n<p>The easiest way to set a default value for a column is to use the “Item default values” settings on the main board screen. It is just below the main board headers, kind of looks like a pencil above paper:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/f392a472f0791c3c83fd6b49f96102f6012b9049.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/f392a472f0791c3c83fd6b49f96102f6012b9049_2_690x218.png\" alt=\"image\" width=\"690\" height=\"218\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1274×403 25.3 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 51386,
+      "postNumber": 9,
+      "createdAt": "2021-05-14T08:25:34.534Z",
+      "author": "donaldcornel (Donald Cornel)",
+      "cookedHtml": "<p>How you will do it if the column from the formula is based from a summary of a Subitem with no value?<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9fe35cfb69685cf4d30d99dc2361686278207839.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9fe35cfb69685cf4d30d99dc2361686278207839_2_690x319.png\" alt=\"image\" width=\"690\" height=\"319\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1010×467 51.8 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 52219,
+      "postNumber": 10,
+      "createdAt": "2021-05-21T08:25:53.264Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

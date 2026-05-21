@@ -1,0 +1,48 @@
+{
+  "id": 38963,
+  "title": "Querying subitems returns unexpected results",
+  "slug": "querying-subitems-returns-unexpected-results",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2022-07-08T18:47:36.506Z",
+  "lastPostedAt": "2022-07-12T04:32:58.556Z",
+  "postsCount": 4,
+  "excerpt": "I have a simple board with items that include a few subitems. Using the GQL API I’m seeing some odd behavior in my query results: \nThe column_values data in each of my returned subitems always reflects the first subitem’&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 766,
+  "posts": [
+    {
+      "id": 90815,
+      "postNumber": 1,
+      "createdAt": "2022-07-08T18:47:36.591Z",
+      "author": "jimmythigpen (Jimmy Thigpen)",
+      "cookedHtml": "<p>I have a simple board with items that include a few subitems. Using the GQL API I’m seeing some odd behavior in my query results:</p>\n<p>The column_values data in each of my returned subitems always reflects the first subitem’s column_values, even though these subitems contain different column dropdown, text, and link field values. The subitem ids and names are correct and unique.</p>\n<p>query example:</p>\n<pre><code class=\"lang-auto\">items(ids: [2916462227, 2916500373]) {\n    id\n    name\n    column_values {\n      id\n      value\n      text\n    }\n  }\n</code></pre>\n<p>I’ve also tried querying the parent:</p>\n<pre><code class=\"lang-auto\">items(ids: [2916537441) {\n  id\n  subitems {\n    id\n    name\n    column_values {\n      id\n      value\n      text\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 90872,
+      "postNumber": 2,
+      "createdAt": "2022-07-10T04:45:47.347Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/jimmythigpen\">@jimmythigpen</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Would you be able to send screenshots or a screen recording (please do not share any sensitive information) with the information you have in your board, the query and the result you get?</p>\n<p>Please show in them the subitems selected and their IDs in the browser’s address bar as well.</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 90933,
+      "postNumber": 3,
+      "createdAt": "2022-07-11T10:37:25.504Z",
+      "author": "jimmythigpen (Jimmy Thigpen)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> - I think I figured out that client side caching is the root of the issue since using the no-cache cache policy with apollo client resolves this.</p>\n<p>I think this happened because apollo’s default caching mechanism uses __typename &amp; id or _id as the cache id. This causes an issue with multiple column_values because the id field is used as a field identifier vs a unique id.</p>\n<p>docs: <a href=\"https://www.apollographql.com/docs/react/caching/overview/#2-generate-cache-ids\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Caching in Apollo Client - Apollo GraphQL Docs</a></p>\n<p>Is there a unique field y’all recommend using for caching Monday API data?</p>"
+    },
+    {
+      "id": 91009,
+      "postNumber": 4,
+      "createdAt": "2022-07-12T04:32:58.556Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/jimmythigpen\">@jimmythigpen</a>!</p>\n<p>I am glad you found the source of the issue <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>To be transparent with you, I do not have much experience with caching so I would not know what to recommend in that case. Let’s hope someone else from the community knows!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

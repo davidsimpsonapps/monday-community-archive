@@ -1,0 +1,69 @@
+{
+  "id": 57773,
+  "title": "Create new item with column values from json data",
+  "slug": "create-new-item-with-column-values-from-json-data",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    13,
+    94
+  ],
+  "createdAt": "2023-05-09T15:57:44.680Z",
+  "lastPostedAt": "2023-05-14T11:55:31.212Z",
+  "postsCount": 7,
+  "excerpt": "I’ve been struggling through pulling data from a website and pushing that data into Monday using Python. I have been able to pull the data from a website and convert to json, but I can’t figure out how to insert a Monday&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1908,
+  "posts": [
+    {
+      "id": 127154,
+      "postNumber": 1,
+      "createdAt": "2023-05-09T15:57:44.772Z",
+      "author": "katy.mitchell (Katy Mitchell)",
+      "cookedHtml": "<p>I’ve been struggling through pulling data from a website and pushing that data into Monday using Python. I have been able to pull the data from a website and convert to json, but I can’t figure out how to insert a Monday column value with the column value of my pulled data. What am I missing?</p>"
+    },
+    {
+      "id": 127206,
+      "postNumber": 2,
+      "createdAt": "2023-05-10T03:41:38.148Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/katy.mitchell\">@katy.mitchell</a> and welcome to the community!</p>\n<p>Can you please share here the script you are using and the exact response you are getting from monday’s server?</p>\n<p>Please do not include any sensitive information such as your API token.</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 127273,
+      "postNumber": 3,
+      "createdAt": "2023-05-10T12:55:09.249Z",
+      "author": "katy.mitchell (Katy Mitchell)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>! Absolutely! I’ve found a few example strings of creating a new item with column values, but I can’t seem to find exactly how to insert a column value from my df rather than a stagnant value.</p>\n<p>Example df:<br />\ndate\t\t\tname\t\t\tord #<br />\n06/01/2023\t\tbusiness1\t\t12345<br />\n05/10/2023\t\tbusiness2\t\t67891<br />\n04/22/2023\t\tbusiness3\t\t01112</p>\n<p>Sample code from the Monday API page: I would want the business name from my df as the item name.</p>\n<p>import requests<br />\nimport json</p>\n<p>apiKey = “YOUR_API_KEY_HERE”<br />\napiUrl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {“Authorization” : apiKey}</p>\n<p>query5 = ‘mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:YOUR_BOARD_ID, item_name:$myItemName, column_values:$columnVals) { id } }’<br />\nvars = {<br />\n‘myItemName’ : ‘Hello everyone!’,<br />\n‘columnVals’ : json.dumps({<br />\n‘status’ : {‘label’ : ‘Done’},<br />\n‘date4’ : {‘date’ : ‘1993-08-27’}<br />\n})<br />\n}</p>\n<p>data = {‘query’ : query5, ‘variables’ : vars}<br />\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request<br />\nprint(r.json())</p>"
+    },
+    {
+      "id": 127399,
+      "postNumber": 4,
+      "createdAt": "2023-05-11T06:27:27.559Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Thank you for sending that over. I have created an example for you:</p>\n<p>Query:</p>\n<pre><code class=\"lang-auto\">mutation ($myItemName: String!, $columnVals: JSON!) {\n  create_item(\n    board_id: 1234567890\n    item_name: $myItemName\n    column_values: $columnVals\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Variables:</p>\n<pre><code class=\"lang-auto\">{\n  \"myItemName\": \"My Name\",\n  \"columnVals\": \"{\\\"status\\\" : \\\"Done\\\",\\\"date4\\\":\\\"1993-08-27\\\"}\"\n}\n</code></pre>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/7/072e0447c10496f611ec10288c9137eb256099b2.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/7/072e0447c10496f611ec10288c9137eb256099b2_2_690x295.png\" alt=\"image\" width=\"690\" height=\"295\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2432×1041 229 KB</span>\n</div></a></div><p></p>\n<p>I used Postman so that it would show me how that would look like using Python:</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\nurl = \"https://api.monday.com/v2\"\n\npayload=\"{\\\"query\\\":\\\"mutation ($myItemName: String!, $columnVals: JSON!) {\\\\n  create_item(\\\\n    board_id: 1234567890\\\\n    item_name: $myItemName\\\\n    column_values: $columnVals\\\\n  ) {\\\\n    id\\\\n  }\\\\n}\\\",\\\"variables\\\":{\\\"myItemName\\\":\\\"My Name\\\",\\\"columnVals\\\":\\\"{\\\\\\\"status\\\\\\\" : \\\\\\\"Done\\\\\\\",\\\\\\\"date4\\\\\\\":\\\\\\\"1993-08-27\\\\\\\"}\\\"}}\"\nheaders = {\n  'Authorization': 'MYAPIKEYHERE',\n  'Content-Type': 'application/json',\n}\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\n\nprint(response.text)\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 127522,
+      "postNumber": 5,
+      "createdAt": "2023-05-11T14:22:10.651Z",
+      "author": "katy.mitchell (Katy Mitchell)",
+      "cookedHtml": "<p>Aha! Thank you! I figured out my problem. I was parsing my json data incorrectly. Once I assigned the variables to the json data, I was able to pull them into my mutation. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 127529,
+      "postNumber": 6,
+      "createdAt": "2023-05-11T15:23:52.462Z",
+      "author": "katy.mitchell (Katy Mitchell)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias\">@matias</a> me again! I’ve finally got my set up pulling my json lists and creating a new item on my Monday board, but I just ran into the issue related to this post: <a href=\"https://community.monday.com/t/create-multiple-items-at-once/4382/37\">Create Multiple items at once - monday Apps &amp; Developers / Feature Requests - API and Apps Framework - monday Community Forum</a>.</p>\n<p>My json list has info to create about 10 items with column values. I’m trying this “create item1” and “create item2” to try and get them to create multiple items using one mutation, but it’s just not working. Here is a snapshot of my python query that will successfully create 1 new item for me:</p>\n<p>query2 = ‘mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:XXXXXXX, item_name:$myItemName, column_values:$columnVals) { id } }’<br />\nvars = {<br />\n‘myItemName’ : f’{address}‘,<br />\n‘columnVals’ : json.dumps({<br />\n‘text10’   : f’{datech}‘,<br />\n‘text’   : f’{builder}‘,<br />\n‘text1’ : f’{surface}‘,<br />\n‘text7’: f’{newdate}‘,<br />\n‘text9’ : f’{oridate}'})}</p>\n<p>data = {‘query’ : query2, ‘variables’ : vars}<br />\nr = requests.post(url=apiUrl, json=data, headers=headers)<br />\nprint(r.json())</p>"
+    },
+    {
+      "id": 127841,
+      "postNumber": 7,
+      "createdAt": "2023-05-14T11:55:31.212Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/katy.mitchell\">@katy.mitchell</a>,</p>\n<p>Which error are you getting?</p>\n<p>I created another example and used Postman to see how it would look like for Python:</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\nurl = \"https://api.monday.com/v2/\"\n\npayload=\"{\\\"query\\\":\\\"mutation ($boardId: Int!, $myItemName: String!, $columnVals: JSON!) {\\\\n  createItem1: create_item(board_id: $boardId, item_name:$myItemName, column_values: $columnVals) {\\\\n    id\\\\n    name\\\\n  }\\\\n  createItem2: create_item(board_id: $boardId, item_name:$myItemName, column_values: $columnVals) {\\\\n    id\\\\n    name\\\\n  }\\\\n}\\\",\\\"variables\\\":{\\\"myItemName\\\":\\\"My Name\\\",\\\"boardId\\\":1234567890,\\\"columnVals\\\":\\\"{\\\\\\\"Status\\\\\\\" : \\\\\\\"Done\\\\\\\",\\\\\\\"date4\\\\\\\":\\\\\\\"1993-08-27\\\\\\\"}\\\"}}\"\nheaders = {\n  'Content-Type': 'application/json',\n  'Authorization': 'MYAPIKEY',\n}\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\n\nprint(response.text)\n</code></pre>\n<p>Does this help?</p>\n<p>If not, please let me know what error message you see from monday’s server so we can take a look!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": 74294,
+  "title": "\"No query string was present\" error",
+  "slug": "no-query-string-was-present-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-05T19:55:44.286Z",
+  "lastPostedAt": "2024-01-08T20:36:12.924Z",
+  "postsCount": 2,
+  "excerpt": "import requests\nimport json\n\nclass MondayClient:\n    def __init__(self, api_key):\n        self.api_url = &quot;https://api.monday.com/v2&quot;\n        self.headers = {&quot;Authorization&quot;: api_key}\n\n    def make_request(self, query):\n &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 438,
+  "posts": [
+    {
+      "id": 160505,
+      "postNumber": 1,
+      "createdAt": "2024-01-05T19:55:44.378Z",
+      "author": "bbd (BZ)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">import requests\nimport json\n\nclass MondayClient:\n    def __init__(self, api_key):\n        self.api_url = \"https://api.monday.com/v2\"\n        self.headers = {\"Authorization\": api_key}\n\n    def make_request(self, query):\n        data = json.dumps({'query': query})\n        response = requests.post(self.api_url, headers=self.headers, data=data)\n        return response.json()\n\n    def create_item(self, board_id, item_name):\n        query = f'''\n        mutation {{\n          create_item (board_id: {board_id}, item_name: \"{item_name}\") {{\n            id\n          }}\n        }}\n        '''\n        return self.make_request(query)\n\n    def change_item_name(self, board_id, item_id, new_name):\n        query = f'''\n        mutation {{\n          change_column_value (board_id: {board_id}, item_id: {item_id}, column_id: \"name\", value: \"{{\\\\\"text\\\\\": \\\\\"{new_name}\\\\\"}}\") {{\n            id\n          }}\n        }}\n        '''\n        return self.make_request(query)\n\n    # Add more methods as needed\n\nclass GPTInterpreter:\n    def __init__(self, openai_api_key):\n        self.api_url = \"https://api.openai.com/v1/engines/davinci/completions\"\n        self.headers = {\n            'Authorization': f'Bearer {openai_api_key}',\n            'Content-Type': 'application/json'\n        }\n\n    def interpret_request(self, user_request):\n        data = json.dumps({\n            'prompt': user_request,\n            'max_tokens': 100\n        })\n        response = requests.post(self.api_url, headers=self.headers, data=data)\n        return response.json()\n\n# Usage\nopenai_api_key = 'X'\nmonday_api_key = 'Y'\n\ngpt = GPTInterpreter(openai_api_key)\nmonday_client = MondayClient(monday_api_key)\n\nuser_request = \"Add a new item called 'Task1' to board 5773096249\"\n\n# GPT interprets the request\ninterpreted_request = gpt.interpret_request(user_request)\n\n# Example action based on interpreted request (this is a placeholder, real implementation depends on GPT's response)\nboard_id = 5773096249# Extract this from GPT's response\nitem_name = \"Task1\"   # Extract this from GPT's response\nresponse = monday_client.create_item(board_id, item_name)\nprint(response)\n\n</code></pre>\n<p>The above code gives error:</p>\n<p>{‘errors’: [{‘message’: ‘No query string was present’}], ‘account_id’: Z}</p>\n<p>I can’t figure what am I doing wrong?</p>"
+    },
+    {
+      "id": 160758,
+      "postNumber": 2,
+      "createdAt": "2024-01-08T07:04:16.935Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Leaving for Joseph</p>"
+    },
+    {
+      "id": 160896,
+      "postNumber": 3,
+      "createdAt": "2024-01-08T20:36:12.924Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hello!</p>\n<p>Typically, this error message means that the query was not formatted correctly. You should check if this query runs correctly in the API playground, as well as making sure the API key is valid.<br />\nHope this helps!</p>\n<p>Best,<br />\nJoseph</p>"
+    }
+  ]
+}

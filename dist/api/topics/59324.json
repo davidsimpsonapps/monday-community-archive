@@ -1,0 +1,70 @@
+{
+  "id": 59324,
+  "title": "Ageing dullard needs help (again)",
+  "slug": "ageing-dullard-needs-help-again",
+  "categoryId": 5,
+  "tagIds": [
+    9,
+    13,
+    108,
+    351
+  ],
+  "createdAt": "2023-06-01T09:14:22.459Z",
+  "lastPostedAt": "2023-06-08T08:25:36.490Z",
+  "postsCount": 7,
+  "excerpt": "Hello gentlefolk. I have a problem getting a Monday Board to &#39;do sums correctly’. \nMy board consists of three columns that calculates time durations for three different activities. I then need to add the three separate t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 819,
+  "posts": [
+    {
+      "id": 130070,
+      "postNumber": 1,
+      "createdAt": "2023-06-01T09:14:22.551Z",
+      "author": "kstirzaker (Kevin Stirzaker)",
+      "cookedHtml": "<p>Hello gentlefolk. I have a problem getting a Monday Board to 'do sums correctly’.</p>\n<p>My board consists of three columns that calculates time durations for three different activities. I then need to add the three separate time durations for input into an accounting system. If all the time durations are exact hours, 1, 2 or 3, etc, it all works fine but, if any of the duration are for (by example) 1.5, 1.25 etc, only the 1 is taken.</p>\n<p>So, if the three durations are 1, 1 and 1, I get 3 which is correct but, if the time durations are 1.5, 1 and 1, I get 3 which is incorrect.</p>\n<p>The time durations are calculated from time started and time ended using HOURS_DIFF({Visit End},{Visit Start}) for 1st visit, again for 2nd visit and again for the 3rd visit: I then using SUM({1st Visit Hours},{2nd Visit Hours},{3rd Visit Hours}) to calculate the total but the response only comes back as integers.</p>\n<p>Any help or thoughts would be welcomed.</p>"
+    },
+    {
+      "id": 130223,
+      "postNumber": 2,
+      "createdAt": "2023-06-02T19:28:41.773Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Kevin,</p>\n<p>No need for the self-deprecation! <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> can be terribly idiosyncratic and almost counter-intuitive at times.</p>\n<p>I think your issue here is that you’re trying to sum “Hours” data, which is different and can’t be summed in the same way.</p>\n<p>If you want to convert your time difference to hours as decimals, you can use the following formula (there may also be a simpler way of doing this).</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE({End},\"HH\")\n-\nFORMAT_DATE({Start},\"HH\")\n+\n(FORMAT_DATE({End},\"mm\")\n-\nFORMAT_DATE({Start},\"mm\"))\n/60\n\n</code></pre>\n<p>The result of this will be more suited to summing. Hope that helps!</p>"
+    },
+    {
+      "id": 130741,
+      "postNumber": 3,
+      "createdAt": "2023-06-08T06:59:35.444Z",
+      "author": "kstirzaker (Kevin Stirzaker)",
+      "cookedHtml": "<p>Francis,</p>\n<p>So many thanks for your suggestion. Looking through it, I can see no reason why it shouldn’t work but, it doesn’t <img src=\"https://emoji.discourse-cdn.com/apple/frowning_face.png?v=12\" title=\":frowning_face:\" class=\"emoji\" alt=\":frowning_face:\" width=\"20\" height=\"20\" /> . I used the formula as suggested thus (for 1st Visit Hours):</p>\n<p>FORMAT_DATE({Visit End},“HH”) - FORMAT_DATE({Visit Start},“HH”) + (FORMAT_DATE({Visit End},“mm”) - FORMAT_DATE({Visit Start},“mm”))/60</p>\n<p>But, it just returns a zero!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/4/f42f8119f9ccc8a7adf37f6908dec05ceee3b1b4.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/f/4/f42f8119f9ccc8a7adf37f6908dec05ceee3b1b4.png\" alt=\"image\" width=\"690\" height=\"161\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1016×238 6.3 KB</span>\n</div></a></div><p></p>\n<p>I’m trying to do this as a (no charge) favour for an elderly care group and their support workers but I’m at my wits end on this one. If you, or anybody else, have any thoughts or ideas at all I really would be so grateful.</p>\n<p>Many thanks<br />\nPodge, aka Kev.</p>"
+    },
+    {
+      "id": 130746,
+      "postNumber": 4,
+      "createdAt": "2023-06-08T07:14:12.665Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>What type of columns are your Visit Start and Visit End columns?</p>\n<p>The formula I created is designed to work with date columns, which I recommend using over these.</p>"
+    },
+    {
+      "id": 130755,
+      "postNumber": 5,
+      "createdAt": "2023-06-08T07:52:49.280Z",
+      "author": "kstirzaker (Kevin Stirzaker)",
+      "cookedHtml": "<p>Hmmm, I did wonder that. They are just time columns. I tried using:</p>\n<p>HOURS_DIFF({Visit End},{Visit Start}) which sort of works but only gives integers so 09:00 to 11:00 gives me 2 but 09:00 to 11:30 also gives me 2. Using Date columns gave me other issues especially given that. some of the support workers are totally computer illiterate (their words not mine) with no access to PCs/Laptops and do everything on their smartphones.</p>\n<p>Many thanks<br />\nKev</p>"
+    },
+    {
+      "id": 130756,
+      "postNumber": 6,
+      "createdAt": "2023-06-08T07:58:27.333Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Kevin,</p>\n<p>No problem!</p>\n<p>I’d still recommend Date columns in almost all cases, however here’s a simple change to make the formula work with Hour columns. You should be able to paste this directly.</p>\n<pre><code class=\"lang-auto\">LEFT({Visit End},2)\n-\nLEFT({Visit Start},2)\n+\n(RIGHT({Visit End},2)\n-\nRIGHT({Visit Start},2))/60\n</code></pre>\n<p>Best of luck!</p>"
+    },
+    {
+      "id": 130760,
+      "postNumber": 7,
+      "createdAt": "2023-06-08T08:25:36.490Z",
+      "author": "kstirzaker (Kevin Stirzaker)",
+      "cookedHtml": "<p>Francis,</p>\n<p>You are an absolute star <img src=\"https://emoji.discourse-cdn.com/apple/star2.png?v=12\" title=\":star2:\" class=\"emoji\" alt=\":star2:\" width=\"20\" height=\"20\" /></p>\n<p>So many thanks. That seems to work perfectly.</p>\n<p>Thank you once more <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" width=\"20\" height=\"20\" /></p>\n<p>Your help is so much appreciated.</p>\n<p>Cheers<br />\nPodge, aka Kev</p>"
+    }
+  ]
+}

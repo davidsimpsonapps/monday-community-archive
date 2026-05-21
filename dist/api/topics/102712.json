@@ -1,0 +1,51 @@
+{
+  "id": 102712,
+  "title": "Pass php variable as item ids for query",
+  "slug": "pass-php-variable-as-item-ids-for-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    155,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-11-10T06:42:30.104Z",
+  "lastPostedAt": "2024-11-11T07:34:44.198Z",
+  "postsCount": 4,
+  "excerpt": "Hello everyone, need help. Trying to pass multiple item ids for query from wordpress platform. The ids are taken from post title. My code: \n$current_user_id = get_current_user_id();\n// Set up the arguments for querying p&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 12,
+  "posts": [
+    {
+      "id": 209287,
+      "postNumber": 1,
+      "createdAt": "2024-11-10T06:42:30.180Z",
+      "author": "Sam23 (Sam)",
+      "cookedHtml": "<p>Hello everyone, need help. Trying to pass multiple item ids for query from wordpress platform. The ids are taken from post title. My code:</p>\n<pre><code class=\"lang-auto\">$current_user_id = get_current_user_id();\n// Set up the arguments for querying posts\n$args = [\n    'author' =&gt; $current_user_id, // Filter posts by the current user ID\n];\n\n// Query the posts\n$user_posts = get_posts($args);\n\n// Check if the user has posts\nif ($user_posts) {\n    // Collect post titles (numbers) in an array\n    $post_titles = [];\n    foreach ($user_posts as $post) {\n        $post_titles[] = esc_html($post-&gt;post_title); // Store the post titles (numbers)\n    }\n    $matters = implode(', ', $post_titles); // Comma-separated list of titles (numbers)\n} else {\n    // No posts found, set matters as empty\n    $matters = '';\n}\n\n// Setup API request for Monday.com\n$token = 'abc';\n$apiUrl = 'https://api.monday.com/v2';\n$headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n// Create the GraphQL query dynamically\n$query = \"\nquery($mattersVar: [String!]) {\n  items (ids: $mattersVar) {\n    name\n    column_values {\n      column {\n        title\n      }\n      value\n    }\n    subitems {\n      name\n      column_values {\n        column {\n          title\n        }\n        value\n      }\n    }\n  }\n}\n\";\n\n// Send the request to the API\n$data = @file_get_contents($apiUrl, false, stream_context_create([\n  'http' =&gt; [\n    'method' =&gt; 'POST',\n    'header' =&gt; $headers,\n    'content' =&gt; json_encode([\n        'query' =&gt; $query,\n        'variables' =&gt; ['mattersVar' =&gt; $post_titles],\n    ]),\n  ]\n]));\n\n$responseContent = json_decode($data, true);\n</code></pre>\n<p>$matters is string of numbers: 1234567, 12345678.<br />\n$post_titles is an array</p>\n<p>No matter I pass $matters or $post_titles to variables, I got the error:</p>\n<p>Error in API response: {“errors”:[{“message”:“Arguments are invalid. The argument ‘ids’ should be used”…</p>\n<p>Any comment is welcome. Thanks in advance.</p>"
+    },
+    {
+      "id": 209369,
+      "postNumber": 2,
+      "createdAt": "2024-11-10T09:11:34.394Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/sam23\">@Sam23</a> and welcome to the community!</p>\n<p>Would you be able to please try using ($mattersVar: [ID!])?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 209371,
+      "postNumber": 3,
+      "createdAt": "2024-11-10T09:45:24.966Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>($mattersVar: [ID!])</p>\n</blockquote>\n</aside>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> <a class=\"mention\" href=\"/u/sam23\">@Sam23</a> If that’s an array I think it’s more likely:</p>\n<pre><code class=\"lang-auto\">($mattersVar: [ID!]!)\n</code></pre>\n<p>But always try out your query in the playground first to validate that it’s correct and working.</p>"
+    },
+    {
+      "id": 209443,
+      "postNumber": 4,
+      "createdAt": "2024-11-11T07:34:44.198Z",
+      "author": "Sam23 (Sam)",
+      "cookedHtml": "<p>HI Martias and David, thank you for your reply.</p>\n<p>Option 1: When I use ($mattersVar: [ID!]) and $matters for the query. I can only get the first item.</p>\n<p>Option 2: If I use ($mattersVar: [ID!]!) and array $post_titles then it gives me error: Error in API response: null</p>\n<p>echo $matters : 123456788, 123456789<br />\nprint_r($post_title) : Array ( [0] =&gt; 123456788 [1] =&gt; 123456789 )</p>\n<p>Below is the code for Option 1:</p>\n<pre><code class=\"lang-auto\">$current_user_id = get_current_user_id();\n// Set up the arguments for querying posts\n$args = [\n    'author' =&gt; $current_user_id, // Filter posts by the current user ID\n];\n\n// Query the posts\n$user_posts = get_posts($args);\n\n// Check if the user has posts\nif ($user_posts) {\n    // Collect post titles (numbers) in an array\n    $post_titles = [];\n    foreach ($user_posts as $post) {\n        $post_titles[] = esc_html($post-&gt;post_title); // Store the post titles (numbers)\n    }\n    $matters = implode(', ', $post_titles); // Comma-separated list of titles (numbers)\n} else {\n    // No posts found, set matters as empty\n    $matters = '';\n}\n\n// Store the comma-separated post titles in the $matters variable\necho $matters;\n\n// Setup API request for Monday.com\n$token = 'abc';\n$apiUrl = 'https://api.monday.com/v2';\n$headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n// Create the GraphQL query dynamically\n$query = '\nquery ($mattersVar: [ID!]) {\nitems (ids: $mattersVar) {\n    name\n    column_values {\n      column {\n        title\n      }\n      value\n    }\n    subitems {\n      name\n      column_values {\n        column {\n          title\n        }\n        value\n      }\n    }\n  }\n}\n';\n\n// Send the request to the API\n$data = @file_get_contents($apiUrl, false, stream_context_create([\n  'http' =&gt; [\n    'method' =&gt; 'POST',\n    'header' =&gt; $headers,\n    'content' =&gt; json_encode([\n        'query' =&gt; $query,\n        'variables' =&gt; ['mattersVar' =&gt; $matters],\n    ]),\n  ]\n]));\n\n$responseContent = json_decode($data, true);\n</code></pre>\n<p>Any help would be greatly appreciated.</p>"
+    }
+  ]
+}

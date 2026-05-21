@@ -1,0 +1,47 @@
+{
+  "id": 78454,
+  "title": "Items_page_by_column_values where date is not blank?",
+  "slug": "items-page-by-column-values-where-date-is-not-blank",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-02-16T17:25:38.725Z",
+  "lastPostedAt": "2024-02-27T15:20:23.719Z",
+  "postsCount": 4,
+  "excerpt": "I’m trying to figure how how to do the below filter using Monday API. I do not see how to filter out results where there is not a match: \n  \n{\n  items_page_by_column_values(\n    limit: 50,\n    board_id: BOARDID,\n    colu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 319,
+  "posts": [
+    {
+      "id": 168367,
+      "postNumber": 1,
+      "createdAt": "2024-02-16T17:25:38.819Z",
+      "author": "tbcosk (Sam)",
+      "cookedHtml": "<p>I’m trying to figure how how to do the below filter using Monday API. I do not see how to filter out results where there is not a match:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/0/605392655c7742f09ea7880ec211affe207a44f9.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/6/0/605392655c7742f09ea7880ec211affe207a44f9.png\" alt=\"image\" width=\"690\" height=\"388\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">729×410 26.1 KB</span></div></a></div><p></p>\n<pre><code class=\"lang-auto\">{\n  items_page_by_column_values(\n    limit: 50,\n    board_id: BOARDID,\n    columns: [\n      { column_id: \"checkbox\", column_values: [\"1\", \"t\", \"true\"] },\n      { column_id: \"text1\", column_values: [\"false\", \"\", null] },\n      { column_id: \"text97\", column_values: [\"false\", \"\", null] },\n      { column_id: \"date0\", column_values: [--IS NOT EMPTY--] }\n    ]\n  ) {\n    cursor\n    items {\n      id\n      name\n       column_values(ids: [\"date4\", \"text\", \"text4\", \"text5\", \"text9\", \"text8\", \"date\", \"text1\", \"text94\", \"date0\", \"checkbox\", \"text97\", \"text45\", \"text90\"]) {\n        id\n        value\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 168540,
+      "postNumber": 2,
+      "createdAt": "2024-02-18T11:19:42.971Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/tbcosk\">@tbcosk</a>,</p>\n<p>What about using something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 11111111) {\n    items_page(\n      limit: 10\n      query_params: {rules: [{column_id: \"date4\", compare_value: [\"\"], operator: is_not_empty}, {column_id: \"text\", compare_value: [\"a\", \"b\"], operator: any_of}], operator: and}\n    ) {\n      cursor\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>Could that work as a solution for you?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 168781,
+      "postNumber": 3,
+      "createdAt": "2024-02-19T14:43:31.893Z",
+      "author": "tbcosk (Sam)",
+      "cookedHtml": "<p>Thanks for the reply. I think so. I will implement and see how it goes. Can I ask, when should I use items_page vs items_page_by_column_values? I assumed if I needed to filter on multiple columns, that is where items_page_by_column_values would be advantaged but it seems to lack features that are available in items_page. I realize this is probably just me not understanding the two.</p>"
+    },
+    {
+      "id": 170278,
+      "postNumber": 4,
+      "createdAt": "2024-02-27T15:20:23.719Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/tbcosk\">@tbcosk</a>,</p>\n<p>items_page can be used with or without “rules” to specify data in the column values to be looked for. items_page_by_column_values must have a criteria. In many cases, both solutions are correct.</p>\n<p>But if you have a specific example, please send it over and I will take a look <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": 90481,
+  "title": "Parse error getting table with python",
+  "slug": "parse-error-getting-table-with-python",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    466
+  ],
+  "createdAt": "2024-06-19T19:41:59.766Z",
+  "lastPostedAt": "2024-06-23T10:39:26.911Z",
+  "postsCount": 2,
+  "excerpt": "I’m facing this issue in python. \nHere’s my code and error: \nimport requests \nimport pandas as pd \nimport os \ndef querycaller(api_token, query): \nurl = “https://api.monday.com/v2” \nheaders = { \n“Content-Type”: “applicati&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 127,
+  "posts": [
+    {
+      "id": 189605,
+      "postNumber": 1,
+      "createdAt": "2024-06-19T19:41:59.862Z",
+      "author": "JoaquinGonzalez (Joaquin Gonzalez Ariztia)",
+      "cookedHtml": "<p>I’m facing this issue in python.</p>\n<p>Here’s my code and error:</p>\n<p>import requests<br />\nimport pandas as pd<br />\nimport os</p>\n<p>def querycaller(api_token, query):<br />\nurl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {<br />\n“Content-Type”: “application/json”,<br />\n“Authorization”: f\"Bearer {api_token}\"<br />\n}<br />\nresponse = requests.post(url, headers=headers, json={“query”: query})<br />\nresponse.raise_for_status()  # Levanta un error si la solicitud falla<br />\nreturn response.json()</p>\n<p>def fetch_all_items(api_token, board_id, row_per_call=500, column_id_select=“”, cursor=None):<br />\nitems = <span class=\"chcklst-box fa fa-square-o fa-fw\"></span><br />\ncodigoRepetido = f\"“”<br />\ncursor<br />\nitems {{<br />\nid<br />\ncreated_at<br />\nupdated_at<br />\nname<br />\ngroup {{ title }}<br />\ncolumns: column_values {column_id_select} {{<br />\ncolumn {{ title }}<br />\ntext<br />\n…on DependencyValue {{ display_value }}<br />\n…on MirrorValue {{ display_value }}<br />\n…on BoardRelationValue {{ display_value }}<br />\n}}<br />\n}}<br />\n“”\"<br />\nwhile True:<br />\nif cursor:<br />\nquery = f\"“”<br />\nquery {{<br />\nnext_items_page (limit: {row_per_call}, cursor: “{cursor}”) {{<br />\n{codigoRepetido}<br />\n}}<br />\n}}<br />\n“”\"<br />\nelse:<br />\nquery = f\"“”<br />\nquery {{<br />\nboards (ids: {board_id}) {{<br />\nitems_page (limit: {row_per_call}) {{<br />\n{codigoRepetido}<br />\n}}<br />\n}}<br />\n}}<br />\n“”\"</p>\n<pre><code>    data = querycaller(api_token, query)\n    print(data)\n    \n    if cursor:\n        page_data = data['data']['next_items_page']\n    else:\n        page_data = data['data']['boards'][0]['items_page']\n    \n    items.extend(page_data['items'])\n    cursor = page_data.get('cursor')\n    \n    if not cursor:\n        break\n\nreturn items\n</code></pre>\n<p>def tabla_monday(api_token, board_id, row_limit=2000000, column_id=None):<br />\nrow_per_call = 500<br />\ncolumn_id_select = “”<br />\nif column_id:<br />\ncolumn_id_select = “(ids: [\"” + “\", \"”.join(column_id) + “\"])”</p>\n<pre><code>items = fetch_all_items(api_token, board_id, row_per_call, column_id_select)\n\nif row_limit and len(items) &gt; row_limit:\n    items = items[:row_limit]\n\ndata_list = []\nfor item in items:\n    record = {\n        \"ID\": item[\"id\"],\n        \"CreateDate\": item[\"created_at\"],\n        \"UpdateDate\": item[\"updated_at\"],\n        \"Name\": item[\"name\"],\n        \"Group\": item[\"group\"][\"title\"]\n    }\n    for column in item[\"columns\"]:\n        column_name = column[\"column\"][\"title\"]\n        column_value = column.get(\"display_value\", column[\"text\"])\n        # Handle duplicate column names\n        while column_name in record:\n            if \"_\" in column_name and column_name.rsplit(\"_\", 1)[-1].isdigit():\n                base, num = column_name.rsplit(\"_\", 1)\n                column_name = f\"{base}_{int(num) + 1}\"\n            else:\n                column_name = f\"{column_name}_1\"\n        record[column_name] = column_value\n    data_list.append(record)\n\ndf = pd.DataFrame(data_list)\nreturn df\n</code></pre>\n<p>def demo_tabla(api_token, board_id, row_limit=14, column_id=None):<br />\nrow_per_call = 500<br />\ncolumn_id_select = “”<br />\nif column_id:<br />\ncolumn_id_select = “(ids: [\"” + “\", \"”.join(column_id) + “\"])”</p>\n<pre><code>items = fetch_all_items(api_token, board_id, row_limit, row_per_call, column_id_select)\n\ndata_list = []\nfor item in items:\n    record = {\n        \"ID\": item[\"id\"],\n        \"CreateDate\": item[\"created_at\"],\n        \"UpdateDate\": item[\"updated_at\"],\n        \"Name\": item[\"name\"],\n        \"Group\": item[\"group\"][\"title\"]\n    }\n    for column in item[\"columns\"]:\n        column_name = column[\"column\"][\"title\"]\n        column_value = column.get(\"display_value\", column[\"text\"])\n        # Handle duplicate column names\n        while column_name in record:\n            if \"_\" in column_name and column_name.rsplit(\"_\", 1)[-1].isdigit():\n                base, num = column_name.rsplit(\"_\", 1)\n                column_name = f\"{base}_{int(num) + 1}\"\n            else:\n                column_name = f\"{column_name}_1\"\n        record[column_name] = column_value\n    data_list.append(record)\n\ndf = pd.DataFrame(data_list)\nreturn df\n</code></pre>\n<p>def guardar_en_excel(df, nombre_archivo):<br />\ndf.to_excel(nombre_archivo, index=False)</p>\n<h1><a name=\"p-189605-ejemplo-de-uso-1\" class=\"anchor\" href=\"#p-189605-ejemplo-de-uso-1\"></a>Ejemplo de uso</h1>\n<p>api_token = os.environ.get(“Monday_APIToken_Claudio_aguilera”)<br />\nboard_id = 589981692<br />\ndf = demo_tabla(api_token, board_id)<br />\nprint(df)<br />\nnombre_archivo = “Base_python_monday.xlsx”<br />\nguardar_en_excel(df, nombre_archivo)<br />\nprint(f\"Datos guardados en {nombre_archivo}\")</p>\n<p>‘Parse error on “500” (INT) at [13, 36]’</p>"
+    },
+    {
+      "id": 190032,
+      "postNumber": 2,
+      "createdAt": "2024-06-23T10:39:26.911Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/joaquingonzalez\">@JoaquinGonzalez</a> and welcome to the community!</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it (such as account ID, board IDs, item IDs, timestamps, etc.) so that our team can take a look into it?</p>"
+    }
+  ]
+}

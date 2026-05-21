@@ -1,0 +1,102 @@
+{
+  "id": 9033,
+  "title": "Dependency error in a formula column",
+  "slug": "dependency-error-in-a-formula-column",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2020-07-15T10:22:03.018Z",
+  "lastPostedAt": "2021-06-21T15:44:43.751Z",
+  "postsCount": 12,
+  "excerpt": "I have a very simple formula here. \nIF(AND({TotalTime}&lt;=1.5,{TotalTime}&gt;1),((1.5*{Rate})+{Extra Cost}), \nIF(AND({TotalTime}&lt;=2,{TotalTime}&gt;1.5),((2*{Rate})+{Extra Cost}), \nIF(AND({TotalTime}&lt;=2.5,{TotalTime}&gt;2),((2.5*{Ra&hellip;",
+  "solvedPostId": null,
+  "likeCount": 13,
+  "views": 2778,
+  "posts": [
+    {
+      "id": 22665,
+      "postNumber": 1,
+      "createdAt": "2020-07-15T10:22:03.092Z",
+      "author": "vas (Vasil Dobrev)",
+      "cookedHtml": "<p>I have a very simple formula here.</p>\n<p>IF(AND({TotalTime}&lt;=1.5,{TotalTime}&gt;1),((1.5*{Rate})+{Extra Cost}),<br />\nIF(AND({TotalTime}&lt;=2,{TotalTime}&gt;1.5),((2*{Rate})+{Extra Cost}),<br />\nIF(AND({TotalTime}&lt;=2.5,{TotalTime}&gt;2),((2.5*{Rate})+{Extra Cost}),<br />\nIF(AND({TotalTime}&lt;=3,{TotalTime}&gt;2.5),((3*{Rate})+{Extra Cost}),<br />\nIF(AND({TotalTime}&lt;=3.5,{TotalTime}&gt;3),((3.5*{Rate})+{Extra Cost}),<br />\nIF(AND({TotalTime}&lt;=4,{TotalTime}&gt;3.5),((4*{Rate})+{Extra Cost}),<br />\nIF(AND({TotalTime}&lt;=4.5,{TotalTime}&gt;4),((4.5*{Rate})+{Extra Cost}),0)))))))</p>\n<p>The whole idea of the formula is to round up the decimal number inputted in the “TotalTime” field to the next half or whole number and multiple the rounded number by another number (Rate) then add “Extra Cost” if such is applicable. It’s simple and it works.</p>\n<p>The problem comes when I try to add more than 7 IF conditions, For example, the next one:<br />\nIF(AND({TotalTime}&lt;=5,{TotalTime}&gt;4.5),((5*{Rate})+{Extra Cost})<br />\nIF(AND({TotalTime}&lt;=5.5,{TotalTime}&gt;5),((5.5*{Rate})+{Extra Cost}) and so on…</p>\n<p>It returns me the following error: “TotalTime” creates a circular dependency.</p>\n<p>I don’t get why this is a thing after the 7th IF condition and why it creates a circular dependency.</p>\n<p>Have anyone occurred such an error?</p>"
+    },
+    {
+      "id": 22671,
+      "postNumber": 2,
+      "createdAt": "2020-07-15T11:05:50.565Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/vas\">@vas</a><br />\nTry converting  your formula into a SWITCH control.</p>\n<pre><code>SWITCH(\n  TRUE,\n  AND({TotalTime} &lt;= 1.5, {TotalTime} &gt; 1),\n  1.5 * {Rate} + {Extra Cost},\n  AND({TotalTime} &lt;= 2, {TotalTime} &gt; 1.5),\n  2 * {Rate} + {Extra Cost},\n  AND({TotalTime} &lt;= 2.5, {TotalTime} &gt; 2),\n  2.5 * {Rate} + {Extra Cost},\n  AND({TotalTime} &lt;= 3, {TotalTime} &gt; 2.5),\n  3 * {Rate} + {Extra Cost},\n  AND({TotalTime} &lt;= 3.5, {TotalTime} &gt; 3),\n  3.5 * {Rate} + {Extra Cost},\n  AND({TotalTime} &lt;= 4, {TotalTime} &gt; 3.5),\n  4 * {Rate} + {Extra Cost},\n  AND({TotalTime} &lt;= 4.5, {TotalTime} &gt; 4),\n  4.5 * {Rate} + {Extra Cost},\n  0\n)\n</code></pre>\n<p><span class=\"hashtag\">#elegantprogramming</span></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/d/d44c45d81adf3cde12a6cab51d9d1d4726ac5393.gif\" alt=\"source\" width=\"500\" height=\"284\" /></p>"
+    },
+    {
+      "id": 22673,
+      "postNumber": 3,
+      "createdAt": "2020-07-15T11:12:47.360Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Or even more elegant.</p>\n<pre><code>IF(\n  {TotalTime} &gt; 1,\n  ROUNDUP({TotalTime} * 2, 0) / 2 * {Rate} + {Extra Cost},\n  0\n)\n</code></pre>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/4/463381491a9eced30bae9f4b4000f0792e6fe392.gif\" alt=\"source-1\" width=\"262\" height=\"200\" /></p>"
+    },
+    {
+      "id": 22677,
+      "postNumber": 4,
+      "createdAt": "2020-07-15T11:38:21.210Z",
+      "author": "vas (Vasil Dobrev)",
+      "cookedHtml": "<p>This returns “TotalTime” creates a circular dependency. Just as my solution.</p>"
+    },
+    {
+      "id": 22679,
+      "postNumber": 5,
+      "createdAt": "2020-07-15T11:39:20.118Z",
+      "author": "vas (Vasil Dobrev)",
+      "cookedHtml": "<p>Your second elegant solution is rounding the numbers to the lower one, not the higher one. <img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=9\" title=\":confused:\" class=\"emoji\" alt=\":confused:\" /></p>"
+    },
+    {
+      "id": 22685,
+      "postNumber": 6,
+      "createdAt": "2020-07-15T12:03:46.605Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>My second solution uses the rounded down double and divides it again to get the 1.5, 2, 2.5, 3, 3.5, … figure you use in the multiplication.</p>"
+    },
+    {
+      "id": 22686,
+      "postNumber": 7,
+      "createdAt": "2020-07-15T12:07:43.493Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Did you try it? It’s weird because there’s no circular reference in the formula.<br />\nIt would be if you assigned formula result to {TotalTime}.</p>"
+    },
+    {
+      "id": 22688,
+      "postNumber": 8,
+      "createdAt": "2020-07-15T12:14:24.073Z",
+      "author": "vas (Vasil Dobrev)",
+      "cookedHtml": "<p>My idea is to round up the number to the higher one.<br />\nFor example, if the output is 1.6, to round it up to 2 (not 1.5)<br />\nIf the output is 2.2, to round it up to 2.5 (the higher half or whole number)</p>\n<p>Yeah, I did try it your first solution. I’m assigning the formula to a completely new one, Not to {TotalTime}.<br />\nAgain the problem occurs when I add the follow up of your first solution:<br />\nAND({TotalTime} &lt;= 5, {TotalTime} &gt; 4.5),<br />\n5 * {Rate} + {Extra Cost},<br />\nAND({TotalTime} &lt;= 5.5, {TotalTime} &gt; 5),<br />\n5.5 * {Rate} + {Extra Cost},<br />\netc.</p>"
+    },
+    {
+      "id": 22689,
+      "postNumber": 9,
+      "createdAt": "2020-07-15T12:16:29.141Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/v/ac91a4/48.png\" class=\"avatar\" /> vas:</div>\n<blockquote>\n<p>My idea is to round up the number to the higher one.<br />\nFor example, if the output is 1.6, to round it up to 2 (not 1.5)<br />\nIf the output is 2.2, to round it up to 2.5 (the higher half or whole number)</p>\n</blockquote>\n</aside>\n<p>Just use ROUNDUP instead of ROUNDDOWN in my formula, sorry for the misunderstanding.</p>"
+    },
+    {
+      "id": 22690,
+      "postNumber": 10,
+      "createdAt": "2020-07-15T12:20:53.675Z",
+      "author": "vas (Vasil Dobrev)",
+      "cookedHtml": "<p>You are a genius mate!<br />\nThank you!!!</p>"
+    },
+    {
+      "id": 22804,
+      "postNumber": 11,
+      "createdAt": "2020-07-16T09:17:52.366Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>This is awesome! Glad that y’all could find a solution <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 55613,
+      "postNumber": 12,
+      "createdAt": "2021-06-21T15:44:43.751Z",
+      "author": "Becca-monday.com (Rebecca Katz (monday.com))",
+      "cookedHtml": ""
+    }
+  ]
+}

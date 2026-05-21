@@ -1,0 +1,39 @@
+{
+  "id": 36592,
+  "title": "Creating an Item with Column Values in C#",
+  "slug": "creating-an-item-with-column-values-in-c",
+  "categoryId": 8,
+  "tagIds": [
+    13
+  ],
+  "createdAt": "2022-05-19T22:39:59.138Z",
+  "lastPostedAt": "2022-05-20T14:15:56.411Z",
+  "postsCount": 3,
+  "excerpt": "I’m using C# ASP.NET with the monday.com API. I’ve been able to do queries and also I’m able to create an item. However, I’m having trouble creating an item with field values. I’ve seen various posts on the same issue bu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1810,
+  "posts": [
+    {
+      "id": 86396,
+      "postNumber": 1,
+      "createdAt": "2022-05-19T22:39:59.287Z",
+      "author": "bobpotter (Bob)",
+      "cookedHtml": "<p>I’m using C# <a href=\"http://ASP.NET\" rel=\"noopener nofollow ugc\">ASP.NET</a> with the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API. I’ve been able to do queries and also I’m able to create an item. However, I’m having trouble creating an item with field values. I’ve seen various posts on the same issue but I can’t seem to get it right. Any help or ideas would be appreciated.</p>\n<p>I’ll share the code I’m using. First, I created a new class:</p>\n<pre><code class=\"lang-auto\">\npublic class MondayAPIClass\n    {\n        private const string MondayApiKey = \"yourkey\";\n\n        private const string MondayApiUrl = \"https://api.monday.com/v2/\";\n\n        public string QueryMonday(string query)\n        {\n            byte[] dataBytes = System.Text.Encoding.UTF8.GetBytes(query);\n\n            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(MondayApiUrl);\n            request.ContentType = \"application/json\";\n            request.Method = \"POST\";\n            request.Headers.Add(\"Authorization\", MondayApiKey);\n\n            using (Stream requestBody = request.GetRequestStream())\n            {\n                requestBody.Write(dataBytes, 0, dataBytes.Length);\n            }\n\n            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())\n            using (Stream stream = response.GetResponseStream())\n            using (StreamReader reader = new StreamReader(stream))\n            {\n                return reader.ReadToEnd();\n            }\n        }\n    }\n</code></pre>\n<p>Then, I use the class in the code behind of my .aspx page.</p>\n<pre><code class=\"lang-auto\">public string CreateItem()\n    {\n\n        MondayAPIClass objMonday = new MondayAPIClass();\n\n   // The code below works to create an item.\n        string queryStr = \"{\\\"query\\\":\\\"mutation{ create_item(board_id: 2698883853,  item_name: \\\\\\\"Joe's Item\\\\\\\"){ id} }\\\"}\";\n\n// However, this code to include  column values does not work.\n// Error message: {\"errors\":[{\"message\":\"Parse error on \\\"text\\\" (STRING) at [1, 88]\",\"locations\":[{\"line\":1,\"column\":88}]}],\"account_id\":10876741}\n\n//        queryStr = \"{\\\"query\\\":\\\"mutation{ create_item(board_id: 2698883853,  item_name: \\\\\\\"Joe's Item\\\\\\\" \";\n//        queryStr += \", column_values:  {\\\\\\\"text\\\\\\\": \\\\\\\"ready3\\\\\\\"}  ){ id} }\\\"}\";\n\n// And, this code with extra \" around the values doesn't work \n// This produces a (500) Internal Server Error.\n\n//        queryStr = \"{\\\"query\\\":\\\"mutation{ create_item(board_id: 2698883853,  item_name: \\\\\\\"Joe's Item\\\\\\\" \";\n//        queryStr += \", column_values: \\\" {\\\\\\\"text\\\\\\\": \\\\\\\"ready3\\\\\\\"} \\\" ){ id} }\\\"}\";\n\n        string json = objMonday.QueryMonday(queryStr);\n        return json;\n    }\n</code></pre>\n<p>The CreateItem() function works with the code shown. However, when using the code that is commented out (includes column values), it fails with error messages.</p>"
+    },
+    {
+      "id": 86453,
+      "postNumber": 2,
+      "createdAt": "2022-05-20T14:15:56.411Z",
+      "author": "bobpotter (Bob)",
+      "cookedHtml": "<p>I finally figured this out!!! If anyone else is having trouble you should give this a try. I had to use Newtonsoft (using Newtonsoft.Json;).  Now my CreateItem() function looks like this:</p>\n<pre><code class=\"lang-auto\">public string CreateItem()\n    {       \n         MondayAPIClass objMonday = new MondayAPIClass();\n\n        var call = JsonConvert.SerializeObject(\n        new\n        {\n            query = \"mutation {create_item(board_id: 2695234567, item_name: \\\"Joe's Item\\\", column_values: \\\"{\\\\\\\"text\\\\\\\": \\\\\\\"Joes's Stuff\\\\\\\",\\\\\\\"status\\\\\\\": \\\\\\\"New\\\\\\\"}\\\") {id} }\"\n        }\n       );\n\n        string json = objMonday.QueryMonday(call);\n        return json;\n    }\n</code></pre>\n<p>I hope this helps someone as I’ve spent a lot of time figuring this out.</p>"
+    },
+    {
+      "id": 87057,
+      "postNumber": 3,
+      "createdAt": "2022-05-27T14:16:28.147Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

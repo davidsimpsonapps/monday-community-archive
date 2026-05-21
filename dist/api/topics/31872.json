@@ -1,0 +1,70 @@
+{
+  "id": 31872,
+  "title": "Column ids - difficult to handle figuring out for each column",
+  "slug": "column-ids-difficult-to-handle-figuring-out-for-each-column",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2022-02-18T09:09:18.134Z",
+  "lastPostedAt": "2022-02-25T11:13:34.739Z",
+  "postsCount": 7,
+  "excerpt": "Is it just me or the way Monday handles column ids is super difficult to manage? I have the graphql mutation running and every time I have to guess what is the columnId for the specific column I need to update. Not cool &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1184,
+  "posts": [
+    {
+      "id": 77717,
+      "postNumber": 1,
+      "createdAt": "2022-02-18T09:09:18.208Z",
+      "author": "kallikakis (Nikos Kallikakis)",
+      "cookedHtml": "<p>Is it just me or the way Monday handles column ids is super difficult to manage? I have the graphql mutation running and every time I have to guess what is the columnId for the specific column I need to update. Not cool that I have to open the developer tools, inspect the network tab and then find the column id of my column. Isn’t there a way to avail this on the UI?</p>\n<p>I can’t find a way to create subitems’ columns which could have sold the issue but still a lot of overhead for what should have been a pretty single thing to have</p>"
+    },
+    {
+      "id": 77718,
+      "postNumber": 2,
+      "createdAt": "2022-02-18T09:17:47.869Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>If you turn on Developer Mode in monday labs, your column ids will appear in the columns.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/4/4f1f2d3ad3888c3acd42721e3a790afcfc444075.png\" alt=\"image\" width=\"650\" height=\"134\" /><br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/f/f71423b6181d71ed3bbe76fb6f57f84eb5114eb0.png\" alt=\"image\" width=\"373\" height=\"98\" /></p>\n<p>Just wondering, since you are already using the graphql mutation, why don’t you get the column ids through graphql?</p>"
+    },
+    {
+      "id": 77719,
+      "postNumber": 3,
+      "createdAt": "2022-02-18T09:38:09.481Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>And for creating columns in subitems: you can query the board, find the subitems column and query the setting_str.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567889) {\n    columns (ids: \"subitems0\"){\n      id\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>This give you:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": [\n          {\n            \"id\": \"subitems0\",\n            \"settings_str\": \"{\\\"allowMultipleItems\\\":true,\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"boardIds\\\":[987654321]}\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": 123456\n}\n</code></pre>\n<p>The boardId of the board holding the subitems can then be used to query or add columns</p>"
+    },
+    {
+      "id": 77720,
+      "postNumber": 4,
+      "createdAt": "2022-02-18T09:43:15.685Z",
+      "author": "kallikakis (Nikos Kallikakis)",
+      "cookedHtml": "<p>Thanks for your reply, I tried this and I’m not getting back any data</p>\n<p>Submitted the following</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: XXX) {\n    columns (ids: \"subitems0\"){\n      id\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>I’m getting back the following</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": []\n      }\n    ]\n  },\n  \"account_id\": XXX\n}\n</code></pre>"
+    },
+    {
+      "id": 77721,
+      "postNumber": 5,
+      "createdAt": "2022-02-18T09:49:59.057Z",
+      "author": "kallikakis (Nikos Kallikakis)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> , never looked at it and this is very handy. I used the graphql query to fetch the columns as suggested by <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> but it didn’t yield any data. For the time being able to get the ids like this is useful</p>"
+    },
+    {
+      "id": 77724,
+      "postNumber": 6,
+      "createdAt": "2022-02-18T11:13:14.220Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>In that case the columnId in your board is differs from the example I gave. You can’t rely on the column to be named “subitems0”. On a brand new board it is called “subitems” but even then you can’t rely on it. If there are no subitems on the board the columnId “subitems” does not even exists.</p>\n<p>The safest way is to get all board columns and (in your code) look for the columnType “subtasks”, that will give you the correct columnId for your subitems.</p>"
+    },
+    {
+      "id": 78312,
+      "postNumber": 7,
+      "createdAt": "2022-02-25T11:13:34.739Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

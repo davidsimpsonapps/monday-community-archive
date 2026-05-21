@@ -1,0 +1,89 @@
+{
+  "id": 25407,
+  "title": "Item retrieval seems to consume way too many credits",
+  "slug": "item-retrieval-seems-to-consume-way-too-many-credits",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107
+  ],
+  "createdAt": "2021-09-28T07:51:16.382Z",
+  "lastPostedAt": "2021-10-07T12:12:29.290Z",
+  "postsCount": 8,
+  "excerpt": "Hi there, \nI am trying to simply retrieve a list of items for a given board that currently has no items (using the API). I get the following message: \nComplexity budget exhausted, query cost 3700020 budget remaining 9999&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1168,
+  "posts": [
+    {
+      "id": 64775,
+      "postNumber": 1,
+      "createdAt": "2021-09-28T07:51:16.467Z",
+      "author": "Harsturomai (Harry Stuart)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>I am trying to simply retrieve a list of items for a given board that currently has no items (using the API). I get the following message:</p>\n<p><code>Complexity budget exhausted, query cost 3700020 budget remaining 999960 out of 1000000 reset in 60 seconds</code></p>\n<p>Does this number seem wayyyy too high to simply get a list of items? Could someone please get me in touch with support so I can follow up with my specific situation?</p>\n<p>Much appreciated,<br />\nHarry</p>"
+    },
+    {
+      "id": 64778,
+      "postNumber": 2,
+      "createdAt": "2021-09-28T08:09:41.972Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/harsturomai\">@Harsturomai</a>,<br />\nTo the best of my knowledge, query complexities are calculated before the queries are performed. If let’s say, in your query, you specify the limit of items to be retrieved to be <code>10000</code> and your remaining budget is less than what the cost of retrieving items of that limit is, you will received a <code>Complexity budget</code> error even if the board is empty. Additionally, the level of item properties you retrieve as a huge impact on the <code>Complexity budget</code>.  So therefore to avoid falling into complexity budget errors, you have to limit by board, group, number of items etc. You can find more information about this <a href=\"https://api.developer.monday.com/docs/rate-limits\" rel=\"noopener nofollow ugc\">here</a></p>"
+    },
+    {
+      "id": 64780,
+      "postNumber": 3,
+      "createdAt": "2021-09-28T08:15:13.041Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>As <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> said, nesting query options that have implicit high complexity exponentially increases the complexity of the whole request, regardless of how many items are in the board.<br />\nSo ironically:</p>\n<ul>\n<li>If you query for boards (complexity 1,000) and items (complexity 1,000) nested inside a board, you get a 1,000,000 complexity<br />\nExample</li>\n</ul>\n<pre><code class=\"lang-auto\">query {\n  boards {   // &lt;- complexity 1k\n    id       //    multiplied by\n    items {  // &lt;- complexity 1k\n      id\n    }\n  }\n}\n</code></pre>\n<ul>\n<li>If you query for 10,000 boards and 10,000 items (not nesting the items query) you get a 20,000 complexity<br />\nExample</li>\n</ul>\n<pre><code class=\"lang-auto\">query {\n  boards (limit: 10000) { // &lt;- complexity 10k\n    id                    //    added to\n  }\n  items (limit: 10000) {  // &lt;- complexity 10k\n    id\n    board_id\n  }\n}\n</code></pre>\n<p>I hope it’s clear how complexity calculation works.</p>"
+    },
+    {
+      "id": 64782,
+      "postNumber": 4,
+      "createdAt": "2021-09-28T08:24:30.266Z",
+      "author": "Harsturomai (Harry Stuart)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I greatly appreciate your timely responses. It seems like the key factor here is that the cost is pre-computed. Thus, there are these exponential implications irrespective of the actual number of material entities.</p>\n<p>I will have to review my query. Also, I gather that this is where pagination can help to retrieve all items but in effective “batches”.</p>\n<p>Cheers,<br />\nHarry</p>"
+    },
+    {
+      "id": 64783,
+      "postNumber": 5,
+      "createdAt": "2021-09-28T08:27:17.124Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/h/7ba0ec/48.png\" class=\"avatar\" /> Harsturomai:</div>\n<blockquote>\n<p>It seems like the key factor here is that the cost is pre-computed. Thus, there are these exponential implications irrespective of the actual number of material entities.</p>\n</blockquote>\n</aside>\n<p>Yes, I confirm it is.<br />\nYou better get raw data and build the structure in your app.</p>"
+    },
+    {
+      "id": 64784,
+      "postNumber": 6,
+      "createdAt": "2021-09-28T09:35:03.483Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/harsturomai\">@Harsturomai</a></p>\n<p>That’s a great question!</p>\n<p>Thanks so much for your input on this <a class=\"mention\" href=\"/u/rob\">@rob</a>  and <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a>, those were super on-point and insightful <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I appreciate you sharing your excellent expertise on this!</p>\n<p><a class=\"mention\" href=\"/u/harsturomai\">@Harsturomai</a> feel free to share the structure of your query with us, and we could try thinking of potential improvements to reduce the complexity cost of your query. We’re here to help!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64785,
+      "postNumber": 7,
+      "createdAt": "2021-09-28T09:35:07.333Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 64787,
+      "postNumber": 8,
+      "createdAt": "2021-09-28T09:39:51.112Z",
+      "author": "Harsturomai (Harry Stuart)",
+      "cookedHtml": "<p>I concede to admit that I am using a dotnet SDK I found on GitHub and was hoping it was plug and play! Seems like I might have to deconstruct it a bit further and write a bespoke query for my use case.</p>\n<p>I’ll revisit this in the morning and if I can’t seem to get an appropriate query up and running then I’ll ask back here with more detail.</p>\n<p>Cheers,<br />\nHarry</p>"
+    },
+    {
+      "id": 65003,
+      "postNumber": 9,
+      "createdAt": "2021-09-30T12:12:17.237Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>This is a whisper, testing for matias</p>"
+    },
+    {
+      "id": 65527,
+      "postNumber": 10,
+      "createdAt": "2021-10-07T12:12:29.290Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

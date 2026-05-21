@@ -1,0 +1,104 @@
+{
+  "id": 71151,
+  "title": "Is there a way to get ALL BOARDS via the API without passing any ID?",
+  "slug": "is-there-a-way-to-get-all-boards-via-the-api-without-passing-any-id",
+  "categoryId": 6,
+  "tagIds": [
+    5,
+    94,
+    239
+  ],
+  "createdAt": "2023-11-20T17:03:17.074Z",
+  "lastPostedAt": "2023-11-23T15:04:59.695Z",
+  "postsCount": 12,
+  "excerpt": "Is there a way to get the result of the query below but without passing an “ID” for the board? \n{ \nboards(ids: 2110384567) { \nitems_page( \nlimit: 500 \nquery_params: {rules: [{column_id: “controle_de_tempo”, compare_value&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 1613,
+  "posts": [
+    {
+      "id": 153950,
+      "postNumber": 1,
+      "createdAt": "2023-11-20T17:03:17.155Z",
+      "author": "alfonso7797 (Haskel)",
+      "cookedHtml": "<p>Is there a way to get the result of the query below but without passing an “ID” for the board?</p>\n<p>{<br />\nboards(ids: 2110384567) {<br />\nitems_page(<br />\nlimit: 500<br />\nquery_params: {rules: [{column_id: “controle_de_tempo”, compare_value: [1]}]}<br />\n) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\n… on TimeTrackingValue {<br />\nhistory {<br />\nended_at<br />\nstarted_at<br />\nstarted_user_id<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>I want to execute this query without having to specify an ID, i want to return the result for all my boards.<br />\nIn the previous API version this was possible.</p>"
+    },
+    {
+      "id": 153969,
+      "postNumber": 2,
+      "createdAt": "2023-11-20T18:38:36.630Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">{\n  boards(limit: 100, page: 1){\n    id\n  }\n}\n</code></pre>\n<p>Then you can just query for page 2 and so on. This will get you the IDs of all the boards. You can then do a <code>boards(ids: 123123123){items_page...</code> query for each board ID like you showed in your original post.</p>\n<p>You may be able to do it by just omitting arguments of boards in your original query (no parenthesis part), but I would discourage this even if it works because you can’t parallelize getting the items from boards that way.</p>\n<p>Also you may not be aware, but <code>column_values(types: time_tracking)</code> (without quotes around time_tracking because it is an enum not string) will filter it to return only time tracking columns. You can specify an array of column types to return as well. I thought this might be of value for you if youre trying to just return time tracking column and not everything else (returning unneeded columns will slow things down considerably).</p>"
+    },
+    {
+      "id": 154139,
+      "postNumber": 4,
+      "createdAt": "2023-11-21T14:19:39.615Z",
+      "author": "alfonso7797 (Haskel)",
+      "cookedHtml": "<p>Hi Cody, thanks for your help!</p>\n<p>Do you know if it is possible to filter a column by the id?<br />\nThe idea of filtering by column_values is really useful, but I also need to filter by column id.</p>"
+    },
+    {
+      "id": 154142,
+      "postNumber": 5,
+      "createdAt": "2023-11-21T14:32:07.707Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>of course! here is a partial query: <code>column_values(ids: [\"columnId1\", \"columnId2\"]){id,type,value}</code> you can use it within your regular query.</p>\n<p>you can also use graphql variables, which is recommended - though this is a very abbreviated example (it wont work by itself), you can find details on how to use graphql variables at the link below.</p>\n<p><code> column_values(ids: $columnIds){id,type,value}</code></p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n\n      <a href=\"https://graphql.org/learn/queries/#variables\" target=\"_blank\" rel=\"noopener\">graphql.org</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://graphql.org/learn/queries/#variables\" target=\"_blank\" rel=\"noopener\">Queries and Mutations | GraphQL</a></h3>\n\n  <p>A query language for your API — GraphQL provides a complete description of the data in your API, gives clients the power to ask for exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables powerful developer...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 154284,
+      "postNumber": 6,
+      "createdAt": "2023-11-22T10:43:04.617Z",
+      "author": "alfonso7797 (Haskel)",
+      "cookedHtml": "<p>Thanks again! You helped me a lot already.</p>\n<p>Let me ask you another question. In the previuos version of the API I was doing the pagination using only the “page” argument.<br />\nNow I saw that there is this “cursor”.<br />\nI’m a bit confused, now I’ll need to use both? page and cursor?</p>"
+    },
+    {
+      "id": 154298,
+      "postNumber": 7,
+      "createdAt": "2023-11-22T12:22:03.575Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The cursor is for paging items_page only - you can also after the initial request use “next_items_page” so you don’t need to retrieve the board each time.</p>\n<pre><code class=\"lang-auto\">query {\n  next_items_page (limit: 50, cursor: \"MSw5NzI4MDA5MDAsaV9YcmxJb0p1VEdYc1VWeGlxeF9kLDg4MiwzNXw0MTQ1NzU1MTE5\") {\n    cursor\n    items {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<p>For paging root fields (boards, users, etc.) you still use limit and page.</p>\n<p>But to paginate items_page (when getting items from a specific board) you need to use cursor. This is because items_page caches the IDs  so it knows where to start - with the old method it has to retrieve all the IDs repeatedly and find the first one to start from. Much less efficient on large numbers of pages.</p>\n<p>Paginating boards for example is often not even needed - unless you have more than 100 boards. But dealing with items is always a large set, so a more efficient pagination was needed.</p>\n<p>What you want to do is first get all your IDs with the boards query I shared first. Then iterate the query you first posted with those board IDs (individually).</p>"
+    },
+    {
+      "id": 154540,
+      "postNumber": 8,
+      "createdAt": "2023-11-23T11:12:40.324Z",
+      "author": "alfonso7797 (Haskel)",
+      "cookedHtml": "<p>Thanks Again!</p>\n<pre><code class=\"lang-auto\">{\n  boards(limit: 25, page:1 \") {\n    id\n    workspace_id\n    name\n  }\n}\n</code></pre>\n<p>Do you know if there is a way to filter the query above by specific workspaces?</p>\n<p>I saw in the documentation the query below, but I dind’t find a way to use both queries combined</p>\n<pre><code class=\"lang-auto\">query {\n  workspaces (ids: 1234567) {\n    id\n    name\n    kind\n    description\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 154558,
+      "postNumber": 9,
+      "createdAt": "2023-11-23T12:58:42.061Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Unfortunately at this time, the API does not reveal the boards within a workspace. You can find the workspace a board belongs to, but not what boards belong to a workspace.</p>"
+    },
+    {
+      "id": 154574,
+      "postNumber": 10,
+      "createdAt": "2023-11-23T14:40:53.002Z",
+      "author": "alfonso7797 (Haskel)",
+      "cookedHtml": "<p>Got it.</p>\n<p>My client have a lot of boards and the API connection is returning an timeout. As I cannot filter by board (the client want to sell all of them), I was planning to filter by workspace (he only needs 2 of 5).</p>\n<p>Now I’m lost on how to solve that <img src=\"https://emoji.discourse-cdn.com/apple/face_with_diagonal_mouth.png?v=12\" title=\":face_with_diagonal_mouth:\" class=\"emoji\" alt=\":face_with_diagonal_mouth:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 154577,
+      "postNumber": 11,
+      "createdAt": "2023-11-23T14:52:09.506Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>What happens with this simplest of queries?</p>\n<pre><code class=\"lang-auto\">boards(limit: 25, page: 2) {\n id\n}\n</code></pre>\n<p>Also are you setting API-Version 2023-10 in the header still?</p>"
+    },
+    {
+      "id": 154578,
+      "postNumber": 12,
+      "createdAt": "2023-11-23T14:56:29.266Z",
+      "author": "alfonso7797 (Haskel)",
+      "cookedHtml": "<p>The query that I’m using:</p>\n<pre><code class=\"lang-auto\">{\n  boards(limit: 100, page: 1) {\n    id\n    items_page(limit: 500) {\n      cursor\n      items {\n        id\n        name\n        column_values(ids: [\\#(0022)controle_de_tempo\\#(0022), \\#(0022)n_meros8\\#(0022), \\#(0022)status_1\\#(0022)]) {\n          id\n          text\n          ... on TimeTrackingValue {\n            history {\n              ended_at\n              started_at\n              started_user_id\n            }\n          }\n        }\n      }\n    }\n    workspace_id\n    name\n  }\n}\n</code></pre>\n<p>I’m doing a pagination into the Page parameter.<br />\nAfter that, I’m getting the items that return a cursor &lt;&gt; blank and executing this query for those:</p>\n<pre><code class=\"lang-auto\">{\n  next_items_page(\n    limit: 500\n    cursor: \\#(0022)\" &amp; Text.From(Pg) &amp; \"\\#(0022)\n  ) {\n      cursor\n      items {\n        id\n        name\n        column_values(ids: [\\#(0022)controle_de_tempo\\#(0022), \\#(0022)n_meros8\\#(0022), \\#(0022)status_1\\#(0022)]) {\n          id\n          text\n          ... on TimeTrackingValue {\n            history {\n              ended_at\n              started_at\n              started_user_id\n            }\n          }\n        }\n      }\n    }\n  }\n</code></pre>"
+    },
+    {
+      "id": 154580,
+      "postNumber": 13,
+      "createdAt": "2023-11-23T15:04:59.695Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Ah, yes this is guaranteed to fail, you are definitely going to get too many results for one query because it repeats the items_page for all 100 boards. You only want do items_page for one board at a time. You will not be able to do this in a single query.</p>\n<p>First do queries like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards (limit: 100, page: 1){\n    id\n    workspace_id\n  }\n}\n</code></pre>\n<p>Now you can filter the boards by workspace_id, and map the ids to an array of board Ids to iterate through, running the following query for each board ID (and then the next_items_page query with the cursor until you get all items for each board).</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: \"123123123\") {\n    id\n    items_page(limit: 500) {\n      cursor\n      items {\n        id\n        name\n        column_values(ids: [\"controle_de_tempo\", \"n_meros8\", \"status_1\")]) {\n          id\n          text\n          ... on TimeTrackingValue {\n            history {\n              ended_at\n              started_at\n              started_user_id\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    }
+  ]
+}

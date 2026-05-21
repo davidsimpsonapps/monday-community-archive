@@ -1,0 +1,46 @@
+{
+  "id": 50808,
+  "title": "What is the app event (actions/triggers) response time limit?",
+  "slug": "what-is-the-app-event-actions-triggers-response-time-limit",
+  "categoryId": 8,
+  "tagIds": [
+    208
+  ],
+  "createdAt": "2023-02-04T21:38:19.240Z",
+  "lastPostedAt": "2023-02-05T22:25:36.342Z",
+  "postsCount": 3,
+  "excerpt": "Has anyone found/documented a timeout on an app event? How long does the monday.com server wait for our 200 (or other) response before dropping the connection when it sends us a webhook for a workflow block? \nBasically, &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 830,
+  "posts": [
+    {
+      "id": 113846,
+      "postNumber": 1,
+      "createdAt": "2023-02-04T21:38:19.321Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Has anyone found/documented a timeout on an app event? How long does the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> server wait for our 200 (or other) response before dropping the connection when it sends us a webhook for a workflow block?</p>\n<p>Basically, how long do we have to complete (including any complexity retries) and return with a status code and body (including severity code, notification text, notification title, etc.) before the monday server drops the connection and starts retrying the event?</p>\n<p>Providing appropriate responses is also impossible if we need to use a queue (per best practices) for mutations - there is no way to know the outcome of the mutation (easily) to respond with an appropriate status/error (referring to the new error mechanism that can disable a recipe, etc.), so we have to hold this connection and just wait for retries until near timeout - then queue them.</p>\n<p>But what is the official monday timelimit for us to respond?</p>"
+    },
+    {
+      "id": 113908,
+      "postNumber": 2,
+      "createdAt": "2023-02-05T21:45:34.982Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>According to these documents (search for the word “retry” in the monday developers website), it will retry every minute for 30 minutes.</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/custom-actions#mechanisms-behind-custom-actions\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday apps framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/apps/docs/custom-actions#mechanisms-behind-custom-actions\" target=\"_blank\" rel=\"noopener nofollow ugc\">Custom actions</a></h3>\n\n  <p>Learn how to build custom actions that will listen to your integration triggers and carry out the action of your choosing.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/integration-authorization#retry-policy---what-happens-if-my-endpoints-return-an-error\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday apps framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/apps/docs/integration-authorization#retry-policy---what-happens-if-my-endpoints-return-an-error\" target=\"_blank\" rel=\"noopener nofollow ugc\">Authorization for integration recipes</a></h3>\n\n  <p>Read more for a guide to designing your app's authorization flows.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 113910,
+      "postNumber": 4,
+      "createdAt": "2023-02-05T22:25:36.342Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> It is 60 seconds.</p>\n<p>If your server does not return a success response within 60 seconds it will retry the request. If you return a failure response, it will also retry the request again. Like GCavin mentioned, it will continue to retry the request for 30 minutes.</p>\n<p>If you are looking to implement a queuing system, you might need to consider OAuth instead of Seamless as it is unlikely that you can ensure your job will be completed within the 60 second expiration limit of the access token.</p>\n<p>However, using Seamless, if you receive a complexity error or similar, you can simply return a failure response and the request will be retried again and the complexity should be free given it resets every minute. Using Seamless auth, you probably won’t required a queue. Note that if you have multiple mutations in a single action, you may need a method to check if a previous mutation has run successfully otherwise you may end up with duplicate items being created for example.</p>\n<p>There was some talk a little while back about implementing a method to handle your app returning a 429 status code, and it will be retried for a longer period of time until your server can process the request, however i’m not sure of the latest update on this.</p>"
+    },
+    {
+      "id": 114833,
+      "postNumber": 6,
+      "createdAt": "2023-02-09T20:52:24.475Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

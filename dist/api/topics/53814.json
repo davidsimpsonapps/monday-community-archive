@@ -1,0 +1,59 @@
+{
+  "id": 53814,
+  "title": "Can not run custom action from custom trigger",
+  "slug": "can-not-run-custom-action-from-custom-trigger",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    208,
+    209,
+    249,
+    351
+  ],
+  "createdAt": "2023-03-15T06:09:41.753Z",
+  "lastPostedAt": "2023-03-15T08:14:30.583Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nI have custom trigger: [When subitem created] that will create webhook [create_subitem] \nand custom action: [Create an item (item mapping field) in board and…] \nThen I created a recipe [When subitem created, create &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 601,
+  "posts": [
+    {
+      "id": 119665,
+      "postNumber": 1,
+      "createdAt": "2023-03-15T06:09:41.832Z",
+      "author": "mhung21 (Hung Do)",
+      "cookedHtml": "<p>Hi,<br />\nI have custom trigger: [When subitem created] that will create webhook [create_subitem]<br />\nand custom action: [Create an <strong>item (item mapping field)</strong> in board and…]<br />\nThen I created a recipe [When subitem created, create an item in board and…]<br />\nWhen I create a subitem, it run into the trigger, then post to “<a href=\"https://api-gw.monday.com/automations/apps-events/%7BsubscriptionId%7D\" rel=\"noopener nofollow ugc\">https://api-gw.monday.com/automations/apps-events/{subscriptionId}</a>” but it is not run into the custom action (create an item in board and…)<br />\nI tried my custom action with built-in trigger like: [When column changes, create an item in board and…], it works very well.<br />\nI tried a lot of options, but can’t seem to get it right.<br />\nThanks in advance for the help. If anything needs clarification, please let me know.</p>"
+    },
+    {
+      "id": 119677,
+      "postNumber": 2,
+      "createdAt": "2023-03-15T07:21:19.456Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/mhung21\">@mhung21</a></p>\n<p>Looks like the correct setup. When you received the post from the webhook in your endpoint (specified in the create_subitem webhook creation) you post to the subscriptions endpoint.</p>\n<p>Are you sure you use the correct subscriptionId to post to? SubscriptionIds are <strong>not</strong> unique (can have duplicates in different regions) so it is safer to post to webhookUrl that you got in the subscribe event (and need to be stored for later access).</p>\n<p>When posting from youw webhook endpoint to the action you need to specify all the input variables expected by the action endpoint. Did you check those? This is an example how you could post from the webhook endpoint to your action endpoint.</p>\n<pre><code class=\"lang-auto\">  //Build the post body\n  const postBody = {\n    trigger: {\n      outputFields: {\n        boardId: event.boardId,\n        itemId: event.pulseId,\n        failedId: null,\n      },\n    },\n  };\n\n  //Post the request\n  var options = { headers: { Authorization: envVars.signingSecret }, json: true };\n  needle(\"post\", myConfig.webhookurl, postBody, options);\n</code></pre>\n<p>In this case the action expects: boardId, itemId and failedId.</p>\n<p>Hope that helps.</p>"
+    },
+    {
+      "id": 119680,
+      "postNumber": 3,
+      "createdAt": "2023-03-15T07:38:00.028Z",
+      "author": "mhung21 (Hung Do)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,<br />\nI’m using webhookUrl, post all the input variables,… and other recipe is working fine. Only this recipe still not working. I found that the action is using Item Mapping field, I remove it and the application work, it run into the action.<br />\nI don’t know why. Is this monday’s problem or Am I setup wrong somewhere?</p>"
+    },
+    {
+      "id": 119683,
+      "postNumber": 4,
+      "createdAt": "2023-03-15T07:52:32.374Z",
+      "author": "mhung21 (Hung Do)",
+      "cookedHtml": "<p>Oop, I know why.<br />\noutputFields I need assign something to itemMapping but I leave it empty/null so it wasn’t working.</p>\n<pre><code class=\"lang-auto\">{\n                    trigger: {\n                        outputFields: {\n                            boardId: boardId,\n                            itemId: itemId,\n                            itemMapping: {}\n                        }\n                    }\n                }\n</code></pre>"
+    },
+    {
+      "id": 119694,
+      "postNumber": 5,
+      "createdAt": "2023-03-15T08:14:30.583Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mhung21\">@mhung21</a>,</p>\n<p>If I understand correctly, you found the source of the issue and could work it out. Correct?</p>"
+    }
+  ]
+}

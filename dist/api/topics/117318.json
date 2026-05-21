@@ -1,0 +1,62 @@
+{
+  "id": 117318,
+  "title": "Calculating days in a range that fall within a financial year",
+  "slug": "calculating-days-in-a-range-that-fall-within-a-financial-year",
+  "categoryId": 6,
+  "tagIds": [
+    108,
+    243,
+    303
+  ],
+  "createdAt": "2025-07-09T10:33:18.745Z",
+  "lastPostedAt": "2025-07-11T11:49:35.465Z",
+  "postsCount": 6,
+  "excerpt": "Hi everyone, \nI’m hoping someone can help me figure out the correct formula for this — I’ve tried multiple variations but keep getting wrong results. \nI have two separate columns: {Start Date} and {End Date}. I am trying&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 48,
+  "posts": [
+    {
+      "id": 233988,
+      "postNumber": 1,
+      "createdAt": "2025-07-09T10:33:18.844Z",
+      "author": "georgina-pe (Georgina)",
+      "cookedHtml": "<p>Hi everyone,</p>\n<p>I’m hoping someone can help me figure out the correct formula for this — I’ve tried multiple variations but keep getting wrong results.</p>\n<p>I have two separate columns: <code>{Start Date}</code> and <code>{End Date}</code>. I am trying to write a formula to return the <strong>number of days</strong> between these two dates that fall between <strong>1 April 2025 and 31 March 2026</strong>.</p>\n<hr />\n<p><strong>What I’ve tried so far:</strong></p>\n<p>IF(<br />\nAND(<br />\n{End Date} &gt;= DATE(2025, 4, 1),<br />\n{Start Date} &lt;= DATE(2026, 3, 31)<br />\n),<br />\nDAYS(<br />\nMIN({End Date}, DATE(2026, 3, 31)),<br />\nMAX({Start Date}, DATE(2025, 4, 1))<br />\n) + 1,<br />\n0<br />\n)</p>\n<ul>\n<li>I understand that <code>DAYS()</code> excludes the start date, so I added <code>+ 1</code> to make it inclusive.</li>\n<li>So far, no matter what tweaks I can try the result always seems to come back as <strong>0</strong>.</li>\n</ul>\n<hr />\n<p><strong>My main question:</strong><br />\n<img src=\"https://emoji.discourse-cdn.com/apple/white_check_mark.png?v=14\" title=\":white_check_mark:\" class=\"emoji\" alt=\":white_check_mark:\" width=\"20\" height=\"20\" /> Does anyone have a <strong>working formula</strong> that accurately counts how many days within <code>{Start Date}</code> and <code>{End Date}</code> fall within a <strong>defined period</strong>?<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/white_check_mark.png?v=14\" title=\":white_check_mark:\" class=\"emoji\" alt=\":white_check_mark:\" width=\"20\" height=\"20\" /> Any tips for common pitfalls I might be missing with <code>DAYS()</code>, <code>MIN()</code>, or <code>MAX()</code> functions?</p>\n<hr />\n<p>Any help or working examples would be really appreciated!<br />\nThanks so much in advance <img src=\"https://emoji.discourse-cdn.com/apple/folded_hands.png?v=14\" title=\":folded_hands:\" class=\"emoji\" alt=\":folded_hands:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 234014,
+      "postNumber": 2,
+      "createdAt": "2025-07-09T11:16:57.923Z",
+      "author": "Clover_Gal (Desiree McCarthy | monday.com Ambassador)",
+      "cookedHtml": "<p>There might be a simpler way to do it, but a workaround I thought of is to add another column.</p>\n<p>Actual Days: Days (End Date - Start Date)+1<br />\nFormula column to capture the ‘out of range’ dates (this is the formula for the dates before 4/1/25). IF(ROUND(DAYS(DATE(2025,4,1), {Start Date}), 0) &lt; 0, 0, ROUND(DAYS(DATE(2025,4,1), {Start Date}), 0))</p>\n<p>You’ll need another formula for the dates AFTER your cut off date. Then a formula column to the 'Actual Dates minus the ‘out of range’ dates.</p>\n<p>I know it’s messy, can likely be done differently but that’s what I was able to come up with quickly.</p>\n<p>Desiree - <a href=\"http://www.thecleverclovers.com\" rel=\"noopener nofollow ugc\">www.thecleverclovers.com</a></p>"
+    },
+    {
+      "id": 234020,
+      "postNumber": 3,
+      "createdAt": "2025-07-09T11:48:37.182Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/georgina-pe\">@georgina-pe</a>,</p>\n<ol>\n<li>\n<p>Don’t use the DATE function in your comparisons, DATE(2025,4,1) returns “Tue Apr 01 2025 00:00:00…” which is not the same format as 2025-04-01 (or whatever date is in your {Start Date} column).</p>\n</li>\n<li>\n<p>Try this formula instead:</p>\n<pre><code>IF({End Date} &lt; \"2025-04-01\", 0, IF({Start Date} &gt; \"2026-03-31\", 0, \n    IF({Start Date} &lt; \"2025-04-01\", \n          IF({End Date} &gt; \"2026-03-31\", DAYS(\"2026-03-31\", \"2025-04-01\")+1, \n               DAYS({End Date}, \"2025-04-01\")+1), \n         IF({End Date} &gt; \"2026-03-31\", DAYS(\"2026-03-31\", {Start Date})+1, \n              DAYS({End Date}, {Start Date})+1)\n)))\n</code></pre>\n</li>\n<li>\n<p>Should you need to write the result in a <strong>Numbers</strong> column or <strong>count only the number of work days</strong>, you would need our <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a> app. Here would be the syntax of the formula:</p>\n</li>\n</ol>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/0/d0994d58075ed3eaf4c23aa0586f0d2dca20dfaa.jpeg\" title=\"2025-07-09_10-39-26\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/0/d0994d58075ed3eaf4c23aa0586f0d2dca20dfaa.jpeg\" alt=\"2025-07-09_10-39-26\" width=\"619\" height=\"291\" /><div class=\"meta\"><span class=\"filename\">2025-07-09_10-39-26</span><span class=\"informations\">619×291 90.9 KB</span></div></a></div><p></p>\n<p>{DaysInPeriod} is the Numbers column you would create instead of the Formula column.</p>\n<ul>\n<li>Lines 2 and 3 allow you to easily change the fiscal year dates when needed.</li>\n<li>To calculate the number of work days and therefore exclude week-ends and company holidays, simply replace COUNTDAYS BY COUNTWORKINGDAYS in Line 10.</li>\n</ul>\n<p> </p>\n<hr />\n<p><strong>What if we could break free of the Formula column?</strong> and write formulas that update any type of columns? What if a formula could update multiple columns at once? This is possible with the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a> app.</p>"
+    },
+    {
+      "id": 234078,
+      "postNumber": 4,
+      "createdAt": "2025-07-10T10:26:52.282Z",
+      "author": "Avo_FluidApps (Avo)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/georgina-pe\">@georgina-pe</a> - if you’re open to using apps, this is something the <strong><a href=\"https://monday.com/marketplace/listing/10000824/smart-timeline--duration\" rel=\"noopener nofollow ugc\">Smart Timeline + Duration</a></strong> app can help simplify.</p>\n<p>You can use this automation:</p>\n<blockquote>\n<p><strong>When both the start and end dates are set,<br />\nautomatically calculate and display the duration.</strong></p>\n</blockquote>\n<p>This gives you the exact number of days between your <strong>Start Date</strong> and <strong>End Date</strong>, stored in a real <strong>Duration column</strong>, no formulas needed, and no issues with inclusivity or formatting.</p>\n<p>From there, you can easily filter or report on durations that fall within a specific window, like your fiscal year (April 1, 2025 – March 31, 2026).</p>\n<p>There are over <strong>20 automation recipes</strong> available in the app, so you can tailor the logic even further based on your workflow.</p>\n<p>Let me know if you’d like help setting it up!</p>"
+    },
+    {
+      "id": 234194,
+      "postNumber": 5,
+      "createdAt": "2025-07-11T11:49:24.515Z",
+      "author": "georgina-pe (Georgina)",
+      "cookedHtml": "<p>Thank you so much!</p>"
+    },
+    {
+      "id": 234195,
+      "postNumber": 6,
+      "createdAt": "2025-07-11T11:49:35.465Z",
+      "author": "georgina-pe (Georgina)",
+      "cookedHtml": "<p>Ah thank you, that works - really appreciated!</p>"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "id": 54932,
+  "title": "Moving items from one board - to become subitems of another board?",
+  "slug": "moving-items-from-one-board-to-become-subitems-of-another-board",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    13,
+    22,
+    187
+  ],
+  "createdAt": "2023-03-29T10:11:33.653Z",
+  "lastPostedAt": "2023-12-20T10:37:47.863Z",
+  "postsCount": 8,
+  "excerpt": "Let’s say I have a board that has items such as this: \nItem 1 \nItem 2 \nItem 3 \nItem 4 \nItem 5 \nItem 6 \nNow let’s give them a column and some column_values \nItem 1 [Project A] \nItem 2 [Project B] \nItem 3 [Project B] \nItem&hellip;",
+  "solvedPostId": null,
+  "likeCount": 12,
+  "views": 1862,
+  "posts": [
+    {
+      "id": 121816,
+      "postNumber": 1,
+      "createdAt": "2023-03-29T10:11:33.752Z",
+      "author": "Dylan.townes (Dylan Townes)",
+      "cookedHtml": "<p>Let’s say I have a board that has items such as this:<br />\nItem 1<br />\nItem 2<br />\nItem 3<br />\nItem 4<br />\nItem 5<br />\nItem 6</p>\n<p>Now let’s give them a column and some column_values<br />\nItem 1 [Project A]<br />\nItem 2 [Project B]<br />\nItem 3 [Project B]<br />\nItem 4 [Project A]<br />\nItem 5 [Project A]<br />\nItem 6 [Project B]</p>\n<p>Now lets say I have another board, that tracks the overall projects. Right now - it only has two items in it:<br />\nProject A<br />\nProject B</p>\n<p>Is there a way for me to, by matching criteria of a column_value to an item name, push all items from my first board as subitems to my second board? In this scenario, the desired result would look like this, with “-” meaning sub-item:</p>\n<p>Project A<br />\n-Item 1<br />\n-Item 4<br />\n-Item 5<br />\nProject B<br />\n-Item 2<br />\n-Item 3<br />\n-Item 6</p>\n<p>I am considering writing a NodeJS script to do this for me - but before I begin I’m wondering if this is already possible and I’m just not seeing it? I’ve messed around with “When an item is created” → “create item in board &amp; connect boards”. But it’s not really what I need as you can see. Furthermore, even if I did go that route - then I use the automation “When an item is moved to this board” → “Then create a subitem”… but this isn’t really what I’m looking for either.</p>\n<p>Essentially - It’s a problem of one board being the database for another board.</p>\n<p>Any suggestions or considerations please let me know.</p>"
+    },
+    {
+      "id": 122033,
+      "postNumber": 2,
+      "createdAt": "2023-03-30T10:51:27.781Z",
+      "author": "JanieKustaborder (Janie Kustaborder)",
+      "cookedHtml": "<p>We have a similar need here, I am looking forward to seeing the responses to this.</p>"
+    },
+    {
+      "id": 122042,
+      "postNumber": 3,
+      "createdAt": "2023-03-30T11:18:13.280Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dylan.townes\">@Dylan.townes</a> <a class=\"mention\" href=\"/u/janiekustaborder\">@JanieKustaborder</a></p>\n<p>This is an interesting idea. What would you want the trigger to be?</p>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a><br />\n<strong><a href=\"https://themondayman.com/custom/\">Get Custom Apps, Integrations &amp; Automations for monday</a></strong></p>"
+    },
+    {
+      "id": 122046,
+      "postNumber": 4,
+      "createdAt": "2023-03-30T11:42:32.744Z",
+      "author": "JanieKustaborder (Janie Kustaborder)",
+      "cookedHtml": "<p>In our situation, we have a plugin that imports items from ADO. ADO User Stories have ADO tasks under them, so we would want task items to be subitems of the associated user story.</p>\n<p>The trigger could be when a task is imported.</p>"
+    },
+    {
+      "id": 122098,
+      "postNumber": 5,
+      "createdAt": "2023-03-30T14:31:48.473Z",
+      "author": "Dylan.townes (Dylan Townes)",
+      "cookedHtml": "<p>Essentially - to make it a feature usable by anyone- it would look something like this.</p>\n<p>Let’s say Item1 is from board 1, and item 2 is from board 2. You want the items in board 1 to become subitems in board 2 by way of some matching criteria. Maybe they share a similar column value, or name, or status, or whatever.</p>\n<pre><code class=\"lang-auto\">if item1 coulmn_value = item2 column_value\nthen mutation{ create_subitem (parent_item_id: {item2}, item_name: \"item1\"}\n</code></pre>\n<p>You can further adjust the mutation to carry over whichever column values from each item you would like - into new column values.</p>\n<p>For expansion on this, this is what it would look like - very abstracted in no particular language.</p>\n<pre><code class=\"lang-auto\">Q1 - Query{boards (ids:{board1 id}) { items{ name { column_values{ value name id } } } }\nQ2 - Query{boards (ids:{board2 id}) { items{ name { column_values{ value name id } } } }\n</code></pre>\n<p>Then to create the matching criteria tool we’d need a function that lets a user decide what value they’d like to match for the criteria of the mutation function.</p>\n<pre><code class=\"lang-auto\">\nmatchingCriteriaToolWithMutation(){\nA = Q1\nB = Q2\nfor(i = 0; i &lt; A.boards[0].items.length; i++){\nif(A.data.boards[0].items[i].column_values[i].value == B.data.boards[0].items[i].column_values[i].value){\nthen mutation{ create_subitem (parent_item_id: ({B.data.boards[0].item[i].id}), item_name: {A.data.boards[0].items[i].name}\n}\n}\n</code></pre>\n<p>And so no and so fourth - This is of-course matching based on a column_value that is hard coded in this case you would want to ask the user what matching criteria between items you would like to create the subitem tool to function on. The function above also assumes the returned arrays from both queries are exactly the same length which ofcourse won’t work. Above is just an extremally rough demonstration of what I’m trying to achieve here.</p>\n<p>“Between Board 1 and Board 2, which criteria determines which items from Board 1 become subitems of items on Board 2”</p>\n<p>Again it’s just the problem of one board being the database for another board. You might ask, then why not just have both boards together in the first place? why did the user get themselves into the situation of using two boards for the same data set? Well in our case it’s because we need the full functionality of items for both boards, not subitems. And groups also don’t have enough functionality to meet the demands necessary.</p>"
+    },
+    {
+      "id": 129052,
+      "postNumber": 6,
+      "createdAt": "2023-05-23T08:10:24.621Z",
+      "author": "BreatheTechnology (Brendon)",
+      "cookedHtml": "<p>I would love a feature like this for my CRM Workspace that allows me to link individual contacts in a raw data area as sub items to the respective Customer/Company when that column is updated. It will also be highly valuable when we develop the project management section of our Monday instance.</p>"
+    },
+    {
+      "id": 158719,
+      "postNumber": 7,
+      "createdAt": "2023-12-20T09:50:53.734Z",
+      "author": "DaveTilmouth (Dave Tilmouth)",
+      "cookedHtml": "<p>Dylan - dd you manage to create this? It’s exactly what I need! If so, could yo share the code AND let me know how to use it (I’m not clever with fiddling under the bonnet!)</p>\n<p>Cheers!</p>\n<p>Dave</p>"
+    },
+    {
+      "id": 158728,
+      "postNumber": 8,
+      "createdAt": "2023-12-20T10:37:47.863Z",
+      "author": "DaveTilmouth (Dave Tilmouth)",
+      "cookedHtml": "<p>Did you manage to create this? It’s exactly what I need! If so, could yo share the code AND let me know how to use it (I’m not clever with fiddling under the bonnet!)</p>\n<p>Cheers!</p>\n<p>Dave</p>"
+    }
+  ]
+}

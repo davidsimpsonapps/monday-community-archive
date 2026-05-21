@@ -1,0 +1,46 @@
+{
+  "id": 32750,
+  "title": "Counting days between dates with IF conditioning error",
+  "slug": "counting-days-between-dates-with-if-conditioning-error",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-03-08T19:08:02.803Z",
+  "lastPostedAt": "2022-03-19T09:20:32.170Z",
+  "postsCount": 4,
+  "excerpt": "Hi! \nI have been researching some posts to create a formula that will let me count the days that have gone by since a due date was passed, but are having trouble nailing the formula. \nI want to know how much time it took&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2064,
+  "posts": [
+    {
+      "id": 79249,
+      "postNumber": 1,
+      "createdAt": "2022-03-08T19:08:02.888Z",
+      "author": "marcepz (Ana Marcela Perez)",
+      "cookedHtml": "<p>Hi!</p>\n<p>I have been researching some posts to create a formula that will let me count the days that have gone by since a due date was passed, but are having trouble nailing the formula.<br />\nI want to know how much time it took customers to pay their order, the count to stop once the shipment was payed, and also mark in red or with a symbol when their order payment is past expirantion date.</p>\n<p>Right now I have these columns:</p>\n<ul>\n<li>Días crédito (number column; additional days the customer has to fulfill payment; are usually 0, 30 or 60)</li>\n<li>Vencimiento Pago (due date; formula column adding the date the order was placed + credit days)<br />\nFORMAT_DATE(ADD_DAYS({Fecha Entrega},{Días crédito}),“D MMM YYYY”)</li>\n<li>Fecha de Pago (date column; date payed)</li>\n<li>Overdue (formula column with below mentioned formula)</li>\n</ul>\n<p>The formula I have now goes like this:<br />\nIF({Estado de Pago}=“Pagado”,ROUNDUP(DAYS(TODAY(),{Fecha Pago}),0),ROUNDUP(DAYS(TODAY(),{Vencimiento Pago}),0))</p>\n<p>BUT nothing is making sense <img src=\"https://emoji.discourse-cdn.com/apple/smiling_face_with_tear.png?v=12\" title=\":smiling_face_with_tear:\" class=\"emoji\" alt=\":smiling_face_with_tear:\" width=\"20\" height=\"20\" /><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/8f0beaf590c89002bc3b41725095de4c76e89477.jpeg\" title=\"Screen Shot 2022-03-08 at 15.01.34\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/8f0beaf590c89002bc3b41725095de4c76e89477_2_690x435.jpeg\" alt=\"Screen Shot 2022-03-08 at 15.01.34\" width=\"690\" height=\"435\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2022-03-08 at 15.01.34</span><span class=\"informations\">1920×1211 144 KB</span>\n</div></a></div><p></p>\n<p>As you can see, I have the starting date and then credit days, but the formula is adding days even though some people have 0 credit. If there is a 0, it adds 5; If I input 1, it adds 6, and so on.<br />\nThen there’s the overdue column, which has a high number of overdue days even though all of these examples were paid between the time frame.</p>\n<p>Can someone please help me understand what I0m doing wrong?</p>"
+    },
+    {
+      "id": 79262,
+      "postNumber": 2,
+      "createdAt": "2022-03-08T20:19:02.404Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/marcepz\">@marcepz</a></p>\n<p>I’m not completely grasping it all. So, let’s take this one step at a time.</p>\n<ol>\n<li>The formula in column {Vencimiento Pago} is referring to {Fecha Entrega} not {Fecha Pedido}.</li>\n<li>I think the second formula should be: IF({Estado de Pago} = “Pagado”, ROUNDUP(DAYS({Fecha Pago}, {Vencimiento Pago}), 0), “<img src=\"https://emoji.discourse-cdn.com/apple/red_square.png?v=12\" title=\":red_square:\" class=\"emoji\" alt=\":red_square:\" width=\"20\" height=\"20\" />” &amp; ROUNDUP(DAYS(TODAY(), {Vencimiento Pago}), 0))</li>\n</ol>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/PcUdUNHSNUE\">Keep your Integromat scenarios from timing out! - YouTube</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 80259,
+      "postNumber": 3,
+      "createdAt": "2022-03-18T20:25:15.667Z",
+      "author": "marcepz (Ana Marcela Perez)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>!</p>\n<p>Thank you so much for the response. The first formula was incorrect <img src=\"https://emoji.discourse-cdn.com/apple/sweat_smile.png?v=12\" title=\":sweat_smile:\" class=\"emoji\" alt=\":sweat_smile:\" width=\"20\" height=\"20\" /> I’ve corrected it now and it works great.<br />\nThe second formula is also working!! Right now I am unable to get the red square -for some reason just the text appears. I am trying to find what I’m writing wrong to get it to show, but it’s just that minor inconvenience.</p>\n<p>However, I am finding that the people who paid before the expiration date, appear with negative days on the formula. Is there a way to set the formula to start counting until the date of {Vencimiento Pago} is passed or is that too crazy?</p>"
+    },
+    {
+      "id": 80274,
+      "postNumber": 4,
+      "createdAt": "2022-03-19T09:20:32.170Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/marcepz\">@marcepz</a></p>\n<p>I don’t think fixing the negative days will be difficult.</p>\n<p>Can you share your current formula?</p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/PcUdUNHSNUE\">Keep your Integromat scenarios from timing out! - YouTube</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "id": 23706,
+  "title": "Missing backToUrl for OAuth handling while app installation",
+  "slug": "missing-backtourl-for-oauth-handling-while-app-installation",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    159,
+    208,
+    351
+  ],
+  "createdAt": "2021-08-14T09:28:05.335Z",
+  "lastPostedAt": "2021-11-02T22:25:00.763Z",
+  "postsCount": 19,
+  "excerpt": "Hello, \nI currently work on the OAuth handling that is triggered when an app is installed. I am using the URL https://auth.monday.com/oauth2/authorize with the client_id of my app and the redirect_uri that should be call&hellip;",
+  "solvedPostId": null,
+  "likeCount": 10,
+  "views": 2191,
+  "posts": [
+    {
+      "id": 60889,
+      "postNumber": 1,
+      "createdAt": "2021-08-14T09:28:05.478Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hello,<br />\nI currently work on the OAuth handling that is triggered when an app is installed. I am using the URL <code>https://auth.monday.com/oauth2/authorize</code> with the <code>client_id</code> of my app and the <code>redirect_uri</code> that should be called after the user has authorized the app. The redirection will then indeed called and I can also request a token with the provided code successfully. However I don’t know how to proceed. The app is not installed after this handling. So I guess I have to call a backToUrl (to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>) to finish it.<br />\nDoes anybody know what is the correct handling here?<br />\nThanks a lot, Marcus</p>"
+    },
+    {
+      "id": 60969,
+      "postNumber": 2,
+      "createdAt": "2021-08-16T10:04:06.607Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 60971,
+      "postNumber": 3,
+      "createdAt": "2021-08-16T10:10:33.079Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a>,</p>\n<p>I’m curious to learn more about how your app is not installed at that point. If you have access to the user’s access token, your app should indeed be installed on the user’s account.</p>\n<p>Additionally, you don’t need to direct the user back to their <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> accounts in order to complete the OAuth flow. This can all happen in a separate window.</p>\n<p>If you want to explain a bit more about what you have set up on your current OAuth flow, maybe I can help spot where the trouble is occurring.</p>"
+    },
+    {
+      "id": 61119,
+      "postNumber": 4,
+      "createdAt": "2021-08-17T18:56:13.603Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/helen\">@Helen</a> I tried again today and the app is not installed, not on my developer account and not on another account which does not own the app. The current app version uses a tunnel URL to test locally. Could this be an issue? At least the redirect_uri is triggered, so I guess it does not matter.<br />\nConcretely I try to install the app with the auth URL mentioned above. When the redirect_uri is called after acceptance, I call the URL to get the token, which is successful. I then return 200 to the received response and that’s it. In the end the user sees a blank page with the redirect_uri and the given code and scope returned by monday,.com. Do I miss something?</p>"
+    },
+    {
+      "id": 61349,
+      "postNumber": 5,
+      "createdAt": "2021-08-19T16:45:49.447Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a>,</p>\n<p>After you get the token from your <code>redirect_uri</code>, you will need to exchange it for an access token as described in this section of our OAuth documentation: <a href=\"https://apps.developer.monday.com/docs/oauth#token-request\" rel=\"noopener nofollow ugc\">https://apps.developer.monday.com/docs/oauth#token-request</a>.</p>\n<p>Is this what you’ve done too? This second step will return the access token that you can then use in your API requests.</p>\n<p>Apologies for not being clear before. Let me know if you were able to implement this second step!</p>"
+    },
+    {
+      "id": 61352,
+      "postNumber": 6,
+      "createdAt": "2021-08-19T17:18:54.017Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p>yes, I exchange the code provided to the <code>redirect_uri</code> with an access token and also do a query to monday API to be sure it is valid. All that is successful, but the app is not installed then. The only way I currently can install the app is to provide the <code>client_id</code> and <code>response_type=install</code> to the auth URL, but this bypasses the OAuth handling which seems not to be recommended.</p>"
+    },
+    {
+      "id": 61439,
+      "postNumber": 7,
+      "createdAt": "2021-08-20T10:39:34.424Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a></p>\n<p>That does sound quite odd. Just to make sure we’re on the same page here, are you going through the OAuth process on a live version currently, or on a draft version? I’m wondering if this could be related to the versioning flow.</p>\n<p>If you haven’t yet, I’d suggest promoting a Major version to live, and then trying to go through an OAuth process again.</p>\n<p>Let us know if that helps!</p>\n<p>-ALex</p>"
+    },
+    {
+      "id": 61494,
+      "postNumber": 8,
+      "createdAt": "2021-08-21T06:30:29.822Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi Alex,<br />\nthis happens with the latest live major version of the app. I tried again today also with different browsers, no success.</p>"
+    },
+    {
+      "id": 61582,
+      "postNumber": 9,
+      "createdAt": "2021-08-23T11:58:11.974Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a>,</p>\n<p>So sorry to see that you’re running into this issue.</p>\n<p>At this time I do want to go ahead and start gathering more information for a bug report. Because the report will include some sensitive information, do you mind emailing <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with the following details?</p>\n<ol>\n<li>What is the most recent time (as specific as possible) where you saw this issue?</li>\n<li>What is the URL of your app (i.e. the account the app was built in)?</li>\n<li>Does this issue occur with other apps in your account as well? Or only this one?</li>\n<li>If needed, do you mind granting our developer permission to log into your account for troubleshooting purposes only?</li>\n<li>It would be immensely helpful to see a visual of the login flow as a user of your app will experience it. This way, we can see if there are any error messages that pop up for the user.</li>\n</ol>\n<p>I know this is a lot of information, but we need to make sure we pass our devs all of it on the first go around, this way we don’t experience any delays.</p>\n<p>Thank you so much!</p>"
+    },
+    {
+      "id": 61627,
+      "postNumber": 10,
+      "createdAt": "2021-08-23T18:22:28.476Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a> I just sent a mail with some information. Let’s see what they say.</p>"
+    },
+    {
+      "id": 61631,
+      "postNumber": 11,
+      "createdAt": "2021-08-23T18:58:34.884Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a>,</p>\n<p>Actually, from your email it looks like your redirect URL doesn’t end in “/oauth/callback”.</p>\n<p>Instead of “monday_auth/callback” do you mind changing it to “/oauth/callback”? It shouldn’t be working with a redirect URI ending in “monday_auth/callback”.</p>\n<p>Let me know if this works.</p>"
+    },
+    {
+      "id": 61634,
+      "postNumber": 12,
+      "createdAt": "2021-08-23T19:14:13.720Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a> I see. I currently use the ending <code>/oauth/callback</code> already for the OAuth handling to the 3rd party server. Is it possible to use something like <code>/monday/oauth/callback</code>?</p>"
+    },
+    {
+      "id": 61635,
+      "postNumber": 13,
+      "createdAt": "2021-08-23T19:19:08.060Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a></p>\n<p>Do you mean this URL is using <code>oauth/callback</code>?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/88d1f72eaaaa17b952f9576e7d940c4e62f160c3.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/88d1f72eaaaa17b952f9576e7d940c4e62f160c3_2_517x186.png\" alt=\"image\" width=\"517\" height=\"186\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1612×582 44.5 KB</span>\n</div></a></div><p></p>\n<p>Because that’s not what I’m seeing in the logs for your redirect URI:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/8/84e68c5eecfc205fc1b8828b3b4e5393d57696d4.png\" alt=\"image\" width=\"180\" height=\"19\" /></p>"
+    },
+    {
+      "id": 61636,
+      "postNumber": 14,
+      "createdAt": "2021-08-23T19:19:41.439Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>coralogix: <a href=\"https://monday.coralogix.com/#/query/logs?id=2YVUKSesCsZ\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Coralogix</a></p>"
+    },
+    {
+      "id": 61644,
+      "postNumber": 15,
+      "createdAt": "2021-08-23T19:35:28.052Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a> correct I mean this URL, which currently is configured and implemented URL ends as <code>/monday_auth/callback</code>, which seems not to work. So my question is, can I configure it as <code>/monday/oauth/callback</code>?</p>"
+    },
+    {
+      "id": 61645,
+      "postNumber": 16,
+      "createdAt": "2021-08-23T19:39:13.609Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>No that sadly won’t work.</p>\n<p>So it sounds like this endpoint is being used for the other platform you’re connecting your app to, right? Could that platform take an alternate endpoint?</p>"
+    },
+    {
+      "id": 61647,
+      "postNumber": 17,
+      "createdAt": "2021-08-23T19:56:47.653Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>I will try tomorrow (it is too late now here in Germany) and will let you know the results.</p>"
+    },
+    {
+      "id": 61737,
+      "postNumber": 18,
+      "createdAt": "2021-08-24T17:30:29.331Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a> I changed the URL as requested, still no success. I also answered the mail to appsupport.</p>"
+    },
+    {
+      "id": 61807,
+      "postNumber": 19,
+      "createdAt": "2021-08-25T11:11:29.905Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a>, for ease let’s just talk in the email.</p>\n<p>I’ll update here once we’ve found a solution!</p>"
+    },
+    {
+      "id": 61933,
+      "postNumber": 20,
+      "createdAt": "2021-08-26T16:13:55.147Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>ticket: <a href=\"https://monday.zendesk.com/agent/tickets/1691017\" rel=\"noopener nofollow ugc\">https://monday.zendesk.com/agent/tickets/1691017</a><br />\nDOW: <a href=\"https://monday.monday.com/boards/620317422/views/8906608/pulses/1611881915?userId=12942868\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 67724,
+      "postNumber": 21,
+      "createdAt": "2021-11-02T22:25:00.763Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Closing this as we were able to resolve this over an email thread.</p>"
+    },
+    {
+      "id": 68337,
+      "postNumber": 22,
+      "createdAt": "2021-11-09T22:25:40.159Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

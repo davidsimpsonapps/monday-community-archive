@@ -1,0 +1,54 @@
+{
+  "id": 87068,
+  "title": "Formatting help on MondayClient Query?",
+  "slug": "formatting-help-on-mondayclient-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-05-15T14:45:19.516Z",
+  "lastPostedAt": "2024-05-20T06:18:27.849Z",
+  "postsCount": 4,
+  "excerpt": "Hi, I’m new to developing on Monday.com and I need some help formatting a graphQL query using the monday.com client. I’ve tried just about everything I can think of but continue to run into errors! \nHere’s my code: \ntry &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 160,
+  "posts": [
+    {
+      "id": 184147,
+      "postNumber": 1,
+      "createdAt": "2024-05-15T14:45:19.590Z",
+      "author": "haydencrabb (Hayden Crabb)",
+      "cookedHtml": "<p>Hi, I’m new to developing on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> and I need some help formatting a graphQL query using the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> client. I’ve tried just about everything I can think of but continue to run into errors!</p>\n<p>Here’s my code:</p>\n<pre><code class=\"lang-auto\">try {\n\t\tconst mondayClient = initMondayClient();\n\t\tmondayClient.setToken('MyAccessToken');\n\t\tmondayClient.setApiVersion('2024-04');\n\n\t\tconst query = `mutation create_item($board_id: ID!, $my_item_name: String!, $columnVals: JSON!) {\n\t\t\t\tcreate_item(board_id: $board_id, item_name: $my_item_name, column_values: $columnVals) { \n\t\t\t\t\tid\n\t\t\t\t}\n\t\t\t}`;\n\t\tconst vars = {\n\t\t    \"my_item_name\" : \"Newest Purchase\",\n\t\t    \"board_id\": '11111111111',\n\t\t    \"columnVals\" : JSON.stringify({\n\t\t\t    \"status45\" : {\"label\" : \"Under Review\"},\n\t\t\t    \"status4\" : {\"label\" : \"J199\"}, //Project #\n\t\t\t    \"dropdown\" : {\"dropdown\" : \"MCMaster\"}, //Vendors\n\t\t\t})\n\t\t};\n\n\t\tconst response = await mondayClient.api(query, vars);\n\t\tconsole.log(response);\n\t} catch (err) {\n\t\tconsole.log(err);\n\t}\n</code></pre>\n<p>The most common error I see is this:<br />\n“Variable $board_id of type ID! was provided invalid value”<br />\n“Variable $my_item_name of type String! was provided invalid value”<br />\n“Variable $columnVals of type JSON! was provided invalid value”</p>\n<p>I’ve also tried formatting the variables like this:</p>\n<pre><code class=\"lang-auto\">const vars = {\n\t\t    \"my_item_name\" : \"Newest Purchase\",\n\t\t    \"board_id\": '1111111111',\n\t\t    \"columnVals\" : \"{\\\"status45\\\" : \\\"Under Review\\\", \\\"status4\\\" : \\\"J199\\\"}\"\n\t\t};\n</code></pre>\n<p>same errors.</p>\n<p>This code works great if I run it through a javascript fetch function rather than through the monday client. Which is why I know it’s just a formatting issue.</p>\n<p>Obviously in my real code I use the correct token, and board_ID.</p>\n<p>Please help! I’m not sure what I’m doing wrong.</p>"
+    },
+    {
+      "id": 184211,
+      "postNumber": 2,
+      "createdAt": "2024-05-15T23:51:47.479Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><code>await mondayClient.api(query, { variables: vars })</code> is the correct usage for making the request. The variables are sent as the <code>variables</code> key of the options object (the second argument of the .api method is the options object, not the variables.)</p>"
+    },
+    {
+      "id": 184279,
+      "postNumber": 3,
+      "createdAt": "2024-05-16T08:45:41.789Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 184339,
+      "postNumber": 4,
+      "createdAt": "2024-05-16T13:14:12.045Z",
+      "author": "haydencrabb (Hayden Crabb)",
+      "cookedHtml": "<p>This fixed it! Thank you so much!</p>"
+    },
+    {
+      "id": 184705,
+      "postNumber": 5,
+      "createdAt": "2024-05-20T06:18:27.849Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the help here!</p>"
+    }
+  ]
+}

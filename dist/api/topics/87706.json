@@ -1,0 +1,93 @@
+{
+  "id": 87706,
+  "title": "Recipe automation authorization",
+  "slug": "recipe-automation-authorization",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-05-22T09:30:56.871Z",
+  "lastPostedAt": "2024-09-08T20:40:06.051Z",
+  "postsCount": 8,
+  "excerpt": "Hello! I’m creating a new application for integration, but I don’t yet understand how to authorize recipes by requesting my API key from the user, as is, for example, implemented in the SMS-Fly service (I’m attaching two&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 146,
+  "posts": [
+    {
+      "id": 185117,
+      "postNumber": 1,
+      "createdAt": "2024-05-22T09:30:56.952Z",
+      "author": "ThisIsIgrek (Igorek)",
+      "cookedHtml": "<p>Hello! I’m creating a new application for integration, but I don’t yet understand how to authorize recipes by requesting my API key from the user, as is, for example, implemented in the SMS-Fly service (I’m attaching two screenshots: <a href=\"https://imgur.com/a/dZ7eh2Z\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Imgur: The magic of the Internet</a> =&gt; <a href=\"https://imgur.com/a/W4h6CKT\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Imgur: The magic of the Internet</a>). I read the recipe authorization documentation - <a href=\"https://developer.monday.com/apps/docs/integration-authorization\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Authorization for integration recipes</a>, but did not find information about similar functionality there. The authorization that is there is through a third-party application, it would be convenient for me to implement it through your interface as has already been done</p>"
+    },
+    {
+      "id": 185382,
+      "postNumber": 2,
+      "createdAt": "2024-05-23T06:57:52.395Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/thisisigrek\">@ThisIsIgrek</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>To create a screen where you can ask for credentials, you can use the <a href=\"https://developer.monday.com/apps/docs/integration-authorization#the-authorization-url\">Authorization URL</a>. It will not look exactly like the screenshots you sent, but it is the feature you need to ask for credentials for integration features <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 200216,
+      "postNumber": 3,
+      "createdAt": "2024-09-06T11:54:18.902Z",
+      "author": "eyalos (Eyal)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>I want to see is if I understand this correctly:<br />\nI read about <a href=\"https://developer.monday.com/apps/docs/credentials\" rel=\"noopener nofollow ugc\">credentials field</a> in the integrations’ docs, and there they require 3 URLs, for getting, setting and deleting.<br />\nI still miss the part of what should I code in order to have the ability of asking the user for his 3rd party API token, for example.<br />\nIf I just use the Authorization URL (in the credentials field) then the user will be redirected to a UI which will be asking him/her for this input?</p>\n<p>Thanks,<br />\nEyal</p>"
+    },
+    {
+      "id": 200259,
+      "postNumber": 4,
+      "createdAt": "2024-09-06T16:51:03.464Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>credentials URL is a URL where you respond with a list of already saved credentials - this way if they’ve already added one, they can reuse it.</p>\n<p>authorization URL will take them to a page of your choice where you can take them through whatever process you need, providing the API token for the service, oauth for the service, whatever method is needed. At the end you redirect them back to the back_to_url that was in the JWT sent with the initial request. This authorization URL is essentially the same as the existing authorization URL on an integration feature except its only called when a user clicks the option to add a new credential in the credentials field. You need to create these pages and serve them from your backend. There is no native functionality here from monday - beside making the initial call to the URL.</p>\n<p>delete URL - does what you’d expect, sends you details to delete an existing credential from the list you return in the credentials URL.</p>"
+    },
+    {
+      "id": 200274,
+      "postNumber": 5,
+      "createdAt": "2024-09-06T17:35:24.778Z",
+      "author": "eyalos (Eyal)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for taking the time and explain.<br />\nSo basically, from reading this it looks like that credentials URL and delete URL are only needed in the multiple credentials use-case, in order to have the ability to choose from different credentials.</p>\n<p>And in the other hand, if an integration only requires single authorization per an account (i.e. 1-to-1 relation), it only needs to have authorization URL.</p>\n<p>Thanks for clarifying the process of providing extra authentication options for the integrated service.</p>"
+    },
+    {
+      "id": 200280,
+      "postNumber": 6,
+      "createdAt": "2024-09-06T18:15:38.622Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Well, there is another consideration.</p>\n<p>The redirect to the back-to-url with the authorization URL is SLOW. Like 10-20 seconds. If you use the authorization URL (standalone) then EVERY time a user configures a recipe, it will call the URL only for you to immediately redirect them (since you have already gotten a credential). This means a 10-20 second lag for the user every single time.</p>\n<p>Using the credential field instead, even if you only need one credential, the call to look up existing credentials (credential URL) should take &lt;1s. The user may have to reselect the credential each time, but there isn’t a long redirect delay involved (except the first time.)</p>\n<p>This is the benefit of the credential field (which has a manually invoked authorization URL) and the “authorization URL” at the feature level which is invoked every time a recipe or action is configured from a feature.</p>\n<p>It all depends on your app and how you expect people to use it. How often and how many recipes need to be configured?</p>"
+    },
+    {
+      "id": 200462,
+      "postNumber": 7,
+      "createdAt": "2024-09-08T08:08:32.292Z",
+      "author": "eyalos (Eyal)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> I only anticipating the users will be configuring the recipes when adding the recipe in the automations.</p>\n<p>I’m also wondering if any security consideration on my backend serving the tokens retrieval (that you mentioned it’s my app responsibility) needs to be taken? I saw your general advice <a href=\"https://community.monday.com/t/monday-com-external-api-authentication/66094/4\">in this post reply</a> - I understand the storing consideration, is there anything else that I should be aware of when building a simple form for pasting an API key (for the 3rd party integration I’m building)?</p>"
+    },
+    {
+      "id": 200475,
+      "postNumber": 8,
+      "createdAt": "2024-09-08T10:25:53.949Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 200501,
+      "postNumber": 9,
+      "createdAt": "2024-09-08T20:40:06.051Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Well, the main question is how many times will they be adding recipe to boards? just to one board one or two times? Or possibly to dozens of boards?</p>\n<p><a href=\"http://Monday.com\">Monday.com</a> includes “secure storage” which is a feature you can access from the front end or a back end running in monday-code. If you have the option, that is what I would recommend using at this time for storage.</p>\n<p>As far as other considerations, I would say “adhere to industry best practices” is the best advice I can give. I know its kind of meaningless but I can’t really make specific recommendations beyond that.</p>"
+    },
+    {
+      "id": 200523,
+      "postNumber": 10,
+      "createdAt": "2024-09-09T04:38:32.654Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

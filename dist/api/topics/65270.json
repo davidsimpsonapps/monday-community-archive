@@ -1,0 +1,138 @@
+{
+  "id": 65270,
+  "title": "Items_page sort items by updated_at/created_at",
+  "slug": "items-page-sort-items-by-updated-at-created-at",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    276
+  ],
+  "createdAt": "2023-09-06T12:36:58.318Z",
+  "lastPostedAt": "2023-10-23T11:47:31.683Z",
+  "postsCount": 16,
+  "excerpt": "I am trying out the new items_page endpoint. \nWhat I am trying to achieve is to fetch the 10 most recent items assigned to me. Where “recent” implies that the item has been created or updated recently. \nI am current usin&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 1121,
+  "posts": [
+    {
+      "id": 142193,
+      "postNumber": 1,
+      "createdAt": "2023-09-06T12:36:58.393Z",
+      "author": "timovanderkamp (Timo van der Kamp)",
+      "cookedHtml": "<p>I am trying out the new items_page endpoint.</p>\n<p>What I am trying to achieve is to fetch the 10 most recent items assigned to me. Where “recent” implies that the item has been created or updated recently.</p>\n<p>I am current using this query:</p>\n<pre><code class=\"lang-auto\">boards (ids: [3576472011 3576476533]){\n    id\n    name\n    items_page (query_params: {rules: [{column_id: \"person\", compare_value: [\"assigned_to_me\"], operator: any_of}\n    \n  ]}, limit: 500) {\n      items {\n        id\n        created_at\n        updated_at\n      }\n    }\n\n   \n  }\n</code></pre>\n<p>I fetch up to 500 items per board and then do the sort myself by querying the created_at and updated_at dates, is there a way to sort the items in the request so that I do not have to fetch 500 items and potentially miss out on 501-xxxx?</p>"
+    },
+    {
+      "id": 142217,
+      "postNumber": 2,
+      "createdAt": "2023-09-06T13:27:35.144Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/timovanderkamp\">@timovanderkamp</a></p>\n<p>Have you tried the order_by on the items_page as described here <a href=\"https://developer.monday.com/api-reference/docs/migrating-to-v-2023-10#sorting-multiple-columns-subsorts\" class=\"inline-onebox\">Migration guide - 2023-10</a></p>\n<p>Not sure if created_at and updated_at are supported and how this would work on multiple boards. It does seem to work with the creation_log, but not sure if it compares the person or the date part of the creation_log.</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids:123456789) {\n    items_page(query_params: {\n      order_by: [\n        {column_id:\"creation_log4\", direction: desc}\n      ]\n    }) {\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 142294,
+      "postNumber": 3,
+      "createdAt": "2023-09-07T04:55:54.550Z",
+      "author": "timovanderkamp (Timo van der Kamp)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>Yes I have tried the order_by query param but with no success. The creation_log column seems to be a custom column, I can not find it on my boards.</p>"
+    },
+    {
+      "id": 142301,
+      "postNumber": 4,
+      "createdAt": "2023-09-07T05:22:08.591Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/timovanderkamp\">@timovanderkamp</a></p>\n<p>What kind of columns are your created_at and updated_at. The “creation log” column is just another column that you can add to your board.</p>"
+    },
+    {
+      "id": 144036,
+      "postNumber": 5,
+      "createdAt": "2023-09-18T10:44:34.266Z",
+      "author": "justinvandyk (Justin van Dyk)",
+      "cookedHtml": "<p>I think I’m having the same issue.</p>\n<p>updated_at and created_at seem to be fields that are added by Monday, so they aren’t columns on the board. However it does not allow you to use those fields to order_by.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/2/4261c70c426cf80c85606ee2460ed688aa73cd92.png\" title=\"Screenshot 2023-09-18 at 15.41.51\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/2/4261c70c426cf80c85606ee2460ed688aa73cd92_2_690x350.png\" alt=\"Screenshot 2023-09-18 at 15.41.51\" width=\"690\" height=\"350\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-09-18 at 15.41.51</span><span class=\"informations\">3102×1576 357 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/8/88f8b7f51c585566b3c5c75813552e697269b5ff.png\" title=\"Screenshot 2023-09-18 at 15.44.09\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/8/88f8b7f51c585566b3c5c75813552e697269b5ff_2_690x350.png\" alt=\"Screenshot 2023-09-18 at 15.44.09\" width=\"690\" height=\"350\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-09-18 at 15.44.09</span><span class=\"informations\">3102×1576 263 KB</span></div></a></div><p></p>\n<p>The fields clearly exist as you can see it returns data in the first screen shot. However when you try use it, it gives an error saying that it does not exist.</p>"
+    },
+    {
+      "id": 144043,
+      "postNumber": 6,
+      "createdAt": "2023-09-18T11:33:20.297Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/justinvandyk\">@justinvandyk</a></p>\n<p>See some good news here: <a href=\"https://community.monday.com/t/using-order-by-creation-date-in-2023-10/66116/4\">https://community.monday.com/t/using-order-by-creation-date-in-2023-10/66116/4</a></p>"
+    },
+    {
+      "id": 144048,
+      "postNumber": 7,
+      "createdAt": "2023-09-18T11:47:51.159Z",
+      "author": "timovanderkamp (Timo van der Kamp)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>It says the page does not exist or I do not have access <img src=\"https://emoji.discourse-cdn.com/apple/thinking.png?v=12\" title=\":thinking:\" class=\"emoji\" alt=\":thinking:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 144050,
+      "postNumber": 8,
+      "createdAt": "2023-09-18T11:49:54.258Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/timovanderkamp\">@timovanderkamp</a></p>\n<p>Oops, this is a closed workspace (developers only). The latest from monday was:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/8/58b5d07fc56dd0dcb2fc78806222d1ede5d31388.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/8/58b5d07fc56dd0dcb2fc78806222d1ede5d31388_2_690x155.png\" alt=\"image\" width=\"690\" height=\"155\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1066×241 23.6 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 144204,
+      "postNumber": 9,
+      "createdAt": "2023-09-19T03:10:06.397Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for bringing the good news!!</p>"
+    },
+    {
+      "id": 144811,
+      "postNumber": 10,
+      "createdAt": "2023-09-21T06:57:42.921Z",
+      "author": "justinvandyk (Justin van Dyk)",
+      "cookedHtml": "<p>Thanks Bas! Has there been any movement on this? I’ve tested again but query still fails in bot 2023-10 and dev version of the API.</p>\n<pre><code class=\"lang-auto\">query_params: {\n      order_by: [\n        {column_id:\"updated_at\", direction: desc}\n      ]\n    }\n</code></pre>"
+    },
+    {
+      "id": 144813,
+      "postNumber": 11,
+      "createdAt": "2023-09-21T07:02:17.763Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/justinvandyk\">@justinvandyk</a></p>\n<p>No update yet, but expected this week / next week (as mentioned by monday team)</p>"
+    },
+    {
+      "id": 144833,
+      "postNumber": 12,
+      "createdAt": "2023-09-21T09:08:45.765Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1695298095062599?thread_ts=1694071788.916409&amp;cid=C018J3C259C\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 144834,
+      "postNumber": 13,
+      "createdAt": "2023-09-21T09:09:07.540Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone! This will be coming soon. We will update here when it does!</p>"
+    },
+    {
+      "id": 145772,
+      "postNumber": 14,
+      "createdAt": "2023-09-27T09:28:11.716Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone!</p>\n<p>You can use these queries now to order your results (documentation on the way):</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890]) {\n    items_page(\n      query_params: {order_by: [{column_id: \"__creation_log__\", direction: desc}]}\n    ) {\n      items {\n        id\n        created_at\n      }\n    }\n  }\n}\n</code></pre>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890]) {\n    items_page(\n      query_params: {order_by: [{column_id: \"__last_updated__\", direction: asc}]}\n    ) {\n      items {\n        id\n        updated_at\n      }\n    }\n  }\n}\n</code></pre>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 149154,
+      "postNumber": 15,
+      "createdAt": "2023-10-20T12:41:12.855Z",
+      "author": "nairihar (Nairi)",
+      "cookedHtml": "<p>Dear <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, I was trying to use order with cursor and got this kind of error.</p>\n<p>\"Invalid request: You must provide either a ‘query_params’ or a ‘cursor’, but not both. Use ‘query_params’ for the initial request and ‘cursor’ for paginated requests.</p>\n<p>I have removed query_params to do the pagination via cursor. But it seems the responses aren’t ordered. How can we do ordered pagination?</p>\n<p>Thanks,<br />\nNairi</p>"
+    },
+    {
+      "id": 149204,
+      "postNumber": 16,
+      "createdAt": "2023-10-20T19:36:52.336Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/nairihar\">@nairihar</a></p>\n<p>In your initial query you can specify the order_by and return the cursor as an output field. As log as the cursor is not null you do a query like this:</p>\n<pre><code class=\"lang-auto\">query getItemValuesInBoard ($columnId: [String!], $cursor: String!) {\n          next_items_page (limit:100, cursor: $cursor) {\n            cursor\n            items {\n              id\n              name\n              column_values (ids: $columnId) {\n                id\n                value\n                text\n                ... on DependencyValue {\n                  id\n                  value\n                  linked_item_ids\n                }\n              }\n            }\n          }\n        }\n</code></pre>\n<p>The <code>next_items_page</code> query does not accept the order by as that was already specified in the initial query</p>"
+    },
+    {
+      "id": 149464,
+      "postNumber": 17,
+      "createdAt": "2023-10-23T11:47:31.683Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> !!</p>"
+    }
+  ]
+}

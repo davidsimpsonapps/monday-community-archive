@@ -1,0 +1,124 @@
+{
+  "id": 70388,
+  "title": "Move group from one board to another board",
+  "slug": "move-group-from-one-board-to-another-board",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-08T23:19:51.434Z",
+  "lastPostedAt": "2023-11-14T16:22:26.438Z",
+  "postsCount": 11,
+  "excerpt": "I’ve read a few posts about users checking if they can move a group to another board within the API in 2020-2021. Wondering if there has been any updates? \npost1 \npost2",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 1060,
+  "posts": [
+    {
+      "id": 152355,
+      "postNumber": 1,
+      "createdAt": "2023-11-08T23:19:51.525Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I’ve read a few posts about users checking if they can move a group to another board within the API in 2020-2021. Wondering if there has been any updates?</p>\n<p><a href=\"https://community.monday.com/t/api-route-to-move-group-from-a-board-to-another/9249\">post1</a><br />\n<a href=\"https://community.monday.com/t/move-group-to-another-board/21301/3\">post2</a></p>"
+    },
+    {
+      "id": 152457,
+      "postNumber": 2,
+      "createdAt": "2023-11-09T14:20:49.976Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/binx96\">@Binx96</a>,</p>\n<p>Unfortunately, that is not possible using the API. You can find all of the available <code>groups</code> mutations/actions in the documentation <a href=\"https://developer.monday.com/api-reference/docs/groups#mutations\">here</a>.</p>\n<p>We have an open feature request for that mutation, so I’ve added your vote to it <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Let us know if you have any other questions!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 152472,
+      "postNumber": 3,
+      "createdAt": "2023-11-09T15:00:04.005Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a>,</p>\n<p>I do have a follow up question then. The reason why I asked is because I am trying to accommodate for the lack of item creation speed I am seeing with the API. Currently I have over 500 groups and 7600 items to be created within those groups. I’ve noticed that each item mutation takes about a second to appear on the board. Unfortunately mutating 7600 items takes about 2 hours.</p>\n<p>Instead of mutating one item at a time, I instead used multiprocessing. With a small dataset, this method worked. However with my larger dataset, groups started missing items and were empty. I cannot confirm the reason for this, but my hunch is that it’s due to sending data to the same board multiple times all at the same time.</p>\n<p>My next thought was to use multiprocessing to build out one group in a new board and then merge them together into a master board. For example, I would have 500 boards with one board in each. All groups would be moved to another board (all having the same columns). I know that this can be done within <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>, but apparently it cannot be done via the API, hence my original question.</p>\n<p>Running out of ideas on how to speed up this process. What are your thoughts?</p>"
+    },
+    {
+      "id": 152667,
+      "postNumber": 4,
+      "createdAt": "2023-11-10T20:39:27.519Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Checking in Slack</p>"
+    },
+    {
+      "id": 152853,
+      "postNumber": 5,
+      "createdAt": "2023-11-13T11:55:26.428Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Multiprocessing seems to be one good step, but the other thing you’re likely to run into is API complexity limits. The API returns errors as 200 status codes, so if you’re not checking each query response for an error per the documentation, you will be missing the errors from complexity limits.</p>\n<p>When the complexity limit hits you need to pause your queue, wait, and retry the outstanding failed requests.</p>\n<p>If you’re using an app OAauth token you can mutate about 160 items per minute maximum (this also includes creating them, creating groups, etc.). If you’re using a user token you can mutate about 300 per minute (depending on how much board reading you do, since user tokens combine read and write capacity, app tokens do not).</p>\n<p>Just wanted to confirm you are handling the complexity limits (returning complexity with the query and checking for complexity errors)</p>"
+    },
+    {
+      "id": 152909,
+      "postNumber": 6,
+      "createdAt": "2023-11-13T16:54:50.845Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Thanks for pointing those out, no I was not handling the complexity limits. I am getting a magnitude of 200 status codes a few 404’s and a few 429’s. If I am not mistaken, 200 is actually “OK” and 404/429 are the errors. Just printed out all the messages and yes some of them are complexity issues and others are “Group not found”. Though it’s likely that the “Group not found” errors are related to the complexity errors since the group writing was not properly executed. I’ll likely use a try except block with a time.sleep element to accommodate this. I’ll post back later with additional findings or other issues I encounter.</p>"
+    },
+    {
+      "id": 152910,
+      "postNumber": 7,
+      "createdAt": "2023-11-13T16:55:28.165Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Since you seem to answer all of my questions, want to take a peak at this one?</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/b/8e8cbc/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/query-all-groups-and-specific-column-values/70382\">Query all groups and specific column values</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    I am having a difficult time figuring out how to configure my query to get the desirable information. \nI have a board with about 500 groups. Each group can have any where between 1 to 100 items. I need my query to gather each groups “id” and “title”. Within that I need every item with it’s “id”, “name”, and a specific “column_values” based on a provided column id. Within the “column_values”, I need it’s “value” and “id”. A final return would look something like this: \n{'group': {'id': '12345_y43…\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 152914,
+      "postNumber": 8,
+      "createdAt": "2023-11-13T17:24:08.237Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>See <a href=\"https://developer.monday.com/api-reference/docs/errors\" class=\"inline-onebox\">Error codes</a> for the details on error codes.</p>\n<p>Complexity errors are a 200 for the HTTP request - so they return without error, try/catch won’t pick up anything!</p>\n<p>You need to check for presence of error keys on the response to see if there are any actual errors.</p>\n<p>Then, on complexity exceptions, the message can be parsed to find out how many seconds to wait… yeah annoying it doesn’t return the complexity as structured data. Then you can wait that number of seconds before retrying.</p>"
+    },
+    {
+      "id": 152946,
+      "postNumber": 9,
+      "createdAt": "2023-11-13T19:39:28.010Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Alright, I tossed some <code>while</code> loops together to check for those complexity issues and just do a simple 5 second wait (I will add the functionality of parsing out how many seconds from the error message later). I am facing a 404 status code error that seems to have happen to quite a few different users (from my research).</p>\n<p>Within the below function “creating_new_board_from_csv()” there are 2 while loops. The first creates a group and ultimately returns the group id. Which is then passed into the second while loop to create one singular item. This is to initiate some status column groups for later processing (not important).</p>\n<p>If I only run the first while loop (comment out the second while loop), the code runs without error. However, when I run it with both while loops, I receive this error on a multitude of groups. I understand the error in which the group cannot be found, but I am unsure why it is occurring since the group id is clearly being printed out above. Does this have something to do with the speed at which multiprocessing is occurring? I even tried adding a 0.5 second sleep function just after a group is created.</p>\n<pre><code class=\"lang-auto\">&gt;&gt;&gt;\n946323_r042576_00___valdez_lid\nItem was not created correctly {'error_code': 'ResourceNotFoundException', 'status_code': 404, 'error_message': 'Group not found', 'error_data': {'resource_type': 'group', 'group_id': '946323_r042576_00___valdez_lid', 'board_id': 5504339963, 'error_reason': 'store.monday.automation.error.missing_group'}}\n</code></pre>\n<p><strong>Multiprocessing</strong>:</p>\n<pre><code class=\"lang-auto\">if add_groups:\n\n        # MULTI-CORE PROCESSING:\n        # Always use n-1 processing cores.\n        number_cores_used = int(multiprocessing.cpu_count() - 1)\n\n        # Establish the multiprocessing pool.\n        pool = multiprocessing.Pool(number_cores_used)\n\n        args = []\n        for group in add_groups:\n            args.append((created_board_id, group, df, org_dict, cid_dict, gid_dict))\n\n        results = [pool.apply_async(creating_new_board_from_csv, args=arg) for arg in args]\n\n        # Check for all other errors\n        for value in results:\n            try:\n                value.get()\n            except Exception as e:\n                pass\n            \n        # Close and join the pool process now.\n        pool.close()\n        pool.join()\n</code></pre>\n<p><strong>Createing_new_board_from_csv()</strong></p>\n<pre><code class=\"lang-auto\">    run_group = True\n    run_group_item = True\n\n    while run_group:\n        group_data = create_group(created_board_id_x, group_x)\n        created_group_id = group_data.json()['data']['create_group']['id']\n        group_status = group_data.status_code\n        if not group_status == 200:\n            print(f'Group was not created correctly: {group_data.json()}')\n            print(group_status)\n            time.sleep(5)\n        else:\n            run_group = False\n            time.sleep(0.5)\n    \n    while run_group_item:\n        gid_dict_x[group_x] = created_group_id\n        # Create an empty item for each group to activate the status column types\n        item_data = create_item(created_board_id_x, created_group_id, 'Zarklock', '')\n        item_status = item_data.status_code\n\n        if not item_status == 200:\n            print(created_group_id)\n            print(f'Item was not created correctly {item_data.json()}')\n            time.sleep(5)\n        else:\n            run_group_item = False\n</code></pre>\n<p><strong>create_group()</strong></p>\n<pre><code class=\"lang-auto\">def create_group(board_id, group_name):\n    payload = f\"\"\"\n    mutation {{\n        create_group (board_id: {board_id} group_name: {json.dumps(group_name)}) {{\n            id\n        }}\n    }}\n    \"\"\"\n    \n    data = {'query' : payload}\n    r_boards = requests.post(url=apiUrl, headers=headers, data=json.dumps(data)) # make request\n\n    return r_boards\n</code></pre>\n<p><strong>create_item()</strong></p>\n<pre><code class=\"lang-auto\">def create_item(board_id, group_id, item_name, column_values):\n    query = \"\"\"\n    mutation ($boardId: ID!, $itemName: String!, $groupId: String, $columnValues: JSON) {\n        create_item(\n            board_id: $boardId\n            group_id: $groupId\n            item_name: $itemName\n            column_values: $columnValues\n        ) {\n            id\n        }\n        }\n    \"\"\"\n\n    variables = {\n        'boardId': board_id,\n        'groupId': group_id,\n        'itemName': item_name,\n        'columnValues': json.dumps(column_values, separators=(',', ':'))\n    }\n\n    datas = {\n        'query': query,\n        'variables': variables\n    }\n\n    r_boards = requests.post(url=apiUrl, headers=headers, data=json.dumps(datas)) # make request\n\n    return r_boards\n</code></pre>"
+    },
+    {
+      "id": 152985,
+      "postNumber": 11,
+      "createdAt": "2023-11-14T06:02:40.862Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 153017,
+      "postNumber": 12,
+      "createdAt": "2023-11-14T11:14:50.187Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Can I confirm you’re setting API-Version header to 2023-10 for your requests?</p>\n<p>2023-10 is backed by the new mondayDB database, and 2023-07 is the old database.</p>\n<p>2023-10 would likely have less replication latency, so the new groups will be available sooner across all the nodes. (I believe should be instant)</p>\n<p>That said, there is always the potential that a new group won’t yet be found for the create_item operation. So you’ll need to handle this exception and retry. I’d sleep for say 15 seconds in this case - that usually seems to be a good enough to start.</p>\n<p>If you haven’t been setting your version header, its a good idea to do it since on January 15th the 2023-07 is being removed, 2024-01 is being made stable and the default, 2023-10 is being made the deprecated version. There are not many (no significant) breaking changes from 2023-10 to 2024-01 but a lot from 2023-07 to 2023-10 - so you’ll want to get on those now.</p>"
+    },
+    {
+      "id": 153051,
+      "postNumber": 13,
+      "createdAt": "2023-11-14T14:28:53.222Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 153071,
+      "postNumber": 14,
+      "createdAt": "2023-11-14T15:50:18.491Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Yes, I the API-Version in my headers set to 2023-10. I’ve updated my <code>creating_new_board_from_csv()</code> function to this and it appears that it is working. I’ve found that it is important where the <code>time.sleep()</code> are placed. One after a group is created and one if the group is not found after creation. It seems that it takes just a moment for monday to update it’s database to account for the changes. 15 seconds seemed to do the trick as well.</p>\n<p>Because the number of groups needed to be created is relatively small, checking if the group was created by querying the groups is okay, but a different approach will need to be made when adding items to them.</p>\n<p>I’ll need to play with the status codes a bit more. While printing out the status codes, I regularly would get 200, but when I printed out the request.json() object, sometimes I would get 500. May be best to parse out the data instead of asking for the <code>.status_code</code>.</p>\n<pre><code class=\"lang-auto\">    run_group = True\n    run_group_item = True\n\n    while run_group:\n        group_data = create_group(created_board_id_x, group_x)\n        time.sleep(15)\n        group_info = check_group_name(created_board_id_x).json()['data']['boards'][0]['groups']\n\n        title_list = []\n        for group in group_info:\n            title_list.append(group['title'])\n        \n        if group_x in title_list:\n            run_group = False\n        else:\n            print(f'{group_x} not found, waiting 15 seconds to try again')\n            time.sleep(2)\n</code></pre>"
+    },
+    {
+      "id": 153077,
+      "postNumber": 15,
+      "createdAt": "2023-11-14T16:22:26.438Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>If you dig into the error documentation, you’re going to find out that most of the errors say status_code: 500 in the <code>request.json()</code> but the HTTP status code is 200. GraphQL returns errors at the GraphQL level (not network, authentication, etc.) as HTTP 200. There is then in the response body, details of any errors.</p>\n<p>Thats what you’re seeing, is many GraphQL errors that are going to show up as HTTP 200, but in the body are errors with other status codes.</p>\n<p>so looking at .status_code is not a reliable way to check for GraphQL errors, you have to look at the body thats returned. That is the only place you’ll see the actual API errors most of the time.</p>"
+    },
+    {
+      "id": 153200,
+      "postNumber": 16,
+      "createdAt": "2023-11-15T10:45:55.309Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

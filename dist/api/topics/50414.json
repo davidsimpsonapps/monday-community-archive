@@ -1,0 +1,75 @@
+{
+  "id": 50414,
+  "title": "Updates sent to monday via graphql api are not allways saved",
+  "slug": "updates-sent-to-monday-via-graphql-api-are-not-allways-saved",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-01-31T06:15:19.683Z",
+  "lastPostedAt": "2023-02-02T07:24:27.484Z",
+  "postsCount": 8,
+  "excerpt": "Hi, \nI’m updating monday using graphql and some of my updates are not saved incosistently and I don’t know why. \nHere’s a log af an update that I’ve made, we can see in the column_values the result from monday saying ot &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 679,
+  "posts": [
+    {
+      "id": 113091,
+      "postNumber": 1,
+      "createdAt": "2023-01-31T06:15:19.779Z",
+      "author": "noam.honig (Noam Honig)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m updating monday using graphql and some of my updates are not saved incosistently and I don’t know why.</p>\n<p>Here’s a log af an update that I’ve made, we can see in the <code>column_values</code> the result from monday saying ot was saved with the value “45”</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/98483c14bde5e0868b2ae87ddc8218c752964e59.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/98483c14bde5e0868b2ae87ddc8218c752964e59_2_690x115.png\" alt=\"image\" width=\"690\" height=\"115\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">978×163 40.2 KB</span>\n</div></a></div><p></p>\n<p>but the data in monday did not reflect this change.</p>\n<p>See Monday change log:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6844b1cb8d7385322a3077f909e395b05e2c3972.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/6844b1cb8d7385322a3077f909e395b05e2c3972_2_690x305.png\" alt=\"image\" width=\"690\" height=\"305\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1088×482 22.6 KB</span>\n</div></a></div><p></p>\n<p>When I ran the same code again today - the change was saved. and I got the same result from monday.</p>\n<p>Here’s my graphql:</p>\n<pre><code class=\"lang-auto\">`#graphql\n  mutation ($id: Int!,$value:JSON!,$board:Int!,$column_id:String!) {\nchange_column_value(\n item_id:$id\n column_id:$column_id,\n board_id:$board,\n value:$value\n) {\n id\nname,\ncolumn_values(ids:[$column_id]){\n  id\n  title\n  value\n}\n}\n}\n</code></pre>\n<p>95% of these updates are saved, but I’m hoping to get to 100%. Can you investigate?</p>"
+    },
+    {
+      "id": 113096,
+      "postNumber": 2,
+      "createdAt": "2023-01-31T06:36:47.827Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/noam.honig\">@noam.honig</a>,</p>\n<p>I can’t find that specific case in the logs, but I see a few similar ones for that board that show that you are reaching your <a href=\"https://developer.monday.com/api-reference/docs/rate-limits\">rate limit</a>.</p>\n<p>If you reach the rate limit, no calls will be made until the complexity points quota resets (as explained in the link above).</p>\n<p>You can also find that link how to avoid hitting the limit.</p>\n<p>Since I can not see that specific call, I am not 100% sure that is the problem but since I see a few calls with the same mutation for the same board with that issue, it is likely to be the source of the issue.</p>\n<p>Please let me know if that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 113282,
+      "postNumber": 3,
+      "createdAt": "2023-02-01T04:14:53.457Z",
+      "author": "noam.honig (Noam Honig)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, Thanks for getting back to me</p>\n<p>I see the multiple rate limit errors - but as I’ve tested, they are not for this specific update - where I’ve included the result that I’ve got back from monday that confirms the update and event show the updated value (as indicated in the screenshot above).</p>\n<p>Do you have any way of tracing it?</p>\n<p>Since you’ve mentioned rate limits, I have an additional question - I’ve followed the article and added the complexity info to my query, and it seems that this very simple one item, one value mutation (detailed above) costs 30015 out of my 1m rate limit.<br />\nIn the article it says that “specific objects (like updates) have a default complexity of 25.”</p>\n<p>Can you give me a tip on how to optimize this single row, single column mutation to cost less?</p>"
+    },
+    {
+      "id": 113295,
+      "postNumber": 4,
+      "createdAt": "2023-02-01T06:56:11.819Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/noam.honig\">@noam.honig</a>,</p>\n<p>Oh! My bad! I did not realize that where it says “result” it is coming directly from our end.</p>\n<p>In that case, I can take a look if you give me a timestamp of the moment when you use the mutation and it fails. I would need location (country), date, hour, minute and the mutation itself (with the IDs so I can check using them). It should be not older than a week.</p>\n<p>Regarding the mutation, you are also querying for information (id, name, and column values) and inside the column values you are getting id, title and value. Which means you are using nesting here. I don’t think you can optimize it more if you want to get that information in the response.</p>\n<p>Let me know about the timestamp with the requested information please so we can take a look!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 113297,
+      "postNumber": 5,
+      "createdAt": "2023-02-01T07:17:19.770Z",
+      "author": "noam.honig (Noam Honig)",
+      "cookedHtml": "<p>Hi again <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>You can find the timestamp, the values and the mutation at the start of this thread.</p>\n<p>I’m located in Israel, but the server is an heroku server located in Ireland (I think) with the timezone of San Fransisco (I think)</p>\n<p>If you can trace it by the item id - it’s 3868224425 - let me know if there is more infomration I can provide to help.</p>\n<p>As for the cost - even if I remove the result values (which I don’t think I should, since I want to verify the udpate) it still costs 30000 - is that the minimal cost for an update?.</p>\n<p>Here’s my graphql:</p>\n<pre><code class=\"lang-auto\">mutation ($id: Int!,$value:JSON!,$board:Int!,$column_id:String!) {\nchange_column_value(\n item_id:$id\n column_id:$column_id,\n board_id:$board,\n value:$value\n) {\n  id\n} \n\n  complexity{\n    query\n  }\n}\n</code></pre>\n<p>And here is the result I got:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"change_column_value\": {\n      \"id\": \"3881749608\"\n    },\n    \"complexity\": {\n      \"query\": 30001\n    }\n  },\n  \"account_id\": 11603941\n}\n</code></pre>\n<p>How can i get it down to 25 as detailed in the docs?</p>"
+    },
+    {
+      "id": 113481,
+      "postNumber": 6,
+      "createdAt": "2023-02-02T06:45:12.462Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/noam.honig\">@noam.honig</a>,</p>\n<p>You are correct. I believed the nesting in the response would had increased the complexity points usage but I was incorrect.  There is nothing you can do there to lower the complexity usage.</p>\n<p>You will have to monitor the usage by using complexity {query before after reset_in_x_seconds} and make your app avoid hitting the limit using that information.</p>\n<p>About the error you got, that is strange, I can not find any errors at that time in our logs.</p>\n<p>Would you be able to provide a new timestamp when you get this error again? Without any errors being shown in our logs, it is hard to check the source of the issue.</p>\n<p>If you can, please send us another timestamp with the full query, full response from our server, date, hour, minute and location and we will see if it appears in the logs.</p>\n<p>Please send this to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so that we can follow this and (if needed) create a report about it for further investigation.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 113484,
+      "postNumber": 7,
+      "createdAt": "2023-02-02T07:07:09.000Z",
+      "author": "noam.honig (Noam Honig)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>Thanks for getting back to me.</p>\n<p>Regarding the update - there wasn’t an error - that’s what confused me - I got a confirmation from Monday that the value was updated, and the result reflected that - but the data eventually didn’t reflect that update.</p>\n<p>Next time it’ll happen, I’ll let you know - but it’s a hard issue to pin down.</p>\n<p>As for the complexity points, am I correct in understanding that updating a column value will cost at least 30K points per update? Does that mean that I can update only 33 updates per minute?</p>"
+    },
+    {
+      "id": 113486,
+      "postNumber": 8,
+      "createdAt": "2023-02-02T07:24:27.484Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>That seems correct <a class=\"mention\" href=\"/u/noam.honig\">@noam.honig</a>,</p>\n<p>We do not have a list of complexity points usage per mutation/query, but I just tested this and it looks like changing a column value using</p>\n<ul>\n<li>change_simple_column_value</li>\n<li>change_column_value</li>\n<li>change_multiple_column_values</li>\n</ul>\n<p>uses at least 30k complexity points.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

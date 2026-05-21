@@ -1,0 +1,42 @@
+{
+  "id": 76085,
+  "title": "Query to get all information of a group without knowing the schema, in particular all column names of expandable subelements table",
+  "slug": "query-to-get-all-information-of-a-group-without-knowing-the-schema-in-particular-all-column-names-of-expandable-subelements-table",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    139,
+    187,
+    351
+  ],
+  "createdAt": "2024-01-24T20:28:54.262Z",
+  "lastPostedAt": "2024-01-28T13:49:52.815Z",
+  "postsCount": 2,
+  "excerpt": "A group has these expandable “Unterelemente” (subelements, i.e. a full sub-table attached to each item). I would like to query/mutate these subelements but I am unable to get the full schema of the sub-thing (Generally I&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 291,
+  "posts": [
+    {
+      "id": 164030,
+      "postNumber": 1,
+      "createdAt": "2024-01-24T20:28:54.351Z",
+      "author": "charter (charter wolf)",
+      "cookedHtml": "<p>A group has these expandable “Unterelemente” (subelements, i.e. a full sub-table attached to each item). I would like to query/mutate these subelements but I am unable to get the full schema of the sub-thing (Generally I find it difficult to retrieve the full schema of a specific board/group with really all IDs, titles, formats etc such that one can thereafter access each value). The following query is what got me at least the row names of the sub-table, but it lacks the column ids/names (hence I don’t know how to access them).</p>\n<pre><code class=\"lang-auto\">    query = '''\n    query {\n    boards(ids: %s) {\n        groups(ids: %s) {\n        items(ids: %i) {\n            name\n            column_values {\n            text\n            value\n            type\n            title\n            }\n        }\n        }\n    }\n    }\n    ''' % (board_id, group_id, item_id)\n</code></pre>"
+    },
+    {
+      "id": 164522,
+      "postNumber": 2,
+      "createdAt": "2024-01-28T13:49:52.815Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/charter\">@charter</a>,</p>\n<p>You could use a query like this one to get the board ID of the subitems board:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 500) {\n      items {\n        subitems {\n          board {\n            id\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Then you could use that to get the column titles and IDs (from the subitems board):</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1122334455) {\n    columns {\n      id\n      title\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 164684,
+      "postNumber": 4,
+      "createdAt": "2024-01-29T12:35:44.501Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

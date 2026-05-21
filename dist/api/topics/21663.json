@@ -1,0 +1,79 @@
+{
+  "id": 21663,
+  "title": "Automation to Assign Person based on Completed Tasks",
+  "slug": "automation-to-assign-person-based-on-completed-tasks",
+  "categoryId": 6,
+  "tagIds": [],
+  "createdAt": "2021-06-24T19:21:27.120Z",
+  "lastPostedAt": "2021-07-09T00:21:02.295Z",
+  "postsCount": 9,
+  "excerpt": "Hi everyone, \nIs there a way of automating that the person who marks a task as complete is populated in the Person column? \nNot the creator of the task - the person who changed the status. \nI have a “Maintenance Board” t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 3626,
+  "posts": [
+    {
+      "id": 56241,
+      "postNumber": 1,
+      "createdAt": "2021-06-24T19:21:27.225Z",
+      "author": "loonjas (J Looney)",
+      "cookedHtml": "<p>Hi everyone,</p>\n<p>Is there a way of automating that the person who marks a task as complete is populated in the Person column?</p>\n<p>Not the creator of the task - the person who changed the status.</p>\n<p>I have a “Maintenance Board” that through a series of automations creates tasks for some of the routine reporting items that people to do throughout the month.  So on the 17th, it will create an item to “Do Report X”  and send out a notification to three people to do the needful.  1 of those 3 people will complete the task.  I’m looking to track the person who completed them -aka the person who marked them as complete.</p>\n<p>I’d like to track the hours for these and combine them with the hours on my project overview on the Workload dashboard widget.  Unfortunately you can’t track by “Last Updated” in the Workload dashboard widget.</p>\n<p>Yes I know, the person could assign themselves under a person column and then just mark the item as complete.  But where’s the fun in solving the problem that way?   In my mind either the dashboard widget should allow you to pull by the last updated column, or there should be an automation that is able to pull the person into a column based on the selection of a status.</p>"
+    },
+    {
+      "id": 56243,
+      "postNumber": 2,
+      "createdAt": "2021-06-24T20:45:22.282Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/loonjas\">@loonjas</a> - while I cannot think of a stock automation to do this you could utilize the Last Updated column to know who was the last person to update the column in concert with the board activity log to know who did what.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/3/3e8162264f85df48433d9ca7275267e504cecdcf.png\" alt=\"image\" width=\"350\" height=\"134\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/170d08958768009b87daaa592005db4956127ae7.png\" alt=\"image\" width=\"288\" height=\"313\" /></p>\n<p>Now this isn’t specifically tied to a status column.  Another option is to notify someone when the status column changes.</p>\n<p>Thanks<br />\nMark</p>"
+    },
+    {
+      "id": 56266,
+      "postNumber": 3,
+      "createdAt": "2021-06-25T04:02:37.688Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/loonjas\">@loonjas</a><br />\nWelcome to the community. As <a class=\"mention\" href=\"/u/mark.anley\">@mark.anley</a> states this is not possible out-of-the-box. You can achieve this with Integromat of a custom app. In that scenario you add a webhook integration that will trigger on status column change. The receiving party of that webhook (either a custom build app or Integromat) receives (among others) the userId of the user that made the change. From there you can assign the user in a person column.</p>\n<p>In a custom integration app scenario I would use a recipe sentence like:<br />\nWhen <strong>this status</strong> is changed to <strong>this value</strong> assign myself in <strong>this column</strong>.</p>"
+    },
+    {
+      "id": 56273,
+      "postNumber": 4,
+      "createdAt": "2021-06-25T05:11:52.865Z",
+      "author": "V.B.Music (Mike  Alducin)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/loonjas\">@loonjas</a>! We are using a similar workflow as you in one of our boards. Our solution was to use the “create update automation” There you can create an update and populate the update with “user” so the update says something like “Looney just completed this amazing task”. Then you’ll have an entry in the convesation of whom and when. Hope that helps!</p>"
+    },
+    {
+      "id": 56357,
+      "postNumber": 5,
+      "createdAt": "2021-06-26T18:07:01.647Z",
+      "author": "graceg (Grace Griffin @Purple Plum Consulting)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/loonjas\">@loonjas</a> , I have a partial solution for you that uses a Formula column. Maybe it’ll give you an idea how to get the results you want.</p>\n<p><strong>What works:</strong></p>\n<ul>\n<li>It runs only if item is marked Done.</li>\n<li>It gets name of person who just changed item (pulls it from “Last Updated,” could not find any way to have it grab the User marking the item Done. Of course if we had that ability in the first place, none of this would be a problem.)</li>\n<li>It shows that name.</li>\n<li>Chart views recognize the column and name.</li>\n</ul>\n<p><strong>Issues where my formula skills are failing me:</strong></p>\n<ul>\n<li>Can’t figure out how to specify trigger of WHEN item is marked Done, not just “check if it is Done every time you run.”</li>\n<li>If status is later changed to anything else, it deletes the name that was in the column.\n<ul>\n<li>This is due to my IF formulation which leaves the alternate option blank.</li>\n</ul>\n</li>\n<li>It will continue to update the name every time someone subsequently changes the item (as long as it’s still marked Done), such as posting an Update, changing any other column.\n<ul>\n<li>I’ve tried to limit this by using dates:\n<ul>\n<li>Added a column + automation to post the Completed Date when the item is marked Done.</li>\n<li>Tried to create formula to check Completed Date, compare it to Now, and ONLY change the name if it’s just been a few moments since item was marked complete (have to give it some allowance due to lags), or, inversely, tell it to NOT change the name if it’s been longer than a certain amount of time.</li>\n<li>I was not successful in working this bit out, but maybe you will be.</li>\n</ul>\n</li>\n</ul>\n</li>\n</ul>\n<p>Here is the formula so far, which works except for the part about limiting futures changes:<br />\nIF(AND({Status}=“Done”,NOT(NOW()&gt;{Completed Date}))=TRUE,{Last Updated#Name},\"\")</p>\n<p>Here is a prior version where I was trying to limit the time from the positive direction. When I did a formula to show me the time difference between when it was marked Completed and NOW, it kept giving back 1.187 (which doesn’t seem right at all for almost immediately), so I was trying to cut as close to that as I could. 1.2 was the closest that still let it post a name, however it then keeps changing the name forever. I could not figure out how to convert a date/time to a total number, such as minutes, so I could define a cutoff in minutes, but that’s the way I’d prefer to do it, if I knew how.)<br />\nIF(AND(DAYS(NOW(),{Completed Date})&gt;1.2,{Status}=“Done”)=TRUE,{Last Updated#Name},\"\")</p>\n<p>My other idea was to use General Caster for all this formulating, because then it can be cast to a Text, People, or Status column, which might be more useful than a Formula column result. However since the Chart view recognizes the Formula column results, maybe it’s not an issue. In any case, my formulating skills failed me there, too; it works in principle but needs actual correct formulation.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/06163a37bc81dd1c2ac4cf0887bce8a3dcf6e1fc.jpeg\" title=\"Picture 2021-06-26 at 2.57.54 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/06163a37bc81dd1c2ac4cf0887bce8a3dcf6e1fc_2_690x216.jpeg\" alt=\"Picture 2021-06-26 at 2.57.54 PM\" width=\"690\" height=\"216\" /><div class=\"meta\">\n<span class=\"filename\">Picture 2021-06-26 at 2.57.54 PM</span><span class=\"informations\">704×221 33.2 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c90657173c5d7021c0e47b85ccf31b3d369155a3.jpeg\" title=\"Picture 2021-06-26 at 2.21.52 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c90657173c5d7021c0e47b85ccf31b3d369155a3_2_690x462.jpeg\" alt=\"Picture 2021-06-26 at 2.21.52 PM\" width=\"690\" height=\"462\" /><div class=\"meta\">\n<span class=\"filename\">Picture 2021-06-26 at 2.21.52 PM</span><span class=\"informations\">908×609 46.2 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 56358,
+      "postNumber": 6,
+      "createdAt": "2021-06-26T18:33:12.767Z",
+      "author": "graceg (Grace Griffin @Purple Plum Consulting)",
+      "cookedHtml": "<p>You know, now that I think about it, a much simpler method (though admittedly less fun) that still only requires your staff to do one action is to have them mark an item as Done in a different way - use a People column called “Completed,” and have them assigned themselves when done. Then automations can mark the status done based on that, post date, etc. Or use a Status column with their names as labels, rather than a People column.</p>"
+    },
+    {
+      "id": 56753,
+      "postNumber": 7,
+      "createdAt": "2021-07-01T18:30:25.720Z",
+      "author": "loonjas (J Looney)",
+      "cookedHtml": "<p>This is the way, I was thinking about it entirely backwards.  Thanks for helping me get my head screwed on straight.</p>"
+    },
+    {
+      "id": 56761,
+      "postNumber": 8,
+      "createdAt": "2021-07-02T00:20:21.848Z",
+      "author": "Crazybeep (Jorge Rodriguez Barrera)",
+      "cookedHtml": "<p>What about use a button as trigger frost to change person and then to change status instead of change status directly?</p>"
+    },
+    {
+      "id": 57247,
+      "postNumber": 9,
+      "createdAt": "2021-07-09T00:21:02.295Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

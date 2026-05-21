@@ -1,0 +1,35 @@
+{
+  "id": 121540,
+  "title": "manage columns (hide or show, check if hidden) using API",
+  "slug": "manage-columns-hide-or-show-check-if-hidden-using-api",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    22,
+    94,
+    319
+  ],
+  "createdAt": "2025-11-10T05:48:12.277Z",
+  "lastPostedAt": "2025-11-11T05:45:31.777Z",
+  "postsCount": 2,
+  "excerpt": "I try to find for a column, using API how to: \n\n\ncheck if the column  is hidden \n\n\nchange it to hidden or the opposite",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 9,
+  "posts": [
+    {
+      "id": 241519,
+      "postNumber": 1,
+      "createdAt": "2025-11-10T05:48:12.351Z",
+      "author": "ttolias (THEODOROS TOLIAS)",
+      "cookedHtml": "<p>I try to find for a column, using API how to:</p>\n<ol>\n<li>\n<p>check if the column  is hidden</p>\n</li>\n<li>\n<p>change it to hidden or the opposite</p>\n</li>\n</ol>"
+    },
+    {
+      "id": 241568,
+      "postNumber": 2,
+      "createdAt": "2025-11-11T05:45:31.777Z",
+      "author": "Clarey (MondayMotivator)",
+      "cookedHtml": "<p>Hey, Im not an expert in this short answer: there isn’t a column.is_hidden field in the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API. “Hidden” is a per-view setting (e.g., the Table view), so you read and update the view’s settings_str JSON.</p>\n<p>How to check if a column is hidden</p>\n<ol>\n<li>Get the board’s Table view and its settings_str:</li>\n</ol>\n<p>query ($boardId: [Int]) {<br />\nboards(ids: $boardId) {<br />\nid<br />\nviews {<br />\nid<br />\nname<br />\ntype # look for type: “table”<br />\nsettings_str<br />\n}<br />\n}<br />\n}</p>\n<ol>\n<li>Parse settings_str (JSON). A column is considered hidden if its ID appears in one of the visibility fields. Depending on your account/version, you’ll typically see one of these shapes:</li>\n</ol>\n<ul>\n<li>\n<p>hidden_columns: an array of column IDs to hide</p>\n</li>\n<li>\n<p>columns_visibility: an object map of columnId → true/false</p>\n</li>\n<li>\n<p>columns[columnId].hidden: true/false</p>\n</li>\n</ul>\n<p>Example check (pseudocode):<br />\nconst s = JSON.parse(settings_str || “{}”);<br />\nconst isHidden =<br />\n(Array.isArray(s.hidden_columns) &amp;&amp; s.hidden_columns.includes(columnId)) ||<br />\n(s.columns_visibility &amp;&amp; s.columns_visibility[columnId] === false) ||<br />\n(s.columns &amp;&amp; s.columns[columnId]?.hidden === true);</p>\n<p>How to hide/unhide a column</p>\n<ol>\n<li>\n<p>Read the current settings_str (as above) and parse it.</p>\n</li>\n<li>\n<p>Modify only the relevant visibility field, keeping all other settings intact. For example:</p>\n</li>\n</ol>\n<ul>\n<li>\n<p>To hide: add the columnId to hidden_columns (or set columns_visibility[columnId] = false).</p>\n</li>\n<li>\n<p>To unhide: remove the columnId from hidden_columns (or set columns_visibility[columnId] = true).</p>\n</li>\n</ul>\n<ol>\n<li>Send the updated JSON back using update_board_view:</li>\n</ol>\n<p>mutation ($boardId: Int!, $viewId: Int!, $settings_str: String!) {<br />\nupdate_board_view(<br />\nboard_id: $boardId,<br />\nview_id: $viewId,<br />\nview_data: { settings_str: $settings_str }<br />\n) {<br />\nid<br />\nsettings_str<br />\n}<br />\n}</p>\n<p>Notes and tips</p>\n<ul>\n<li>\n<p>Hiding is per view. If the board has multiple views, you must update the specific view where you want the column hidden/unhidden (commonly the view with type “table” and name like “Main Table”).</p>\n</li>\n<li>\n<p>Always fetch and merge the existing settings_str to avoid overwriting other users’ settings (column order, widths, filters, etc.).</p>\n</li>\n<li>\n<p>Some columns may be required/behave specially in certain views.</p>\n</li>\n<li>\n<p>The exact shape of settings_str is not formally documented and can vary; inspect your current settings_str to see which visibility field your account uses.</p>\n</li>\n</ul>"
+    }
+  ]
+}

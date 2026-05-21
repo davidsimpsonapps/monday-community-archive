@@ -1,0 +1,40 @@
+{
+  "id": 82701,
+  "title": "Token error - from item view to backend",
+  "slug": "token-error-from-item-view-to-backend",
+  "categoryId": 80,
+  "tagIds": [
+    5,
+    94
+  ],
+  "createdAt": "2024-04-01T17:01:50.455Z",
+  "lastPostedAt": "2024-04-08T02:54:18.411Z",
+  "postsCount": 3,
+  "excerpt": "Hi all, \nwhile building  a item view app and backend integration that stay on monday code. \nwhen i using the session token from item view  on backend to send query i got a : \n{ errors: [ ‘Not Authenticated’ ] } \nmy flow &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 533,
+  "posts": [
+    {
+      "id": 176179,
+      "postNumber": 1,
+      "createdAt": "2024-04-01T17:01:50.529Z",
+      "author": "LOLER (loler grention)",
+      "cookedHtml": "<p>Hi all,<br />\nwhile building  a item view app and backend integration that stay on monday code.<br />\nwhen i using the session token from item view  on backend to send query i got a :<br />\n{ errors: [ ‘Not Authenticated’ ] }</p>\n<p>my flow is</p>\n<ol>\n<li>get sessionToken from itemView and send it to back in authorization header.</li>\n<li>verify the token with CLIENT_SECRET_KEY</li>\n<li>try using the session token for queries and here my error</li>\n</ol>\n<p>the response of mondayApiResult</p>\n<p>{ errors: [ ‘Not Authenticated’ ] }</p>\n<p>the response of jwtData</p>\n<p>{<br />\ndat: {<br />\nclient_id: ‘myclientId’,<br />\nuser_id: 565129,<br />\naccount_id: 21579,<br />\nslug: ‘toorefo’,<br />\napp_id: 10139,<br />\napp_version_id: 10882,<br />\ninstall_id: -2,<br />\nis_admin: true,<br />\nis_view_only: false,<br />\nis_guest: false,<br />\nuser_kind: ‘admin’<br />\n},<br />\nexp: 1712080413<br />\n}</p>\n<p>i really appreciate any help <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" width=\"20\" height=\"20\" /></p>\n<p>code  in BE :</p>\n<pre><code class=\"lang-auto\">    let { authorization } = req.headers;\n    if (!authorization &amp;&amp; req.query) {\n      authorization = req.query.token;\n\n   const { sourceItemId } = req.body.payload.inputFields;\n    console.log('jwtData', jwt.verify(\n      authorization,\n      getSecret(MONDAY_CLIENT_SECRET)\n    ))\n\n\n const query = `query {\n        items (ids: ${sourceItemId}) {\n          name\n          column_values {\n            value\n            type\n            id\n            column {\n              id\n              title\n            }\n          }\n        }\n      }`;\n\n\nconst monday = mondaySdk()\n\n    monday.setToken(token)\n    const mondayApiResult = await monday.api( query);\nconsole.log('mondayApiResult', mondayApiResult)\n\n    }```</code></pre>"
+    },
+    {
+      "id": 177285,
+      "postNumber": 2,
+      "createdAt": "2024-04-07T14:30:02.132Z",
+      "author": "LOLER (loler grention)",
+      "cookedHtml": "<p>still not found a solution, please if someone can help me <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 177327,
+      "postNumber": 3,
+      "createdAt": "2024-04-08T02:54:18.411Z",
+      "author": "reinier (Reinier ― 📅 Calendar Plus 🍅 Automato)",
+      "cookedHtml": "<p>Hi!</p>\n<p>As far as I know the session token provided to your item view is part of what is called <em>seamless authentication</em>. Since you’re verifying the token with your secret key, and you’re dealing with request bodies, I assume you’re trying to use the API from the server.</p>\n<p>If you read the <a href=\"https://developer.monday.com/apps/docs/choosing-auth#method-1-seamless-authentication\" rel=\"noopener nofollow ugc\">docs on seamless authentication</a> you will see it is not suitable for use from the server. You can only use it from your front end running in the embedded item view.</p>\n<p>You will have to perform <a href=\"https://developer.monday.com/apps/docs/choosing-auth#method-2-using-oauth-to-issue-access-tokens\" rel=\"noopener nofollow ugc\">OAuth authentication</a> to obtain an access token you can use from the server.</p>\n<p>I hope that clears things up!</p>"
+    }
+  ]
+}

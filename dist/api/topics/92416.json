@@ -1,0 +1,47 @@
+{
+  "id": 92416,
+  "title": "Critical dependency: the request of a dependency is an expression",
+  "slug": "critical-dependency-the-request-of-a-dependency-is-an-expression",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2024-07-07T08:30:07.106Z",
+  "lastPostedAt": "2024-07-28T07:06:18.309Z",
+  "postsCount": 4,
+  "excerpt": "I’m using EnvironmentVariablesManager from the @mondaycom/apps-sdk npm package (latest version 3.0.11). \nIn a Typescript file auth.ts, I’m trying to read environment variables to initialize NextAuth (v5, beta) which I’m &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 169,
+  "posts": [
+    {
+      "id": 192428,
+      "postNumber": 1,
+      "createdAt": "2024-07-07T08:30:07.185Z",
+      "author": "ngruson (Nils Gruson)",
+      "cookedHtml": "<p>I’m using <code>EnvironmentVariablesManager</code> from the <span class=\"mention\">@mondaycom</span>/apps-sdk npm package (latest version 3.0.11).<br />\nIn a Typescript file <code>auth.ts</code>, I’m trying to read environment variables to initialize NextAuth (v5, beta) which I’m using to authenticate the user to my app.</p>\n<pre><code class=\"lang-auto\">import NextAuth from \"next-auth\";\nimport { EnvironmentVariablesManager } from \"@mondaycom/apps-sdk\";\n\nnew EnvironmentVariablesManager({ updateProcessEnv: true });\n\nexport const { auth, handlers, signIn, signOut } = NextAuth({\n  ...\n}\n</code></pre>\n<p>This compilation error occurs:</p>\n<pre><code class=\"lang-auto\">./node_modules/app-root-path/lib/app-root-path.js\nCritical dependency: the request of a dependency is an expression\n\nImport trace for requested module:\n./node_modules/app-root-path/lib/app-root-path.js\n./node_modules/app-root-path/index.js\n./node_modules/@mondaycom/apps-sdk/dist/esm/utils/local-db.js\n./node_modules/@mondaycom/apps-sdk/dist/esm/secure-storage/secure-storage.local.js\n./node_modules/@mondaycom/apps-sdk/dist/esm/secure-storage/index.js\n./node_modules/@mondaycom/apps-sdk/dist/esm/index.js\n./src/auth.ts\n./src/app/layout.tsx\n</code></pre>\n<p>How do I fix this?</p>"
+    },
+    {
+      "id": 192486,
+      "postNumber": 2,
+      "createdAt": "2024-07-08T05:33:57.004Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ngruson\">@ngruson</a>,</p>\n<p>I believe this problem might not be connected to monday itself. I found a few links with possible solutions that worked for other users (disclaimer: This is not a recommendation, it is just what I could find about it):</p>\n<p><a href=\"https://stackoverflow.com/questions/42908116/webpack-critical-dependency-the-request-of-a-dependency-is-an-expression\">Link 1</a><br />\n<a href=\"https://github.com/google/model-viewer/issues/4091\">Link 2</a><br />\n<a href=\"https://github.com/i18next/next-i18next/issues/1545\">Link 3</a><br />\n<a href=\"https://www.reddit.com/r/reactjs/comments/10yvsay/critical_dependency_the_request_of_a_dependency/\">Link 4</a><br />\n<a href=\"https://answers.netlify.com/t/help-needed-critical-dependency-the-request-of-a-dependency-is-an-expression/3992\">Link 5</a></p>\n<p>I hope you find the solution!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 193234,
+      "postNumber": 3,
+      "createdAt": "2024-07-14T07:13:53.215Z",
+      "author": "ngruson (Nils Gruson)",
+      "cookedHtml": "<p>Agreed that it’s not a problem of the Monday platform.<br />\nThe problem was just related to the way that Next.js is bundling npm packages.<br />\nI found a solution, I changed the <code>next.config.mjs</code> file in my app.</p>\n<pre><code class=\"lang-auto\">/** @type {import('next').NextConfig} */\nconst nextConfig = {\n    experimental: {\n        serverComponentsExternalPackages: ['@mondaycom/apps-sdk']\n    }        \n};\n\nexport default nextConfig;\n\n</code></pre>\n<p>Reference:<br />\n<a href=\"https://nextjs.org/docs/app/api-reference/next-config-js/serverComponentsExternalPackages\" rel=\"noopener nofollow ugc\">next.config.js Options: serverComponentsExternalPackages | Next.js (nextjs.org)</a></p>\n<p>Now my app compiles again.</p>"
+    },
+    {
+      "id": 195104,
+      "postNumber": 4,
+      "createdAt": "2024-07-28T07:06:18.309Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>That is great <a class=\"mention\" href=\"/u/ngruson\">@ngruson</a>!</p>\n<p>Thank you for sharing this!</p>"
+    }
+  ]
+}

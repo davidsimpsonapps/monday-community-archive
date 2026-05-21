@@ -1,0 +1,63 @@
+{
+  "id": 67817,
+  "title": "2023-10, Field 'items' doesn't accept argument 'ids'",
+  "slug": "2023-10-field-items-doesnt-accept-argument-ids",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    351,
+    406
+  ],
+  "createdAt": "2023-10-05T16:33:26.801Z",
+  "lastPostedAt": "2023-10-11T10:20:26.624Z",
+  "postsCount": 6,
+  "excerpt": "Hi there! \nI’m migrating a Monday API python wrapper to work on the 2023-10 version of the API, and I found out that the field items doesn’t accept the item ID anymore! \nHow is anyone supposed to find data about a specif&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 591,
+  "posts": [
+    {
+      "id": 147135,
+      "postNumber": 1,
+      "createdAt": "2023-10-05T16:33:26.883Z",
+      "author": "william.brochensque (William Brochensque Júnior)",
+      "cookedHtml": "<p>Hi there!<br />\nI’m migrating a <a href=\"https://github.com/willnaoosmith/monday\" rel=\"noopener nofollow ugc\">Monday API python wrapper</a> to work on the 2023-10 version of the API, and I found out that the field items doesn’t accept the item ID anymore!</p>\n<p>How is anyone supposed to find data about a specific item using only the item ID?</p>\n<p>For example, this query gets the item updates, works perfectly on 2023-04:</p>\n<pre><code class=\"lang-auto\">query{\n    boards (ids: %s){            \n        items(ids: %s){\n            updates (limit: %s) {\n                id,\n                body,\n                created_at,\n                updated_at,\n                creator {\n                  id,\n                  name,\n                  email\n                },\n                assets {\n                  id,\n                  name,\n                  url,\n                  file_extension,\n                  file_size\n                },\n                replies {\n                    id,\n                    body,\n                    creator{\n                        id,\n                        name,\n                        email\n                    },\n                    created_at,\n                    updated_at\n                }\n            }         \n        }                        \n    }\n}\n</code></pre>\n<p>but now, on 2023-10, the following doesn’t work anymore:</p>\n<pre><code class=\"lang-auto\">query{\n        boards (ids: %s){\n            items_page (){\n                items(ids: %s){\n                    updates (limit: %s) {\n                        id,\n                        body,\n                        created_at,\n                        updated_at,\n                        creator {\n                          id,\n                          name,\n                          email\n                        },\n                        assets {\n                          id,\n                          name,\n                          url,\n                          file_extension,\n                          file_size\n                        },\n                        replies {\n                            id,\n                            body,\n                            creator{\n                                id,\n                                name,\n                                email\n                            },\n                            created_at,\n                            updated_at\n                        }\n                    }         \n                }            \n            }\n        }\n    }\n</code></pre>"
+    },
+    {
+      "id": 147143,
+      "postNumber": 2,
+      "createdAt": "2023-10-05T16:57:18.128Z",
+      "author": "william.brochensque (William Brochensque Júnior)",
+      "cookedHtml": "<p>Neverming, this works:</p>\n<pre><code class=\"lang-auto\">query{                \n        items(ids: %s){\n            updates (limit: %s) {\n                id,\n                body,\n                created_at,\n                updated_at,\n                creator {\n                  id,\n                  name,\n                  email\n                },\n                assets {\n                  id,\n                  name,\n                  url,\n                  file_extension,\n                  file_size\n                },\n                replies {\n                    id,\n                    body,\n                    creator{\n                        id,\n                        name,\n                        email\n                    },\n                    created_at,\n                    updated_at\n                }\n            }         \n        }\n    }\n</code></pre>"
+    },
+    {
+      "id": 147325,
+      "postNumber": 3,
+      "createdAt": "2023-10-06T12:06:27.486Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Also see the following syntax. The maximum number of IDs you can specify is 100, same as the using items as the root query. This query is also much more complex from an api complexity standpoint (can’t do as many of them per minute). Its in the thousands to query a board with items_page like this vs tens to do items directly as you did.</p>\n<pre><code class=\"lang-auto\">query ($boardIds: [ID!], $itemIds: [ID!]) {\n  boards(ids: $boardIds) {\n    items_page(query_params: {ids: $itemIds}) {\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>Also I used native GraphQL variables because string substitution handles types poorly.</p>\n<pre><code class=\"lang-auto\">{\n   \"query\": \"graphql string from above\",\n   \"variables\": {\n      \"boardIds\": [\"12312453252\"],\n      \"itemIds\": [\"123123\",\"12321\", \"523432\"]\n   }\n}\n</code></pre>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> for you to investigate, since mondayDB changed a lot of things - is the query of <code>items (ids:[ID]){}</code> no longer “slower” than querying <code>items</code> within  <code>boards</code> (via <code>items_page</code>? The warning saying we should only use  <code>items (ids:[ID]){}</code> if we have no other options continues to exist in the documentation. However the direct items query is much lower API complexity.</p>"
+    },
+    {
+      "id": 147549,
+      "postNumber": 4,
+      "createdAt": "2023-10-09T13:16:43.761Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>I checked with the team and they said that items_page should be used instead of items{} generally speaking.</p>"
+    },
+    {
+      "id": 147572,
+      "postNumber": 5,
+      "createdAt": "2023-10-09T17:04:53.561Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>items_page is over 4000 complexity just to query a single item. items{} is 25. (with the number of columns I’m testing, as low as 12 if you specify a single column you want rather than all, 12)</p>\n<p>Complexity is 4037 for the below. If you forget to set limit to 1 (since there is one ID) the complexity jumps to 4445.</p>\n<pre><code class=\"lang-auto\">{\n  complexity {query}\n  boards(ids: \"12312312312\") {\n    items_page(limit: 1, query_params: {ids: \"123123123123\"}) {\n      cursor\n      items {\n        id\n        name\n        column_values {\n          id\n          text\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Yet the following is 25 complexity to get the exact same data.</p>\n<pre><code class=\"lang-auto\">{\n  complexity {\n    query\n  }\n  items(ids: 5209639007) {\n    id\n    name\n    column_values {\n      id\n      text\n      value\n    }\n  }\n}\n</code></pre>\n<p>Remember, I’m talking in the context of integrations, where I’m only ever getting one item’s values (usually, and if multiple its often across multiple boards)</p>"
+    },
+    {
+      "id": 147851,
+      "postNumber": 6,
+      "createdAt": "2023-10-11T10:20:26.624Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>In the context of a single item, that is the case and I have shared your feedback with the API team so that it can be taken into account.</p>\n<p>For anyone retrieviing multiple items, I want to share <a href=\"https://developer.monday.com/api-reference/docs/migrating-to-v-2023-10#cursor-pagination-new-method\">this article</a>. To save on complexity, you can use the <a href=\"https://developer.monday.com/api-reference/docs/items_page#cursor-based-pagination-using-next_items_page\"><code>next_items_page</code></a> object at the root of your query and pass the <code>cursor</code> argument to return the next page.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

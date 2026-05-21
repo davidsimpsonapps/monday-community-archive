@@ -1,0 +1,53 @@
+{
+  "id": 31415,
+  "title": "New custom automation recipe condition: group",
+  "slug": "new-custom-automation-recipe-condition-group",
+  "categoryId": 7,
+  "tagIds": [
+    6
+  ],
+  "createdAt": "2022-02-10T12:49:17.114Z",
+  "lastPostedAt": "2022-05-06T11:55:24.401Z",
+  "postsCount": 5,
+  "excerpt": "Create a “group” condition for automation recipes. While we can work around it by having an automation “when group changes, set status to something” then use the status as the conditional, this is a bad solution for the &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2239,
+  "posts": [
+    {
+      "id": 76798,
+      "postNumber": 1,
+      "createdAt": "2022-02-10T12:49:17.192Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Create a “group” condition for automation recipes. While we can work around it by having an automation “when group changes, set status to something” then use the status as the conditional, this is a bad solution for the following reasons:</p>\n<ol>\n<li>Creates a potential race condition - anything triggered by the group change, triggers before that status change happens. Any further automations triggered cannot rely on that status to decide to run or not.</li>\n<li>Increases load on the platform - every single instance of this “boilerplate” automations is another trigger that has to be processed, and action be taken.</li>\n</ol>\n<p>Adding “group” as a condition in automation recipes will streamline board creation, reduces platform load (and hence automation latency), and reduce the chance of creating race conditions where two automations are dependent on each completing executing at the same time.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 78313,
+      "postNumber": 2,
+      "createdAt": "2022-02-25T11:20:55.855Z",
+      "author": "WellThisIsFun (Scott)",
+      "cookedHtml": "<p>I have a use case example for this, please don’t beat me up too bad if there is another way to accomplish this process.</p>\n<p>We use a Status column for what I will call the “Stage” an item is in.  For example:  Agenda, Queued, In-Process, Completed.  When we create a new item we need a recipe that says:</p>\n<p>When an Item is created AND Group is Agenda set Stage to Agenda.</p>\n<p>I’m sure there are much more complex scenarios, mine is simple.</p>"
+    },
+    {
+      "id": 78315,
+      "postNumber": 3,
+      "createdAt": "2022-02-25T11:54:14.650Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Thats a good one. While the standard workaround for this is to have a column that is the group, and an automation of “when item moves to agenda… set status to agenda” this won’t do anything for a NEW item because it didnt move to the group - it was created in the group.</p>\n<p>I’ve gotten around this in the past when needed in the workflow using Integromat. I make a status column in the board called “groupmirror” using the API directly. This way the column ID is “groupmirror”. I then configure it with status labels that exactly match the group titles (which again I create with the API so they are usable and meaningful at the lower level not just display level). Then I set up a webhook on the board for when an item is created, and integromat just maps the boardid, itemid, and then the group id to the status label. IT works.</p>\n<p>The reason I shared the above is simple - thats the level of workaround its required for me to achieve having something set like that on creation. This way any automations that depend on group, i can use this groupmirror status as the criteria. Then one of my recipe actions is “set group mirror to ____” right before “move item to group”.</p>\n<p>In your case you could use integromat to set the stage status to agenda as needed. <strong>That said if ALL new items must be created in agenda, you could set the item defaults on the board for stage to be Agenda.</strong></p>"
+    },
+    {
+      "id": 85149,
+      "postNumber": 4,
+      "createdAt": "2022-05-06T11:55:24.401Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Since nobody from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> replied here with the solution. I am replying on my own with it!</p>\n<p>As of 5/3/2022 there is a new condition of “only if item is in <strong>group</strong>” which meets this need.</p>\n<p>However, I would have preferred if the IS was selectable for is or is not.</p>\n<p>only if item <strong>is / is not</strong> in <strong>group</strong></p>"
+    },
+    {
+      "id": 85758,
+      "postNumber": 5,
+      "createdAt": "2022-05-13T11:55:56.568Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": 83572,
+  "title": "TypeError: Cannot read properties of undefined (reading 'settings_str')",
+  "slug": "typeerror-cannot-read-properties-of-undefined-reading-settings-str",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187
+  ],
+  "createdAt": "2024-04-10T23:49:44.686Z",
+  "lastPostedAt": "2024-04-14T03:46:56.481Z",
+  "postsCount": 4,
+  "excerpt": "For some reason, this is no longer returning the subitem board in in settings_str, where it was earlier this week. \n  // Query to get Subitem BoardId\n  const getSubItemBoardId = `query {\n    boards(ids: [${boardId}]) \n  &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 168,
+  "posts": [
+    {
+      "id": 177904,
+      "postNumber": 1,
+      "createdAt": "2024-04-10T23:49:44.763Z",
+      "author": "ianhunter373 (IH)",
+      "cookedHtml": "<p>For some reason, this is no longer returning the subitem board in in settings_str, where it was earlier this week.</p>\n<pre><code class=\"lang-auto\">  // Query to get Subitem BoardId\n  const getSubItemBoardId = `query {\n    boards(ids: [${boardId}]) \n    {\n      columns(ids: \"subitems\")\n      {\n        settings_str\n      }\n    }\n  }`;\n</code></pre>"
+    },
+    {
+      "id": 177960,
+      "postNumber": 2,
+      "createdAt": "2024-04-11T03:27:34.788Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>It does work on my account. Did you check:</p>\n<ul>\n<li>the board has at least one subitem</li>\n<li>the columnId of the subitem column mitht be different</li>\n</ul>\n<p>Alternatively, this would work without hardcoding the columnId</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: $(boardId)) {\n    columns(types: [subtasks]) {\n      settings_str\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 177976,
+      "postNumber": 3,
+      "createdAt": "2024-04-11T05:00:28.265Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 178364,
+      "postNumber": 4,
+      "createdAt": "2024-04-13T14:33:37.834Z",
+      "author": "ianhunter373 (IH)",
+      "cookedHtml": "<p>For some reason, some of my boards have multiple settings_str values.</p>\n<p>Example query:</p>\n<pre><code class=\"lang-auto\">query test {boards(ids:&lt;BOARD_ID&gt;)\n  {\n    columns\n    {settings_str}\n  }\n}\n</code></pre>\n<p>Output:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": [\n          {\n            \"settings_str\": \"{}\"\n          },\n          {\n            \"settings_str\": \"{\\\"allowMultipleItems\\\":true,\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"boardIds\\\":[XXXXXXX]}\"\n          },\n          {\n            \"settings_str\": \"{}\"\n          },\n          {\n            \"settings_str\": \"{\\\"done_colors\\\":[1],\\\"labels\\\":{\\\"0\\\":\\\"Working on it\\\",\\\"1\\\":\\\"Done\\\",\\\"2\\\":\\\"Stuck\\\"},\\\"labels_positions_v2\\\":{\\\"0\\\":0,\\\"1\\\":2,\\\"2\\\":1,\\\"5\\\":3},\\\"labels_colors\\\":{\\\"0\\\":{\\\"color\\\":\\\"#fdab3d\\\",\\\"border\\\":\\\"#e99729\\\",\\\"var_name\\\":\\\"orange\\\"},\\\"1\\\":{\\\"color\\\":\\\"#00c875\\\",\\\"border\\\":\\\"#00b461\\\",\\\"var_name\\\":\\\"green-shadow\\\"},\\\"2\\\":{\\\"color\\\":\\\"#df2f4a\\\",\\\"border\\\":\\\"#ce3048\\\",\\\"var_name\\\":\\\"red-shadow\\\"}}}\"\n          },\n          {\n            \"settings_str\": \"{}\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": XXXXX\n}\n</code></pre>"
+    },
+    {
+      "id": 178401,
+      "postNumber": 5,
+      "createdAt": "2024-04-14T03:46:56.481Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>You are requesting the setting_str for each column on your board. The board itself does not have a setting_str. If you want to limit to the subtask column you should filter it in your request</p>\n<pre><code class=\"lang-auto\">query test {boards(ids:&lt;BOARD_ID&gt;)\n  {\n    columns (types: [subtasks])\n    {settings_str}\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 178432,
+      "postNumber": 6,
+      "createdAt": "2024-04-14T10:04:37.370Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

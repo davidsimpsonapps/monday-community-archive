@@ -1,0 +1,51 @@
+{
+  "id": 121578,
+  "title": "Subitem Mirror Timeline (multiple) to subitem timeline",
+  "slug": "subitem-mirror-timeline-multiple-to-subitem-timeline",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    20,
+    103,
+    104,
+    187,
+    351
+  ],
+  "createdAt": "2025-11-11T06:02:54.360Z",
+  "lastPostedAt": "2025-11-13T05:44:57.664Z",
+  "postsCount": 4,
+  "excerpt": "We’ve created a “Sprint Board” that contains a sprint number, start date, end date, and timeline. \nOn our portoflio board, our subitems to projects we use a connected board column to “select sprints” and the timeline bui&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 22,
+  "posts": [
+    {
+      "id": 241595,
+      "postNumber": 1,
+      "createdAt": "2025-11-11T06:02:54.437Z",
+      "author": "mwhittaker1 (Michael)",
+      "cookedHtml": "<p>We’ve created a “Sprint Board” that contains a sprint number, start date, end date, and timeline.</p>\n<p>On our portoflio board, our subitems to projects we use a connected board column to “select sprints” and the timeline builds from earliest to latest.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/a/ba1e3aef12af44bb969b20f1501bd4c0903cf96f_2_690x55.png\" alt=\"image\" width=\"690\" height=\"55\" /></p>\n<p>However, we are using a different timeline within the subitem for our workload, Gantt, and other views since not all teams work in sprints.</p>\n<p>I am looking for a way to take this mirrored timeline (earliest and latest) and automate an update to the other Timeline field.  (It’s ok if the timeline changes and the sprint timeline doesn’t reflect appropriately.)</p>\n<p>A few things I’ve tried:</p>\n<ul>\n<li>When multiple items are selected, I know it’s not a single object, but a multi-object and Monday is displaying a specific item of that data set- this prevents most normal automations from working.</li>\n<li>Use a formula to copy the date mirror column to capture current date, and automate off the formula\n<ul>\n<li>\n<p>Each sprint row has a start and end date as a date column</p>\n<p>Formula [form_s_start_date] = DATE_FORMAT({s.end})</p>\n</li>\n<li>\n<p>if (trigger) [form_s_start_date] = {timeline#start}</p>\n</li>\n</ul>\n</li>\n<li>Same as the above but copy [form_s_start_date] → [new_start_date]\n<ul>\n<li>Take the mirror column, use a formula to pull the date value out, use an automation to take that value and apply to another normal date field (then take that normal date field and push to the timeline ahhhhh)</li>\n</ul>\n</li>\n</ul>\n<p>I’ve tried several different 3rd party apps- since we’re working in sub-items, mirror column, and multi-selected items, many apps don’t apply.</p>\n<p>I’m not opposed to a 3rd party app, but seems like I may have to brush up on my Python and write something myself….</p>"
+    },
+    {
+      "id": 241666,
+      "postNumber": 2,
+      "createdAt": "2025-11-12T12:25:34.618Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/mwhittaker1\">@mwhittaker1</a></p>\n<p>Welcome to the community! What I understand you are looking for is available in an app called <a href=\"https://monday.com/marketplace/listing/10000124/rollup-subitems\">Rollup Subitems</a>. It takes the timeline (or date) column from the subitems and put it (earliest to latest as an option) in a <strong>normal</strong> timeline column in the parent item. As this is not a mirror you can use the same timeline column you use in the parent items, or create another one if needed. The app also support filtering to filter which subitems take into account.</p>"
+    },
+    {
+      "id": 241704,
+      "postNumber": 3,
+      "createdAt": "2025-11-13T05:44:43.592Z",
+      "author": "mwhittaker1 (Michael)",
+      "cookedHtml": "<p>Hello Bas, appreciate the response. However, I’m not looking to move the timeline into the parent column, but a different column within the same row/item.</p>"
+    },
+    {
+      "id": 241705,
+      "postNumber": 4,
+      "createdAt": "2025-11-13T05:44:57.664Z",
+      "author": "mwhittaker1 (Michael)",
+      "cookedHtml": "<p>Hi Everyone,</p>\n<p>Quick update- I found a way to make this work, although it requires a 3rd party app and a workflow in conjunction.</p>\n<p>Essentially I use an app that does:</p>\n<p>”When TRIGGER, perform FORMULA, cast result to COLUMN”</p>\n<p>I’m able to use this to take the mirrored timeline and send the result to a text column. The result is this:</p>\n<p><code>2025-12-25 - 2026-01-07, 2026-01-08 - 2026-01-21, 2026-05-14 - 2026-05-27</code></p>\n<p>I then have two formula columns to take the LEFT and RIGHT 10 characters to capture the earliest and latest (so far, it always orders this earliest to latest.)</p>\n<p><code>FORMAT_DATE(LEFT({Mirror timeline to text}, 10))</code></p>\n<p><code>FORMAT_DATE(RIGHT({Mirror timeline to text}, 10))</code></p>\n<p>Finally, I have a workflow that triggers when <code>Mirror timeline to text</code> changes. This uses the “Text to Date” function to take the text from each of the above columns and cast the result to a new timeline.</p>\n<p>Currently, it takes about 30 seconds from connected column change → final timeline change. I’m working with my CS rep to see if there’s a better way, but I’m not sure there is.</p>"
+    }
+  ]
+}

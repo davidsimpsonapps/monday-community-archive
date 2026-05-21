@@ -1,0 +1,74 @@
+{
+  "id": 12497,
+  "title": "Notification payload",
+  "slug": "notification-payload",
+  "categoryId": 8,
+  "tagIds": [
+    11
+  ],
+  "createdAt": "2020-10-25T08:40:50.723Z",
+  "lastPostedAt": "2021-03-03T15:29:35.978Z",
+  "postsCount": 7,
+  "excerpt": "Hi Monday Team, \nIn your API documentation, for creating notifications, it says we can add JSON payload, but I am getting 500s constantly when I try to add it (without that argument it works well): \n    monday.api(`\n    &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2855,
+  "posts": [
+    {
+      "id": 31858,
+      "postNumber": 1,
+      "createdAt": "2020-10-25T08:40:50.795Z",
+      "author": "kkocsis (Krisztian Kocsis)",
+      "cookedHtml": "<p>Hi Monday Team,</p>\n<p>In your <a href=\"https://monday.com/developers/v2#mutations-section-notifications-create\" rel=\"noopener nofollow ugc\">API documentation</a>, for creating notifications, it says we can add JSON payload, but I am getting 500s constantly when I try to add it (without that argument it works well):</p>\n<pre><code>    monday.api(`\n      mutation {\n        create_notification(\n          text: ${JSON.stringify(notificationText)},\n          user_id: ${userId},\n          target_id: ${itemId},\n          payload: ${JSON.stringify(1234)},\n          target_type: Project,\n          internal: true\n        ) { \n          text \n        }\n      }\n    `);\n</code></pre>\n<p>Response:<br />\n<code>{error_message: \"Internal server error\", status_code: 500}</code></p>\n<p>Am I doing something wrong? Could you help me, please?</p>\n<p>Additionally I have a couple questions as well: if it will work, how we can get the payload when opening a notification? I will be in the context? What is “post” target_type (I tried it but it results as 500 on my side)?<br />\nIn this <a href=\"https://monday.com/developers/apps/sdk#mondayapiquery-options--\" rel=\"noopener nofollow ugc\">documentation</a> you used “internal” argument for creating notification, what does it mean?</p>\n<p>Thanks,<br />\nKrisztian</p>"
+    },
+    {
+      "id": 31861,
+      "postNumber": 2,
+      "createdAt": "2020-10-25T10:31:48.281Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kkocsis\">@kkocsis</a></p>\n<p>Welcome to the community. I am using a function to send notifications.</p>\n<pre><code>static async sendNotification(token, userId, targetId, notificationText) {\n    try {\n      const mondayClient = initMondayClient({ token });\n      const query = `mutation create_notification($userId: Int!, $targetId: Int!, $notificationText: String!){\n        create_notification(user_id: $userId, target_id: $targetId, text: $notificationText, target_type: Project) {\n            text\n          }\n        }\n        `;\n\n      const variables = { userId, targetId, notificationText };\n      const response = await mondayClient.api(query, { variables });\n      return response;\n    } catch (err) {\n      console.log(err);\n    }\n  }\n} \n</code></pre>\n<p>I am calling this function with:</p>\n<p><code>mondayService.sendNotification(token, userId, boardId, notificationText);</code></p>\n<p>The UserId here is the userId of the user who gets the notification.</p>\n<p>Hope this helps.</p>"
+    },
+    {
+      "id": 31865,
+      "postNumber": 3,
+      "createdAt": "2020-10-25T16:03:06.829Z",
+      "author": "kkocsis (Krisztian Kocsis)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, I can make it work, I just would like to know how I can send contextual data with a notification.</p>"
+    },
+    {
+      "id": 32306,
+      "postNumber": 4,
+      "createdAt": "2020-10-29T18:09:34.421Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/kkocsis\">@kkocsis</a> - could you expand a bit on what you’re referring to by contextual data?</p>"
+    },
+    {
+      "id": 32400,
+      "postNumber": 5,
+      "createdAt": "2020-10-30T17:17:09.498Z",
+      "author": "nick-ts (Nick Martinez)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a>, I see you’ve recently responded to this so hopefully I can get some support from you guys.</p>\n<p>Not to hijack the thread but I’m also getting 500’s with this query. Also want to give you a heads up that the documentation in <a href=\"https://monday.com/developers/v2#mutations-section-notifications\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#mutations-section-notifications</a> is incorrect.</p>\n<p>The example shows ‘project’ in lowercase, when it should be in upper case as the API rejects it otherwise.</p>\n<p>Can you guys let me know if this API is broken or experiencing issues on your end? Here’s a snippet of our Python code that calls this</p>\n<pre><code>    def notify_setter(self, msg, user_id):\n        query = 'mutation ' \\\n                '($user_id: Int!, $target_id: Int!, $msg: String!) ' \\\n                '{ ' \\\n                'create_notification (' \\\n                'user_id: $user_id, ' \\\n                'target_id: $target_id, ' \\\n                'text: $msg, ' \\\n                'target_type: Project' \\\n                ') {text} }'\n        query_vars = {\n            'user_id': self.sender_id,\n            'target_id': user_id,\n            'msg': msg,\n        }\n</code></pre>\n<p>The resulting query string becomes:<br />\n<code>'mutation ($user_id: Int!, $target_id: Int!, $msg: String!) { create_notification (user_id: $user_id, target_id: $target_id, text: $msg, target_type: Project) {text} }'</code></p>"
+    },
+    {
+      "id": 43334,
+      "postNumber": 6,
+      "createdAt": "2021-03-03T15:29:35.978Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Apologies for the delay in response!</p>\n<p>Are you still experiencing this issue? To confirm: I tested this out on my end and it seems to be working for me.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 43335,
+      "postNumber": 7,
+      "createdAt": "2021-03-03T15:29:38.591Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 44819,
+      "postNumber": 8,
+      "createdAt": "2021-03-15T14:04:31.449Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

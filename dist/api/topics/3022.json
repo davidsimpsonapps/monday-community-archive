@@ -1,0 +1,69 @@
+{
+  "id": 3022,
+  "title": "How to connect Curl to C# APIV2",
+  "slug": "how-to-connect-curl-to-c-apiv2",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    105,
+    137
+  ],
+  "createdAt": "2019-11-11T13:00:51.598Z",
+  "lastPostedAt": "2021-02-25T12:23:03.300Z",
+  "postsCount": 7,
+  "excerpt": "I need help connecting C # to APIV2 curl to read data! \nHow I do? \nany examples? \nThanks in advance : )",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 9320,
+  "posts": [
+    {
+      "id": 8163,
+      "postNumber": 1,
+      "createdAt": "2019-11-11T13:00:51.665Z",
+      "author": "DK_89 (Enzo Luka de Lima )",
+      "cookedHtml": "<p>I need help connecting C # to APIV2 curl to read data!</p>\n<p>How I do?</p>\n<p>any examples?</p>\n<p>Thanks in advance : )</p>"
+    },
+    {
+      "id": 8230,
+      "postNumber": 2,
+      "createdAt": "2019-11-12T13:33:38.473Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dk_89\">@DK_89</a>, we at <a href=\"http://monday.com\">monday.com</a> don’t have any C# examples just yet, but maybe someone else here does!</p>\n<p>I did a bit of Googling and found an example of how to make an HTTP POST request in C# <a href=\"https://stackoverflow.com/questions/27108264/c-sharp-how-to-properly-make-a-http-web-get-request\">here</a>.  With GraphQL, the data in your POST request dictates the API call you’re making. This is different from REST, where each endpoint corresponds to a different call or operation.</p>\n<p>The following example shows how to structure a query that gets column values for a specific subset of line items and columns on a board.</p>\n<p>Your headers should contain your API key, and indicate that the request body is JSON-formatted:</p>\n<pre><code class=\"lang-auto\">{\n  \"Authentication\" : \"API_KEY_HERE\", \n  \"Content-Type\" : \"application/json\"\n}\n</code></pre>\n<p>The actual content of the POST request should send your query and any variables in the request body like below. If you are not sending any variables, you can ignore the “variables” key-value pair.</p>\n<pre><code class=\"lang-auto\">{\n  \"query\" : \"query($rows:[Int!], $cols:[String!]){items(ids:$rows){column_values(ids:$cols){text value}}}\", \n  \"variables\" : {\"rows\" :  [111,222], \"cols\": [\"status\", \"number\"]}\n}\n</code></pre>\n<p>For mutations, your request body might look something like this (notice we’re still using the query key, despite it being a mutation).</p>\n<pre><code class=\"lang-auto\">{\n  \"query\" : \"mutation {create_webhook(board_id:148203423, event:create_item, url: \\\"https://myurl.ngrok.io\\\") { id } }\"\n}\n</code></pre>\n<p>Let me know if that helps!</p>"
+    },
+    {
+      "id": 8234,
+      "postNumber": 3,
+      "createdAt": "2019-11-12T13:47:26.652Z",
+      "author": "kfogarty (Kevin Fogarty)",
+      "cookedHtml": "<p>No, I am just trying to figure out how to build the request body that gets executed.</p>"
+    },
+    {
+      "id": 8236,
+      "postNumber": 4,
+      "createdAt": "2019-11-12T14:03:24.967Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Alrighty then <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> What are you looking to accomplish and how far have you gotten so far? Do you have a query that you’ve gotten working in the <a href=\"https://monday.com/developers/v2/try-it-yourself\">testing environment</a>?</p>"
+    },
+    {
+      "id": 8239,
+      "postNumber": 5,
+      "createdAt": "2019-11-12T14:11:17.960Z",
+      "author": "kfogarty (Kevin Fogarty)",
+      "cookedHtml": "<p>var client = new RestClient(“<a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a>”);<br />\nvar request = new RestRequest(Method.GET);<br />\nrequest.AddHeader(“cache-control”, “no-cache”);<br />\nrequest.AddHeader(“Connection”, “keep-alive”);<br />\nrequest.AddHeader(“Cookie”, “__cfduid=d580475ff5eb080ca4afa8689679a21e61572616637”);<br />\nrequest.AddHeader(“Content-Length”, “168”);<br />\nrequest.AddHeader(“Accept-Encoding”, “gzip, deflate”);<br />\nrequest.AddHeader(“Host”, “<a href=\"http://api.monday.com\" rel=\"noopener nofollow ugc\">api.monday.com</a>”);<br />\nrequest.AddHeader(“Cache-Control”, “no-cache”);<br />\nrequest.AddHeader(“Accept”, “<em>/</em>”);<br />\nrequest.AddHeader(“User-Agent”, “PostmanRuntime/7.19.0”);<br />\nrequest.AddHeader(“Content-Type”, “application/json”);<br />\nrequest.AddHeader(“Authorization”, “Bearer”)<br />\nrequest.AddJsonBody(“query {boards(ids: 354318007) {name}}”); ???<br />\nIRestResponse response = client.Execute(request);</p>\n<p>The ??? piece is where I have my question, how do I format my JsonBody so that when the client executes I will get the data returned? Obviously I removed my Bearer token from the header here… <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 8246,
+      "postNumber": 6,
+      "createdAt": "2019-11-12T14:34:05.850Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/kfogarty\">@kfogarty</a>, I think I can help here!</p>\n<p>First off, it looks like you need to change the AddJsonBody line to serialize an object into a key-value pair like so (<a href=\"https://stackoverflow.com/questions/31937939/restsharp-post-a-json-object\">article</a>):</p>\n<pre><code class=\"lang-auto\">request.AddJsonBody(\n    new \n    {\n      query = \"query {boards(ids: 354318007) {name}}\",\n      variables = \"\"\n    }); // AddJsonBody serializes the object automatically\n</code></pre>\n<p>If I understand the above code correctly, once you do that and it successfully executes, you will be able to access the data returned by our server by calling methods on the <code>response</code> object.</p>\n<p>Finally, you can see if any errors are thrown by our server by checking the status code or by looking at the body of the response itself. Something like <code>response.body.errors</code> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 42088,
+      "postNumber": 7,
+      "createdAt": "2021-02-25T12:23:03.300Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

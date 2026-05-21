@@ -1,0 +1,95 @@
+{
+  "id": 73351,
+  "title": "Calculate Percentage, or Leave Blank if Both Column Counts Are 0",
+  "slug": "calculate-percentage-or-leave-blank-if-both-column-counts-are-0",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-12-18T22:54:25.361Z",
+  "lastPostedAt": "2023-12-20T12:05:37.015Z",
+  "postsCount": 11,
+  "excerpt": "I have a percentage formula that works perfectly, except when both columns are empty/the values are 0. When both Published and Rejected are 0, I want the column to be blank rather than show an error. \nHere’s the formula &hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 873,
+  "posts": [
+    {
+      "id": 158529,
+      "postNumber": 1,
+      "createdAt": "2023-12-18T22:54:25.428Z",
+      "author": "mmartin3 (Meagan)",
+      "cookedHtml": "<p>I have a percentage formula that works perfectly, except when both columns are empty/the values are 0. When both Published and Rejected are 0, I want the column to be blank rather than show an error.</p>\n<p>Here’s the formula that works: CONCATENATE(ROUNDUP((((DIVIDE({Published#Count},SUM({Published#Count},{Rejected#Count}))))*100),1),“”,“%”)</p>\n<p>My attempt at an IF formula for this:<br />\nIF(AND({Published#Count}=0,{Rejected#Count}=0, \" “), DIVIDE((({Published#Count},SUM({Published#Count},{Rejected#Count}))*100),1),”%\")</p>"
+    },
+    {
+      "id": 158544,
+      "postNumber": 2,
+      "createdAt": "2023-12-19T01:56:11.825Z",
+      "author": "BiancaT (Bianca Taylor)",
+      "cookedHtml": "<p>Hey Megan!</p>\n<p>Would you be happy to share a screenshot of the columns in your board that are included in your formula? This way we can see the column type and test this on our end? <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 158575,
+      "postNumber": 3,
+      "createdAt": "2023-12-19T09:15:27.796Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Meagan,</p>\n<p>The problem with your formula (and why you’re getting errors when the values are 0) is that you’re dividing {Published#Count} by the sum of {Published#Count} and {Rejected#Count}. When both are at 0, the sum is 0, therefore you’re dividing by 0 which is an illegal operation and you get the infamous red icon.</p>\n<p>You may think that by using an IF statement checking first that both columns are not 0 you will avoid the problem but, I know this may not seem intuitive, that doesn’t work.</p>\n<p><strong>Why?</strong></p>\n<p>When you use <em>IF(condition,result_if_cond_true,result_if_cond_false)</em>, intuitively you would think that, in the background, monday checks the condition and only calculates <em>result_if_cond_true</em> if the condition is true (and forget about <em>result_if_cond_false</em>, why calculate it, right?), but that’s not the case.</p>\n<p><em>When processing IF statements monday will always calculate <em>result_if_cond_true</em> and  <em>result_if_cond_false</em> and return the correct one.</em></p>\n<p><strong>So what is the solution?</strong></p>\n<p>You need to make sure that both results can be calculated. In this case, try this syntax (I removed your formatting functions so that it is easier to understand).</p>\n<p>DIVIDE({Published#Count},IF(SUM({Published#Count},{Rejected#Count})=0,“1”,SUM({Published#Count},{Rejected#Count})))</p>\n<p>The IF statement is nested in the DIVIDE function to prevent dividing by 0. So it checks the sum, if it is 0, it divides by 1, not by 0. If it is not 0, it divides by the sum.</p>\n<p>I can’t help saying that by using the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster app</a>, it would be a lot simpler to write such a formula <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<hr />\n<p><em>What if we could break free of the Formula column and write formulas that update any type of columns? What if a formula could update multiple columns at once? This is possible with the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a> app</em>.</p>"
+    },
+    {
+      "id": 158592,
+      "postNumber": 4,
+      "createdAt": "2023-12-19T12:49:27.216Z",
+      "author": "mmartin3 (Meagan)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/m/a6a055/48.png\" class=\"avatar\" /> Meagan:</div>\n<blockquote>\n<p>CONCATENATE(ROUNDUP((((DIVIDE({Published#Count},SUM({Published#Count},{Rejected#Count}))))*100),1),“”,“%”)</p>\n</blockquote>\n</aside>\n<p>Sure! Acceptance Rate is the formula column, Published and Rejected are both “Connect boards” columns which I’m wanting to count the total number of items added to each.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/6/76cd7c1857b52ce396106af273a22727d9f5e484.png\" title=\"Screenshot 2023-12-19 at 8.47.24 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/6/76cd7c1857b52ce396106af273a22727d9f5e484_2_690x95.png\" alt=\"Screenshot 2023-12-19 at 8.47.24 AM\" width=\"690\" height=\"95\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-12-19 at 8.47.24 AM</span><span class=\"informations\">994×138 7.71 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 158593,
+      "postNumber": 5,
+      "createdAt": "2023-12-19T12:51:31.952Z",
+      "author": "mmartin3 (Meagan)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/gcavin/48/15217_2.png\" class=\"avatar\" /> Gilles Cavin - Reinventing Formulas in monday.com:</div>\n<blockquote>\n<p>DIVIDE({Published#Count},IF(SUM({Published#Count},{Rejected#Count})=0,“1”,SUM({Published#Count},{Rejected#Count})))</p>\n</blockquote>\n</aside>\n<p>This formula returns only an error message for me, sadly.</p>"
+    },
+    {
+      "id": 158672,
+      "postNumber": 6,
+      "createdAt": "2023-12-19T23:43:19.683Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>If you copied and pasted, make sure to replace the double-quotes with straight double-quotes</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/7/f74d4befce9f1bf76f731758a388768f6134fbbf.gif\" title=\"2023-12-19_20-43-23\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/f/7/f74d4befce9f1bf76f731758a388768f6134fbbf.gif\" alt=\"2023-12-19_20-43-23\" width=\"690\" height=\"157\" /><div class=\"meta\"><span class=\"filename\">2023-12-19_20-43-23</span><span class=\"informations\">885×202 9.8 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 158680,
+      "postNumber": 7,
+      "createdAt": "2023-12-20T00:54:23.204Z",
+      "author": "mmartin3 (Meagan)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/m/a6a055/60.png\" class=\"avatar\" /> Meagan:</div>\n<blockquote>\n<p>*100),1),“”,“%”)</p>\n</blockquote>\n</aside>\n<p>Thank you! That did it. I still had to add in my percentage formatting, but it works perfectly now.</p>\n<p>CONCATENATE(ROUNDUP(DIVIDE({Published#Count},IF(SUM({Published#Count},{Rejected#Count})=0,“1”,SUM({Published#Count},{Rejected#Count})))*100,1),“”,“%”)</p>"
+    },
+    {
+      "id": 158681,
+      "postNumber": 8,
+      "createdAt": "2023-12-20T01:11:34.236Z",
+      "author": "mmartin3 (Meagan)",
+      "cookedHtml": "<p>Gilles, would you happen to know how to make this formula return “N/A” if the sum of Published and Rejected is 0?</p>\n<p>CONCATENATE(ROUNDUP(DIVIDE({Published#Count},IF(SUM({Published#Count},{Rejected#Count})=0,“1”,SUM({Published#Count},{Rejected#Count})))*100,1),“”,“%”)</p>"
+    },
+    {
+      "id": 158683,
+      "postNumber": 9,
+      "createdAt": "2023-12-20T01:42:19.838Z",
+      "author": "BiancaT (Bianca Taylor)",
+      "cookedHtml": "<p>Thanks so much for your help on this Gilles <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 158701,
+      "postNumber": 10,
+      "createdAt": "2023-12-20T08:20:56.663Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Meagan,</p>\n<p>Glad it worked. To display N/A. simply encapsulate your current formula with:</p>\n<p>IF(SUM({Published#Count},{Rejected#Count})=0,“N/A”,<br />\n)</p>\n<p>like this:</p>\n<p>IF(SUM({Published#Count},{Rejected#Count})=0,“N/A”,CONCATENATE(ROUNDUP(DIVIDE({Published#Count},IF(SUM({Published#Count},{Rejected#Count})=0,“1”,SUM({Published#Count},{Rejected#Count})))*100,1),“”,“%”))</p>\n<p>Again, check the double-quotes after pasting.</p>\n<hr />\n<p><em>Want to get rid of the formula column and write formulas that support multiple lines, variables and can update various columns at once? Take a look at the Advanced Formula Booster at <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">https://mdboosters.com</a></em></p>"
+    },
+    {
+      "id": 158738,
+      "postNumber": 11,
+      "createdAt": "2023-12-20T12:05:37.015Z",
+      "author": "mmartin3 (Meagan)",
+      "cookedHtml": "<p>Perfect! Thank you again!</p>"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": 74450,
+  "title": "Please help - can't get column_values?",
+  "slug": "please-help-cant-get-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-08T04:55:39.794Z",
+  "lastPostedAt": "2024-01-09T17:03:19.753Z",
+  "postsCount": 8,
+  "excerpt": "Hello, \nI can’t wrap my head around the new API syntax needed.   I am just wanting to query the item by id and return its column values…   The following syntax worked fine on the old API. \n{user: \nboards(ids: ‘id_here’) &hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 614,
+  "posts": [
+    {
+      "id": 160727,
+      "postNumber": 1,
+      "createdAt": "2024-01-08T04:55:39.879Z",
+      "author": "geeemaaan (G)",
+      "cookedHtml": "<p>Hello,<br />\nI can’t wrap my head around the new API syntax needed.   I am just wanting to query the item by id and return its column values…   The following syntax worked fine on the old API.</p>\n<p>{user:<br />\nboards(ids: ‘id_here’) {<br />\nitems (ids: [‘id_here’]) {<br />\nname<br />\nid<br />\ncolumn_values {<br />\nid<br />\ntitle<br />\nvalue<br />\ntext<br />\n}<br />\n}<br />\n}';</p>\n<p>I can’t seem to get a valid column_values query going now… I’ve looked through the docs and they don’t make sense to me…    I think I am doing it right but just get errors back.  Can someone please translate that old query above into a new, working format ?  I know this is kind of lazy to ask like this but it’s really doing my head in…</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 160756,
+      "postNumber": 2,
+      "createdAt": "2024-01-08T07:02:30.867Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/geeemaaan\">@geeemaaan</a>,</p>\n<p>You can use something like this:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: [1234567890]) {\n    name\n    id\n    column_values {\n      id\n      value\n      text\n      column {\n        id\n        title\n      }\n    }\n  }\n}\n</code></pre>\n<p>If you want to get the items inside of a board, you can use items_page as explained <a href=\"https://developer.monday.com/api-reference/docs/items_page\">here</a>.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 160760,
+      "postNumber": 3,
+      "createdAt": "2024-01-08T07:05:50.938Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/geeemaaan\">@geeemaaan</a></p>\n<p>In the new API items as a subset of boards is replaced by items_page, see <a href=\"https://developer.monday.com/api-reference/docs/items\" class=\"inline-onebox\">Items</a>. If you only want to get the column values for a given item the example you have here is very complex and costly. Why not just:</p>\n<pre><code class=\"lang-auto\">items (ids: [‘id_here’]) {\n  name\n  id\n  column_values {\n    id\n    title\n    value\n    text\n  }\n}\n</code></pre>\n<p>Also  note that text will return null for all mirror, dependency and a few other columns. See also fragments at <a href=\"https://developer.monday.com/api-reference/docs/column-values-v2#using-fragments-to-get-column-specific-fields\" class=\"inline-onebox\">Column values v2</a></p>"
+    },
+    {
+      "id": 160919,
+      "postNumber": 4,
+      "createdAt": "2024-01-08T22:28:48.086Z",
+      "author": "geeemaaan (G)",
+      "cookedHtml": "<p>Thanks so much for the reply.  This got me on the right track.</p>\n<p>It’s weird that ‘id’ is available to ‘column_values’ and ‘column’ , yet ‘title’ is only available to column.</p>"
+    },
+    {
+      "id": 160920,
+      "postNumber": 5,
+      "createdAt": "2024-01-08T22:32:13.094Z",
+      "author": "geeemaaan (G)",
+      "cookedHtml": "<p>Hi Bas, your example code caused a syntax error.  ‘title’ is only available to ‘column’ , not ‘column_values’ (like it used to be)  …  Matias’ example shows a working syntax.</p>\n<p>My overly-complicated query was a result of reading the Monday docs which state that it’s quicker to narrow search by board, rather than at the root item level.  But the docs (or my reading of them) might be wrong.</p>"
+    },
+    {
+      "id": 160924,
+      "postNumber": 6,
+      "createdAt": "2024-01-08T23:27:22.406Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/geeemaaan\">@geeemaaan</a></p>\n<p>Correct, I did not include the column id and title. If you want to do this from the board level (faster?) you can still do that by using the items_page object. Like:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: THE_BOARD_ID) {\n  items_page (ids: [THE_ITEM_ID] {\n    cursor    \n    name\n    id\n    column_values {\n      id\n      value\n      text\n      column {\n        id\n        title\n      }\n    }\n  }\n  }\n}\n</code></pre>\n<p>These answers are just to help you figuring out. All information in available at <a href=\"https://developer.monday.com/api-reference/docs/basics\" class=\"inline-onebox\">The basics</a></p>"
+    },
+    {
+      "id": 160926,
+      "postNumber": 7,
+      "createdAt": "2024-01-08T23:42:27.733Z",
+      "author": "geeemaaan (G)",
+      "cookedHtml": "<p>Thanks Bas, I appreciate it.  Sometimes reading the docs can be really painful (especially just after new year!)  …whereas a code example can turn on the lightbulb quickly.  Hopefully this thread will help someone else too.</p>\n<p>Who knows if the query is faster from the board level ( <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> )  ???<br />\nIn reality for my application it’s probably not too important.</p>"
+    },
+    {
+      "id": 161090,
+      "postNumber": 8,
+      "createdAt": "2024-01-09T17:03:19.753Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I don’t work for <a href=\"http://monday.com\">monday.com</a> so the below is based on my understanding of how GraphQL APIs would work in general and my experience with the <a href=\"http://monday.com\">monday.com</a> API.</p>\n<p>When it says nesting “items” in “boards” is “faster” its a little misleading.</p>\n<p>A root query of items, boards, users, updates, whatevers has an intrinsic limit of 100 objects.</p>\n<p>If you have 1000 item IDs, in the past you could fetch them all in one request by nesting items within the board. The items within board had a limit of 1000. In 2023-10, items_page is now required and has a limit of 500 - it also works differently.</p>\n<p><em><strong>EDIT: it has been brought to my attention that even the items within boards is limited to 100 item Ids. So that isn’t even faster.</strong></em></p>\n<p>It is this ability to fetch more items in a single request which made it “faster” - if you have more than 100 Ids to fetch in the past.</p>\n<p>board.items_page.items with an array of a few item IDs is actually SLOWER than using items at the root. This is because the API resolver would first resolve the board, then use items_page to resolve a list of items (gets all item id then filters by the ids provided), then the items resolver to resolve the items themselves.</p>\n<p>Using items at the root, with IDs uses the items resolver directly to resolve that list of IDs - esp. if it is less than 100 IDs. But even if you did have more you could execute two parallel requests for say 100 items (200 total) and it would still be faster than using boards for you.</p>\n<p>Additionally if using items_page and you don’t specify a limit equal to the number of Ids provided, the API complexity goes WAY up because it processes as though its retrieving 500 items even though you’re only fetching 10. This is because the item_ids parameter of items_page is a filter of items fetched, not a request for specific item IDs.</p>"
+    },
+    {
+      "id": 161974,
+      "postNumber": 9,
+      "createdAt": "2024-01-14T12:57:02.545Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

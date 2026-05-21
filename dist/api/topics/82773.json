@@ -1,0 +1,51 @@
+{
+  "id": 82773,
+  "title": "Some thoughts on designing apps for standard browser AND native Electron-based \"browser apps\"",
+  "slug": "some-thoughts-on-designing-apps-for-standard-browser-and-native-electron-based-browser-apps",
+  "categoryId": 8,
+  "tagIds": [
+    35,
+    96,
+    152,
+    159,
+    203,
+    208
+  ],
+  "createdAt": "2024-04-02T05:38:53.553Z",
+  "lastPostedAt": "2024-04-02T05:52:49.634Z",
+  "postsCount": 3,
+  "excerpt": "In case you missed it, monday.com has a native app for iOS and some “native” Electron-based apps for desktop computers. \nFor iOS (and probably Android), the user experience for app developers is simple. Apps are not supp&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 325,
+  "posts": [
+    {
+      "id": 176342,
+      "postNumber": 1,
+      "createdAt": "2024-04-02T05:38:53.667Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>In case you missed it, monday.com has a native app for iOS and some “native” Electron-based apps for desktop computers.</p>\n<p>For iOS (and probably Android), the user experience for app developers is simple. Apps are not supported, go to a desktop browser <img src=\"https://emoji.discourse-cdn.com/apple/cry.png?v=15\" title=\":cry:\" class=\"emoji\" alt=\":cry:\" width=\"20\" height=\"20\" />.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/d/0dbe63ec65f64e7a4f0aadb8331d093207c31930.jpeg\" title=\"IMG_8789.PNG\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/d/0dbe63ec65f64e7a4f0aadb8331d093207c31930_2_230x500.jpeg\" alt=\"IMG_8789.PNG\" width=\"230\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">IMG_8789.PNG</span><span class=\"informations\">1179×2556 153 KB</span></div></a></div><p></p>\n<p>For the Electron-based apps, the behaviour is subtly different from actual real browsers.</p>\n<p>2 important places where Electron-based different are:</p>\n<ul>\n<li>There is no access to <code>window.open</code>, or rather it just fails</li>\n<li>You cannot open links in new tabs, e.g. <code>&lt;a target=\"_blank\" ...</code> will fail silently, so be prepared.\n<ul>\n<li>Actually, as <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> points out in the comments, you can and should always be using <a href=\"https://developer.monday.com/apps/docs/mondayexecute#open-link-in-tab\" rel=\"noopener nofollow ugc\">openLinkInTab</a>:</li>\n</ul>\n<pre><code class=\"lang-auto\">monday.execute(\"openLinkInTab\", { url: \"https://google.com\" });\n</code></pre>\n</li>\n</ul>\n<p>If you build your app without these considerations, be prepared to have additional support requirements from you customers that may not be simply to troubleshoot quickly if you don’t ask the right questions.</p>\n<p>If you are opening links with <code>window.open</code>  in a desktop app, then perhaps you need to rethink this strategy for Electron-based apps and adapt.</p>\n<p>What follows are a couple of approaches and when you might use them.</p>\n<h2><a name=\"p-176342-h-1-hide-elements-that-are-not-appropriate-for-electron-based-apps-1\" class=\"anchor\" href=\"#p-176342-h-1-hide-elements-that-are-not-appropriate-for-electron-based-apps-1\"></a>1. Hide elements that are not appropriate for Electron-based apps</h2>\n<p>An easy way to do this is to check for Electron and then hide content that’s not appropriate from the electron-based app.</p>\n<p>An example of how to do this in Svelte (but you get the idea):</p>\n<pre><code class=\"lang-auto\">&lt;script&gt;\n  const isElectron = window.navigator.userAgent.indexOf(' Electron/') !== -1;\n&lt;/script&gt;\n\n&lt;div&gt;\n  {#if !isElectron}\n    &lt;div&gt;...&lt;/div&gt;\n  {/if}\n&lt;/div&gt;\n</code></pre>\n<p>This approach could lead to the following menu items…</p>\n<p>On desktop browser:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/e/5e29761f3c32343cb7c86107d9149af04c67b1f7.png\" title=\"Screenshot 2024-04-02 at 08.36.14\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/e/5e29761f3c32343cb7c86107d9149af04c67b1f7_2_156x250.png\" alt=\"Screenshot 2024-04-02 at 08.36.14\" width=\"156\" height=\"250\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-04-02 at 08.36.14</span><span class=\"informations\">396×634 19.9 KB</span></div></a></div><p></p>\n<p>On Electron-based app:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/d/8dc8e03ae01b1fdd3029f3ea1469fbfbeba98c81.png\" title=\"Screenshot 2024-04-02 at 08.39.40\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/d/8dc8e03ae01b1fdd3029f3ea1469fbfbeba98c81.png\" alt=\"Screenshot 2024-04-02 at 08.39.40\" width=\"195\" height=\"235\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-04-02 at 08.39.40</span><span class=\"informations\">390×470 16.5 KB</span></div></a></div><p></p>\n<h2><a name=\"p-176342-h-2-let-things-fail-gracefully-2\" class=\"anchor\" href=\"#p-176342-h-2-let-things-fail-gracefully-2\"></a>2. Let things fail, gracefully</h2>\n<p>If your app contains OAuth with an external service, then you probably want the Electron-based app to see the “Sign in” button (which should open a new window)…</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/d/0d8d01503f274644dd2a3fcbbe7b20f7392c55bd.jpeg\" title=\"Screenshot 2024-04-02 at 08.34.39\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/d/0d8d01503f274644dd2a3fcbbe7b20f7392c55bd_2_478x375.jpeg\" alt=\"Screenshot 2024-04-02 at 08.34.39\" width=\"478\" height=\"375\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-04-02 at 08.34.39</span><span class=\"informations\">2312×1810 185 KB</span></div></a></div><p></p>\n<p>…but then display a message when <code>window.open</code> fails.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/1/f1c67703223c0a8c87e14d8882f4e47d2ca33faf.jpeg\" title=\"Screenshot 2024-04-02 at 08.35.17\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/1/f1c67703223c0a8c87e14d8882f4e47d2ca33faf_2_478x375.jpeg\" alt=\"Screenshot 2024-04-02 at 08.35.17\" width=\"478\" height=\"375\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-04-02 at 08.35.17</span><span class=\"informations\">2312×1810 220 KB</span></div></a></div><p></p>\n<p>This message also allows for popup blockers, so is a double win.</p>\n<p>Allowing the end-user to attempt to sign in on the Electron-based app lets them see where the authentication action should be, so that they can repeat it on a desktop browser.</p>\n<p>This is a reinforcement pattern. Let them fail, but then let them try again elsewhere.</p>\n<p>If the sign in button was missing from the Electron-based app, it would be more confusion, so we keep it in place.</p>\n<p>In this case, our Svelte code would look similar to this:</p>\n<pre><code class=\"lang-auto\">&lt;script&gt;\n\tlet popupBlocked = false;\n\t\n\tfunction onClick() {\n\t\tconst popup = window.open(\n\t\t\t`/oauth2/authorize?sessionToken=${...}`,\n\t\t\t'myPopup',\n\t\t\t'popup=1,width=480,height=650'\n\t\t);\n\n\t\tif (!popup) {\n\t\t\tpopupBlocked = true;\n\t\t}\n\t}\n&lt;/script&gt;\n\n&lt;button type=\"button\" on:click={onClick}&gt;\n\tSign In\n&lt;/button&gt;\n\n{#if popupBlocked}\n\t&lt;div&gt;\n\t\t&lt;p&gt;Sorry! You cannot sign in to Xxxx in this browser,/p&gt;\n\t\t&lt;p&gt;Please allow popups, or sign in on a desktop browser and then reload this page.&lt;/p&gt;\n\t&lt;/div&gt;\n{/if}\n\n</code></pre>\n<p>This is not an exhaustive list, but a starting point on developing for both browser and Electron-based apps.</p>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/folded_hands.png?v=15\" title=\":folded_hands:\" class=\"emoji\" alt=\":folded_hands:\" width=\"20\" height=\"20\" />  Please share any similar findings as a comment.</p>"
+    },
+    {
+      "id": 176344,
+      "postNumber": 2,
+      "createdAt": "2024-04-02T05:48:16.767Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Concerning opening links in a new tab, why not use the function that monday provides?</p>\n<pre><code class=\"lang-auto\">monday.execute(\"openLinkInTab\", { url: \"https://google.com\" });\n</code></pre>"
+    },
+    {
+      "id": 176346,
+      "postNumber": 3,
+      "createdAt": "2024-04-02T05:52:49.634Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> Ooh, excellent, I’d actually forgotten about that. <img src=\"https://emoji.discourse-cdn.com/apple/woman_facepalming.png?v=12\" title=\":woman_facepalming:\" class=\"emoji\" alt=\":woman_facepalming:\" width=\"20\" height=\"20\" /></p>\n<p>Updated accordingly.</p>"
+    },
+    {
+      "id": 177264,
+      "postNumber": 4,
+      "createdAt": "2024-04-07T09:04:51.804Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

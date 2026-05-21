@@ -1,0 +1,44 @@
+{
+  "id": 76752,
+  "title": "Accessing Storage with monday-code apps SDK using client's sessionToken",
+  "slug": "accessing-storage-with-monday-code-apps-sdk-using-clients-sessiontoken",
+  "categoryId": 8,
+  "tagIds": [
+    38,
+    208,
+    297,
+    351,
+    423,
+    428
+  ],
+  "createdAt": "2024-02-01T08:44:17.366Z",
+  "lastPostedAt": "2024-02-01T13:15:36.193Z",
+  "postsCount": 2,
+  "excerpt": "Hello  Community, \nI hope this message finds you well. \nI’m currently working on a project where I need to access Storage from the backend on behalf of the user. The sessionToken is captured in an Item View Context when &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 250,
+  "posts": [
+    {
+      "id": 165329,
+      "postNumber": 1,
+      "createdAt": "2024-02-01T08:44:17.457Z",
+      "author": "0xm3t1 (Flynn .Is)",
+      "cookedHtml": "<p>Hello  Community,</p>\n<p>I hope this message finds you well.</p>\n<p>I’m currently working on a project where I need to access Storage from the backend on behalf of the user. The sessionToken is captured in an Item View Context when the user click to sends a request to the backend.</p>\n<p>Allow me to provide some context and share what I have attempted so far:</p>\n<p><strong>Frontend Code (client-side Item view):</strong></p>\n<pre><code class=\"lang-auto\">monday.get('sessionToken').then((token) =&gt; { \n  // send token to backend\n}\n</code></pre>\n<p><strong>Backend Request Handling Code (backend server):</strong></p>\n<pre><code class=\"lang-auto\">import { Storage } from '@mondaycom/apps-sdk';\n\n\njwt.verify(token.data, MY_CLIENT_SECRET, (err, decoded) =&gt; {\n    if (err) {\n        // Handle token verification error\n    }\n \n    // token verified\n    const storage = new Storage(token.data);\n    const storageItem = await storage.get(KEY, options);\n    console.log(storageItem);\n    // log output\n    /*{\n       success: true,\n       error: 'You need to log in or sign up before continuing.'\n    }*/\n\n});\n</code></pre>\n<p><strong>Questions:</strong></p>\n<ol>\n<li>\n<p>Is it feasible to access storage from the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> SDK using a session token obtained during an Item View interaction?</p>\n</li>\n<li>\n<p>Are there specific limitations or considerations regarding the usage of sessionTokens for storage operations?</p>\n</li>\n<li>\n<p>What is the difference between this auth approach, and using the <code>shortLivedToken</code> in the integration trigger flow?</p>\n</li>\n</ol>\n<p>I’m eager to understand whether the current approach is technically feasible and if there are any best practices or guidelines I should follow.</p>\n<p>Thank you for your time and expertise!</p>\n<p>Best regards,</p>"
+    },
+    {
+      "id": 165380,
+      "postNumber": 2,
+      "createdAt": "2024-02-01T13:15:36.193Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The sessionToken does not contain an API token so it cannot be used for calls to <a href=\"http://monday.com\">monday.com</a>. What the sessionToken is used for, is providing something signed with your apps signing secret to your backend to enable your front end to access your backend without requiring your users to login to the backend in your client-side app. It is not an access token to connect to the <a href=\"http://monday.com\">monday.com</a> platform.</p>\n<p>You will instead need to get and store an OAuth token in your backend, this is the access token you’ll need to perform storage operations, after you use the sessionToken to authenticate the request from your front end to your back end.</p>\n<p>Short lived tokens from the integration trigger flow, are embedded in a JWT - the JWT is used to authenticate the request from monday, and the shortLivedToken in the JWT is used as your access token to monday. sessionToken is much like the JWT but doesn’t have a shortLivedToken in it.</p>"
+    },
+    {
+      "id": 165383,
+      "postNumber": 3,
+      "createdAt": "2024-02-01T13:38:02.481Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

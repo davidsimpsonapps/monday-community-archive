@@ -1,0 +1,89 @@
+{
+  "id": 3024,
+  "title": "Recommended way to retrieve all items and the item's column values from a board?",
+  "slug": "recommended-way-to-retrieve-all-items-and-the-items-column-values-from-a-board",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2019-11-11T14:58:31.376Z",
+  "lastPostedAt": "2021-07-27T12:35:25.283Z",
+  "postsCount": 10,
+  "excerpt": "Hello, \nI was wondering what the best query would be for retrieving all of the items from a board. I’d also like to see specific columns and the updates associated with the items. \nThanks, \nDan",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 15158,
+  "posts": [
+    {
+      "id": 8166,
+      "postNumber": 1,
+      "createdAt": "2019-11-11T14:58:31.544Z",
+      "author": "dturcanbbi (Dan Turcan)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I was wondering what the best query would be for retrieving all of the items from a board. I’d also like to see specific columns and the updates associated with the items.</p>\n<p>Thanks,<br />\nDan</p>"
+    },
+    {
+      "id": 8199,
+      "postNumber": 2,
+      "createdAt": "2019-11-12T01:01:52.866Z",
+      "author": "Scott-monday.com (Scott Underwood)",
+      "cookedHtml": "<p>Hi again <a class=\"mention\" href=\"/u/dturcanbbi\">@dturcanbbi</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>In order to retrieve <em>all</em> Items on a board, and those Items’ column values, you can use the below call:</p>\n<pre><code>query {\n  boards (ids: 000000000) {\n    items {\n      id\n      name\n      column_values {\n        id\n        title\n        value\n      }\n    }\n  }\n</code></pre>\n<p>In order to view Updates associated with a specific Item, you can utilize the call below:</p>\n<pre><code>query {\n  items (ids: 000000000) {\n    updates {\n      creator {\n        id\n        name\n      }\n      created_at\n      text_body\n    }\n  }\n}\n</code></pre>\n<p>Admittedly these are fairly basic calls in the sense that they may not be grabbing the <em>exact</em> datas you’re after, although it should hopefully be enough to get you started <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can also find out API v2 documentation here - <a href=\"https://monday.com/developers/v2\">https://monday.com/developers/v2</a></p>\n<p>If you have any questions about how to get any more specific data, just let us know! <img src=\"https://emoji.discourse-cdn.com/apple/raised_hands.png?v=12\" title=\":raised_hands:\" class=\"emoji\" alt=\":raised_hands:\" width=\"20\" height=\"20\" /></p>\n<p>-Scott</p>"
+    },
+    {
+      "id": 8228,
+      "postNumber": 3,
+      "createdAt": "2019-11-12T13:13:58.484Z",
+      "author": "dturcanbbi (Dan Turcan)",
+      "cookedHtml": "<p>Thank you! I do have one board with over 7000 items and it appears that the query times out for that. What would be the recommended way of pulling a board with that many items?</p>"
+    },
+    {
+      "id": 8232,
+      "postNumber": 4,
+      "createdAt": "2019-11-12T13:37:48.615Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Dan! I would suggest getting the items group-by-group in this case. We’re also working on adding optional paging to the items() field, so look out for an update on that sometime in the future.</p>"
+    },
+    {
+      "id": 8317,
+      "postNumber": 5,
+      "createdAt": "2019-11-13T17:08:01.152Z",
+      "author": "dturcanbbi (Dan Turcan)",
+      "cookedHtml": "<p>That worked, thank you! And I look forward to the paging feature <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 8463,
+      "postNumber": 6,
+      "createdAt": "2019-11-19T20:34:15.127Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dturcanbbi\">@dturcanbbi</a> – just wanted to let you know that we added paging to the items field on the board! Now you can grab items on your big boards little by little <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Here’s an example that grabs one item from a board:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/b893753646d44f6ff622795961255961e4cae7a3.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/b893753646d44f6ff622795961255961e4cae7a3_2_690x176.png\" alt=\"image\" width=\"690\" height=\"176\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1042×267 18.8 KB</span>\n</div></a></div><p></p>\n<p>Hope that helps <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Enjoy!</p>"
+    },
+    {
+      "id": 8490,
+      "postNumber": 7,
+      "createdAt": "2019-11-20T12:33:20.328Z",
+      "author": "dturcanbbi (Dan Turcan)",
+      "cookedHtml": "<p>Thanks dipro. Question though, how would I then be able to grab the next item? Typically when I thinking of paging, I would be grabbing all items in chunks of a set amount. This seems to just limit the query unless I’m mistaken on what’s happening here.</p>"
+    },
+    {
+      "id": 29937,
+      "postNumber": 8,
+      "createdAt": "2020-09-30T07:29:20.231Z",
+      "author": "PaulCJ (Paul CJ)",
+      "cookedHtml": "<p>Hi Scott,</p>\n<p>How would I go about specifying the <em>column_values</em> that I wanted to return in order to restrict the size of data? Effectively filtering in the query as you might with a REST call?</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 42089,
+      "postNumber": 9,
+      "createdAt": "2021-02-25T12:23:03.384Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 59082,
+      "postNumber": 10,
+      "createdAt": "2021-07-27T12:35:25.283Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi all!</p>\n<p>On a tangential note, feel free to check out my most recent announcement on our release of the <code>items_by_multiple_column_values()</code> API method <a href=\"https://community.monday.com/t/released-items-by-multiple-column-values-query/22881\">here</a>.</p>\n<p>It will allow you to retrieve items matching multiple column values in a single column.</p>\n<p>Thanks!</p>"
+    }
+  ]
+}

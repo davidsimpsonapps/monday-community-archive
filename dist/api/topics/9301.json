@@ -1,0 +1,103 @@
+{
+  "id": 9301,
+  "title": "Order of events and changing Ids",
+  "slug": "order-of-events-and-changing-ids",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-07-22T04:51:26.151Z",
+  "lastPostedAt": "2021-02-25T14:24:17.011Z",
+  "postsCount": 12,
+  "excerpt": "Hi. I’m developing board view app that detects changes in realtime, by using \nmonday.listen(“events”…) \nalso I need to check for currently filtered items \nmonday.listen(“itemIds”…) \nmy app should only detect changes in t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1713,
+  "posts": [
+    {
+      "id": 23348,
+      "postNumber": 1,
+      "createdAt": "2020-07-22T04:51:26.209Z",
+      "author": "yureckey (yureckey)",
+      "cookedHtml": "<p>Hi. I’m developing board view app that detects changes in realtime, by using<br />\nmonday.listen(“events”…)<br />\nalso I need to check for currently filtered items<br />\nmonday.listen(“itemIds”…)<br />\nmy app should only detect changes in the items that are within currently filtered.<br />\nBut when user add new item, first “events” callback fires, and only after that “itemIds” (if this new item goes in filtered).<br />\nSo, if I’m checking filtered in “events” callback it would always fail. I guess I can workaround by adding some delay in check, but this doesn’t look good, maybe there is more clean way?</p>"
+    },
+    {
+      "id": 23705,
+      "postNumber": 2,
+      "createdAt": "2020-07-27T03:27:39.003Z",
+      "author": "yureckey (yureckey)",
+      "cookedHtml": "<p>The lack of activity in this post is disturbing…</p>"
+    },
+    {
+      "id": 23956,
+      "postNumber": 3,
+      "createdAt": "2020-07-29T06:05:15.728Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/yureckey\">@yureckey</a><br />\nSorry for the delay in reply.<br />\nWhy do you try to check filtered in “events” callback? If you want to display filtered items, so you need to rely to the “itemIds” changes and not to “events”, because user can add new item and change filters, so this item will not be in filtered anymore. Or to create an item and then change it, so it will become part of filtered items.</p>"
+    },
+    {
+      "id": 23957,
+      "postNumber": 4,
+      "createdAt": "2020-07-29T06:40:08.971Z",
+      "author": "yureckey (yureckey)",
+      "cookedHtml": "<p>There is some confusion, probably I didn’t described my problem properly.<br />\nMy app dedicated to the tracking of data updates by using monday.listen(“events”…). When there is new data added or old data updated my app react in it’s UI. I wanted to have option, so app user can choose whatever to track all changes or only changes in data currently filtered in the view. I thought, I should embrace monday.listen(“itemIds”…) so when filter changes, my app will set state with changed items ids and then callback of “events” will execute and inside it there is reading of those ids, is it filtered or not. But then I run test - set filter in view and added data/updated old data. And I realized that currently “events” callback runs first, and only after it, “itemIds” change callback run. So what is proper way to check is newly added/updated item in current filter view?</p>"
+    },
+    {
+      "id": 23963,
+      "postNumber": 5,
+      "createdAt": "2020-07-29T07:36:56.916Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>In case of tracking changes in data currently filtered in the view, I would suggest to listen only to “itemIds” changes and check the diff between current “itemIds” array and the new array, which is coming to the callback.<br />\nBy this, you will be able to track not only the creation of the new item but also if an item was changed and it became part of the filter/was removed/was changed in a way that it became out of the filter, etc.</p>"
+    },
+    {
+      "id": 23968,
+      "postNumber": 6,
+      "createdAt": "2020-07-29T08:39:57.052Z",
+      "author": "yureckey (yureckey)",
+      "cookedHtml": "<p>Yes, valid points, thanks. But then again, app should track data updates, like when cell updates, so it needs to use “events”, otherwise cell update event is lost (if it’s not causing the filter to change). So, again, since filter view change generates “itemsIds” after “events”, I need to use something in “events” callback to ensure that updated data was in filter view. Looks like I should stick to time delay.</p>"
+    },
+    {
+      "id": 24018,
+      "postNumber": 7,
+      "createdAt": "2020-07-29T16:03:36.300Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>I think that in “events” you need to listen only to “content” updates, like change_column_values, but in “itemIds” listen to the “visible items” changes (if it’s add/remove/change filters/etc.)</p>"
+    },
+    {
+      "id": 25122,
+      "postNumber": 8,
+      "createdAt": "2020-08-11T09:47:17.925Z",
+      "author": "yureckey (yureckey)",
+      "cookedHtml": "<p>after some experiments with “itemIds” I can say that I can’t really use it in my app.<br />\nMy app dedicated to tracking change of real data, not change in the view data. And with “itemIds” it’s impossible to detect if event called due to simple change of filter or real data adding/removing.</p>"
+    },
+    {
+      "id": 25175,
+      "postNumber": 9,
+      "createdAt": "2020-08-11T15:28:52.764Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/yureckey\">@yureckey</a>! Just to make sure we are on the same page, do you mean it’s impossible to <strong>only</strong> use an itemIds listener to check for changes to data?</p>\n<p>This is true; you will need to watch both <code>events</code> and <code>itemIds</code> to track both data updates and view updates.</p>\n<p>Let us know if you have additional questions or thoughts.</p>"
+    },
+    {
+      "id": 25215,
+      "postNumber": 10,
+      "createdAt": "2020-08-12T06:58:01.486Z",
+      "author": "yureckey (yureckey)",
+      "cookedHtml": "<p>Yes, I wasn’t clear, sorry. I mean that I hoped to use “itemIds” along with “events” to track adding and removing data. And I was able to use it to track <strong>adding</strong> data and determine if it in filter or not. But it’s impossible to track data deletion, since it doesn’t generate “events” and you can’t tell if it user changed filter or data was removed for real. Possible workaround is to query those items from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>, but it doesn’t look like good solution</p>"
+    },
+    {
+      "id": 25220,
+      "postNumber": 11,
+      "createdAt": "2020-08-12T09:03:52.688Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/yureckey\">@yureckey</a>, <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>We are indeed missing an event that triggers item deletion. A webhook like “When item is deleted send a webhook” (including support for this webhook type in the API would be very helpful.</p>"
+    },
+    {
+      "id": 42277,
+      "postNumber": 12,
+      "createdAt": "2021-02-25T14:24:17.011Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

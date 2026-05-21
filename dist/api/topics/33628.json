@@ -1,0 +1,116 @@
+{
+  "id": 33628,
+  "title": "Monday API call succeeds but value does not display",
+  "slug": "monday-api-call-succeeds-but-value-does-not-display",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-03-24T21:26:03.319Z",
+  "lastPostedAt": "2022-04-21T19:09:27.326Z",
+  "postsCount": 14,
+  "excerpt": "I have noticed a couple of issues that may or may not be related. \nIssue 1: I have created a custom integration using the API to create items in Monday whenever a contract signed event webhook is fired from our proposal &hellip;",
+  "solvedPostId": null,
+  "likeCount": 9,
+  "views": 3517,
+  "posts": [
+    {
+      "id": 80851,
+      "postNumber": 1,
+      "createdAt": "2022-03-24T21:26:03.394Z",
+      "author": "jmsmit38 (Jonathon Smith)",
+      "cookedHtml": "<p>I have noticed a couple of issues that may or may not be related.</p>\n<p>Issue 1: I have created a custom integration using the API to create items in Monday whenever a contract signed event webhook is fired from our proposal software. Most of the time it works fine. Occasionally though, the item will have blank entries in a few columns despite the API call returning a success code without an error message. To make it even more confusing, the activity log in Monday shows that the value was entered into the column, and no action appears after to indicate that it has been deleted or rolled back. To me this means there is either a bug that is preventing the item from displaying correctly, or the column value is being deleted without record of this happening in the activity log (undocumented roll back). If it is a roll back, this is a huge problem, because whatever is triggering the roll back is seemingly random, and is not consistent with any valid reason for rolling back an update (ie a conflict such as entering a column value into a deleted column).</p>\n<p>Issue 2: Automations that trigger on item creation fail silently. I have an automation that assigns a value to the people column whenever an item is created. This works fine most of the time, but occasionally this automation will silently fail, and the people column will be left unpopulated.</p>\n<p>If I had to guess, these two errors are similar, and potentially related to API rate limits or concurrency issues. Silently rolling back an update that is 100% not conflicting to a prior or future operation seems like completely unintended behavior.</p>\n<p>Has anyone else noticed similar behavior and have any idea of what might be causing this, and or what I can do to work around this? (For the time being I solved issue 2 by setting default values for columns, but I am concerned that there are larger issues lurking below if a cookie cutter out of the box automation is failing silently.)</p>\n<p>I would be happy to discuss this in more detail, or provide code snippets and or AWS / Monday activity logs if it will help narrow down the problem.</p>\n<p>Thanks!<br />\nJon</p>"
+    },
+    {
+      "id": 80856,
+      "postNumber": 2,
+      "createdAt": "2022-03-24T23:57:29.913Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jmsmit38\">@jmsmit38</a></p>\n<p>I experience similar behavior. We are running 10+ different apps and close to 1.000 different accounts are using these apps. I most cases everything works as expected. It is the last 4-5 weeks that I am receiving calls from customers that information written to their board is not visible. As I log each and every API call in a logger solution based on ELK, I have proof that a value is written to a board / item / column. The customer has the same proof from the activity log. Like you, for me that is ultimate proof that the information has been written to the board successfully. However, the customer(s) claim the information is not visible on their board. Off course this can be because the user (or another app / automation) has deleted it, but there is no sign at all in the activity log. It very much looks like a roll back.</p>\n<p>I am redirecting these customers to support, but with very limited success. The support team states they can’t support the customer as it involves a 3rd party app. I also reached out to the appsupport team (mainly <a class=\"mention\" href=\"/u/dipro\">@dipro</a> and <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>) and hope they are willing to invest time to sort this out to the bottom. I am fine with giving access to my logger environment (if they know how to use Kabana / Lucene) as the logs shows both the actual API call, the variables and the success (to the millisecond).</p>\n<p>I am very interested to work together with you with the end goal to make the API more robust.</p>\n<p>Thanks,<br />\nBas</p>"
+    },
+    {
+      "id": 80924,
+      "postNumber": 3,
+      "createdAt": "2022-03-25T13:17:08.723Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> <a class=\"mention\" href=\"/u/jmsmit38\">@jmsmit38</a></p>\n<p>I just had a similar experience in which the monday activity log showed that a value was written to a text column hours prior to accessing the same value using the API where it read as null. Subsequent reads showed the correct value. There were no other expected changes to the value and monday logs confirmed no other changes.</p>\n<p>If we can not rely on data being accurately displayed and returned, all is lost.</p>\n<p>If I can help in any way, please cound me in!</p>\n<p>Jim</p>"
+    },
+    {
+      "id": 80927,
+      "postNumber": 4,
+      "createdAt": "2022-03-25T13:32:09.073Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>To chip in here, <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> has a concurrency problem. It is a problem I have mentioned before <a href=\"https://community.monday.com/t/new-column-creation-bug/24019\">here</a>.<br />\n<a class=\"mention\" href=\"/u/dipro\">@dipro</a> and <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, this is the problem I was talking about during the developers meeting but couldn’t remember exactly what it was.<br />\nThe workaround currently for multiple values is to create each column value one after the other. This will of course take way longer time but at least, that is works for me for now</p>"
+    },
+    {
+      "id": 80928,
+      "postNumber": 5,
+      "createdAt": "2022-03-25T13:40:07.761Z",
+      "author": "jmsmit38 (Jonathon Smith)",
+      "cookedHtml": "<p>Hi Bas,</p>\n<p>Thanks for the response. I would love to collaborate with you to find a solution to this problem. What time zone do you work in? Maybe we can set up a Zoom call one day next week to share thoughts and ideas.  My fear is that this issue is fundamental to Monday’s backend architecture, and that we will be at the mercy of the Monday dev team for a solution. That said though, I’m definitely up for trying to find a temporary work around until they can get this fixed.</p>\n<p>Thanks,<br />\nJon</p>"
+    },
+    {
+      "id": 80929,
+      "postNumber": 6,
+      "createdAt": "2022-03-25T13:44:39.970Z",
+      "author": "jmsmit38 (Jonathon Smith)",
+      "cookedHtml": "<p>Thanks for the reply!<br />\nUnfortunately I don’t think that workaround will work for my use case. I am running an AWS Lambda function for the integration, and splitting all of the column value insertions into single API calls would almost certainly cause the function to timeout. (The function already runs for almost a minute and a half, and splitting up the calls would result in close to 10x as many API calls). I suppose I could break it up into multiple Lambda functions, but this is far from ideal and will result in significantly higher AWS bills. Hopefully Monday can figure out their concurrency issues in a timely manner.</p>\n<p>Thanks,<br />\nJon</p>"
+    },
+    {
+      "id": 80930,
+      "postNumber": 7,
+      "createdAt": "2022-03-25T13:47:06.462Z",
+      "author": "jmsmit38 (Jonathon Smith)",
+      "cookedHtml": "<p>Hi Jim,</p>\n<p>Thanks for your response. It’s good to know that I’m not the only one experiencing these issues. I was starting to pull my hair out yesterday figuring out what was going on. Hopefully we can all get together some time next week to find a solution to this.</p>\n<p>Thanks,<br />\nJon</p>"
+    },
+    {
+      "id": 80931,
+      "postNumber": 8,
+      "createdAt": "2022-03-25T13:48:29.500Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Exactly the problem I was facing. I have migrated to another service provider due to that reason alone. But yes, the costs is another issue you will have deal with due to the multiple requests</p>"
+    },
+    {
+      "id": 81062,
+      "postNumber": 9,
+      "createdAt": "2022-03-27T10:07:23.849Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi Jonathan,</p>\n<p>I am in CET (Rotterdam, The Netherlands). You can setup a call through <a href=\"https://calendly.com/excellent-team/45min\" class=\"inline-onebox\">Calendly - Bas de Bruin</a>. I agree that this looks like an architectural issue, but in my experience this only happens since approx. 6 weeks. I am also working with the appsupport team and a customer who experiences missing values and I think it is good to align efforts.</p>"
+    },
+    {
+      "id": 81109,
+      "postNumber": 10,
+      "createdAt": "2022-03-28T05:31:26.636Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello all!</p>\n<p>Matias here <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>At the moment we are investigating this.</p>\n<p>If you are experiencing these kind of issues, you can always contact us at <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> and in this way we will have a great way of following the issue and updating you when we have updates about it!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 81146,
+      "postNumber": 11,
+      "createdAt": "2022-03-28T11:33:58.266Z",
+      "author": "jmsmit38 (Jonathon Smith)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>Thank you for the response. It sounds like quite a few people are experiencing the same issue. If I can provide an assistance in this effort please let me know.</p>\n<p>Thanks,<br />\nJon</p>"
+    },
+    {
+      "id": 81241,
+      "postNumber": 12,
+      "createdAt": "2022-03-29T04:26:39.093Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>Matias here!</p>\n<p>A fix related to this has been deployed. Please let us know via email at <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> if you continue seeing any issues <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 83627,
+      "postNumber": 13,
+      "createdAt": "2022-04-21T16:27:11.361Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>I am experiencing this again. Anybody else?</p>"
+    },
+    {
+      "id": 83648,
+      "postNumber": 14,
+      "createdAt": "2022-04-21T19:09:27.326Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Sorry… my bad. It got better after I took a break. <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

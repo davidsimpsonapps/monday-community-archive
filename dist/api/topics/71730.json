@@ -1,0 +1,61 @@
+{
+  "id": 71730,
+  "title": "Column Status Labels Missing",
+  "slug": "column-status-labels-missing",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-28T23:10:35.916Z",
+  "lastPostedAt": "2023-11-29T12:06:52.585Z",
+  "postsCount": 4,
+  "excerpt": "I am running into a problem where while creating a column with a status type and creating the possible labels, some labels are not appearing. However, the return json shows they are there and the column summary also show&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 308,
+  "posts": [
+    {
+      "id": 155192,
+      "postNumber": 1,
+      "createdAt": "2023-11-28T23:10:36.003Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I am running into a problem where while creating a column with a status type and creating the possible labels, some labels are not appearing. However, the return json shows they are there and the column summary also shows there is a value there.</p>\n<p>Any idea what may be causing this? Am I hitting some sort of limit?</p>\n<p>Note, I skip label 5 because <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> sets label 5 as the default empty value.</p>\n<pre><code class=\"lang-auto\">def create_columns(board_id, title, column_type, default_values=None):\n    if default_values:\n        vals_dict = {}\n        for cnt, vals in enumerate(default_values):\n            if cnt == 4:\n                cnt += 1\n            vals_dict[cnt + 1] = vals\n        status_values = {\"labels\": vals_dict}\n    else:\n        status_values = ''\n\n    query = \"\"\"\n    mutation ($boardId: ID!, $titleName: String!, $columnType: ColumnType!, $defaultValues: JSON) {\n        create_column(\n            board_id: $boardId\n            title: $titleName\n            column_type: $columnType\n            defaults: $defaultValues\n        ) {\n            id\n            title\n        }\n    }\n    \"\"\"\n\n    variables = {\n    'boardId': board_id,\n    'titleName': title,\n    'columnType': column_type,\n    'defaultValues': json.dumps(status_values, separators=(',', ':'))\n    }\n\n    datas = {\n    'query': query,\n    'variables': variables\n    }\n\n    r_boards = requests.post(url=apiUrl, headers=headers, data=json.dumps(datas)) # make request\n    print(variables)\n    print(r_boards.json())\n\n    return r_boards\n\n&gt;&gt;&gt;\n{'boardId': '1234', 'titleName': 'Location', 'columnType': 'status', 'defaultValues': '{\"labels\":{\"1\":\"label one\",\"2\":\"label two\",\"3\":\"label three\",\"4\":\"label four\",\"6\":\"label six\",\"7\":\"label seven\",\"8\":\"label eight\",\"9\":\"label nine\",\"10\":\"label ten\",\"11\":\"label eleven\",\"12\":\"label twelve\",\"13\":\"label thirteen\",\"14\":\"label fourteen\",\"15\":\"label fifteen\",\"16\":\"label sixteen\",\"17\":\"label seventeen\",\"18\":\"label eighteen\",\"19\":\"label nineteen\",\"20\":\"label twenty\",\"21\":\"label twenty one\",\"22\":\"label twenty two\"}}'}\n\n{'data': {'create_column': {'id': 'location', 'title': 'Location'}}, 'account_id': 12345}\n</code></pre>\n<p><strong>Column Labels</strong><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/c/bc5f980f047d0cdb9f29f97e7abcf3bd0907ba03.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/c/bc5f980f047d0cdb9f29f97e7abcf3bd0907ba03_2_671x500.png\" alt=\"image\" width=\"671\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">881×656 31.4 KB</span></div></a></div><p></p>\n<p><strong>When a item with “label twenty” is created</strong><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/8/c8150e8d90d47d3984d53d0efe574818ce1dae8c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/8/c8150e8d90d47d3984d53d0efe574818ce1dae8c.png\" alt=\"image\" width=\"690\" height=\"320\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">710×330 6.93 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 155231,
+      "postNumber": 2,
+      "createdAt": "2023-11-29T01:27:43.549Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>OOH! You’re discovering the range of indexes is sparse! The range is 0-19, 101-110, 151-160. And of course you already remembered 5 is special.</p>\n<p>Here is a list of all the valid <a href=\"https://view.monday.com/1073554546-ad9f20a427a16e67ded630108994c11b?r=use1\">indexes and colors</a></p>"
+    },
+    {
+      "id": 155247,
+      "postNumber": 3,
+      "createdAt": "2023-11-29T04:50:47.244Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Nice! Do you know why those index ranges are sparse or why those particular ranges? Those ranges can’t be random, but that seems very odd to limit it.</p>"
+    },
+    {
+      "id": 155307,
+      "postNumber": 4,
+      "createdAt": "2023-11-29T11:47:21.560Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 155313,
+      "postNumber": 5,
+      "createdAt": "2023-11-29T12:06:52.585Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I do not have an answer for that. My suspicion is that they are groups of colors they intended to work together.  the 101-110 range seems to be used for the “Label” column type (which is just a special implementation of “Status”)</p>\n<p>But it sure seems like it can lead to some pains coding.</p>"
+    },
+    {
+      "id": 155511,
+      "postNumber": 6,
+      "createdAt": "2023-11-30T08:27:28.737Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

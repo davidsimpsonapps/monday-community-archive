@@ -1,0 +1,28 @@
+{
+  "id": 40270,
+  "title": "Add_file_to_column via cURL - ChangeColumnValueError",
+  "slug": "add-file-to-column-via-curl-changecolumnvalueerror",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    41,
+    94,
+    351
+  ],
+  "createdAt": "2022-08-02T08:47:47.141Z",
+  "lastPostedAt": "2022-08-02T08:47:47.228Z",
+  "postsCount": 1,
+  "excerpt": "Hey Monday-Team, \nI’m having trouble adding a file to a column one by one with cURL. \nI’m using the the following example and can successfully add a file to a column: \n\t\t\t\t// Connect the API and send the file.\n\t\t\t\t\t\t$cur&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 911,
+  "posts": [
+    {
+      "id": 93287,
+      "postNumber": 1,
+      "createdAt": "2022-08-02T08:47:47.228Z",
+      "author": "patrick_posner (Patrick Posner)",
+      "cookedHtml": "<p>Hey Monday-Team,</p>\n<p>I’m having trouble adding a file to a column one by one with cURL.<br />\nI’m using the the following example and can successfully add a file to a column:</p>\n<pre><code class=\"lang-auto\">\t\t\t\t// Connect the API and send the file.\n\t\t\t\t\t\t$curl = curl_init();\n\n\t\t\t\t\t\tcurl_setopt_array( $curl, array(\n\t\t\t\t\t\t\tCURLOPT_URL            =&gt; 'https://api.monday.com/v2/file',\n\t\t\t\t\t\t\tCURLOPT_RETURNTRANSFER =&gt; true,\n\t\t\t\t\t\t\tCURLOPT_ENCODING       =&gt; '',\n\t\t\t\t\t\t\tCURLOPT_MAXREDIRS      =&gt; 10,\n\t\t\t\t\t\t\tCURLOPT_TIMEOUT        =&gt; 0,\n\t\t\t\t\t\t\tCURLOPT_FOLLOWLOCATION =&gt; true,\n\t\t\t\t\t\t\tCURLOPT_HTTP_VERSION   =&gt; CURL_HTTP_VERSION_1_1,\n\t\t\t\t\t\t\tCURLOPT_CUSTOMREQUEST  =&gt; 'POST',\n\t\t\t\t\t\t\tCURLOPT_POSTFIELDS     =&gt; array(\n\t\t\t\t\t\t\t\t'query'           =&gt; 'mutation ($file: File!, $item_id: Int!, $column_id: String!) { add_file_to_column ( item_id:$item_id, column_id: $column_id, file: $file) { id}}',\n\t\t\t\t\t\t\t\t'variables'       =&gt; '{\"item_id\":' . $item_id . ', \"column_id\": \"' . $column_id . '\"}',\n\t\t\t\t\t\t\t\t'map'             =&gt; '{\"application/pdf\":\"variables.file\"}',\n\t\t\t\t\t\t\t\t'application/pdf' =&gt; new \\CURLFILE( $file )\n\t\t\t\t\t\t\t),\n\t\t\t\t\t\t\tCURLOPT_HTTPHEADER     =&gt; array(\n\t\t\t\t\t\t\t\t'Authorization: ' . $token\n\t\t\t\t\t\t\t),\n\t\t\t\t\t\t) );\n\n\t\t\t\t\t\t$response = curl_exec( $curl );\n\t\t\t\t\t\tcurl_close( $curl );\n</code></pre>\n<p>What I’m trying to do now is the exact same thing, but with an array of files.<br />\nSo for each iteration I set the column_id and the path to the file and run a new cURL connection:</p>\n<pre><code class=\"lang-auto\">foreach ( $file_entry as $column_id =&gt; $file ) {\n\n\t\t\t\t\t\t// Connect the API and send the file.\n\t\t\t\t\t\t$curl = curl_init();\n\n\t\t\t\t\t\tcurl_setopt_array( $curl, array(\n\t\t\t\t\t\t\tCURLOPT_URL            =&gt; 'https://api.monday.com/v2/file',\n\t\t\t\t\t\t\tCURLOPT_RETURNTRANSFER =&gt; true,\n\t\t\t\t\t\t\tCURLOPT_ENCODING       =&gt; '',\n\t\t\t\t\t\t\tCURLOPT_MAXREDIRS      =&gt; 10,\n\t\t\t\t\t\t\tCURLOPT_TIMEOUT        =&gt; 0,\n\t\t\t\t\t\t\tCURLOPT_FOLLOWLOCATION =&gt; true,\n\t\t\t\t\t\t\tCURLOPT_HTTP_VERSION   =&gt; CURL_HTTP_VERSION_1_1,\n\t\t\t\t\t\t\tCURLOPT_CUSTOMREQUEST  =&gt; 'POST',\n\t\t\t\t\t\t\tCURLOPT_POSTFIELDS     =&gt; array(\n\t\t\t\t\t\t\t\t'query'           =&gt; 'mutation ($file: File!, $item_id: Int!, $column_id: String!) { add_file_to_column ( item_id:$item_id, column_id: $column_id, file: $file) { id}}',\n\t\t\t\t\t\t\t\t'variables'       =&gt; '{\"item_id\":' . $item_id . ', \"column_id\": \"' . $column_id . '\"}',\n\t\t\t\t\t\t\t\t'map'             =&gt; '{\"application/pdf\":\"variables.file\"}',\n\t\t\t\t\t\t\t\t'application/pdf' =&gt; new \\CURLFILE( $file )\n\t\t\t\t\t\t\t),\n\t\t\t\t\t\t\tCURLOPT_HTTPHEADER     =&gt; array(\n\t\t\t\t\t\t\t\t'Authorization: ' . $token\n\t\t\t\t\t\t\t),\n\t\t\t\t\t\t) );\n\n\t\t\t\t\t\t$response = curl_exec( $curl );\n\n\t\t\t\t\t\tcurl_close( $curl );\n\n\t\t\t\t\t}\n</code></pre>\n<p>A key/value pair of the array looks like this:</p>\n<p>[02-Aug-2022 11:01:18 UTC] file<br />\n[02-Aug-2022 11:01:18 UTC] /sites/mywebsite.com/files/wp-content/uploads/wp_dndcf7_uploads/wpcf7-files/myfile.pdf</p>\n<p>But once I send the cURL request within the iteration I’m always getting the following error:</p>\n<pre><code class=\"lang-auto\">\"{\\\"error_code\\\":\\\"ChangeColumnValueError\\\",\\\"status_code\\\":400,\\\"error_message\\\":\\\"no implicit conversion of Symbol into Integer\\\",\\\"error_data\\\":{\\\"error_reason\\\":\\\"automations.history.failed_trigger_details.error_reason.change_column_value_failed\\\"}}\"\n</code></pre>\n<p>Any help is greatly appreciated,<br />\nPatrick</p>"
+    }
+  ]
+}

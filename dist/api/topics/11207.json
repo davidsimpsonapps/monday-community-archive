@@ -1,0 +1,177 @@
+{
+  "id": 11207,
+  "title": "How to populate item column values from custom input trigger",
+  "slug": "how-to-populate-item-column-values-from-custom-input-trigger",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-09-15T10:48:31.480Z",
+  "lastPostedAt": "2020-10-12T18:46:12.771Z",
+  "postsCount": 23,
+  "excerpt": "Hi there :wave:, \nI’m building an IoT App, and I’m using a custom input trigger. Each time that a device send data, we should create a new item (service requests). \nMy custom input trigger looks like this: \n  \nAnd works &hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 3817,
+  "posts": [
+    {
+      "id": 28514,
+      "postNumber": 1,
+      "createdAt": "2020-09-15T10:48:31.565Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Hi there <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" />,<br />\nI’m building an IoT App, and I’m using a custom input trigger. Each time that a device send data, we should create a new item (service requests).<br />\nMy custom input trigger looks like this:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/dc70f312b78e84efa94119a08b18a5ad7ff8c34e.png\" title=\"inputtrigger\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/dc70f312b78e84efa94119a08b18a5ad7ff8c34e_2_593x500.png\" alt=\"inputtrigger\" width=\"593\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">inputtrigger</span><span class=\"informations\">876×738 27 KB</span>\n</div></a></div><br />\nAnd works well (tested with postman, 200 received, <img src=\"https://emoji.discourse-cdn.com/apple/ok_hand.png?v=12\" title=\":ok_hand:\" class=\"emoji\" alt=\":ok_hand:\" width=\"20\" height=\"20\" />)<br />\nSubscribe / unsubscribe is OK.<br />\nI’m trying to create an new item based on the output fields of this custom trigger. And I failed…<p></p>\n<p><strong>First try: with the action “Create an Item”</strong><br />\nI tried with a Item Column Values field, but I don’t know which format is required. I tried this:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5d1d69074da5e93885aa690f192041af9d0d76d3.png\" alt=\"image\" width=\"243\" height=\"210\" /><br />\nI receive a 200, but nothing happens.<br />\nAction trigger looks like this:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/8303242c3ad0f58b6137a41a527420e81d688530.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/8/8303242c3ad0f58b6137a41a527420e81d688530.png\" alt=\"image\" width=\"534\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">558×522 15.6 KB</span>\n</div></a></div><p></p>\n<p>Is there a doc somewhere to know the format of itemColumnValues?</p>\n<p><strong>Second try: with the action “Create an Item with mapping”</strong><br />\nLooks really promising (at least the title), but then, I’m lost:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/b0fc13d4ab918febefc77bddceaad8edbc0ff0dd.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/b0fc13d4ab918febefc77bddceaad8edbc0ff0dd_2_492x500.png\" alt=\"image\" width=\"492\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">597×606 18.8 KB</span>\n</div></a></div><p></p>\n<p>Same question: is there a doc somewhere or codes example?</p>"
+    },
+    {
+      "id": 28538,
+      "postNumber": 2,
+      "createdAt": "2020-09-15T12:01:36.749Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jeromeskiply\">@jeromeskiply</a></p>\n<p>Did you sign the request you send to the action part? It needs to be signed with your signing secret, something like this: (I store my signing secret in an envVars object)</p>\n<blockquote>\n<p>//Build the post header and body<br />\npostHeader = { Authorization: envVars.signingSecret };<br />\npostBody = {<br />\ntrigger: {<br />\noutputFields: {<br />\nboardId: event.boardId,<br />\nitemId: event.pulseId,<br />\n},<br />\n},<br />\n};</p>\n<p>//Build the request<br />\nconst actionRequest = {<br />\nurl: subscriptionUrl,<br />\nheaders: postHeader,<br />\nbody: JSON.stringify(postBody),<br />\n};</p>\n<p>//Post the request<br />\nrequest.post(actionRequest, function (error, response) {<br />\nif (error) throw new Error(error);<br />\n});</p>\n</blockquote>\n<p>Hope that make sense.</p>"
+    },
+    {
+      "id": 28542,
+      "postNumber": 3,
+      "createdAt": "2020-09-15T12:15:17.128Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,<br />\nYes I did, and I don’t have any auth trouble. I tested it with another action trigger (create item in group) and it works well.<br />\nWhat I need is the doc of the create item and create item with mapping action triggers.</p>"
+    },
+    {
+      "id": 28551,
+      "postNumber": 4,
+      "createdAt": "2020-09-15T12:58:06.386Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jeromeskiply\">@jeromeskiply</a></p>\n<p>Looks like I misunderstood your question. I did not had the need to create an item from the action part yet. I would guess itemValues needs to be formatted as a JSON and within it for each column a value as JSON?</p>"
+    },
+    {
+      "id": 28553,
+      "postNumber": 5,
+      "createdAt": "2020-09-15T13:18:16.492Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Yes, probably, I will do some tests. But for the name (see my screenshot), it doesn’t work, and name is an important one.<br />\nIt would be much easier with a doc <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 28558,
+      "postNumber": 6,
+      "createdAt": "2020-09-15T14:31:43.770Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>To me documentation is the most important missing piece of all API, automations, triggers, apps etc. Certainly room for improvement here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 28574,
+      "postNumber": 7,
+      "createdAt": "2020-09-15T15:36:00.190Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> <a class=\"mention\" href=\"/u/ben\">@Ben</a> <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> do you know if this documentation exists somewhere? How are you dealing with that internally?</p>"
+    },
+    {
+      "id": 28576,
+      "postNumber": 8,
+      "createdAt": "2020-09-15T15:56:25.720Z",
+      "author": "lalondesteve (Steve Lalonde)",
+      "cookedHtml": "<p>I’m investigating the same thing and didn’t really succeed yet.<br />\nI stumbled upon this page, maybe it’ll lead you further than me :<br />\n<a href=\"https://monday.com/developers/apps/dynamic-mapping\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://monday.com/developers/apps/dynamic-mapping</a></p>"
+    },
+    {
+      "id": 28618,
+      "postNumber": 9,
+      "createdAt": "2020-09-16T03:42:39.939Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/lalondesteve\">@lalondesteve</a>, I think this is probably where the solution stands. I will let you know if I manage to succeed.</p>"
+    },
+    {
+      "id": 28621,
+      "postNumber": 10,
+      "createdAt": "2020-09-16T04:27:13.139Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Solved! Thanks <a class=\"mention\" href=\"/u/lalondesteve\">@lalondesteve</a> I missed this page, and this was exactly what I needed.<br />\nIf you need help for your implementation, please ask.<br />\nCheers,</p>"
+    },
+    {
+      "id": 28624,
+      "postNumber": 11,
+      "createdAt": "2020-09-16T05:06:10.877Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jeromeskiply\">@jeromeskiply</a></p>\n<p>I am curious how you used the dynamic field mapping. I intend to use it for two custom fields that are dependent (CF2 is depending on input form CF1) and have troubles configuring this. When I set CF2 to type “Dynamic mapping” it shows up up the recipe configuration with input field setting for “Source entity” and \"Dependency. I got the Dependency dropdown filled, but still having trouble what I need to do to populate the Source Entity dropdown.</p>\n<p>          <a href=\"https://global.discourse-cdn.com/monday/original/2X/d/de8d2ba817efdf9c61925907834e77a40c665e97.png\" target=\"_blank\" rel=\"noopener\" class=\"onebox\">\n            <img src=\"https://global.discourse-cdn.com/monday/original/2X/d/de8d2ba817efdf9c61925907834e77a40c665e97.png\" width=\"690\" height=\"388\" />\n          </a>\n</p>"
+    },
+    {
+      "id": 28625,
+      "postNumber": 12,
+      "createdAt": "2020-09-16T05:18:48.868Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> I’m using it exactly the way of “Part 2” in the doc.<br />\nI created a custom field with key smilioDevice. I’m using a server side definition for the mapping.<br />\nEach time that a device send a message, I’m including the custom field key, with the fields included in the mapping.<br />\nAnd this creates the new item with the mapped data.<br />\nIf you want, I can show my screens, but basically this is very similar to the doc.<br />\nAnd it is very convenient, I love it.</p>"
+    },
+    {
+      "id": 28644,
+      "postNumber": 13,
+      "createdAt": "2020-09-16T11:45:02.217Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jeromeskiply\">@jeromeskiply</a>, <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> and <a class=\"mention\" href=\"/u/lalondesteve\">@lalondesteve</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Sorry I’m late to the help party here! I’m so excited to see our users help each other though, it’s literally breath-taking. <img src=\"https://emoji.discourse-cdn.com/apple/heart_eyes.png?v=9\" title=\":heart_eyes:\" class=\"emoji\" alt=\":heart_eyes:\" /></p>\n<p>Thank you for creating the thread and fostering a healthy discussion I’m glad that <a class=\"mention\" href=\"/u/lalondesteve\">@lalondesteve</a> was able to point you in the right direction here. Moreover, I’m glad to hear you’re enjoying the way we’ve set this up so far <a class=\"mention\" href=\"/u/jeromeskiply\">@jeromeskiply</a> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>To be transparent with you, I’ve discussed our docs in more detail with Dipro and we both came to the conclusion that it is crucial to make some improvements there. If it wouldn’t be asking for too much, we would really appreciate your input into the specifics of how things are laid out right now, and any adjustments and improvements you would suggest from your point of view as a user. If you could shoot me a PM on the forums here, I’d love to continue the discussion from there to make our documentation easier to digest and navigate.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 28646,
+      "postNumber": 14,
+      "createdAt": "2020-09-16T11:52:04.223Z",
+      "author": "jeromeskiply (Jerome Chambard)",
+      "cookedHtml": "<p>Ok <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> let’s do this.</p>"
+    },
+    {
+      "id": 28685,
+      "postNumber": 15,
+      "createdAt": "2020-09-16T15:57:13.894Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>\n<p>In general the documentation can certainly use a good refresh. Over the last months I was able to use a lot of features after numerous efforts and in some case using browser dev tools to see what is going on.</p>\n<p>For this specific one I do see example of inbound and outbound mapping, but no example how to create a dependency between two custom fields in an integration (monday &lt;&gt; monday) scenario.</p>"
+    },
+    {
+      "id": 29819,
+      "postNumber": 17,
+      "createdAt": "2020-09-29T06:56:13.405Z",
+      "author": "edogr1 (Edo Garavani)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, can you please explain your question further? What do you mean by creating a dependency between fields in Monday&lt;&gt;Monday scenario?</p>"
+    },
+    {
+      "id": 29847,
+      "postNumber": 18,
+      "createdAt": "2020-09-29T12:07:19.383Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/edogr1\">@edogr1</a></p>\n<p>I my recipe I want to use 2 custom fields (list type / dropdown), let’s call them CF1 and CF2. CF1 got its list of possible values from a call to the configured endpoint (all good). Now for CF2 I created another endpoint and the list of options to provide depends on the selected option in CF1. This all is within the same monday account (no external apps involved). The documentation seems to be tailored on external apps.</p>\n<p>When I set CF2 to type “Dynamic mapping” it shows up up the recipe configuration with input field setting for “Source entity” and \"Dependency. I got the Dependency dropdown filled, but still having trouble what I need to do to populate the Source Entity dropdown.</p>"
+    },
+    {
+      "id": 29907,
+      "postNumber": 19,
+      "createdAt": "2020-09-30T01:16:11.065Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Edo mentioned a week or so ago to me that this feature is coming soon!</p>\n<p>You would still need to have the custom field and process it as required, but it will allow remote dependencies as well</p>"
+    },
+    {
+      "id": 30826,
+      "postNumber": 20,
+      "createdAt": "2020-10-10T13:58:35.773Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi there,<br />\nSeem the documentation is a little changed with regards to item mapping, custom entities and dependencies. Maybe I overlooked this important note earlier:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/41cd617803d71c906a83dac936798e797127f639.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/41cd617803d71c906a83dac936798e797127f639_2_690x153.png\" alt=\"image\" width=\"690\" height=\"153\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1407×312 22.5 KB</span></div></a></div><p></p>\n<p>So, my next question is: are there any plans to support custom triggers to support mapping?</p>"
+    },
+    {
+      "id": 30952,
+      "postNumber": 21,
+      "createdAt": "2020-10-12T18:17:38.311Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> You can use Custom Triggers with Item Mapping using Part 3 from the documentation here - <a href=\"https://monday.com/developers/apps/dynamic-mapping\">https://monday.com/developers/apps/dynamic-mapping</a></p>"
+    },
+    {
+      "id": 30953,
+      "postNumber": 22,
+      "createdAt": "2020-10-12T18:22:31.663Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a></p>\n<p>Yes, I have tried this one, but it does not solve my requirement. What I am looking for is dependency between two custom fields (no need for item mapping at all). Let say I have fieldA and fieldB. FieldA get its choices from an endpoint and user can select. Then the choices for fieldB (to be provide by another endpoint) is dependent of the choice made by the user for fieldA.</p>\n<p>So, no need for incoming or outgoing item mapping. Just two custom fields that depend on each other.</p>"
+    },
+    {
+      "id": 30957,
+      "postNumber": 23,
+      "createdAt": "2020-10-12T18:46:12.771Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> Ahh I see, sorry I misunderstood.</p>\n<p>I believe it was in development but I am not sure what the ETA on it is.</p>"
+    },
+    {
+      "id": 43626,
+      "postNumber": 24,
+      "createdAt": "2021-03-05T16:09:43.123Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

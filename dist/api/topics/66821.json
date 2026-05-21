@@ -1,0 +1,35 @@
+{
+  "id": 66821,
+  "title": "Create an Item using Python dictionary",
+  "slug": "create-an-item-using-python-dictionary",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    139,
+    351
+  ],
+  "createdAt": "2023-09-23T13:57:00.948Z",
+  "lastPostedAt": "2023-09-26T02:00:42.220Z",
+  "postsCount": 2,
+  "excerpt": "I want to create an item using Python, I have the following dictionary: \nitem_data = { \n“account_contact”: “account_contact”, \n“people”: “people”, \n“status0”: ‘{status0: “status0”}’, \n“numbers”: 987, \n“numbers8”: 45847, \n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 238,
+  "posts": [
+    {
+      "id": 145268,
+      "postNumber": 1,
+      "createdAt": "2023-09-23T13:57:01.035Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p>I want to create an item using Python, I have the following dictionary:<br />\nitem_data = {<br />\n“account_contact”: “account_contact”,<br />\n“people”: “people”,<br />\n“status0”: ‘{status0: “status0”}’,<br />\n“numbers”: 987,<br />\n“numbers8”: 45847,<br />\n“date”: ‘{“date”:“2023-07-01”}’,<br />\n“formula”: None,<br />\n“numbers7”: “7”,<br />\n“formula3”: None,<br />\n“status8”: “status8”,<br />\n“date3”: ‘{“date”:“2023-07-01”}’}</p>\n<p>I want to execute the following:<br />\nquery = ‘’‘mutation {<br />\ncreate_item(board_id: 0000000000000, item_name: “new item from Python abc”, column_values: ‘’’ + json.dumps(item_data).replace(‘\"’, ‘\"’) + ‘’‘) {<br />\nid<br />\n}<br />\n}’‘’</p>\n<p>print(query)</p>\n<h1><a name=\"p-145268-mutation-1\" class=\"anchor\" href=\"#p-145268-mutation-1\"></a>mutation {</h1>\n<pre><code>create_item(board_id: 5203759868, item_name: \"new item from Python abc\", column_values: {\"account_contact\": \"account_contact\", \"people\": \"people\", \"status0\": \"{status0: \\\"status0\\\"}\", \"numbers\": 987, \"numbers8\": 45847, \"date\": \"{\\\"date\\\":\\\"2023-07-01\\\"}\", \"formula\": null, \"numbers7\": \"7\", \"formula3\": null, \"status8\": \"status8\", \"date3\": \"{\\\"date\\\":\\\"2023-07-01\\\"}\"}) {\n    id\n}\n</code></pre>\n<p>}</p>\n<p>query_to_run = {‘query’: query}</p>\n<p>r = requests.post(url=apiUrl, json=query_to_run, headers=MONDAY_HEADERS)</p>\n<p>I am getting the following error:<br />\n[{‘message’: ‘Parse error on “account_contact” (STRING) at [2, 94]’, ‘locations’: [{‘line’: 2, ‘column’: 94}]}]</p>"
+    },
+    {
+      "id": 145507,
+      "postNumber": 2,
+      "createdAt": "2023-09-26T02:00:42.220Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey! The column values needs to be a JSON string, which is why you’re getting an error.</p>\n<p>Instead of doing string concatenation, I’d use GraphQL variables here - it’s less error-prone and handles JSON strings a bit more elegantly: <a href=\"https://graphql.org/learn/queries/#variables\">https://graphql.org/learn/queries/#variables</a></p>\n<p>The way to use it is the following:</p>\n<p>Step 1 - replace the column values JSON with a variable in your mutation:</p>\n<pre><code class=\"lang-auto\">mutation ($colVals:JSON!) {\n  create_item(board_id: 000000000000, item_name: “new item from Python abc”, column_values: $colVals) {\n    id\n  }\n}\n</code></pre>\n<p>step 2 - pass the dictionary (as a string) as a variable in the final http request -</p>\n<pre><code class=\"lang-auto\">{\n  \"query\" : \"mutation($colVals:JSON!) { ... }\",\n  \"variables\" : {\n    \"colVals\": \"{ \\\"account_contact\\\" : \\\"account_contact\\\", ... }\"\n}\n</code></pre>"
+    }
+  ]
+}

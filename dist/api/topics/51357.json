@@ -1,0 +1,50 @@
+{
+  "id": 51357,
+  "title": "Subscription Questions",
+  "slug": "subscription-questions",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    208,
+    209,
+    249,
+    351
+  ],
+  "createdAt": "2023-02-10T18:51:04.587Z",
+  "lastPostedAt": "2023-02-11T21:59:16.354Z",
+  "postsCount": 4,
+  "excerpt": "I have a few questions about using the built-in monetization. I’d ideally like to retrieve the subscription object and be able to deterministically determine my apps usage against the subscription given that state (and s&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 812,
+  "posts": [
+    {
+      "id": 114973,
+      "postNumber": 1,
+      "createdAt": "2023-02-10T18:51:04.667Z",
+      "author": "dcwilson (David Wilson)",
+      "cookedHtml": "<p>I have a few questions about using the built-in monetization. I’d ideally like to retrieve the subscription object and be able to deterministically determine my apps usage against the subscription given that state (and some record keeping on my end).</p>\n<p>Say my app provides 1000 queries per month to paying users. The subscription object looks like this:</p>\n<pre><code class=\"lang-auto\">app_subscription {\n    plan_id\n    is_trial\n    renewal_date\n    billing_period\n    days_left\n  }\n</code></pre>\n<p>Since I don’t have the start/end dates of the current period, it seems difficult to count the number of queries within the monthly period since I don’t know when in the month the subscription started.</p>\n<p>If the subscriptions are pro-rated based on the calendar months, I can just count usage based on calendar months per subscriber, which isn’t too hard. Is this the case?</p>\n<p>If not, I could try to listen to some of the webhook events and track subscription changes this myself, but if I miss a webhook, this will get out of sync quickly.</p>\n<p>All this has me considering building out my monetization on an external vendor instead of with Monday, but I thought I would check in and see if there was some guidance around determining the current usage tracking interval from the subscription object.</p>"
+    },
+    {
+      "id": 114977,
+      "postNumber": 2,
+      "createdAt": "2023-02-10T20:47:50.821Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Subscriptions are either monthly or yearly, so you can work out the start date based on the days left and the billing period.</p>\n<p>You can then figure out when the next month ends and check a user’s usage accordingly.</p>"
+    },
+    {
+      "id": 114978,
+      "postNumber": 3,
+      "createdAt": "2023-02-10T20:57:40.249Z",
+      "author": "dcwilson (David Wilson)",
+      "cookedHtml": "<p>Thanks, I think that makes sense. Are the monthly cycles 30 days? So I can find (30 - days left) days ago, and compute usage since that time?</p>\n<p>Yearly is also a puzzle since the 30 day partitions won’t divide into 365 days evenly.</p>"
+    },
+    {
+      "id": 115023,
+      "postNumber": 4,
+      "createdAt": "2023-02-11T21:59:16.354Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>No, monthly subscriptions are based a specific day of the month. So subscriptions that start on the 3rd renew on the third of the next month.</p>\n<p>As for yearly, I’d use the same policy — calculate what day of the month the subscription ends on (eg, the 28th) and then reset a user’s usage on that day every month.</p>\n<p>As for subscriptions that start on the 31st, it’s up to you how you want to calculate it. For simplicity, you can just reset usage on the last day of the month (even if the month has 28 days).</p>\n<p>Frankly, don’t overthink it. What matters to customers is that your policy will be <em>consistent</em> and <em>transparent</em>. As long as your policy makes reasonable sense and you let your customers know about it in your product documentation, you will be fine <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

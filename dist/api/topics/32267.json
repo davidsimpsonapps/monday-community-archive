@@ -1,0 +1,39 @@
+{
+  "id": 32267,
+  "title": "Inconsistent API response for passing strings exceeding 255 characters",
+  "slug": "inconsistent-api-response-for-passing-strings-exceeding-255-characters",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-02-27T22:44:08.341Z",
+  "lastPostedAt": "2022-03-01T09:19:47.746Z",
+  "postsCount": 3,
+  "excerpt": "I’m working on error handling and want to be sure I’m covering some bases to provide more suitable user-facing error messaging. In doing so, I’ve noticed what appears to be some inconsistency in how the API responds to m&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 985,
+  "posts": [
+    {
+      "id": 78438,
+      "postNumber": 1,
+      "createdAt": "2022-02-27T22:44:08.437Z",
+      "author": "riosd (Danny)",
+      "cookedHtml": "<p>I’m working on error handling and want to be sure I’m covering some bases to provide more suitable user-facing error messaging. In doing so, I’ve noticed what appears to be some inconsistency in how the API responds to mutations on text inputs.</p>\n<p>Namely, I’ve compared three mutations:</p>\n<ul>\n<li>create_workspace</li>\n<li>create_board</li>\n<li>create_item</li>\n</ul>\n<p><strong>Sample input</strong> (length: 256): <code>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuv</code></p>\n<ol>\n<li><strong>Create a workspace</strong></li>\n</ol>\n<p>The workspace is created given the sample input with no error response (200 nor non-200).  However, the workspace’s name is silently truncated to 255 characters.</p>\n<ol>\n<li><strong>Create a board</strong></li>\n</ol>\n<p>The board is unable to be created, throwing a <code>CreateBoardException</code> (400).</p>\n<pre><code class=\"lang-json\">{\n  \"error_code\": \"CreateBoardException\",\n  \"status_code\": 400,\n  \"error_message\": \"Failed to create board\",\n  \"error_data\": {}\n}\n</code></pre>\n<ol>\n<li><strong>Create an item</strong></li>\n</ol>\n<p>The item is unable to be created, throwing an <code>ItemNameTooLongException</code> (200).</p>\n<pre><code class=\"lang-json\">{\n  \"error_code\": \"ItemNameTooLongException\",\n  \"status_code\": 200,\n  \"error_message\": \"item_name is too long. Item names must be below 256 characters.\",\n  \"error_data\": {\n    \"item_name\": \"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuv\"\n  }\n}\n</code></pre>\n<p>So, my questions are:</p>\n<ol>\n<li>Shouldn’t workspace creation throw an exception? While the workspace was indeed created, it was not created with the query specified.</li>\n<li>Creating a board and creating an item both failed for the same reason: the name exceeded 255 characters. So, why the different status codes?</li>\n</ol>"
+    },
+    {
+      "id": 78570,
+      "postNumber": 2,
+      "createdAt": "2022-03-01T09:19:47.746Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/riosd\">@riosd</a>!</p>\n<p>I hear what you say about different status codes for an issue that originates from the same source. I will pass this feedback to our team so that they can review the error codes and messages.</p>\n<p>I will also share your experience with the creation of the workspace and the issue of not getting an exception.</p>\n<p>All feedback is very useful for us so thank you very much <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 79175,
+      "postNumber": 3,
+      "createdAt": "2022-03-08T09:20:29.345Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

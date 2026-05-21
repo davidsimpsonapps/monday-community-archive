@@ -1,0 +1,54 @@
+{
+  "id": 39805,
+  "title": "Custom actions not triggering the endpoint",
+  "slug": "custom-actions-not-triggering-the-endpoint",
+  "categoryId": 7,
+  "tagIds": [
+    5,
+    207
+  ],
+  "createdAt": "2022-07-25T14:05:23.956Z",
+  "lastPostedAt": "2024-03-25T21:19:56.269Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nAnybody help me in configuring the custom actions to my board. I am choosing this option since i am unable to verify the origin as Monday.com of my webhook.simillar issue related to this thread - Voted \nVerify webho&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2127,
+  "posts": [
+    {
+      "id": 92449,
+      "postNumber": 1,
+      "createdAt": "2022-07-25T14:05:24.037Z",
+      "author": "Venkateshwaran (Venkateshwaran Krishnakumar)",
+      "cookedHtml": "<p>Hi,</p>\n<p>Anybody help me in configuring the custom actions to my board. I am choosing this option since i am unable to verify the origin as <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> of my webhook.simillar issue related to this thread - Voted</p>\n<h1><a name=\"p-92449-verify-webhook-origin-as-mondaycomhttpscommunitymondaycomtverify-webhook-origin-as-monday-com20927-1\" class=\"anchor\" href=\"#p-92449-verify-webhook-origin-as-mondaycomhttpscommunitymondaycomtverify-webhook-origin-as-monday-com20927-1\"></a><a href=\"https://community.monday.com/t/verify-webhook-origin-as-monday-com/20927\">Verify webhook origin as Monday.com</a></h1>\n<p>I have created the custom action and recipe. It is added to the board. When i do any changes to the board, the integration is started executing and It was in progress for an hour and later it got failed as mentioned in the screenshot below. Not sure what is the issue.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/88613ead9942cc84b36a3814ea45353be11b46af.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/88613ead9942cc84b36a3814ea45353be11b46af_2_690x61.png\" alt=\"image\" width=\"690\" height=\"61\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1527×136 14.5 KB</span></div></a></div><p></p>\n<p>For your note, i am able to hit the endpoint from postman.</p>"
+    },
+    {
+      "id": 92451,
+      "postNumber": 2,
+      "createdAt": "2022-07-25T14:16:34.176Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/venkateshwaran\">@Venkateshwaran</a></p>\n<p>How is your action endpoint configured?</p>\n<ul>\n<li>are you sure the run URL (in combination with the base URL) is correct?</li>\n<li>Which input fields are configured and are you sure the standard trigger provide these fields as output?</li>\n</ul>"
+    },
+    {
+      "id": 92474,
+      "postNumber": 3,
+      "createdAt": "2022-07-25T16:17:34.699Z",
+      "author": "Venkateshwaran (Venkateshwaran Krishnakumar)",
+      "cookedHtml": "<p>Thanks for your response.</p>\n<p>Sorry, I missed the base url part. But now i have tried by adding the base url and run url is (baseurl + relative resource path). But still facing the same issue. I have configured any authorization url.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d7fa07c0cfe7e2151059a20b120ec81787d2863e.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/d7fa07c0cfe7e2151059a20b120ec81787d2863e_2_690x74.png\" alt=\"image\" width=\"690\" height=\"74\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1516×164 15.8 KB</span>\n</div></a></div><p></p>\n<p>Yes I have configured the itemid as input field. The standard trigger is item created.</p>\n<p>Not sure what i am missing. I am new to this.</p>"
+    },
+    {
+      "id": 92494,
+      "postNumber": 4,
+      "createdAt": "2022-07-25T17:57:31.605Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>When you say that you have not configured authorization url is that the url in the OAuth scope. If so, that’s ok, you don’t need to have one. What you have to do is to authenticate the request coming from monday. In NodeJS you would add your endpoint something like this:</p>\n<pre><code class=\"lang-auto\">router.post(\"/autoid-column/recipeaction\", authenticationMiddleware.authMonday, autoIdColumnController.recipeAction);\n</code></pre>\n<p>The authenticationMiddleware is used to authenticate the request send to you by monday. You authenticate the request with your sigingSecret</p>\n<pre><code class=\"lang-auto\">  try {\n    let { authorization } = req.headers;\n    if (!authorization &amp;&amp; req.query) {\n      authorization = req.query.shortLivedToken;\n    }\n    const { accountId, userId, backToUrl } = jwt.verify(authorization, envVars.signingSecret);\n    req.session = { accountId, userId, backToUrl };\n    next();\n  } catch (err) {\n    res.status(401).json({ error: \"not authenticated\" });\n  }\n</code></pre>\n<p>When monday posts to your endpoint you will receive a encrypted shortLivedToken  (to be decrypted with your sigingSecret) that can be used to make the monday API call.</p>\n<pre><code class=\"lang-auto\">async function recipeAction(req, res) {\n  const { payload } = req.body;\n  const { inputFields } = payload;\n  const { boardId, itemId } = inputFields;\n  const { authorization } = req.headers;\n\n  const { accountId, userId, aud, exp, iat, shortLivedToken } = jwt.verify(authorization, envVars.signingSecret);\n</code></pre>\n<p>Hope that helps to get you started.</p>"
+    },
+    {
+      "id": 175014,
+      "postNumber": 5,
+      "createdAt": "2024-03-25T21:19:56.269Z",
+      "author": "pranavmehendiratta (Pranav Mehendiratta)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>I’m facing a similar issue and was wondering if there are any logs in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> to help debug this. Below is the route and authentication middleware. When I trigger this action from a button neither does it give any error message nor does it call the api i.e. the print statement is not being called in the <code>executeAction</code> function. I have created a tunnel for which the base url look like <code>https://[random_string].apps-tunnel.monday.com</code>. I am able to access both the base url and <code>/health</code> which are provided in the Quickstart-integration code through a get request from the browser. I have provided the above base url to the feature and the path in the workflow blocks &gt; action &gt; api configuration is <code>/monday/executeAction</code>. Is there a way to see the logs of what <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> is trying to call?</p>\n<p>Complete index.js from Quickstart-integration</p>\n<pre><code class=\"lang-auto\">const router = require('express').Router();\nconst mondayRoutes = require('./monday');\nconst authenticationMiddleware = require('../middlewares/authentication');\n\nrouter.use(mondayRoutes);\n\nrouter.get('/', function (req, res) {\n  res.json(getHealth());\n});\n\nrouter.get('/health', function (req, res) {\n  res.json(getHealth());\n  res.end();\n});\n\nrouter.post(\"/monday/executeAction\", authenticationMiddleware.authenticationMiddleware, executeAction);\n\nfunction executeAction(req, res) {\n  console.log(\"executeAction\");\n  res.send(\"Health check done\"); \n}\n\n\nfunction getHealth() {\n  return {\n    ok: true,\n    message: 'Healthy',\n  };\n}\n\nmodule.exports = router;\n\n</code></pre>\n<p>Complete authentication.js</p>\n<pre><code class=\"lang-auto\">const jwt = require('jsonwebtoken');\n\nasync function authenticationMiddleware(req, res, next) {\n  console.log(\"Inside authenticationMiddleware\")\n  try {\n    let { authorization } = req.headers;\n    if (!authorization &amp;&amp; req.query) {\n      authorization = req.query.token;\n    }\n    const { accountId, userId, backToUrl, shortLivedToken } = jwt.verify(\n      authorization,\n      process.env.MONDAY_SIGNING_SECRET\n    );\n    req.session = { accountId, userId, backToUrl, shortLivedToken };\n    next();\n  } catch (err) {\n    console.error(err);\n    res.status(401).json({ error: 'not authenticated' });\n  }\n}\n\nmodule.exports = {\n  authenticationMiddleware,\n};\n</code></pre>"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "id": 102736,
+  "title": "Pulling Specific Columns in a Group Data into Google Sheet",
+  "slug": "pulling-specific-columns-in-a-group-data-into-google-sheet",
+  "categoryId": 58,
+  "tagIds": [
+    5,
+    13,
+    38,
+    94,
+    165,
+    166,
+    167
+  ],
+  "createdAt": "2024-11-10T07:38:18.180Z",
+  "lastPostedAt": "2024-11-18T12:06:48.270Z",
+  "postsCount": 4,
+  "excerpt": "Hi everyone, so I am trying to pull specific columns for all items in a group using API. I need only items and not the subitems. I tried using this script on apps script but keep falling into error. I am a newbie and nee&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 17,
+  "posts": [
+    {
+      "id": 209339,
+      "postNumber": 1,
+      "createdAt": "2024-11-10T07:38:18.276Z",
+      "author": "Zubair2icy (Zubair Abdulqadir Okhayold)",
+      "cookedHtml": "<p>Hi everyone, so I am trying to pull specific columns for all items in a group using API. I need only items and not the subitems. I tried using this script on apps script but keep falling into error. I am a newbie and need guide:</p>\n<p>function importBoardItemsByGroup() {<br />\nconst apiKey = “YOUR_MONDAY_API_KEY”;<br />\nconst boardId = 3745952099;<br />\nconst groupId = “topics”; // The confirmed group ID for “Pre-Event”</p>\n<p>const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(“Sheet1”);<br />\nsheet.clear();</p>\n<p>// Query to get all items on the board and filter by group ID<br />\nconst query = <code>   {     boards(ids: ${boardId}) {       items {         group {           id         }         name         column_values {           title           text         }       }     }   }</code>;</p>\n<p>const options = {<br />\nmethod: “post”,<br />\ncontentType: “application/json”,<br />\nheaders: { Authorization: apiKey },<br />\npayload: JSON.stringify({ query: query })<br />\n};</p>\n<p>const response = UrlFetchApp.fetch(“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”, options);<br />\nconst data = JSON.parse(response.getContentText());<br />\nLogger.log(data); // Verify the structure of the returned data</p>\n<p>const headers = [“Item”, “Workshop Date”, “Ready 2WIA”, “Date Status”, “Type (Facilitator Location)”, “Facilitator”, “Firm / Company/Group”, “Topic”, “Fee”, “Contract”, “Numbers”];</p>\n<p>sheet.getRange(1, 1, 1, headers.length).setValues([headers]);</p>\n<p>if (!data.data || !data.data.boards || data.data.boards[0].items.length === 0) {<br />\nLogger.log(“No data found or items are empty.”);<br />\nreturn;<br />\n}</p>\n<p>// Filter items by the desired group ID<br />\nconst rows = data.data.boards[0].items<br />\n.filter(item =&gt; item.group.id === groupId)<br />\n.map(item =&gt; {<br />\nconst row = <span class=\"chcklst-box fa fa-square-o fa-fw\"></span>;<br />\nheaders.forEach(header =&gt; {<br />\nconst column = item.column_values.find(col =&gt; col.title === header);<br />\nrow.push(column ? column.text : “”);<br />\n});<br />\nreturn row;<br />\n});</p>\n<p>if (rows.length &gt; 0) {<br />\nsheet.getRange(2, 1, rows.length, headers.length).setValues(rows);<br />\n} else {<br />\nLogger.log(“No data found for the specified group.”);<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 209794,
+      "postNumber": 2,
+      "createdAt": "2024-11-13T13:42:41.741Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/zubair2icy\">@Zubair2icy</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>In this case, you can not query the items directly from the boards. You need to use the “items_page” query as explained <a href=\"https://developer.monday.com/api-reference/reference/items-page\">here</a>.</p>\n<p>You also need to add the “columns” object here to get the column’s data.</p>\n<p>This would be an example:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 7822773244) {\n    items_page {\n      items {\n        group {\n          id\n        }\n        name\n        column_values {\n          column {\n            title\n            id\n            type\n          }\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 210403,
+      "postNumber": 3,
+      "createdAt": "2024-11-17T11:34:41.558Z",
+      "author": "Zubair2icy (Zubair Abdulqadir Okhayold)",
+      "cookedHtml": "<p>Thank you. Worked. What if I want to pull the subitems for all the columns in a group. Is that possible?</p>"
+    },
+    {
+      "id": 210555,
+      "postNumber": 4,
+      "createdAt": "2024-11-18T12:06:48.270Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/zubair2icy\">@Zubair2icy</a>,</p>\n<p>Do you mean you want to get all the subitems for all the “items” inside a group?</p>\n<p>If so, you could use something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 7291403118) {\n    groups(ids: \"topics\") {\n      items_page {\n        items {\n          name\n          column_values {\n            column {\n              title\n              id\n              type\n            }\n            text\n          }\n          subitems {\n            name\n            id\n            column_values {\n              value\n              text\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>But I do recommend getting all the items with their IDs in one query, and then using another one to check the subitems (to avoid <a href=\"https://developer.monday.com/api-reference/docs/rate-limits\">rate limits issues</a>)</p>"
+    }
+  ]
+}

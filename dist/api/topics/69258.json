@@ -1,0 +1,82 @@
+{
+  "id": 69258,
+  "title": "Api version 2023_10. issues with changes with python script, how do we define the usage?",
+  "slug": "api-version-2023-10-issues-with-changes-with-python-script-how-do-we-define-the-usage",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-10-25T23:55:13.883Z",
+  "lastPostedAt": "2023-10-26T23:18:20.456Z",
+  "postsCount": 7,
+  "excerpt": "Is the header variable for API_Version. supported in the python environment? \nI was trying to set up an item query that works in the previous enviornment. \ntried setting \n\napiUrl = “https://api.monday.com/v2” \nheaders = &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 518,
+  "posts": [
+    {
+      "id": 150045,
+      "postNumber": 1,
+      "createdAt": "2023-10-25T23:55:13.971Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>Is the header variable for API_Version. supported in the python environment?</p>\n<p>I was trying to set up an item query that works in the previous enviornment.</p>\n<p>tried setting</p>\n<h3><a name=\"p-150045-h-1\" class=\"anchor\" href=\"#p-150045-h-1\"></a></h3>\n<p>apiUrl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {<br />\n“Authorization” : apiKey,<br />\n‘API-Version’ : ‘2023-10’<br />\n}</p>\n<h3><a name=\"p-150045-h-2\" class=\"anchor\" href=\"#p-150045-h-2\"></a></h3>\n<p>The query then fails with<br />\nerrors:  [{‘message’: ‘Type mismatch on variable $myBoardID and argument ids ([Int]! / [ID!])’, …</p>\n<p>I found an older reference to this error “<a href=\"https://community.monday.com/t/api-error-dimension-mismatch/18407\" class=\"inline-onebox\">API Error - Dimension mismatch</a>”</p>\n<p>but that doesnt help.</p>\n<p>Want to first confirm that the header approach  will work in Python?<br />\nThe documentation seems to focus on javascript.</p>"
+    },
+    {
+      "id": 150046,
+      "postNumber": 2,
+      "createdAt": "2023-10-25T23:56:16.287Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>or,  what is the correct way to reference the API version.</p>"
+    },
+    {
+      "id": 150101,
+      "postNumber": 3,
+      "createdAt": "2023-10-26T05:08:27.706Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/eric.white.au\">@eric.white.au</a></p>\n<p>Are you sure you are using the latest version of the API package? In NodeJS you need to update the npm package <code>monday-sdk-js</code> to the latest version, don’t know if there is something similar in Python.</p>"
+    },
+    {
+      "id": 150105,
+      "postNumber": 4,
+      "createdAt": "2023-10-26T05:30:12.926Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 150201,
+      "postNumber": 5,
+      "createdAt": "2023-10-26T16:21:06.949Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Using the header is the correct method in Python.</p>\n<p>As far as the error, I’d have to see your query - which is next step. It could be that you’re defining your variable types incorrectly. a board ID variable should be defined as <code>[ID!]</code></p>"
+    },
+    {
+      "id": 150233,
+      "postNumber": 6,
+      "createdAt": "2023-10-26T22:31:49.961Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p>As far as the error, I’d have to see your query - which is next step. It could be that you’re defining your variable types incorrectly. a board ID variable should be defined as <code>[ID!]</code></p>\n</blockquote>\n</aside>\n<p>Thanks Guys.</p>\n<p>Support got back to me, and Cody called it also.</p>\n<p>Need to change the references to Workspace and Boards to type.  ID not Int.</p>\n<p>getitems = 'query ($myBoardID: ID!)</p>"
+    },
+    {
+      "id": 150234,
+      "postNumber": 7,
+      "createdAt": "2023-10-26T22:33:28.866Z",
+      "author": "eric.white.au (Eric White)",
+      "cookedHtml": "<p>funny the error makes sense when you know…    <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 150236,
+      "postNumber": 8,
+      "createdAt": "2023-10-26T23:18:20.456Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>the ID/Int change is related to 2023-10, so it definitely was working with the header!</p>\n<p>That said, in the playground, it reports that it must be [ID!] not ID! - meaning it expects an array of IDs for the <code>board(ids: $boardIds){id, name}</code> even if its just one.</p>\n<p>Now its possible the GraphQL resolver tolerates either, and accepts an ID directly and not just an array of IDs - I would not count on it. The API schema specifies an array of IDs, and its entirely possible that the resolver could become more strict in the future and break your query.</p>\n<p>Its easy enough to solve though, and doesn’t change the response. It could also just be a typo here in the community and not what you’re even doing and I wasted the last 90 seconds writing that out!</p>"
+    },
+    {
+      "id": 150433,
+      "postNumber": 9,
+      "createdAt": "2023-10-29T11:56:51.711Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

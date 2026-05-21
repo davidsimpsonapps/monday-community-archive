@@ -1,0 +1,32 @@
+{
+  "id": 50098,
+  "title": "Monthly Revenue Recognition Formula Issues",
+  "slug": "monthly-revenue-recognition-formula-issues",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-01-26T09:44:27.997Z",
+  "lastPostedAt": "2023-01-27T12:48:58.806Z",
+  "postsCount": 2,
+  "excerpt": "Hello everyone, \nI’m trying to build a monthly revenue recognition board for support and maintenance invoice reminders, that takes the overall deal value for the contract and splits it into equal monthly values for each &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1475,
+  "posts": [
+    {
+      "id": 112366,
+      "postNumber": 1,
+      "createdAt": "2023-01-26T09:44:28.084Z",
+      "author": "redXIII (Alex)",
+      "cookedHtml": "<p>Hello everyone,<br />\nI’m trying to build a monthly revenue recognition board for support and maintenance invoice reminders, that takes the overall deal value for the contract and splits it into equal monthly values for each month that is activate between the start and end dates (see screenshot):</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/a902e451d5cfaa978dba6a2134339becf6c1f6ba.png\" title=\"revrec\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/a/a902e451d5cfaa978dba6a2134339becf6c1f6ba_2_690x175.png\" alt=\"revrec\" width=\"690\" height=\"175\" /><div class=\"meta\">\n<span class=\"filename\">revrec</span><span class=\"informations\">1788×454 43.5 KB</span>\n</div></a></div><p></p>\n<p>For the purposes of this question I have removed the value calculation which is a simple {Deal Value}/{Support Months} and replaced it with a “True” &amp; “False” values.</p>\n<p>In the screenshot I’d expect “Item 1” to have “True” against Jan23, Feb23 and Mar23, but as you can see only Feb is set to “True”, and similar can be said for the other items.</p>\n<p>My formulas in this version of the board are:<br />\nSupport Months = <code>ROUND(ROUND(DAYS({End Date}, {Start Date}),0)/30.4167, 0)</code></p>\n<p>Jan23 = <code>IF(AND(AND({Start Date}&gt;\"2023-01-01\",{Start Date}&lt;\"2023-01-31\"),AND({End Date}&gt;\"2023-01-1\",{End Date}&gt;\"2023-04-31\")), \"True\", \"False\")</code></p>\n<p>The other months are the same as Jan23 except the hardcoded dates reflect the month in question.</p>\n<p>In a previous version of the board I tried this formula for the month column:<br />\n<code>IF(AND(DATE(2023,1,1)&gt;=DATE(YEAR({Start Date}), MONTH({Start Date}), DAY({Start Date})),DATE(2023,1,1)&lt;=DATE(YEAR({End Date}), MONTH({End Date}), DAY({End Date}))),\"True\",\"False\")</code></p>\n<p>This formula worked better for the end date month, but the start date months still showed as false.</p>\n<p>I also tried converting this excel based method (<a href=\"https://superuser.com/questions/1201256/how-to-split-a-total-contract-value-into-equal-monthly-values-starting-from-the\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">worksheet function - How to split a total contract value into equal monthly values, starting from the contract start date, in Excel? - Super User</a>) into Monday which uses the start date and duration in months, but that also gave me similar results.</p>\n<p>I’ve also tried wrapping the date parts of the formulas in FORMAT_DATE() functions after reading a lot of posts explaining how Monday does date formulas but nothing has worked so far.  So if anyone can point me in the right direction on how to get this working, that would be awesome.</p>\n<p>Many thanks,<br />\nAlex</p>"
+    },
+    {
+      "id": 112558,
+      "postNumber": 2,
+      "createdAt": "2023-01-27T12:48:58.806Z",
+      "author": "redXIII (Alex)",
+      "cookedHtml": "<p>Feel free to close this thread I worked it out in the end with this formula:<br />\n<code>IF(AND(\"2023-01-31\"&gt;={Start Date},\"2023-01-01\"&lt;={End Date}),ROUND(DIVIDE({Deal Value},{Support Months}),2),\"N/A\")</code></p>\n<p>The issue was for the start date I needed to compare the end of the month in the relevant month column with the “Start Date”.</p>"
+    }
+  ]
+}

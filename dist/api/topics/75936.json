@@ -1,0 +1,47 @@
+{
+  "id": 75936,
+  "title": "Inserting Data into Tables from C#",
+  "slug": "inserting-data-into-tables-from-c",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-23T16:03:04.758Z",
+  "lastPostedAt": "2024-01-28T13:40:40.641Z",
+  "postsCount": 4,
+  "excerpt": "Hi, \nI have these two methods, that are made to, with retreived data, push data into a board on monday using C#. When these two methods are called, they are surrounded with a try catch: \nprivate string FormatDataForMonda&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 226,
+  "posts": [
+    {
+      "id": 163715,
+      "postNumber": 1,
+      "createdAt": "2024-01-23T16:03:04.876Z",
+      "author": "mfournier (Mathieu Fournier)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I have these two methods, that are made to, with retreived data, push data into a board on monday using C#. When these two methods are called, they are surrounded with a try catch:</p>\n<pre><code class=\"lang-auto\">private string FormatDataForMonday(List&lt;ResultItem&gt; databaseData)\n{\n    string mutationTemplate = @\"mutation { create_item (board_id: bID, item_name: \"\"Test\"\", column_values: {JSON_DATA} ) {id} }\";\n    string mutationQuery = mutationTemplate.Replace(\"bID\", boardId);\n\n    var formattedData = new\n    {\n        items = databaseData.Select(dataItem =&gt; new\n        {\n            Site = dataItem.Site,\n            EwqPn = dataItem.EwqPn,\n        }).ToList()\n    };\n\n    // Serializing the entire formattedData, including both Site and EwqPn\n    string jsonFormattedData = Newtonsoft.Json.JsonConvert.SerializeObject(formattedData.items);\n\n    mutationQuery = mutationQuery.Replace(\"{JSON_DATA}\", jsonFormattedData);\n\n    return mutationQuery;\n}\n\npublic async Task&lt;string&gt; QueryMondayApiV2(string query)\n{\n    byte[] dataBytes = System.Text.Encoding.UTF8.GetBytes(query);\n\n    try\n    {\n        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(MONDAY_API_URL);\n        request.ContentType = \"application/json\";\n        request.Method = \"POST\";\n        request.Headers.Add(\"Authorization\", API_KEY);\n\n        using (Stream requestBody = request.GetRequestStream())\n        {\n            await requestBody.WriteAsync(dataBytes, 0, dataBytes.Length);\n        }\n\n        using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())\n        using (Stream stream = response.GetResponseStream())\n        using (StreamReader reader = new StreamReader(stream))\n        {\n            string responseBody = await reader.ReadToEndAsync();\n\n            Console.WriteLine(\"Request Payload:\");\n            Console.WriteLine(query);\n            Console.WriteLine(\"Response Body:\");\n            Console.WriteLine(responseBody);\n\n            return responseBody;\n        }\n    }\n    catch (Exception ex)\n    {\n        Console.WriteLine($\"Error: {ex.ToString()}\");\n        throw;\n    }\n}\n</code></pre>\n<p>On the other hand, when I execute it, it catches an error 500. It seems like my JSON is correct, and the error would be triggered by something else. Here is the JSON that is created by FormatDataForMonday(). (The real board_id has been swapped for “boardId”) :</p>\n<p><code>mutation { create_item (board_id: \"boardId\", item_name: \"Test\", column_values: [{\"Site\":\"VTI\",\"EwqPn\":\"1370C-0153A\"}] ) {id} }</code></p>\n<p>My board inside <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> has all the columns that are needed to match what is in the JSON, but I feel like I’m overlooking something. Maybe someone has already ecountered something like this and could help me understand my problem.</p>\n<p>Thank you !</p>"
+    },
+    {
+      "id": 164145,
+      "postNumber": 2,
+      "createdAt": "2024-01-25T14:31:25.481Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mfournier\">@mfournier</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>This is the correct syntax for such a mutation:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(\n    board_id: 1234567890\n    item_name: \"Test\"\n    column_values: \"{\\\"status\\\":\\\"Done\\\",\\\"text\\\":\\\"1370C-0153A\\\"}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Please note that “status” and “text” are the column IDs, and not the column titles.</p>\n<p>You can find an example in Postman <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-8e47fb45-be09-440c-9429-fa6034a0440e\">here</a>.</p>\n<p>Hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 164198,
+      "postNumber": 3,
+      "createdAt": "2024-01-25T19:17:32.954Z",
+      "author": "mfournier (Mathieu Fournier)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>I resolved my problem. Yes it was about the syntax, but it was mostly a problem of strings between C# and GraphQL. Here are my modified methods, that can send values in a board using C# :</p>\n<pre><code class=\"lang-auto\">private string FormatDataForMonday(List&lt;ResultItem&gt; databaseData)\n{\n    string mutationQuery = \"mutation {create_item(board_id: bID,item_name: \\\"itemName\\\",column_values: \\\"{\\\\\\\"txtId1\\\\\\\":\\\\\\\"txtValue1\\\\\\\",\\\\\\\"txtId2\\\\\\\":\\\\\\\"txtValue2\\\\\\\"}\\\") {id}}\";\n    mutationQuery = mutationQuery.Replace(\"bID\", boardId);\n    mutationQuery = mutationQuery.Replace(\"\\\"itemName\\\"\", \"\\\"Item API2\\\"\");\n    mutationQuery = mutationQuery.Replace(\"\\\\\\\"txtId1\\\\\\\"\", \"\\\\\\\"texte\\\\\\\"\");\n    mutationQuery = mutationQuery.Replace(\"\\\\\\\"txtValue1\\\\\\\"\", \"\\\\\\\"test texte\\\\\\\"\");\n    mutationQuery = mutationQuery.Replace(\"\\\\\\\"txtId2\\\\\\\"\", \"\\\\\\\"texte5\\\\\\\"\");\n    mutationQuery = mutationQuery.Replace(\"\\\\\\\"txtValue2\\\\\\\"\", \"\\\\\\\"test texte\\\\\\\"\");\n\n    return mutationQuery;\n}\n\npublic async Task&lt;string&gt; QueryMondayApiV2(string query)\n{\n    try\n    {\n        using (HttpClient client = new HttpClient())\n        {\n            client.DefaultRequestHeaders.Add(\"Authorization\", API_KEY);\n\n\n            var body = new { query = query };\n            var response = await client.PostAsJsonAsync(MONDAY_API_URL, body);\n\n            if (response.IsSuccessStatusCode)\n            {\n                string responseBody = await response.Content.ReadAsStringAsync();\n                Console.WriteLine(\"Response Body:\");\n                Console.WriteLine(responseBody);\n\n                return responseBody;\n            }\n            else\n            {\n                Console.WriteLine($\"Error: {response.StatusCode} - {response.ReasonPhrase}\");\n            }\n        }\n    }\n    catch (Exception ex)\n    {\n        Console.WriteLine($\"Error: {ex.ToString()}\");\n    }\n\n    return null;\n}\n</code></pre>\n<p>Obviously, replacing strings inside of another string isn’t necessary, the text values can be entered directly in the first string.</p>"
+    },
+    {
+      "id": 164511,
+      "postNumber": 4,
+      "createdAt": "2024-01-28T13:40:40.641Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I am glad you found the solution <a class=\"mention\" href=\"/u/mfournier\">@mfournier</a> !</p>\n<p>Thank you for sharing your solution <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

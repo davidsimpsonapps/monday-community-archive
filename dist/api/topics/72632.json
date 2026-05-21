@@ -1,0 +1,75 @@
+{
+  "id": 72632,
+  "title": "Include info about trigger source in the custom action payload, to differentiate between user- and app-triggered events",
+  "slug": "include-info-about-trigger-source-in-the-custom-action-payload-to-differentiate-between-user-and-app-triggered-events",
+  "categoryId": 58,
+  "tagIds": [
+    5,
+    208
+  ],
+  "createdAt": "2023-12-06T12:06:46.785Z",
+  "lastPostedAt": "2023-12-12T12:54:47.934Z",
+  "postsCount": 8,
+  "excerpt": "Hi everyone. \nI’ve (and other devs) asked a similar question several months ago. \nI’ve proposed to add a couple of new fields to the payload sent to the custom action: \n\ntrigger_source_type: “user”, “app”, “date”, …;\ntri&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 225,
+  "posts": [
+    {
+      "id": 156502,
+      "postNumber": 1,
+      "createdAt": "2023-12-06T12:06:46.785Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi everyone.<br />\nI’ve (and other devs) asked a similar question several months ago.<br />\nI’ve proposed to add a couple of new fields to the payload sent to the custom action:</p>\n<ul>\n<li><code>trigger_source_type</code>: “user”, “app”, “date”, …;</li>\n<li><code>trigger_source_id</code>: user Id, app Id, …</li>\n</ul>\n<p><a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a> Is it something in your to-do list?</p>"
+    },
+    {
+      "id": 156870,
+      "postNumber": 2,
+      "createdAt": "2023-12-08T06:11:15.574Z",
+      "author": "anton1 (Anton)",
+      "cookedHtml": "<p>Although its propably a new topic I totally agree <a class=\"mention\" href=\"/u/rob\">@rob</a>, the triggering user (like in the screenshot) would also be very helpful in other scenarios <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=12\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 156914,
+      "postNumber": 3,
+      "createdAt": "2023-12-08T12:32:08.144Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rob\">@rob</a> you can get the triggering user in almost all integrations though already, with a user field and the source being “trigger output”.</p>"
+    },
+    {
+      "id": 156945,
+      "postNumber": 4,
+      "createdAt": "2023-12-08T14:50:33.397Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/rob\">@rob</a>,</p>\n<p>Thanks for following up. I’m checking with the team to see the status of this.</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 156951,
+      "postNumber": 5,
+      "createdAt": "2023-12-08T15:02:38.500Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Can you share a bit more why you need this?</p>\n<p>Action blocks (and all blocks, really) should be agnostic to the other blocks in the scenario. It should only care about the input fields, regardless of if they came from a date trigger or a column change.</p>\n<p>That doesn’t mean that this request is irrelevant, just that we need to think about designing the feature in a way that “plays nicely” with the rest of the platform. <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=12\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" width=\"20\" height=\"20\" /></p>\n<p>PS: Moved this to a new topic as it’s not super related to the previous one.</p>"
+    },
+    {
+      "id": 157299,
+      "postNumber": 6,
+      "createdAt": "2023-12-11T15:56:21.481Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> Cody:</div>\n<blockquote>\n<p>you can get the triggering user in almost all integrations though already, with a user field and the source being “trigger output”.</p>\n</blockquote>\n</aside>\n<p>Hey <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a><br />\nYes, this is what I do.<br />\nI think that the <em>trigger’s trigger</em> should always be included in the payload without explicitly adding it to the recipe.</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" /> Dipro Bhowmik:</div>\n<blockquote>\n<p>Can you share a bit more why you need this?</p>\n</blockquote>\n</aside>\n<p>Something I definitely need is to know who changed a column value.<br />\nIf I use the “When column changes” trigger, monday calls my action at every change.<br />\nThe column can be changed by the user or by my app.<br />\nAt the moment, this is risky because, if my integration changes a column which is the trigger for the same integration, it creates a loop, wasting all the available actions with just one click.</p>"
+    },
+    {
+      "id": 157303,
+      "postNumber": 7,
+      "createdAt": "2023-12-11T16:16:53.373Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>How I overcome this, is when I mutate a value I get the “text” back (or other value if thats not possible), I create an MD5 of that and store it using the account/integration &amp; itemID as the key.</p>\n<p>I store this to database with a ttl (so it automatically deletes after a period, one minute usually). Then on next trigger I check for for the existence of a hash, and if it exists i include the text of the column in the query to get values needed. Then I can check the MD5 of that and see if the value is different than what I just wrote or not, and if it is the same, I can return early with a no-op.</p>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> this no-op situation is one of the reasons I’d made the request elsewhere about a way to return no-op on a trigger and have it not consume an action since no action is ultimately performed.</p>"
+    },
+    {
+      "id": 157486,
+      "postNumber": 8,
+      "createdAt": "2023-12-12T12:54:47.934Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/rob/48/33058_2.png\" class=\"avatar\" /> Roberto Tremonti:</div>\n<blockquote>\n<p>At the moment, this is risky because, if my integration changes a column which is the trigger for the same integration, it creates a loop, wasting all the available actions with just one click.</p>\n</blockquote>\n</aside>\n<p>Totally understand. So you want to be able to differentiate between blocks triggered by your own app vs a user. Thank you for explaining further!!!</p>"
+    }
+  ]
+}

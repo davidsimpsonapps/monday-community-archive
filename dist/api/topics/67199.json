@@ -1,0 +1,75 @@
+{
+  "id": 67199,
+  "title": "How to retrieve mirrored column values with v2 in Zapier Webhooks?",
+  "slug": "how-to-retrieve-mirrored-column-values-with-v2-in-zapier-webhooks",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-09-28T06:00:37.504Z",
+  "lastPostedAt": "2023-10-05T08:59:44.727Z",
+  "postsCount": 8,
+  "excerpt": "Hi, I noted there is a change in the API, and I am no longer able to retrieve mirrored values through the webhooks text step as it returns me a warning instead of the actual values. \nHow can I return the mirrored values &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 588,
+  "posts": [
+    {
+      "id": 145947,
+      "postNumber": 1,
+      "createdAt": "2023-09-28T06:00:37.578Z",
+      "author": "leelingyan (Lee Ling Yan)",
+      "cookedHtml": "<p>Hi, I noted there is a change in the API, and I am no longer able to retrieve mirrored values through the webhooks text step as it returns me a warning instead of the actual values.</p>\n<p>How can I return the mirrored values of Item IDs from the item that I am querying from? Thank you.</p>"
+    },
+    {
+      "id": 146265,
+      "postNumber": 2,
+      "createdAt": "2023-10-01T04:33:25.579Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/leelingyan\">@leelingyan</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Which query are you using and which response are you getting exactly?</p>\n<p>Which <a href=\"https://developer.monday.com/api-reference/docs/api-versioning\">version of the API</a> are you using for your query?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146476,
+      "postNumber": 3,
+      "createdAt": "2023-10-02T23:56:56.857Z",
+      "author": "leelingyan (Lee Ling Yan)",
+      "cookedHtml": "<p>Hi Matias, I am now trying to use version 2023-10 to retrieve mirrored column values (item IDs) as 2023-07 will be discontinued. However, the code does not work. I might be doing something wrong.</p>\n<pre><code class=\"lang-auto\">{ items (ids: [Zap Data Value]) { column_values { ... on ItemIdValue { column { dup__of_employer_pulse_id, dup__of_helper_pulse_id8 } text } } } }\n</code></pre>\n<p>The error message get is: Field ‘dup__of_employer_pulse_id’ doesn’t exist on type ‘Column’. But these 2 columns are mirrored columns.</p>\n<p>Best,<br />\nLing Yan</p>"
+    },
+    {
+      "id": 146511,
+      "postNumber": 4,
+      "createdAt": "2023-10-03T05:13:20.178Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/leelingyan\">@leelingyan</a>,</p>\n<p>It looks like you are trying to pass “Zap Data Value” as item IDs, when item IDs are supposed to look something like: 4508311111</p>\n<p>You are also passing the column IDs when you don’t really need them necessarily.</p>\n<p>You can use a query like this one:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids:[1234567890, 2233445566]) {\n    column_values {\n      ... on MirrorValue {\n        value\n        display_value\n        column{\n          title\n          id\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>You can find the documentation about it <a href=\"https://developer.monday.com/api-reference/docs/mirror\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146528,
+      "postNumber": 5,
+      "createdAt": "2023-10-03T07:28:27.269Z",
+      "author": "leelingyan (Lee Ling Yan)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>Thank you so much. I am looking for a way to retrieve specific column values, which was available in column_values v1 with this code:</p>\n<pre><code class=\"lang-auto\">{ items (ids: [Zap Data Value]) { name column_values (ids: [phone, email_text, marital_status]) { id text } } }\n</code></pre>\n<p>Is there a way to replicate this with column_values v2?</p>"
+    },
+    {
+      "id": 146779,
+      "postNumber": 6,
+      "createdAt": "2023-10-04T09:20:22.717Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I believe this is what you are looking for:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids:[1234567890, 1122334455]) {\n    column_values (ids:[\"text\", \"date4\", \"mirror\"]) {\n      value\n      text\n      ... on MirrorValue {\n        value\n        display_value\n        column {\n          title\n          id\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Please let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 147004,
+      "postNumber": 7,
+      "createdAt": "2023-10-05T06:19:07.031Z",
+      "author": "leelingyan (Lee Ling Yan)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>Thank you very much, this works!</p>"
+    },
+    {
+      "id": 147035,
+      "postNumber": 8,
+      "createdAt": "2023-10-05T08:59:44.727Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I am glad that is the case! Happy to help <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

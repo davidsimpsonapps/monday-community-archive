@@ -1,0 +1,95 @@
+{
+  "id": 16459,
+  "title": "File Column - Clear All 500 error",
+  "slug": "file-column-clear-all-500-error",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2021-02-18T11:16:47.469Z",
+  "lastPostedAt": "2021-02-18T14:20:31.661Z",
+  "postsCount": 10,
+  "excerpt": "Anyone else having any issues clearing a file column? \nI’m using the correct syntax but keep getting a 500 error, bot via my app and the monday playground. If I use an incorrect item_id or board_id I correctly get a 404.&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1261,
+  "posts": [
+    {
+      "id": 41183,
+      "postNumber": 1,
+      "createdAt": "2021-02-18T11:16:47.557Z",
+      "author": "adam.s (Adam)",
+      "cookedHtml": "<p>Anyone else having any issues clearing a file column?</p>\n<p>I’m using the correct syntax but keep getting a 500 error, bot via my app and the monday playground. If I use an incorrect item_id or board_id I correctly get a 404. The 500 seems to only happen when the request is correct.</p>\n<p>Example:</p>\n<pre><code class=\"lang-bash\">mutation($board_id: Int!, $item_id: Int!, $column_id: String!, $value: JSON!) { \n  change_column_value(board_id: $board_id, item_id: $item_id, column_id: $column_id, value: $value) {\n    id \n  } \n}\n</code></pre>\n<p>vars:</p>\n<pre><code class=\"lang-gql\">    {\n      \"board_id\":10XXXXXX,\n      \"item_id\":10XXXXXX,\n      \"column_id\":\"my_file_column\",\n      \"value\":\"{\\\"clear_all\\\": true}\"\n    }\n</code></pre>\n<p>Any ideas?</p>\n<p>FYI - I’m trying to clear a file column on a sub item.</p>"
+    },
+    {
+      "id": 41198,
+      "postNumber": 2,
+      "createdAt": "2021-02-18T12:47:39.312Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/adam.s\">@adam.s</a> ,</p>\n<p>Change</p>\n<pre><code>mutation($board_id: Int!, $item_id: Int!, $column_id: String!, $value: JSON!) { \n  change_column_value(board_id: $board_id, item_id: $item_id, column_id: $column_id, value: $value) {\n    id \n  } \n}\n</code></pre>\n<p>to</p>\n<pre><code>mutation change_column_value($board_id: Int!, $item_id: Int!, $column_id: String!, $value: JSON!) { \n  change_column_value(board_id: $board_id, item_id: $item_id, column_id: $column_id, value: $value) {\n    id \n  } \n}\n</code></pre>\n<p>Maybe that already helps.</p>\n<p>Greetings</p>"
+    },
+    {
+      "id": 41202,
+      "postNumber": 3,
+      "createdAt": "2021-02-18T12:55:07.672Z",
+      "author": "adam.s (Adam)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/t/bc8723/48.png\" class=\"avatar\" /> TMNXT-Dev:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">mutation change_column_value($board_id: Int!, $item_id: Int!, $column_id: String!, $value: JSON!) { \n  change_column_value(board_id: $board_id, item_id: $item_id, column_id: $column_id, value: $value) {\n    id \n  } \n}\n</code></pre>\n</blockquote>\n</aside>\n<p>Same error unfortunately. I’ve also tried using the update_multiple_column_values to see if that works but it gives the same 500 error. There’s no graphql error returned either, the response is the ‘We’re currently experiencing some technical issues which our developers are working hard to resolve.’</p>"
+    },
+    {
+      "id": 41206,
+      "postNumber": 4,
+      "createdAt": "2021-02-18T13:07:08.753Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Could your try your variables as following:</p>\n<pre><code>{ \n  variables: { \n     board_id: 10XXXXXX, \n     item_id: 10XXXXXX,\n     column_id : \"my_file_column\", \n     value: \"{\\\"clear_all\\\": true}\" \n  }\n}</code></pre>"
+    },
+    {
+      "id": 41207,
+      "postNumber": 5,
+      "createdAt": "2021-02-18T13:10:47.313Z",
+      "author": "adam.s (Adam)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/t/bc8723/48.png\" class=\"avatar\" /> TMNXT-Dev:</div>\n<blockquote>\n<p>Could your try your variables as following:</p>\n<pre><code>{ \n  variables: { \n     board_id: 10XXXXXX, \n     item_id: 10XXXXXX,\n     column_id : \"my_file_column\", \n     value: \"{\\\"clear_all\\\": true}\" \n  }\n}\n</code></pre>\n</blockquote>\n</aside>\n<p>That’s not valid variables structure. It doesn’t run the mutation in that format.</p>"
+    },
+    {
+      "id": 41216,
+      "postNumber": 6,
+      "createdAt": "2021-02-18T13:28:49.972Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Alright, so I made a quick sample which works.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/316837475969132bd56133ad9a5acda12bcf9f00.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/3/316837475969132bd56133ad9a5acda12bcf9f00.png\" alt=\"image\" width=\"690\" height=\"374\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1004×545 16.6 KB</span></div></a></div><p></p>\n<p>When you use it in an App don’t forget to set permissions.</p>"
+    },
+    {
+      "id": 41221,
+      "postNumber": 7,
+      "createdAt": "2021-02-18T13:44:29.153Z",
+      "author": "adam.s (Adam)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/t/bc8723/48.png\" class=\"avatar\" /> TMNXT-Dev:</div>\n<blockquote>\n<p>Alright, so I made a quick sample which works.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/316837475969132bd56133ad9a5acda12bcf9f00.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/3/316837475969132bd56133ad9a5acda12bcf9f00.png\" alt=\"image\" width=\"690\" height=\"374\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1004×545 16.6 KB</span></div></a></div><p></p>\n<p>When you use it in an App don’t forget to set permissions.</p>\n</blockquote>\n</aside>\n<p>I’m not using the node library. But doing it in the Monday API Playground. It doesn’t work.<br />\nI’ve integrated all sorts of functionality without issue. Just this one call.</p>\n<p>Thank you for your responses though</p>"
+    },
+    {
+      "id": 41232,
+      "postNumber": 8,
+      "createdAt": "2021-02-18T13:54:47.918Z",
+      "author": "adam.s (Adam)",
+      "cookedHtml": "<p>Could it be that clear_all doesn’t work on sub items?</p>"
+    },
+    {
+      "id": 41239,
+      "postNumber": 9,
+      "createdAt": "2021-02-18T14:20:31.661Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/adam.s\">@adam.s</a>!</p>\n<p>I tested this out and you can indeed clear a Files column for a Subitem using this method.</p>\n<p>Just make sure you’re using the correct Subitem Id and board Id that the Subitem sits on (these will be different than your parent item board Id and parent item Ids).</p>\n<p>Let me know if this still doesn’t work for you.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41240,
+      "postNumber": 10,
+      "createdAt": "2021-02-18T14:20:37.861Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 43303,
+      "postNumber": 11,
+      "createdAt": "2021-03-03T14:24:17.405Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

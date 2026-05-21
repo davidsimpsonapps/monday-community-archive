@@ -1,0 +1,33 @@
+{
+  "id": 122817,
+  "title": "REST API with python to update multiple columns",
+  "slug": "rest-api-with-python-to-update-multiple-columns",
+  "categoryId": 6,
+  "tagIds": [
+    94,
+    139
+  ],
+  "createdAt": "2026-01-11T05:32:45.119Z",
+  "lastPostedAt": "2026-01-11T15:16:10.607Z",
+  "postsCount": 2,
+  "excerpt": "Hi All, \nI am struggling getting multiple column updates using a rest API in python \nI am using a mutation query as follows: \nquery = f&#39;&#39;&#39;\n       mutation ($column_values: JSON!) {{\n       change_multiple_column_values(b&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 12,
+  "posts": [
+    {
+      "id": 243944,
+      "postNumber": 1,
+      "createdAt": "2026-01-11T05:32:45.191Z",
+      "author": "mseaborn (Mark Seaborn)",
+      "cookedHtml": "<p>Hi All,</p>\n<p>I am struggling getting multiple column updates using a rest API in python</p>\n<p>I am using a mutation query as follows:</p>\n<pre><code class=\"lang-auto\">query = f'''\n       mutation ($column_values: JSON!) {{\n       change_multiple_column_values(board_id: {board_id}, item_id: {item_id}, column_values: $column_values) {{\n                    id\n                  }}\n                }}\n</code></pre>\n<p>I am using a dictionary of column names and values<br />\ncolumn_values = {“col1”: “value1”, “col2”: \"value2 …more}</p>\n<p>I place it in a json string as follows</p>\n<pre><code class=\"lang-auto\">column_values_json = json.dumps(column_values)\n</code></pre>\n<p>I then add that to my variables field for the python request.</p>\n<pre><code class=\"lang-auto\">variables = {'column_values': column_values_json}\n</code></pre>\n<p>I then use this helper function to create my request.</p>\n<pre><code class=\"lang-auto\">def api_request(query, variables=None, headers=None):\n    \"\"\"Helper function to make monday.com API requests.\"\"\"\n\n    if variables is None:\n        variables = {}\n    data = {\"query\": query, \"variables\": variables}\n    try:\n        response = requests.post(url=API_URL, json=data, headers=headers)\n        response.raise_for_status() # Raise an exception for bad status codes\n        return response.json()\n    except requests.exceptions.RequestException as e:\n        print(query)\n        print(variables)\n        print(f\"API request failed: {e}\")\n        return None\n</code></pre>\n<p>I don’t think it likes the string created by json.dumps() in the as the value of column_values.</p>\n<p>this variable string works in the playground</p>\n<pre><code class=\"lang-auto\">{\"column_values\": \"{\\\"project_owner\\\": \\\"johndoe@someemail.com\\\"}\n</code></pre>\n<p>However I cannot seem to get my python string formatted correctly for the REST API queries. Has any had success with this using python?</p>"
+    },
+    {
+      "id": 243949,
+      "postNumber": 2,
+      "createdAt": "2026-01-11T15:16:10.607Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mseaborn\">@mseaborn</a>  The issue is double-encoding.</p>\n<p>monday expects <code>column_values</code> as a JSON string, but if you <code>json.dumps()</code> it and then pass it again using <code>json=...</code> in <code>requests.post</code>, it gets escaped.</p>\n<p>Do this:</p>\n<p>Build your dict<br />\n<code>column_values = {\"col1\": \"value1\", \"col2\": \"value2\"}</code></p>\n<p>Stringify once<br />\n<code>variables = {\"column_values\": json.dumps(column_values)}</code></p>\n<p>In your mutation, use JSON type<br />\n<code>$column_values: JSON!</code></p>\n<p>Example mutation shape:<br />\n<code>change_multiple_column_values(board_id: $board_id, item_id: $item_id, column_values: $column_values)</code></p>\n<p>Dr. Tanvi Sachar<br />\nMonday Certified Partner, Monday Wizard</p>"
+    }
+  ]
+}

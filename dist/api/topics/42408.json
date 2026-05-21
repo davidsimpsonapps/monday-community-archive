@@ -1,0 +1,44 @@
+{
+  "id": 42408,
+  "title": "Creating an external link using monday session information",
+  "slug": "creating-an-external-link-using-monday-session-information",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2022-09-13T10:15:28.517Z",
+  "lastPostedAt": "2022-09-13T12:21:24.255Z",
+  "postsCount": 4,
+  "excerpt": "Hi all, \nI would like to be able to dynamically generate a link to an external website, probably within a monday board, that would contain (whether it would be sent thru get or post) session information such as the monda&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1757,
+  "posts": [
+    {
+      "id": 97570,
+      "postNumber": 1,
+      "createdAt": "2022-09-13T10:15:28.584Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I would like to be able to dynamically generate a link to an external website, probably within a monday board, that would contain (whether it would be sent thru get or post) session information such as the monday user id and account id of the logged in user, so when the user clicked the link, the external website would receive that information and be able to pre-fill a form on the external website with their monday user id and account id.</p>\n<p>Of course the link itself would be different for each user, as each user has a different id.</p>\n<p>I’m imagining something like a button that a user could press on their board that would take them to the website in question, or even a url link which could be custom-generated for each user that they could click on somewhere in their board.</p>\n<p>Is such a thing possible?  Can anyone point me in a direction of how to do this, or at least how to grab a logged-in user’s session information to use in a different site?</p>\n<p>Thanks for your help.</p>"
+    },
+    {
+      "id": 97571,
+      "postNumber": 2,
+      "createdAt": "2022-09-13T10:29:27.734Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/msh\">@Msh</a><br />\nYou can do that with a custom integration:<br />\n<a href=\"https://developer.monday.com/apps/docs/quickstart-integration\">https://developer.monday.com/apps/docs/quickstart-integration</a></p>"
+    },
+    {
+      "id": 97573,
+      "postNumber": 3,
+      "createdAt": "2022-09-13T10:43:04.162Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/msh\">@Msh</a></p>\n<p>Two different solutions here:</p>\n<ol>\n<li>\n<p>create an integration app and use the userId / accountId or anything else you need to build the url and update a link column through the API. In this scenario the link column will display the link to the other website and when the user clicks on it a new browser window will show that website. You need to have a trigger to instruct the app to build that URL (e.g. a status change)</p>\n</li>\n<li>\n<p>create a boardview app  and do something like below in the render() function of the React app. In this example the url from the iframe is build in the componentDidMount() React function.</p>\n</li>\n</ol>\n<pre><code class=\"lang-auto\">      return (\n        &lt;div className=\"App\" style={{ overflow: \"hidden\" }}&gt;\n          &lt;iframe\n            src={this.state.logzio}\n            style={{ width: \"100vw\", height: \"100vh\", border: \"none\" }}\n            title=\"Log Viewer\"\n          &gt;&lt;/iframe&gt;\n        &lt;/div&gt;\n      );\n</code></pre>"
+    },
+    {
+      "id": 97588,
+      "postNumber": 4,
+      "createdAt": "2022-09-13T12:21:24.255Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>It looks like you need a custom integration that starts with a Button on the item, like so:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/0/0c01dbc7222a7a9e96f0a0c7bcf805328c6bcd4d.png\" alt=\"Screen Shot 2022-09-13 at 16.13.29\" width=\"390\" height=\"352\" /></p>\n<p>This could then be configured by clicking on Setup here…</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/678290d33dc4a2d512816d016b33ea3ed0c462b8.png\" title=\"Screen Shot 2022-09-13 at 16.12.01\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/678290d33dc4a2d512816d016b33ea3ed0c462b8_2_387x500.png\" alt=\"Screen Shot 2022-09-13 at 16.12.01\" width=\"387\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2022-09-13 at 16.12.01</span><span class=\"informations\">904×1166 80.4 KB</span>\n</div></a></div><p></p>\n<p>…but then you’d need to build a custom integration which allows you to add the URL of the button and collect/replace the <code>user_id</code> from monday.com.</p>\n<p>So your custom integration would be something like…</p>\n<p>When button clicked,</p>\n<p>Then open web address (e.g. <code>https://example.com/users/{user_id}</code>) and replace <code>{user_id}</code> with the <code>user_id</code> from monday.com</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/a2c3a9613282b8bb3371c1e1fbf489ec32175ec1.png\" title=\"Screen Shot 2022-09-13 at 16.12.24\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/a/a2c3a9613282b8bb3371c1e1fbf489ec32175ec1_2_552x500.png\" alt=\"Screen Shot 2022-09-13 at 16.12.24\" width=\"552\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2022-09-13 at 16.12.24</span><span class=\"informations\">1586×1436 167 KB</span>\n</div></a></div><p></p>\n<p>Your integration would need to query the monday API to get the user_id / email_address, or whatever it is, like so:</p>\n<pre><code class=\"lang-auto\">query {\n  me {\n    id\n    email\n    name\n  } \n}\n</code></pre>"
+    }
+  ]
+}

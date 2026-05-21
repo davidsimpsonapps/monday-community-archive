@@ -1,0 +1,75 @@
+{
+  "id": 78811,
+  "title": "API calls about Boards make no sense",
+  "slug": "api-calls-about-boards-make-no-sense",
+  "categoryId": 6,
+  "tagIds": [
+    22,
+    94
+  ],
+  "createdAt": "2024-02-20T14:53:03.140Z",
+  "lastPostedAt": "2024-02-20T16:02:51.358Z",
+  "postsCount": 8,
+  "excerpt": "I use the 2024-01 to get a board by name. How do I know this name? I see it in Monday. It is the name of my board. My interesting name is: MyCompany Dev WIP \nGetMondayBoard.call(name: &quot;MyCompany Dev WIP&quot;)\n\ndata returned &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 772,
+  "posts": [
+    {
+      "id": 168990,
+      "postNumber": 1,
+      "createdAt": "2024-02-20T14:53:03.216Z",
+      "author": "dlazar (Dave)",
+      "cookedHtml": "<p>I use the 2024-01 to get a board by name. How do I know this name? I see it in Monday. It is the name of my board. My interesting name is: <strong>MyCompany Dev WIP</strong></p>\n<pre><code class=\"lang-auto\">GetMondayBoard.call(name: \"MyCompany Dev WIP\")\n\ndata returned from API call is:\n\n[\n  {\"name\"=&gt;\"Subitems of MyCompany Dev\", \"id\"=&gt;\"6011889899\"}, \n  {\"name\"=&gt;\"MyCompany Dev\", \"id\"=&gt;\"6011889795\"}, \n  {\"name\"=&gt;\"My Tasks\", \"id\"=&gt;\"5909041240\"}\n]\n</code></pre>\n<p>So I am trying to get the ID of my board “MyCompany DEV WIP”. With that ID, I can continue to do magic. However, much to my confusion, hence this post, Monday API has other ideas. It is returning the above data, informing me there is no board by that name. I can see this! That is bad. The “truth” according to the API is that I have a board named <strong>MyCompany Dev</strong> which is most definitely not what I see in the Monday desktop view of things.</p>\n<p>So it is one thing to be an adhoc data store, but how am I supposed to work with this? I know my board has a name, yet I cannot search for it by name. What is the secret sauce I am missing here?</p>"
+    },
+    {
+      "id": 168997,
+      "postNumber": 2,
+      "createdAt": "2024-02-20T15:23:47.292Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You should be able to get the <a href=\"https://support.monday.com/hc/en-us/articles/360000225709-Board-item-column-and-automation-or-integration-ID-s\">board ID</a> directly for your board in your browser, then use it, if you are writing arbitrary code to work with your board. There is no way to query boards by name. Just return them all, and get their name and manually filter them. Just use the ID from the browser if you’re doing something of a fixed nature.</p>\n<p>If you’re writing dynamic code that could work on many boards, then using webhooks or app integrations, you set those up to send you the board ID.</p>\n<p>GetMondayBoard.call is not part of the API, its a function of some third party library. Here is an actual API query string for the API.</p>\n<p>Name is always downstream for the ID.</p>\n<pre><code class=\"lang-auto\">{\n   boards(ids: \"123123123\") {\n     name\n     id\n   }\n}\n</code></pre>\n<p>You haven’t shared the query you’re running, nor language you’re working in, or other libraries so it’s kind of a guess.</p>"
+    },
+    {
+      "id": 168998,
+      "postNumber": 3,
+      "createdAt": "2024-02-20T15:26:48.192Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/dlazar\">@dlazar</a></p>\n<p>I don’t know where <code>GetMondayBoard</code> is implemented from and how this call uses the API. The monday API does not support a call to retrieve a board id by its name. The other way around works perfectly well (retrieve the board name given its id).</p>\n<p>Where does <code>GetMondayBoard</code> comes from?</p>"
+    },
+    {
+      "id": 169001,
+      "postNumber": 4,
+      "createdAt": "2024-02-20T15:31:21.661Z",
+      "author": "dlazar (Dave)",
+      "cookedHtml": "<p>My GetMondayBoard is just a wrapper around this:</p>\n<pre><code class=\"lang-auto\"> query {\n      boards(state: active, limit: 200) {\n        name\n        type\n        id\n      }    \n    }\n</code></pre>\n<p>While I appreciate the sentiment that Monday does not support query by name, my point was, it stores text as the name of a board that differs from the browser. That is unsettling to say the least.</p>\n<p>So I still remain puzzled, not on how to query Monday, but on just what is going on INSIDE Monday itself. Apples are not Oranges.</p>\n<p>And yes, I am doing an automation between online business properties, and while I could theoretically hard-code IDs to get things done, that is like me in 1978 programming my Trash80 using Basic and doing GOTO calls. It is 2024.</p>"
+    },
+    {
+      "id": 169003,
+      "postNumber": 5,
+      "createdAt": "2024-02-20T15:40:04.814Z",
+      "author": "dlazar (Dave)",
+      "cookedHtml": "<p>Never mind… I see that if I just rely on the hard-coded value for the Board, I can get my groups and those match my expectations. Weird but true. The quirks of Monday API work!</p>"
+    },
+    {
+      "id": 169008,
+      "postNumber": 6,
+      "createdAt": "2024-02-20T15:46:38.903Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The monday apps framework, whether for integrations (automations) or UI features provides a “context” which contains the relevant board ID. The webhooks created by API or manually in the UI send the board ID in their payloads as well.</p>\n<p>Since you’re working outside of the apps framework, nor using a webhook integration to send item/column/group changes etc. to your code, you’re not being sent that board ID. That’s why you need to hard code the ID - instead of your board name (how would that be any different than the ID?)</p>"
+    },
+    {
+      "id": 169012,
+      "postNumber": 7,
+      "createdAt": "2024-02-20T15:52:08.977Z",
+      "author": "Glenn (Glenn Conradt)",
+      "cookedHtml": "<p>With the workspace id (retrieve from workspace URL), you can use this query to obtain all the boards. Unfortunately it also provides “sub_items_board”, but you filter those out:</p>\n<p>query {<br />\nboards(state: active, limit: 200, workspace_ids:12345678) {<br />\nname<br />\ntype<br />\nid<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 169013,
+      "postNumber": 8,
+      "createdAt": "2024-02-20T16:02:51.358Z",
+      "author": "dlazar (Dave)",
+      "cookedHtml": "<p>I sampled for workspace ID in all my boards. Every single workspace ID is NULL.</p>\n<p>Onto other things… I am going to try and listen for a click in Monday that then fires off a Webhook to my App. I read up on this a little, and found it most perplexing. There is no real security except in the sense that if I set a Webhook to fire in Monday, it will send a payload to my App endpoint, but I must retrieve a value from the header and echo it back to Monday.</p>\n<p>I am paraphrasing. I am not sure that is true. I can’t wait to find out.</p>"
+    }
+  ]
+}

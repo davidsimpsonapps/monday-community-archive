@@ -1,0 +1,83 @@
+{
+  "id": 71379,
+  "title": "Query items based on the Timetime column with a specific day, and specific time range",
+  "slug": "query-items-based-on-the-timetime-column-with-a-specific-day-and-specific-time-range",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    104,
+    351
+  ],
+  "createdAt": "2023-11-23T00:58:27.143Z",
+  "lastPostedAt": "2023-12-04T07:38:42.734Z",
+  "postsCount": 7,
+  "excerpt": "Hi there, \nI’m working on the Timeline column. To implement a function in my app, I need to get the item by timeline column with a specific day, a specific time time range. \nI had tested some cases, and monday.com API al&hellip;",
+  "solvedPostId": null,
+  "likeCount": 9,
+  "views": 361,
+  "posts": [
+    {
+      "id": 154458,
+      "postNumber": 1,
+      "createdAt": "2023-11-23T00:58:27.232Z",
+      "author": "t.h (T.H)",
+      "cookedHtml": "<p>Hi there,<br />\nI’m working on the Timeline column. To implement a function in my app, I need to get the item by timeline column with a specific day, a specific time time range.<br />\nI had tested some cases, and <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API already supports so well with operator: between. See:</p>\n<pre><code class=\"lang-auto\">items_page(\n      limit: $limit\n      query_params: {rules: [\n        {\n        column_id: $timelineField,\n        compare_value: [\"2023-11-19\", \"2023-12-02\"],\n        compare_attribute: \"START_DATE\", \n        operator: between\n        },    \n        {\n          column_id: $timelineField, \n          compare_value: [\"2023-11-19\", \"2023-12-02\"],\n          compare_attribute: \"END_DATE\",\n          operator: between\n        }\n      ], \n        operator: or\n      }\n    )\n\n</code></pre>\n<p>However, it doesn’t seem working well on greater_than_or_equals, greater_than, lower_than_or_equals, and lower_than. It still works fine with other defined compare values such as <code>\"TODAY\"</code> , <code>\"TOMORROW\",</code>. But what I need is a special day. so this is the query I tried:</p>\n<pre><code class=\"lang-auto\">items_page(\n      limit: $limit\n      query_params: {\n        rules: [\n          {\n          column_id: $timelineField,\n          compare_value: [\"2023-10-20\"],\n          compare_attribute: \"START_DATE\",\n          operator: greater_than_or_equals\n          }\n     \t\t]\n      }\n    \n</code></pre>\n<p>Maybe, I got something wrong. Please advise me about how to get all the items planned before/after a specific day,</p>"
+    },
+    {
+      "id": 154751,
+      "postNumber": 2,
+      "createdAt": "2023-11-26T13:27:18.695Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/t.h\">@t.h</a>,</p>\n<p>I am not sure I understand what you are trying to get.</p>\n<p>Are you trying to retrieve all items where the start date of the “timeline” column equals a specific date?</p>"
+    },
+    {
+      "id": 154793,
+      "postNumber": 3,
+      "createdAt": "2023-11-26T23:32:29.446Z",
+      "author": "t.h (T.H)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<blockquote>\n<p>Are you trying to retrieve all items where the start date of the “timeline” column equals a specific date?</p>\n</blockquote>\n<p>Yes, that’s correct. Additionally, I also want to retrieve all items before/after a specific date.<br />\nHope you can help. Thank you.</p>"
+    },
+    {
+      "id": 155265,
+      "postNumber": 4,
+      "createdAt": "2023-11-29T06:59:58.129Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/t.h\">@t.h</a>,</p>\n<p>This will get you the items where the start date of the timeline column is 2023-11-11:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(\n      query_params: {rules: {column_id: \"timeline\", compare_value: [\"2023-11-11\",\"2023-11-11\"], compare_attribute: \"START_DATE\", operator: between}}\n    ) {\n      items {\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>I will check about the other query you need with the team and let you know!</p>"
+    },
+    {
+      "id": 155268,
+      "postNumber": 5,
+      "createdAt": "2023-11-29T07:02:08.359Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1701248517310149\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 155273,
+      "postNumber": 6,
+      "createdAt": "2023-11-29T08:32:53.450Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here now <a href=\"https://monday.slack.com/archives/C05SCPF7F8U/p1701253950442669\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 155913,
+      "postNumber": 7,
+      "createdAt": "2023-12-03T05:59:54.750Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>You can use a query like this one to get the items in which the start date of the timeline column is before a specific date:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(\n      query_params: {rules: {column_id: \"timeline\", compare_value: [\"EXACT\", \"2023-11-11\"], compare_attribute: \"START_DATE\", operator: lower_than}}\n    ) {\n      items {\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 156047,
+      "postNumber": 8,
+      "createdAt": "2023-12-04T04:43:42.791Z",
+      "author": "t.h (T.H)",
+      "cookedHtml": "<p>thank you so much <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nYou saved my life. It works perfectly <img src=\"https://emoji.discourse-cdn.com/apple/ok_hand.png?v=12\" title=\":ok_hand:\" class=\"emoji\" alt=\":ok_hand:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 156060,
+      "postNumber": 9,
+      "createdAt": "2023-12-04T07:38:42.734Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/t.h\">@t.h</a> !!!</p>"
+    }
+  ]
+}

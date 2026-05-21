@@ -1,0 +1,107 @@
+{
+  "id": 7992,
+  "title": "Weird behaviour querying item after webhook",
+  "slug": "weird-behaviour-querying-item-after-webhook",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-06-12T07:08:10.431Z",
+  "lastPostedAt": "2020-10-01T17:14:22.000Z",
+  "postsCount": 13,
+  "excerpt": "Hi, \nOn item creation I send a monday webhook to my api. \nOn my api side I get the webhook and send an event on my side. \nThis event query monday and get the item from a column that was set at its creation, but it almost&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1917,
+  "posts": [
+    {
+      "id": 19968,
+      "postNumber": 1,
+      "createdAt": "2020-06-12T07:08:10.494Z",
+      "author": "Zalayeta (Mathieu)",
+      "cookedHtml": "<p>Hi,</p>\n<p>On item creation I send a monday webhook to my api.<br />\nOn my api side I get the webhook and send an event on my side.<br />\nThis event query monday and get the item from a column that was set at its creation, but it almost fail to get the item everytime.<br />\nWhen I add a 1 sec delay to my event, things work fine.</p>"
+    },
+    {
+      "id": 19978,
+      "postNumber": 2,
+      "createdAt": "2020-06-12T10:42:46.854Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Zalayeta,</p>\n<p>Our webhooks are queued and sent based on overall platform load. In high-traffic situations, you might find your webhooks taking 1 second (or longer) to emit an event.</p>\n<p>I would recommend adding a 5 second delay just to be safe (or implement a retry mechanism).</p>\n<p>Does that help?</p>"
+    },
+    {
+      "id": 19987,
+      "postNumber": 3,
+      "createdAt": "2020-06-12T11:18:51.839Z",
+      "author": "Zalayeta (Mathieu)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>,</p>\n<p>The problem is not with the webhook here, more with the item creation event.<br />\nAfter an item is created, it sends a webhook, that webhook triggers an action that make me fetch the item on monday side. Sometimes no item match my query while it should be impossible.<br />\nIt seems that items on monday side are created with a name first and then filled with the data (its not created with all its data but more like updated). Is this right?</p>\n<ol>\n<li>Monday automation creates an item to a board (it must fill this item with an id that the other item had, its an id I have on my db)</li>\n<li>Monday send a webhook after it created the item</li>\n<li>My api receive the webhook and send a request to monday to retrieve the new item created, to retrieve it, it uses the id<br />\nSometimes on step 3 monday tells me that no items match my query while it should’nt be possible.</li>\n</ol>\n<p>Do you get the point?</p>"
+    },
+    {
+      "id": 20000,
+      "postNumber": 4,
+      "createdAt": "2020-06-12T14:50:37.678Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Ah, I understand what you’re saying. Is the webhook recipe you’re using “When item is created, send a webhook”?</p>"
+    },
+    {
+      "id": 20033,
+      "postNumber": 5,
+      "createdAt": "2020-06-13T07:11:35.457Z",
+      "author": "Zalayeta (Mathieu)",
+      "cookedHtml": "<p>Yes it is.<br />\nAlso I see that it sends the webhook like 6 times for 1 item creation.<br />\nSo my theory is that monday creates an item. And then fills its column one by one which all trigger a hook. Thats why sometimes when I query monday after I received the first hook, the id column is not filled yet.<br />\nAm I right?</p>"
+    },
+    {
+      "id": 20271,
+      "postNumber": 6,
+      "createdAt": "2020-06-16T13:35:32.717Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Yep, that’s exactly it. The change_column_value event gets sent every time a new column value is updated on the item.</p>"
+    },
+    {
+      "id": 20284,
+      "postNumber": 7,
+      "createdAt": "2020-06-16T15:49:19.162Z",
+      "author": "Zalayeta (Mathieu)",
+      "cookedHtml": "<p>That’s not really what I asked for.<br />\nI asked the process of item creation by automations.<br />\nIn my case, why do the automation bellow which is launch once triggers 6 times the same webhook?<br />\nAutomation called once:<br />\n<em>When STATUS changes to SOMETHING, create an ITEM in BOARD and link them using LINK TO ITEM in this board.</em><br />\nTriggers 6 times:<br />\n<em>When an item is created send a webhook</em></p>"
+    },
+    {
+      "id": 20345,
+      "postNumber": 8,
+      "createdAt": "2020-06-17T10:44:58.817Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>I see. Thanks for clarifying. Let’s figure this out over email; I’ve just sent you a ticket about this so we can resolve it together.</p>"
+    },
+    {
+      "id": 29846,
+      "postNumber": 9,
+      "createdAt": "2020-09-29T12:03:32.348Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a> i have a couple of related questions to this one:</p>\n<p>when i create a custom block i noticed that it fires shortly after the trigger is hit. If it receives anything other than a 200 OK http status code, it fires again after a few seconds - which is great.</p>\n<ul>\n<li>how many retries will it perform? Or, alternatively, for how long after the original trigger will it keep retrying?</li>\n<li>are custom blocks sent in the same order as triggers are being hit? or is there no guarantee of that?</li>\n</ul>"
+    },
+    {
+      "id": 29958,
+      "postNumber": 10,
+      "createdAt": "2020-09-30T14:44:05.087Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a> - let me check in with the team on this.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 30109,
+      "postNumber": 11,
+      "createdAt": "2020-10-01T16:47:04.199Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a> - sorry for the delay on this, please see below.</p>\n<p>In regards to retries on the platform: the system <strong>will</strong> attempt retries - we’re currently doing 30 retries for 30 minutes (1 each minute).</p>\n<p>In regards to the trigger sequence: there isn’t a 100% guarantee about the order in which this is executed. If the triggers are happening one after another, then the actions will be executed in the same order 99% of the time. But if a certain action fails for example, it’ll retry after a minute. Something like that would then change the order as a result.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 30114,
+      "postNumber": 12,
+      "createdAt": "2020-10-01T17:14:22.000Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Thanks. This is helpful</p>"
+    },
+    {
+      "id": 43330,
+      "postNumber": 13,
+      "createdAt": "2021-03-03T15:11:14.773Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

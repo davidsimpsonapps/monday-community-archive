@@ -1,0 +1,57 @@
+{
+  "id": 41927,
+  "title": "Line breaks in longtext: what is and isn't possible?",
+  "slug": "line-breaks-in-longtext-what-is-and-isnt-possible",
+  "categoryId": 7,
+  "tagIds": [
+    13,
+    107,
+    108,
+    112,
+    132
+  ],
+  "createdAt": "2022-09-01T17:51:00.317Z",
+  "lastPostedAt": "2025-09-29T10:44:56.255Z",
+  "postsCount": 5,
+  "excerpt": "I’m looking for a reality check on whether I have understood the following. \nIt seems I can do these operations with line breaks/newlines: \n\n\nEnter data containing line breaks in a longtext field \n\n\nDisplay longtext data&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 4419,
+  "posts": [
+    {
+      "id": 96721,
+      "postNumber": 1,
+      "createdAt": "2022-09-01T17:51:00.412Z",
+      "author": "riddle (Prentiss Riddle)",
+      "cookedHtml": "<p>I’m looking for a reality check on whether I have understood the following.</p>\n<p>It seems I <strong>can</strong> do these operations with line breaks/newlines:</p>\n<ul>\n<li>\n<p>Enter data containing line breaks in a longtext field</p>\n</li>\n<li>\n<p>Display longtext data containing line breaks in a text widget in a card</p>\n</li>\n<li>\n<p>Accept data containing line breaks in a longtext field in a form</p>\n</li>\n<li>\n<p>Export data containing line breaks in a longtext field in an Excel file</p>\n</li>\n</ul>\n<p>But apparently I <strong>can’t</strong> do any of the following:</p>\n<ul>\n<li>\n<p>I can’t import text data containing line breaks in Excel (can’t import to longtext at all)</p>\n</li>\n<li>\n<p>I can’t use a longtext field in a function and have line breaks persist (e.g., the CONCATENATE() function turns line breaks to spaces)</p>\n</li>\n<li>\n<p>I can’t represent line breaks in a string literal (i.e., “\\n” or some other common convention) (I guess this is a corollary to the above)</p>\n</li>\n</ul>\n<p>Did I get that right?</p>\n<p>My use case: I have an urgent need to import legacy data containing line breaks. (I also would <em>like</em> to use functions to combine multiple form submission data fields into nicely formatted longtexts containing embedded blank lines, but that’s not mission critical.)</p>\n<p>If there are any tricks to get around these limitations I’d love to hear about them. I’m investigating the General Caster integration. Are there others?</p>"
+    },
+    {
+      "id": 111430,
+      "postNumber": 2,
+      "createdAt": "2023-01-19T17:02:03.699Z",
+      "author": "Polly (Polly Cordwell)",
+      "cookedHtml": "<p>I realize this is an older post, but I stumbled across it as I was trying to import an excel file that includes a “notes” column that can be very long.  Having to add these manually would be very time consuming and when I went to import the data I found the long text column isn’t supported for imports.  I decided to change the long text column in my board to a regular text column and to my delight it actually worked!  It didn’t populate at first and I figured it wasn’t going to, but after a minute or 2 I refreshed my screen and the text appeared.  Now I’m going to create an automation to add the info in that column as an item update so I can just delete the text column in my board.  Hope this is helpful to someone! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 121520,
+      "postNumber": 3,
+      "createdAt": "2023-03-27T16:55:14.463Z",
+      "author": "gregb (Greg Bishop)",
+      "cookedHtml": "<p>Here is how we accomplished this:</p>\n<ol>\n<li>Set up your board with the following columns:</li>\n</ol>\n<ul>\n<li>a long text column where you want the data to end up,</li>\n<li>an interim long text column to use for formulas,</li>\n<li>and a normal text column for every line you want entered into the long text column.</li>\n<li>Create a status column for triggering the automation that includes the stages of start, working, done.</li>\n</ul>\n<ol>\n<li>Create an automation that is triggered when the status is changed to “start.”</li>\n<li>The automation performs the following steps:</li>\n</ol>\n<ul>\n<li>Change the status to “working.”</li>\n<li>Use General Caster to perform a formula to check if the long text column has data in it or not. If it does, cast that result to our interim long text column with a line break at the end using CHAR(10).</li>\n<li>Use General Caster to combine the interim long text and the import short text columns and cast that back to our long text column.</li>\n<li>Clear the interim long text column.</li>\n<li>Set the import status column to “done.”</li>\n</ul>\n<p>We have an automation created for each line we want to implement this for so that we can import several lines into a single long text field. We use the same status column for triggering these automations and just turn them on or off depending on which line we want to insert/add to the long text field.</p>\n<p>Wish there was a simpler way (i.e. being able to import to long text fields) but for now this is working.</p>"
+    },
+    {
+      "id": 148165,
+      "postNumber": 4,
+      "createdAt": "2023-10-13T07:21:49.713Z",
+      "author": "loovanloon (Ton)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/riddle\">@riddle</a> Did you ever find a solution? I would like to use line breaks in a formula column with the CONCATENATE-function or with General Caster.</p>\n<p>At MONDAY:  Adding a CHAR() function to the available function list would help this in broader sense.</p>"
+    },
+    {
+      "id": 239367,
+      "postNumber": 5,
+      "createdAt": "2025-09-29T10:44:56.255Z",
+      "author": "INEO (J)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/loovanloon\">@loovanloon</a> I got this to work surprisingly through AI (the monday) one for a change got it right! <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=14\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>\n<p>I asked it to add a carriage return between two fields or text. Here’s my working formula</p>\n<p>CONCATENATE({Name}, \"</p>\n<p>\", {Address}, \"</p>\n<p>“, {Bedrooms}, \" bedrooms (”, {Bed Config}, “)”, \"</p>\n<p>\", {Parking}, \"</p>\n<p>\", “£ per night, inc commission. VAT exempt.”, \"</p>\n<p>\", “cleans included. 14 day cancellation policy”, \"</p>\n<p>“, “£”, {Security Deposit}, \" security deposit.”)</p>"
+    }
+  ]
+}

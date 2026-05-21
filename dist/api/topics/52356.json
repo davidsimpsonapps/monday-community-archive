@@ -1,0 +1,61 @@
+{
+  "id": 52356,
+  "title": "Mutation returns null (no success and no error message)",
+  "slug": "mutation-returns-null-no-success-and-no-error-message",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-02-24T06:48:13.124Z",
+  "lastPostedAt": "2023-02-28T07:15:46.074Z",
+  "postsCount": 6,
+  "excerpt": "Hello, \nI have been working with the Monday API for a while now. So far without any problems. But now I have a problem and do not get further. \nMy Setup: \n\n2 web pages on one website\neach a JS file calls the same php fil&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 819,
+  "posts": [
+    {
+      "id": 116892,
+      "postNumber": 1,
+      "createdAt": "2023-02-24T06:48:13.216Z",
+      "author": "mm_hw (Manuel)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I have been working with the Monday API for a while now. So far without any problems. But now I have a problem and do not get further.</p>\n<p>My Setup:</p>\n<ul>\n<li>2 web pages on one website</li>\n<li>each a JS file calls the same php file</li>\n<li>1 PHP file that performs a mutation</li>\n</ul>\n<p><strong>The structure of the files</strong><br />\nJS file from page A (snippet)</p>\n<pre><code class=\"lang-auto\">    $.ajax({\n        url: \"/mondayapi.php\",    //the page containing php script\n        type: \"post\",    //request type,\n        data: { 'myBoardId': parseInt(board_id_bewerbungen), 'myItemId': mondayItemId, 'queryVariables': queryVariables, 'category': 'updateMonday' },\n        success: function (result) {\n            let reslt_ojb = JSON.parse(result)\n            console.log(reslt_ojb)\n            if (reslt_ojb.hasOwnProperty('error_code')) {\n                console.log('error')\n                showToast('Daten konnten nicht aktualisiert werden', 'bg-danger')\n            } else {\n                showToast('Erfolgreich aktualisiert', 'bg-success')\n            }\n        }\n    }).fail(function () {\n        alert(\"error\");\n    })\n</code></pre>\n<p>JS file from page B (snippet)</p>\n<pre><code class=\"lang-auto\">   $.ajax({\n        url: \"/mondayapi.php\",    //the page containing php script\n        type: \"post\",    //request type,\n        data: { 'myBoardId': parseInt(board_id_bewerbungen), 'myItemId': mondayItemId, 'queryVariables': queryVariables, 'category': 'updateMonday' },\n        success: function (result) {\n            console.log(result)\n            let reslt_ojb = JSON.parse(result)\n            console.log(reslt_ojb)\n\n            if (reslt_ojb.hasOwnProperty('error_code')) {\n                showToast('Daten konnten nicht aktualisiert werden', 'bg-danger')\n            } else {\n                showToast('Erfolgreich aktualisiert', 'bg-success')\n            }\n        }\n    }).fail(function () {\n        alert(\"error\");\n    })\n</code></pre>\n<p><strong>php file (snippet)</strong></p>\n<pre><code class=\"lang-auto\">function updateMonday($myBoardId, $myItemId, $queryVariables)\n{\n    $query = 'mutation ($myBoardId:Int!, $myItemId:Int!, $queryVariables:JSON!) { change_multiple_column_values(item_id:$myItemId, board_id:$myBoardId, column_values: $queryVariables) { id }}';\n    $vars = [\n        'myBoardId' =&gt; (int)$myBoardId,\n        'myItemId' =&gt; (int)$myItemId,\n        'queryVariables' =&gt; $queryVariables\n    ];\n\n\n    $token = '1234567890';\n    $apiUrl = 'https://api.monday.com/v2';\n    $headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n    $data = @file_get_contents($apiUrl, false, stream_context_create([\n        'http' =&gt; [\n            'method' =&gt; 'POST',\n            'header' =&gt; $headers,\n            'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n        ]\n    ]));\n\n    $responseContent = json_decode($data, true);\n\n    echo json_encode($responseContent);\n}\n</code></pre>\n<p>From page A everything works without problems. Variable <strong>$queryVariables</strong> looks linke this. The column is a type of “long-text”.</p>\n<pre><code class=\"lang-auto\">{\"langer_text\" : \"Some Text\"}\n</code></pre>\n<p>On page B the mutation does not work. I get neither an error message nor a success message from the PHP file.<br />\nVariable <strong>$queryVariables</strong> looks linke this. The column is a type of “long-text”.</p>\n<pre><code class=\"lang-auto\">{\"long_text1\" : \"This text not work\"}\n</code></pre>\n<p>A have already checked all other variables in that query. In both scenarios they are correct.</p>\n<p>From A I recieve a success message like</p>\n<pre><code class=\"lang-auto\">data: change_multiple_column_values\nid: \"3696347409\"\n</code></pre>\n<p>From B I recieve just null</p>\n<pre><code class=\"lang-auto\">null\n</code></pre>\n<p>In scenario B I do not get any erros in my php-log.</p>"
+    },
+    {
+      "id": 117065,
+      "postNumber": 2,
+      "createdAt": "2023-02-26T08:42:15.679Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mm_hw\">@mm_hw</a>,</p>\n<p>It looks like your issue may lie in your code and the mutation is probably never reaching monday for B.</p>\n<p>I am not experienced with PHP but I would check how the JS files are calling the PHP file. It could be related to a matter of where the file is stored (in which folder) and how it is being called or something like that.</p>\n<p>Is there an PHP expert in here who can contribute in solving this issue?</p>"
+    },
+    {
+      "id": 117072,
+      "postNumber": 3,
+      "createdAt": "2023-02-26T11:38:01.605Z",
+      "author": "mm_hw (Manuel)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ,</p>\n<p>Thanks for your reply.</p>\n<p>I have a central php file that handles all the request with Monday API. In total I have 10 pages. 9 of them work without problems (as described in scenario A). Only the one page does not work (scenario B).<br />\nBut the file is also called correctly in scenario B (see screenshot). Only the variable $data in B has the value null.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/f/5fef1be4bececf0bf5149dff683d5ac2d042f3a0.png\" title=\"2023-02-26 14_23_30\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/5/f/5fef1be4bececf0bf5149dff683d5ac2d042f3a0.png\" alt=\"2023-02-26 14_23_30\" width=\"690\" height=\"132\" /><div class=\"meta\">\n<span class=\"filename\">2023-02-26 14_23_30</span><span class=\"informations\">1135×218 14.3 KB</span>\n</div></a></div><p></p>\n<p>Each of these 10 pages has its own JS file, all in the same folder and all accessing a single PHP file.</p>\n<p>The code is always the same, except that the value of the variable changes.</p>\n<p>If I enter the query by hand in Monday Playground, it works. But as soon as I run it from the php code, it does not work.</p>"
+    },
+    {
+      "id": 117085,
+      "postNumber": 4,
+      "createdAt": "2023-02-26T13:25:50.565Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>From what you told me, then I can assume that the issue does not lie on the mutation itself because it would fail in the Playground as well.</p>\n<p>In this case, we will need to see if someone who is experienced with PHP can see something in the script you sent that might be causing this.</p>"
+    },
+    {
+      "id": 117406,
+      "postNumber": 5,
+      "createdAt": "2023-02-28T06:46:33.926Z",
+      "author": "mm_hw (Manuel)",
+      "cookedHtml": "<p>Hello,<br />\nI have found the problem. The board was defined as a template. I created a board from the template and I worked with this board. Now it works.</p>\n<p>Note: From a template you can read data with the API but you can not write data to such a board.</p>"
+    },
+    {
+      "id": 117412,
+      "postNumber": 6,
+      "createdAt": "2023-02-28T07:15:46.074Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I am glad you found the source of the issue!</p>\n<p>Let us know if you need anything else!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

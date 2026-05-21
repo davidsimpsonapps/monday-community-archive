@@ -1,0 +1,54 @@
+{
+  "id": 31778,
+  "title": "Subitems Column Id",
+  "slug": "subitems-column-id",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-02-16T19:59:00.248Z",
+  "lastPostedAt": "2022-02-17T19:28:38.816Z",
+  "postsCount": 5,
+  "excerpt": "Hi Community, \nHow to get subitems id columns in the playground \nany suggestions.",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1809,
+  "posts": [
+    {
+      "id": 77499,
+      "postNumber": 1,
+      "createdAt": "2022-02-16T19:59:00.329Z",
+      "author": "Jorgemolina (Jorge)",
+      "cookedHtml": "<p>Hi Community,</p>\n<p>How to get subitems id columns in the playground</p>\n<p>any suggestions.</p>"
+    },
+    {
+      "id": 77500,
+      "postNumber": 2,
+      "createdAt": "2022-02-16T20:31:26.910Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jorgemolina\">@Jorgemolina</a></p>\n<p>I guess this requires a 2-step approach.</p>\n<p>Step-1: query your board to get all columns in with:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    columns {\n      id\n      type\n      setting_str\n    }\n  }\n}\n</code></pre>\n<p>Now in you code (example is JS) get the columnId of the subitems column from the returned boards array from above (in my case called boardColumns) with:</p>\n<pre><code class=\"lang-auto\">  if (!boardColumns) return res.status(406).json({ error: \"configuration error\" });\n  var subitemIndex = boardColumns.findIndex((el) =&gt; el.type == \"subtasks\");\n  if (subitemIndex == -1) return res.status(406).json({ error: \"configuration error\" });\n  var columnProperties = JSON.parse(boardColumns[subitemIndex].settings_str);\n  var subBoardId = columnProperties.boardIds[0];\n</code></pre>\n<p>Now you have the boardId where your subitems are stored and you can use that to query it’s columns.</p>"
+    },
+    {
+      "id": 77530,
+      "postNumber": 3,
+      "createdAt": "2022-02-17T04:05:17.038Z",
+      "author": "Jorgemolina (Jorge)",
+      "cookedHtml": "<p>Hi BasdeBruin, Thanks for your reply. i could not make it with that query, however, I manage to get them from the following query:</p>\n<pre><code class=\"lang-auto\">query { boards(ids: 2304755136) {\n    items (ids:2304780325) {\n    subitems  {\n      column_values {\n        id\n      }\n    }\n  }\n}\n}\n</code></pre>\n<p>The problem i am facing now is that i am receiving from the payload the subitem id and cannot find how to get  with the query the column values of this subitem without the parent item id.</p>"
+    },
+    {
+      "id": 77539,
+      "postNumber": 4,
+      "createdAt": "2022-02-17T06:39:43.421Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Yes, your query is using is using the (newer) subitems field. The problem I have with that one is that you require an itemId and in my use case that is not known. The query you show is also more expensive than just query the columns, fine the subitems column and get the setting_str</p>\n<p>Are you referring to a payload you received form a webhook that triggers on subitem creation? In that case it is even easier as the payload will contain the boardId of the board where the subitems live. So you can get the columns from that board.</p>"
+    },
+    {
+      "id": 77629,
+      "postNumber": 5,
+      "createdAt": "2022-02-17T19:28:38.816Z",
+      "author": "Jorgemolina (Jorge)",
+      "cookedHtml": "<p>I will try to fig this one out - getting the board of subitems in the payload.</p>\n<p>Thank you for your help - it is really appreciate it.</p>"
+    }
+  ]
+}

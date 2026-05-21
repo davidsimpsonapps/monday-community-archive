@@ -1,0 +1,40 @@
+{
+  "id": 2676,
+  "title": "Accessing and returning data from monday API v2 with Node.js",
+  "slug": "accessing-and-returning-data-from-monday-api-v2-with-node-js",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    105
+  ],
+  "createdAt": "2019-10-17T14:51:30.843Z",
+  "lastPostedAt": "2021-02-25T12:23:06.558Z",
+  "postsCount": 3,
+  "excerpt": "Hey all, \nI am trying to write a small program to query a board, return all items that have a certain flagged value, compare the data to an external source(probably a mySQL database), and finally return the data it finds&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 6377,
+  "posts": [
+    {
+      "id": 7205,
+      "postNumber": 1,
+      "createdAt": "2019-10-17T14:51:30.947Z",
+      "author": "TorreyT (Torrey Turkovitz)",
+      "cookedHtml": "<p>Hey all,</p>\n<p>I am trying to write a small program to query a board, return all items that have a certain flagged value, compare the data to an external source(probably a mySQL database), and finally return the data it finds from the database to the monday board item that matches the extracted values.</p>\n<p>Structured it will look like this:</p>\n<p>fetch monday data</p>\n<p>restructure data that is fetched</p>\n<p>use restructured data to perform a query in mySQL</p>\n<p>return the queried data</p>\n<p>update the monday board item based on id of data</p>\n<p>I have been working on some code, but I am not the most familiar with node.js or even javascript itself.</p>\n<p>This is what I have so far:</p>\n<blockquote>\n<pre><code>const { GraphQLClient } = require('graphql-request');\nvar mysql = require('mysql');\n\n//Create connection called 'client' that connects to Monday.com's API\nconst client = new GraphQLClient('https://api.monday.com/v2/', {\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': myapikey'\n    },\n    \n});\n\n//Create query to send to Monday.com's API\nconst query = ` query {boards(ids:307027197) {name, items {name id &gt; \n  column_values(ids:lockbox_) {title id value text}}}}`;\n\n//Create database connection\n\nvar dbconnection = mysql.createConnection({\n  host     : 'SG-RealtyOneProd-1223-master.servers.mongodirector.com',\n  user     : 'sgroot',\n  password : '4sH7vq0B+Xnohydt',\n  database : 'R1Prod',\n  port     : '3306'\n});\n</code></pre>\n<p>async function callQuery() {</p>\n<p>client.request(query)<br />\n.then(data =&gt; console.log(data.boards[0].items));<br />\n}</p>\n<pre><code>// function to call and log the data using graphql-request\n</code></pre>\n</blockquote>\n<p>Sorry for the messy code above, but I’m trying to wrap my head around promises. With this code, I can see a large console.log of all my boards in this format:</p>\n<blockquote>\n<p>{ name: ‘name’,<br />\nid: ‘341557416’,<br />\ncolumn_values: [ [Object] ] },</p>\n</blockquote>\n<p>I am looking to see all of the data from this individual object named “column_values” as well as a way to store it outside of the function. If anyone can help me out with this, it would be greatly appreciated.</p>\n<p>If there is a better package to use for this or a better way in general, please let me know.</p>"
+    },
+    {
+      "id": 7776,
+      "postNumber": 2,
+      "createdAt": "2019-11-01T16:40:15.798Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/torreyt\">@TorreyT</a> <img src=\"https://emoji.discourse-cdn.com/apple/raised_hands.png?v=9\" title=\":raised_hands:\" class=\"emoji\" alt=\":raised_hands:\" /> Sorry for taking a while to get to this.</p>\n<p>You’re seeing [Object] because console.log cannot print nested objects out of the box. You’ll need to use a function to convert the object to a string, like <code>JSON.stringify(data.boards[0].items)</code>.</p>\n<p>Let me know if that works for you!</p>"
+    },
+    {
+      "id": 42123,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T12:23:06.558Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

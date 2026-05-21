@@ -1,0 +1,48 @@
+{
+  "id": 101960,
+  "title": "Cleanup of orphaned Secure Storage items when a monday-code app goes multi-region",
+  "slug": "cleanup-of-orphaned-secure-storage-items-when-a-monday-code-app-goes-multi-region",
+  "categoryId": 58,
+  "tagIds": [
+    428,
+    430,
+    485
+  ],
+  "createdAt": "2024-10-31T07:35:47.676Z",
+  "lastPostedAt": "2025-02-04T11:44:41.247Z",
+  "postsCount": 3,
+  "excerpt": "When you switch on multi-region for monday-code, any data in Storage remains in the correct region, because it was already stored in the same region as the account instance, but for Secure Storage, this is not the case. \n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 21,
+  "posts": [
+    {
+      "id": 207971,
+      "postNumber": 1,
+      "createdAt": "2024-10-31T07:35:47.750Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>When you switch on multi-region for monday-code, any data in Storage remains in the correct region, because it was already stored in the same region as the account instance, but for Secure Storage, this is not the case.</p>\n<p>Secure Storage is not currently scoped to a particular account, so is all stored in a single place, which I’m guessing is the region of the account for the app developer (please confirm).</p>\n<p>When you multi region enable your app, there is some orphaning of SecureStorage values if the account ends up moving to hosting on a different region than US (assuming that’s the original region the app was hosted in).</p>\n<p>We need to have a way to clean up there orphaned values in the US region. For vendors who are storing user tokens in Secure Storage, customers will potentially ask why they had to login to external systems again. How do we explain that our apps can no longer access that data because it has been left behind in a different region?</p>"
+    },
+    {
+      "id": 208424,
+      "postNumber": 2,
+      "createdAt": "2024-11-04T07:40:12.092Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 219958,
+      "postNumber": 3,
+      "createdAt": "2025-02-04T08:20:21.753Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I’ve really changed my mind on this.</p>\n<p>It should rather be a seamless migration task provided by <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> that takes the secure storage values for an account from the existing region and migrates it to the new/correct region.</p>\n<p>Perhaps this is a process that could be triggered by the developer:</p>\n<ol>\n<li>Manually trigger a script to copy secure storage from region X to region Y for a list of account ids or secure storage keys</li>\n<li>Enable multi region</li>\n<li>Manually trigger a script to delete secured storage from region X for a list of account ids or secure storage keys</li>\n</ol>\n<p>Otherwise, the app developer will need to:</p>\n<ol>\n<li>Ask all their customers to delete everything in secure storage e.g. user access tokens (provided that they have already build a way to do this).</li>\n<li>Publish a multiregion version of their app</li>\n<li>Tell all their customers that the update is complete and that they can reauth to get their user access tokens populated into the secure storage in the new region.</li>\n</ol>\n<p>The former process would provide a better trust signal to customers, rather than the current potential for orphaned secure storage items</p>"
+    },
+    {
+      "id": 219974,
+      "postNumber": 4,
+      "createdAt": "2025-02-04T11:44:41.247Z",
+      "author": "benhowes (Ben Howes 🐨)",
+      "cookedHtml": "<p>I completely agree with David. There needs to be a migration path that does not involve the app developer having to attempt to design a manual a migration.</p>\n<p>Even using <code>mapps storage:export</code> for all installations would need work doing to import the data to the correct place <em>and</em> involve the app developer having to download a load of customer data for the migration. And same again for secure storage.</p>"
+    }
+  ]
+}

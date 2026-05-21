@@ -1,0 +1,47 @@
+{
+  "id": 27344,
+  "title": "GraphQL query complexity seems too high when fetching current users teams with users",
+  "slug": "graphql-query-complexity-seems-too-high-when-fetching-current-users-teams-with-users",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-11-12T07:36:07.723Z",
+  "lastPostedAt": "2021-11-17T12:42:30.133Z",
+  "postsCount": 4,
+  "excerpt": "The query below results in the query complexity budget being exhausted, especially if users are not being limited: \nme {\n    id,\n    name,\n    teams {\n      id,\n      name,\n      users(limit: 100) {\n        id\n      }\n  &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1398,
+  "posts": [
+    {
+      "id": 68614,
+      "postNumber": 1,
+      "createdAt": "2021-11-12T07:36:07.799Z",
+      "author": "fatih (Fatih Demir)",
+      "cookedHtml": "<p>The query below results in the query complexity budget being exhausted, especially if users are not being limited:</p>\n<pre><code class=\"lang-auto\">me {\n    id,\n    name,\n    teams {\n      id,\n      name,\n      users(limit: 100) {\n        id\n      }\n    }\n  }\n\ncomplexity {\n    before,\n    after,\n    query,\n    reset_in_x_seconds\n  }\n</code></pre>\n<p>However the query cost for the query below is only about 1000.</p>\n<pre><code class=\"lang-auto\">  teams {\n      id,\n      name,\n      users {\n        id\n      }\n    }\n  \n  complexity {\n    before,\n    after,\n    query,\n    reset_in_x_seconds\n  }\n</code></pre>\n<p>Am I misunderstanding about the usage of the first query or is this a bug?</p>"
+    },
+    {
+      "id": 68615,
+      "postNumber": 2,
+      "createdAt": "2021-11-12T07:41:46.499Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/fatih\">@fatih</a>,<br />\nThis is due to nesting. Nesting increases the complexity by multiple folds. If possible avoid it or keep it to the barest minimum.<br />\nYou can read more about that in the docs <a href=\"https://api.developer.monday.com/docs/rate-limits#complexity-of-nested-queries\" rel=\"noopener nofollow ugc\">here</a></p>"
+    },
+    {
+      "id": 68619,
+      "postNumber": 3,
+      "createdAt": "2021-11-12T09:01:58.737Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/fatih\">@fatih</a> ,</p>\n<p>I agree with <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> here - in this case, it is better to use 2 separate queries, one for team, and the other query for the info about current user. Otherwise, as Alfred mentioned, you are implementing nesting within the query and that amplifies the total complexity of your requests.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 69070,
+      "postNumber": 4,
+      "createdAt": "2021-11-17T12:42:30.133Z",
+      "author": "fatih (Fatih Demir)",
+      "cookedHtml": "<p>Thanks for your replies <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> &amp; <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>. I understand that nesting increases complexity. What I do not understand yet is how limiting nested queries impacts complexity. I have an instance with 5 users, the following query results in a complexity of <code>13022</code>:</p>\n<pre><code class=\"lang-auto\">me {\n    id,\n    name,\n    teams {\n      id,\n      name,\n      users(limit: 1) {\n        id\n      }\n    }\n  }\n  \n  complexity {\n    before,\n    after,\n    query,\n    reset_in_x_seconds\n  }\n</code></pre>\n<p>If I increase the <code>limit</code> parameter the query complexity is increased by a thousand, it doesn’t stop at 5, but just continues to be increased by a thousand.</p>"
+    }
+  ]
+}

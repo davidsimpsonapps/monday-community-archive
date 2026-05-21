@@ -1,0 +1,103 @@
+{
+  "id": 74847,
+  "title": "Query item by ID using items_page",
+  "slug": "query-item-by-id-using-items-page",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-11T07:19:50.123Z",
+  "lastPostedAt": "2024-01-11T12:40:45.213Z",
+  "postsCount": 11,
+  "excerpt": "Before I could query items by ID like this: \n\n{ \nboards(ids: 1303312611) { \nitems(ids:5820698515) { \nid \nname \ncolumn_values(ids: “person”) { \nvalue \ntext \n} \n} \n} \n} \n\nNow we have to use items_page as parent to query it&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 593,
+  "posts": [
+    {
+      "id": 161504,
+      "postNumber": 1,
+      "createdAt": "2024-01-11T07:19:50.204Z",
+      "author": "jonathan.van (Jonathan)",
+      "cookedHtml": "<p>Before I could query items by ID like this:</p>\n<blockquote>\n<p>{<br />\nboards(ids: 1303312611) {<br />\nitems(ids:5820698515) {<br />\nid<br />\nname<br />\ncolumn_values(ids: “person”) {<br />\nvalue<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}</p>\n</blockquote>\n<p>Now we have to use items_page as parent to query items. If I just add items_page to the query as below, I get an error saying items doesn’t have an argument called ids. You also can’t use ids as a filter column I think. So how can I query with items_page an item by ID?</p>\n<blockquote>\n<p>{<br />\nboards(ids: 1303312611) {<br />\nitems_page(limit: 1) {<br />\nitems(ids:5820698515) {<br />\nid<br />\nname<br />\ncolumn_values(ids: “person”) {<br />\nvalue<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n</blockquote>"
+    },
+    {
+      "id": 161510,
+      "postNumber": 2,
+      "createdAt": "2024-01-11T07:50:13.633Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jonathan.van\">@jonathan.van</a></p>\n<p>The ids arguments needs to go to items_page (not items). Why don’t you just use items as your root query as you seem to know the itemId?</p>"
+    },
+    {
+      "id": 161511,
+      "postNumber": 3,
+      "createdAt": "2024-01-11T08:07:03.020Z",
+      "author": "jonathan.van (Jonathan)",
+      "cookedHtml": "<p>Could you give an example of what that query would look like?</p>"
+    },
+    {
+      "id": 161512,
+      "postNumber": 4,
+      "createdAt": "2024-01-11T08:13:03.329Z",
+      "author": "Adnene (Adnene)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jonathan.van\">@jonathan.van</a> you can use <code>ItemQuery</code> to supply your ids. <a href=\"https://developer.monday.com/api-reference/docs/other-types#items-query\" rel=\"noopener nofollow ugc\">Here’s the documentation</a></p>\n<p>An example of such query:</p>\n<pre><code class=\"lang-auto\">boards(ids: [BOARD_ID_1]) {\n    id\n    items_page(query_params: {ids: [ITEM_ID_1]}) {\n      cursor\n      items {\n        id\n      }\n  }\n} \n</code></pre>"
+    },
+    {
+      "id": 161515,
+      "postNumber": 5,
+      "createdAt": "2024-01-11T08:25:32.170Z",
+      "author": "jonathan.van (Jonathan)",
+      "cookedHtml": "<p>Ok great, that example really helps, thanks!</p>"
+    },
+    {
+      "id": 161517,
+      "postNumber": 6,
+      "createdAt": "2024-01-11T08:37:03.568Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>or just items as the root query (you don’t need the boarId)</p>\n<pre><code class=\"lang-auto\">items(ids:5820698515) {\nid\nname\ncolumn_values(ids: “person”) {\nvalue\ntext\n}\n}\n</code></pre>\n<p>This is the simplest form <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=12\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 161518,
+      "postNumber": 7,
+      "createdAt": "2024-01-11T08:47:41.514Z",
+      "author": "Adnene (Adnene)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> documentation recommends to use <code>items</code> query at root when you don’t know the boardId. It strongly recommends to use items_page instead <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>\n<p>Just look how many warnings on this page: <a href=\"https://developer.monday.com/api-reference/docs/items\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Items</a></p>"
+    },
+    {
+      "id": 161519,
+      "postNumber": 8,
+      "createdAt": "2024-01-11T09:06:49.154Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>That is a common misunderstanding, see also <a href=\"https://community.monday.com/t/please-help-cant-get-column-values/74450/8\" class=\"inline-onebox\">Please help - can't get column_values? - #8 by codyfrisch</a></p>"
+    },
+    {
+      "id": 161521,
+      "postNumber": 9,
+      "createdAt": "2024-01-11T09:20:40.116Z",
+      "author": "Adnene (Adnene)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> thank you for sharing the link <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" width=\"20\" height=\"20\" />. Actually, I am not referring to query speed, just what documentation is recommending.</p>\n<p>Totally agree with you, root items was waaaayyy much faster then the actual items_page. Since we migrated to 2023-10 and start using items_page, we noticed a huge regression in our performances that reach sometimes x3 slow requests than previous version.</p>\n<p>With <a class=\"mention\" href=\"/u/samicaracand\">@samicaracand</a> we were struggling for days figuring out what was causing these performances issues. Even the 500 limits with items_page is not respected when you provide 500 item ids! see this: <a href=\"https://community.monday.com/t/2024-01-api-items-page-query-limits-500-or-100/74835\" class=\"inline-onebox\">[2024-01 API:] items_page query limits - 500 or 100?</a></p>"
+    },
+    {
+      "id": 161524,
+      "postNumber": 10,
+      "createdAt": "2024-01-11T09:45:47.860Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>The best approach differs case by case. You <a class=\"mention\" href=\"/u/adnene\">@Adnene</a> are talking about limits (500 or 100) but the original ask from <a class=\"mention\" href=\"/u/jonathan.van\">@jonathan.van</a> was for just one item. For one item (knowing the itemId) I would always use the items root query.</p>"
+    },
+    {
+      "id": 161587,
+      "postNumber": 11,
+      "createdAt": "2024-01-11T12:40:45.213Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/adnene\">@Adnene</a> I’ve even recommended for some situations to use the items_page to only return the item IDs. no values, not even the name. When using items_page this way its much faster since its not invoking the column_value or any other resolvers (say group, subitems, updates, etc.)</p>\n<p>Then once you have IDs, fetch the IDs using the <code>items</code> root query in batches of 100. Even in JS by not using await on query, you can loop through batches of 100 really quick, then <code>await Promise.all(promises)</code> and handle the results from the 5 queries you sent out.</p>\n<p><em>With the way JS works each of those query functions would reach the internal await on the actual HTTP request, and JS moves onto making the next request while it awaits the actual network activity. This lets you execute the slow part (the <a href=\"http://monday.com\">monday.com</a> getting the data) in near parallel without JS being multi-threaded!</em></p>\n<p>Now when you do the <code>await Promise.all(promises)</code> you will get an array of results from the queries you can process. You’d also get setup with the right loop and structure for the pagination so that you’re also getting the next pages of IDs at the same time so you can create the next batch to fire off as soon as you’re ready, maybe even create a queue of batches.</p>\n<p>But now I’m getting into software architecture and its too much for this venue! But I hope the concept inspired you. In fact you may see this be faster than the pre-items_page methods you used.</p>"
+    },
+    {
+      "id": 161976,
+      "postNumber": 12,
+      "createdAt": "2024-01-14T12:59:52.523Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

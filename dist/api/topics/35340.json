@@ -1,0 +1,33 @@
+{
+  "id": 35340,
+  "title": "Get data from monday - using foreach in php?",
+  "slug": "get-data-from-monday-using-foreach-in-php",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    155
+  ],
+  "createdAt": "2022-04-27T09:19:07.279Z",
+  "lastPostedAt": "2022-05-11T15:50:31.523Z",
+  "postsCount": 2,
+  "excerpt": "Hi All, \nI’m trying to pull info from Monday and display a list of job numbers and connected clients. \nWhen I query the board I’m using: \n\t\tboards (ids: 111) {\n\t\t\titems {\n\t\t\t\t  id\n\t\t\t\t  name\n\t\t\t\tcolumn_values {\n\t\t\t\t  id\n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1617,
+  "posts": [
+    {
+      "id": 84198,
+      "postNumber": 1,
+      "createdAt": "2022-04-27T09:19:07.367Z",
+      "author": "johnners (Drew)",
+      "cookedHtml": "<p>Hi All,<br />\nI’m trying to pull info from Monday and display a list of job numbers and connected clients.</p>\n<p>When I query the board I’m using:</p>\n<pre><code class=\"lang-nohighlight\">\t\tboards (ids: 111) {\n\t\t\titems {\n\t\t\t\t  id\n\t\t\t\t  name\n\t\t\t\tcolumn_values {\n\t\t\t\t  id\n\t\t\t\t  text\n\t\t\t\t  title\n\t\t\t\t  }\n\t\t\t\t}\n\t\t\t}\n\t\t}\n</code></pre>\n<p>The results to show:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items\": [\n          {\n            \"id\": \"project_number\",\n            \"name\": \"project name\",\n            \"column_values\": [\n              {\n                \"id\": \"subitems\",\n                \"text\": \"\",\n                \"title\": \"Subitems\"\n              },\n              {\n                \"id\": \"connect_boards\",\n                \"text\": \"Client Name\",\n                \"title\": \"Client\"\n              },\n              {\n                \"id\": \"rep\",\n                \"text\": \"11586\",\n                \"title\": \"Job No\"\n              },\n              {\n                \"id\": \"timeline\",\n                \"text\": \"2022-02-24 - 2022-02-24\",\n                \"title\": \"Project Completion\"\n              },\n              {\n                \"id\": \"dup__of_project_completion\",\n                \"text\": \"2022-02-24 - 2022-02-24\",\n                \"title\": \"Completion\"\n              },\n              {\n                \"id\": \"quoted_hrs\",\n                \"text\": \"0\",\n                \"title\": \"Quoted Hrs\"\n              },\n              {\n                \"id\": \"hours_taken\",\n                \"text\": \"0\",\n                \"title\": \"Hours Taken\"\n              },\n              {\n                \"id\": \"status_16\",\n                \"text\": \"\",\n                \"title\": \"Status\"\n              },\n              {\n                \"id\": \"people4\",\n                \"text\": \"\",\n                \"title\": \"People\"\n              },\n              {\n                \"id\": \"status70\",\n                \"text\": \"Yes\",\n                \"title\": \"Production\"\n              },\n              {\n                \"id\": \"numbers4\",\n                \"text\": \"9999999\",\n                \"title\": \"Quoted Price\"\n              },\n              {\n                \"id\": \"dup__of_quoted_price\",\n                \"text\": \"\",\n                \"title\": \"Suppliers costs\"\n              }\n            ]\n          },\n</code></pre>\n<p>How can I get a list showing:</p>\n<p>Project Name<br />\nClient Name<br />\nJob No</p>\n<p>as I can’t work out what the query would need to be - I would need it to show all records (at the moment around 100 projects)</p>\n<p>Is this possible or do I need to use php and run a foreach query?</p>\n<p>Thanks in advance</p>"
+    },
+    {
+      "id": 85578,
+      "postNumber": 2,
+      "createdAt": "2022-05-11T15:50:31.523Z",
+      "author": "efaria (Emilio Faria)",
+      "cookedHtml": "<p>Hello,<br />\nThis is how I run queries to get information from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a></p>\n<pre><code class=\"lang-auto\">$token = 'YOUR TOKEN HERE';\n$apiUrl = 'https://api.monday.com/v2';\n$headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n$query_1 = '{boards(ids:123456789) { name id items { name column_values{id type text } } } }';\n$data = @file_get_contents($apiUrl, false, stream_context_create([\n 'http' =&gt; [\n 'method' =&gt; 'POST',\n 'header' =&gt; $headers,\n 'content' =&gt; json_encode(['query' =&gt; $query_1]),\n ]\n]));\n$responseContent = json_decode($data, true);\n\nforeach($responseContent['data']['boards'][0]['items'] as $mydata){\n  echo $mydata['name'] . \"&lt;br&gt;\";\n}\n?&gt;\n</code></pre>"
+    }
+  ]
+}

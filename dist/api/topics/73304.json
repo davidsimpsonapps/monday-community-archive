@@ -1,0 +1,70 @@
+{
+  "id": 73304,
+  "title": "Why monday has unsupported columns like ITEM ID for searching using automation platforms like make.com?",
+  "slug": "why-monday-has-unsupported-columns-like-item-id-for-searching-using-automation-platforms-like-make-com",
+  "categoryId": 8,
+  "tagIds": [
+    46,
+    94,
+    203,
+    242
+  ],
+  "createdAt": "2023-12-18T08:31:40.070Z",
+  "lastPostedAt": "2023-12-20T12:21:02.507Z",
+  "postsCount": 6,
+  "excerpt": "Why monday has unsupported columns like ITEM ID, we used it for a lot of clients to build automation on make andwe were using ITEM ID as unique value to search for but monday has unspported that now. Anyone has workaroun&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 519,
+  "posts": [
+    {
+      "id": 158388,
+      "postNumber": 1,
+      "createdAt": "2023-12-18T08:31:40.161Z",
+      "author": "rehan.abdul (Rehan AQ | monday.com Partner)",
+      "cookedHtml": "<p>Why monday has unsupported columns like ITEM ID, we used it for a lot of clients to build automation on make andwe were using ITEM ID as unique value to search for but monday has unspported that now. Anyone has workaround for that. Getting a lot of emails from clients that automations has been stopped. Link to article:  <a href=\"https://developer.monday.com/api-reference/docs/items-by-column-values#supported-limited-support-and-unsupported-columns\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Items by column values</a></p>"
+    },
+    {
+      "id": 158422,
+      "postNumber": 2,
+      "createdAt": "2023-12-18T12:10:00.382Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The item ID is the item ID. If you want the item for an item ID by API… you don’t need to search by item ID. The item ID column just shows the user the item ID in the browser easily. For purposes of automations or make, just use the item using the ID. Why use the find by column value when its an expensive (complexity wise) operation, when just getting the item directly by ID works?</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: \"12312312312\"){\n    name\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 158560,
+      "postNumber": 3,
+      "createdAt": "2023-12-19T03:19:34.582Z",
+      "author": "rehan.abdul (Rehan AQ | monday.com Partner)",
+      "cookedHtml": "<p>I am getting Item by search on Board B where it is mirrored. As only item ID is unique.</p>"
+    },
+    {
+      "id": 158586,
+      "postNumber": 4,
+      "createdAt": "2023-12-19T11:44:31.156Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There is no limitation here, this works. <code>mirror_1</code> column is a mirror of an item ID column on another board in the query below. <code>items_by_column_value</code> is deprecated so you should not be trying to use it since it will cease to function at all on January 15, 2024. Using <code>items_page</code> works just fine. I suspect <code>items_page_by_column_value</code> will as well but didn’t test it. Don’t forget to set your API Version to 2023-10 of course to use <code>items_page</code> and <code>items_page_by_column_value</code>.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123123123123) {\n    items_page(\n      query_params: {rules: [{column_id: \"mirror_1\", compare_value: [\"324234234\"], operator: any_of}]}\n    ) {\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>the response i get is below, and that is the item i would expect to find.</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items_page\": {\n          \"items\": [\n            {\n              \"id\": \"244234234\",\n              \"name\": \"Test Item\"\n            }\n          ]\n        }\n      }\n    ]\n  },\n  \"account_id\": 123123\n}\n</code></pre>"
+    },
+    {
+      "id": 158682,
+      "postNumber": 5,
+      "createdAt": "2023-12-20T01:26:01.385Z",
+      "author": "RickAllen (Rick Allen)",
+      "cookedHtml": "<p>Is this Items api supported with the new api or do I need to use items_page?</p>"
+    },
+    {
+      "id": 158740,
+      "postNumber": 6,
+      "createdAt": "2023-12-20T12:21:02.507Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>you can use a root query of <code>items</code> without items_page, but if you want to get the items from a board or group, items_page is required within the board or group part of the query, then items within items page. Items page controls pagination. <a href=\"https://developer.monday.com/api-reference/docs/items_page\" class=\"inline-onebox\">Items page</a></p>\n<p>The queries with items_page require the new API version.</p>\n<p>Here is a items root query example, if you didn’t specify ids you’d get 100 randomish items (probably the 100 oldest items). Not very useful. So an items root query like this is really only useful if you’re specifying item IDs - since there is no reason to go through the complexity of querying the board and items_page since you know what items to get already. (often just one item)</p>\n<pre><code class=\"lang-auto\">{\n   items(ids:123123123){id, name}\n}\n</code></pre>"
+    },
+    {
+      "id": 159322,
+      "postNumber": 7,
+      "createdAt": "2023-12-27T11:24:06.566Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": 95480,
+  "title": "Delete Multiple Subitems in one request",
+  "slug": "delete-multiple-subitems-in-one-request",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    107,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-08-16T16:38:10.416Z",
+  "lastPostedAt": "2024-08-16T17:49:59.146Z",
+  "postsCount": 2,
+  "excerpt": "Does anyone know if you can delete multiple subitems in one request. It’s fairly slow to do it through iteration as seen here: \nexport const clearSubitems = async (event: TEvent) =&gt; {\n  const response = await monday.api(&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 36,
+  "posts": [
+    {
+      "id": 197668,
+      "postNumber": 1,
+      "createdAt": "2024-08-16T16:38:10.491Z",
+      "author": "cartersingle (Carter Singletary)",
+      "cookedHtml": "<p>Does anyone know if you can delete multiple subitems in one request. It’s fairly slow to do it through iteration as seen here:</p>\n<pre><code class=\"lang-auto\">export const clearSubitems = async (event: TEvent) =&gt; {\n  const response = await monday.api(`{\n    items(ids:[${event.pulseId}]) {\n      subitems {\n        id\n      }\n    }\n  }`);\n\n  const idsToDelete = response.data.items[0].subitems.map(\n    (item: { id: string }) =&gt; item.id\n  ) as string[];\n\n  for (const id of idsToDelete) {\n    await monday.api(`\n      mutation {\n        delete_item(item_id: ${id}) {\n          id\n        }\n      }\n    `);\n  }\n};\n</code></pre>\n<p>Thanks for the help!</p>"
+    },
+    {
+      "id": 197678,
+      "postNumber": 2,
+      "createdAt": "2024-08-16T17:49:59.146Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">export const clearSubitems = async (event: TEvent) =&gt; {\n  const response = await monday.api(`{\n    items(ids:[${event.pulseId}]) {\n      subitems {\n        id\n      }\n    }\n  }`);\n\n  const idsToDelete = response.data.items[0].subitems.map(\n    (item: { id: string }) =&gt; item.id\n  ) as string[];\n  \nconst deletePromises = idsToDelete.map((id) =&gt; { \n  return monday.api(`\n    mutation {\n      delete_item(item_id: ${id}) {\n        id\n      }\n    }\n  `);\n})\n\nconst results = await Promise.allSettled(deletePromises);\n// iterate your results, its an array of objects with success (boolean), data, and \n// an error object if there is an error. \n  \n};\n\n</code></pre>\n<p>Just don’t await each request, instead just get the promises, and then use <code>await Promise.allSettled()</code> to await them all. This will let the JS runtime execute all of the I/O portions on separate threads in the background, and then await all of them to return. While JS is single-threaded the IO that runs outside the JS runtime is not.</p>"
+    },
+    {
+      "id": 197849,
+      "postNumber": 3,
+      "createdAt": "2024-08-18T06:16:22.134Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

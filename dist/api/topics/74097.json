@@ -1,0 +1,104 @@
+{
+  "id": 74097,
+  "title": "How to return Board Name and ID in my Power BI query?",
+  "slug": "how-to-return-board-name-and-id-in-my-power-bi-query",
+  "categoryId": 6,
+  "tagIds": [
+    22,
+    94,
+    460
+  ],
+  "createdAt": "2024-01-04T08:47:13.301Z",
+  "lastPostedAt": "2026-03-11T08:39:24.282Z",
+  "postsCount": 12,
+  "excerpt": "Hi all, I need to adjust my PBI query to handle the monday api output which now includes the board name and id. Can someone tell me what I need to add in please, many thanks! \n“{”“query”“: ““query {boards(ids: “&amp; Board &amp;”&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 952,
+  "posts": [
+    {
+      "id": 160138,
+      "postNumber": 1,
+      "createdAt": "2024-01-04T08:47:13.375Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Hi all, I need to adjust my PBI query to handle the monday api output which now includes the board <em>name</em> and <em>id</em>. Can someone tell me what I need to add in please, many thanks!</p>\n<p>“{”“query”“: ““query {boards(ids: “&amp; Board &amp;”) {name id items_page(limit: 500) {items {id name updated_at group {title} column_values {column {title} text … on MirrorValue {display_value} … on BoardRelationValue {display_value}}}}}}””}”)]),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items_page][items], Record.FieldValues, {“BoardName”, “BoardID”,“ID”, “Title”, “UpdatedAt”, “Group”, “Columns_Values”})<br />\nin<br />\nData</p>"
+    },
+    {
+      "id": 160160,
+      "postNumber": 2,
+      "createdAt": "2024-01-04T09:41:02.245Z",
+      "author": "rehan.abdul (Rehan AQ | monday.com Partner)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> take a look if you can help.</p>"
+    },
+    {
+      "id": 160298,
+      "postNumber": 3,
+      "createdAt": "2024-01-04T20:01:33.377Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/hbouk\">@hbouk</a> I’m looping you in since you seem to be the Power BI guru here!</p>\n<p><a class=\"mention\" href=\"/u/demmo\">@Demmo</a> I’d be very cautious with a limit of 500 and the <code>... on MirrorValue</code> there have been performance issues around this, depending on when the number of mirror columns increases. Its sometimes bad enough that people can only get 10-20 items at a time or else the query errors or timesout.</p>\n<p><a class=\"mention\" href=\"/u/rehan.abdul\">@rehan.abdul</a> just an FYI, while I seem to be everywhere and know a lot about the API, I don’t actually work for monday! and Power BI is probably the one thing I barely know - just enough to be very dangerous with it.</p>"
+    },
+    {
+      "id": 160351,
+      "postNumber": 4,
+      "createdAt": "2024-01-05T04:56:15.358Z",
+      "author": "rehan.abdul (Rehan AQ | monday.com Partner)",
+      "cookedHtml": "<p>I know, I just tagged you because you are normally on discussions of API <img src=\"https://emoji.discourse-cdn.com/apple/stuck_out_tongue.png?v=12\" title=\":stuck_out_tongue:\" class=\"emoji\" alt=\":stuck_out_tongue:\" width=\"20\" height=\"20\" /> .</p>"
+    },
+    {
+      "id": 161027,
+      "postNumber": 5,
+      "createdAt": "2024-01-09T12:49:43.316Z",
+      "author": "hbouk (Howard Bouk)",
+      "cookedHtml": "<p>I haven’t had to deal with connected boards so far.  <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=12\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" width=\"20\" height=\"20\" />  I have avoided this (to keep things simpler) by adding a column in each of the boards I need to “join” that I can use in Power BI to join the boards.  Generally, I treat each board as a table then handle all joins in Power BI.</p>\n<p>I keep running into Monday functionality (mostly column types) that are supported in Monday but not through the API so I end up coming up with what simple work arounds.</p>"
+    },
+    {
+      "id": 161034,
+      "postNumber": 6,
+      "createdAt": "2024-01-09T13:09:25.398Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Thanks all - I’m just after the Board name and id being returned as part of my existing query. The Graph QL bit is fine - it’s just handling the output in the M Query syntax that I don’t get… i.e. the additional 2 columns that are being returned from monday…</p>"
+    },
+    {
+      "id": 161819,
+      "postNumber": 7,
+      "createdAt": "2024-01-12T14:57:49.574Z",
+      "author": "enier (enier)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/d/ce7236/48.png\" class=\"avatar\" /> Graeme Dempsey:</div>\n<blockquote>\n<p>Data = Table.FromList(Json.Document(Source)[data][boards]{0}[items_page][items], Record.FieldValues, {“BoardName”, “BoardID”,“ID”, “Title”, “UpdatedAt”, “Group”, “Columns_Values”})</p>\n</blockquote>\n</aside>\n<p>When you extract data using Table.FromList(Json.Document(Source)[data][boards]{0}[items_page][items], Record.FieldValues, {“BoardName”, “BoardID”, “ID”, “Title”, “UpdatedAt”, “Group”, “Columns_Values”}), you’re focusing on the items within a single board, which might not include the board’s own metadata like its name or ID. To access the BOARDID and BOARD NAME, you should first retrieve the board-level details. Use Table.FromList(Json.Document(Source)[data][boards], Record.FieldValues, [“BoardName”, “BoardID”, …]) where ‘…’ represents other relevant fields you might need from the board level. This method will help you access the BoardID and BoardName before you dive into the specific items of each board.</p>\n<p>I’ve never used PBI, but the approach to retrieving information via JSON is a standard structure.\"</p>"
+    },
+    {
+      "id": 167292,
+      "postNumber": 8,
+      "createdAt": "2024-02-12T07:04:18.945Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/enier\">@enier</a> - I’ve gone with 2 separate queries and combined them in PBI to get the desired result.</p>"
+    },
+    {
+      "id": 167392,
+      "postNumber": 9,
+      "createdAt": "2024-02-12T16:08:24.297Z",
+      "author": "enier (enier)",
+      "cookedHtml": "<p>Is it working as you needed ?</p>"
+    },
+    {
+      "id": 167483,
+      "postNumber": 10,
+      "createdAt": "2024-02-13T07:02:28.835Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/enier\">@enier</a> - yes, all good. I’m not an experienced query writer, so I’m always trying to return everything in one hit, where a multi-stage approach is required/just as good!</p>"
+    },
+    {
+      "id": 220790,
+      "postNumber": 11,
+      "createdAt": "2025-02-10T17:14:50.471Z",
+      "author": "emily475 (Emily Smith )",
+      "cookedHtml": "<p>In Power BI, you can retrieve the Board Name and ID in your query by using Power Query (M) or DAX, depending on your data source. If you’re connecting to an API or database, try using Power Query with the <strong>Web.Contents</strong> function to fetch board details.</p>\n<p>For example, if you’re querying an API, use:</p>\n<blockquote>\n<p>let<br />\nSource = Json.Document(Web.Contents(“<a href=\"https://api.example.com/boards\" rel=\"noopener nofollow ugc\">https://api.example.com/boards</a>”)),<br />\nBoards = Source[boards],<br />\nTable = Table.FromList(Boards, Record.FieldValues, {“ID”, “Name”})<br />\nin<br />\nTable<br />\nIf your data is already in Power BI, use <strong>DAX</strong> like:</p>\n</blockquote>\n<p>BoardTable = SELECTCOLUMNS(BoardDataset, “Board ID”, [ID], “Board Name”, [Name])<br />\nMake sure the API or database returns the required fields. Let me know if you need more details!</p>"
+    },
+    {
+      "id": 247020,
+      "postNumber": 12,
+      "createdAt": "2026-03-11T08:39:24.282Z",
+      "author": "nicstt (Nicholas)",
+      "cookedHtml": "<p>Although the previous response are helpful, I thought to add my “two-penneth“ to the mix. Hopefully, as I’m new to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>, I’ve not misunderstood anything.</p>\n<p>You seem close, but the issue is that <strong><code>name</code> and <code>id</code> are returned at the board level</strong>, not inside the <code>items</code> records.</p>\n<p>When you do:</p>\n<p><code>Json.Document(Source)[data][boards]{0}[items_page][items]</code></p>\n<p>you’re already drilling down to the <strong>items list</strong>, which only contains item-level fields (<code>id</code>, <code>name</code>, <code>updated_at</code>, etc.). So Power BI can’t populate <code>BoardName</code> and <code>BoardID</code> from that step.</p>\n<p>You have two options:</p>\n<p><strong>Option 1 – Store the board fields before expanding items</strong></p>\n<pre><code class=\"lang-auto\">Board = Json.Document(Source)[data][boards]{0},\nItems = Board[items_page][items],\nBoardName = Board[name],\nBoardID = Board[id],\n\n</code></pre>\n<p>Then add them after converting the items list to a table.</p>\n<p><strong>Option 2 – Add the board fields as custom columns after <code>Table.FromList</code></strong></p>\n<pre><code class=\"lang-auto\">= Table.AddColumn(Data, \"BoardName\", each Json.Document(Source)[data][boards]{0}[name])\n\n</code></pre>\n<p>(and the same for <code>BoardID</code>).</p>\n<p>The key point is that <strong>BoardName and BoardID aren’t part of the item record</strong>, so they need to be pulled from the board object separately and then added to the items table.</p>\n<p>For info though, I prefer not to maintain code relating to connectors, be they: Monday, Harvest, Xero, Simpro or HubSpot or whatever, I’ve been using (Tugger) as they take the hassle out of it. Since, I first started using ‘em, they have added a number of connectors and we’ve just added Monday to the ones we use - admittedly, most we don’t. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=15\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I’d suggest checking em out as you might find it very cost-effective.</p>"
+    }
+  ]
+}

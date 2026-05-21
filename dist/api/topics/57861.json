@@ -1,0 +1,46 @@
+{
+  "id": 57861,
+  "title": "COUNT total rows and use value in formula",
+  "slug": "count-total-rows-and-use-value-in-formula",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-05-10T14:57:57.128Z",
+  "lastPostedAt": "2024-07-11T08:48:50.043Z",
+  "postsCount": 4,
+  "excerpt": "I’m trying to figure out a way to return the amount of rows based on certain conditions and then use that value within a formula column.  I’m not sure if this is possible, I’m very new to Monday. \nFor example, I’d like t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3146,
+  "posts": [
+    {
+      "id": 127291,
+      "postNumber": 1,
+      "createdAt": "2023-05-10T14:57:57.288Z",
+      "author": "rschwall1 (Ryan)",
+      "cookedHtml": "<p>I’m trying to figure out a way to return the amount of rows based on certain conditions and then use that value within a formula column.  I’m not sure if this is possible, I’m very new to Monday.</p>\n<p>For example, I’d like to count the amount of rows that have a date entered in one of the columns in the board and have a particular status column value.  If date is empty, I’d then want to use that row total value within a formula.</p>\n<p>We’re building out a Sales Forecasting model and need to be able to figure out success rate.  Success rate is defined by (Total Successes / (Total Success + Total Fails)) * 100.</p>\n<p>I’ve got the formula written out below, but having trouble figuring out how to pull the total count of rows into that formula.  The bolded items below are where I’m having trouble figuring it out.</p>\n<p>Currently, my formula is as follows:</p>\n<p>MULTIPLY(DIVIDE(<strong>COUNT rows WHERE</strong> AND({POC Start Date} &lt;&gt;“”, {Current Stage} = ‘1-Won/Active’),<br />\n(SUM(<strong>COUNT rows WHERE</strong> AND({POC Start Date} &lt;&gt;“”, {Current Stage} = ‘1-Won/Active’), <strong>COUNT rows WHERE</strong> AND({POC Start Date} &lt;&gt;“”, {Current Stage} = ‘11-Deal Dead’)))), 100)</p>"
+    },
+    {
+      "id": 127313,
+      "postNumber": 2,
+      "createdAt": "2023-05-10T17:48:58.347Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>I would say <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> just fundamentally doesn’t work in this way. One of the key challenges people face when they start using <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> is expecting it to behave like a spreadsheet, when really it’s more like a database. Data is consistent across all rows, unlike a spreadsheet where there is more context and relevance to a row’s position.</p>\n<p>This can be achieved in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> by aggregating data. I would approach this by creating a second board and connecting all the items that you’d want to include in this calculation.</p>\n<p>Then I’d create some formula columns on the main database to be something like:</p>\n<p>“IsSuccess”</p>\n<pre><code class=\"lang-auto\">IF(\n    AND(\n        NOT({POC Start Date}=\"\"),\n        {Current Stage}=\"1-Won/Active\"\n    ),\n    1,\n    0\n)\n</code></pre>\n<p>“IsClosed”</p>\n<pre><code class=\"lang-auto\">IF(\n    AND(\n        NOT({POC Start Date}=\"\"),\n        OR(\n            {Current Stage}=\"1-Won/Active\",\n            11-Deal Dead\"\n        )\n    ),\n    1,\n    0\n)\n</code></pre>\n<p>Then have all these items linked (can be one way) from the second board you created. Make sure that that the mirror columns are set to sum the mirrored values.</p>\n<p>Then on the new board, you can just create a simple formula column to divide these totals and multiply by 100.</p>"
+    },
+    {
+      "id": 192710,
+      "postNumber": 3,
+      "createdAt": "2024-07-10T05:26:59.038Z",
+      "author": "Iryna_Belaya (Iryna Belaya)",
+      "cookedHtml": "<p>Hello Ryan,<br />\nYou can easily do his by <a href=\"https://docs.stiltsoft.com/ssfm/smart-spreadseet-import-a-board-and-subitems-179143232.html\" rel=\"noopener nofollow ugc\">autoimporting your board</a> to a spreadsheet with the <a href=\"https://monday.com/marketplace/10000173\" rel=\"noopener nofollow ugc\">Smart Spreadsheet</a> app and using the IF formula.</p>\n<ol>\n<li>Create a ‘Helper’ column: =IF({column cell with a date} = “date”, 1, 0)</li>\n<li>Then Sum this column.<br />\nI hope this can help.</li>\n</ol>"
+    },
+    {
+      "id": 192917,
+      "postNumber": 4,
+      "createdAt": "2024-07-11T08:48:50.043Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Ryan,</p>\n<p>This can be easily done with a 3rd-party app called the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>. It is designed to revolutionize formulas and automations in monday. Among many unique features, it allows you to access any item from the same board or any other board.</p>\n<p>In this case, you would use the following syntax:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/a/4a9810fb69dc2a32a3f0657475ca085ef1a3c8c4.jpeg\" title=\"2024-07-10_08-37-09\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/a/4a9810fb69dc2a32a3f0657475ca085ef1a3c8c4_2_690x75.jpeg\" alt=\"2024-07-10_08-37-09\" width=\"690\" height=\"75\" /><div class=\"meta\"><span class=\"filename\">2024-07-10_08-37-09</span><span class=\"informations\">1074×117 57.5 KB</span></div></a></div><p></p>\n<ul>\n<li>In the first row (the app’s syntax editor can have up to 100 lines), you retrieve all the start dates of the board and store it in a list called [AllDates].</li>\n<li>In the second row, you keep only the ones that are empty.</li>\n<li>In the third row, you retrieve the number of items.</li>\n</ul>\n<p>As you can see in the screenshot, the app allows you to run a simulation to immediately show you the results (without affecting your board data). So you can see in the first line, that the line is made of 5 values (the list separator is |) among which 2 are empty. They are removed by the filter and the final count is 3.<br />\nAny text in-between <span class=\"chcklst-box fa fa-square-o fa-fw\"></span> is a variable, i.e. the value is stored and can be called later in the formula as with the [AllDates] variable calculated in row 1 and used in row 2.</p>\n<p>The app can write any calculation to any type of column in your board. So in your case, instead of having a formula column, you would create a numbers column  called <em>Success Rate</em>,. That means that this rate could be used anywhere in widgets, automations, etc. without the limitations of the formula column.</p>\n<p>Hope it helps.</p>"
+    }
+  ]
+}

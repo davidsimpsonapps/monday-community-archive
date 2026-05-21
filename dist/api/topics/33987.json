@@ -1,0 +1,88 @@
+{
+  "id": 33987,
+  "title": "Weighting ratings columns in formulas",
+  "slug": "weighting-ratings-columns-in-formulas",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-03-31T11:25:09.564Z",
+  "lastPostedAt": "2022-04-11T08:20:45.231Z",
+  "postsCount": 10,
+  "excerpt": "Hi, I am using the Feature Tracking Board which uses a basic RICE Scoring formula ({Growth}{Reach}{Impact}*{Confidence})/{Effort} where each of the column names is a rating field. \nIs there a way to equate the stars to d&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 3276,
+  "posts": [
+    {
+      "id": 81543,
+      "postNumber": 1,
+      "createdAt": "2022-03-31T11:25:09.660Z",
+      "author": "agotlieb (agotlieb)",
+      "cookedHtml": "<p>Hi, I am using the Feature Tracking Board which uses a basic RICE Scoring formula ({Growth}<em>{Reach}</em>{Impact}*{Confidence})/{Effort} where each of the column names is a rating field.</p>\n<p>Is there a way to equate the stars to different values?<br />\nFor example, for<br />\n{Impact}, 1 star = .25, 2 stars = .5, 3 stars = 1, 4 stars = 2, 5 stars = 3<br />\n{Reach}, 1 star = 5, 2 stars = 10, 3 stars = 20, 4 stars = 30</p>\n<p>ratings field is ideal, but if that is not possible, is there a different field type that could achieve the same result?</p>\n<p>Thank you</p>"
+    },
+    {
+      "id": 81553,
+      "postNumber": 2,
+      "createdAt": "2022-03-31T13:00:07.503Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/agotlieb\">@agotlieb</a></p>\n<p>I think the simplest way would be to use the undocumented CHOOSE() function for each component, e.g.</p>\n<p><code>CHOOSE({IMPACT}+1,0,0.25,0.5,1,2,5)</code></p>\n<p><code>CHOOSE({REACH}+1,0,5,10,20,30,999) </code></p>\n<p>Combining the components in your formula as something like:<br />\n<code>CHOOSE({GROWTH}+1,0,1,2,3,4,5) * CHOOSE({REACH}+1,0,5,10,20,30,999) * CHOOSE({IMPACT}+1,0,0.25,0.5,1,2,5) * CHOOSE({CONFIDENCE}+1,0,1,2,3,4,5) / CHOOSE({EFFORT}+1,0,1,2,3,4,5)</code></p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/SARq3tmCIX8\" class=\"inline-onebox\">Should I convert my Integromat account to Make? - YouTube</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 81563,
+      "postNumber": 3,
+      "createdAt": "2022-03-31T14:08:29.933Z",
+      "author": "agotlieb (agotlieb)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a><br />\nThank you, you got me on the right track, especially with syntax, but I ended up having to use SWITCH instead of CHOOSE (maybe because of my plan)</p>\n<p>(SWITCH({Growth},1,1,2,2,3,3,4,5) * SWITCH({Reach},1,5,2,10,3,20,4,30) *<br />\nSWITCH({Revenue},1,1,2,5,3,10,4,20) *<br />\nSWITCH({Impact},1,0.25,2,0.50,3,1,4,2,5,3) * SWITCH({Confidence},1,0.10,2,0.50,3,0.80,4,1)) / SWITCH({Effort},1,1,2,2,3,3,4,5,5,8)</p>"
+    },
+    {
+      "id": 81592,
+      "postNumber": 4,
+      "createdAt": "2022-03-31T15:25:13.287Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/agotlieb\">@agotlieb</a></p>\n<p>SWITCH() works too, of course. It’s just a little more complex in this use case.</p>\n<p>I am curious why you thought that you could not use CHOOSE(). If you have formulas, it should work.</p>\n<p>Also, the final formula you gave will return an error if any of your rating columns have no stars selected and {Growth}, {Reach}, {Revenue}, or {Confidence} have 5 stars selected.</p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/SARq3tmCIX8\" class=\"inline-onebox\">Should I convert my Integromat account to Make? - YouTube</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 81602,
+      "postNumber": 5,
+      "createdAt": "2022-03-31T16:07:52.379Z",
+      "author": "agotlieb (agotlieb)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a><br />\nI just reset to Choose, which as you stated is a much cleaner solution.  I missed the purpose of the 0 or 1 value at the beginning of the statement (CHOOSE({GROWTH}+1,<strong>0,</strong>…) which caused the invalid function error I was getting.</p>"
+    },
+    {
+      "id": 81612,
+      "postNumber": 6,
+      "createdAt": "2022-03-31T17:39:34.506Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/agotlieb\">@agotlieb</a></p>\n<p>Got it.</p>\n<p>Thanks for circling back.</p>"
+    },
+    {
+      "id": 81724,
+      "postNumber": 7,
+      "createdAt": "2022-04-01T16:32:07.688Z",
+      "author": "FdL (Franck de Luca)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Sorry to step in. I am interested in this choose function, basically for the same purpose as agotlieb. But I can’t find it in the list of available function in the formula …<br />\nWhere did you find this function ? Where is it documented ?<br />\nThanks for your answer<br />\nFranck</p>"
+    },
+    {
+      "id": 81727,
+      "postNumber": 8,
+      "createdAt": "2022-04-01T18:36:58.657Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/fdl\">@FdL</a></p>\n<p>CHOOSE() is among the list of (previously) undocumented functions available in monday formulas.</p>\n<p>You can find my documentation about it and the other functions I found here: <a href=\"https://themondayman.com/hidden/\">The monday Hidden Functions – The Monday Man</a></p>\n<p>From the documentation:</p>\n<p><strong>CHOOSE</strong><br />\nReturns the nth parameter from a list, returns an error when n does not map to a given parameter.<br />\nSyntax: CHOOSE(n, “val1” [,“val2”]…)<br />\nExample: CHOOSE(WEEKDAY(TODAY()), “sun”, “mon”, “tue”, “wed”, “thu”, “fri”, “sat”) =&gt; “mon” (in case where today is Monday)</p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/SARq3tmCIX8\" class=\"inline-onebox\">Should I convert my Integromat account to Make? - YouTube</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 81833,
+      "postNumber": 9,
+      "createdAt": "2022-04-04T08:20:26.474Z",
+      "author": "FdL (Franck de Luca)",
+      "cookedHtml": "<p>Awesome !<br />\nThanks Jim for your answer and for providing all this information.<br />\nHave a great day</p>\n<p>Franck</p>"
+    },
+    {
+      "id": 82536,
+      "postNumber": 10,
+      "createdAt": "2022-04-11T08:20:45.231Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

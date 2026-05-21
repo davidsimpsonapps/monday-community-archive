@@ -1,0 +1,53 @@
+{
+  "id": 45161,
+  "title": "Trying to fill additional fields when creating an item according to the API documention",
+  "slug": "trying-to-fill-additional-fields-when-creating-an-item-according-to-the-api-documention",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-11-04T00:26:46.666Z",
+  "lastPostedAt": "2022-11-07T05:14:46.575Z",
+  "postsCount": 5,
+  "excerpt": "apiKey = “MySecretKey” \napiUrl = “https://api.monday.com/v2” \nheaders = {“Authorization” : apiKey} \n######## \nquery5 = ‘mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:myBoard_ID, item_name:$m&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 652,
+  "posts": [
+    {
+      "id": 102917,
+      "postNumber": 1,
+      "createdAt": "2022-11-04T00:26:46.757Z",
+      "author": "KevKev (Kevin VanderVeer)",
+      "cookedHtml": "<p>apiKey = “MySecretKey”<br />\napiUrl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {“Authorization” : apiKey}<br />\n########<br />\nquery5 = ‘mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:myBoard_ID, item_name:$myItemName, column_values:$columnVals) { id } }’<br />\nvars = {<br />\n‘myItemName’ : billingAddressVariable, <span class=\"hashtag\">#works</span> as is, variable<br />\n‘columnVals’ : json.dumps({<br />\n'WorkID : {‘value’ : workIDVariable},  <span class=\"hashtag\">#does</span> not work, variable<br />\n‘Ticket#’ : {‘text’ : ticketNumberVariable},  <span class=\"hashtag\">#does</span> not work, variable<br />\n‘status’ : {‘label’ : 'Working on it '},   <span class=\"hashtag\">#works</span> as is; constant<br />\n‘date4’ : {‘date’ : dueDateVariable}  <span class=\"hashtag\">#works</span> as is; variable<br />\n})<br />\n}<br />\ndata = {‘query’ : query5, ‘variables’ : vars}<br />\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request<br />\nprint(r.json())</p>\n<p>No errors, date and status columns fill no problem, same with myItemName.  This is but one of many attempted formats of implementation.  Nothing changes. Ticket# and WorkID refuse to fill. I am using official docs as far as I am able.</p>"
+    },
+    {
+      "id": 103065,
+      "postNumber": 2,
+      "createdAt": "2022-11-06T07:02:03.594Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/kevkev\">@KevKev</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>The correct syntax for a number column would be just using the number. No ‘value’ key needed.<br />\nExample:<br />\n‘WorkID’ : 123456789</p>\n<p>The correct syntax for a text column would be just using the text as a string. No ‘text’ key needed.</p>\n<p>Example:<br />\n‘Ticket#’ : “Some text”</p>\n<p>I hope this helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 103105,
+      "postNumber": 3,
+      "createdAt": "2022-11-06T14:54:15.707Z",
+      "author": "KevKev (Kevin VanderVeer)",
+      "cookedHtml": "<p>Thanks, I’m glad to be here.  And thanks for taking some time to assist.  I’m still not getting WorkID and Ticket# to post to the generated items on the board.</p>\n<pre><code>apiKey = \"MySecretKey\"\napiUrl = \"https://api.monday.com/v2\"\nheaders = {\"Authorization\" : apiKey}\n########\nquery5 = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:3467404663, item_name:$myItemName, column_values:$columnVals) { id } }'\n\nvars = {\n    'myItemName' : billingAddress,\n    'columnVals' : json.dumps({\n        'WorkID' : workIDVariable, #still not working, variable\n        'Ticket#' : ticketNumberVariable, #still not working, variable\n        'status' : {'label' : 'Working on it'}, #works as is, constant\n        'date4' : {'date' : date} #works as is, variable\n        })\n    }\ndata = {'query' : query5, 'variables' : vars}\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request\nprint(r.json())\n</code></pre>\n<p>Still no errors, date, status and item name columns fill.  I know the workID and ticket# variables aren’t empty, I print all variables to the console to make sure of it.  Thanks!</p>"
+    },
+    {
+      "id": 103123,
+      "postNumber": 4,
+      "createdAt": "2022-11-07T00:35:49.985Z",
+      "author": "KevKev (Kevin VanderVeer)",
+      "cookedHtml": "<p>Nevermind, I just figured it out.  Just learned about column IDs and why date4 is what it is and how to find them.  I kept googling to find additional topics and found a topic by leokushnir in June '20 with a similar issue that you <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> solved for me by mentioning actual column ID’s.  So thanks for that! I also didn’t realize a developer account won’t have developer mode enabled by default <img src=\"https://emoji.discourse-cdn.com/apple/face_with_raised_eyebrow.png?v=12\" title=\":face_with_raised_eyebrow:\" class=\"emoji\" alt=\":face_with_raised_eyebrow:\" width=\"20\" height=\"20\" />.</p>\n<p>Keep on your toes, because I’ll probably come back with more questions!</p>\n<p>Edit: for solution thanks to <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> 2 years ago:<br />\nEdit column values by enabling developer mode.  Click on your avatar on bottom left, go to monday.labs, enable developer mode.  Now when you click on a column the Id will be visible.  Use that for column value pairs like so: {column_ID : myColumnValue} or {numbers6: aNumber}.<br />\nHere is my solution for anyone else:</p>\n<p>apiKey = “MySecretKey”<br />\napiUrl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {“Authorization” : apiKey}<br />\n########<br />\nquery5 = ‘mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:3467404663, item_name:$myItemName, column_values:$columnVals) { id } }’</p>\n<p>vars = {<br />\n‘myItemName’ : billingAddress,<br />\n‘columnVals’ : json.dumps({<br />\n‘numbers6’ : workIDVariable,<br />\n‘text’ : ticketNumberVariable,<br />\n‘status’ : {‘label’ : ‘Working on it’},<br />\n‘date4’ : {‘date’ : date}<br />\n})<br />\n}<br />\ndata = {‘query’ : query5, ‘variables’ : vars}<br />\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request<br />\nprint(r.json())</p>"
+    },
+    {
+      "id": 103138,
+      "postNumber": 5,
+      "createdAt": "2022-11-07T05:14:46.575Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again!</p>\n<p>Ohhh sorry about that!</p>\n<p>I missed that you were assigning those names as column IDs.</p>\n<p>I am glad you found it <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Let us know if you have more questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

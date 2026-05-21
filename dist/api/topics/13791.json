@@ -1,0 +1,55 @@
+{
+  "id": 13791,
+  "title": "Recipe with custom trigger - how to format payload to trigger",
+  "slug": "recipe-with-custom-trigger-how-to-format-payload-to-trigger",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    208,
+    351
+  ],
+  "createdAt": "2020-11-30T18:35:15.340Z",
+  "lastPostedAt": "2020-12-01T03:08:12.676Z",
+  "postsCount": 5,
+  "excerpt": "Hey folks \nI am trying to build an integration. \nI have the Monday → to my app working well. \nNow I want to do my app → to Monday. \nSo I created a new recipe with a custom trigger. \nAnd as an action I have change column &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1772,
+  "posts": [
+    {
+      "id": 34940,
+      "postNumber": 1,
+      "createdAt": "2020-11-30T18:35:15.416Z",
+      "author": "picsoung (Nicolas Grenié)",
+      "cookedHtml": "<p>Hey folks</p>\n<p>I am trying to build an integration.<br />\nI have the Monday → to my app working well.</p>\n<p>Now I want to do my app → to Monday.<br />\nSo I created a new recipe with a custom trigger.</p>\n<p>And as an action I have <code>change column value</code> and connected to the trigger provides the value.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/4fcc6a06c64ec9da513ede7827f26cd87d1fbdee.jpeg\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/4fcc6a06c64ec9da513ede7827f26cd87d1fbdee_2_379x500.jpeg\" alt=\"\" width=\"379\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\"></span><span class=\"informations\">577×760 44.5 KB</span>\n</div></a></div><p></p>\n<p>I am then calling the trigger in my app with the following code</p>\n<pre><code class=\"lang-auto\">let mondayWebhookCall = {\n      method: 'POST',\n      url: 'https://api-gw.monday.com/automations/apps-events/28711827',\n      headers:{\n        'Authorization': `${process.env.SIGNING_SECRET}`,\n        'Content-Type': 'application/json'\n      },\n      data:{\n        trigger: {\n          outputFields: {\n              status : status,\n              itemId : 882599396\n          }\n        }\n      }\n    }\n    let call = await axios(mondayWebhookCall)\n</code></pre>\n<p>I receive a nice <code>{ success: true }</code> message, but I see no change in the board <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>\n<p>Any idea what I am doing wrong?<br />\nThanks</p>"
+    },
+    {
+      "id": 34964,
+      "postNumber": 2,
+      "createdAt": "2020-12-01T00:33:11.992Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey there! I notice you’re passing status as the column value. Try sending the column data  in the same structure as defined in our API documentation: <a href=\"https://monday.com/developers/v2\">https://monday.com/developers/v2</a></p>\n<p>It should be something like this:</p>\n<p><code>status: {\"label\": \"Done\"}</code></p>\n<p>If that doesn’t work, you can also try sending the column value as a JSON string:<br />\n<code>status: JSON.stringify({\"label\": \"Done\"})</code></p>\n<p>Hope that helps.</p>"
+    },
+    {
+      "id": 34970,
+      "postNumber": 3,
+      "createdAt": "2020-12-01T03:06:19.288Z",
+      "author": "picsoung (Nicolas Grenié)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" /> dipro:</div>\n<blockquote>\n<p>{“label”: “Done”}</p>\n</blockquote>\n</aside>\n<p>That was it!<br />\nMy understanding is that it will be Monday that would do the translation for me.<br />\nEspecially if I want to map to different column types.</p>"
+    },
+    {
+      "id": 34971,
+      "postNumber": 4,
+      "createdAt": "2020-12-01T03:08:12.676Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Not at the moment. Right now we don’t coerce arbitrary values into column types – but it would be awesome if we did. I’ll pass it to the team as feedback.</p>"
+    },
+    {
+      "id": 43596,
+      "postNumber": 5,
+      "createdAt": "2021-03-05T15:49:30.729Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

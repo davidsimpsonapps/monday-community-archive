@@ -1,0 +1,71 @@
+{
+  "id": 18635,
+  "title": "Exporting items",
+  "slug": "exporting-items",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    13,
+    22,
+    94,
+    118
+  ],
+  "createdAt": "2021-04-08T10:48:07.908Z",
+  "lastPostedAt": "2021-04-27T11:11:28.969Z",
+  "postsCount": 6,
+  "excerpt": "Hi!!! \nIs there a way (using API for example) to export all the items from one board into a processable format (csv, excel, txt etc …)? Actually we have an integration process that use GraphQL queries to get all the item&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3797,
+  "posts": [
+    {
+      "id": 47243,
+      "postNumber": 1,
+      "createdAt": "2021-04-08T10:48:08.007Z",
+      "author": "jsanchezcs (José Sánchez)",
+      "cookedHtml": "<p>Hi!!!</p>\n<p>Is there a way (using API for example) to export all the items from one board into a processable format (csv, excel, txt etc …)? Actually we have an integration process that use GraphQL queries to get all the items and generate the report but we have a lot of problems with the rate limitations.</p>\n<p>Any suggestion, alternative approach is welcome!!!</p>\n<p>Thanks in advance!!!</p>"
+    },
+    {
+      "id": 47252,
+      "postNumber": 2,
+      "createdAt": "2021-04-08T12:39:37.572Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jsanchezcs\">@jsanchezcs</a>  <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks for getting in touch with us! Just to make sure we’re on the same page here, would you be able to clarify the exact queries you are using thus far? I’d love to see if we can re-adjust the API call itself to help with the complexity rate.</p>\n<p>In general, you can also use a feature that would export your entire board as an .XLS file directly within the platform <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> You can find more info on this feature below:</p>\n<p><a href=\"https://support.monday.com/hc/en-us/articles/360000219209-Excel-Import-and-Export\" rel=\"noopener nofollow ugc\">Excel Import and Export</a></p>\n<p>I hope this is helpful in the meantime <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 47344,
+      "postNumber": 3,
+      "createdAt": "2021-04-09T08:30:08.946Z",
+      "author": "jsanchezcs (José Sánchez)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> !!!</p>\n<p>The process is as follows:</p>\n<p>First, given a board, I retrieve it and collect the items with this query:</p>\n<pre><code>{\n  boards(ids: ID_OF_BOARD) {\n    id\n    name\n    groups {\n      id\n      title\n    }\n    columns {\n      id\n      title\n    }\n    items(limit: 50000) {\n      id\n      name\n      column_values {\n        id\n        title\n        value\n        text\n      }\n    }\n  }\n</code></pre>\n<p>}</p>\n<p>As you can see, now we are limiting the query ( we have to give it a twist). Then, for each item, we retrieve the subitems ids and, for each subitem id, we recover the subitem with this query:</p>\n<pre><code>{\n  items(ids: SUB_ITEM_ID) {\n    id\n    name\n    column_values {\n      id\n      value\n      text\n    }\n    board {\n      id\n    }\n  }\n}\n</code></pre>\n<p>Any suggestion to improve this process?</p>\n<p>Thanks!!!</p>"
+    },
+    {
+      "id": 47367,
+      "postNumber": 4,
+      "createdAt": "2021-04-09T12:04:25.112Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jsanchezcs\">@jsanchezcs</a></p>\n<p>Thank you for following up here!</p>\n<p>I would definitely recommend considering the following adjustments:</p>\n<ul>\n<li>Set the items limit to 10,000, if not lower. At the time, any <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> board can not have above 10,000 items, so setting the limit to 50,000 doesn’t seem like the best practice;</li>\n<li>Since you are getting the Item’s column values, you could probably avoid querying the columns separately, as you’d get the ID and Title of the column in the column values section either way;</li>\n<li>You can also reduce complexity further by using specific Group IDs, instead of querying all of the groups within a board. Otherwise, this will cost a 1000 nested complexity by default, which can make the query quite expensive.</li>\n</ul>\n<p>Does that make sense? I hope the above is helpful!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 47535,
+      "postNumber": 5,
+      "createdAt": "2021-04-12T05:39:36.320Z",
+      "author": "jsanchezcs (José Sánchez)",
+      "cookedHtml": "<p>Thanks for your suggestions <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> !!!</p>"
+    },
+    {
+      "id": 48294,
+      "postNumber": 6,
+      "createdAt": "2021-04-20T11:10:47.449Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 49035,
+      "postNumber": 7,
+      "createdAt": "2021-04-27T11:11:28.969Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

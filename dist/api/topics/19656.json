@@ -1,0 +1,85 @@
+{
+  "id": 19656,
+  "title": "Create new item w/ column values not working",
+  "slug": "create-new-item-w-column-values-not-working",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    22,
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2021-05-04T17:45:39.032Z",
+  "lastPostedAt": "2021-06-01T14:10:29.916Z",
+  "postsCount": 8,
+  "excerpt": "I’m trying to understand basic item creation. I can create a new item successfully with a name but when I try to add additional column content I get errors. \n  monday.api(\n    `mutation {\n        create_item (\n          &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 3106,
+  "posts": [
+    {
+      "id": 49943,
+      "postNumber": 1,
+      "createdAt": "2021-05-04T17:45:39.126Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p>I’m trying to understand basic item creation. I can create a new item successfully with a name but when I try to add additional column content I get errors.</p>\n<pre><code>  monday.api(\n    `mutation {\n        create_item (\n          board_id: ${myBoardId}, \n          group_id: \"new_group\", \n          item_name: \"new item creation\",\n          column_values: {\n            person: 20602378,\n          }\n        )\n        {\n          id\n        }\n      }`\n )\n</code></pre>\n<p>It works if I remove the column-values object.</p>"
+    },
+    {
+      "id": 50032,
+      "postNumber": 2,
+      "createdAt": "2021-05-05T05:57:43.128Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Thank you for sharing this and I’m sorry that creating items with People column values has been giving you some trouble! I would recommend trying to send the values as a string, or as part of your variables. This seems to have worked well for me in the Playground:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item (board_id:1232810882, item_name:\"test\", column_values: \"{\\\"person\\\":\\\"9603417\\\"}\")  {\n    id\n  }\n}\n</code></pre>\n<p>Also, you might want to make sure that the user you are trying to be  to the item is part of the board - if they are not part of the Shareable or PRivate board you are creating an item on, the user will not be assigned to the item.</p>\n<p>I hope this helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 50166,
+      "postNumber": 3,
+      "createdAt": "2021-05-05T13:47:48.571Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p>I’m getting an error:  Line 106:28:  Unnecessary escape character: \"</p>\n<p>I’m using the monday.api call from the react bootstrap so my code looks like this:</p>\n<pre><code>monday.api(\n      `mutation {\n        create_item (\n          board_id:${myBoardId}, \n          group_id: \"new_group\", \n          item_name: \"test item\" \n          column_values: \"{\\\"person\\\":\\\"9603417\\\"}\"\n      )\n        {\n          id\n        }\n      }`\n    )\n</code></pre>\n<p>If I remove the \\ I get undefined in the response.</p>\n<p>I’ve also tried passing a string as a variable like this:</p>\n<pre><code>let columnValues = JSON.stringify({\n          person: 20602378,\n          text0: \"Requestor name\",\n          text9: \"Notes\",\n          dropdown: [0],\n        })\n\n    monday.api(\n      `mutation {\n        create_item (\n          board_id:${myBoardId}, \n          group_id: \"new_group\", \n          item_name: \"test item\",\n          column_values: ${columnValues}\n      )\n        {\n          id\n        }\n      }`\n    ).then(res =&gt; {\n      if(res.data){\n        console.log('new item info: ', res.data)\n      };\n    });\n</code></pre>\n<p>Also, I’m using my own id for person as a test so I know it’s good.</p>"
+    },
+    {
+      "id": 50307,
+      "postNumber": 4,
+      "createdAt": "2021-05-06T06:46:21.233Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Thank you for circling back with me here! Would you be able to try wrapping your column IDs in quotes, so that the column values become the following:</p>\n<pre><code class=\"lang-auto\">let columnValues = JSON.stringify({\n          \"person\": 20602378,\n          \"text0\": \"Requestor name\",\n          \"text9\": \"Notes\",\n          \"dropdown\": [0],\n        })\n</code></pre>\n<p>I’m also not quite sure if you need curly brackets around the values, like {columnValues} or {boardId}, unless you are adding the variables to the call as GraphQL variables.</p>\n<p>Would you be able to try out the 2 points above and let us know if that helped at all?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 50404,
+      "postNumber": 5,
+      "createdAt": "2021-05-06T14:09:10.749Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>\n<p>I tried adding quotes and the create_item didn’t get logged and no item was created.</p>\n<pre><code>let columnValues = JSON.stringify({\n        \"person\": 20602378,\n        \"text0\": \"Requestor name\",\n        \"text9\": \"Notes\",\n        \"dropdown\": [0],\n      })\n</code></pre>\n<p>I removed the curly braces but then had to convert the colons to = and had to remove the Quotes from the column ids which makes them variables that haven’t been declared - not sure this one is going in the right direction.</p>\n<pre><code>let columnValues = JSON.stringify(\n        person= 20602378,\n        text0= \"Requestor name\",\n        text9= \"Notes\",\n        dropdown= [0],\n      )</code></pre>"
+    },
+    {
+      "id": 53258,
+      "postNumber": 6,
+      "createdAt": "2021-06-01T10:15:15.269Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 53259,
+      "postNumber": 7,
+      "createdAt": "2021-06-01T10:16:45.627Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>For all future readers: this issue has since been resolved!</p>\n<p>There were a myriad of issues at play, including the proper JSON formatting for a Person vs. a People column, as well as some other formatting issues for the columnValues values.</p>\n<p>Make sure to check our documentation for changing column values using JSON for the proper formatting: <a href=\"https://monday.com/developers/v2#column-values-section\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#column-values-section</a>!</p>"
+    },
+    {
+      "id": 53331,
+      "postNumber": 8,
+      "createdAt": "2021-06-01T14:10:29.916Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p>Here was the solution:</p>\n<pre><code>const variables = ({\n      boardId : 00000000,\n      groupId: \"new_group\",\n      itemName : \"New Item\",\n      columnValues: JSON.stringify({\n        people78: { \n          personsAndTeams: [\n            {\n              id: 00000000, \n              kind: \"person\"\n            }\n          ] \n        },\n        text0: \"Yosemite Sam,\n        dropdown: {\n          labels: [\n            \"TAM\"\n          ]\n        },\n      })\n    });\n\n    const query = `mutation create_item ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) { \n      create_item (\n        board_id: $boardId,\n        group_id: $groupId,\n        item_name: $itemName, \n        column_values: $columnValues\n      ) \n      { \n        id\n      } \n    }`;\n\n    monday.api(query, {variables}).then((res) =&gt; {\n      console.log('new item info: ', res);\n    });</code></pre>"
+    },
+    {
+      "id": 54061,
+      "postNumber": 9,
+      "createdAt": "2021-06-08T14:10:57.983Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

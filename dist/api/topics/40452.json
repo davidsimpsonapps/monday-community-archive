@@ -1,0 +1,40 @@
+{
+  "id": 40452,
+  "title": "Linking two boards using Python and the API",
+  "slug": "linking-two-boards-using-python-and-the-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-08-04T20:56:41.830Z",
+  "lastPostedAt": "2022-08-05T09:59:36.172Z",
+  "postsCount": 3,
+  "excerpt": "I am currently importing data into two boards to simulate a parent/child relationship.  The two boards share a value companyName that will link them.  I final part of the code I am pasting now works.  However, I want to &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 792,
+  "posts": [
+    {
+      "id": 93752,
+      "postNumber": 1,
+      "createdAt": "2022-08-04T20:56:41.921Z",
+      "author": "BruceB (Bruce Baldwin)",
+      "cookedHtml": "<p>I am currently importing data into two boards to simulate a parent/child relationship.  The two boards share a value companyName that will link them.  I final part of the code I am pasting now works.  However, I want to replace one of the hardcoded IDs with a variable.  I’ve tried a number of ways without any success.</p>\n<p>Query 1, not shown retrieves a JSON with the item ID, item name (company) from the parent board</p>\n<p>Query 2, not shown retrieves a JSON with item ID, item name, company name from the child board</p>\n<p>The loop below takes a single item from Q2, calls a function to find the matching company from Q1, then calls API to connect_boards.</p>\n<p>for allItems2 in itemLevelData2:<br />\nsingleItem2 = allItems2[‘items’]<br />\n# Loop for individual item detail<br />\nfor itemDetail2 in singleItem2:<br />\n<span class=\"hashtag\">#Retrieve</span> the entry ID<br />\nitemID2 = int(itemDetail2[‘id’])<br />\ncolumnValues = itemDetail2[‘column_values’]<br />\n<a class=\"hashtag\" href=\"/tag/print\">#<span>print</span></a>(columnValues)<br />\nfor company in columnValues:<br />\ncompanyName2 = company[‘text’]  \t<br />\nif (search_company(companyName2) != None):<br />\naccountRowID = search_company(companyName2)<br />\nvars3 = {<br />\n‘boardID’: 3030320934,<br />\n‘itemID’ : itemID2,<br />\n‘myColVals’ : json.dumps({<br />\n‘connect_boards’ : {‘item_ids’ : [3028979985]}})  <span class=\"hashtag\">#Want</span> to use accountRowID here<br />\n}<br />\nqueryUpdateRow = ’ mutation ($boardID: Int!, $itemID: Int!, $myColVals: JSON!) {change_multiple_column_values(board_id:$boardID, item_id:$itemID,  column_values:$myColVals) {id}}’<br />\ndata = {‘query’: queryUpdateRow, ‘variables’: vars3}<br />\nr = requests.post(url=apiUrl, json=data, headers=headers)  # make request<br />\nelse:<br />\nprint(“No Match”)</p>\n<p>I want to use a variable in vars3 for the connect_boards line.</p>\n<p>Any recommendations?</p>\n<p>Thanks<br />\nBruce</p>"
+    },
+    {
+      "id": 93834,
+      "postNumber": 2,
+      "createdAt": "2022-08-05T09:59:36.172Z",
+      "author": "BruceB (Bruce Baldwin)",
+      "cookedHtml": "<p>Since the query is really a string, I was able to get it working by building the string in multiple statements:</p>\n<p>or allItems2 in itemLevelData2:<br />\nsingleItem2 = allItems2[‘items’]<br />\n# Loop for individual item detail<br />\nfor itemDetail2 in singleItem2:<br />\n<span class=\"hashtag\">#Retrieve</span> the entry ID<br />\nitemID2 = int(itemDetail2[‘id’])<br />\ncolumnValues = itemDetail2[‘column_values’]<br />\n<a class=\"hashtag\" href=\"/tag/print\">#<span>print</span></a>(columnValues)<br />\nfor company in columnValues:<br />\ncompanyName2 = company[‘text’]<br />\nprint(itemID2,\" \",companyName2)    \t<br />\nif (search_company(companyName2) != None):<br />\naccountRowID = search_company(companyName2)<br />\ndata7=[accountRowID]<br />\nprint(data7)</p>\n<pre><code>    \t\tvars3 = {\n    \t\t\t'boardID': 3030320934,\n    \t\t\t'itemID' : itemID2,\n    \t\t\t'myColVals' : json.dumps({\n    \t\t\t\t'connect_boards' : {'item_ids' : [3028979985]}})  #Want to user accountRowID here\n    \t\t\t}\n    \t\tqueryUpdateRow = ' mutation {change_multiple_column_values(board_id:3030320934, item_id:'\n    \t\tqueryUpdateRow += str(itemID2)\n    \t\tqueryUpdateRow += ',  column_values: \"{\\\\\"connect_boards\\\\\" : {\\\\\"item_ids\\\\\" : ['\n    \t\tqueryUpdateRow += accountRowID\n    \t\tqueryUpdateRow += ']}}\") {id}}'\n    \t\tdata = {'query': queryUpdateRow, 'variables': vars3}\n    \t\tr = requests.post(url=apiUrl, json=data, headers=headers)  # make request\n    \telse:\n    \t\tprint(\"No Match\")\n</code></pre>\n<p>print(\"Type is \", type(queryUpdateRow))</p>"
+    },
+    {
+      "id": 94564,
+      "postNumber": 3,
+      "createdAt": "2022-08-12T10:00:22.242Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

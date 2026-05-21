@@ -1,0 +1,39 @@
+{
+  "id": 84250,
+  "title": "- Formula Column - Need Help Adjusting Deadline Formula to Account for Suspensions",
+  "slug": "formula-column-need-help-adjusting-deadline-formula-to-account-for-suspensions",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-04-17T04:56:46.209Z",
+  "lastPostedAt": "2024-05-15T07:13:16.945Z",
+  "postsCount": 3,
+  "excerpt": "Hello fellow monday users! \nI’m currently facing a challenge with the formula column on our project management board and would appreciate any insights or advice from the community. \nThe Goal: We need to calculate a proje&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 299,
+  "posts": [
+    {
+      "id": 179173,
+      "postNumber": 1,
+      "createdAt": "2024-04-17T04:56:46.297Z",
+      "author": "DEZ (Andreas)",
+      "cookedHtml": "<p>Hello fellow monday users!</p>\n<p>I’m currently facing a challenge with the formula column on our project management board and would appreciate any insights or advice from the community.</p>\n<p><strong>The Goal:</strong> We need to calculate a project deadline date based on the initial payment date, but our projects can occasionally be suspended, which should push back the deadline accordingly. The challenge is to adjust the deadline dynamically, depending on whether a suspension period has been defined or not.</p>\n<p><strong>The Problem:</strong> Our current formula needs to account for three scenarios:</p>\n<ol>\n<li>When only the payment date is available → (69 days from payment date)</li>\n<li>When the payment date and the suspension start date are available, but the suspension end date is not yet defined. → (Deadline suspended)</li>\n<li>When both suspension start and end dates are available. → (adjusted Deadline date (69 days plus suspension period)</li>\n</ol>\n<p>The desired output should adjust the project deadline based on the suspension period, and if the suspension is ongoing (i.e., no end date), the status should show as “Deadline Suspended.”</p>\n<p><strong>Current Formula Setup:</strong> Here’s what we’ve been working with:</p>\n<pre><code class=\"lang-auto\">IF({1. TR Zahlungseingang}=\"\",\n    \"Zahlungseingang erforderlich\",\n    IF(AND({Datum Deadline ausgesetzt}&lt;&gt;\"\", {Datum Deadline fortgesetzt}=\"\"),\n        \"Deadline ausgesetzt\",\n        IF(AND({Datum Deadline ausgesetzt}&lt;&gt;\"\", {Datum Deadline fortgesetzt}&lt;&gt;\"\"),\n            FORMAT_DATE(\n                ADD_DAYS(\n                    {1. TR Zahlungseingang},\n                    69 + DAYS_DIFF({Datum Deadline fortgesetzt}, {Datum Deadline ausgesetzt})\n                ),\n                \"DD/MM/YYYY\"\n            ),\n            FORMAT_DATE(\n                ADD_DAYS({1. TR Zahlungseingang}, 69),\n                \"DD/MM/YYYY\"\n            )\n        )\n    )\n)\n</code></pre>\n<p><strong>Issues Faced:</strong></p>\n<ul>\n<li>The formula does not work and I have no idead why</li>\n<li>Difficulty in ensuring that the formula dynamically adjusts dates based on potential ongoing suspensions.</li>\n</ul>\n<p>I’ve attempted various modifications to this formula, but none seem to perfectly fit the requirements or operate without error.</p>\n<p><strong>Request for Assistance:</strong> Does anyone have experience with similar setups or could offer advice on how to manage such dynamic date adjustments in monday? Any guidance on improving the formula or configuring the board differently would be greatly appreciated.</p>\n<p>Thank you in advance for your help!</p>"
+    },
+    {
+      "id": 179246,
+      "postNumber": 2,
+      "createdAt": "2024-04-17T09:44:01.443Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Andreas,</p>\n<p>Regarding your current formula, replace DAYS_DIFF by DAYS and it will work.</p>\n<p>Regarding guidance, if you have other formulas like this to create I suggest using a 3rd-party app called <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Boosters</a>. It really revolutionizes creating formulas in monday.</p>\n<ul>\n<li>The syntax editor can take up to 100 lines (=100 instructions)</li>\n<li>1 formula can update more than 1 column</li>\n<li>Formulas can update items besides the current item, ie. previous, next, sub-items, parent items, items in the same group, in the same board, in other boards</li>\n<li>You can use variables, ie. store part of the calculation in a variable to reuse it later.</li>\n<li>etc.</li>\n</ul>"
+    },
+    {
+      "id": 183978,
+      "postNumber": 3,
+      "createdAt": "2024-05-15T07:13:16.945Z",
+      "author": "DEZ (Andreas)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">IF({1. TR Zahlungseingang}=\"\",\n    \"Zahlungseingang erforderlich\",\n    IF(AND({Datum Deadline ausgesetzt}&lt;&gt;\"\", {Datum Deadline fortgesetzt}=\"\"),\n        \"Deadline ausgesetzt\",\n        IF(AND({Datum Deadline ausgesetzt}&lt;&gt;\"\", {Datum Deadline fortgesetzt}&lt;&gt;\"\"),\n            FORMAT_DATE(\n                ADD_DAYS(\n                    {1. TR Zahlungseingang},\n                    69 + DAYS({Datum Deadline fortgesetzt}, {Datum Deadline ausgesetzt})\n                ),\n                \"DD/MM/YYYY\"\n            ),\n            FORMAT_DATE(\n                ADD_DAYS({1. TR Zahlungseingang}, 69),\n                \"DD/MM/YYYY\"\n            )\n        )\n    )\n)\n</code></pre>\n<p>it still gives an Error</p>"
+    }
+  ]
+}

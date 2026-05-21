@@ -1,0 +1,41 @@
+{
+  "id": 78077,
+  "title": "API Issue - Python Read",
+  "slug": "api-issue-python-read",
+  "categoryId": 58,
+  "tagIds": [
+    5,
+    94,
+    107
+  ],
+  "createdAt": "2024-02-13T18:42:46.306Z",
+  "lastPostedAt": "2024-02-13T20:09:04.405Z",
+  "postsCount": 2,
+  "excerpt": "We were issuing very standard read queries and they were working, but then mysteriously stopped working with the error: \n“undefinedField” message: \n“Field ‘items’ doesn’t exist on type ‘Board’” \nThis exact file executed &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 155,
+  "posts": [
+    {
+      "id": 167636,
+      "postNumber": 1,
+      "createdAt": "2024-02-13T18:42:46.383Z",
+      "author": "bleong (Brennan)",
+      "cookedHtml": "<p>We were issuing very standard read queries and they were working, but then mysteriously stopped working with the error:</p>\n<p>“undefinedField” message:</p>\n<p>“Field ‘items’ doesn’t exist on type ‘Board’”</p>\n<p>This exact file executed earlier, but now fails.</p>\n<p>This is what we were running:</p>\n<pre><code class=\"lang-auto\">import requests\n\napiKey = redacted\napiUrl = \"https://api.monday.com/v2\"\nheaders = {\"Authorization\" : apiKey,\n           \"api-version\": \"2023-10\",\n           \"user-agent\": \"Make/production\"\n           }\n\nquery = \"\"\"{\n  boards (ids: 5971617342) {\n    items {\n      id\n      name\n      column_values {\n        id\n        title\n        value\n      }\n    }\n  }}\"\"\"\n\ndata = {'query' : query}\n\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request\n\nboard = r.json()\n\nfor item in board['data']['boards'][0]['items']:\n    id = int(item['id'])\n    name = item['name']\n</code></pre>\n<p>Has anyone experienced this issue, and would you mind sharing how you resolved it?</p>"
+    },
+    {
+      "id": 167651,
+      "postNumber": 2,
+      "createdAt": "2024-02-13T20:09:04.405Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/bleong\">@bleong</a></p>\n<p>Welcome to the community. This is one of the braking changes from API version to 2023-07 to 2023-10. The field items is not available on boards, you need to nest items in an items_page object.</p>\n<p>See <a href=\"https://developer.monday.com/api-reference/docs/migrating-to-v-2023-10#summary-of-changes\" class=\"inline-onebox\">Migration guide - 2023-10</a></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/3/835169274c99279f539684c6cbe2617e265d873e.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/3/835169274c99279f539684c6cbe2617e265d873e.png\" alt=\"image\" width=\"690\" height=\"90\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">777×102 11 KB</span></div></a></div><p></p>\n<p>I’m not a Python expert, but you code should be something like</p>\n<pre><code class=\"lang-auto\">query = \"\"\"{\n  boards (ids: 5971617342) {\n   items_page (limit:100) {\n    cursor\n    items {\n      id\n      name\n      column_values {\n        id\n        title\n        value\n      }\n    }\n   }\n  }}\"\"\"\n</code></pre>\n<p>You will get the first 100 items on the board. As long the returned cursor is not null you can retrieve the next 100 items with</p>\n<pre><code class=\"lang-auto\">query {\n  next_items_page (limit: 100, cursor: \"the cursor you got returned\") {\n    cursor\n    items {\n      id\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 167872,
+      "postNumber": 3,
+      "createdAt": "2024-02-14T14:07:30.670Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

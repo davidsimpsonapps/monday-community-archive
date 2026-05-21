@@ -1,0 +1,79 @@
+{
+  "id": 17189,
+  "title": "Button Activated Webhook Thoughts",
+  "slug": "button-activated-webhook-thoughts",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    144,
+    208,
+    351
+  ],
+  "createdAt": "2021-03-05T13:00:44.477Z",
+  "lastPostedAt": "2021-06-01T10:18:21.431Z",
+  "postsCount": 8,
+  "excerpt": "(Scroll to the bottom for the “bottom” line… The “best” way to call a webhook with a button column.) \nThe somewhat long story… \nIn the past I’ve needed to call a webhook based on a button column click. \nMy approach was t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 4438,
+  "posts": [
+    {
+      "id": 43561,
+      "postNumber": 1,
+      "createdAt": "2021-03-05T13:00:44.557Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>(Scroll to the bottom for the “bottom” line… The “best” way to call a webhook with a button column.)</p>\n<p>The somewhat long story…</p>\n<p>In the past I’ve needed to call a webhook based on a button column click.</p>\n<p>My approach was to create a seperate work status column that I would change with the required automation for the button click. I would then have an integration that would call the webhook when that work column changed. A little clunky. But, it worked.</p>\n<p>Recently, I had the same need but have come up with a better way to do it.</p>\n<p>I found that the button column “value” actually changes every time you click it. So, I could use that for the integration trigger. But, you still have to have an attached automation for the button. I looked at the actions available and thought that the Notify action was the least messy and used that thinking that I could just ignore the notifications.</p>\n<p>I didn’t like the notifications. I thought who else could I send this to? I didn’t want to create a dummy user just for this. Then it occured to me that I could send it to a team with no one in it. Added the team, changed the automation, tested it. It works. No extra column. No unwanted notifications.</p>\n<p>… posted this…</p>\n<p>… then Bas got involved and I found a better “best” way… (now included in the Bottom Line)</p>\n<p>*********************************** The Bottom Line ***********************************<br />\nThe “best” way to call a webhook with a button column.</p>\n<ul>\n<li>Create a button column. Use the recipe: When <strong>Buttom</strong>clicked and <strong>Status is Done</strong> and <strong>Status in not Done notify anybody</strong>. (As can be seen, the notification will never be sent.)</li>\n<li>Create an integration: “When {button column} changes, send a webhook”</li>\n</ul>\n<p>That’s it. QED<br />\n(Edited to include the NEW better “best” way.)</p>"
+    },
+    {
+      "id": 43578,
+      "postNumber": 2,
+      "createdAt": "2021-03-05T14:09:37.782Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a><br />\nI did some testing few weeks ago and when you create a webhook through the API you can use a button column in the API call, like:</p>\n<p><code>mutation { create_webhook ( board_id: 12593, url: \"https://www.webhooks.my-webhook/test\", event: change_specific_column_value, config: \"{\\\"columnId\\\": \\\"button\\\"}\") { id board_id } }</code></p>\n<p>There is no need to “configure” the button through the API, once the webhook is hooked up pressing the button will just fire the webhook. And indeed, the even contains the number of times the button is clicked.</p>"
+    },
+    {
+      "id": 43968,
+      "postNumber": 3,
+      "createdAt": "2021-03-08T21:29:25.635Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>First in trying to understand your comment, I found a better “best” way…</p>\n<p>Because the required button automation is a “custom” automation, you can add mutually exclusive “and” criteria that will insure that though the integration gets called the automation action never will. (Now included in the “best” way above.) As follows:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/574702bdd4494f9129dece58b4886227c746b053.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/574702bdd4494f9129dece58b4886227c746b053_2_690x64.png\" alt=\"image\" width=\"690\" height=\"64\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">880×82 7.38 KB</span>\n</div></a></div><p></p>\n<p>Second, I’m not sure I understand your comment completely. I thought that what you were saying was that by creating the webhook using the API you would not have to attach an automation to the button. In testing, I did find that the integration will work without the automation attached to the button. However, everytime I click it, it also brings up the button automation setup screen. Did I misunderstand or am I missing something?</p>"
+    },
+    {
+      "id": 44113,
+      "postNumber": 4,
+      "createdAt": "2021-03-09T18:53:24.565Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a></p>\n<p>You understand correctly… until I tested further. I have indeed boards where adding a webhook through the API when the user selects the recipe (custom trigger - add webhook in subscribe event) makes the button work WITHOUT the button automation setup window. However, on a new board with a new recipe I does popup with the automation setup window. I can’t get my head around this one. Maybe <a class=\"mention-group\" href=\"/groups/monday-team\">@monday-team</a> can shine some light here.</p>\n<p>To summarize:</p>\n<ul>\n<li>integration with custom trigger, custom action</li>\n<li>recipe with a button column</li>\n<li>subscribe event create a webhook, type: change_specific_column_value to an endpoint</li>\n</ul>\n<p>In all cases clicking the button will fire the trigger and the webhook endpoint receives the event.</p>\n<p>In some case clicking the button shows the button setup window, and in some case it does not show this setup window.</p>"
+    },
+    {
+      "id": 44119,
+      "postNumber": 5,
+      "createdAt": "2021-03-09T19:17:35.465Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>To add some more detail. In boards where I can add (through the API) a webhook to a button - WITHOUT having the button automation window popping up on click - I see the following when selecting the column settings for the button.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/c/cc62c412cf559ba1f8fa34fefdd106437be0ff85.png\" alt=\"image\" width=\"400\" height=\"370\" /></p>\n<p>As you can see the recipe itself is the automation setup for the button. The question is: why i sthis working on some boards and not on others?</p>\n<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> one for you? <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 51911,
+      "postNumber": 6,
+      "createdAt": "2021-05-19T12:33:49.042Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Sorry for the late reply here, we missed it because it was originally not in the Developer’s Category.</p>\n<p>I suspect the difference in UI is due to a change in the column behaviour. Sometimes we choose to release features that only affect <strong>new</strong> columns (so that existing ones won’t break).</p>\n<p>Is this feature not working the way you expect, or was it just a clarifying question?</p>"
+    },
+    {
+      "id": 53260,
+      "postNumber": 7,
+      "createdAt": "2021-06-01T10:18:21.431Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>!</p>\n<p>Since it’s been a while since we’ve heard back from you, I’m going to mark one of the previous comments as the solution.</p>\n<p>If this issue is still ongoing, feel free to make a new comment within a week, or start a new thread.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 54021,
+      "postNumber": 8,
+      "createdAt": "2021-06-08T10:18:28.272Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

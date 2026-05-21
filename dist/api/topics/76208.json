@@ -1,0 +1,77 @@
+{
+  "id": 76208,
+  "title": "Formatting for creating people, link, and number items (google app script)",
+  "slug": "formatting-for-creating-people-link-and-number-items-google-app-script",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2024-01-26T03:43:25.873Z",
+  "lastPostedAt": "2024-01-28T13:46:52.610Z",
+  "postsCount": 8,
+  "excerpt": "I’m really struggling with syntax and formatting in google app script. As a baseline, this works for creating an item on a board: \nconst BASE_URL = &#39;https://api.monday.com/v2&#39;;\nconst dealBoardId = &#39;5533299122&#39;;  //Deals &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 201,
+  "posts": [
+    {
+      "id": 164238,
+      "postNumber": 1,
+      "createdAt": "2024-01-26T03:43:25.960Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>I’m really struggling with syntax and formatting in google app script. As a baseline, this works for creating an item on a board:</p>\n<pre><code class=\"lang-auto\">const BASE_URL = 'https://api.monday.com/v2';\nconst dealBoardId = '5533299122';  //Deals board in the test workspace\n\nfunction createMondayDeal() {\n  let query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:' + dealBoardId + ', item_name:$myItemName, column_values:$columnVals) { id } }';\n\n  let vars = {\n    \"myItemName\": \"Hello, Best Deal!\",\n    \"columnVals\": JSON.stringify({\n      \"deal_stage\" : {\"label\" : \"New\"},\n      \"status9\" : {\"label\" : \"1\"},\n    })\n  };\n\n\n  var response = UrlFetchApp.fetch(\"https://api.monday.com/v2\", {\n    method: 'post',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': API_KEY,\n      'API-Version' : '2023-04'\n    },\n    payload: JSON.stringify({\n      'query': query,\n      'variables': JSON.stringify(vars)\n    })\n  })\n</code></pre>\n<p>However, expanding to include a link fails::</p>\n<p>This fails with status code 200, invalid value:</p>\n<pre><code class=\"lang-auto\">  let vars = {\n    \"myItemName\": \"Hello, Best Deal!\",\n    \"columnVals\": JSON.stringify({\n      \"link\": { \"link\": \"https://www.google.com\", \"text\" : \"google\"},\n      \"deal_stage\" : {\"label\" : \"New\"},\n      \"status9\" : {\"label\" : \"1\"},\n    })\n  };\n\n</code></pre>\n<p>and this fails silently (successfully creates item with without the link:</p>\n<pre><code class=\"lang-auto\">  let vars = {\n    \"myItemName\": \"Hello, Best Deal!\",\n    \"columnVals\": JSON.stringify({\n      \"link\": { \"link\": \"https://www.google.com\"},\n      \"deal_stage\" : {\"label\" : \"New\"},\n      \"status9\" : {\"label\" : \"1\"},\n    })\n  };\n\n</code></pre>\n<p>Trying to include a people column also fails with status code 200, “Link to item column value structure invalid”:</p>\n<pre><code class=\"lang-auto\">\"deal_contact\" : {\"people\" : {\"personsAndTeams\" : [ {\"id\" : \"5936051010\", \"kind\" : \"person\"} ] } }\n</code></pre>"
+    },
+    {
+      "id": 164254,
+      "postNumber": 2,
+      "createdAt": "2024-01-26T06:05:46.054Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Review the example change_multiple_column_values for some syntax on link columns:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:9876543210, board_id:1234567890, column_values: \"{\\\"link\\\" : {\\\"url\\\" : \\\"http://monday.com\\\", \\\"text\\\":\\\"go to monday!\\\"}}\") {\n    id\n  }\n}\n</code></pre>\n<p>note its <code>url</code> not <code>link</code> for the key for the url in the change object. Secondly I have to assume your column ID is actually link?</p>\n<p>In the second case, it seems the <code>deal_contact</code> is a connect boards column, not a people column. That means you’re picking contact items from another board, not users from your account. <code>5936051010</code> is an item ID not user ID. See below for the structure of a connect boards column.</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:9876543210, board_id:1234567890, column_values: \"{\\\"connect_boards\\\" : {\\\"item_ids\\\" : [12345, 23456, 34567]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>Lastly… API 2023-04 is very much gone, you might be able to get 2023-07 through february 15th if you extend your user token. 2024-01 is current, and 2024-04 is release candidate. Maybe you meant to be trying 2024-04?</p>"
+    },
+    {
+      "id": 164322,
+      "postNumber": 3,
+      "createdAt": "2024-01-26T13:53:43.277Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Thank you Cody for the quick response. I updated my api to 2024-01.  yes, “link” is the column ID as well. I changed the column type to “url” and that works. I was referencing <a href=\"https://developer.monday.com/api-reference/docs/column-types-reference\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Column types reference</a>, which seems to say that “link” should be the column type? Where should I be looking in the future?</p>\n<p>Thanks for pointing me in the right direction on connect boards. Trying this:</p>\n<pre><code class=\"lang-auto\">\"deal_contact\" : {\"connect_boards\" : {\"item_ids\" : [\"5939178365\"]}}\n</code></pre>\n<p>gives me “status_code”:200,“error_message”:“Link to item column value structure invalid”,“error_data”:{}}</p>\n<p>doubling checking, seems like my item id is correct for an item on the connected board for that column. So not sure about that. Will keep debugging…</p>"
+    },
+    {
+      "id": 164353,
+      "postNumber": 4,
+      "createdAt": "2024-01-26T17:04:26.655Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>ok, not sure where to go from here. I believe that item id and column setup (board linking) and column id are correct.  Is there a formatting issue with this query?</p>"
+    },
+    {
+      "id": 164364,
+      "postNumber": 5,
+      "createdAt": "2024-01-26T18:06:25.242Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>Additional issue/question:</p>\n<pre><code>  \"deal_owner\" : {\"people\" : {\"personsAndTeams\" : [ {\"id\" : \"50584368\", \"kind\" : \"person\"} ] } }\n</code></pre>\n<p>seems to fail silently.  New deal item is created with all other column values, but deal_owner is left blank. I double checked people id by manually assigning person and then doing a query of the board with this result:</p>\n<p>“id”:“deal_owner”,“type”:“people”,“value”:\"{\"changed_at\":\"2023-11-18T02:48:26.188Z\",\"personsAndTeams\":[{\"id\":50584368,\"kind\":\"person\"}]}</p>\n<p>What am I missing?</p>"
+    },
+    {
+      "id": 164384,
+      "postNumber": 6,
+      "createdAt": "2024-01-26T19:55:56.141Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>“connect_boards” and “people” are the column IDs, you should use your own column IDs like as follows.</p>\n<p><code>\"deal_contact\" : {\"item_ids\" : [\"5939178365\"]}</code><br />\n<code>\"deal_owner\" :  {\"personsAndTeams\" : [ {\"id\" : \"50584368\", \"kind\" : \"person\"} ] }</code></p>"
+    },
+    {
+      "id": 164392,
+      "postNumber": 7,
+      "createdAt": "2024-01-26T21:34:52.946Z",
+      "author": "dlicc (D L)",
+      "cookedHtml": "<p>awesome that worked, thank you!</p>"
+    },
+    {
+      "id": 164521,
+      "postNumber": 8,
+      "createdAt": "2024-01-28T13:46:52.610Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!</p>"
+    }
+  ]
+}

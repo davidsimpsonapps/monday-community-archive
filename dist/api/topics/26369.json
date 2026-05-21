@@ -1,0 +1,84 @@
+{
+  "id": 26369,
+  "title": "Counting the items from a group in PHP",
+  "slug": "counting-the-items-from-a-group-in-php",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    105,
+    155,
+    351
+  ],
+  "createdAt": "2021-10-21T09:53:45.883Z",
+  "lastPostedAt": "2023-09-03T05:20:21.049Z",
+  "postsCount": 9,
+  "excerpt": "My name is Lorentz and I have some questions about using PHP with monday. I am working with the monday API and I have connected my monday with PHP. But know I am looking for a way to count all the data that I have called&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 2869,
+  "posts": [
+    {
+      "id": 66696,
+      "postNumber": 1,
+      "createdAt": "2021-10-21T09:53:45.976Z",
+      "author": "lorentz (lorentz)",
+      "cookedHtml": "<p>My name is Lorentz and I have some questions about using PHP with monday. I am working with the monday API and I have connected my monday with PHP. But know I am looking for a way to count all the data that I have called in. The query that I made to get data is: <code>query { boards (ids: xxxxxxxxx) { groups { title items { name id }}}}</code>. This calls back all the items form all the groups. But I only want all the items from one specific group. And I also want to a piece of code the count all the items so that I have the total amount of items. Can someone give me a step in the right direction?</p>"
+    },
+    {
+      "id": 66697,
+      "postNumber": 2,
+      "createdAt": "2021-10-21T10:04:58.375Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/lorentz\">@lorentz</a>,</p>\n<p>You can get items from a specific group by specifying the group id.<br />\nIn your case, it will look like something like below:</p>\n<pre><code class=\"lang-auto\">query { boards (ids: xxxxxxxxx) { groups(ids: groupIdHere) { title items { name id }}}}\n</code></pre>\n<p>Concerning the number of items in a group, currently, as far as I’m aware, <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> doesn’t offer a way to know how many items there are in a group. However, a hack you can use is to specify a high limit of items to return from the query and then when you receive the array of items, you can get the length of the items array.<br />\nFor example:</p>\n<pre><code class=\"lang-auto\">query { boards (ids: xxxxxxxxx) { groups { title items(limit: 20000) { name id }}}}\n</code></pre>\n<p>You can read more about <a href=\"https://api.developer.monday.com/docs/groups-queries\" rel=\"noopener nofollow ugc\">groups</a> and <a href=\"https://api.developer.monday.com/docs/items-queries\" rel=\"noopener nofollow ugc\">items</a> in the documentation</p>"
+    },
+    {
+      "id": 66700,
+      "postNumber": 3,
+      "createdAt": "2021-10-21T10:16:22.084Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/lorentz\">@lorentz</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=10\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Great question! And in my opinion, the response from <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> is exactly on point. You will need to specify the Group ID (or use an array of IDs as string, separated by comma).</p>\n<p>We don’t offer an option to count the number of items via API currently, so that’s very accurate too.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 66701,
+      "postNumber": 4,
+      "createdAt": "2021-10-21T10:20:49.467Z",
+      "author": "lorentz (lorentz)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>, thank you for you quick response! But I have one more question to follow up on this. Do you any website or form or maybe you know your self how to use php to filter the data from the API?<br />\nEDIT: Is the data that you recieve also a array for PHP?</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 66713,
+      "postNumber": 5,
+      "createdAt": "2021-10-21T11:25:25.774Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/lorentz\">@lorentz</a></p>\n<p>I’m glad Alfred and I could help <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>The response will be a JSON body. I’d recommend looking through how to filter JSON results in PHP generally. Here’s a StackOverflow thread that might be helpful:</p>\n<p><a href=\"https://stackoverflow.com/questions/31763608/filtering-json-data-with-php\" rel=\"noopener nofollow ugc\">Filter JSON in PHP</a></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 141032,
+      "postNumber": 6,
+      "createdAt": "2023-08-28T13:20:06.180Z",
+      "author": "gary (Gary Singh)",
+      "cookedHtml": "<p>Hey Alex, how would we do this in version 2023-10? The max items one can get now is 100, so say user has 20,000 items on board, how would I get the count? make 200 calls?</p>\n<p>I want to count items in each group.</p>"
+    },
+    {
+      "id": 141268,
+      "postNumber": 7,
+      "createdAt": "2023-08-30T05:35:39.249Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/gary\">@gary</a>,</p>\n<p>You can either use something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    groups(ids: \"topics\") {\n      items_page (limit:50000){\n        cursor\n        items  {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Or use pagination with the cursor like:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    groups(ids: \"topics\") {\n      items_page (limit:100){\n        cursor\n        items  {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>and then use the cursor to get the next page and so on:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    groups(ids: \"topics\") {\n      items_page (limit:100, cursor: \"MSw5NzI4MDA5MDAsaV9YcmxJb0p1VEdYc1VWeGlxeF9kLDg4MiwzNXw0MTQ1NzU1MTE5\"){\n        cursor\n        items  {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 141348,
+      "postNumber": 8,
+      "createdAt": "2023-08-30T11:44:35.336Z",
+      "author": "gary (Gary Singh)",
+      "cookedHtml": "<p>Thanks for that, first query works but can I ask you whats the max limit we can use for that query?</p>\n<p>also when using query_params in item_page, the limit is decreased to 500? is that right?<br />\nhere is the query I have which gives error that limit can be max 500.</p>\n<pre><code class=\"lang-auto\">  let query =\n        \"query { boards(ids:\" +\n        this.boardID +\n        \"){ items_page(limit:50000, query_params: {ids: [\" +\n        itemIdsArray +\n        \"]}) {  items {id name group {  title id color}} } }}\";\n</code></pre>\n<p>Basically I need to get only those items which are in that that idsArray, is there any better way?</p>\n<p>I can filter them after getting them but I want to know if there is a better way?</p>\n<p><strong>UPDATE</strong></p>\n<p>I did try that first solution and it did not give me any error when I used 50,000 limit, but once I got the items back, it is still caping it to 500 items only!<br />\nSo that solution does not really work! is there any other better way?</p>\n<p>I don’t think second solution is really feasible, it will hit the complexity budget if I get all 50,000 items in a loop(get 500, use cursor to get next) on board to count them</p>"
+    },
+    {
+      "id": 141785,
+      "postNumber": 9,
+      "createdAt": "2023-09-03T05:20:21.049Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/gary\">@gary</a>,</p>\n<p>I am sorry about the 500 items limit. I forgot about that limitation. My bad. I asked the team to add an exception when a limit bigger than 500 is used.</p>\n<p>In this case you can go with the second approach. You can avoid hitting the complexity limit by <a href=\"https://developer.monday.com/api-reference/docs/rate-limits#avoiding-the-complexity-limit\">checking the complexity points usage</a> and creating a mechanism that waits for the quota to reset before continuing with the next batch. And then do the filtering.</p>\n<p>Or you could not use the limit, but use the IDs instead. In that way, you can pass an array of IDs to get only those items (take into account that you might also needd use batches here and not add all of the IDs together in one call). The limit of IDs is 100.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "id": 7541,
+  "title": "OAuth example in React / Visual Studio Code",
+  "slug": "oauth-example-in-react-visual-studio-code",
+  "categoryId": 8,
+  "tagIds": [
+    159
+  ],
+  "createdAt": "2020-05-27T16:42:54.604Z",
+  "lastPostedAt": "2020-11-06T04:44:32.884Z",
+  "postsCount": 14,
+  "excerpt": "My first monday app (integration) is working nicely with use of the API key. Does anybody has a good example how to setup and use OAuth to replace the API token? Preferably in React / Visual AStudio. \nAny help is more th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 4527,
+  "posts": [
+    {
+      "id": 18749,
+      "postNumber": 1,
+      "createdAt": "2020-05-27T16:42:54.732Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>My first monday app (integration) is working nicely with use of the API key. Does anybody has a good example how to setup and use OAuth to replace the API token? Preferably in React / Visual AStudio.</p>\n<p>Any help is more than welcome <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 18772,
+      "postNumber": 2,
+      "createdAt": "2020-05-28T03:56:18.403Z",
+      "author": "moshik (Moshik Eilon)",
+      "cookedHtml": "<p>Hi!<br />\nI’m Moshik and I’m working on the integration apps feature at <a href=\"http://monday.com\">monday.com</a>.<br />\nWe’ve recently had a remote hackathon where developers from all over the world used our apps infrastructure for the first time.<br />\nDuring the hackathon we’ve had a short talk where we explained on how to implement OAuth as part of integration apps.<br />\nThis is a link to a video which explains the functionality: <a href=\"https://monday.zoom.us/rec/share/4uFOCJL__19IeKuQ5H3tY4sxJZzgT6a80SYY_qFZyBzYWh59cFsB7h3m3XvaR-_V?startTime=1589878246000\" class=\"inline-onebox\">Moshik Eilon's Personal Meeting Room - Zoom</a><br />\nAnd here’s a repository with a simple server to server example usage of the <a href=\"http://monday.com\">monday.com</a> OAuth functionality in general: <a href=\"https://github.com/yuhgto/monday-oauth-example\">https://github.com/yuhgto/monday-oauth-example</a></p>\n<p>Let us know if you need any more information <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Moshik Eilon,<br />\n<a href=\"http://monday.com\">monday.com</a> R&amp;D</p>"
+    },
+    {
+      "id": 18803,
+      "postNumber": 3,
+      "createdAt": "2020-05-28T16:35:08.164Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/moshik\">@moshik</a>,</p>\n<p>Thank you, it helped me to get on the correct path. I do understand how to configure the app with the callback and where / how to implement this is the code. The missing piece is how to get the access token (knowing the accountId and userId) that can be used for all monday GraphQL queries and how to store this (probably in a cookie?).</p>\n<p>Many thanks,</p>"
+    },
+    {
+      "id": 18872,
+      "postNumber": 4,
+      "createdAt": "2020-05-29T13:59:11.637Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>As a best practice, we recommend implementing a database in your app to store the tokens.</p>\n<p>I don’t believe storing the key as a cookie would work because the integration feature will ping your app from the backend – in this context, your app won’t have access to the user’s browser cookies because it will be responding to an event coming from the monday server.</p>\n<p><a class=\"mention\" href=\"/u/moshik\">@moshik</a> – anything to add here?</p>"
+    },
+    {
+      "id": 18900,
+      "postNumber": 5,
+      "createdAt": "2020-05-29T18:50:28.976Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Sounds like a plan <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />. My initial thoughts are:</p>\n<ul>\n<li>Create an endpoint (e.g. /authorization), which is used in the integration feature</li>\n<li>This gives me accountid / userid and backtourl</li>\n<li>Check db for token for accountid / userid</li>\n<li>If token exists in DB use it and redirect to backtourl</li>\n<li>If not found redirect to monday oauth (clientid / state) with a callback</li>\n<li>In callback check state and if same create token and store in DB and redirect to backtourl</li>\n</ul>\n<p>When the endpoint (/authorization) needs to redirect to oauth, do I need to set the scope form code or is this done based on the scope of the app?</p>\n<p>Anything to add?</p>"
+    },
+    {
+      "id": 18976,
+      "postNumber": 7,
+      "createdAt": "2020-06-01T07:40:51.894Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>, <a class=\"mention\" href=\"/u/moshik\">@moshik</a></p>\n<p>That makes sense, I will store the tokens in a database. Got this partly working now. I do get the access token (do not store it yet) and the flow is looking good. When user adds the integration to the board he gets the messages that the app needs access and when approved I do get the access token.</p>\n<p>Before doing the next step (store the token in a database) I want to understand what the lifetime of the access token is. When making the request I got the access token, but the refresh token is returned as null. So basically my question is: can I use the access token forever?</p>\n<p>My second question is: is the access token bound to a specific board? If the user wants to use the same integration app on another board, can I rely on the stored token or should I send the user to another authorization session?</p>\n<p>Many thanks for the help so far.</p>"
+    },
+    {
+      "id": 29120,
+      "postNumber": 8,
+      "createdAt": "2020-09-21T20:14:59.939Z",
+      "author": "hrustad1017 (Hunter Rustad)",
+      "cookedHtml": "<p>Omg thank you! I have been searching for something like this.</p>"
+    },
+    {
+      "id": 31906,
+      "postNumber": 9,
+      "createdAt": "2020-10-26T09:38:43.115Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> <a class=\"mention\" href=\"/u/moshik\">@moshik</a> <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>I have a question relating to oauth flow when setting up integrations.</p>\n<p>my read of the documentation is that this authorization / token handshake is supposed to take place when a user sets up an integration on a board in the account. The advice seems to be to get a token once for each (integration recipe, board) tuple and use it forever.</p>\n<p>Is my understanding correct? If so, does it not mean that, if a recipe is triggered by another user on the same board (not the user who set up the integration), the external app will receive a JWT which will contain the user id (i.e. the user whose action triggered the recipe) but will have to use the first user’s token (the user who configured the integration and associated it to the board) to make any API calls. This could potentially introduce an asymmetry (i.e. the user triggering the action may not have the same access rights than those included in the API token which will be used).</p>\n<p>This is not creating an immediate issue for any of my use cases, but i am just trying to ascertain whether I am understanding the situation correctly when it comes to providing monday API tokens to our external apps that are linking up to monday via integrations.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 31916,
+      "postNumber": 10,
+      "createdAt": "2020-10-26T11:03:40.084Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a></p>\n<p>“The advice seems to be to get a token once for each (integration recipe, board) tuple and use it forever…” There is nor reason to request a token for the same recipe on another board. I store my tokens with an accountId + userId key.</p>\n<p>“If so, does it not mean that, if a recipe is triggered by another user on the same board (not the user who set up the integration)…” if a recipe is triggerd by an action from another user the trigger action still runs under the credentials of the user who sets up the integration. That is: if you use that token in your action.</p>\n<p>Does that answer your question?</p>"
+    },
+    {
+      "id": 31919,
+      "postNumber": 11,
+      "createdAt": "2020-10-26T11:15:00.167Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a><br />\non the first paragraph -&gt; I agree and it makes sense. If you have a user setting up an integration on a second board, after having done it on one board already, there is no need for another token.</p>\n<p>on the second paragraph -&gt; thanks for confirming my understanding. The action will be performed with the privileges of the user who “installed” the integration on the board, not the user whose action triggers the recipe. It is good to keep in mind.</p>\n<p>Thanks for the swift and detailed response as ever!</p>"
+    },
+    {
+      "id": 32958,
+      "postNumber": 12,
+      "createdAt": "2020-11-06T03:58:02.051Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Following up on this question. I am trying to pass to my server-side app the ID of the user whose action triggers the column change. I am querying the user ID based on the JWT sent with the trigger --&gt; I get the user ID of the user who set up the automation. I also tried using the ‘Context’ argument “userId” but this also returns the ID of the user who set up the automation.</p>\n<p>Is there a way to do what I am trying to do?</p>"
+    },
+    {
+      "id": 32961,
+      "postNumber": 13,
+      "createdAt": "2020-11-06T04:37:29.590Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a><br />\nI don’t think you have access to the user that initiates the automation through the API. That’s also why the acitivity logs always shows the user who inserted the integration on the board.</p>"
+    },
+    {
+      "id": 32963,
+      "postNumber": 14,
+      "createdAt": "2020-11-06T04:44:32.884Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>. That is a shame. I am trying to send notifications to the user responsible for the triggering (to inform them if there are any validity issues with the data they are updating).</p>"
+    },
+    {
+      "id": 43634,
+      "postNumber": 15,
+      "createdAt": "2021-03-05T16:16:40.594Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

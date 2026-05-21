@@ -1,0 +1,65 @@
+{
+  "id": 65657,
+  "title": "Updates to MirrorValue, DependencyValue, and BoardRelationValue column values",
+  "slug": "updates-to-mirrorvalue-dependencyvalue-and-boardrelationvalue-column-values",
+  "categoryId": 70,
+  "tagIds": [
+    20,
+    94,
+    103,
+    123,
+    245,
+    406
+  ],
+  "createdAt": "2023-09-11T14:27:11.540Z",
+  "lastPostedAt": "2024-03-17T08:13:30.011Z",
+  "postsCount": 5,
+  "excerpt": "We have removed support for the text field on MirrorValue, DependencyValue, and BoardRelationValue column values. We have replaced it with the new display_value field to return text values for the connect boards, depende&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 858,
+  "posts": [
+    {
+      "id": 142968,
+      "postNumber": 1,
+      "createdAt": "2023-09-11T14:27:11.628Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>We have removed support for the <code>text</code> field on <code>MirrorValue</code>, <code>DependencyValue</code>, and <code>BoardRelationValue</code> column values. We have replaced it with the new <code>display_value</code> field to return text values for the <a href=\"https://developer.monday.com/api-reference/docs/connect#fields\" target=\"_blank\" rel=\"noopener\">connect boards</a>, <a href=\"https://developer.monday.com/api-reference/docs/dependency#fields\" target=\"_blank\" rel=\"noopener\">dependency</a>, and <a href=\"https://developer.monday.com/api-reference/docs/mirror#fields\" target=\"_blank\" rel=\"noopener\">mirror</a> columns.</p>\n<p>As part of the 2023-10 release, we created the <code>text</code> field on <code>column_values</code> to return the text values for each column. These calls have a high cost for the mirror, dependency, and connect board columns.</p>\n<p>Therefore, we stopped supporting the <code>text</code> field and created the <code>display_value</code> field on these three column values only. These updates will help reduce the load by only returning the data when users actually need it.</p>\n<p>The following example would return the mirror column display values (i.e., text values) on items 1234567890 and 9876543210.</p>\n<pre><code class=\"lang-graphql\">query {  \n  items (ids:[1234567890, 9876543210]) {  \n    column_values {  \n      ... on MirrorValue {  \n        display_value  \n      }  \n    }  \n  }  \n}\n</code></pre>"
+    },
+    {
+      "id": 159109,
+      "postNumber": 2,
+      "createdAt": "2023-12-22T13:18:45.170Z",
+      "author": "Meneghini (Meneghini)",
+      "cookedHtml": "<p>Thanks for the information. This was extremely helpful! Just had to add the bold section.<br />\nquery {boards (ids:BoardID){items_page (limit: 200) {cursor items {name id column_values {id text <strong>… on MirrorValue {display_value}</strong>}}}}}</p>"
+    },
+    {
+      "id": 159134,
+      "postNumber": 3,
+      "createdAt": "2023-12-22T18:47:50.946Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/meneghini\">@Meneghini</a> that’s great to hear!</p>\n<p>Please reach out with any questions <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 173373,
+      "postNumber": 4,
+      "createdAt": "2024-03-14T23:58:35.354Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a></p>\n<p>The problem I am having currently, is that this returns 2 different columns now. I get Text from the regular fields from the board, or I get a column of display_value, but only for those columns that were a BoardRelationValue.</p>\n<p>Is there a way to use an IF or CASE type of statement where if it does return a display_value, it uses that value in the “text” field, otherwise just return the text field as expected?</p>\n<p>This is currently an issue with how we were using PowerQuery/PowerBI to bring in results and then expand all of the columns from what was returned. But if I try to have it include display_value, it causes errors because most of the records don’t return that field since they were a BoardRelationValue.</p>"
+    },
+    {
+      "id": 173504,
+      "postNumber": 5,
+      "createdAt": "2024-03-15T18:42:37.151Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p><a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1710535228617969\">checking Slack</a> (but feel free to answer if you know the answer :D)</p>"
+    },
+    {
+      "id": 173636,
+      "postNumber": 6,
+      "createdAt": "2024-03-17T08:13:30.011Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/justanothermonday\">@JustAnotherMonday</a>,</p>\n<p>There is no way to add a condition (IF) to a query.</p>\n<p>I do not have experience with PowerQuery but, I believe you could probably create one query for that specific column type that returns the display_value and a different one for other columns (returning “text”) in case PowerQuery gibes you an issue with the results you get when retrieving all column values at once.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

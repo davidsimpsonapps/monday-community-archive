@@ -1,0 +1,120 @@
+{
+  "id": 95828,
+  "title": "API access to a specific column value on an individual item with PHP",
+  "slug": "api-access-to-a-specific-column-value-on-an-individual-item-with-php",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-08-21T09:45:44.422Z",
+  "lastPostedAt": "2024-09-11T08:39:30.186Z",
+  "postsCount": 14,
+  "excerpt": "I’m new to the api but have worked with quite a few others and I’m stumped on how to actually return an individual item value of a specific column that is not a board default like id or name. I’ve enabled dev mode to be &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 55,
+  "posts": [
+    {
+      "id": 198227,
+      "postNumber": 1,
+      "createdAt": "2024-08-21T09:45:44.495Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>I’m new to the api but have worked with quite a few others and I’m stumped on how to actually return an individual item value of a specific column that is not a board default like id or name. I’ve enabled dev mode to be able to see what the actual api column ids are and have tried in many different iterations of calling the specific one…in this case, the column id is just text__1 according to the output on the header of the one I want. I’ve got my main loop from the items page working fine. I’ve got the individual item id from the loop…but every item query I try, I get an error saying the column text__1 doesn’t exist on Items.</p>\n<p>Is there some magical formula that’s required to simply just return the value of a custom column from the api?</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 198267,
+      "postNumber": 2,
+      "createdAt": "2024-08-21T10:12:39.262Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a> and welcome to the community!</p>\n<p>If you use something like this, you should be able to get that data:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1234567890) {\n    name\n    id\n    column_values {\n      text\n      value\n    }\n  }\n}\n</code></pre>\n<p>Take into account that some specific column types might require a different syntax. You can check how to get any column data <a href=\"https://developer.monday.com/api-reference/reference/column-types-reference\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 198491,
+      "postNumber": 3,
+      "createdAt": "2024-08-22T13:41:08.295Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>Matias,</p>\n<p>Thanks! I actually figured out what I needed on this and couldn’t see a way to remove my post as it was still pending.</p>\n<p>What I’m REALLY needing to know now is how to post a mutation query where I can create an item that includes a column value that is a pulse id column reference to another item on another board. I’m trying to make sure I have this in place so I can finish writing my integration for one of our systems I’m transitioning us from and really need to be able to create items that will have the right references in those columns.</p>\n<p>For example, in this case, I’ve done a full import of our accounts into the crm side, but I’m wanting to tie our Contact records to the accounts as they are and I’ve got our source platform record id in as a column on the account board.</p>\n<p>I’m reading a source contact file and then querying for the right item id from the account board based on that source platform id and it’s returning properly.</p>\n<p>I’ve got absolutely everything working except the mutation. It looks like it tries to do it when I run my code, outputs the insert, but the insert is blank on the pulse id column still.</p>\n<p>I’ve validated that the mutation is actually working though. It creates a new one any time I run it…so…</p>\n<p>If you can help me with the best way to get the pulse id column reference to actually work, that would be awesome.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 198741,
+      "postNumber": 4,
+      "createdAt": "2024-08-25T05:48:03.479Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again!</p>\n<p>If I understand correctly, the item is created but without the value for that column.</p>\n<p>Can you please send over the full mutation you are using? You can change the values a bit so that we don’t get the actual data you are using.</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 199814,
+      "postNumber": 5,
+      "createdAt": "2024-09-03T12:38:44.485Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>Matias,</p>\n<p>No problem. I’ve tried a lot of different variations and just can’t seem to get it to work.</p>\n<p>Here’s an example.</p>\n<p>mutation {<br />\ncreate_item (board_id: our_board_id, group_id: “topics”, item_name: “’ . $fullname . '”, column_values: “{\"linkedPulseIds\": {\"linkedPulseId\": \"’ . $mondayid . '\"}}”)<br />\n}</p>\n<p>I’ve also tried to do it by column name (the linked column id is called contact_account), but I couldn’t get that to work.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 199880,
+      "postNumber": 6,
+      "createdAt": "2024-09-04T06:10:19.176Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a>,</p>\n<p>Would you be able to please try something like this:</p>\n<pre><code class=\"lang-auto\">mutation {create_item (board_id: our_board_id, group_id: \"topics\", item_name: \"\" . $fullname . \"\", column_values: \"{\\\"YOURCONNECTBOARDSCOLUMNIDHERE\\\" : {\\\"item_ids\\\" : [\\\"THEIDOFTHEITEMTOCONNECTTOHERE\\\"]}}\")\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 199946,
+      "postNumber": 7,
+      "createdAt": "2024-09-04T12:20:21.648Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>Matias,</p>\n<p>I figured out what was wrong with my mutation. I had originally had the {id} in my original query from the docs but had removed it and once i added it back in, my queries are inserting just fine.</p>\n<p>I do have one more question.</p>\n<p>I’m curious if there is a particular way I need to escape and/or handle an email string for an email type column. I tried to include that in my new query and it’s not working with same escaping as the other fields. I can run the query with everything except the email string insert and it works fine. Is there something special I need to do with it to be accepted in the query?</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 200053,
+      "postNumber": 8,
+      "createdAt": "2024-09-05T09:47:48.063Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a>,</p>\n<p>Can you please share the mutation that is failing with the email value you are using?</p>"
+    },
+    {
+      "id": 200069,
+      "postNumber": 9,
+      "createdAt": "2024-09-05T11:11:31.174Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>Sure.</p>\n<p>Looks like the forum is removing the escaping for whatever reason when I paste, but this is the essense of what I tried.</p>\n<p>mutation {<br />\ncreate_item (board_id: our_board_id, group_id: “topics”, item_name: “’ . $fullname . '”, column_values: “{\"status\": \"Partner\",\"text__1\":\"928 Santa Fe Street\",\"text6__1\":\"’ . $mailingcity . ‘\",\"text2__1\":\"’ . $mailingstate . ‘\",\"text0__1\":\"’ . $mailingzip . ‘\",\"contact_email\": {\"email\":\"’ . $email . ‘\",\"text\":\"’ . $email . ‘\",\"contact_account\" : {\"item_ids\" : [\"’ . $mondayid . '\"]}}”)<br />\n{id}<br />\n}</p>"
+    },
+    {
+      "id": 200468,
+      "postNumber": 10,
+      "createdAt": "2024-09-08T09:50:06.394Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a>,</p>\n<p>GraphQL wise, this syntax should work for you:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/d/ed7b4a121acf85b4e17f8b20555379c1df127d72.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/d/ed7b4a121acf85b4e17f8b20555379c1df127d72_2_690x159.png\" alt=\"image\" width=\"690\" height=\"159\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">768×177 21.1 KB</span></div></a></div><p></p>\n<p>In a JSON this would look something like this:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/3/e3669ee7bd0a3e700ca351f6987ac4fa437bb4a8.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/e/3/e3669ee7bd0a3e700ca351f6987ac4fa437bb4a8.png\" alt=\"image\" width=\"690\" height=\"31\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1177×53 9.27 KB</span></div></a></div><p></p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 200621,
+      "postNumber": 12,
+      "createdAt": "2024-09-09T18:15:50.055Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>Matias,</p>\n<p>I figured out what the issue was with my email insert and have it working just fine now. Had to delete the stock phone and mobile columns and use text types for both as the default ones just didn’t want to work with any type of usage I tried on the insert, but I have it working now and I’m migrating our contacts over as I type this.</p>\n<p>Excited to get our baseline in there and allow some of our users to hop in and start using the platform.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 200705,
+      "postNumber": 13,
+      "createdAt": "2024-09-10T09:55:30.698Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>That is great news <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a> !</p>\n<p>If you need anything you can always create a new topic here or fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> to reach out to our technical support team!</p>"
+    },
+    {
+      "id": 200744,
+      "postNumber": 14,
+      "createdAt": "2024-09-10T13:17:11.134Z",
+      "author": "netadmin_cf8594845 (Chris Wagner)",
+      "cookedHtml": "<p>Matias,</p>\n<p>Is there no way to do an EXACT match query on a board item?</p>\n<p>I’ve got our source system IDs stored on the account structure.</p>\n<p>My code is doing a sampling query of 1 (I only want the exact match), but there could legitimately be two of the same id but still unique by…in this case…say the last letter of the id itself is lower and then upper on the second.</p>\n<p>Two very distinct record ids, but when I query monday, I get a case insensitive result and with the sampling of 1, you can imagine that opens up a lot of opportunity for error on the connect column association.</p>\n<p>I noticed the web UI search function does exactly the same thing…it’s doing a case insensitive search and returns multiple records instead of an exact match.</p>\n<p>Is there no way to do that?</p>\n<p>That will actually be really problematic for us if we can’t.</p>\n<p>It will make moving to Monday a nightmare, honestly.</p>\n<p>Here’s my query:</p>\n<p>query {<br />\nboards (ids: our_board_id){<br />\nitems_page (limit: 1, query_params: {rules: [{column_id: “text__1”, compare_value: [“’ . $accountid . '”]}], operator: and}) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 200795,
+      "postNumber": 15,
+      "createdAt": "2024-09-11T08:39:30.186Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/netadmin_cf8594845\">@netadmin_cf8594845</a>,</p>\n<p>I see you asked this already <a href=\"https://community.monday.com/t/querying-for-additional-custom-columns-in-an-items-page/97430\">here</a>. I will check if there is a way of working around this to make it case sensitive and I will reply in the other topic <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

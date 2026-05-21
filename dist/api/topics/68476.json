@@ -1,0 +1,61 @@
+{
+  "id": 68476,
+  "title": "Dynamically generate link column display text?",
+  "slug": "dynamically-generate-link-column-display-text",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    342
+  ],
+  "createdAt": "2023-10-16T12:42:30.390Z",
+  "lastPostedAt": "2023-10-17T12:34:16.044Z",
+  "postsCount": 6,
+  "excerpt": "This may be a feature request, not sure yet – \nCan the “Default link text” in the link column be set up to dynamically generate its value from its link URL or from another column’s value? \nI’d like the text displayed for&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1586,
+  "posts": [
+    {
+      "id": 148416,
+      "postNumber": 1,
+      "createdAt": "2023-10-16T12:42:30.469Z",
+      "author": "Schteevynn (Stephen)",
+      "cookedHtml": "<p>This may be a feature request, not sure yet –</p>\n<p>Can the “Default link text” in the link column be set up to <em>dynamically</em> generate its value from its link URL or from another column’s value?</p>\n<p>I’d like the text displayed for my link to do either of these (same result):</p>\n<p>• use regex or similar to truncate link’s URL down to its slug<br />\n• pull in a value from different column in the same row</p>\n<p>I want the link text shown in the “Jira link” column to look like the “Jira ID” column next to it. Then I need only display that one column, the link column.</p>\n<p>I tried plugging <code>{Jira ID ↓}</code> into the default link text field, hoping it would work like in a function column, but no.</p>\n<p>I’m surprised that expressions like <code>{column_name}</code> are not exposed for use outside of the formula column. Why not?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/0/60f6bdc34c684318165c8f947d11803eeb3d00fe.png\" title=\"Screenshot 2023-10-16 at 11.11.52 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/6/0/60f6bdc34c684318165c8f947d11803eeb3d00fe_2_303x375.png\" alt=\"Screenshot 2023-10-16 at 11.11.52 AM\" width=\"303\" height=\"375\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-16 at 11.11.52 AM</span><span class=\"informations\">564×698 27.7 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/a/7a104240fa3e26e48979e6f2d25567e1302c5e5b.png\" title=\"Screenshot 2023-10-16 at 11.13.46 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/a/7a104240fa3e26e48979e6f2d25567e1302c5e5b_2_517x258.png\" alt=\"Screenshot 2023-10-16 at 11.13.46 AM\" width=\"517\" height=\"258\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-16 at 11.13.46 AM</span><span class=\"informations\">910×456 37.2 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 148476,
+      "postNumber": 2,
+      "createdAt": "2023-10-16T18:34:12.096Z",
+      "author": "CharlotteK (Charlotte Kirkham)",
+      "cookedHtml": "<p>Hey Stephen!</p>\n<p>So just to make sure I am accurately understanding what you’re looking to do, you want to be able to change the display text of a Link Column based on the value in another column?</p>\n<p>If so, this is not yet supported and you would have to manually copy over the value you want to see, which I understand is redundant for what you’re looking for.</p>\n<p>This is a great idea though! We’d love for you to add it <strong><a href=\"https://community.monday.com/c/feature-requests/7/none\">here</a></strong> so that our other Community members can vote on it and our product team can look into developing it.</p>\n<p>Thanks for sharing!</p>"
+    },
+    {
+      "id": 148490,
+      "postNumber": 3,
+      "createdAt": "2023-10-16T19:44:40.642Z",
+      "author": "Schteevynn (Stephen)",
+      "cookedHtml": "<p>Yes, I’d like to be able to either:</p>\n<p>manipulate the link column’s URL value, formula-style, to generate the link’s displayed text, like so:</p>\n<p>URL → display text</p>\n<p><a href=\"http://whatever.com/slug\" rel=\"noopener nofollow ugc\">http://whatever.com/slug</a> → <a href=\"http://whatever.com/slug\" rel=\"noopener nofollow ugc\">slug</a></p>\n<p>Or, another possibility for the same result with our current schema:</p>\n<p>Refer to another column’s value to generate the displayed text for the link. Unfortunately later in the day after writing the above, I learned that columns hidden from view at the permissions level are not exposed to formulas, so I’m afraid we would likely have the same problem here…</p>\n<p>In the above screenshot example, I would like the “Jira link” column’s display text to pull in the value from its neighbor column, Jira ID. Then I could hide the Jira ID out of redundancy, right? Buuuut if it’s anything like formulas, trying to refer to a hidden column’s value will not work (I actually submitted another topic on this quirk but it is awaiting approval)</p>"
+    },
+    {
+      "id": 148500,
+      "postNumber": 4,
+      "createdAt": "2023-10-16T20:35:34.373Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/schteevynn\">@Schteevynn</a></p>\n<p>Full disclosure, I am with the developer of Column Magic - which I am about to suggest you try.</p>\n<p>There is a feature called “Text Builder” within the suite. There is a recipe that can use message boxes to build both the URL and the display text from other columns.</p>\n<p>That said DO NOT trigger it when the link column changes and then write to the same link column - you will create an infinite loop and use up all of your automations in short order.</p>\n<p>Since the link is currently the display text, you can use that as the URL pattern. Then pick the Jira ID as the Text Pattern. Then write to the Jira link.</p>\n<p>I am assuming the Jira link and Jira ID are set when the item is created. Here is a recipe suggestion:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/4/34053421416765313852eb46edf1a63e13161b40.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/3/4/34053421416765313852eb46edf1a63e13161b40_2_690x95.png\" alt=\"image\" width=\"690\" height=\"95\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1137×157 18.2 KB</span></div></a></div><p></p>\n<p>If its not when the item is created… you may want to find a column that changes with them you can use to trigger. (maybe Jira writes one more column like a status?)</p>\n<p>Hope this helps get you headed in the right direction though! If you need additional help, let us know.  Also as long as you can see the column with your account, it doesn’t matter if the column is hidden like formulas. Maybe you can use a second link column, and when Jira link changes - write it to the new link column. Same effect and avoids some of the troubles. Then you can hide the other two from view for everyone but yourself.</p>"
+    },
+    {
+      "id": 148614,
+      "postNumber": 5,
+      "createdAt": "2023-10-17T11:43:53.570Z",
+      "author": "Schteevynn (Stephen)",
+      "cookedHtml": "<p>Ah, this works well.</p>\n<p>When an item on our board is manually “sent” to Jira, the Jira link and the Jira ID values sync back down from Jira and (basically) never change.</p>\n<p>So, I set your text builder to watch for a change to the Jira ID column and then write that Jira ID column value into the displayed text for Jira link. The URL pattern merely rewrites itself with its own value (this is ideal since the pattern of our Jira links is not static – we have two Jira instances).</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/0/20fc5a8e5044949b4d8afc9e3687c3b7525f9416.png\" title=\"Screenshot 2023-10-17 at 10.02.18 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/0/20fc5a8e5044949b4d8afc9e3687c3b7525f9416_2_517x66.png\" alt=\"Screenshot 2023-10-17 at 10.02.18 AM\" width=\"517\" height=\"66\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-17 at 10.02.18 AM</span><span class=\"informations\">2540×324 37.7 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/7/27813fbfe055f75a91816323c137ef952a652473.png\" title=\"Screenshot 2023-10-17 at 10.19.08 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/7/27813fbfe055f75a91816323c137ef952a652473_2_345x66.png\" alt=\"Screenshot 2023-10-17 at 10.19.08 AM\" width=\"345\" height=\"66\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-17 at 10.19.08 AM</span><span class=\"informations\">1096×210 20.2 KB</span></div></a></div><p></p>\n<p>And yes, now I can fully hide the now-redundant Jira ID column from everyone without breaking the recipe, the way a formula would break. Thanks!</p>"
+    },
+    {
+      "id": 148626,
+      "postNumber": 6,
+      "createdAt": "2023-10-17T12:34:16.044Z",
+      "author": "Schteevynn (Stephen)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/charlottek\">@CharlotteK</a> – although Cody’s integration does accomplish this (yay!), I have nevertheless submitted it as a feature request, as per your suggestion.</p>"
+    }
+  ]
+}

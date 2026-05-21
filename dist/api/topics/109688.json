@@ -1,0 +1,43 @@
+{
+  "id": 109688,
+  "title": "Multiple column creation at on request?",
+  "slug": "multiple-column-creation-at-on-request",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    13,
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2025-02-14T04:52:47.463Z",
+  "lastPostedAt": "2025-02-16T09:01:55.422Z",
+  "postsCount": 3,
+  "excerpt": "Hello everyone, \nI am working on a project where I need to create multiple columns in a Monday.com board. I want to add 10+ columns with different types (text, numbers, date, etc.) using the Monday.com API. However, I fo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 15,
+  "posts": [
+    {
+      "id": 221159,
+      "postNumber": 1,
+      "createdAt": "2025-02-14T04:52:47.544Z",
+      "author": "Tamil (Arasi)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>I am working on a project where I need to create multiple columns in a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> board. I want to add 10+ columns with different types (text, numbers, date, etc.) using the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API. However, I found that creating multiple columns in a <strong>single request</strong> is not supported natively in the API.</p>\n<p>I am currently considering using <strong>separate requests</strong> for each column, but I’m wondering if there’s a more efficient way to do this programmatically.</p>\n<p>Can anyone suggest the best way to batch create multiple columns using <strong>separate requests</strong> or any improvements to the approach below?</p>"
+    },
+    {
+      "id": 221220,
+      "postNumber": 2,
+      "createdAt": "2025-02-14T11:17:03.889Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>You can perform <strong>multiple mutations in a single request</strong> by including them in the same <code>mutation</code> operation.</p>\n<p>Try something like this:</p>\n<pre><code class=\"lang-auto\">mutation {\n  column1: create_column(\n    board_id: 1781628496, \n    title: \"Work Status 1\", \n    description: \"This is my work status column\", \n    column_type: status\n  ) {\n    id\n    title\n    description\n  }\n  column2: create_column(\n    board_id: 1781628496, \n    title: \"Work Status 2\", \n    description: \"This is my work status column\", \n    column_type: status\n  ) {\n    id\n    title\n    description\n  }\n}\n</code></pre>\n<p>Some points to note…</p>\n<ol>\n<li><strong>Aliases</strong>:</li>\n</ol>\n<ul>\n<li>Use aliases (<code>column1</code>, <code>column2</code>) to differentiate between the two mutations. This ensures that the response fields don’t conflict with each other.</li>\n</ul>\n<ol>\n<li><strong>Independent Execution</strong>:</li>\n</ol>\n<ul>\n<li>Each mutation is executed independently, but they are sent in a single request. If one mutation fails, it does not affect the execution of the other mutations.</li>\n</ul>\n<ol>\n<li><strong>Response Structure</strong>:</li>\n</ol>\n<ul>\n<li>The response will include the results of both mutations, grouped under the aliases you provided (<code>column1</code> and <code>column2</code>).</li>\n</ul>\n<p><strong>Error Handling</strong></p>\n<p>If one of the mutations fails, the response will include an <code>errors</code> field, but the other mutation will still be executed. For example (with only an illustrative error):</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"column1\": {\n      \"id\": \"123\",\n      \"title\": \"Work Status 1\",\n      \"description\": \"This is my work status column\"\n    },\n    \"column2\": null\n  },\n  \"errors\": [\n    {\n      \"message\": \"Failed to create column\",\n      \"locations\": [{ \"line\": 10, \"column\": 3 }],\n      \"path\": [\"column2\"]\n    }\n  ]\n}\n</code></pre>\n<p>Ask your favourite AI if you want to make your mutation more dynamic using variables (which is a very good idea – always use variables). <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 221322,
+      "postNumber": 3,
+      "createdAt": "2025-02-16T09:01:55.422Z",
+      "author": "Tamil (Arasi)",
+      "cookedHtml": "<p>Thank you, i will try it.<br />\ni also have an another doubt,<br />\nAny specific way to create custom column for subitem.</p>\n<p>i tried but it created for parent item(using board id), but i also want to create a custom column for subitem too(API)</p>"
+    }
+  ]
+}

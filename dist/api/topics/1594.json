@@ -1,0 +1,37 @@
+{
+  "id": 1594,
+  "title": "Still having issues with column_values within create_item",
+  "slug": "still-having-issues-with-column-values-within-create-item",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2019-08-08T21:04:15.254Z",
+  "lastPostedAt": "2019-08-08T21:58:25.190Z",
+  "postsCount": 3,
+  "excerpt": "I’ve scoured the forums for every suggestion on how to use the create_item manipulation and adding column values, but the column values never seem to update. I currently have a group that has a column called “Submission &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 3465,
+  "posts": [
+    {
+      "id": 4192,
+      "postNumber": 1,
+      "createdAt": "2019-08-08T21:04:15.317Z",
+      "author": "dturcanbbi (Dan Turcan)",
+      "cookedHtml": "<p>I’ve scoured the forums for every suggestion on how to use the create_item manipulation and adding column values, but the column values never seem to update. I currently have a group that has a column called “Submission ID”. Here is my python code that is trying to create an item and populate it with a column value:</p>\n<pre><code class=\"lang-auto\">    headers = build_auth_header()\n    column_data = {\"Submission ID\": \"Test\"}\n    board = XXXXXXXXX\n    group = 'topics'\n    item_name = 'TEST'\n    query = (\"\"\"\n    mutation ($name: String!, $board: Int!, $group: String!, $columns: JSON!) {\n        create_item (board_id: $board, group_id: $group, item_name: $name, column_values: $columns) {\n            id\n        }\n    }\n    \"\"\")\n    graph_var = {\n        \"board\": board,\n        \"group\": group,\n        \"name\": item_name,\n        \"columns\": json.dumps(column_data)\n    }\n    response = requests.post('https://api.monday.com/v2/',\n                             json={\"query\": query, \"variables\": graph_var},\n                             headers=headers)\n</code></pre>\n<p>This posts as a success, but I do not see the value going into the column. Am I missing something?</p>"
+    },
+    {
+      "id": 4194,
+      "postNumber": 2,
+      "createdAt": "2019-08-08T21:58:25.190Z",
+      "author": "dturcanbbi (Dan Turcan)",
+      "cookedHtml": "<p>Finally got it. I needed to use a function to get all of the column IDs for the board. In case anyone else wants to use it, here is the function I wrote:</p>\n<pre><code class=\"lang-auto\">def get_column_id_mapping(board_id, headers):\n    boards = [int(board_id)]\n    query = \"\"\"\n    query ($board: [Int]) {\n      boards (ids: $board){\n        columns{\n          id\n          title\n          type\n        }\n      }\n    }\n    \"\"\"\n    graph_var = {\"board\": boards}\n    result = run_graph_operation(query, headers, graph_var)\n    mapping = {j['title']: j['id'] for j in result['data']['boards'][0]['columns']}\n    return mapping\n</code></pre>"
+    },
+    {
+      "id": 42065,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T12:03:58.313Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

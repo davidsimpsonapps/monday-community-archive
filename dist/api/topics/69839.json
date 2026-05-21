@@ -1,0 +1,144 @@
+{
+  "id": 69839,
+  "title": "Calculating shift length when shift end time passes midnight",
+  "slug": "calculating-shift-length-when-shift-end-time-passes-midnight",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-11-02T11:50:14.238Z",
+  "lastPostedAt": "2024-06-25T13:05:42.529Z",
+  "postsCount": 18,
+  "excerpt": "I’m trying to create a formula that will calculate the length of a shift when the user provides a ‘Start Time’ and ‘End Time’. These columns are currently set as ‘Hours’ columns. There is no issue when the End Time value&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1652,
+  "posts": [
+    {
+      "id": 151188,
+      "postNumber": 1,
+      "createdAt": "2023-11-02T11:50:14.316Z",
+      "author": "NateW (Nathan Williams)",
+      "cookedHtml": "<p>I’m trying to create a formula that will calculate the length of a shift when the user provides a ‘Start Time’ and ‘End Time’. These columns are currently set as ‘Hours’ columns. There is no issue when the End Time value is greater then the Start Time, however; sometimes the End Time entered is after midnight creating a formula issue. I’m looking for the portion of the formula that would replace the ??? below.</p>\n<p>IF({End Time} &lt; {Start Time}, ???, HOURS_DIFF({End Time}, {Start Time}))</p>"
+    },
+    {
+      "id": 151544,
+      "postNumber": 2,
+      "createdAt": "2023-11-03T20:06:56.836Z",
+      "author": "CharlotteK (Charlotte Kirkham)",
+      "cookedHtml": "<p>Hey Nathan! I’d be happy to try to figure this one out with you!</p>\n<p>Could you clarify what you’re currently using the ??? for in the formula? Sorry for my confusion; knowing what placeholder the ??? is serving will help me better understand what issue you’re encountering here and how to resolve it.</p>\n<p>Alternatively, have you considered using the <a href=\"https://support.monday.com/hc/en-us/articles/360001143809-The-Time-Tracking-Column-\">Time Tracking Column</a> for measuring shift lengths? Let me know your thoughts on this!</p>"
+    },
+    {
+      "id": 151553,
+      "postNumber": 3,
+      "createdAt": "2023-11-04T00:19:51.910Z",
+      "author": "NateW (Nathan Williams)",
+      "cookedHtml": "<p>The time tracking column complicates my board quite a bit. I’m hoping to use an input form to quickly add a date, a start time, end time, and I want monday to automatically generate values for overtime, shift length, and unsociable hours (hours worked after midnight).</p>\n<p>In the formula above the portions I’ve included work correctly, the issue is I cannot get the portion that would replace the ??? to work. I’m looking for a code that would work in that portion of the formula, that would calclate the total shift length when the end time is past midnight.</p>"
+    },
+    {
+      "id": 151588,
+      "postNumber": 4,
+      "createdAt": "2023-11-04T15:41:37.130Z",
+      "author": "WorkFlow (Christopher Jeffers)",
+      "cookedHtml": "<p>Nathan,</p>\n<p>How are you starting and ending the shift? There are a few ways you can calculate and setup formulas based on whats activating these values.</p>\n<p>Thank you</p>"
+    },
+    {
+      "id": 151637,
+      "postNumber": 5,
+      "createdAt": "2023-11-05T10:10:43.608Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You will make your life a lot easier if rather than a start hour and end hour alongside a date, if you just use two full date columns - start datetime and end datetime. Since date columns can hold times.</p>\n<p>That is going to eliminate the whole issue.</p>"
+    },
+    {
+      "id": 151638,
+      "postNumber": 6,
+      "createdAt": "2023-11-05T10:11:40.783Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There is no automations. This sounds like the end employees enter it arbitrarily - in other words they aren’t in a position to start and stop it on monday through an automation. Just come in and enter it in manually.</p>"
+    },
+    {
+      "id": 174507,
+      "postNumber": 7,
+      "createdAt": "2024-03-21T18:20:36.575Z",
+      "author": "wednesday.com (David)",
+      "cookedHtml": "<p>Has anyone figured this out? I’m having the same issue - I really need the formula column to calculate total hours worked. The hours input are typically at night, going past midnight - which breaks the formula. Anyone have a solution?<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/5/5/557ca8bd40821bb95bded055827d3e8b0c770908.png\" alt=\"Screenshot 2024-03-21 at 4.19.06 PM\" width=\"540\" height=\"290\" /></p>"
+    },
+    {
+      "id": 174525,
+      "postNumber": 8,
+      "createdAt": "2024-03-21T19:03:29.413Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi David,</p>\n<p>Here is one way of doing it:</p>\n<p>Convert the CALL time to a date: For instance, take today’s date at 0:00 and use the ADD_MINUTES function to add your CALL column.</p>\n<p>Let’s call it Syntax1:</p>\n<pre><code class=\"lang-auto\">ADD_MINUTES(FORMAT_DATE(TODAY(),\"YYYY-MM-DD\"), LEFT({CALL},2) * 60 + RIGHT({CALL},2))\n</code></pre>\n<p>Do the same for END, but add 1 day to TODAY() so that it is tomorrow.</p>\n<p>Let’s call it Syntax2:</p>\n<pre><code class=\"lang-auto\">ADD_MINUTES(FORMAT_DATE(ADD_DAYS(TODAY(),1),\"YYYY-MM-DD\"), LEFT({END},2) * 60 + RIGHT({END},2))\n</code></pre>\n<p>So we now have 2 dates that we can compare: if I take the first line of your screenshot, they would be today at 10PM and tomorrow at 2:30AM. To get the number of hours between the 2, simple use the DAYS() function:</p>\n<pre><code class=\"lang-auto\">DAYS(&lt;ReplaceWithSyntax1&gt;,&lt;ReplaceWithSyntax2&gt;)*24\n</code></pre>\n<p> </p>\n<hr />\n<p><strong>Want to take your formulas to the next level?</strong> Try the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, the app that reinvents formulas in monday.</p>\n<ul>\n<li>Create formulas without using the Formula column (and avoid its limitations)</li>\n<li>Build formulas involving data from the previous item, the next item, the sub-items, the parent item, even items in the same group or the same board.</li>\n<li>In one formula, update multiple columns from multiple items.</li>\n</ul>\n<p>Check our blog for <a href=\"https://blog.mdboosters.com\" rel=\"noopener nofollow ugc\">real use cases</a>.</p>"
+    },
+    {
+      "id": 174710,
+      "postNumber": 9,
+      "createdAt": "2024-03-22T20:02:19.139Z",
+      "author": "wednesday.com (David)",
+      "cookedHtml": "<p>Thank you so much Gilles! This was incredibly helpful!!</p>"
+    },
+    {
+      "id": 174713,
+      "postNumber": 10,
+      "createdAt": "2024-03-22T21:28:23.082Z",
+      "author": "ByronGriffin (ByronGriffin)",
+      "cookedHtml": "<p>To handle cases where the End Time is after midnight, you can add 24 hours to the End Time if it’s earlier than the Start Time. Here’s how you can adjust your formula:</p>\n<pre><code class=\"lang-auto\">IF({End Time} &lt; {Start Time}, HOURS_DIFF({End Time} + 24, {Start Time}), HOURS_DIFF({End Time}, {Start Time}))\n</code></pre>\n<p>This formula checks if the End Time is before the Start Time. If it is, it adds 24 hours to the End Time to account for the shift crossing midnight, then calculates the difference. Otherwise, it simply calculates the difference between the two times.</p>"
+    },
+    {
+      "id": 175145,
+      "postNumber": 11,
+      "createdAt": "2024-03-26T13:58:20.163Z",
+      "author": "wednesday.com (David)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gcavin\">@GCavin</a> your formula works great -IF the end time is after midnight - if end time is before midnight it thinks it’s the next day and calculates it wrong, any solution?</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/6/2/62b96520c7c3be217853c01da2fa2a7419a550a6.png\" alt=\"Screenshot 2024-03-26 at 11.55.12 AM\" width=\"578\" height=\"196\" /></p>"
+    },
+    {
+      "id": 175148,
+      "postNumber": 12,
+      "createdAt": "2024-03-26T14:22:49.781Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi David,</p>\n<p>Assuming that the difference between {Start} and {End} is less than 24 hours, then you want to test if {CALL}&lt;={END}.</p>\n<p>If {CALL}&lt;={END}, we are in the case scenario when {END} is before midnight. Then Syntax2 is the same as Syntax1, except you replace {CALL} by {END}.</p>\n<p>There may be a simpler way when {END} is before midnight, but at least this way will work.</p>\n<hr />\n<p><strong>Want to get rid of the formula column?</strong> and write formulas that support multiple lines, variables and can update various columns at once? Take a look at the Advanced Formula Booster at <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">https://mdboosters.com</a>*</p>"
+    },
+    {
+      "id": 176140,
+      "postNumber": 13,
+      "createdAt": "2024-04-01T13:41:40.351Z",
+      "author": "wednesday.com (David)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a> yeah unfortunately that won’t work for any end time that occurs after midnight…that only works for hours before midnight…I need it to be able to calculate hours whether they’re before or after midnight. I switched the hours columns to 24H/military time and it still won’t work…</p>"
+    },
+    {
+      "id": 176143,
+      "postNumber": 14,
+      "createdAt": "2024-04-01T13:56:57.439Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Publish your syntax.</p>"
+    },
+    {
+      "id": 176156,
+      "postNumber": 15,
+      "createdAt": "2024-04-01T14:51:04.252Z",
+      "author": "wednesday.com (David)",
+      "cookedHtml": "<p>Okeedoke! In this case - (btw this works fine if end time is before midnight - but not for after midnight.)</p>\n<p><strong>Syntax 1 - Column name: DONT TOUCH CALL:</strong> ADD_MINUTES(FORMAT_DATE(TODAY(),“YYYY-MM-DD”),LEFT({CALL},2)*60 +RIGHT({CALL},2))</p>\n<p><strong>Syntax 2 - Column name: DONT TOUCH END:</strong> ADD_MINUTES(FORMAT_DATE(TODAY(),“YYYY-MM-DD”),LEFT({END},2)*60 +RIGHT({END},2))</p>\n<p><strong>Syntax 3 - Total Hours Formula Column:</strong> DAYS({DONT TOUCH END},{DONT TOUCH CALL})*24</p>"
+    },
+    {
+      "id": 176454,
+      "postNumber": 16,
+      "createdAt": "2024-04-02T12:22:47.133Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>I’d like to see your real syntax with the IF statements.</p>"
+    },
+    {
+      "id": 176757,
+      "postNumber": 17,
+      "createdAt": "2024-04-03T15:00:55.245Z",
+      "author": "wednesday.com (David)",
+      "cookedHtml": "<p>I don’t have the IF statements in there - the formula failed whenever/wherever I tried to insert those…</p>"
+    },
+    {
+      "id": 190405,
+      "postNumber": 18,
+      "createdAt": "2024-06-25T13:05:42.529Z",
+      "author": "wednesday.com (David)",
+      "cookedHtml": "<p>We’ve found the winning formula for this everyone, thanks to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> for helping out:</p>\n<p>IF(HOURS_DIFF({End},{CALL})&lt;“0”,ROUND(SUM(SUM(MINUS(23,LEFT({CALL},2)),DIVIDE(MINUS(60,RIGHT({CALL},2)),60)),SUM(LEFT({End},2),DIVIDE(RIGHT({End},2),60))),2),ROUND(SUM(LEFT(HOURS_DIFF({End},{CALL}),2),DIVIDE(RIGHT(HOURS_DIFF({End},{CALL}),2),60)),2))</p>\n<p>FYI: “CALL” is the shift start rime, “End” is the shift end time.</p>"
+    }
+  ]
+}

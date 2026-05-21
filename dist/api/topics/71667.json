@@ -1,0 +1,49 @@
+{
+  "id": 71667,
+  "title": "Read Data from a Group and parse the JSON into a CSV",
+  "slug": "read-data-from-a-group-and-parse-the-json-into-a-csv",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    139,
+    270,
+    351
+  ],
+  "createdAt": "2023-11-28T12:00:24.025Z",
+  "lastPostedAt": "2023-11-29T11:52:44.477Z",
+  "postsCount": 4,
+  "excerpt": "Hey all! \nI have a question that maybe you can help. \nIm creating a code in python that basically uploads / updates some data in Monday. \nIn short, i have 2 separate folders with CSV files. My python code accesses those &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 548,
+  "posts": [
+    {
+      "id": 155092,
+      "postNumber": 1,
+      "createdAt": "2023-11-28T12:00:24.119Z",
+      "author": "Avas (AVas)",
+      "cookedHtml": "<p>Hey all!</p>\n<p>I have a question that maybe you can help.<br />\nIm creating a code in python that basically uploads / updates some data in Monday.</p>\n<p>In short, i have 2 separate folders with CSV files. My python code accesses those files and populates my board. one folder’s CSVs have what populates the values of one group and the other folder’s CSVs have what populates the sub items of one value<br />\n(e.g: Folder1 &gt; toyota.csv, nissan.csv, bmw.csv.<br />\nFolder2&gt; toyota-specs.csv, nissan-specs.csv, bmw-specs.csv).</p>\n<p>my board groups names are :  Toyota, Nissan, BMW.<br />\nin the toyota.csv column0 are several models of toyota cars.</p>\n<p>everyday this toyota.csv is renewed automatically with same or less or new models.</p>\n<p>i need my code to list all the items of the toyota group (or any other that is being checked), and compare column0 entries with the api json response of what the group already has as values. If theres something new i need to add it on monday and take the new id in order to use it for future updates. if something on monday is not there anymore on the csv i need to delete it. Whatever is the same i need to update it.</p>\n<p>The way i tried to do it is to put the r.json()  into a csv but i get multiple errors when i tried to use pandas.</p>\n<pre><code class=\"lang-auto\">\ncolumnsQuery = f\"\"\"query {{\n                         boards (ids: {BOARD_ID}) {{\n                            groups(ids: {groupIDToyota}){{\n                                items {{\n                                    id\n                                    name\n                                    column_values {{\n                                        id\n                                        title\n                                        value\n                                    }}\n                                }}\n                            }}\n                        }}\n                     }}\"\"\"                  \n\n    data = {\"query\": columnsQuery}\n    r = requests.post(url=BASE_URL, json=data, headers=HEADERS)\n    columnsResults = r.json()\n    print(\"columns\", columnsResults)\n</code></pre>\n<p>this is the query i use to get the results. i specify both the board and group id. however when i tried a json parser website it showed me that the response is completely wrong and couldnt get any result. and when i tried pandas it didnt work.</p>\n<p>would appreciate any ideas. thanks</p>\n<p>\"<code>Preformatted text</code></p>"
+    },
+    {
+      "id": 155253,
+      "postNumber": 2,
+      "createdAt": "2023-11-29T06:22:00.811Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/avas\">@Avas</a> and welcome to the community!</p>\n<p>I hope you like it here.</p>\n<p>I am not experienced with Python but as for the query, I recommend using something like <a href=\"https://developer.monday.com/api-reference/docs/items_page\">this</a>:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    groups(ids: \"topics\") {\n      items_page(limit: 10) {\n        cursor\n        items {\n          id\n          name\n          column_values {\n            column {\n              title\n            }\n            id\n            value\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Please note in this case the board ID is a number and the group ID is a string.</p>\n<p>Here it is in Python:</p>\n<pre><code class=\"lang-auto\">import http.client\nimport json\n\nconn = http.client.HTTPSConnection(\"api.monday.com\")\npayload = \"{\\\"query\\\":\\\"{\\\\n  boards(ids: 1234567890) {\\\\n    groups(ids: \\\\\\\"topics\\\\\\\") {\\\\n      items_page(limit: 10) {\\\\n        cursor\\\\n        items {\\\\n          id\\\\n          name\\\\n          column_values {\\\\n            column {\\\\n              title\\\\n            }\\\\n            id\\\\n            value\\\\n          }\\\\n        }\\\\n      }\\\\n    }\\\\n  }\\\\n}\\\",\\\"variables\\\":{}}\"\nheaders = {\n  'API-Version': '2023-10',\n  'Authorization': 'APITOKENHERE',\n  'Content-Type': 'application/json',\n}\nconn.request(\"POST\", \"/v2/\", payload, headers)\nres = conn.getresponse()\ndata = res.read()\nprint(data.decode(\"utf-8\"))\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 155262,
+      "postNumber": 3,
+      "createdAt": "2023-11-29T06:43:28.784Z",
+      "author": "Avas (AVas)",
+      "cookedHtml": "<p>Hello Matias ,</p>\n<p>Thank you for your time to reply to me.<br />\nI  think what you wrote me is just to see/read/list the items on the specified group?<br />\nI have already achieved that, it is no problem. What i need is to put the information from</p>\n<p>data = {“query”: columnsQuery}  (query being the part i already posted)<br />\nr = (url=BASE_URL, json=data, headers=HEADERS) (r = response 200)<br />\ntemp = r.json() (&lt;= data in json)</p>\n<p>to put the data in temp into a CSV file.</p>"
+    },
+    {
+      "id": 155309,
+      "postNumber": 4,
+      "createdAt": "2023-11-29T11:52:44.477Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Oh! So you are succeeding in the use of our API and now you want to take that data and save it into a CSV file. Thank you for the confirmation!</p>\n<p>I am afraid I am not experienced with CSV so I am not sure how that is done.</p>\n<p>Let’s hope someone else in the community has experience with this <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

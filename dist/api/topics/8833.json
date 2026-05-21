@@ -1,0 +1,58 @@
+{
+  "id": 8833,
+  "title": "I can't seem to figure out the basic use case of getting the value for a column that is in a selected item/pulse",
+  "slug": "i-cant-seem-to-figure-out-the-basic-use-case-of-getting-the-value-for-a-column-that-is-in-a-selected-item-pulse",
+  "categoryId": 6,
+  "tagIds": [],
+  "createdAt": "2020-07-09T23:03:23.254Z",
+  "lastPostedAt": "2021-06-21T15:44:33.071Z",
+  "postsCount": 6,
+  "excerpt": "I see how to query all values from all items (items apparently used to be called pulses? because the webhook gives me pulseId and pulseName).  I am using something like this: \nitems(limit: 50) {\n    column_values {\n     &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2080,
+  "posts": [
+    {
+      "id": 22166,
+      "postNumber": 1,
+      "createdAt": "2020-07-09T23:03:23.329Z",
+      "author": "barrycox (barry)",
+      "cookedHtml": "<p>I see how to query all values from all items (items apparently used to be called pulses? because the webhook gives me pulseId and pulseName).  I am using something like this:</p>\n<p><code>items(limit: 50) {\n    column_values {\n      id\n      value\n      type\n      title\n    }\n  }\n}</code></p>\n<p>but i can’t find anywhere in the doc how to return the value of a text type column that i have added that is called ‘property_id’ that is in a chosen item (or pulse).</p>\n<p>some other related questions about this query:</p>\n<ul>\n<li>\n<p>seems like the item id (or pulseId) for the item would be included or able to be included in this query… i can’t see how to do that even.</p>\n</li>\n<li>\n<p>also, when i query all items like above, it doesn’t show a value in any of my property_id items… even though i have some entered on a few items/pulses.</p>\n</li>\n</ul>\n<p>i’m a noob on monday, so i’m sure i’m just missing how to perform this seemingly basic function of getting the value of a column for a certain item.</p>"
+    },
+    {
+      "id": 22203,
+      "postNumber": 2,
+      "createdAt": "2020-07-10T10:52:33.279Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>try these…</p>\n<p>{ items(limit: 50) {id  name  column_values { id value type title } } }<br />\n{ items(ids: 123456789) {id name column_values { id value type title } } }<br />\n{ items(ids: 123456789) {id name column_values(ids:property_id) { id value type title } } }</p>"
+    },
+    {
+      "id": 22238,
+      "postNumber": 3,
+      "createdAt": "2020-07-10T16:56:51.754Z",
+      "author": "barrycox (barry)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/jcorrell/48/10443_2.png\" class=\"avatar\" /> JCorrell:</div>\n<blockquote>\n<p>{ items(limit: 50) {id name column_values { id value type title } } }<br />\n{ items(ids: 123456789) {id name column_values { id value type title } } }<br />\n{ items(ids: 123456789) {id name column_values(ids:property_id) { id value type title } } }</p>\n</blockquote>\n</aside>\n<p>thanks jcorrell, that should help me since i am getting the id from the webhook. (assuming the pulseId is the same as the items ids:</p>\n<p>for other use-cases where i may not have the item id, it seems difficult to find the right item.  seems that the only way to load all of the data on the board  (with your first query but a higher limit) and then spin down the list until you find the item you’re looking for.  seems expensive.</p>\n<p>is there a way to search for an item id based on the name of the item?  or the value of one of the columns?  or the value of a info box note where i could store the property_id?<br />\n*info boxes don’t seem to be exposed to the api.  i put one on an item and put a file attachement too, but assets{id name} doesn’t return anything.</p>"
+    },
+    {
+      "id": 22239,
+      "postNumber": 4,
+      "createdAt": "2020-07-10T17:08:18.685Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>query {items_by_colum_values (board_id: 20178755, column_id: “date”, column_value: “2019-02-06”) {id<br />\nname<br />\n}}</p>\n<p>From <a href=\"https://monday.com/developers/v2#queries-section-items-by-column-values\">https://monday.com/developers/v2#queries-section-items-by-column-values</a></p>\n<p>is this what you are looking for?</p>"
+    },
+    {
+      "id": 22240,
+      "postNumber": 5,
+      "createdAt": "2020-07-10T17:15:26.016Z",
+      "author": "barrycox (barry)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/basdebruin/48/688_2.png\" class=\"avatar\" /> basdebruin:</div>\n<blockquote>\n<p>query {items_by_colum_values (board_id: 20178755, column_id: “date”, column_value: “2019-02-06”) {id<br />\nname<br />\n}}</p>\n</blockquote>\n</aside>\n<p>YES!  this also works to find the item by it’s column_id: “name”<br />\nthanks for all the help getting started <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> and <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>.</p>"
+    },
+    {
+      "id": 55603,
+      "postNumber": 6,
+      "createdAt": "2021-06-21T15:44:33.071Z",
+      "author": "Becca-monday.com (Rebecca Katz (monday.com))",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": 31689,
+  "title": "Fetch data from a specific column of a board using python",
+  "slug": "fetch-data-from-a-specific-column-of-a-board-using-python",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    139,
+    351
+  ],
+  "createdAt": "2022-02-15T17:34:29.966Z",
+  "lastPostedAt": "2022-07-01T14:17:17.158Z",
+  "postsCount": 6,
+  "excerpt": "I  have the following code in Python-&gt; \nimport requests \nimport json \napiKey = “my api key” \napiUrl = “https://api.monday.com/v2” \nheaders = {“Authorization” : apiKey} \nquery2 = ‘{boards (ids: 2257165976) { name id descr&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 4859,
+  "posts": [
+    {
+      "id": 77340,
+      "postNumber": 1,
+      "createdAt": "2022-02-15T17:34:30.042Z",
+      "author": "rajniali (Rajni Ali Reza)",
+      "cookedHtml": "<p>I  have the following code in Python-&gt;<br />\nimport requests<br />\nimport json</p>\n<p>apiKey = “my api key”<br />\napiUrl = “<a href=\"https://api.monday.com/v2%E2%80%9D\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2”</a><br />\nheaders = {“Authorization” : apiKey}</p>\n<p>query2 = ‘{boards (ids: 2257165976) { name id description items { name column_values{title id type text } } } }’<br />\ndata = {‘query’ : query2}</p>\n<p>r = requests.post(url=apiUrl, json=data, headers=headers) # make request<br />\nprint(r.json())</p>\n<p>This code displays everything (all the items) from a specific board but doesn’t always return the values of a column. How could I fix that? Also, I don’t want to fetch data from every column, I want to fetch data from a specific column. Could someone please modify my code in order to do so?</p>"
+    },
+    {
+      "id": 77460,
+      "postNumber": 2,
+      "createdAt": "2022-02-16T14:39:50.791Z",
+      "author": "RonTuretzky (Ron Turetzky)",
+      "cookedHtml": "<p>dude trust me, do pip install monday in the terminal<br />\nthen do from monday import MondayClient</p>\n<p>this is going to save you so much time</p>\n<p><a href=\"https://github.com/ProdPerfect/monday\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - ProdPerfect/monday: Python client for Monday.com</a> documentation here</p>\n<p>What do you mean it doesn’t return all the values of a column? Can you show the example?</p>\n<p>You can use the library I shared above to get the column id (or through enabling dev mode and getting the col_id), then use a different function with the column id to fetch from that specific function</p>\n<p>Here’s a snippet</p>\n<pre><code class=\"lang-auto\">client = MondayClient(apiKey)\nret = client .boards.fetch_columns_by_board_id(board_id) # you also have to know the board id which is in the url \n##Parse ret['data']['boards'][0]['columns'] for the column id\n ret=mPT.boards.fetch_items_by_board_id(1684237949)\n#now parse ret using the column id for the col values you are looking for, you can use list comprehension here  for example \n arr = client.boards.fetch_items_by_board_id(board)\n names = [item['name'] for item in [item for item in arr['data']['boards'][0][\"items\"]]]\n#will give you the names of the items, play with it a bit\n</code></pre>"
+    },
+    {
+      "id": 90199,
+      "postNumber": 3,
+      "createdAt": "2022-07-01T11:29:54.410Z",
+      "author": "URounder (URounder)",
+      "cookedHtml": "<p>This works alright, but when I try to pull specific column values (especially numbers) things don’t seem to work.</p>\n<p>For example:</p>\n<pre><code class=\"lang-auto\">arr = client.boards.fetch_items_by_board_id(2885491262)\nnames = [item['name'] for item in [item for item in arr['data']['boards'][0][\"items\"]]]\nprint(names)\n# will give you the names of the items, play with it a bit\n\nhours = [item['numbers'] for item in [item for item in arr['data']['boards'][0][\"items\"][0]['column_values'][0][\n    'value']]]\nprint(hours)\n</code></pre>\n<p>The return is:<br />\n[‘Item 1’, ‘Item 2’, ‘Item 3’, ‘Item 4’, ‘Item 5’]</p>\n<p>Traceback (most recent call last):<br />\nhours = [item[‘numbers’] for item in [item for item in arr[‘data’][‘boards’][0][“items”][0][‘column_values’][0][<br />\nTypeError: ‘NoneType’ object is not iterable</p>"
+    },
+    {
+      "id": 90200,
+      "postNumber": 4,
+      "createdAt": "2022-07-01T11:34:03.753Z",
+      "author": "URounder (URounder)",
+      "cookedHtml": "<p>For what it’s worth I get similar results when not using the monday module.</p>\n<pre><code class=\"lang-auto\">hours_sum = 0\ncolumn_length = len(result['data']['boards'][0]['items'][0]['column_values'])\nfor item in range(len(result['data']['boards'][0]['items'])):\n    # print(f\"Item {item}: {result['data']['boards'][0]['items'][item]['column_values']}\")\n\n    for i in range(column_length):\n        if result['data']['boards'][0]['items'][0]['column_values'][i]['id'] in ['numbers', 'item']:\n            line_result = int(0 if result['data']['boards'][0]['items'][0]['column_values'][i]['value'] is None else\n                              result['data']['boards'][0]['items'][0]['column_values'][i]['value'])\n            hours_sum += line_result\n            print(item, i)\n            print(result['data']['boards'][0]['items'][0]['column_values'][i])\nprint(f'Total Hours Spent: {hours_sum}')\n</code></pre>\n<p>line 56, in <br />\nline_result = int(0 if result[‘data’][‘boards’][0][‘items’][0][‘column_values’][i][‘value’] is None else<br />\nValueError: invalid literal for int() with base 10: ‘“1”’</p>\n<p>Seems like the number columns return strings and I am having trouble converting them to int.</p>\n<p>Is anyone using python with the Monday API to really leverage their workflow? I would love to see what others are doing to make this effective.</p>"
+    },
+    {
+      "id": 90231,
+      "postNumber": 5,
+      "createdAt": "2022-07-01T14:11:40.550Z",
+      "author": "RonTuretzky (Ron Turetzky)",
+      "cookedHtml": "<p>Without acess to your specific board it’s hard to figure out what’s wrong here but generally you’re probably unpacking the json wrong somehow. Try printing out the raw api response and see how to properly unpack the data you’re trying to get.</p>"
+    },
+    {
+      "id": 90233,
+      "postNumber": 6,
+      "createdAt": "2022-07-01T14:17:17.158Z",
+      "author": "URounder (URounder)",
+      "cookedHtml": "<p>Yes, this API feels like an exercise in unpacking JSON. Clearly I am not yet up to the task.</p>\n<pre><code class=\"lang-auto\">query_columns = \"\"\"\n                query {\n                    boards (ids: 2885491262) {\n                        items () {\n                            id\n                            name\n                            \n                        column_values {\n                            id\n                            title\n                            value\n                            text\n                            additional_info   \n                            }\n                        }\n                    }\n                }\n                \"\"\"\ndata = {'query': query_columns}\n\nr = requests.post(url=apiUrl, json=data, headers=headers)  # make request\n\nresult = r.json()\n\nprint(result)\n</code></pre>\n<p>And the output is:</p>\n<pre><code class=\"lang-auto\">{'data': {'boards': [{'items': [{'id': '2885491305', 'name': 'Item 1', 'column_values': [{'id': 'person', 'title': 'Person', 'value': None, 'text': '', 'additional_info': None}, {'id': 'status', 'title': 'Status', 'value': '{\"index\":0,\"post_id\":null,\"changed_at\":\"2019-03-01T17:24:57.321Z\"}', 'text': 'Working on it', 'additional_info': '{\"label\":\"Working on it\",\"color\":\"#fdab3d\",\"changed_at\":\"2019-03-01T17:24:57.321Z\"}'}, {'id': 'date4', 'title': 'Date', 'value': '{\"date\":\"2022-07-03\",\"icon\":null,\"changed_at\":\"2022-07-01T13:29:43.829Z\"}', 'text': '2022-07-03', 'additional_info': None}, {'id': 'numbers', 'title': 'Hours', 'value': '\"1\"', 'text': '1', 'additional_info': None}]}, {'id': '2885491315', 'name': 'Item 2', 'column_values': [{'id': 'person', 'title': 'Person', 'value': None, 'text': '', 'additional_info': None}, {'id': 'status', 'title': 'Status', 'value': '{\"index\":1,\"post_id\":null,\"changed_at\":\"2019-03-01T17:28:23.178Z\"}', 'text': 'Done', 'additional_info': '{\"label\":\"Done\",\"color\":\"#00c875\",\"changed_at\":\"2019-03-01T17:28:23.178Z\"}'}, {'id': 'date4', 'title': 'Date', 'value': '{\"date\":\"2022-07-01\",\"icon\":null,\"changed_at\":\"2022-07-01T13:29:43.426Z\"}', 'text': '2022-07-01', 'additional_info': None}, {'id': 'numbers', 'title': 'Hours', 'value': '\"2\"', 'text': '2', 'additional_info': None}]}, {'id': '2885491325', 'name': 'Item 3', 'column_values': [{'id': 'person', 'title': 'Person', 'value': None, 'text': '', 'additional_info': None}, {'id': 'status', 'title': 'Status', 'value': '{\"index\":5,\"post_id\":null,\"changed_at\":\"2019-03-01T17:25:02.248Z\"}', 'text': None, 'additional_info': '{\"label\":null,\"color\":\"#c4c4c4\",\"changed_at\":\"2019-03-01T17:25:02.248Z\"}'}, {'id': 'date4', 'title': 'Date', 'value': '{\"date\":\"2022-07-01\",\"icon\":null,\"changed_at\":\"2022-07-01T13:29:42.918Z\"}', 'text': '2022-07-01', 'additional_info': None}, {'id': 'numbers', 'title': 'Hours', 'value': '\"3\"', 'text': '3', 'additional_info': None}]}, {'id': '2885491341', 'name': 'Item 4', 'column_values': [{'id': 'person', 'title': 'Person', 'value': None, 'text': '', 'additional_info': None}, {'id': 'status', 'title': 'Status', 'value': None, 'text': None, 'additional_info': None}, {'id': 'date4', 'title': 'Date', 'value': '{\"date\":\"2022-07-01\",\"icon\":null,\"changed_at\":\"2022-07-01T13:29:42.918Z\"}', 'text': '2022-07-01', 'additional_info': None}, {'id': 'numbers', 'title': 'Hours', 'value': '\"4\"', 'text': '4', 'additional_info': None}]}, {'id': '2885491355', 'name': 'Item 5', 'column_values': [{'id': 'person', 'title': 'Person', 'value': None, 'text': '', 'additional_info': None}, {'id': 'status', 'title': 'Status', 'value': None, 'text': None, 'additional_info': None}, {'id': 'date4', 'title': 'Date', 'value': '{\"date\":\"2022-07-01\",\"icon\":null,\"changed_at\":\"2022-07-01T13:29:43.426Z\"}', 'text': '2022-07-01', 'additional_info': None}, {'id': 'numbers', 'title': 'Hours', 'value': '\"5\"', 'text': '5', 'additional_info': None}]}]}]}, 'account_id': 9792846}\n</code></pre>\n<p>It seems very odd that my numbers column is returning ‘“1”’.</p>"
+    }
+  ]
+}

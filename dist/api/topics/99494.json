@@ -1,0 +1,65 @@
+{
+  "id": 99494,
+  "title": "To add table content in docs using create_doc_block api",
+  "slug": "to-add-table-content-in-docs-using-create-doc-block-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351,
+    362
+  ],
+  "createdAt": "2024-09-30T11:58:38.655Z",
+  "lastPostedAt": "2024-10-06T09:13:59.941Z",
+  "postsCount": 6,
+  "excerpt": "Hey, \nI’m unable to add content as it gives unrecognized property and bad request. Here is my query: \nmutation CreateTableBlock($docId: ID!, $type: DocBlockContentType!, $content: JSON!) {\n  create_doc_block(\n    doc_id:&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 25,
+  "posts": [
+    {
+      "id": 203847,
+      "postNumber": 1,
+      "createdAt": "2024-09-30T11:58:38.733Z",
+      "author": "niraj83 (Niraj Pathak)",
+      "cookedHtml": "<p>Hey,<br />\nI’m unable to add content as it gives unrecognized property and bad request. Here is my query:</p>\n<pre><code class=\"lang-auto\">mutation CreateTableBlock($docId: ID!, $type: DocBlockContentType!, $content: JSON!) {\n  create_doc_block(\n    doc_id: $docId,\n    type: $type,\n    content: $content\n  ) {\n    id\n  }\n}\n\n{\n  \"docId\": 123456,\n  \"type\": \"table\",\n  \"content\": \"{\\\"column_count\\\": 5, \\\"row_count\\\": 2, \\\"deltaFormat\\\": [{\\\"insert\\\":{\\\"columns\\\":5,\\\"rows\\\":[{\\\"cells\\\":[{\\\"insert\\\":\\\"File\\\"},{\\\"insert\\\":\\\"Line\\\"},{\\\"insert\\\":\\\"Match\\\"},{\\\"insert\\\":\\\"Commit By\\\"},{\\\"insert\\\":\\\"Open ticket day\\\"}]},{\\\"cells\\\":[{\\\"insert\\\":\\\"path/to/file\\\"},{\\\"insert\\\":\\\"100\\\"},{\\\"insert\\\":\\\"example match\\\"},{\\\"insert\\\":\\\"username\\\"},{\\\"insert\\\":\\\"2024-03-05\\\"}]}]}}]}\"\n}\n</code></pre>\n<p>Could you please check what’s wrong here.<br />\nThanks in advance</p>"
+    },
+    {
+      "id": 203850,
+      "postNumber": 2,
+      "createdAt": "2024-09-30T12:00:16.706Z",
+      "author": "AnishJ (Anish)",
+      "cookedHtml": "<p>I would suggest to check that content<br />\nstep by step, that’s format always creates a issue for me as well</p>"
+    },
+    {
+      "id": 203946,
+      "postNumber": 3,
+      "createdAt": "2024-10-01T05:53:03.114Z",
+      "author": "niraj83 (Niraj Pathak)",
+      "cookedHtml": "<p>Thanks for the response.<br />\nHowever, I can’t find any specific format for type ‘table’. Could you share any example/reference.<br />\nThanks</p>"
+    },
+    {
+      "id": 203947,
+      "postNumber": 4,
+      "createdAt": "2024-10-01T06:08:17.241Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/niraj83\">@niraj83</a> and welcome to the community!</p>\n<p>I hope you like it here!</p>\n<p>You can create the table:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_doc_block(\n    type: table\n    doc_id: 1234567\n    content: \"{\\\"column_count\\\":4,\\\"row_count\\\":4}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Then query to get the ID of the cells in it:</p>\n<pre><code class=\"lang-auto\">{\n  docs(ids:123456){\n    blocks{\n      type\n      content\n      id\n    }\n  }\n}\n</code></pre>\n<p>And then add data to the cells:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_doc_block(\n    parent_block_id: \"5sdfd3-c811-41c5-93e6-ec1111f22201\"\n    doc_id: 123456\n    type: normal_text\n    content: \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"New text in cell\\\"}]}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Is that what you need to do?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 204065,
+      "postNumber": 5,
+      "createdAt": "2024-10-01T15:49:49.138Z",
+      "author": "niraj83 (Niraj Pathak)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p><code>\"{\\\"column_count\\\":4,\\\"row_count\\\":4}\"</code></p>\n</blockquote>\n</aside>\n<p>Thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> .<br />\nIt works for me <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" />.</p>\n<p>I’m getting error  <code>{\\\"column_count\\\": 11, \\\"row_count\\\": 10}</code> Does it not support more than 5 rows/cols?<br />\nHow can I manage?</p>"
+    },
+    {
+      "id": 204529,
+      "postNumber": 6,
+      "createdAt": "2024-10-06T09:13:59.941Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/niraj83\">@niraj83</a>,</p>\n<p>As of today, yes. <a href=\"https://developer.monday.com/api-reference/reference/blocks#arguments-1\">The limit is 5</a> for rows and columns when creating the table via API. There is no way to add more than that when using this mutation.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

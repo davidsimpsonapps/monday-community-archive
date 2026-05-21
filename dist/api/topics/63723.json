@@ -1,0 +1,54 @@
+{
+  "id": 63723,
+  "title": "It there a built in method or function to return connected items in another board",
+  "slug": "it-there-a-built-in-method-or-function-to-return-connected-items-in-another-board",
+  "categoryId": 58,
+  "tagIds": [
+    13,
+    351
+  ],
+  "createdAt": "2023-08-15T00:17:24.697Z",
+  "lastPostedAt": "2023-08-15T14:28:12.461Z",
+  "postsCount": 5,
+  "excerpt": "I’m looking for a way to place the number of connected items in another connect board into an number collumn.  in landlords i would like to see how many properties.",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 477,
+  "posts": [
+    {
+      "id": 139140,
+      "postNumber": 1,
+      "createdAt": "2023-08-15T00:17:24.758Z",
+      "author": "dsullivan2 (Dennis Sullivan)",
+      "cookedHtml": "<p>I’m looking for a way to place the number of connected items in another connect board into an number collumn.  in landlords i would like to see how many properties.</p>"
+    },
+    {
+      "id": 139217,
+      "postNumber": 2,
+      "createdAt": "2023-08-15T11:36:38.199Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dsullivan2\">@dsullivan2</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Let me know if I understand correctly. You have a “connect_boards” column and a “numbers” column. You want to know how many items are connected in the “connect_boards” column and show that number in the “numbers” column. Is that accurate?</p>\n<p>If so, you can check the number of items with a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 123456789) {\n    column_values(ids: \"connect_boards\") {\n      value\n    }\n  }\n}\n</code></pre>\n<p>You would need to change the ID of the column for your column’s ID if it is different.</p>\n<p>Then you can check the number of results you get (with a script on your end), and then you can send that number to the “numbers” column with a mutation like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_simple_column_value(\n    board_id: 1122334455\n    item_id: 1234567890\n    column_id: \"numbers\"\n    value: \"10\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Let me know if that is what you were looking for!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 139238,
+      "postNumber": 3,
+      "createdAt": "2023-08-15T12:05:36.165Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>To add on to what Matias said:</p>\n<p>The next version of our API contains an update for the connect-boards column to make accessing linked items easier.</p>\n<h3><a name=\"p-139238-introducing-the-boardrelationvalue-type-1\" class=\"anchor\" href=\"#p-139238-introducing-the-boardrelationvalue-type-1\"></a>Introducing the BoardRelationValue type</h3>\n<p>These column values have the BoardRelationValue type, which contains some useful fields on it:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/4/e43113375c3ac432142b58f6532dfbd4ddb6866c.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/4/e43113375c3ac432142b58f6532dfbd4ddb6866c_2_219x500.png\" alt=\"image\" width=\"219\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">328×747 32.5 KB</span></div></a></div><p></p>\n<h3><a name=\"p-139238-using-this-in-a-query-2\" class=\"anchor\" href=\"#p-139238-using-this-in-a-query-2\"></a>Using this in a query</h3>\n<p>Specifically you can grab the <code>linked_item_ids</code> field and check its length, with a query like this:</p>\n<pre><code class=\"lang-graphql\">query {\n  boards (ids:12345) {\n    items_page (limit:25) {\n      items {\n       \tid\n      \tcolumn_values {\n        \t...on BoardRelationValue {\n         \t linked_item_ids\n        \t}\n      \t} \n      }\n    }\n  }\n}\n</code></pre>\n<h3><a name=\"p-139238-how-to-switch-api-versions-3\" class=\"anchor\" href=\"#p-139238-how-to-switch-api-versions-3\"></a>How to switch API versions</h3>\n<p>Oh, and you can switch API versions <a href=\"https://developer.monday.com/api-reference/docs/api-versioning#how-to-access-different-api-versions\">using these instructions.</a></p>\n<p>Let me know if that helps.</p>"
+    },
+    {
+      "id": 139271,
+      "postNumber": 4,
+      "createdAt": "2023-08-15T14:17:40.000Z",
+      "author": "dsullivan2 (Dennis Sullivan)",
+      "cookedHtml": "<p>Matias,</p>\n<p>Thak you for your help. I’m not sure where I would run a query. Your solution is probably over my head. I was looking for a solution to capture those counts already done in Monday and put the number in a field such as this.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/6/f63a4353f0b8ceb429710dd5d7f1ca34c78e14a5.png\" title=\"image001.png\" rel=\"noopener nofollow ugc\"><img width=\"488\" height=\"500\" src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/6/f63a4353f0b8ceb429710dd5d7f1ca34c78e14a5_2_488x500.png\" /><div class=\"meta\"><span class=\"filename\">image001.png</span><span class=\"informations\">1284×1315 117 KB</span></div></a></div><p></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/b/5/b5977024b4d37f6fceefca820fff14cf307b4525.png\" alt=\"image002.png\" width=\"179\" height=\"60\" /></p>"
+    },
+    {
+      "id": 139275,
+      "postNumber": 5,
+      "createdAt": "2023-08-15T14:28:12.461Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Dennis – I understand now, thanks for letting us know. Your post was in the developers’ section so we immediately jumped to a custom development solution <img src=\"https://emoji.discourse-cdn.com/apple/cowboy_hat_face.png?v=12\" title=\":cowboy_hat_face:\" class=\"emoji\" alt=\":cowboy_hat_face:\" width=\"20\" height=\"20\" /> Sorry about that!</p>\n<p>So, to recap – you’re looking to count the number of items on a board, using something like a formula column.</p>\n<p>You can do this by using the <span class=\"hashtag-raw\">#count</span> helper in the formula column:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/c/8c04a3d771aee73ebfcbbb4a71ecdae9fde1562d.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/c/8c04a3d771aee73ebfcbbb4a71ecdae9fde1562d_2_689x363.png\" alt=\"image\" width=\"689\" height=\"363\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1344×709 103 KB</span></div></a></div><p></p>\n<p>PS: I’m going to move this over to the main platform discussions of the community!</p>"
+    }
+  ]
+}

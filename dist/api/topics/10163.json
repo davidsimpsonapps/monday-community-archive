@@ -1,0 +1,95 @@
+{
+  "id": 10163,
+  "title": "OAuth \"Invalid client_id param\" *",
+  "slug": "oauth-invalid-client-id-param",
+  "categoryId": 8,
+  "tagIds": [
+    159
+  ],
+  "createdAt": "2020-08-17T09:46:54.269Z",
+  "lastPostedAt": "2020-09-22T22:46:18.023Z",
+  "postsCount": 11,
+  "excerpt": "I followed the OAuth Implementation guide &amp; have my local server &amp; ngrok tunnel running. Problem is when I click on the OAuth button, I get “invalid_request” - “Invalid client_id param” error even though I defined the cl&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 4692,
+  "posts": [
+    {
+      "id": 25670,
+      "postNumber": 1,
+      "createdAt": "2020-08-17T09:46:54.334Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>I followed the <a href=\"https://github.com/yuhgto/monday-oauth-example\" rel=\"noopener nofollow ugc\">OAuth Implementation guide</a> &amp; have my local server &amp; ngrok tunnel running. Problem is when I click on the OAuth button, I get “invalid_request” - “Invalid client_id param” error even though I defined the client_id, client_secret &amp; redirect_uri vars with the correct values ( <img src=\"https://emoji.discourse-cdn.com/apple/heavy_check_mark.png?v=12\" title=\":heavy_check_mark:\" class=\"emoji\" alt=\":heavy_check_mark:\" width=\"20\" height=\"20\" /><img src=\"https://emoji.discourse-cdn.com/apple/heavy_check_mark.png?v=12\" title=\":heavy_check_mark:\" class=\"emoji\" alt=\":heavy_check_mark:\" width=\"20\" height=\"20\" /><img src=\"https://emoji.discourse-cdn.com/apple/heavy_check_mark.png?v=12\" title=\":heavy_check_mark:\" class=\"emoji\" alt=\":heavy_check_mark:\" width=\"20\" height=\"20\" /> to be certain ). What could the issue be?</p>\n<p>*sorry for reposting…I accidentally deleted my previous post description <img src=\"https://emoji.discourse-cdn.com/apple/woman_facepalming/2.png?v=12\" title=\":woman_facepalming:t2:\" class=\"emoji\" alt=\":woman_facepalming:t2:\" width=\"20\" height=\"20\" /></p>\n<hr />\nEdit:\n<p>In addition to the problem described above <img src=\"https://emoji.discourse-cdn.com/apple/point_up_2.png?v=12\" title=\":point_up_2:\" class=\"emoji\" alt=\":point_up_2:\" width=\"20\" height=\"20\" />, I can’t perform a query / mutation using GraphQL. Doing so yields a 401 Unauthorized error. So yeah…sorta just stuck here since I can’t read / write to the board &amp; idk how to resolve the issues I’m encountering with OAuth AND GraphQL.</p>\n<p>Here’s my code:</p>\n<pre><code>  useEffect(() =&gt; {\n    monday.setToken(process.env.REACT_APP_API_TOKEN);\n\n    monday.listen(\"settings\", (res) =&gt; {\n      setSettings(res.data);\n    });\n\n    monday.listen(\"context\", (res) =&gt; {\n      setContext(res.data);\n    });\n\n    monday\n      .api(\n        `query ($boardIds: [Int]) { boards (ids:$boardIds) \n            { name items(limit:1) { name column_values { title text } } } }`,\n        { variables: { boardIds: context.boardIds } }\n      )\n      .then((res) =&gt; {\n        setBoardData(res.data);\n      });\n }, []);\n</code></pre>\n<p>With React hooks, I can’t query or mutate. But I found that when this code gets reformatted to its component lifecycle equivalent, then the query runs &amp; I can fetch the data. In this case, the query runs only if I <strong>don’t</strong> set the token beforehand.</p>\n<p>The API token is only supposed to be required for server-side code right? So then why can’t I access the GraphQL API from client-side? And why can’t I perform mutations in both React code forms? All necessary board permission scopes are configured in my monday app  for client &amp; in the node express code for server.</p>\n<p>What am I doing wrong?</p>"
+    },
+    {
+      "id": 25673,
+      "postNumber": 2,
+      "createdAt": "2020-08-17T10:15:25.176Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>ohh there’s an option to <em>undelete</em> oops…how do I do delete the full post though??</p>"
+    },
+    {
+      "id": 25749,
+      "postNumber": 3,
+      "createdAt": "2020-08-17T21:32:56.048Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/supernova\">@supernova</a> – I did a review of that OAuth example earlier today and found some issues with the instructions. Happy to help troubleshoot!</p>\n<p>Can you check the client ID in the URL itself (query param) and let us know if the app has introduced any bad characters (extra quotes, etc)?</p>\n<p>(By the way, if you want to see an updated version of the OAuth guide, check out <a href=\"https://github.com/yuhgto/welcome-apps/tree/master/apps/oauth-example\">this link</a>. Still needs some work, but the updated code and instructions should get you going!)</p>\n<p>As for the authorization error, it’s probably happening because your OAuth flow failed, so your app doesn’t have an access token…</p>"
+    },
+    {
+      "id": 25759,
+      "postNumber": 4,
+      "createdAt": "2020-08-18T02:44:53.363Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>The block of code within <code>app.get('/start')...</code> redirects to the following decoded url (spaces replaced with %20 when encoded):</p>\n<p><a href=\"https://auth.monday.com/oauth2/authorize?client_id=%5Bmy_client_id%5D&amp;redirect_uri=%5Bmy_redirect_uri%5D/oauth/callback&amp;scopes=me:read\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com: Where Teams Get Work Done</a> boards:read boards:write&amp;state=[arbitrary_state_token]</p>\n<p>^ does that look right to you?</p>\n<p>I removed an extra ‘/’ that I found, but I’m still getting an “Invalid redirect_uri” err. I can reach the app scopes / user authorization page when just my client_id is appended to monday’s OAuth request URL, but of course leaving out the other necessary parameters defeats the purpose… maybe there’s a bad char in the url that I’m not seeing though?</p>\n<pre><code>/* code from OAuth guide: */\n\napp.get('/start', function (req, res) {\n      res.redirect('https://auth.monday.com/oauth2/authorize?' +\n        querystring.stringify({\n          client_id: client_id,\n          redirect_uri: redirect_uri + '/oauth/callback',\n          state: state,\n          scopes: \"me:read boards:read boards:write\"\n        }));\n    });\n</code></pre>"
+    },
+    {
+      "id": 25764,
+      "postNumber": 5,
+      "createdAt": "2020-08-18T04:38:41.950Z",
+      "author": "edogr1 (Edo Garavani)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/supernova\">@supernova</a> - Did you added the redirect URL also in your app’s OAuth page? It must be the same as the one you’re sending.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/03e05be2defd5f3a70f7b55c20e3c807904fcad7.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/03e05be2defd5f3a70f7b55c20e3c807904fcad7_2_690x341.png\" alt=\"image\" width=\"690\" height=\"341\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">747×370 20.2 KB</span></div></a></div><br />\nAlso, I don’t think that react hooks/components make any difference, when using our SDK in the client you’re not supposed to use “monday. setToken” at all<p></p>"
+    },
+    {
+      "id": 25766,
+      "postNumber": 6,
+      "createdAt": "2020-08-18T06:01:01.021Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/edogr1\">@edogr1</a> - yes I added the same redirect url in my app config so that shouldn’t be the problem. I believe it’s due to content-security policy blocking the cross-site request &amp; resource from loading (forgot to mention that came up too). Seems like I need to add http header in some server file / meta tag in index.html…? Thought cors was enough to handle cross-origin stuff but guess not <img src=\"https://emoji.discourse-cdn.com/apple/woman_shrugging/2.png?v=9\" title=\":woman_shrugging:t2:\" class=\"emoji\" alt=\":woman_shrugging:t2:\" /></p>"
+    },
+    {
+      "id": 27893,
+      "postNumber": 7,
+      "createdAt": "2020-09-08T09:41:32.308Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Late update, but I see that the official doc hasn’t been updated.</p>\n<p>So in case anyone ever runs into this issue:</p>\n<p>If your monday app throws an “ Invalid redirect_uri ” error (after you’ve ensured that your redir_uri &amp; board scopes are correctly configured):</p>\n<p>Go to the server index.js file cloned from <a href=\"https://github.com/yuhgto/welcome-apps/tree/master/apps/oauth-example\" rel=\"noopener nofollow ugc\"><strong>this git repo here</strong></a> &amp; delete <code>‘/outh/callback/‘</code> that’s appended to redirect_uri in <code>app.get('/start', (req, res) =&gt; {</code></p>\n<p>This will send the user to the scopes page that’ll prompt them to authorize your app <strong>and then</strong> redirect them to /oauth/callback <img src=\"https://emoji.discourse-cdn.com/apple/ok_hand.png?v=12\" title=\":ok_hand:\" class=\"emoji\" alt=\":ok_hand:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 28835,
+      "postNumber": 8,
+      "createdAt": "2020-09-18T07:56:24.854Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Thank you for the update <a class=\"mention\" href=\"/u/supernova\">@supernova</a> , much obliged!</p>"
+    },
+    {
+      "id": 28984,
+      "postNumber": 9,
+      "createdAt": "2020-09-20T08:49:51.116Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/supernova\">@supernova</a></p>\n<p>Thanks so much for sharing that solution! I really appreciate it and I’ll ask the team to take a further look at how we can make this process a little easier both in the docs and otherwise.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 29257,
+      "postNumber": 10,
+      "createdAt": "2020-09-22T22:46:18.023Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/supernova\">@supernova</a> !</p>\n<p>Looks like you found a bug in my unofficial OAuth example <img src=\"https://emoji.discourse-cdn.com/apple/smile_cat.png?v=9\" title=\":smile_cat:\" class=\"emoji\" alt=\":smile_cat:\" />  I went ahead and updated it! Thanks for keeping me honest <img src=\"https://emoji.discourse-cdn.com/apple/fire.png?v=9\" title=\":fire:\" class=\"emoji\" alt=\":fire:\" /></p>\n<p>I also enabled “Issues” on that repo in case you find any other… issues.</p>"
+    },
+    {
+      "id": 42512,
+      "postNumber": 11,
+      "createdAt": "2021-02-25T14:39:19.802Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

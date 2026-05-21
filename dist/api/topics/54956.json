@@ -1,0 +1,124 @@
+{
+  "id": 54956,
+  "title": "Locating Subitem Board ID",
+  "slug": "locating-subitem-board-id",
+  "categoryId": 6,
+  "tagIds": [
+    94,
+    187
+  ],
+  "createdAt": "2023-03-29T14:31:50.882Z",
+  "lastPostedAt": "2024-07-25T11:12:31.485Z",
+  "postsCount": 15,
+  "excerpt": "Hello! Could someone help me figure out how to locate a Subitem Board ID? Thanks in advance!",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 2951,
+  "posts": [
+    {
+      "id": 121855,
+      "postNumber": 1,
+      "createdAt": "2023-03-29T14:31:50.958Z",
+      "author": "Amandalindsey (Amanda)",
+      "cookedHtml": "<p>Hello! Could someone help me figure out how to locate a Subitem Board ID? Thanks in advance!</p>"
+    },
+    {
+      "id": 121898,
+      "postNumber": 2,
+      "createdAt": "2023-03-29T18:53:30.086Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/amandalindsey\">@Amandalindsey</a></p>\n<p>Through the UI you can open a subitem (as if you want to write an update) and your subitem boardId for that specific subitem can be found in the url</p>\n<p><a>xxx.monday.com/boards/<strong>123456789</strong>/pulses/987654321</a></p>"
+    },
+    {
+      "id": 128738,
+      "postNumber": 3,
+      "createdAt": "2023-05-19T15:11:25.380Z",
+      "author": "avp (Amanda)",
+      "cookedHtml": "<p>Note that this no longer seems to be true. I used to use this method but noticed recently that when opening a subitem (as if to add an update), the board ID shown in the URL is still the parent board ID. I have to use the API to get the subitem board ID.</p>"
+    },
+    {
+      "id": 128761,
+      "postNumber": 4,
+      "createdAt": "2023-05-19T17:44:08.726Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/avp\">@avp</a></p>\n<p>Good catch. Indeed the URL shown when opening a subitem has been changed recently. The only option I see is to use the API. In the API playground you can enter this one:</p>\n<pre><code class=\"lang-auto\">query{boards(ids:123456789){columns(ids:\"subitems\"){settings_str}}}\n</code></pre>\n<p>Where 123456789 is the boardId of the parent. The output will show soemting like:</p>\n<pre><code class=\"lang-auto\">{\\\"allowMultipleItems\\\":true,\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"boardIds\\\":[987654321]}\"\n</code></pre>\n<p>Where 987654321 is the boardId of the board holding the subitems.</p>"
+    },
+    {
+      "id": 139178,
+      "postNumber": 5,
+      "createdAt": "2023-08-15T06:50:35.331Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>Do all subitems on a given board use the same board Id? Meaning: does each board have a single “counterpart” subitem board. I ask because I am trying to build a workflow around the activity logs but these are specific to a board id (so to get activity logs for the subitems, i have to query the subitems board id rather than the parent).</p>"
+    },
+    {
+      "id": 139179,
+      "postNumber": 6,
+      "createdAt": "2023-08-15T06:55:47.757Z",
+      "author": "JHconsultancy (Joseph Honig)",
+      "cookedHtml": "<p>Hi,</p>\n<p>Yes each board has one unique parent board ID and one unique subitem board ID.</p>\n<p>Hope this helps</p>"
+    },
+    {
+      "id": 139180,
+      "postNumber": 7,
+      "createdAt": "2023-08-15T06:58:21.315Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>That helps very much, thanks!</p>"
+    },
+    {
+      "id": 139636,
+      "postNumber": 8,
+      "createdAt": "2023-08-17T09:14:47.082Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>I had hoped I could use the code provided by <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> above in a generic way to get the subitem board id for any given board, however, I have come across a board which does not have a coresponding subitem board it (i.e. the response to the above query came back empty). Does this simply mean that this board has no subitems (and as a result the subitem board only exists is the board has at least one subitem on it)?</p>"
+    },
+    {
+      "id": 139639,
+      "postNumber": 9,
+      "createdAt": "2023-08-17T09:42:34.078Z",
+      "author": "JHconsultancy (Joseph Honig)",
+      "cookedHtml": "<p>Hi,</p>\n<p>This is correct once there is a subitem on the board you will then get a subitem board ID.</p>"
+    },
+    {
+      "id": 176385,
+      "postNumber": 10,
+      "createdAt": "2024-04-02T09:12:06.878Z",
+      "author": "eonox (Mervin)",
+      "cookedHtml": "<p>For anyone reading this, take note that it’s not “subitems” anymore, it is “subtasks”</p>\n<blockquote>\n<p>query{boards(ids:123456789){columns(ids:“subtasks”){settings_str}}}</p>\n</blockquote>"
+    },
+    {
+      "id": 176441,
+      "postNumber": 11,
+      "createdAt": "2024-04-02T11:18:54.666Z",
+      "author": "graham.r (Graham Roberts)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> <a class=\"mention\" href=\"/u/jhconsultancy\">@JHconsultancy</a> I found a case where I had to query using a subitems<strong>2</strong> id instead, i.e.</p>\n<pre><code class=\"lang-auto\">query{boards(ids:123456789){columns(ids:\"subitems2\"){settings_str}}}\n</code></pre>\n<p>Any idea what causes this sort of difference or indeed how to cater for the fact that there could presumably be other suffixed ids, short of running multiple queries and trying each in turn?</p>\n<p>Thanks in advance for any advice/guidance you can provide.</p>"
+    },
+    {
+      "id": 176459,
+      "postNumber": 12,
+      "createdAt": "2024-04-02T12:30:39.124Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Some time ago (over a year?) the subitem was a column that could be added / removed as any other column. When that was the case adding / deleting / adding the subitem column would give it an id with a numeric suffix. Nowadays the subitem column can’t be removed anymore and on those boards the id is always “subitems”</p>\n<p>About <a class=\"mention\" href=\"/u/eonox\">@eonox</a> 's comment: the <strong>type</strong> is indeed subtasks, the <strong>id</strong> is still subitems (except for older boards as described above). To be safe you can use this one, which works in all cases:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    columns(types: [subtasks]) {\n      settings_str\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 176479,
+      "postNumber": 13,
+      "createdAt": "2024-04-02T12:49:54.291Z",
+      "author": "eonox (Mervin)",
+      "cookedHtml": "<p>I see. Knowing that our board was made last year, that may be the reason why the id of my subitems is “subtasks”, I tried “subitems”, but it didn’t work. I’ll try the types argument, hope it will work.</p>"
+    },
+    {
+      "id": 176501,
+      "postNumber": 14,
+      "createdAt": "2024-04-02T13:41:56.210Z",
+      "author": "graham.r (Graham Roberts)",
+      "cookedHtml": "<p>Many thanks <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>!</p>"
+    },
+    {
+      "id": 194825,
+      "postNumber": 15,
+      "createdAt": "2024-07-25T11:12:31.485Z",
+      "author": "MartinC (Martin)",
+      "cookedHtml": "<p>I’ve also had a case where the subitems didn’t match the column Monday gave it. I just removed the filter and manually found the item.</p>\n<p>{<br />\nboards(ids: 123456798) {<br />\ncolumns {<br />\nsettings_str<br />\n}<br />\n}<br />\n}</p>"
+    }
+  ]
+}

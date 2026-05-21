@@ -1,0 +1,39 @@
+{
+  "id": 71486,
+  "title": "Is there a way to get all subitems from a board between specific creation dates?",
+  "slug": "is-there-a-way-to-get-all-subitems-from-a-board-between-specific-creation-dates",
+  "categoryId": 58,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-11-25T04:25:18.611Z",
+  "lastPostedAt": "2023-11-25T07:20:02.785Z",
+  "postsCount": 2,
+  "excerpt": "Your help is much appreciated. \nI am very new to this and have been searching and trying different ways with success. Is there a way to query all subitems from a board between specific create dates?",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 131,
+  "posts": [
+    {
+      "id": 154701,
+      "postNumber": 1,
+      "createdAt": "2023-11-25T04:25:18.675Z",
+      "author": "jyuc (Jeff)",
+      "cookedHtml": "<p>Your help is much appreciated.</p>\n<p>I am very new to this and have been searching and trying different ways with success. Is there a way to query all subitems from a board between specific create dates?</p>"
+    },
+    {
+      "id": 154705,
+      "postNumber": 2,
+      "createdAt": "2023-11-25T07:20:02.785Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jyuc\">@jyuc</a></p>\n<p>I don’t think that is possible with just one query. The items_page is where you can filter for column values (like date), but that works on items (not subitems). The good news is: subitems are just items on another board. You can retrieve the boardId where those subitems live with:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    columns (ids: \"subitems\") {\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>where 123456789 is the id of your board holding the items and subitems. This will return a settings_str in the form:</p>\n<pre><code class=\"lang-auto\">{\\\"allowMultipleItems\\\":true,\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"boardIds\\\":[987654321]}\"\n</code></pre>\n<p>which contains the boardId of the board where the subitems live, in this case 987654321. Now you can query that board and filter for dates with:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 987654321) {\n    items_page(\n      limit: 100\n      query_params: {rules: [{column_id: \"date0\", compare_value: [\"2023-11-23\", \"2023-11-25\"], operator: between}]}\n    ) {\n      cursor\n      items {\n        name\n        column_values {\n          id\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>So, basically an items query on the board holding the subitems <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />.</p>"
+    },
+    {
+      "id": 154765,
+      "postNumber": 3,
+      "createdAt": "2023-11-26T13:48:02.678Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

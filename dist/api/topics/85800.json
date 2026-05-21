@@ -1,0 +1,33 @@
+{
+  "id": 85800,
+  "title": "How to fix pd.json_normalize so it will take \"title\"",
+  "slug": "how-to-fix-pd-json-normalize-so-it-will-take-title",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-05-03T04:08:44.174Z",
+  "lastPostedAt": "2024-05-03T04:08:44.254Z",
+  "postsCount": 1,
+  "excerpt": "Hello, I have a python code, but i do not know how monday filters work with pd.json_normalize python function. I don’t think it is written ok, because I believe column{title} should be written somewhere. Can someone help&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 130,
+  "posts": [
+    {
+      "id": 182015,
+      "postNumber": 1,
+      "createdAt": "2024-05-03T04:08:44.254Z",
+      "author": "agness15 (Agne)",
+      "cookedHtml": "<p>Hello, I have a python code, but i do not know how monday filters work with pd.json_normalize python function. I don’t think it is written ok, because I believe column{title} should be written somewhere. Can someone help me? Thanks in advance <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>\n<pre><code class=\"lang-auto\">item_features = pd.DataFrame()\npulse_3 = pulse_3.reset_index(drop=True)\nfor i in range(1,len(pulse_3)):\n    q_features = (\n        \"{boards(ids:\" \n        + pulse_3.loc[i, 'board_id'] \n        + \"){items_page (limit:500){cursor items {id name column_values{... on MirrorValue {display_value} ... on BoardRelationValue{display_value} column{title} text type}}}}}\"\n    )\n    q_features = {\"query\": q_features}\n    r_features = requests.post(url=apiUrl, json= q_features, headers=headers)\n    features_json = r_features.json()\n    \n    df_features_norm = pd.json_normalize(\n       features_json['data']['boards'][0]['items_page'],\n       record_path=['items', 'column_values'],\n       meta=[\n            ['items', 'id'],\n            ['items', 'name'],\n            ['column_values', 'display_value']\n       ],\n       errors=\"ignore\",\n    )\n    df_features_norm.insert(0, \"board_id\", pulse_3.loc[i, \"board_id\"])\n    if i%100 == 0:\n        time.sleep(125)\n    item_features = pd.concat([item_features, df_features_norm], ignore_index=True)\nitem_features.head()\n</code></pre>"
+    },
+    {
+      "id": 182184,
+      "postNumber": 2,
+      "createdAt": "2024-05-05T06:43:54.827Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": 91854,
+  "title": "Multi features, client-side app infrastructure",
+  "slug": "multi-features-client-side-app-infrastructure",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2024-06-30T05:38:21.113Z",
+  "lastPostedAt": "2024-07-04T04:50:14.672Z",
+  "postsCount": 4,
+  "excerpt": "Hello, \nI would like to ask you for advice as I’m trying to figure out the optimal app infrastructure. \nGeneral requirements: \n\nThe app is a fully client-side React TypeScript app (bootstrapped using Vite).\nThe app has a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 171,
+  "posts": [
+    {
+      "id": 191532,
+      "postNumber": 1,
+      "createdAt": "2024-06-30T05:38:21.176Z",
+      "author": "mtkacz-soldevelo (Michał Tkacz)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I would like to ask you for advice as I’m trying to figure out the optimal app infrastructure.</p>\n<p>General requirements:</p>\n<ol>\n<li>The app is a fully client-side React TypeScript app (bootstrapped using Vite).</li>\n<li>The app has a few different features/entry points, e.g., board, item menu, multi-item menu.</li>\n<li>Different features have different views; however, they share similar functionalities, so logic and code are shared.</li>\n<li>I need full CI/CD support with dev/staging/prod environments.</li>\n</ol>\n<p>To my understanding, monday-code supports only server-side applications, so I have two options:</p>\n<ol>\n<li>Host the client-only app on some server and use URL builds for features. Each feature can be under its distinct URL path, e.g., <code>&lt;base-url&gt;/board-feature</code>, <code>&lt;base-url&gt;/item-menu-feature</code>.</li>\n<li>Implement my app as a full-stack app with a Node.js backend that only serves the client app, and then use monday-code to host the app. In that case, I can also use distinct URL paths for different features.<br />\nIn both cases, I need to add routing.</li>\n</ol>\n<p>Is my understanding correct? Is there a better, more robust approach that you could suggest?</p>\n<p>Any advice is much appreciated. Thanks.</p>"
+    },
+    {
+      "id": 191560,
+      "postNumber": 2,
+      "createdAt": "2024-06-30T07:38:14.041Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>You can do either.</p>\n<p>For our apps that have no backend, we currently host on AWS s3 fronted by cloudfront for the production version.</p>\n<p>You can then have a different s3 bucket for dev, staging and production.</p>\n<p>I’d recommend 3 <a href=\"http://monday.com\">monday.com</a> instances. One for each ci/cd environment. It’s a hassle to set up initially, but just means that you can separate things out nicely and every commit can be automatically deployed.</p>\n<p>One nice thing about hosting elsewhere is that you can automatically deploy updates without Monday even being aware that anything has changed.</p>\n<p>You could do this with monday-code, but will have to manually release a new version in the developer UI whenever your production code changes.</p>"
+    },
+    {
+      "id": 191572,
+      "postNumber": 3,
+      "createdAt": "2024-06-30T08:56:47.812Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 191724,
+      "postNumber": 4,
+      "createdAt": "2024-07-01T17:24:55.457Z",
+      "author": "mtkacz-soldevelo (Michał Tkacz)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> thanks, your insights are very helpful!</p>\n<p>From both my research and your recommendations I conclude that using external hosting sounds like a good choice for my needs.</p>\n<p>Regarding using three instances - that’s also how I imagined it. I’m glad that you confirmed it <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 191829,
+      "postNumber": 5,
+      "createdAt": "2024-07-02T08:37:39.996Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 192110,
+      "postNumber": 6,
+      "createdAt": "2024-07-04T04:50:14.672Z",
+      "author": "mtkacz-soldevelo (Michał Tkacz)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> I have one more question if you don’t mind. We’ve decided to try out the URL hosting and I am curious how did you - if at all -approach the routing.</p>\n<p>As I mentioned in my previous post:</p>\n<blockquote>\n<ol>\n<li>The app is a fully client-side React TypeScript app (bootstrapped using Vite).</li>\n<li>The app has a few different features/entry points, e.g., board, item menu, multi-item menu.</li>\n<li>Different features have different views; however, they share similar functionalities, so logic and code are shared.</li>\n</ol>\n</blockquote>\n<p>Generally the idea was that</p>\n<ol>\n<li>There is a client-side, single page app hosted on AWS at <code>&lt;baseurl&gt;.com/</code>.</li>\n<li>The client-side routing has paths, e.g. <code>/feature1</code>, <code>/feature2</code>.</li>\n<li>So now for the first feature I can create build in monday app from the URL: <code>&lt;baseurl&gt;.com/feature1</code> and for the second feature like-for-like <code>&lt;baseurl&gt;.com/feature2</code>, and so on.</li>\n</ol>\n<p>Now, I imagined that AWS server would just “wildcard” URL path, and always return the SPA from <code>&lt;baseurl&gt;.com/</code>, and the URL path would be taken care by the client-side routing, however I am not sure yet if this will play well with monday. I am in the middle of figuring it out.</p>\n<p>Do you maybe have any insights or suggestions on that matter? Maybe I should even ditch that idea, and proceed with a MPA with server-side routing?</p>"
+    },
+    {
+      "id": 192221,
+      "postNumber": 7,
+      "createdAt": "2024-07-04T10:46:45.579Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": 15931,
+  "title": "Formula error when date is empty",
+  "slug": "formula-error-when-date-is-empty",
+  "categoryId": 6,
+  "tagIds": [
+    22,
+    108
+  ],
+  "createdAt": "2021-02-05T02:49:52.432Z",
+  "lastPostedAt": "2021-02-05T16:31:51.536Z",
+  "postsCount": 5,
+  "excerpt": "Hi There, I’m having an issue with a formula. What I’m trying to do is calculate the accuracy of time estimates of my team. \nHere are the fundamentals I’m working with: \n\nAccuracy should be the estimate/actual*100\nIf an &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3287,
+  "posts": [
+    {
+      "id": 39828,
+      "postNumber": 1,
+      "createdAt": "2021-02-05T02:49:52.508Z",
+      "author": "chrisd (Chris Doyle)",
+      "cookedHtml": "<p>Hi There, I’m having an issue with a formula. What I’m trying to do is calculate the accuracy of time estimates of my team.</p>\n<p>Here are the fundamentals I’m working with:</p>\n<ul>\n<li>Accuracy should be the estimate/actual*100</li>\n<li>If an item doesn’t have a start &amp; end date then the Accuracy should be blank</li>\n<li>If an actual value is lower than an estimate, they receive 100% accuracy</li>\n</ul>\n<p>Here is the formula I have put together:</p>\n<pre><code>IF({Estimate}&lt;{Actual},{Estimate}/{Actual}*100,\n    IF({Actual},100,\n        \"\"\n    )\n)\n</code></pre>\n<p>The actual column itself is a formula as well:</p>\n<pre><code>WORKDAYS({End Date},{Start Date})\n</code></pre>\n<p>The formulas are working fine, however I get an error for the accuracy column when the start and end date are not filled in:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/bef5e0ac8eb3ba680150d0932f8f861e8d7e7376.jpeg\" title=\"monday_help\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/bef5e0ac8eb3ba680150d0932f8f861e8d7e7376_2_690x135.jpeg\" alt=\"monday_help\" width=\"690\" height=\"135\" /><div class=\"meta\">\n<span class=\"filename\">monday_help</span><span class=\"informations\">1415×277 50.4 KB</span>\n</div></a></div><p></p>\n<p>Thanks in advance!</p>"
+    },
+    {
+      "id": 39850,
+      "postNumber": 2,
+      "createdAt": "2021-02-05T11:33:18.483Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/chrisd\">@chrisd</a>,</p>\n<p>Logically, what you have SHOULD work. However, with the way the monday formula evaluator works, ALL portions of the formula must ALWAYS be valid. So, if you  change …{Estimate}/{Actual} *100… to …{Estimate}/IF(({Actual}+0)&lt;&gt;0,{Actual},1)*100… you will not get the error.</p>"
+    },
+    {
+      "id": 39855,
+      "postNumber": 3,
+      "createdAt": "2021-02-05T11:58:17.268Z",
+      "author": "chrisd (Chris Doyle)",
+      "cookedHtml": "<p>Thank you! I actually was able to solve this late last night by substituting the arithmatic portions of the equation with their functional counterparts:</p>\n<pre><code>IF({Estimate}&lt;WORKDAYS({End Date},{Start Date}), \n    ROUND(MULTIPLY(DIVIDE({Estimate},WORKDAYS({End Date},{Start Date})),100),0),\n        IF(WORKDAYS({End Date},{Start Date}),100,\n            \"\"\n        )\n)</code></pre>"
+    },
+    {
+      "id": 39908,
+      "postNumber": 4,
+      "createdAt": "2021-02-05T16:31:51.536Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>Interesting to see the the DIVIDE function is handled differently than the divide operation. Good to know.</p>"
+    },
+    {
+      "id": 50208,
+      "postNumber": 5,
+      "createdAt": "2021-05-05T15:41:16.742Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

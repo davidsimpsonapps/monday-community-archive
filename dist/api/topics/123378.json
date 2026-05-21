@@ -1,0 +1,63 @@
+{
+  "id": 123378,
+  "title": "Making GraphQL api calls from server side code in custom Monday widget",
+  "slug": "making-graphql-api-calls-from-server-side-code-in-custom-monday-widget",
+  "categoryId": 98,
+  "tagIds": [
+    17,
+    94,
+    351,
+    484
+  ],
+  "createdAt": "2026-01-30T12:34:25.314Z",
+  "lastPostedAt": "2026-02-02T12:30:05.634Z",
+  "postsCount": 6,
+  "excerpt": "# Context \nOur dashboard widget needs a front-end (client-side) and needs to communicate to a back-end (server-side) that communicates with the Monday API. \nIn Monday you can deploy “client-side” code and “server-side” c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 23,
+  "posts": [
+    {
+      "id": 245112,
+      "postNumber": 1,
+      "createdAt": "2026-01-30T12:34:25.413Z",
+      "author": "Joran (Joran)",
+      "cookedHtml": "<p># Context<br />\nOur dashboard widget needs a front-end (client-side) and needs to communicate to a back-end (server-side) that communicates with the Monday API.<br />\nIn Monday you can deploy “client-side” code and “server-side” code.</p>\n<p># Question 1<br />\nIn the “client-side” code it is easy to perform requests to the official Monday API using the “monday-sdk”. But we can’t seem to figure out how you can perform Monday API calls in the “server-side” code.</p>\n<p>On the developer docs page “Choosing an authentication method” (<a href=\"https://developer.monday.com/apps/docs/choosing-auth)\" title=\"https://developer.monday.com/apps/docs/choosing-auth)\" rel=\"noopener nofollow ugc\">https://developer.monday.com/apps/docs/choosing-auth)</a> a “seamless” option and an “OAuth” option are suggested. But from what we understand, the “seamless” option wouldn’t be an option to use in the “server-side” code (unless it is somehow possible to provide the necessary details/tokens from the “client-side” to the “server-side” to be able to authenticate). The “OAuth” option seems to require user interaction (step 2) according to “The OAuth flow” (<a href=\"https://developer.monday.com/apps/docs/oauth#the-oauth-flow).\" title=\"https://developer.monday.com/apps/docs/oauth#the-oauth-flow).\" rel=\"noopener nofollow ugc\">https://developer.monday.com/apps/docs/oauth#the-oauth-flow).</a> And receiving a login page when a user is already logged in to Monday would be weird and confusing for the user.</p>\n<p>So we are curious as to what the proper way would be to be able to perform Monday API requests (in name of a user) on the “server-side”. Or how it is possible to correctly use the “monday-sdk” on the “server-side” with the proper tokens provided.</p>\n<p># Question 2<br />\nWhen you want your client-side (frontend) to communicate with your server-side (backend) via an API, your client-side needs to know the URL of that API. But what is the proper way for the “client-side” to communicate with the “server-side” of the app, without a developer or admin having to update the URL of that “server-side” inside the “client-side” code?</p>\n<p>Is a fullstack app, where the server-side serves the “client-side”/frontend, the solution? Or is there a better/easier solution?</p>"
+    },
+    {
+      "id": 245140,
+      "postNumber": 2,
+      "createdAt": "2026-01-30T15:04:43.851Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/joran\">@Joran</a>  For Q1 the common pattern is to use the frontend token as a delegated user token. From your client side widget, use the monday SDK to get the session token and send it to your backend with each request. Your backend then calls the monday GraphQL API using that token in the Authorization header. This lets you act on behalf of the logged in user without triggering another login or storing long lived tokens on the client.</p>\n<p>OAuth is mainly needed when your backend must run without an active UI session, such as background jobs, scheduled tasks, or webhooks. In most cases the user only sees a consent step once during installation.</p>\n<p>For Q2 you usually solve this with a stable backend URL. If you deploy using monday code, the Live URL remains the same across deployments so the client does not need to be updated. If you self host, store the backend URL in app settings or environment variables and read it at runtime instead of hardcoding it.</p>\n<p>Dr. Tanvi Sachar<br />\nMonday Certified Partner, Tuesday Wizard</p>"
+    },
+    {
+      "id": 245198,
+      "postNumber": 3,
+      "createdAt": "2026-02-01T09:22:18.140Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/joran\">@Joran</a>,</p>\n<p>I just wanted to clarify, you can’t use the sessionToken as the API token in your backend.</p>\n<p>The sessionToken is normally used to authorise requests sent to your backend as it contains the userId and accountId and you can verify it came from your <a href=\"http://monday.com\">monday.com</a> app, however it won’t work with the API.</p>\n<p>Usually if you are using a UI, you would make the monday API calls directly in your front end using the monday SDK, this handles all of the authentication to the API for you.</p>\n<p>If you want to make the API calls on your backend server (monday code hosted or not) you would need to prompt the user to complete an OAuth process</p>\n<p>For question 2, another option could be to use a NextJS app or similar with client side/server side all in a single app. You would upload this code to the ‘server side’ if you’re using monday code<br />\nHowever Tanvi’s idea of a front end uploaded to the ‘client side’  and a seperate backend will likely get you better performance as the client side code is uploaded to a CDN</p>"
+    },
+    {
+      "id": 245230,
+      "postNumber": 4,
+      "createdAt": "2026-02-02T12:29:07.893Z",
+      "author": "MatthiasVM (Matthias Van Meerbeek)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a>,</p>\n<p>You say the following regarding making API calls in the backend:</p>\n<blockquote>\n<p>If you want to make the API calls on your backend server (monday code hosted or not) you would need to prompt the user to complete an OAuth process</p>\n</blockquote>\n<p>But the <a href=\"https://developer.monday.com/apps/docs/choosing-auth#method-2-using-oauth-to-issue-access-tokens\" rel=\"noopener nofollow ugc\">official documentation regarding authentication via OAuth</a> says the following:</p>\n<blockquote>\n<p>To implement OAuth in a board view or a dashboard widget, you will need to establish the logic in your backend to retrieve an access token (that will give you access to a user’s data) from our token endpoint: <code>https://auth.monday.com/oauth2/token</code>.</p>\n</blockquote>\n<p>This doesn’t mention anything about prompting the user.</p>\n<p>If I’m not mistaken, then the above documentation is incomplete or gives the wrong impression and the flow does require you to first perform some kind of authorization via a client-side/front-end/dashboard/UI using <code>https://auth.monday.com/oauth2/authorize?client_id=&lt;your-client-id&gt;</code>. This will give you a “code”, and that “code” can then be used in your call towards <code>https://auth.monday.com/oauth2/token</code> alongside your client-id (the same one) and your client-secret.</p>\n<p>Is there really no way to perform an actual “<strong>OAuth 2.0 Client Credentials Flow</strong>” (system-to-system authentication)?</p>\n<p>Thanks in advance and kind regards</p>"
+    },
+    {
+      "id": 245236,
+      "postNumber": 5,
+      "createdAt": "2026-02-02T12:30:02.269Z",
+      "author": "Joran (Joran)",
+      "cookedHtml": "<p>Thank you Mitchell.<br />\nI will be using the UI (client side) to make the API calls since you confirmed the sessionToken can’t be used on the server side for that.<br />\nFor hosting, I am going to use both client side and server side as this seems the best way for my use case.</p>"
+    },
+    {
+      "id": 245237,
+      "postNumber": 6,
+      "createdAt": "2026-02-02T12:30:05.634Z",
+      "author": "Joran (Joran)",
+      "cookedHtml": "<p>Thank you for clarifying.<br />\nLooks like the use of the sessionToken would not work on the server side though to make api calls, but only for verifying the request coming from a Monday ui.</p>"
+    }
+  ]
+}

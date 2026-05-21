@@ -1,0 +1,76 @@
+{
+  "id": 70724,
+  "title": "Time Tracking Log API",
+  "slug": "time-tracking-log-api",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    94,
+    351
+  ],
+  "createdAt": "2023-11-14T15:32:08.587Z",
+  "lastPostedAt": "2023-11-21T08:16:23.408Z",
+  "postsCount": 8,
+  "excerpt": "Hello, \nI am trying to automate the download of our time tracking logs for our main board using the API. \nThe ideal download would be similar to the data provided in the “timer” tab of the spreadsheet but condensed to Ta&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 911,
+  "posts": [
+    {
+      "id": 153064,
+      "postNumber": 1,
+      "createdAt": "2023-11-14T15:32:08.661Z",
+      "author": "Milbourn (Neil)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I am trying to automate the download of our time tracking logs for our main board using the API.</p>\n<p>The ideal download would be similar to the data provided in the “timer” tab of the spreadsheet but condensed to Task ID, User ID, Start Date/Time, End Date/Time, (including the subitems too in the same query ideally)</p>\n<p>I had thought that I had done this using the activity_log function (screenshot below) but the duration there tracks the total time spent, not individual logs? Don’t think I am barking up the right tree.</p>\n<p>Could anybody let me know if there is a simple query I am missing that I can run to get all time logs (filtered by start date)?</p>\n<p>I am using python also in case that matters!</p>\n<p>Thanks</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/1/219a259215add6caee1b021e908be164806d8199.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/1/219a259215add6caee1b021e908be164806d8199.png\" alt=\"image\" width=\"690\" height=\"128\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">867×162 3.15 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 153204,
+      "postNumber": 2,
+      "createdAt": "2023-11-15T10:56:05.432Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/milbourn\">@Milbourn</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>The activity logs will not show individual logs.</p>\n<p>I believe the closest you can get to that would be to check all the events for a specific items, check the “running” field to see when it was set to “running” and when it was paused, and with a script, build the individual logs.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 153263,
+      "postNumber": 3,
+      "createdAt": "2023-11-15T15:42:34.906Z",
+      "author": "Milbourn (Neil)",
+      "cookedHtml": "<p>Hello! Thanks for the welcome and for responding!</p>\n<p>Just in the meantime I’ve found this code:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 5256361xxx) {\n    column_values {\n      id\n      value\n      ... on TimeTrackingValue {\n        history {\n          status\n          ended_at\n          started_at\n          started_user_id\n          manually_entered_end_date\n        }\n      }\n    }\n    id\n  }\n}\n</code></pre>\n<p>Which appears to give me what i am after on the playground (historical time logs)</p>\n<p>but when i run it through python</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\n# Your Monday.com API key\napi_key = 'xxx'\n\n# The GraphQL query\nquery = '''\n{\n  items(ids: 5256361524) {\n    column_values {\n      id\n      value\n      ... on TimeTrackingValue {\n        history {\n          status\n          ended_at\n          started_at\n          started_user_id\n          manually_entered_end_date\n        }\n      }\n    }\n    id\n  }\n}\n'''\n\n# The API endpoint\nurl = 'https://api.monday.com/v2'\n\n# Headers for the request\nheaders = {\n    'Authorization': api_key,\n    'Content-Type': 'application/json'\n}\n\n# Send the request\nresponse = requests.post(url, headers=headers, json={'query': query})\n\n# Print the response\nprint(response.json())\n\n</code></pre>\n<p>I recieve the following error and I am struggling to find a work around. Do you or anyone else have any advice?</p>\n<pre><code class=\"lang-auto\">{'errors': [{'message': \"Field 'on' doesn't exist on type 'ColumnValue'\", 'locations': [{'line': 7, 'column': 7}], 'path': ['query', 'items', 'column_values', 'on'], 'extensions': {'code': 'undefinedField', 'typeName': 'ColumnValue', 'fieldName': 'on'}}, \n{'message': \"Field 'TimeTrackingValue' doesn't exist on type 'ColumnValue'\", 'locations': [{'line': 7, 'column': 10}], 'path': ['query', 'items', 'column_values', 'TimeTrackingValue'], 'extensions': {'code': 'undefinedField', 'typeName': 'ColumnValue', 'fieldName': 'TimeTrackingValue'}}], 'account_id': 10523xxx}\n\n</code></pre>"
+    },
+    {
+      "id": 153417,
+      "postNumber": 4,
+      "createdAt": "2023-11-16T08:15:47.861Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I do not have experience with Python, but it looks like the 3 dots might not be being taken as it should. I recreated this query in Postman and exported it to Python. I hope that helps!</p>\n<p>Python - Requests:</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\nurl = \"https://api.monday.com/v2/\"\n\npayload = \"{\\\"query\\\":\\\"{\\\\n  items(ids: 5256361524) {\\\\n    column_values {\\\\n      id\\\\n      value\\\\n      ... on TimeTrackingValue {\\\\n        history {\\\\n          status\\\\n          ended_at\\\\n          started_at\\\\n          started_user_id\\\\n          manually_entered_end_date\\\\n        }\\\\n      }\\\\n    }\\\\n    id\\\\n  }\\\\n}\\\",\\\"variables\\\":{}}\"\nheaders = {\n  'API-Version': '2023-10',\n  'Authorization': 'MYAPITOKEN',\n  'Content-Type': 'application/json',\n}\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\n\nprint(response.text)\n</code></pre>\n<p>Python http.client:</p>\n<pre><code class=\"lang-auto\">import http.client\nimport json\n\nconn = http.client.HTTPSConnection(\"api.monday.com\")\npayload = \"{\\\"query\\\":\\\"{\\\\n  items(ids: 5256361524) {\\\\n    column_values {\\\\n      id\\\\n      value\\\\n      ... on TimeTrackingValue {\\\\n        history {\\\\n          status\\\\n          ended_at\\\\n          started_at\\\\n          started_user_id\\\\n          manually_entered_end_date\\\\n        }\\\\n      }\\\\n    }\\\\n    id\\\\n  }\\\\n}\\\",\\\"variables\\\":{}}\"\nheaders = {\n  'API-Version': '2023-10',\n  'Authorization': 'MYAPITOKEN',\n  'Content-Type': 'application/json',\n}\nconn.request(\"POST\", \"/v2/\", payload, headers)\nres = conn.getresponse()\ndata = res.read()\nprint(data.decode(\"utf-8\"))\n</code></pre>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 153500,
+      "postNumber": 5,
+      "createdAt": "2023-11-16T15:18:24.710Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> included it in his example but doesn’t seem to call it out directly, but you also need to set API-Version header to 2023-10 for the column value fragments for various column types to work.</p>"
+    },
+    {
+      "id": 153758,
+      "postNumber": 6,
+      "createdAt": "2023-11-19T08:38:49.892Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>!</p>\n<p>I totally missed that it was missing on the script that was posted, and is probably why this was not working!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 154073,
+      "postNumber": 7,
+      "createdAt": "2023-11-21T07:46:54.831Z",
+      "author": "Milbourn (Neil)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> so so so so much! Can now run the time logs without issue!!</p>\n<p>I had not being setting the API-Version header to 2023-10 in my other queries and had some success, but thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for letting me know. Will include that going forward.</p>\n<p>Thank you both <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 154075,
+      "postNumber": 8,
+      "createdAt": "2023-11-21T08:16:23.408Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/milbourn\">@Milbourn</a> !</p>"
+    }
+  ]
+}

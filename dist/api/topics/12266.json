@@ -1,0 +1,79 @@
+{
+  "id": 12266,
+  "title": "ERROR: Apostrophe's in Board Updates",
+  "slug": "error-apostrophes-in-board-updates",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-10-17T23:16:02.134Z",
+  "lastPostedAt": "2020-10-20T10:26:20.722Z",
+  "postsCount": 9,
+  "excerpt": "I’m using the following and it works unless there’s an apostrophe in the update. I’ve tried addslashes() but that didn’t do it. \n// send to Monday.com - update\n\t$board_id = &#39;XXXXXXXX&#39;;\n\n\t$content = &quot;This isn&#39;t working&quot;;\n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1524,
+  "posts": [
+    {
+      "id": 31352,
+      "postNumber": 1,
+      "createdAt": "2020-10-17T23:16:02.195Z",
+      "author": "BostonJames (James Shiner)",
+      "cookedHtml": "<p>I’m using the following and it works unless there’s an apostrophe in the update. I’ve tried addslashes() but that didn’t do it.</p>\n<pre><code>// send to Monday.com - update\n\t$board_id = 'XXXXXXXX';\n\n\t$content = \"This isn't working\";\n\n\t$query = '\n\tmutation {\n\t\tcreate_update (item_id: '.$board_id.', body: \"'.$content.'\") {\n\t\t\tid\n\t\t}\n\t}';\n\t\t\t\t\t\n\t$data = @file_get_contents($endpoint, false, stream_context_create([\n\t    'http' =&gt; [\n\t        'method' =&gt; 'POST',\n\t        'header' =&gt; $endpoint_headers,\n\t        'content' =&gt; json_encode(['query' =&gt; $query], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),\n\t    ]\n\t]));\n</code></pre>"
+    },
+    {
+      "id": 31362,
+      "postNumber": 2,
+      "createdAt": "2020-10-18T13:14:47.390Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/bostonjames\">@BostonJames</a>,</p>\n<p>first of all - welcome to the community!</p>\n<p>Could you expand your question a bit, not exactly sure what the issue is <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> .</p>\n<p>Greetings.</p>"
+    },
+    {
+      "id": 31363,
+      "postNumber": 3,
+      "createdAt": "2020-10-18T13:45:39.440Z",
+      "author": "BostonJames (James Shiner)",
+      "cookedHtml": "<p>If there are single quotes or double quotes in my post title or content it doesn’t work. For example:</p>\n<p>This is my post title and it works</p>\n<p>Vs</p>\n<p>This is my post title and it doesn’t work</p>\n<p>I tried addslashes() and the various options for json_encode() for quotes but it isn’t working.</p>"
+    },
+    {
+      "id": 31374,
+      "postNumber": 4,
+      "createdAt": "2020-10-18T18:24:00.826Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Did you try to escape?</p>\n<p>Looks like this:</p>\n<p><code>$content = \"This isn\\'t working\";</code></p>"
+    },
+    {
+      "id": 31436,
+      "postNumber": 5,
+      "createdAt": "2020-10-19T15:20:17.573Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/bostonjames\">@BostonJames</a> - could you try the example <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> posted above? I think that should do the trick here.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 31440,
+      "postNumber": 6,
+      "createdAt": "2020-10-19T15:35:59.541Z",
+      "author": "BostonJames (James Shiner)",
+      "cookedHtml": "<p>This is very confusing. This works:</p>\n<pre><code>\t$content = 'This wasn\\'t posting to Monday.com before.';\n\n\t$query = '\n\tmutation {\n\t\tcreate_update (item_id: '.$ticket['monday_board_id'].', body: \"'.$content.'\") {\n\t\t\tid\n\t\t}\n\t}';\n</code></pre>\n<p>But this does not:</p>\n<pre><code>\t$content = addslashes($input['content']);\n\n\t$query = '\n\tmutation {\n\t\tcreate_update (item_id: '.$ticket['monday_board_id'].', body: \"'.$content.'\") {\n\t\t\tid\n\t\t}\n\t}';\n</code></pre>\n<p>Even though when I echo this:</p>\n<pre><code>$content = addslashes($input['content']);\necho $content;\n</code></pre>\n<p>I get this:</p>\n<p><code>This wasn\\'t posting to Monday.com before.</code></p>"
+    },
+    {
+      "id": 31452,
+      "postNumber": 7,
+      "createdAt": "2020-10-19T18:15:23.494Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/bostonjames\">@BostonJames</a> - stepping back a bit  I think we can skip the <code>addslashes</code> method all together.</p>\n<p>Using our <a href=\"https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP\" rel=\"noopener nofollow ugc\">PHP quickstart</a> as a baseline, I made a few modifications which allowed me to upload updates through the GraphQL API without any hiccups.</p>\n<p>In this example I’m using the <code>$input</code> variable since I was manually entering different variables on the terminal, but you can replace it for a pre-determined string. The biggest change was declaring the variables on the query portion of the query so that <code>json_encode</code> would be able to process it.</p>\n<pre><code>echo \"What do you want to input? \";\n$input = rtrim(fgets(STDIN));\n\n$query = 'mutation ($myUpdate: String!) { create_update (item_id: xxxx, body:$myUpdate) {id}}'; \n$vars = ['myUpdate' =&gt; $input];\n</code></pre>\n<p>And then you would just need to modify the last line of the $data portion to json_encode / send your variables as well as the query:</p>\n<pre><code>'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars])\n</code></pre>\n<p>Let me know if this helps!</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 31508,
+      "postNumber": 8,
+      "createdAt": "2020-10-20T10:26:20.722Z",
+      "author": "BostonJames (James Shiner)",
+      "cookedHtml": "<p>That did the trick, thank you!</p>"
+    },
+    {
+      "id": 44282,
+      "postNumber": 9,
+      "createdAt": "2021-03-10T14:42:30.039Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

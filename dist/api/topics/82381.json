@@ -1,0 +1,55 @@
+{
+  "id": 82381,
+  "title": "How to create a item with value in Python?",
+  "slug": "how-to-create-a-item-with-value-in-python",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2024-03-28T14:10:33.161Z",
+  "lastPostedAt": "2024-04-07T09:08:01.487Z",
+  "postsCount": 5,
+  "excerpt": "Dear Team , \nI’m making an application in Python to send data via Monday’s API. \nI’ve read a lot of threads, but I still don’t understand how to do it. \nCan we create items directly with values? \nExample : \n(Creating a n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 502,
+  "posts": [
+    {
+      "id": 175623,
+      "postNumber": 1,
+      "createdAt": "2024-03-28T14:10:33.248Z",
+      "author": "Jefforion (Jeffrey C.)",
+      "cookedHtml": "<p>Dear Team ,</p>\n<p>I’m making an application in Python to send data via Monday’s API.</p>\n<p>I’ve read a lot of threads, but I still don’t understand how to do it.</p>\n<p>Can we create items directly with values?<br />\nExample :<br />\n(<a href=\"https://community.monday.com/t/creating-a-new-item-with-column-values-populated-python/47995/4\" class=\"inline-onebox\">Creating a new item with column values populated (Python) - #4 by Tri</a>)</p>\n<p>Other example :<br />\n(<a href=\"https://community.monday.com/t/how-to-post-to-a-form-using-monday-coms-api/81072\" class=\"inline-onebox\">How to post to a form using Monday.com's API?</a>)</p>\n<p>Where you have to create the item, then update this item, as it says here:</p><aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/m/71e660/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/rest-api-items-are-created-even-if-column-values-are-incorrect/78328\">REST API - Items are created even if column_values are incorrect</a> <a class=\"badge-category__wrapper \" href=\"/c/platform-discussions/monday-dev/98\"><span style=\"--category-badge-color:#CAF4E2;--category-badge-text-color:#FFFFFF;--parent-category-badge-color:#00ca72\" class=\"badge-category --has-parent\"><span class=\"badge-category__name\">monday dev</span></span></a>\n  </div>\n  <blockquote>\n    Hi Friends, \nI’m new to the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API and I noticed that if my column_values contains a Column Type that does not match what is on the board, the item is still created! \nExample: \nvars = {\n    \"myItemName\": \"Hello everyone!\",\n    \"columnVals\": json.dumps(\n        {\n            \"status\": {\"number\": \"Closed\"},\n            \"label\": {\"text\": \"CADS\"},\n        }\n    ),\n}\n\nThe Status and Label column are not Number or Text types. In this scenario, a new Item with a Title of ‘Hello Everyone!’ is cr…\n  </blockquote>\n</aside>\n<p>\nI wanted to do it in this form:</p>\n<pre><code class=\"lang-auto\">{ change_column_values (board_id: ' + str(board_id) + ', item_id: '+ str(rjson[\"data\"][\"create_item\"][\"id\"]) + ', column_values: $columnValues)\n</code></pre>\n<p>but I can not.</p>\n<p>Can you help me ?</p>"
+    },
+    {
+      "id": 175951,
+      "postNumber": 2,
+      "createdAt": "2024-03-31T09:46:38.046Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/jefforion\">@Jefforion</a>,</p>\n<p>You can create items with populated columns via the API with a query like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(\n    board_id: 1234567890\n    group_id: \"topics\"\n    item_name: \"new item\"\n    column_values: \"{\\\"status\\\":\\\"Done\\\", \\\"text\\\":\\\"My Text\\\"}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p><a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-8e47fb45-be09-440c-9429-fa6034a0440e\">Here is the Postman example</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 176655,
+      "postNumber": 3,
+      "createdAt": "2024-04-03T04:54:54.884Z",
+      "author": "Jefforion (Jeffrey C.)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ,</p>\n<p>I tested with this, but it does not bring up the information in the columns.</p>\n<p>Here are the different tests :</p>\n<pre><code class=\"lang-auto\">    # Postman exemple : \"query\": \"mutation {create_item (board_id: 1234567890, group_id: \\\"topics\\\", item_name: \\\"new item\\\", column_values: \\\"{\\\\\\\"status\\\\\\\":\\\\\\\"Done\\\\\\\", \\\\\\\"text\\\\\\\":\\\\\\\"My Text\\\\\\\"}\\\") {id}}\" \n    print(\"Try 1\")\n    try:\n        query = 'mutation { \\\n                    create_item( \\\n                    board_id: 6373870433 \\\n                    item_name: \"Foo 1\" \\\n                    column_values: \"{\\\\\\\"num\\\\\\\":\\\\\\\"123\\\\\\\", \\\\\\\"text\\\\\\\":\\\\\\\"Bar\\\\\\\"}\"\\\n                    ) \\\n                { id } }'\n        data = {'query': query}\n        r = requests.post(url=apiUrl, json=data, headers=headers)\n        rjson = r.json()\n        print(rjson)\n    except Exception as e:\n        print(\"NOK -- The query is wrong...\")\n        print(e)\n        exit()\n\n    print(\"Try 2\") \n    try:\n        query = 'mutation { \\\n                    create_item( \\\n                    board_id: 6373870433 \\\n                    item_name: \"Foo 2\" \\\n                    column_values: \"{\\\"num\\\":\\\"123\\\", \\\"text\\\":\\\"Bar\\\"}\"\\\n                    ) \\\n                { id } }'\n        data = {'query': query}\n        r = requests.post(url=apiUrl, json=data, headers=headers)\n        rjson = r.json()\n        print(rjson)\n    except Exception as e:\n        print(\"NOK -- The query is wrong...\")\n        print(e)\n        exit()\n\n    print(\"Try 3\")\n    try:\n        var =  json.dumps({\n                    \"num\":\"123\",\n                     \"text\":\"Bar\"\n                    })\n        \n        query = 'mutation { \\\n                    create_item( \\\n                    board_id: 6373870433 \\\n                    item_name: \"Foo 3\" \\\n                    column_values: ' \\\n                    + str(var) \\\n                    + ' ) { id } }'\n        data = {'query': query}\n        r = requests.post(url=apiUrl, json=data, headers=headers)\n        rjson = r.json()\n        print(rjson)\n    except Exception as e:\n        print(\"NOK -- The query is wrong...\")\n        print(e)\n        exit()\n\n    print(\"Try 4\")\n    try:\n        var =  '{\\\"num\\\":\\\"123\\\",\\\"text\\\":\\\"Bar\\\"})'\n        print(var)\n        query = 'mutation { \\\n                    create_item( \\\n                    board_id: 6373870433 \\\n                    item_name: \"Foo 4\" \\\n                    column_values: ' \\\n                    + str(var) \\\n                    + ' ) { id } }'\n        data = {'query': query}\n        r = requests.post(url=apiUrl, json=data, headers=headers)\n        rjson = r.json()\n        print(rjson)\n    except Exception as e:\n        print(\"NOK -- The query is wrong...\")\n        print(e)\n        exit()\n</code></pre>\n<p>Here are the answers :</p>\n<pre><code class=\"lang-auto\">\nTry 1\n{'data': {'create_item': {'id': '6374309917'}}, 'account_id': 6007217}\nTry 2\n{'errors': [{'message': 'Parse error on \":\" (STRING) at [1, 166]', 'locations': [{'line': 1, 'column': 166}]}], 'account_id': 6007217}\nTry 3\n{'errors': [{'message': 'Parse error on \"num\" (STRING) at [1, 161]', 'locations': [{'line': 1, 'column': 161}]}], 'account_id': 6007217}\nTry 4\n{\"num\":\"123\",\"text\":\"Bar\"})\n{'errors': [{'message': 'Parse error on \"num\" (STRING) at [1, 161]', 'locations': [{'line': 1, 'column': 161}]}], 'account_id': 6007217}\n\n</code></pre>\n<p>For TRY 1, there is still the item to create, but not the columns.</p>"
+    },
+    {
+      "id": 177084,
+      "postNumber": 4,
+      "createdAt": "2024-04-05T06:59:13.930Z",
+      "author": "Jefforion (Jeffrey C.)",
+      "cookedHtml": "<p>It’s working !</p>\n<pre><code class=\"lang-auto\">    try:\n        query = 'mutation { \\\n                    create_item( \\\n                    board_id: 6373870433, \\\n                    item_name: \"Foo 1\", \\\n                    column_values: \"{\\\\\\\"chiffres\\\\\\\":\\\\\\\"123\\\\\\\", \\\\\\\"texte\\\\\\\":\\\\\\\"Bar\\\\\\\"}\"\\\n                    ) \\\n                { id } }'\n        data = {'query': query}\n        r = requests.post(url=apiUrl, json=data, headers=headers)\n        rjson = r.json()\n        print(rjson)\n    except Exception as e:\n        print(\"NOK -- The query is wrong...\")\n        print(e)\n        exit()\n</code></pre>\n<p>Juste copy this name (ID) :<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/e/b/eba2bf9cfc447e8d3e3b4923b878e6c981a3fbc7.png\" alt=\"image\" width=\"317\" height=\"107\" /></p>\n<p>In reality, the documentation is in English, but my Monday is French.<br />\nWe should put a warning to indicate that this may vary depending on the country language in the documentation.</p>"
+    },
+    {
+      "id": 177265,
+      "postNumber": 5,
+      "createdAt": "2024-04-07T09:08:01.487Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/jefforion\">@Jefforion</a>,</p>\n<p>I am glad you found the source of the issue <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

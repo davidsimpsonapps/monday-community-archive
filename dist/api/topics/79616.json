@@ -1,0 +1,47 @@
+{
+  "id": 79616,
+  "title": "Sudden error when connecting to monday.com from power bi",
+  "slug": "sudden-error-when-connecting-to-monday-com-from-power-bi",
+  "categoryId": 80,
+  "tagIds": [
+    5,
+    22
+  ],
+  "createdAt": "2024-02-29T03:40:39.140Z",
+  "lastPostedAt": "2026-02-06T12:28:35.355Z",
+  "postsCount": 4,
+  "excerpt": "Hello Guys, \nI’m encountering an error just today when connecting to monday.com from power bi. The error is “Expression.Error: The field ‘data’ of the record wasn’t found.” See the code below: \nlet \nKey = “my key”, \nBoar&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 732,
+  "posts": [
+    {
+      "id": 170609,
+      "postNumber": 1,
+      "createdAt": "2024-02-29T03:40:39.234Z",
+      "author": "rgadingan (Randy Gadingan)",
+      "cookedHtml": "<p>Hello Guys,</p>\n<p>I’m encountering an error just today when connecting to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> from power bi. The error is “Expression.Error: The field ‘data’ of the record wasn’t found.” See the code below:</p>\n<p>let<br />\nKey = “my key”,<br />\nBoard = “3722588315”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) { items { name, updated_at, group { title }, columns: column_values { title, text } } } }””}”)<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, {“Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\n#“Trent700” = Table.FromRecords(Table.TransformRows(Data, each<br />\nList.Accumulate([Columns], [<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[title], current[text]) )<br />\n)),<br />\n#“Renamed Columns” = Table.RenameColumns(Trent700,{{“Title”, “ESN”}}),<br />\n#“Filtered Rows” = Table.SelectRows(#“Renamed Columns”, each ([Group] = “Gate 1”)),<br />\n#“Filtered Rows2” = Table.SelectRows(#“Filtered Rows”, each [Actual Gate Closure Date] &lt;&gt; null and [Actual Gate Closure Date] &lt;&gt; “”),<br />\n#“Changed Type1” = Table.TransformColumnTypes(#“Filtered Rows2”,{{“Actual Gate Closure Date”, type date}})<br />\nin<br />\n#“Changed Type1”</p>"
+    },
+    {
+      "id": 172742,
+      "postNumber": 2,
+      "createdAt": "2024-03-12T08:45:59.093Z",
+      "author": "MichalBugala (Michal Bugala)",
+      "cookedHtml": "<p>Hello, i ve got the same problem, i had set of reports working fine and suddenly they stopped working. Returning same error. We made no changes to our data sets so im quite surprised to see this.<br />\nIs there any solution to this?</p>"
+    },
+    {
+      "id": 173532,
+      "postNumber": 3,
+      "createdAt": "2024-03-15T23:55:49.604Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>I’m new to a client and <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API. We just had ours break as well using Power BI. I came to learn its because we were still targeting the 2023-07 API version. Your m-code looks to not be targeting an API version for starters.</p>\n<p>But I believe the reason yours broke is you are still using items, it now must be items_page. This was a change going to the 2023-10 API version.</p>\n<p>If you end up needing more than 100 records (i think thats the items limit) you will also need to bring in the cursor ability. If you can find my other posts/replies from recently. I have posted my fixes and findings the past few weeks working through my struggles on this in Power BI. I even got a looping function using the cursor. Now i’m stuck because I found out about BoardRelationValue for some linked boards used to selected some values on another Board and Monday changed something about not supporting those values within “text” column_values, so now I needed to add \" … on BoardRelationValue { display_value}\" into the column_values I’m bringing back.</p>\n<p>I hope I didn’t miss anything because I only edited your code here and didn’t run anything. Try this:</p>\n<p>let<br />\nKey = “my key”,<br />\nBoard = “3722588315”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2%E2%80%9D\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2”</a>,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n<strong>#“API-Version”=“2023-10”,</strong><br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) { items_page { items { name, updated_at, group { title }, columns: column_values { title, text } } } } }””}”)<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}<strong>[items_page][items]</strong>, Record.FieldValues, {“Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\n#“Trent700” = Table.FromRecords(Table.TransformRows(Data, each<br />\nList.Accumulate([Columns], [<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[title], current[text]) )<br />\n)),<br />\n#“Renamed Columns” = Table.RenameColumns(Trent700,{{“Title”, “ESN”}}),<br />\n#“Filtered Rows” = Table.SelectRows(#“Renamed Columns”, each ([Group] = “Gate 1”)),<br />\n#“Filtered Rows2” = Table.SelectRows(#“Filtered Rows”, each [Actual Gate Closure Date] &lt;&gt; null and [Actual Gate Closure Date] &lt;&gt; “”),<br />\n#“Changed Type1” = Table.TransformColumnTypes(#“Filtered Rows2”,{{“Actual Gate Closure Date”, type date}})<br />\nin<br />\n#“Changed Type1”</p>"
+    },
+    {
+      "id": 245447,
+      "postNumber": 4,
+      "createdAt": "2026-02-06T12:28:35.355Z",
+      "author": "nicstt (Nicholas)",
+      "cookedHtml": "<p>Not a solution but my opinion of what to do in certain circumstances.</p>\n<p>As software dev, creating solutions to problems (or needs) is my job. However, just like in code, where you use plugin that saves time (and therefore money), I’d suggest using Tugger; they provide a connector that connects to your Monday account.</p>\n<p>You get your data, using an OData feed!</p>\n<p>We started using them originally for Simpro, I think it was, and now they have added Monday, we are looking at that too. Their monthly fee is well worth the development cost saving - and the lessening of the hassle.  They are ISO 27001 certified, which was a major plus for us, and I noticed that the free trial is still available, 30 days i think.</p>"
+    }
+  ]
+}

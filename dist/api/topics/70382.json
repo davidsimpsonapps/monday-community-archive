@@ -1,0 +1,61 @@
+{
+  "id": 70382,
+  "title": "Query all groups and specific column values",
+  "slug": "query-all-groups-and-specific-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-08T21:04:05.496Z",
+  "lastPostedAt": "2023-11-14T20:52:04.855Z",
+  "postsCount": 5,
+  "excerpt": "I am having a difficult time figuring out how to configure my query to get the desirable information. \nI have a board with about 500 groups. Each group can have any where between 1 to 100 items. I need my query to gather&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 688,
+  "posts": [
+    {
+      "id": 152345,
+      "postNumber": 1,
+      "createdAt": "2023-11-08T21:04:05.576Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I am having a difficult time figuring out how to configure my query to get the desirable information.</p>\n<p>I have a board with about 500 groups. Each group can have any where between 1 to 100 items. I need my query to gather each groups “id” and “title”. Within that I need every item with it’s “id”, “name”, and a specific “column_values” based on a provided column id. Within the “column_values”, I need it’s “value” and “id”. A final return would look something like this:</p>\n<pre><code class=\"lang-auto\">{'group': {'id': '12345_y4321_00___nags_head_', 'title': '12345-R039177.00 - Nags Head', 'items_page': {'items': [{'id': '12345', 'name': 'Echo', 'column_values': [{'value': None, 'id': 'phase'}]}, {'id': '56789', 'name': '02 - Admin', 'column_values': [{'value': '\"0001 - 0001 Project Management\"', 'id': 'phase'}]}]}}}\n</code></pre>\n<p>I was hitting some query limits, and read that I should be use <code>next_items_page</code> and <code>cursor</code>. I can then append each query to a list and iterate through each list for the rest of my processes. My code is producing almost exactly as what I need, however it’s only selecting 25 items within a group. I think I need to add or move one of my <code>item_page</code> methods. I’ve been on this problem for a few hours now and need a couple of pointers of what I am doing wrong.</p>\n<p><strong>Python3.10 Code</strong></p>\n<pre><code class=\"lang-auto\">    created_board_id = \"12345\"\n    phase_col_id = cid_dict['Phase'][0]\n\n    # Query group and items\n    start_time = timeit.default_timer()\n    next_section = True\n    group_board_info = []\n    query_page = f\"\"\"\n        {{\n            boards (ids: {created_board_id}) {{\n                items_page (limit: 1) {{\n                    cursor\n                    items {{\n                        group {{\n                            id\n                            title\n                            items_page (limit: 100) {{\n                                items {{\n                                    id\n                                    name\n                                    column_values (ids: [{json.dumps(phase_col_id)}]) {{\n                                        value\n                                        id\n                                    }}\n                                }}\n                            }}\n                        }}\n                    }}\n                }}\n            }}\n        }}\n        \"\"\"\n\n    data = {'query' : query_page}\n    r = requests.post(url=apiUrl, json=data, headers=headers)\n    r_dict = r.json()\n    section_board_info = r_dict['data']['boards'][0]['items_page']\n    group_info = section_board_info['items']\n    next_cursor = section_board_info['cursor']\n    group_board_info.append(group_info)\n\n    while next_section:\n        # First item limit is X-times will get group data per item row\n        # Second item limit is amount of column\n        query_next_section = f\"\"\"\n        {{\n            next_items_page (limit: 1, cursor: {json.dumps(next_cursor)}) {{\n                cursor\n                items {{\n                    group {{\n                        id\n                        title\n                        items_page (limit: 100) {{\n                            items {{\n                                id\n                                name\n                                column_values (ids: [{json.dumps(phase_col_id)}]) {{\n                                        value\n                                        id\n                                }}\n                            }}\n                        }}\n                    }}\n                }}\n            }}\n        }}\n        \"\"\"\n        data = {'query' : query_next_section}\n        r = requests.post(url=apiUrl, json=data, headers=headers)\n        r_dict = r.json()\n\n        section_board_info = r_dict['data']['next_items_page']\n        group_info = section_board_info['items']\n        next_cursor = section_board_info['cursor']\n        group_board_info.append(group_info)\n\n        if next_cursor is None:\n            next_section = False\n</code></pre>"
+    },
+    {
+      "id": 152393,
+      "postNumber": 2,
+      "createdAt": "2023-11-09T07:12:53.556Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/binx96\">@Binx96</a>,</p>\n<p>That is odd. If you are using a limit of 100, it should give you 100 items.</p>\n<p>Please send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with:</p>\n<ol>\n<li>Your full query (including IDs)</li>\n<li>The full response you get</li>\n<li>The last time you tested it (if you can, please run it now) including date, hour, minute and the user whose API token is being used for the query</li>\n</ol>\n<p>We can take a look from there <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 152474,
+      "postNumber": 3,
+      "createdAt": "2023-11-09T15:12:34.327Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Prior to sending that email, there are two important things I wanted to point out that I found with <code>items_page (limit: #)</code>. They are mentioned under my <code>while</code> loop.</p>\n<ol>\n<li>The First item limit is querying the group data per item row. For example:</li>\n</ol>\n<pre><code class=\"lang-auto\">query_next_section = f\"\"\"\n        {{\n            next_items_page (limit: 3, cursor: {json.dumps(next_cursor)}) {{\n                cursor\n                items {{\n                    group {{ .......\n</code></pre>\n<pre><code class=\"lang-auto\">&gt;&gt;&gt;\n{'group': {'id': '12345_y4321_00___nags_head_', 'title': '12345-R039177.00 - Nags Head', 'items_page': {'items': [{'id': '12345', 'name': 'Echo', 'column_values': [{'value': None, 'id': 'phase'}]}, {'id': '56789', 'name': '02 - Admin', 'column_values': [{'value': '\"0001 - 0001 Project Management\"', 'id': 'phase'}]}]}}}\n{'group': {'id': '12345_y4321_00___nags_head_', 'title': '12345-R039177.00 - Nags Head', 'items_page': {'items': [{'id': '12345', 'name': 'Echo', 'column_values': [{'value': None, 'id': 'phase'}]}, {'id': '56789', 'name': '02 - Admin', 'column_values': [{'value': '\"0001 - 0001 Project Management\"', 'id': 'phase'}]}]}}}\n{'group': {'id': '12345_y4321_00___nags_head_', 'title': '12345-R039177.00 - Nags Head', 'items_page': {'items': [{'id': '12345', 'name': 'Echo', 'column_values': [{'value': None, 'id': 'phase'}]}, {'id': '56789', 'name': '02 - Admin', 'column_values': [{'value': '\"0001 - 0001 Project Management\"', 'id': 'phase'}]}]}}}\n</code></pre>\n<ol>\n<li>The second limit is amount of columns. For example:</li>\n</ol>\n<pre><code class=\"lang-auto\">              ......\n                    group {{\n                        id\n                        title\n                        items_page (limit: 1) {{\n                            items {{\n                                id\n                                name ......\n</code></pre>\n<pre><code class=\"lang-auto\">&gt;&gt;&gt;\n{'group': {'id': '12345_y4321_00___nags_head_', 'title': '12345-R039177.00 - Nags Head', 'items_page': {'items': [{'id': '12345', 'name': 'Echo', 'column_values': [{'value': None, 'id': 'phase'}]}]}}}\n</code></pre>\n<p>So if we were to put these two limits together, we would get the following output:</p>\n<pre><code class=\"lang-auto\">&gt;&gt;&gt;\n{'group': {'id': '12345_y4321_00___nags_head_', 'title': '12345-R039177.00 - Nags Head', 'items_page': {'items': [{'id': '12345', 'name': 'Echo', 'column_values': [{'value': None, 'id': 'phase'}]}]}}}\n{'group': {'id': '12345_y4321_00___nags_head_', 'title': '12345-R039177.00 - Nags Head', 'items_page': {'items': [{'id': '12345', 'name': 'Echo', 'column_values': [{'value': None, 'id': 'phase'}]}]}}}\n{'group': {'id': '12345_y4321_00___nags_head_', 'title': '12345-R039177.00 - Nags Head', 'items_page': {'items': [{'id': '12345', 'name': 'Echo', 'column_values': [{'value': None, 'id': 'phase'}]}]}}}\n</code></pre>\n<p>That being said, I can set my first limit to 1 and my second limit to 100 to ensure that I only query the group once and account for all of my columns. Though, I still have the problem that I don’t know how to query more than 25 items from each group.</p>\n<p>Does all that make sense?</p>"
+    },
+    {
+      "id": 152728,
+      "postNumber": 4,
+      "createdAt": "2023-11-12T12:15:25.734Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I am not sure I follow how you are using these two together.</p>\n<p>Please send this over via email with your full query and everything detailed in the last message and we will take a look into it <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 153111,
+      "postNumber": 5,
+      "createdAt": "2023-11-14T20:52:04.855Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Work with Monday’s support team to resolve this issue and wanted to report my findings. The <code>items_page</code> limit functionality does if fact work as expected. After digger further I found that my query needed to changed.</p>\n<p>First I needed to query through and find all my group ids. Then I loop through each group to query out the necessary data and append it to an list. Fortunately I will likely never have a group with over 500 items so the max limit will never be hit. However, if that is the case (or I decide to choose a different limit threshold), I would need to loop the additional cursors through the <code>next_items_page</code> functionality. Note that this functionality has to be called as a root and cannot be imbedded into the query I currently have.</p>\n<p>Happy to discuss more if anyone has any remaining questions.</p>\n<pre><code class=\"lang-auto\">group_board_info = []\n    for group_id in group_id_list:\n\n        query_groups = f\"\"\"\n        {{\n            boards (ids: {created_board_id}) {{\n                groups (ids: {json.dumps(group_id)}) {{\n                    title\n                    items_page (limit: 50) {{\n                        cursor\n                        items {{\n                            id\n                            name\n                            column_values (ids: [{json.dumps(phase_col_id)}]) {{\n                                value\n                                id\n                            }}\n                        }}\n                    }}\n                }}\n            }}\n        }}\"\"\"\n\n        data = {'query' : query_groups}\n        r = requests.post(url=apiUrl, json=data, headers=headers)\n        r_dict = r.json()\n        \n        section_board_info = r_dict['data']['boards'][0]\n        group_board_info.append(section_board_info)\n</code></pre>"
+    },
+    {
+      "id": 153187,
+      "postNumber": 6,
+      "createdAt": "2023-11-15T08:35:46.017Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

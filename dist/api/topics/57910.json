@@ -1,0 +1,75 @@
+{
+  "id": 57910,
+  "title": "Partial matches using regex or wildcads",
+  "slug": "partial-matches-using-regex-or-wildcads",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-05-11T04:13:27.668Z",
+  "lastPostedAt": "2024-11-25T08:44:13.539Z",
+  "postsCount": 7,
+  "excerpt": "Hello, \nIs it possible at all to search Monday via GraphQL query to make a query that returns partial matches for item name, using regex or wildcards in the search value?  I am thinking of something like searching items &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 701,
+  "posts": [
+    {
+      "id": 127389,
+      "postNumber": 1,
+      "createdAt": "2023-05-11T04:13:27.741Z",
+      "author": "DevIntegrations (Dev)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Is it possible at all to search Monday via GraphQL query to make a query that returns partial matches for item name, using regex or wildcards in the search value?  I am thinking of something like searching items with value “John*” and finding both “John Smith” and “John Doe” or am I restricted to finding only exact matches and there is nothing I can do about?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 127395,
+      "postNumber": 2,
+      "createdAt": "2023-05-11T06:05:15.533Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/devintegrations\">@DevIntegrations</a>,</p>\n<p>As of today, the queries items_by_column_values and items_by_multiple_column_values are restricted to exact matches only.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 209513,
+      "postNumber": 3,
+      "createdAt": "2024-11-11T14:33:15.070Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nAny update on this feature?<br />\nThe search field in the board toolbar supports partial matches.<br />\nWe would like to have the same functionality using the API.</p>"
+    },
+    {
+      "id": 210287,
+      "postNumber": 4,
+      "createdAt": "2024-11-17T06:16:13.387Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/rob\">@rob</a>,</p>\n<p>You can use a query like this one, which would give you (for example) two items, one with the text value being “John Doe”, and one with the value being “John Smith”:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 7867452110) {\n    items_page (query_params: {rules: [{column_id: \"text__1\", compare_value: [\"John\"], operator:contains_text}]}) {\n      cursor\n      items {\n        name\n        id\n      }\n    }\n  }\n}\n</code></pre>\n<p>The same applies for the name of the items:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 7867452110) {\n    items_page (query_params: {rules: [{column_id: \"name\", compare_value: [\"Jake\"], operator:contains_text}]}) {\n      cursor\n      items {\n        name\n        id\n      }\n    }\n  }\n}\n</code></pre>\n<p>This would give you as a result both an item with the name “Jake Roberts” and one with the name “Jake Pearson”.</p>\n<p>Is that what you are looking for?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 210572,
+      "postNumber": 5,
+      "createdAt": "2024-11-18T14:17:14.764Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nNo, it’s not what we are looking for.<br />\nHere’s an example.<br />\nWe have three items in the board.<br />\nTheir names are:</p>\n<ul>\n<li><code>abc[three spaces]001</code>;</li>\n<li><code>abc[one space]001</code>;</li>\n<li><code>def[one space]001</code>.</li>\n</ul>\n<p>Please note multiple spaces in the first item (I cannot display the spaces in this window).<br />\nIf I search <code>abc[one space]001</code> using the search field I get two results.</p>\n<p>The search functionality through API doesn’t work this way.<br />\nIt only accepts exact matches.</p>\n<p>If I search <code>abc[one space]001</code> I get only one result.<br />\nThe same if I search <code>abc[three spaces]001</code>.</p>\n<p>The solution you suggest doesn’t work because splitting the search into two queries (<code>abc</code> and <code>001</code>) I would get also <code>def[one space]001</code> as a result.</p>"
+    },
+    {
+      "id": 210627,
+      "postNumber": 6,
+      "createdAt": "2024-11-19T06:57:12.825Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/rob\">@rob</a>,</p>\n<p>Thank you for the explanation! Now I understand.</p>\n<p>Would you be able to please create a feature request <a href=\"https://community.monday.com/c/developers/api-feature-requests/58/l/latest\">here</a> may adding this same specific example?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 211564,
+      "postNumber": 7,
+      "createdAt": "2024-11-25T08:44:13.539Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>Would you be able to please create a feature request <a href=\"https://community.monday.com/c/developers/api-feature-requests/58/l/latest\">here</a> may adding this same specific example?</p>\n</blockquote>\n</aside>\n<p>Done.<br />\n<a href=\"https://community.monday.com/t/regex-support-in-items-by-column-values-and-items-by-multiple-column-values-methods/104066\">https://community.monday.com/t/regex-support-in-items-by-column-values-and-items-by-multiple-column-values-methods/104066</a></p>\n<p>Please everyone vote this request.</p>"
+    },
+    {
+      "id": 211588,
+      "postNumber": 8,
+      "createdAt": "2024-11-25T12:17:09.483Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

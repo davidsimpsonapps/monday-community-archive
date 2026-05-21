@@ -1,0 +1,58 @@
+{
+  "id": 10943,
+  "title": "Automations: Item linking",
+  "slug": "automations-item-linking",
+  "categoryId": 6,
+  "tagIds": [],
+  "createdAt": "2020-09-07T06:41:52.297Z",
+  "lastPostedAt": "2021-04-06T15:49:20.438Z",
+  "postsCount": 6,
+  "excerpt": "Hi, \nCurrently we are having separate Monday boards for several of our web products. \nWe are using the status updates to easily show where in the pipeline each task is sitting, like “More information needed”, “Ready for &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 3717,
+  "posts": [
+    {
+      "id": 27828,
+      "postNumber": 1,
+      "createdAt": "2020-09-07T06:41:52.357Z",
+      "author": "stianolini (Stian)",
+      "cookedHtml": "<p>Hi,</p>\n<p>Currently we are having separate Monday boards for several of our web products.</p>\n<p>We are using the status updates to easily show where in the pipeline each task is sitting, like “More information needed”, “Ready for publishing”, “Live”, among others.</p>\n<p>I’d like to create a “super-board” to quickly summarize how many tasks we have in each of these categories through groups.</p>\n<p>The item creation isn’t a problem. I have been able to do this through the “When status changes to something, create an item in another board and link them in the selected board” automation.</p>\n<p>However, is there a way of creating a constant link between items created in the “super-board”? One issue I am having is that when change a status to “Ready for publishing” it creates an item in the “super-board”. However, when I am changing the status to “Live”, it creates a new item as well.</p>\n<p>Is it possible to set up an automation that would simply update the already created item in the “super-board” rather than creating a new one?</p>"
+    },
+    {
+      "id": 27831,
+      "postNumber": 2,
+      "createdAt": "2020-09-07T08:02:17.955Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>There might be a better way to approach this. But, given the structure that you are suggesting, with the “super-board”, the only way that I can think of to make this work currently would be with a custom monday app or a third party integration.</p>\n<p>For example, if you used the automation below to create the item on the “super-board”, you could then add an integration to call a Integromat scenario using a webhook when that status changes to update the status on the “super-board”. If you’re okay with the concept, it would actually be pretty easy.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/c/c61c4f690ce3f3297e18e133a9c8fd1928ad8ef8.png\" alt=\"image\" width=\"310\" height=\"327\" /></p>"
+    },
+    {
+      "id": 28014,
+      "postNumber": 3,
+      "createdAt": "2020-09-09T06:11:39.966Z",
+      "author": "stianolini (Stian)",
+      "cookedHtml": "<p>I actually think this might be the way to go, <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>, thank you so much!</p>\n<p>I’ll look into the webhook integration.</p>"
+    },
+    {
+      "id": 28419,
+      "postNumber": 4,
+      "createdAt": "2020-09-14T08:57:15.350Z",
+      "author": "stianolini (Stian)",
+      "cookedHtml": "<p>I have tried to set everything up like you sketched it out now, <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>.</p>\n<p>The item creation are done through a Monday automation, however, I can’t seem to get the updates to work through Integromat.</p>\n<p>This is what I have tried:</p>\n<ol>\n<li>Set up a “Watch Board’s Item” with “New and Updated Items”, Board ID: the low-level board, and Output Column Values: “Status”</li>\n<li>Set up a “Get an Item’s Column Value” with Board ID: the high-level board, Item ID (map): “ID”, and Column ID: “Status”</li>\n</ol>\n<p>Any idea what I’m doing wrong?</p>"
+    },
+    {
+      "id": 28423,
+      "postNumber": 5,
+      "createdAt": "2020-09-14T09:20:19.677Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/stianolini\">@stianolini</a>,</p>\n<p>I’d have to look at the details to see if I could figure it out. Your concept seems sound.</p>\n<p>But, here’s how I would do it:<br />\nIn Integromat, create a scenario with these modules:</p>\n<ol>\n<li>Webhook.</li>\n<li>read the low-board to get the item link to the high-level board.</li>\n<li>if needed, read high-level board item.</li>\n<li>update high-level board.</li>\n</ol>\n<p>Then connect to the webook by adding this automation to the low-level board.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/f/f118d8bb0902db356523dd08cee31ba203de275f.png\" alt=\"image\" width=\"352\" height=\"252\" /></p>\n<p>Also, although I have found webhook integrations to be fairly reliable, depending on the details of your use case, you may want to have a separate process that goes through the entire structure and verifies / corrects any discrepancies on a regular basis (weekly/monthly/?).</p>"
+    },
+    {
+      "id": 46972,
+      "postNumber": 6,
+      "createdAt": "2021-04-06T15:49:20.438Z",
+      "author": "timlittletech (Tim Little)",
+      "cookedHtml": "<p>I know this is an old thread, but I came across it this week and found it quite useful for setting up an integromat sequence to update a value on a linked item when the other linked item changed.<br />\nhere is the sequence:</p>\n<ol>\n<li>webhook - this gives me the linkedItemId</li>\n<li>get the rest of the updated item based on pulseID coming in from webhook</li>\n<li>iterate through the linked ids array (since in our case its possible to have more than 1 linked item</li>\n<li>for each linkedID update the status of the linkeditem to be same as status of the pulseId.</li>\n</ol>\n<p>here is a screenshot. Hope that helps someone else in the future </p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0544ee44c076c678fc6b4848611b03931913b95c.jpeg\" title=\"Screen Shot 2021-04-06 at 11.42.06 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0544ee44c076c678fc6b4848611b03931913b95c_2_690x223.jpeg\" alt=\"Screen Shot 2021-04-06 at 11.42.06 AM\" width=\"690\" height=\"223\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2021-04-06 at 11.42.06 AM</span><span class=\"informations\">3352×1088 213 KB</span>\n</div></a></div><p></p>"
+    }
+  ]
+}

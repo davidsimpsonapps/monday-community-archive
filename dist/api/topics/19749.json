@@ -1,0 +1,44 @@
+{
+  "id": 19749,
+  "title": "Create column and add values",
+  "slug": "create-column-and-add-values",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2021-05-06T13:14:18.493Z",
+  "lastPostedAt": "2021-05-07T12:27:19.784Z",
+  "postsCount": 3,
+  "excerpt": "I am trying to create a new column on an existing board and then add values to that column from a python list called hydrant_totals. I am able to create the new column but am unsure how to dump the 51 values contained wi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2607,
+  "posts": [
+    {
+      "id": 50389,
+      "postNumber": 1,
+      "createdAt": "2021-05-06T13:14:18.572Z",
+      "author": "jcla490 (Josh Clark)",
+      "cookedHtml": "<p>I am trying to create a new column on an existing board and then add values to that column from a python list called <code>hydrant_totals</code>. I am able to create the new column but am unsure how to dump the 51 values contained within <code>hydrant_totals</code> into the new column. Note that the existing board contains the correct number of rows. Any guidance would be appreciated, I am new to GraphQL syntax. Thank you!</p>\n<pre><code>hydrant_totals = sorted([[k, v[\"TOTAL\"]] for k, v in hydrant_stats.items()])\ncol_name = date.today().strftime(\"%m/%d/%y\")\n\nquery = \"\"\"\n            mutation ($colname: String!) {\n                create_column (board_id: 172407875, title:$colname, column_type:numbers) {\n                    id\n                }\n\n                ....Want to now populate this new column with hydrant_totals\n            }\n        \"\"\"\n\nqvars = {\"colname\": f\"COUNT {col_name}\"}\n\napi_r = requests.post(\n    \"https://api.monday.com/v2/\",\n    json={\"query\": query, \"variables\": qvars},\n    headers={\"Authorization\": os.getenv(\"MONDAY_TOKEN\")},\n)\n</code></pre>"
+    },
+    {
+      "id": 50573,
+      "postNumber": 2,
+      "createdAt": "2021-05-07T12:23:26.263Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 50575,
+      "postNumber": 3,
+      "createdAt": "2021-05-07T12:27:19.784Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jcla490\">@jcla490</a>, and welcome to our community!</p>\n<p>Ahh okay, I see what you’re saying.</p>\n<p>At this time, the only way to modify an item’s column value is to utilize one of two API methods: the <code>change_column_value()</code> mutation, and the <code>change_simple_column_value()</code> mutation.</p>\n<p>This also means though, you will need to know the item IDs of all of these items in order to make these mutations. I’m afraid that you wouldn’t be able to modify all of the column entries for this new Numbers column in one fell swoop. You would need to modify them item by item.</p>\n<p>For instance, if you have an item with ID 12345, your <code>change_simple_column_value()</code> could look something like this:</p>\n<p><code>mutation { change_simple_column_value (board_id: 12345678, item_id: 12345, column_id: \"numbers\", value: 123) { id  } }</code></p>\n<p>You would then rinse and repeat for all 51 of your items and new entries.</p>\n<p>Is this what you had in mind?</p>"
+    },
+    {
+      "id": 52038,
+      "postNumber": 4,
+      "createdAt": "2021-05-19T16:00:10.298Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

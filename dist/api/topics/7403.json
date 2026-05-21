@@ -1,0 +1,75 @@
+{
+  "id": 7403,
+  "title": "Create item with custom status and other columns values",
+  "slug": "create-item-with-custom-status-and-other-columns-values",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94
+  ],
+  "createdAt": "2020-05-21T06:08:52.177Z",
+  "lastPostedAt": "2021-02-24T22:42:43.262Z",
+  "postsCount": 7,
+  "excerpt": "Hi there, \nI’m trying to create task and define status of the task, but it is not easy to understand how to properly do this. \nMy query: \nmutation {create_item (board_id: 377902169, group_id: &quot;new_group18793&quot;, item_name:&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 6403,
+  "posts": [
+    {
+      "id": 18390,
+      "postNumber": 1,
+      "createdAt": "2020-05-21T06:08:52.278Z",
+      "author": "xwizard (Timur Nurlygayanov)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>I’m trying to create task and define status of the task, but it is not easy to understand how to properly do this.</p>\n<p>My query:</p>\n<p><code>mutation {create_item (board_id: 377902169, group_id: \"new_group18793\", item_name: \"new item\", column_values: \"{\"status\": \"Search Active\"}\") {id}}</code></p>\n<p>This query failed with error:<br />\n<code>[{\"message\":\"Parse error on \\\": \\\" (STRING) at [1, 117]\",\"locations\":[{\"line\":1,\"column\":117}]}]</code></p>\n<p>I’ve also tried this query:</p>\n<p><code>mutation {create_item (board_id: 377902169, group_id: \"new_group18793\", item_name: \"new item\", column_values: {status: \"Search Active\"}) {id}}</code></p>\n<p>And this query fails with 500 status code and message “We’re currently experiencing some technical issues which our developers are working hard to resolve” (but the status page shows there are no incidents…)</p>\n<p>So, the question is how I can set the correct value for columns for a new task?</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 18393,
+      "postNumber": 2,
+      "createdAt": "2020-05-21T07:23:20.729Z",
+      "author": "xwizard (Timur Nurlygayanov)",
+      "cookedHtml": "<p>So, more I work with this API more I hate it <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=9\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" />.</p>\n<p>Here is the example for people who will also be stuck trying to create a new item with PYthon:</p>\n<pre><code>headers = {'Content-Type': 'application/json',\n           'Authorization': token}\n\nurl = 'https://api.monday.com/v2/'\n\ncreate_item = \"\"\"mutation {create_item (board_id: 377902169, group_id: \"new_group18793\", item_name: \"new item\",\n               column_values: \"{\\\\\"status\\\\\": {\\\\\"label\\\\\": \\\\\"Search Active\\\\\"},\n                                \\\\\"numbers\\\\\": \\\\\"1\\\\\",\n                                \\\\\"text4\\\\\": \\\\\"Test\\\\\"\n                                }\") {id}}\n            \"\"\"\n\nget_columns_data = \"\"\"query {boards (ids: 377902169) {owner {id} columns {id title type}}}\"\"\"\n\n# Get columns types / ids:\nbody = {'query': get_columns_data}\nres = requests.post(url=url, json=body, headers=headers)\n\n# Create item with one status column, one numeric column and one text column:\nbody = {'query': create_item}\nres = requests.post(url=url, json=body, headers=headers)</code></pre>"
+    },
+    {
+      "id": 18413,
+      "postNumber": 3,
+      "createdAt": "2020-05-21T14:35:55.702Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/xwizard\">@xwizard</a> – sorry to hear that you’ve found it difficult to get started with our API.</p>\n<p>You can certainly use escape characters to make the column value string, but I recommend using GraphQL variables for this instead. It will let you send the column values as a normal JSON object and not worry about string interpolation.</p>\n<p><a href=\"https://support.monday.com/hc/en-us/articles/360013483119-API-Quickstart-Tutorial-Python?abcb=72607\">Here’s a guide to help you get started in Python!</a></p>\n<p>Cheers,<br />\nDipro</p>"
+    },
+    {
+      "id": 39824,
+      "postNumber": 4,
+      "createdAt": "2021-02-04T23:23:30.923Z",
+      "author": "timxiber (tim h)",
+      "cookedHtml": "<p>Can you guys please add examples to these column data !<br />\nIts the most complex part of the call an you have no documentation on it.</p>\n<p>In the page here:<br />\n<a href=\"https://monday.com/developers/v2#mutations-section-items-create\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#mutations-section-items-create</a></p>"
+    },
+    {
+      "id": 41803,
+      "postNumber": 5,
+      "createdAt": "2021-02-23T18:08:43.369Z",
+      "author": "kutib (kuti)",
+      "cookedHtml": "<p>Hi , I share same issue. here is my code, I am getting an empty response  {}</p>\n<p>var colval = {</p>\n<pre><code>    \"columnVals\" : JSON.stringify({\n\n    status2 : $w('#dropdown1').value,\n\n    phone : \"1234567\",\n\n    email : {email : \"abc@xyz.com\", text : \"abc@xyz.com\",\n\n    location :\"my place ca\",\n\n    long_text1 : \"some very long story\",\n\n    date4 :new Date(),\n\n    date1 : 'today'\n\n};\n</code></pre>\n<p>let query1 =‘mutation{create_item(board_id: 1032702316, item_name : “wix lead”,  $columnVals: JSON!){id}}’;</p>\n<pre><code>fetch(\"https://api.monday.com/v2\", {\n\n    method : 'post',\n\n    headers : {\n\n        'Content-Type': 'application/json',\n\n        'Authorization': 'xxxx' \n\n    },\n\n    body : JSON.stringify({'query' : query1, 'variables' : JSON.stringify(vars)})\n\n})\n\n.then(res =&gt; res.json())\n\n.then(res =&gt; console.log(res));\n\n.catch(err =&gt; wixData.insert('Log', {dt: new Date(), msg : err}));\n</code></pre>\n<p>So I dont see any reject and item was not created</p>"
+    },
+    {
+      "id": 41996,
+      "postNumber": 6,
+      "createdAt": "2021-02-24T22:42:36.235Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kutib\">@kutib</a>, welcome to the community!</p>\n<p>I see that not all of your colvals are formatted correctly. I would definitely utilize our API documentation as a starting point.</p>\n<p>For your date columns in particular, the format needs to be in “YYYY-MM-DD” formatting. Additionally, the location column needs to be in longitude/latitude, otherwise I would recommend utilizing a text column. Additionally, for your email, you’re missing the closing curly bracket “}” at the end of the expression.</p>\n<p>Here’s our API documentation: <a href=\"https://monday.com/developers/v2#simple-column-values-section-location\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#simple-column-values-section-location</a>. The quickest way to find all of the column formatting would be to just search the page with a CTRL + F!</p>\n<p>If you have more questions feel free to write into <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a>.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41997,
+      "postNumber": 7,
+      "createdAt": "2021-02-24T22:42:38.739Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 41998,
+      "postNumber": 8,
+      "createdAt": "2021-02-24T22:42:43.262Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": 8892,
+  "title": "Secure Widget Views & Custom - Best Practices?",
+  "slug": "secure-widget-views-custom-best-practices",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-07-11T12:43:58.085Z",
+  "lastPostedAt": "2021-02-25T14:24:15.436Z",
+  "postsCount": 5,
+  "excerpt": "What’s the best practice for securing custom views? \nThe documentation obviously shows how to setup an application accessible via an ngrok URL, but I don’t see any reference to best practices for securing views. \n\nhttps:&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2389,
+  "posts": [
+    {
+      "id": 22308,
+      "postNumber": 1,
+      "createdAt": "2020-07-11T12:43:58.148Z",
+      "author": "kamescg (kames)",
+      "cookedHtml": "<p>What’s the best practice for securing custom views?</p>\n<p>The documentation obviously shows how to setup an application accessible via an ngrok URL, but I don’t see any reference to best practices for securing views.</p>\n<blockquote>\n<p><a href=\"https://monday.com/developers/apps/quickstart-view\" rel=\"noopener nofollow ugc\">https://monday.com/developers/apps/quickstart-view</a></p>\n</blockquote>\n<p>Do we add authentication in the view? Pass data into the iFrame? Something else?</p>\n<p>Sorry if I am just missing something, but didn’t see anything links in the documentation for View security.</p>"
+    },
+    {
+      "id": 22309,
+      "postNumber": 2,
+      "createdAt": "2020-07-11T13:05:07.383Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kamescg\">@kamescg</a></p>\n<p>I do not have experience with views yet, but I did successfully build a number of integrations with the apps framework. The authorization is done on app level, not on feature level. Therefore I don’t think it makes any difference if you build integrations or views. At the app level you can specify your authorization endpoint. Within this endpoint you start the authorization handshake. This is basically a few requests, starting with redirecting to <a href=\"https://auth.monday.com/oauth2/authorize\">https://auth.monday.com/oauth2/authorize</a>? with your clientid and a callback url:</p>\n<blockquote>\n<pre><code>  return res.redirect(\n\"https://auth.monday.com/oauth2/authorize?\" +\n  querystring.stringify({\n    client_id: process.env.MONDAY_CLIENT_ID,\n    redirect_uri: redirectUrl,\n    state: state,\n  })\n</code></pre>\n<p>);</p>\n</blockquote>\n<p>The callback url is then called by the authorization handshake with a code.</p>\n<blockquote>\n<p>router.get(“/oauth/callback”, async (req, res, next) =&gt; {<br />\nconst code = req.query.code || null;<br />\nconst state = req.query.state || null;<br />\nconst error = req.query.error || null;</p>\n</blockquote>\n<p>Then you do the final handshake to get the token (I store it in a database as you can see)</p>\n<blockquote>\n<p>const authRequest = {<br />\nurl: “<a href=\"https://auth.monday.com/oauth2/token\">https://auth.monday.com/oauth2/token</a>”,<br />\nform: {<br />\nredirect_uri: redirectUrl,<br />\nclient_id: process.env.MONDAY_CLIENT_ID,<br />\nclient_secret: process.env.MONDAY_CLIENT_SECRET,<br />\ncode: code,<br />\n},<br />\n};</p>\n</blockquote>\n<blockquote>\n<p>request.post(authRequest, function (error, response, body) {<br />\nif (!error &amp;&amp; response.statusCode === 200) {<br />\nconst jsonBody = JSON.parse(body);<br />\nconst token = jsonBody.access_token;<br />\nconst scope = jsonBody.scope;<br />\nmySqlAccess.createToken(accountId, userId, accountUrl, token, scope);<br />\nres.redirect(backToUrlCommit);<br />\n} else {<br />\nres.redirect(backToUrlCancel);<br />\n}<br />\n});</p>\n</blockquote>\n<p>These are just fragments of my code to do the authorization, but it should give you a general idea how to handle authorization. Hopes it gets you on track.</p>"
+    },
+    {
+      "id": 22311,
+      "postNumber": 3,
+      "createdAt": "2020-07-11T13:23:40.822Z",
+      "author": "kamescg (kames)",
+      "cookedHtml": "<p>Thanks for the snippets. That’s the setup I figured - just wanted to make sure <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>edit: After a little more digging it’s making more sense.</p>"
+    },
+    {
+      "id": 22389,
+      "postNumber": 4,
+      "createdAt": "2020-07-13T06:12:45.954Z",
+      "author": "LaurentConroux (Laurent Conroux)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kamescg\">@kamescg</a>,</p>\n<p>You might also want to check monday sdk when working on Views/Widget.</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://github.githubassets.com/favicons/favicon.svg\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://github.com/mondaycom/monday-sdk-js\" target=\"_blank\" rel=\"noopener nofollow ugc\">GitHub</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/a/a26586a0542ee77c97c72718b899f6461ca73566_2_690x345.png\" class=\"thumbnail\" width=\"690\" height=\"345\" /></div>\n\n<h3><a href=\"https://github.com/mondaycom/monday-sdk-js\" target=\"_blank\" rel=\"noopener nofollow ugc\">GitHub - mondaycom/monday-sdk-js: Node.js and JavaScript SDK for developing...</a></h3>\n\n  <p>Node.js and JavaScript SDK for developing over the monday.com platform - GitHub - mondaycom/monday-sdk-js: Node.js and JavaScript SDK for developing over the monday.com platform</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 42261,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T14:24:15.436Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

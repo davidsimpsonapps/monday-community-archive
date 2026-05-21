@@ -1,0 +1,75 @@
+{
+  "id": 67383,
+  "title": "Monday.com API: Inserting record into group fails",
+  "slug": "monday-com-api-inserting-record-into-group-fails",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-09-30T21:28:17.608Z",
+  "lastPostedAt": "2023-10-24T07:23:10.316Z",
+  "postsCount": 7,
+  "excerpt": "I want to take a portion of the data from a registration form from a web app, create an item in an existing board, and then insert it into a Mysql database. \nCan someone tell me where I’m going wrong? I’m not getting a P&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 360,
+  "posts": [
+    {
+      "id": 146257,
+      "postNumber": 1,
+      "createdAt": "2023-09-30T21:28:17.705Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>I want to take a portion of the data from a registration form from a web app, create an item in an existing board, and then insert it into a Mysql database.</p>\n<p>Can someone tell me where I’m going wrong? I’m not getting a PHP error code, and the API is not returning an error code.</p>\n<p>As a starting point, I have used the example of <strong>Creating a new item with column values populated</strong>  in the <a href=\"https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP\" rel=\"noopener nofollow ugc\">API-Quickstart-Tutorial-PHP</a>.</p>\n<p>This code below fails.   Following the code is the GraphQL query and results for reference.</p>\n<pre>&lt;?php\n  #insert record\n  $firstName      = 'Johnny';\n  $lastName       = 'Smith';\n  $contactEmail   = 'info@mee.com';\n  $contactPhone   = '726-222-3333';\n  $companyName    = 'Johnny Contractor';\n  $companyAddress = '123 Main Street';\n  $companyCity    = 'Dixon';\n  $companyState   = 'MI';\n  $companyPostal  = '45451';\n  $companyEmail   = 'info@jcons.com';\n  $companyPhone   = '555-999-9999';\n  $date           = date('Y-m-d');\n\n  // **insert into Monday.com**\n  $token = 'API_KEY';\n  $apiUrl = 'https://api.monday.com/v2';\n  $headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n  $incentive_users_id = BOARD_ID;\n\n  $query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:BOARD_ID, item_name:$myItemName, column_values:$columnVals) { id } }';\n  $vars = ['myItemName' =&gt; $companyName, \n  'columnVals' =&gt; json_encode([\n    'person'  =&gt; [ 'people' =&gt;'Scott Steward' ],\n    'status' =&gt; ['label' =&gt; 'New Lead'], \n    'date' =&gt; ['date' =&gt; $date],\n    'text' =&gt;[ 'text' =&gt; $firstName ],\n    'text8' =&gt;[ 'text' =&gt; $lastName ],\n    'email' =&gt;[ 'email' =&gt; $contactEmail ],\n    'phone' =&gt;[ 'phone' =&gt; $contactPhone ],\n    'text1' =&gt;[ 'text' =&gt; $companyAddress ],\n    'text7' =&gt;[ 'text' =&gt; $companyCity ],\n    'text6' =&gt;[ 'text' =&gt; $companyState ],\n    'text0' =&gt;[ 'text' =&gt; $companyPostal ],\n    'email_1' =&gt;[ 'email' =&gt;$companyEmail ],\n    'phone_1' =&gt;[ 'phone' =&gt; $companyPhone ]\n  ])];\n\n  $data = @file_get_contents($apiUrl, false, stream_context_create([\n  'http' =&gt; [\n  'method' =&gt; 'POST',\n  'header' =&gt; $headers,\n  'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n  ]\n  ]));    \n?&gt;\n\n// **GraphQL query**:\nquery { \n  boards (ids: BOARD_ID) {\n    columns {\n      title\n      id\n      type\n    } \n  } \n} \n\n// **GraphQL results**:\n{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": [\n          {\n            \"title\": \"Name\",\n            \"id\": \"name\",\n            \"type\": \"name\"\n          },\n          {\n            \"title\": \"Person\",\n            \"id\": \"person\",\n            \"type\": \"multiple-person\"\n          },\n          {\n            \"title\": \"Status\",\n            \"id\": \"status\",\n            \"type\": \"color\"\n          },\n          {\n            \"title\": \"Date\",\n            \"id\": \"date4\",\n            \"type\": \"date\"\n          },\n          {\n            \"title\": \"First Name\",\n            \"id\": \"text\",\n            \"type\": \"text\"\n          },\n          {\n            \"title\": \"Last Name\",\n            \"id\": \"text8\",\n            \"type\": \"text\"\n          },\n          {\n            \"title\": \"Email\",\n            \"id\": \"email\",\n            \"type\": \"email\"\n          },\n          {\n            \"title\": \"Phone\",\n            \"id\": \"phone\",\n            \"type\": \"phone\"\n          },\n          {\n            \"title\": \"Street Address\",\n            \"id\": \"text1\",\n            \"type\": \"text\"\n          },\n          {\n            \"title\": \"City\",\n            \"id\": \"text7\",\n            \"type\": \"text\"\n          },\n          {\n            \"title\": \"State\",\n            \"id\": \"text6\",\n            \"type\": \"text\"\n          },\n          {\n            \"title\": \"Zipcode\",\n            \"id\": \"text0\",\n            \"type\": \"text\"\n          },\n          {\n            \"title\": \"Company Email\",\n            \"id\": \"email_1\",\n            \"type\": \"email\"\n          },\n          {\n            \"title\": \"Company Phone\",\n            \"id\": \"phone_1\",\n            \"type\": \"phone\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": 9999999\n}</pre>"
+    },
+    {
+      "id": 146276,
+      "postNumber": 2,
+      "createdAt": "2023-10-01T05:21:18.864Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mark.stout\">@mark.stout</a> ,</p>\n<p>Would you be able to please send this over to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so we can take a closer look?</p>\n<p>Please test this again now, and send in the email the timestamp of when you tested it including:</p>\n<ol>\n<li>Date</li>\n<li>Hour</li>\n<li>Minute</li>\n<li>Your location</li>\n<li>Full query</li>\n<li>Full response</li>\n<li>The user ID of the user whose API token is being used</li>\n<li>The board ID</li>\n</ol>\n<p>Looking forward to hearing from you via email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146927,
+      "postNumber": 3,
+      "createdAt": "2023-10-04T20:13:59.371Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>Hoe can I test this on postman?</p>"
+    },
+    {
+      "id": 146985,
+      "postNumber": 4,
+      "createdAt": "2023-10-05T04:36:10.243Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/mark.stout\">@mark.stout</a> ,</p>\n<p>Here are examples of how this looks like in Postman:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/8/c89ecd349710f409c3d0d9fce485acb4dcec0bb0.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/8/c89ecd349710f409c3d0d9fce485acb4dcec0bb0_2_689x201.png\" alt=\"image\" width=\"689\" height=\"201\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2536×742 75.8 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/c/3c6df27bb3621f888f900e3c51ad4ed3a17fa9d2.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/3/c/3c6df27bb3621f888f900e3c51ad4ed3a17fa9d2_2_690x170.png\" alt=\"image\" width=\"690\" height=\"170\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2529×626 93.1 KB</span></div></a></div><p></p>\n<p>You can check how the format for each column type is <a href=\"https://developer.monday.com/api-reference/docs/column-types-reference\">here</a>.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 149309,
+      "postNumber": 5,
+      "createdAt": "2023-10-22T20:47:09.126Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>This is being called from a PHP file.</p>\n<p>I’m getting an errror beginning with ‘text’ =&gt;[ ‘text’ =&gt; $firstName ],</p>\n<p>I get the following error: “error_message”:“invalid value, . . . “error_data”:{“column_value”:”{\"text\"=&gt;\"Johnny\"}\",“column_type”:“TextColumn”}}</p>\n<p>What is this error telling me and how would I correct it?</p>\n<p>The actual call:</p>\n<pre>include(\"file.php\"); // holds the API authorization key as $token and board id\n\n$query = 'mutation ($myItemName: String!, $incentive_users_id: Int!, $columnVals: JSON!) { create_item (board_id: $incentive_users_id, item_name:$myItemName, column_values:$columnVals) { id } }';\n$vars = ['myItemName' =&gt; $companyName, 'incentive_users_id' =&gt; $incentive_users_id,\n  'columnVals' =&gt; json_encode([\n    'status'  =&gt; [ 'label' =&gt; 'New Lead' ], \n    'date4'   =&gt; [ 'date'  =&gt; $date ],\n    'text'    =&gt; [ 'text'  =&gt; $firstName ],\n    'text8'   =&gt; [ 'text'  =&gt; $lastName ],\n    'email'   =&gt; [ 'email' =&gt; $contactEmail],\n    'phone'   =&gt; [ 'phone' =&gt; $contactPhone]\n])];\n\n$data = @file_get_contents($apiUrl, false, stream_context_create([\n  'http' =&gt; [\n  'method' =&gt; 'POST',\n  'header' =&gt; $headers,\n  'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n  ]\n]));\n\n$responseContent = json_decode($data, true);\n\necho json_encode($responseContent);\n</pre>"
+    },
+    {
+      "id": 149559,
+      "postNumber": 6,
+      "createdAt": "2023-10-23T18:54:21.607Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>Any updates?</p>\n<p>Also, what should I be using?  ID or TYPE when updfating a column?</p>"
+    },
+    {
+      "id": 149640,
+      "postNumber": 7,
+      "createdAt": "2023-10-24T06:51:50.197Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C018J3C259C/p1698139735347719\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 149643,
+      "postNumber": 8,
+      "createdAt": "2023-10-24T07:23:10.316Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mark.stout\">@mark.stout</a>,</p>\n<p>I am not experienced using PHP but I just recreated this in Postman as an example for you:</p>\n<p>Query:</p>\n<pre><code class=\"lang-auto\">mutation ($myItemName: String!, $incentive_users_id: ID!, $columnVals: JSON!) {\n  create_item (board_id: $incentive_users_id, item_name:$myItemName, column_values:$columnVals) { id }\n}\n</code></pre>\n<p>Variables:</p>\n<pre><code class=\"lang-auto\">{\n    \"myItemName\": \"My Name\",\n    \"incentive_users_id\": 1234567890,\n    \"columnVals\":\"{\\\"status\\\": \\\"New Lead\\\", \\\"date4\\\": \\\"2023-04-24\\\",\\\"text\\\": \\\"Some text\\\",\\\"text8\\\": \\\"Some text\\\",\\\"email\\\": \\\"example@example.com This is an example email\\\",\\\"phone\\\": \\\"+19175998722 US\\\"}\"\n}\n</code></pre>\n<p>cURL:</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2' \\\n\n--header 'Authorization: YOURAPITOKEN' \\\n\n--header 'API-Version: 2023-10' \\\n\n--header 'Content-Type: application/json' \\\n\n--data-raw '{\"query\":\"mutation ($myItemName: String!, $incentive_users_id: ID!, $columnVals: JSON!) {\\n create_item (board_id: $incentive_users_id, item_name:$myItemName, column_values:$columnVals) { id }\\n} \\n \\n\",\"variables\":{\"myItemName\":\"My Name\",\"incentive_users_id\":1234567890,\"columnVals\":\"{\\\"status\\\": \\\"New Lead\\\", \\\"date4\\\": \\\"2023-04-24\\\",\\\"text\\\": \\\"Some text\\\",\\\"text8\\\": \\\"Some text\\\",\\\"email\\\": \\\"example@example.com This is an example email\\\",\\\"phone\\\": \\\"+19175998722 US\\\"}\"}}'\n</code></pre>\n<p>PHP HTTP request 2:</p>\n<pre><code class=\"lang-auto\">&lt;?php\nrequire_once 'HTTP/Request2.php';\n$request = new HTTP_Request2();\n$request-&gt;setUrl('https://api.monday.com/v2');\n$request-&gt;setMethod(HTTP_Request2::METHOD_POST);\n$request-&gt;setConfig(array(\n  'follow_redirects' =&gt; TRUE\n));\n$request-&gt;setHeader(array(\n  'Authorization' =&gt; 'YOURAPITOKEN',\n  'API-Version' =&gt; '2023-10',\n  'Content-Type' =&gt; 'application/json',\n));\n$request-&gt;setBody('{\"query\":\"mutation ($myItemName: String!, $incentive_users_id: ID!, $columnVals: JSON!) {\\\\n  create_item (board_id: $incentive_users_id, item_name:$myItemName, column_values:$columnVals) { id }\\\\n} \\\\n \\\\n\",\"variables\":{\"myItemName\":\"My Name\",\"incentive_users_id\":1234567890,\"columnVals\":\"{\\\\\"status\\\\\": \\\\\"New Lead\\\\\", \\\\\"date4\\\\\": \\\\\"2023-04-24\\\\\",\\\\\"text\\\\\": \\\\\"Some text\\\\\",\\\\\"text8\\\\\": \\\\\"Some text\\\\\",\\\\\"email\\\\\": \\\\\"example@example.com This is an example email\\\\\",\\\\\"phone\\\\\": \\\\\"+19175998722 US\\\\\"}\"}}');\ntry {\n  $response = $request-&gt;send();\n  if ($response-&gt;getStatus() == 200) {\n    echo $response-&gt;getBody();\n  }\n  else {\n    echo 'Unexpected HTTP status: ' . $response-&gt;getStatus() . ' ' .\n    $response-&gt;getReasonPhrase();\n  }\n}\ncatch(HTTP_Request2_Exception $e) {\n  echo 'Error: ' . $e-&gt;getMessage();\n}\n</code></pre>\n<p>PHP Guzzle:</p>\n<pre><code class=\"lang-auto\">&lt;?php\n$client = new Client();\n$headers = [\n  'Authorization' =&gt; 'YOURAPITOKEN',\n  'API-Version' =&gt; '2023-10',\n  'Content-Type' =&gt; 'application/json',\n];\n$body = '{\"query\":\"mutation ($myItemName: String!, $incentive_users_id: ID!, $columnVals: JSON!) {\\\\n  create_item (board_id: $incentive_users_id, item_name:$myItemName, column_values:$columnVals) { id }\\\\n} \\\\n \\\\n\",\"variables\":{\"myItemName\":\"My Name\",\"incentive_users_id\":1234567890,\"columnVals\":\"{\\\\\"status\\\\\": \\\\\"New Lead\\\\\", \\\\\"date4\\\\\": \\\\\"2023-04-24\\\\\",\\\\\"text\\\\\": \\\\\"Some text\\\\\",\\\\\"text8\\\\\": \\\\\"Some text\\\\\",\\\\\"email\\\\\": \\\\\"example@example.com This is an example email\\\\\",\\\\\"phone\\\\\": \\\\\"+19175998722 US\\\\\"}\"}}';\n$request = new Request('POST', 'https://api.monday.com/v2', $headers, $body);\n$res = $client-&gt;sendAsync($request)-&gt;wait();\necho $res-&gt;getBody();\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

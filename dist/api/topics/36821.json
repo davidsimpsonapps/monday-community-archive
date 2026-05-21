@@ -1,0 +1,40 @@
+{
+  "id": 36821,
+  "title": "`add_file_to_column` mutation returning a 500 server error",
+  "slug": "add-file-to-column-mutation-returning-a-500-server-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-05-25T09:04:22.819Z",
+  "lastPostedAt": "2022-05-26T07:39:43.287Z",
+  "postsCount": 3,
+  "excerpt": "Hello, I am using the SDK to upload an image to a column on a board, and I’m receiving a 500 error. I am passing the file through an HTML input which returns a File e.g: \nFile: {name: &#39;sample.pdf&#39;, lastModified: 16534716&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1771,
+  "posts": [
+    {
+      "id": 86845,
+      "postNumber": 1,
+      "createdAt": "2022-05-25T09:04:22.891Z",
+      "author": "rhymnz (Ryan)",
+      "cookedHtml": "<p>Hello, I am using the SDK to upload an image to a column on a board, and I’m receiving a 500 error. I am passing the file through an HTML input which returns a <code>File</code> e.g:</p>\n<pre><code class=\"lang-auto\">File: {name: 'sample.pdf', lastModified: 1653471602427, etc...}\n</code></pre>\n<p>I am using the SDK as stated in this post: <a href=\"https://community.monday.com/t/announcement-uploading-files-to-monday-com-has-just-become-easier/16803\" class=\"inline-onebox\">Announcement: Uploading files to monday.com has just become easier :)</a></p>\n<p>My code:</p>\n<pre><code class=\"lang-ts\">const RESPONSE = await monday.api(\n  `\n  mutation addFile($id: Int!, $file: File!) {\n    add_file_to_column(item_id: $id, column_id: \"files\", file: $file) {\n      id\n    }\n  }\n`,\n  {\n    variables: {\n      id: parseInt(id),\n      file,\n    },\n  },\n);\n</code></pre>\n<p>When I run the mutation I get a 500 POST error from the <code>https://api.monday.com/v2</code> url.</p>\n<p>Hoping someone can help me understand what’s going wrong. Cheers!</p>"
+    },
+    {
+      "id": 86928,
+      "postNumber": 2,
+      "createdAt": "2022-05-26T06:16:01.388Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/rhymnz\">@rhymnz</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You have to use the endpoint <a href=\"https://api.monday.com/v2/file\">https://api.monday.com/v2/file</a> for this!</p>\n<p>Let me know if that does it <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 86938,
+      "postNumber": 3,
+      "createdAt": "2022-05-26T07:39:43.287Z",
+      "author": "rhymnz (Ryan)",
+      "cookedHtml": "<p>Thanks! I have a CORS issue with <code>v2/file/</code>, but <code>/v2/</code> works fine.</p>\n<p>For anyone who stumbles across this question here’s the working solution:</p>\n<pre><code class=\"lang-auto\">export async function submitFileToColumn(data: { id: number; file: File }) {\n  try {\n    const { id, file } = data;\n\n    const FORM_DATA = new FormData();\n    FORM_DATA.append(\"query\", `mutation addFile($file: File!) { add_file_to_column(item_id: ${id}, column_id: \"files\", file: $file) {id}}`);\n    FORM_DATA.append(\"variables[file]\", file, file.name);\n\n    const RESPONSE = await fetch(\"https://api.monday.com/v2/\", {\n      method: \"POST\",\n      body: FORM_DATA,\n      headers: {\n        \"Authorization\": process.env.MONDAY_API_TOKEN || \"\"\n      }\n    });\n\n    const RESPONSE_DATA = await RESPONSE.json();\n\n    if (RESPONSE_DATA.status === 200) {\n      return Promise.resolve(RESPONSE_DATA);\n    } else {\n      throw new Error(RESPONSE_DATA);\n    }\n  } catch (errResponse) {\n    return Promise.reject(errResponse);\n  }\n}\n</code></pre>"
+    }
+  ]
+}

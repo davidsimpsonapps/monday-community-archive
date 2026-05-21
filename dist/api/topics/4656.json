@@ -1,0 +1,39 @@
+{
+  "id": 4656,
+  "title": "Creating an item & then populating it with data",
+  "slug": "creating-an-item-then-populating-it-with-data",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2020-02-11T07:58:51.188Z",
+  "lastPostedAt": "2021-02-25T12:32:49.560Z",
+  "postsCount": 3,
+  "excerpt": "Hi all, \nI’m trying to create items on my own board using garphql, axios and nodejs. \nfor some reason when i try to send the columnValues i get the followong errMessage: \n errors: [\n    {\n      message: &#39;Variable columnV&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1431,
+  "posts": [
+    {
+      "id": 11864,
+      "postNumber": 1,
+      "createdAt": "2020-02-11T07:58:51.264Z",
+      "author": "John23986 (Jonathan Atia)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I’m trying to create items on my own board using garphql, axios and nodejs.</p>\n<p>for some reason when i try to send the columnValues i get the followong errMessage:</p>\n<pre><code class=\"lang-auto\"> errors: [\n    {\n      message: 'Variable columnValues of type JSON! was provided invalid value',\n      locations: [Array],\n      value: null,\n      problems: [Array]\n    }\n  ],\n</code></pre>\n<p>and here is what i’m doing <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<pre><code class=\"lang-auto\"> const createItem = {\n          query: `\n          mutation ($boardId: Int!, $groupId: String!, $itemName: String!) {\n            create_item (\n              board_id: $boardId,\n              group_id: $groupId,\n              item_name: $itemName,\n            ) {\n              id\n              }\n            }`,\n            \n            variables: {\n              boardId: +BOARD,\n              groupId: \"topics\",\n              itemName: `${title}`,\n              }\n            }\n\n            axios.post(`${URL}`, createItem, {\n                headers: {\n                  Authorization: `${KEY}`\n                }\n              }).then(res =&gt; {\n                console.log(res.data.data.create_item.id)\n                let itemId = res.data.data.create_item.id;\n\n              const fillItem = {\n                query: `\n                mutation ($boardId: Int!, $itemId: Int!, $columnValues: JSON!) {\n                  change_multiple_column_values (\n                    board_id: $boardId,\n                    item_id: $itemId,\n                    column_values: $columnValues\n                  ) {\n                    id\n                  }\n                }`,\n\n                variables: {\n                  boardId: +BOARD,\n                  itemId: +itemId,\n                  groupId: \"topics\", \n                  columnValues: JSON.stringify({\n                    text8: problem_type,\n                    text9: problem_sub_type,\n                    text7: third_level_category,\n                    text5: description, \n                    text4: assigned_group,\n                    text1: responsability,\n                    text6: request_user,\n                    text61: submit_user,\n                    text97: request_user_email,\n                    text3: request_user_cellphone,\n                    text33: module_klh,\n                    text50: df_phone_number,\n                 \n                  })\n                }\n              }\n              axios.post(`${URL}`, fillItem, {\n                headers: {\n                  Authorization: `${KEY}`\n                }\n              }).then(res =&gt; console.log(res.data.errors[0]))\n              .catch(err =&gt; console.log(err.data))\n</code></pre>"
+    },
+    {
+      "id": 12138,
+      "postNumber": 2,
+      "createdAt": "2020-02-14T15:41:26.292Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Can you please add the code example that contains the column values? Doesn’t look like that is included in your code right now.</p>\n<p>Looking forward to the additional context.</p>"
+    },
+    {
+      "id": 42155,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T12:32:49.560Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

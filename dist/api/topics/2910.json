@@ -1,0 +1,65 @@
+{
+  "id": 2910,
+  "title": "Error on parse query when Text or bad request",
+  "slug": "error-on-parse-query-when-text-or-bad-request",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2019-11-04T06:39:59.881Z",
+  "lastPostedAt": "2020-10-12T19:07:11.133Z",
+  "postsCount": 7,
+  "excerpt": "Hi Community, \nI’m trying to create a new pulse, the query works fine but, if the item_name have a long text with spacebar it give me a 400 response or parse \nI’m working with Java. \nRequest working: \nString query = “{&quot;q&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 5012,
+  "posts": [
+    {
+      "id": 7836,
+      "postNumber": 1,
+      "createdAt": "2019-11-04T06:39:59.948Z",
+      "author": "BorjaCorrea (Borja Correa Martín)",
+      "cookedHtml": "<p>Hi Community,<br />\nI’m trying to create a new pulse, the query works fine but, if the item_name have a long text with spacebar it give me a 400 response or parse</p>\n<p>I’m working with Java.</p>\n<p><strong>Request working:</strong><br />\nString query = “{\"query\":\"mutation{create_item(board_id: 88486632, group_id: topics, item_name: apiTest){id}}\"}”</p>\n<p><strong>Request doesn’t work:</strong><br />\nTry double quote text with scaped quotes<br />\nString query = “{\"query\":\"mutation{create_item(board_id: 88486632, group_id: topics, item_name: \"api Test\"){id}}\"}”<br />\n<strong>Error</strong>: 400 Bad Request</p>\n<p><strong>Try with simple quote without scape it:</strong><br />\nString query = “{\"query\":\"mutation{create_item(board_id: 88486632, group_id: topics, item_name: ‘api Test’){id}}\"}”<br />\n<strong>Error</strong> : {“errors”:[{“message”:“Parse error on \"'\" (error) at [1, 71]”,“locations”:[{“line”:1,“column”:71}]}],“account_id”:XXXXXXX}</p>\n<p><strong>Try with simple quote  scaping it:</strong><br />\nString query = “{\"query\":\"mutation{create_item(board_id: 88486632, group_id: topics, item_name: 'api Test'){id}}\"}”<br />\n<strong>Error</strong>: {“errors”:[{“message”:“Parse error on \"'\" (error) at [1, 71]”,“locations”:[{“line”:1,“column”:71}]}],“account_id”:XXXXXXX}</p>\n<p>I tryed some more examples but all with same responses 400 or parse error.</p>\n<p>If anyone can help me with how i have to send the text on mutation.<br />\nThank you Community</p>"
+    },
+    {
+      "id": 7837,
+      "postNumber": 2,
+      "createdAt": "2019-11-04T06:51:15.214Z",
+      "author": "BorjaCorrea (Borja Correa Martín)",
+      "cookedHtml": "<p><strong>Solution</strong>:<br />\nString query =<br />\n“{“query”:“mutation{create_item(board_id: 88486632, group_id: topics, item_name: <strong>\\ \\ \\ \" api   espacios  Prueba \\ \\ \\ \"</strong>){id}}”}”<br />\n-<strong>Espaced escapes to you can see it.</strong></p>\n<p>** You have to send the escape characters escapeds : ** Escape slash \\ and escape  quotes \".</p>\n<p>Hope this help someone.<br />\nThank you!</p>"
+    },
+    {
+      "id": 7879,
+      "postNumber": 3,
+      "createdAt": "2019-11-04T18:44:41.063Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Thanks for posting your problem AND solution Borja!</p>"
+    },
+    {
+      "id": 27642,
+      "postNumber": 4,
+      "createdAt": "2020-09-03T13:44:41.762Z",
+      "author": "booey811 (Gabriel Barr)",
+      "cookedHtml": "<p>Hi Team,</p>\n<p>I think I’m having a similar issue, except when trying to create an update (through a Python based Application). I’m currently using a workaround so no stress, but I thought I’d bring it up for my own learning/in case it is a separate issue.</p>\n<p>My query string is as follows:</p>\n<p>‘{“query”: “mutation { create_update (body:\\“Repairs Processed: ['iPad Pro 9.7\\” Original Front Screen Repair Black  ']\\nRegister: End User\\”, item_id:724303189) { id, body } }\"}’</p>\n<p>And the response I receive is:</p>\n<p>{‘message’: ‘Parse error on “Front” (IDENTIFIER) at [1, 76]’, ‘locations’: [{‘line’: 1, ‘column’: 76}]}</p>\n<p>I guess the reason I’m so intrigued is that the issue appears to be with the word ‘Front’ rather than the absurd number of quotation marks in the query string. I’d also love to know what “IDENTIFIER” refers to!</p>\n<p>Any or all insights would be appreciated as always, but as I’ve said, there’s no rush at all <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=9\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" /></p>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/call_me_hand.png?v=9\" title=\":call_me_hand:\" class=\"emoji only-emoji\" alt=\":call_me_hand:\" /></p>\n<p>Gabe</p>"
+    },
+    {
+      "id": 30960,
+      "postNumber": 5,
+      "createdAt": "2020-10-12T19:05:03.733Z",
+      "author": "turboroof (Jorge)",
+      "cookedHtml": "<p>I think you have to add an operation name to the mutation</p>\n<p>instead of <code>mutation { create_update(...</code> would be <code>mutation xyz { create_update(...</code></p>"
+    },
+    {
+      "id": 30962,
+      "postNumber": 6,
+      "createdAt": "2020-10-12T19:07:11.133Z",
+      "author": "turboroof (Jorge)",
+      "cookedHtml": "<p>I’m having a similar issue but instead of <code>'</code> it is flagging <code>Parse error on \\xC2</code><br />\nnot sure what to do …<br />\nI have a similar issue in another query but figured that new line chars <code>\\n</code> were being passed with an extra slash <code>\\\\n</code></p>\n<p>but now I have the same parse error message but I don’t have <code>\\n</code> this time…<br />\nthis column_values being stringified always gets me in trouble</p>"
+    },
+    {
+      "id": 41083,
+      "postNumber": 7,
+      "createdAt": "2021-02-17T14:34:52.583Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

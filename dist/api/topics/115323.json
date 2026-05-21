@@ -1,0 +1,53 @@
+{
+  "id": 115323,
+  "title": "Nested formula invalid error",
+  "slug": "nested-formula-invalid-error",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2025-05-28T12:29:58.025Z",
+  "lastPostedAt": "2025-05-30T13:33:10.243Z",
+  "postsCount": 5,
+  "excerpt": "I ve AI to assit me to create this formula, but it is not working: Can anyone spot the error: \nIF({Rental Status} = “Active”, ROUND(DAYS({Switch Date (Hide)}, {Rental Start}), 0), DAYS({Rental End}, {Rental Start}))",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 34,
+  "posts": [
+    {
+      "id": 230742,
+      "postNumber": 1,
+      "createdAt": "2025-05-28T12:29:58.092Z",
+      "author": "jobcam (Glenn)",
+      "cookedHtml": "<p>I ve AI to assit me to create this formula, but it is not working: Can anyone spot the error:</p>\n<p>IF({Rental Status} = “Active”, ROUND(DAYS({Switch Date (Hide)}, {Rental Start}), 0), DAYS({Rental End}, {Rental Start}))</p>"
+    },
+    {
+      "id": 230789,
+      "postNumber": 2,
+      "createdAt": "2025-05-28T14:54:18.537Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Glenn,</p>\n<p>What’s not working exactly?</p>\n<p> </p>\n<hr />\n<p><strong>What if we could break free of the Formula column?</strong> and write formulas that update any type of columns? What if a formula could update multiple columns at once? This is possible with the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a> app.</p>"
+    },
+    {
+      "id": 230940,
+      "postNumber": 3,
+      "createdAt": "2025-05-30T12:44:09.644Z",
+      "author": "jobcam (Glenn)",
+      "cookedHtml": "<p>The switch date column is a formula column:<br />\nSWITCH({Rental Status},“Active”, Today(),“Completed”, {Rental End})</p>\n<p>I would prefer if this date used the {Rental End} date for ANY status other than Active but not sure how to write the formula..</p>"
+    },
+    {
+      "id": 230941,
+      "postNumber": 4,
+      "createdAt": "2025-05-30T12:44:16.851Z",
+      "author": "jobcam (Glenn)",
+      "cookedHtml": "<p>Hi Gillies,  If the status is “Active” the formula works. But if the status is anything else it gives the invalid formula triangle.  Even though there is a date in both the rental start and end columns</p>"
+    },
+    {
+      "id": 230953,
+      "postNumber": 5,
+      "createdAt": "2025-05-30T13:33:10.243Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>That’s probably because when the status is active, {Switch Date (Hide)} is empty.<br />\nWhen {Switch Date (Hide)} is empty, then:</p>\n<pre><code>ROUND(DAYS({Switch Date (Hide)}, {Rental Start}), 0)\n</code></pre>\n<p>will return an error. Hence the triangle.</p>\n<p>You may think, but this part of the formula shouldn’t be taken into account because {Rental Status} is NOT “Active”, but this is not the case. In an IF Statement, monday calculates both outcomes before evaluating the condition. If you want to know more on this, see <a href=\"https://blog.mdboosters.com/en/a-simple-way-to-handle-empty-columns-and-avoid-errors-in-your-formulas-in-monday-com\" rel=\"noopener nofollow ugc\">A Simple Way to Handle Empty Columns and Avoid Errors in your Formulas</a>. This method of evaluating an IF statement is called the <em>Eager</em> approach vs the <em>Lazy</em> approach (2nd paragraph of the article).</p>\n<p><strong>Anyway, here is the solution to your problem</strong></p>\n<p>Replace {Switch Date (Hide)} by:</p>\n<pre><code>IF(Switch Date (Hide)=\"\",\"2025-01-01\",Switch Date (Hide))\n</code></pre>\n<p>As in:</p>\n<pre><code>IF({Rental Status} = \"Active\", ROUND(DAYS(IF({Switch Date (Hide)}=\"\", \"2025-01-01\",{Switch Date (Hide)}), {Rental Start}), 0), DAYS({Rental End}, {Rental Start}))\n</code></pre>\n<p>That way, if {Switch Date (Hide)} is empty, monday will calculate the first outcome of your IF statement using a date of 2025-01-01 (it could be any other date: you don’t care since this result will never be displayed anyway).</p>\n<p>Depending on your scenarios, you may want to do the same with the other dates.</p>\n<hr />\n<p>Just because I am the developer of the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a> and have put a lot of thought on how to provide a more intuitive solution than the formula column, here is how you could handle it with the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/a/aa5cbcbfb47d15a26c6727a76cce3f546cbd611d.jpeg\" title=\"2025-05-30_12-30-29\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/a/aa5cbcbfb47d15a26c6727a76cce3f546cbd611d_2_690x128.jpeg\" alt=\"2025-05-30_12-30-29\" width=\"690\" height=\"128\" /><div class=\"meta\"><span class=\"filename\">2025-05-30_12-30-29</span><span class=\"informations\">982×183 74.4 KB</span></div></a></div><p></p>\n<p>Note that:</p>\n<ul>\n<li>You can use multiple lines for your formulas</li>\n<li>You can use SKIP() / RESUME() to jump over certain lines</li>\n<li>The COUNTDAYS function in AFB, actually counts the number of days, so there is no need to round the result.</li>\n</ul>"
+    }
+  ]
+}

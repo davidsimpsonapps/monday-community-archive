@@ -1,0 +1,116 @@
+{
+  "id": 2747,
+  "title": "Why cant I get decimal numbers in a formula field?",
+  "slug": "why-cant-i-get-decimal-numbers-in-a-formula-field",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2019-10-22T12:40:39.625Z",
+  "lastPostedAt": "2021-06-21T15:40:33.546Z",
+  "postsCount": 14,
+  "excerpt": "I’m trying to create a formula column called “Duration” that minuses a column called “Start Time” from the “End Time” column. Unfortunately, the result is either a full number or a blank if it’s less than 1. Is this a no&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 5410,
+  "posts": [
+    {
+      "id": 7430,
+      "postNumber": 1,
+      "createdAt": "2019-10-22T12:40:39.747Z",
+      "author": "HannahObz (Hannah Obano)",
+      "cookedHtml": "<p>I’m trying to create a formula column called “Duration” that minuses a column called “Start Time” from the “End Time” column. Unfortunately, the result is either a full number or a blank if it’s less than 1. Is this a normal feature or a glitch?</p>\n<p>(I’ve tried all the round functions)</p>"
+    },
+    {
+      "id": 7434,
+      "postNumber": 2,
+      "createdAt": "2019-10-22T14:59:48.461Z",
+      "author": "Miguel.Velasco (Miguel Velasco)",
+      "cookedHtml": "<p>Are start time and end time numbers or dates?</p>"
+    },
+    {
+      "id": 7435,
+      "postNumber": 3,
+      "createdAt": "2019-10-22T15:02:28.276Z",
+      "author": "hlopezvc (Hernan Lopez)",
+      "cookedHtml": "<p>So far i know, monday doesnt operate with time data in formula columns.</p>"
+    },
+    {
+      "id": 7451,
+      "postNumber": 4,
+      "createdAt": "2019-10-22T17:13:33.512Z",
+      "author": "Emily (Emily Temkin)",
+      "cookedHtml": "<p>Hey! Can you send us a screenshot of your board and of the formula you’re using? I’d love to see how you have this set up to see how we can help!</p>"
+    },
+    {
+      "id": 7468,
+      "postNumber": 5,
+      "createdAt": "2019-10-23T04:34:50.489Z",
+      "author": "HannahObz (Hannah Obano)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/a5c5a66b53798237d9e6261198ce01e71bddd929.png\" title=\"Screenshot 2019-10-23 at 08.33.14.png\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/a/a5c5a66b53798237d9e6261198ce01e71bddd929_2_650x500.png\" alt=\"14\" width=\"650\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2019-10-23 at 08.33.14.png</span><span class=\"informations\">2140×1646 368 KB</span>\n</div></a></div><p></p>\n<p>The Duration Column (HHMM) is showing 30 minutes in some cases, which should mean the duration formula should show 0.5,</p>\n<p>Sum({End Time}-{Start Time})</p>"
+    },
+    {
+      "id": 7506,
+      "postNumber": 6,
+      "createdAt": "2019-10-23T16:48:44.423Z",
+      "author": "Miguel.Velasco (Miguel Velasco)",
+      "cookedHtml": "<p>You should use: HOURS_DIFF({End Time},{Start Time})</p>"
+    },
+    {
+      "id": 7518,
+      "postNumber": 7,
+      "createdAt": "2019-10-24T05:02:35.476Z",
+      "author": "HannahObz (Hannah Obano)",
+      "cookedHtml": "<p>i’ve used that for the Duration (HH:MM) Column, however that column, as the results are time, can’t be summed at the bottom </p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/b1426303f8db7c9aea6b94aab58b809ff5a5c4cf.png\" title=\"Screenshot 2019-10-24 at 09.02.01.png\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/b1426303f8db7c9aea6b94aab58b809ff5a5c4cf_2_690x253.png\" alt=\"01\" width=\"690\" height=\"253\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2019-10-24 at 09.02.01.png</span><span class=\"informations\">1974×724 63.8 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 16992,
+      "postNumber": 8,
+      "createdAt": "2020-04-29T21:02:09.521Z",
+      "author": "david.major (David Major)",
+      "cookedHtml": "<p>Was this ever solved? I’d like to know the same thing. I can use HOURS_DIFF to produce a duration in HH:MM (eg 00:30 or 00:10). But I’d like to convert those numbers to decimal (ie 0.5 or 0.166).</p>"
+    },
+    {
+      "id": 16995,
+      "postNumber": 9,
+      "createdAt": "2020-04-29T21:41:23.241Z",
+      "author": "ShalomRHS (Shalom)",
+      "cookedHtml": "<p>I was curious so I took a stab at it. This is wacky but technically works.</p>\n<p>If you have 2 time columns with the differences in a new formula column named “Duration”, something like this COULD work:</p>\n<p>SUM(ROUNDDOWN(SUBSTITUTE({Duration},\":\",\".\"),0),DIVIDE(SUBSTITUTE({Duration},\":\",\".\")-ROUNDDOWN(SUBSTITUTE({Duration},\":\",\".\"),0),0.6))</p>\n<p>Say your difference is 01:30 (i.e. 1.5 hours), it takes that text and changes 01:30 to 1.3 (SUBSTITUE), then does 1.3 - 1 (ROUNDDOWN) which gives you the 0.3. Now that you have 0.3 you do 0.6 divided 0.3 (DIVIDE) to get the percentage, 0.5, then you “sum” back the 1.0 (SUBSTITUTE again) to the 0.5 giving you 1.5.</p>\n<p>Essentially, Monday seems to be ok with working with numbers extracted from text, so once you know that, you can probably come up with other ways (and possible shorter formulas) to get what you need.</p>"
+    },
+    {
+      "id": 16996,
+      "postNumber": 10,
+      "createdAt": "2020-04-29T21:41:57.287Z",
+      "author": "ShalomRHS (Shalom)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/hannahobz\">@HannahObz</a> in case you’re still looking for something.</p>"
+    },
+    {
+      "id": 17004,
+      "postNumber": 11,
+      "createdAt": "2020-04-30T05:08:47.921Z",
+      "author": "david.major (David Major)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shalomrhs\">@ShalomRHS</a> Brilliant, thank you so much!</p>"
+    },
+    {
+      "id": 23574,
+      "postNumber": 12,
+      "createdAt": "2020-07-24T14:45:51.366Z",
+      "author": "AFrohman (DR)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shalomrhs\">@ShalomRHS</a>  Thanks very much!  I had the same issue and your formula was spot on.</p>"
+    },
+    {
+      "id": 28975,
+      "postNumber": 13,
+      "createdAt": "2020-09-20T06:29:03.903Z",
+      "author": "digitalrebelz.com (Joris Jansen)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>Just found out a really simple way to do this.<br />\nYou just take the total time and divide it by 3600… Don’t know why but it works!<img src=\"https://global.discourse-cdn.com/monday/original/2X/5/52bbe73ac9f4c790fb6764219c97d9c97aa9e54f.png\" alt=\"Screenshot at Sep 20 11-28-29\" width=\"555\" height=\"424\" /></p>"
+    },
+    {
+      "id": 55370,
+      "postNumber": 14,
+      "createdAt": "2021-06-21T15:40:33.546Z",
+      "author": "Becca-monday.com (Rebecca Katz (monday.com))",
+      "cookedHtml": ""
+    }
+  ]
+}

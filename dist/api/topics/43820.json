@@ -1,0 +1,49 @@
+{
+  "id": 43820,
+  "title": "Creating item with specific column value using a bash script",
+  "slug": "creating-item-with-specific-column-value-using-a-bash-script",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    138,
+    351
+  ],
+  "createdAt": "2022-10-12T06:52:17.012Z",
+  "lastPostedAt": "2022-10-12T10:08:04.049Z",
+  "postsCount": 4,
+  "excerpt": "Hello! \nI’m working on a bash script to perform multiple automations in monday. The script is already able to create boards, create groups, create items in the correct group… the only thing missing now for me is to enter&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 978,
+  "posts": [
+    {
+      "id": 100282,
+      "postNumber": 1,
+      "createdAt": "2022-10-12T06:52:17.096Z",
+      "author": "mkolb (Marco Kolbas)",
+      "cookedHtml": "<p>Hello!</p>\n<p>I’m working on a bash script to perform multiple automations in monday. The script is already able to create boards, create groups, create items in the correct group… the only thing missing now for me is to enter a value into a specific column for a new created item. Can someone maybe help with this? I’m new to the monday API or GraphQL API in general.</p>\n<p>This line of code works to create an item and I know the ID of the column I want to add a value in is “numbers”. What would I have to add to this line to do this?</p>\n<pre><code class=\"lang-auto\">curl --location --request POST ''https://api.monday.com/v2'' --header 'Authorization: '$APIKey'' --header 'Content-Type: application/json' --header 'Cookie: __cfduid=d4512e647bd3dd90706f5673d6041f7c51618840981' --data-raw '{\"query\": \"mutation { create_item (board_id: '$boardID', group_id: '$buildingPhaseID', item_name: \\\"TEST ITEM\\\") { id }}\"}'\n</code></pre>\n<p>Thanks in advance for your help with this!</p>"
+    },
+    {
+      "id": 100286,
+      "postNumber": 2,
+      "createdAt": "2022-10-12T07:28:40.405Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mkolb\">@mkolb</a></p>\n<p>Welcome to the community! (Nederlandse naam? <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> )</p>\n<p>The easiest thing to do is play around with the API Playground (avatar &gt; developer &gt; API playground). Your mutation is escaping the item name (which is a normal string and doesn’t need escaping) and is missing the column_values. That one needs escaping as the API expects a stringified JSON  of {columnid: value} pairs. Each column type require a different format for the value. Here is one for setting a date column (which requires a JSON format for the value) based on your input (assuming the boardId and groupId are both correct, and the columnId for the date column is “date”. Take care, you need the groupId, not the goupName.</p>\n<pre><code class=\"lang-auto\">curl --location --request POST ''https://api.monday.com/v2'' --header 'Authorization: '$APIKey'' --header 'Content-Type: application/json' --header 'Cookie: __cfduid=d4512e647bd3dd90706f5673d6041f7c51618840981' --data-raw '{\"query\": \"mutation { create_item (board_id: '$boardID', group_id: '$buildingPhaseID', item_name: \"TEST ITEM\", column_values: \"{\\\"date\\\":{\\\"date\\\":\\\"2022-10-12\\\"}}\") { id }}\"}'\n</code></pre>"
+    },
+    {
+      "id": 100309,
+      "postNumber": 3,
+      "createdAt": "2022-10-12T09:46:15.366Z",
+      "author": "mkolb (Marco Kolbas)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> !</p>\n<p>Thank you for your help! I tried to build this into my script, but I still get an error… This is the line I currently try to run:</p>\n<pre><code class=\"lang-auto\">curl --location --request POST ''https://api.monday.com/v2'' --header 'Authorization: '$APIKey'' --header 'Content-Type: application/json' --header 'Cookie: __cfduid=d4512e647bd3dd90706f5673d6041f7c51618840981' --data-raw '{\"query\": \"mutation { create_item (board_id: '$boardID', group_id: '$buildingPhaseID', item_name: \"TEST ITEM\", column_values: \"{\\\"numbers\\\":{\\\"Planned Time\\\":\\\"12\\\"}}\"}'\n</code></pre>\n<p>Background is: I want to create items on a board which get a specific number as “planned time in hours” added. The board is created based on a template that already has a lot of formular_columns to then work with this value. When I tried to get the ID of this column, this was the output I received:</p>\n<pre><code class=\"lang-auto\">{\"id\":\"numbers\",\"title\":\"Planned Time\",\"value\":\"\\\"2\\\"\"}\n</code></pre>\n<p>The line without the “column_values” part works without any issues. So creating the board and creating an item with just a title in the correct group… works like expected.</p>\n<p>Thanks again for your support!</p>"
+    },
+    {
+      "id": 100313,
+      "postNumber": 4,
+      "createdAt": "2022-10-12T10:08:04.049Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/mkolb\">@mkolb</a></p>\n<p>You really need to understand that each column type requires a different format. Where a date column from my example needs {date: \"2022-10-12} a number column just need a number (not a JSON). See also: <a href=\"https://developer.monday.com/api-reference/docs/number#json\" class=\"inline-onebox\">Numbers</a></p>\n<p>So,</p>\n<pre><code class=\"lang-auto\">column_values: \"{\\\"numbers\\\":{\\\"Planned Time\\\":\\\"12\\\"}}\"\n</code></pre>\n<p>should be something like</p>\n<pre><code class=\"lang-auto\">column_values: \"{\\\"numbers\\\":\\\"12\\\"}\"```</code></pre>"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "id": 71749,
+  "title": "Getting Board relation column value as count",
+  "slug": "getting-board-relation-column-value-as-count",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    13,
+    20,
+    94,
+    351
+  ],
+  "createdAt": "2023-11-29T00:13:00.636Z",
+  "lastPostedAt": "2023-12-04T17:48:37.000Z",
+  "postsCount": 17,
+  "excerpt": "Hi, \nI have a board with a column &quot;relations&quot; where the column value is an array of ids \nI want to set the value of another column &quot;relation_count&quot; based on how many ids are in “relations” value. \nrelations is changed -&gt; &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 439,
+  "posts": [
+    {
+      "id": 155220,
+      "postNumber": 1,
+      "createdAt": "2023-11-29T00:13:00.712Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I have a board with a column <code>\"relations\"</code> where the column value is an array of ids<br />\nI want to set the value of another column <code>\"relation_count\"</code> based on how many ids are in “relations” value.</p>\n<pre><code class=\"lang-plaintext\">relations is changed -&gt; set relation_count\n</code></pre>\n<p>I wonder if and how to set an automation of that nature.</p>"
+    },
+    {
+      "id": 155228,
+      "postNumber": 2,
+      "createdAt": "2023-11-29T01:08:42.005Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>What type is <code>relations</code> column? Board relation?</p>\n<pre><code class=\"lang-auto\">{\n  items (ids: \"123124123\") {\n    column_values(ids: \"connect_boards\") {\n      ... on BoardRelationValue {\n        linked_item_ids\n      }\n    }\n  }\n}\n</code></pre>\n<pre><code class=\"lang-auto\">const relationCount = res.data.items[0].column_values[0].linked_item_ids.length\n</code></pre>\n<p>That should give you the number of connected items.</p>\n<p>Or were you thinking something like a formula or automation on the board itself? Sorry this being in the apps &amp; Developers section inclines answers toward programming tasks.</p>"
+    },
+    {
+      "id": 155233,
+      "postNumber": 3,
+      "createdAt": "2023-11-29T01:54:51.337Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> ty for the prompt response.</p>\n<p>Via the gql there are indeed many ways to assert that count of said array of linked items.</p>\n<p>I was thinking more in the lines of an automation</p>\n<pre><code class=\"lang-plaintext\">When value of board relation column chnges set another column value to length of linked items array.\n</code></pre>\n<p>Meanwhile I made a on item update webhook to use an external service to do so.</p>"
+    },
+    {
+      "id": 155234,
+      "postNumber": 4,
+      "createdAt": "2023-11-29T02:05:34.793Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yeah, there is no way to get the number directly except maybe a formula column, or an existing third party app (but you have the skills, why pay!). But no direct automation exist (yet)</p>"
+    },
+    {
+      "id": 155305,
+      "postNumber": 5,
+      "createdAt": "2023-11-29T11:39:49.462Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 155349,
+      "postNumber": 6,
+      "createdAt": "2023-11-29T14:11:30.652Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>Hehe I am up to my elbows in lambdas atm <img src=\"https://emoji.discourse-cdn.com/apple/stuck_out_tongue.png?v=12\" title=\":stuck_out_tongue:\" class=\"emoji\" alt=\":stuck_out_tongue:\" width=\"20\" height=\"20\" /></p>\n<p>Can you please elaborate on formula columns?sounds interesting.<br />\nI would love any monday native solutions where possible</p>"
+    },
+    {
+      "id": 155356,
+      "postNumber": 7,
+      "createdAt": "2023-11-29T15:03:33.994Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Formula columns are a column type available only in pro &amp; enterprise accounts.</p>\n<p>You can create a formula in their settings and it will calculate a value from other columns, much like Excel syntax (but not the same). The board relation column has an operator for the count of connected items.</p>\n<p><code>{Relation Column#Count}</code> as the formula will return the count of connected items! So exactly what you need…</p>\n<p>HOWEVER! formula columns are also quite limited. The values are calculated client side by the users browser. They are display only as well. You can’t access them from the API, you can’t trigger automations off them changing, you can’t use their values in emails, notifications, or updates. You can only see the value in the formula column on the board.</p>\n<p>But if that is all you need, and you have paid for pro/enterprise, then you can use them. Just add a column to the board and choose “more columns” and search “formula” to add one.</p>"
+    },
+    {
+      "id": 155357,
+      "postNumber": 8,
+      "createdAt": "2023-11-29T15:07:19.676Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p>{Relation Column#Count}</p>\n</blockquote>\n</aside>\n<p>Amazing feature.<br />\nIf it had api access at least it would save me a lambda <img src=\"https://emoji.discourse-cdn.com/apple/stuck_out_tongue.png?v=12\" title=\":stuck_out_tongue:\" class=\"emoji\" alt=\":stuck_out_tongue:\" width=\"20\" height=\"20\" /></p>\n<p>Tyvm!</p>"
+    },
+    {
+      "id": 155435,
+      "postNumber": 9,
+      "createdAt": "2023-11-29T22:29:34.362Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Are you using API Gateway, or just function URLs (direct or through cloudfront?)? Now I’m just being nosey.</p>"
+    },
+    {
+      "id": 155504,
+      "postNumber": 10,
+      "createdAt": "2023-11-30T08:06:46.562Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 155547,
+      "postNumber": 11,
+      "createdAt": "2023-11-30T12:32:38.163Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>Hehe all good.</p>\n<p>I believe in knowledge sharing!</p>\n<p>I use function urls.</p>\n<p>This is what one of the bigger lambdas looks like.<br />\nThe tests are mostly ok.one is just for hacky int test I need to better define.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://github.githubassets.com/favicons/favicon.svg\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://github.com/Darkmift/monday_assign_volunteer\" target=\"_blank\" rel=\"noopener nofollow ugc\">GitHub</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/e/ce60274c174ed1418cd3faea6c75feb6ca63a3f5_2_690x345.png\" class=\"thumbnail\" width=\"690\" height=\"345\" /></div>\n\n<h3><a href=\"https://github.com/Darkmift/monday_assign_volunteer\" target=\"_blank\" rel=\"noopener nofollow ugc\">GitHub - Darkmift/monday_assign_volunteer</a></h3>\n\n  <p>Contribute to Darkmift/monday_assign_volunteer development by creating an account on GitHub.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>While on the subject,<br />\nI came across some rumour one can define webhook behaviour.</p>\n<p>Say for a bulk items move to group I want to ensure the webhook triggers for each item seqeuncially rarher than all of them at once.</p>\n<p>Do you know anything about this?</p>"
+    },
+    {
+      "id": 155551,
+      "postNumber": 12,
+      "createdAt": "2023-11-30T12:42:07.974Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I do not know anything about the behavior you discussed. First I’ve heard of such a thing - though it might be nice.</p>\n<p>I’m using AWS CDK to build and deploy, since it lets me also define queues, databases, etc. through code.</p>"
+    },
+    {
+      "id": 155612,
+      "postNumber": 13,
+      "createdAt": "2023-11-30T17:57:09.000Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>Sure feel free to DM anytime!</p>\n<p>I think a queue would be a best choice for bulk updates indeed.</p>"
+    },
+    {
+      "id": 155617,
+      "postNumber": 14,
+      "createdAt": "2023-11-30T18:01:02.111Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>btw what you’re thinking of for ordered operations is likely the workflow builder, which is in beta - but today it doesn’t support external integrations.</p>\n<p>SQS FIFO queues work pretty well I’ve found, since you can return one to the queue with a visibility timeout set to when the API complexity resets. That way your lambda that is processing the queue can exit and just retrigger once the visibility timeout expires (and API complexity limits reset.)</p>"
+    },
+    {
+      "id": 155628,
+      "postNumber": 15,
+      "createdAt": "2023-11-30T18:44:42.898Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>To be honest I will probably decide if the bulk operations seem to malfunction…at this time they do not seem to fail.</p>\n<p>Any queue were things run in sequence rather than concurrently will do well.<br />\nIm used to Kafka where such setups are very simple to define.</p>"
+    },
+    {
+      "id": 155633,
+      "postNumber": 16,
+      "createdAt": "2023-11-30T19:10:24.858Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>If you use CDK, you can define a queue for something, and trigger a lambda with it in a few lines. Very easy - once you get CDK. Then you just have to grant another lambda (the generator) the ability to send to the queue, and in that lambda you can just publish to it.</p>\n<p>How are you handling your API complexity limits with lambda today? One of the problems with API complexity limits and bulk operations is you consume the complexity very fast - then your lambda has to pause execution for a minute. There is a problem with this, the webhook expects a response in 1 minute or it terminates which should abort the lambda. But that is going to often mean complexity resets after the request aborts. If you don’t have a queue then you lose the request. Now, when you have single requests that do a single operation, failing will trigger a retry if using the apps framework (it will not with the webhook integrations) isn’t a big deal. You can also check complexity before starting execution and if there isn’t going to be enough to complete the request, you return a 429 and it will retry in one minute. (again if using apps framework, not webhooks).</p>"
+    },
+    {
+      "id": 155948,
+      "postNumber": 17,
+      "createdAt": "2023-12-03T13:32:59.754Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 156149,
+      "postNumber": 18,
+      "createdAt": "2023-12-04T16:26:02.195Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>Yes currently looking into SQS to sort the concurrency default nature of the AWS lambdas.</p>\n<p>This is indeed an issue that I am now facing.<br />\nfirst phase I am optimizing my queries overall to reduce complexity.<br />\nAlso considering getting afew keys instead of just the one.</p>"
+    },
+    {
+      "id": 156160,
+      "postNumber": 19,
+      "createdAt": "2023-12-04T17:30:55.737Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The complexity limit is not per key, it is per app+account, and is shared across all users for the same account. One or forty keys - you’ll have the same limit. If you are using user api keys - those are one quota for the whole account, shared by all users.</p>"
+    },
+    {
+      "id": 156164,
+      "postNumber": 20,
+      "createdAt": "2023-12-04T17:48:37.000Z",
+      "author": "darkmift (Avi Koenig)",
+      "cookedHtml": "<p>I see,<br />\nThanks for the clarification!</p>\n<p>I’ll factor that in.</p>"
+    },
+    {
+      "id": 156275,
+      "postNumber": 21,
+      "createdAt": "2023-12-05T09:05:50.557Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

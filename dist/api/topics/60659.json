@@ -1,0 +1,91 @@
+{
+  "id": 60659,
+  "title": "Best way to determine when to delete personal data",
+  "slug": "best-way-to-determine-when-to-delete-personal-data",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    144,
+    249,
+    351
+  ],
+  "createdAt": "2023-06-26T17:19:59.656Z",
+  "lastPostedAt": "2023-08-01T11:08:30.588Z",
+  "postsCount": 7,
+  "excerpt": "What is the recommended way to determine when to delete personal data for an account to be in compliance with the Developer Terms (see bullet point four here: Security and privacy)? \nWould querying the App Subscription v&hellip;",
+  "solvedPostId": null,
+  "likeCount": 9,
+  "views": 503,
+  "posts": [
+    {
+      "id": 132843,
+      "postNumber": 1,
+      "createdAt": "2023-06-26T17:19:59.758Z",
+      "author": "PluginGenie (Oliver Albrecht)",
+      "cookedHtml": "<p>What is the recommended way to determine when to delete personal data for an account to be in compliance with the Developer Terms (see bullet point four here: <a href=\"https://developer.monday.com/apps/docs/security-and-privacy\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Security and privacy</a>)?</p>\n<p>Would querying the App Subscription via the API be sufficient? Here’s how I could see how the logic might work:</p>\n<ul>\n<li>If there is an active subscription, then the data wouldn’t be deleted.</li>\n<li>If there is not an active subscription or the API request fails due to authentication issues, then the personal data for the account should be deleted within 10 days.</li>\n</ul>\n<p>Another way I could think of it working is via the app events webhook, though that seems less reliable in case a webhook is missed by my server.</p>"
+    },
+    {
+      "id": 132895,
+      "postNumber": 2,
+      "createdAt": "2023-06-27T04:34:26.218Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Asking here <a href=\"https://monday.slack.com/archives/C0183BAEBK6/p1687814138864219\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 136311,
+      "postNumber": 3,
+      "createdAt": "2023-07-24T17:48:12.163Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/plugingenie\">@PluginGenie</a>,</p>\n<p>Our apologies for the delayed response while trying to confirm the best way possible. The team recommends webhooks based on reliability and industry standards.</p>\n<p>Please let us know if you have any other questions!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 136808,
+      "postNumber": 4,
+      "createdAt": "2023-07-28T11:01:23.949Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Oliver,</p>\n<p>We are using the uninstall webhook to the app events to trigger setting a deletion date.  (not subscription ended/cancelled because we have a free tier where the app continues to function). Deauthorizing/Deactivating seems legalese since there is no object/event tied to that which we can access.</p>\n<p>I absolutely concur that this webhook needs to have retries if we do not respond with a 200/202 response to say we got it. Right now it will not retry even if we return a 500 error. It should retry with an exponential backoff for a period.</p>\n<p>Any long term failures should then appear in a view in the developer section to allow us to manually retry them when we’ve resolved the issue.</p>"
+    },
+    {
+      "id": 136828,
+      "postNumber": 5,
+      "createdAt": "2023-07-28T15:22:24.139Z",
+      "author": "PluginGenie (Oliver Albrecht)",
+      "cookedHtml": "<p>Thanks for the info! I would feel much more confident using webhooks if it had the features you mentioned. It seems risky if only one is sent by monday without any retries if it’s not a success response.</p>"
+    },
+    {
+      "id": 136830,
+      "postNumber": 6,
+      "createdAt": "2023-07-28T15:44:21.965Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There is are several issues with looking up status using a stored token.</p>\n<ul>\n<li>You have to actually store a token to start with. Many apps have no technical requirement to do so, and from a security perspective should be using a seamless authentication method not OAuth token.</li>\n<li>If the app gets uninstalled the token is invalid and you get a 401</li>\n<li>If the account of the user whose token you got gets disabled/deleted you also get a 401, however you do not know the app has been uninstalled.</li>\n<li>You can only get an OAuth token when they install a feature or recipe - no longer can on app installation.</li>\n</ul>\n<p>Now, you could using seamless authentication methods have a check “on usage” where your app checks when it receives an integration event, or a UI feature can poll your backend to see if it needs to check and report back the result.</p>\n<p>But this all seems hacky to me, just making the webhooks require a response is good. Install should also require a response - and if we return a non-200 response the app install fails for the user. That way they don’t get an app installed that then fails to function because we’re rejecting it because we don’t see it as installed.</p>"
+    },
+    {
+      "id": 136831,
+      "postNumber": 7,
+      "createdAt": "2023-07-28T15:51:13.191Z",
+      "author": "PluginGenie (Oliver Albrecht)",
+      "cookedHtml": "<p>Those are some excellent points. You’ve convinced me that a webhook makes the most sense, even with its current limitations.</p>"
+    },
+    {
+      "id": 136919,
+      "postNumber": 8,
+      "createdAt": "2023-07-30T09:41:27.393Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 137227,
+      "postNumber": 9,
+      "createdAt": "2023-08-01T11:08:30.588Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>one thing con consider doing, is to store the event in a queue as soon as you finish authenticating it, then process from the queue. Like AWS SQS type queue. Then any processing errors you have it can get put in a failure queue or dead-letter queue, and you’re able to resolved errors from there.</p>\n<p>That way there is some temporary persistence of data so you can reprocess it later.</p>"
+    },
+    {
+      "id": 137396,
+      "postNumber": 10,
+      "createdAt": "2023-08-02T08:32:08.464Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

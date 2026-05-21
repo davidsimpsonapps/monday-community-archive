@@ -1,0 +1,153 @@
+{
+  "id": 11582,
+  "title": "Auto refresh schedule not working in Power BI",
+  "slug": "auto-refresh-schedule-not-working-in-power-bi",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94
+  ],
+  "createdAt": "2020-09-25T11:42:10.749Z",
+  "lastPostedAt": "2021-03-04T01:22:11.434Z",
+  "postsCount": 18,
+  "excerpt": "Hello All, \nI am using this small code in M query (power BI) to extract data out of monday board. \nBut when i try to schedule a refresh in power BI platform it says “not authenticated”. \nCan any one help me to find a way&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 5868,
+  "posts": [
+    {
+      "id": 29574,
+      "postNumber": 1,
+      "createdAt": "2020-09-25T11:42:10.823Z",
+      "author": "Deepankar (Deepankar)",
+      "cookedHtml": "<p>Hello All,<br />\nI am using this small code in M query (power BI) to extract data out of monday board.<br />\nBut when i try to schedule a refresh in power BI platform it says “not authenticated”.<br />\nCan any one help me to find a way to add authentication in the code or how can i login to this<br />\n<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a> so that power BI can authenticate itself. Any help will be appreciated.</p>\n<h2><a name=\"p-29574-here-is-the-code-1\" class=\"anchor\" href=\"#p-29574-here-is-the-code-1\"></a>here is the code.</h2>\n<p>let<br />\nKey = “api token”,<br />\nBoard = “board id”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) { items { name, columns: column_values { title, text } } } }””}”)<br />\n]<br />\n),<br />\n//Line 19 converts the data inside “data → board-&gt; items” to a table with the column names “Title”, “Updated At”, “Group”, “Columns”<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, {“Title”, “Columns”}),<br />\n#“Expanded Columns” = Table.ExpandListColumn(Data, “Columns”),<br />\n#“Expanded Columns1” = Table.ExpandRecordColumn(#“Expanded Columns”, “Columns”, {“title”, “text”}, {“Columns.title”, “Columns.text”}),<br />\n#“Pivoted Column” = Table.Pivot(#“Expanded Columns1”, List.Distinct(#“Expanded Columns1”[Columns.title]), “Columns.title”, “Columns.text”)<br />\nin<br />\n#“Pivoted Column”</p>"
+    },
+    {
+      "id": 29598,
+      "postNumber": 2,
+      "createdAt": "2020-09-25T14:58:24.226Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/deepankar\">@Deepankar</a>,</p>\n<p>could you try:</p>\n<pre><code>Key = \"Bearer api_token\"\n\n #\"Authorization\"= Key\n</code></pre>\n<p>Greetings</p>"
+    },
+    {
+      "id": 29631,
+      "postNumber": 3,
+      "createdAt": "2020-09-26T15:01:58.656Z",
+      "author": "Deepankar (Deepankar)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a>,<br />\nThanks for your response. Can you please let me know where can I find The “bearer api token“?</p>"
+    },
+    {
+      "id": 29636,
+      "postNumber": 4,
+      "createdAt": "2020-09-26T20:32:52.693Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Ah my bad.</p>\n<p>Just type Bearer and then add your token.<br />\nKind of like this:</p>\n<p><code>Key = \"Bearer dsawe21345322.....\"</code></p>"
+    },
+    {
+      "id": 29649,
+      "postNumber": 5,
+      "createdAt": "2020-09-27T10:43:32.377Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey hey <a class=\"mention\" href=\"/u/deepankar\">@Deepankar</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks for reaching out to the community and allowing us to help! My warmest welcome and I hope you enoy your stay with us. <img src=\"https://emoji.discourse-cdn.com/apple/star.png?v=12\" title=\":star:\" class=\"emoji\" alt=\":star:\" width=\"20\" height=\"20\" /></p>\n<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> thanks so much for your quick and helpful suggestion as usual! I do think that should be the solution to the issue.</p>\n<p>Just to drive this point further, you can find your API v2 key in your <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> account’s Admin section (if you are an Admin). You’ll need to jump to the API tab, like so:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/08d3d823ad813d17dd425fc58fc0f814a452ae41.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/08d3d823ad813d17dd425fc58fc0f814a452ae41_2_690x295.png\" alt=\"image\" width=\"690\" height=\"295\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1448×620 78.1 KB</span>\n</div></a></div><p></p>\n<p>Let me know if this helps <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 29694,
+      "postNumber": 6,
+      "createdAt": "2020-09-28T04:04:26.242Z",
+      "author": "Deepankar (Deepankar)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a><br />\nI tried the way you mentioned. But i still couldn’t authenticate in Power BI for schedule refresh.<br />\nAuthentication method is basic. Error is:<br />\nFailed to update data source credentials: The credentials provided for the Web source are invalid. (Source at <a href=\"https://api.monday.com/v2.\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2.</a>)</p>\n<p>Even if Authentication level is anonymous, it’s still the same error.</p>\n<p>Also in the Gateway option i cannot see my personal gateway and see something like<br />\n“You don’t need a gateway for this dataset, because all of its data sources are in the cloud, but you can use a gateway for enhanced control over how you connect.”</p>\n<p>Can you suggest me something in this case.</p>\n<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a><br />\nThanks for your warm regards.</p>"
+    },
+    {
+      "id": 29695,
+      "postNumber": 7,
+      "createdAt": "2020-09-28T04:07:17.509Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/deepankar\">@Deepankar</a>,</p>\n<p>could you share the whole code again please ?</p>\n<p>Greetings</p>"
+    },
+    {
+      "id": 29696,
+      "postNumber": 8,
+      "createdAt": "2020-09-28T04:13:47.637Z",
+      "author": "Deepankar (Deepankar)",
+      "cookedHtml": "<p>let<br />\nKey = “Bearer eyJhbBciPiJIAzI1NiJ9.ey…”,<br />\nBoard = “123456789”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”= Key<br />\n],<br />\nContent=Text.ToBinary(“{”“query”\": ““query { boards(ids: \" &amp; Board &amp; “) { items { name, columns: column_values { title, text } } } }””}”)<br />\n]<br />\n),<br />\n//Line 19 converts the data inside “data → board-&gt; items” to a table with the column names “Title”, “Updated At”, “Group”, “Columns”<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, {“Title”, “Columns”}),<br />\n#“Expanded Columns” = Table.ExpandListColumn(Data, “Columns”),<br />\n#“Expanded Columns1” = Table.ExpandRecordColumn(#“Expanded Columns”, “Columns”, {“title”, “text”}, {“Columns.title”, “Columns.text”}),<br />\n#“Pivoted Column” = Table.Pivot(#“Expanded Columns1”, List.Distinct(#“Expanded Columns1”[Columns.title]), “Columns.title”, “Columns.text”),<br />\n#“Changed Type” = Table.TransformColumnTypes(#“Pivoted Column”,{{“EG [m²]”, type number}})<br />\nin<br />\n#“Changed Type”</p>"
+    },
+    {
+      "id": 29697,
+      "postNumber": 9,
+      "createdAt": "2020-09-28T04:56:37.744Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>There actually issues with cloud and http request in Power BI.</p>\n<p>There is a whole article about this here:</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/1/10eb92df7d958593ec90c1406f3947dee2e29631.png\" class=\"site-icon\" width=\"16\" height=\"16\" />\n\n      <a href=\"https://community.powerbi.com/t5/Service/How-to-specify-HTTP-request-header-parameter-in-Power-BI-service/td-p/726384\" target=\"_blank\" rel=\"noopener\" title=\"04:07PM - 27 June 2019\">community.powerbi.com – 27 Jun 19</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/5dab69a63eb31a572057d1a464bd070915e74337_2_690x419.png\" class=\"thumbnail\" width=\"690\" height=\"419\" /></div>\n\n<h3><a href=\"https://community.powerbi.com/t5/Service/How-to-specify-HTTP-request-header-parameter-in-Power-BI-service/td-p/726384\" target=\"_blank\" rel=\"noopener\">How to specify HTTP request header parameter in Power BI service</a></h3>\n\n  <p>Hi everyone,   In Power BI Desktop I can connect to Web specifying HTTP request header parameter:    I need my report to get updated in Power BI service as well. The issue is there seems to be no means for setting HTTP request header...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>Tell me if that helped.</p>\n<p>Greetings</p>"
+    },
+    {
+      "id": 29698,
+      "postNumber": 10,
+      "createdAt": "2020-09-28T05:33:02.914Z",
+      "author": "Deepankar (Deepankar)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a>,<br />\nI get to know this as well. And already went through the link you provided. But unfortunately of no help.</p>"
+    },
+    {
+      "id": 29701,
+      "postNumber": 11,
+      "createdAt": "2020-09-28T05:57:42.395Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>To eliminate my last doubt could you enter your key directly into the Authorization header please.</p>\n<p><code>#“Authorization”= \"Bearer eyJhbBciPiJIAzI1NiJ9.ey… \"</code></p>\n<p>If that doesn’t work, I think it’s the problem with the skip test http request within power BI.</p>"
+    },
+    {
+      "id": 29703,
+      "postNumber": 12,
+      "createdAt": "2020-09-28T06:19:45.205Z",
+      "author": "Deepankar (Deepankar)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a>,<br />\nIt didn’t worked unfortunately.<br />\nis it http request within Power BI? Or it is because of the Monday API ?<br />\nbecause i found some information where it is possible with different web sources.</p>"
+    },
+    {
+      "id": 29753,
+      "postNumber": 13,
+      "createdAt": "2020-09-28T17:19:07.763Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 29757,
+      "postNumber": 14,
+      "createdAt": "2020-09-28T17:35:07.056Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/deepankar\">@Deepankar</a>,</p>\n<p>Are you receiving the authentication error from PowerBI? If you try the API key  on our <a href=\"https://monday.com/developers/v2/try-it-yourself\" rel=\"noopener nofollow ugc\">try it yourself</a> page, do you also receive an error?</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 29796,
+      "postNumber": 15,
+      "createdAt": "2020-09-29T03:29:34.471Z",
+      "author": "Deepankar (Deepankar)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a>,<br />\nAuthentication is working in <a href=\"https://monday.com/developers/v2/try-it-yourself\" rel=\"noopener nofollow ugc\">try it yourself</a><br />\nusing my API key.</p>"
+    },
+    {
+      "id": 29839,
+      "postNumber": 16,
+      "createdAt": "2020-09-29T11:06:59.949Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/deepankar\">@Deepankar</a> - thank you for confirming this.</p>\n<p>To be completely honest here I’m not quite sure at the moment where the problem is occurring (whether it is on the on the PowerBI side, or a response from the API due to a malformed auth header).</p>\n<p>I’d like to get a better picture of what you’re seeing on your end - would you mind posting some screenshots walking us through the steps you’re taking on your end and showing the <strong>error</strong> you’re seeing? This will help us better understand.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 30558,
+      "postNumber": 17,
+      "createdAt": "2020-10-07T08:10:30.954Z",
+      "author": "Deepankar (Deepankar)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dsilva\">@dsilva</a> <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> <a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> <a class=\"mention\" href=\"/u/dipro\">@dipro</a><br />\nThank you all for your responses. It worked finally. Actually we don’t have to authenticate the credentials in power BI as we are using the key in script. we have to check “skip test” option while providing credentials and that’s all.</p>"
+    },
+    {
+      "id": 30587,
+      "postNumber": 18,
+      "createdAt": "2020-10-07T12:24:13.886Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/deepankar\">@Deepankar</a> - awesome!! So glad that worked, thank you for sharing.</p>\n<p>Hopefully this helps if anyone else in the community is running into any issues.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 43374,
+      "postNumber": 19,
+      "createdAt": "2021-03-04T01:22:11.434Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "id": 19597,
+  "title": "Parse error on change_multiple_column_values mutation with Postman",
+  "slug": "parse-error-on-change-multiple-column-values-mutation-with-postman",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2021-05-03T15:49:10.493Z",
+  "lastPostedAt": "2021-05-13T06:32:55.255Z",
+  "postsCount": 9,
+  "excerpt": "Hi there, \nI’m using Postman to build out all of our API calls before coding them. I need to change multiple column values on an existing item with a single API call. However, I’m receiving a Parse error when sending the&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2522,
+  "posts": [
+    {
+      "id": 49705,
+      "postNumber": 1,
+      "createdAt": "2021-05-03T15:49:10.594Z",
+      "author": "paulmiller3000 (Paul Miller)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>I’m using Postman to build out all of our API calls before coding them. I need to change multiple column values on an existing item with a single API call. However, I’m receiving a Parse error when sending the request using JSON</p>\n<p>Here’s what the request body looks like, with <code>board_id</code> and <code>item_id</code> redacted for security:</p>\n<pre><code>{\n\n    \"query\":\n\n        \"mutation {change_multiple_column_values (board_id: 12345, item_id: 67890, column_values: {\\\"text03\\\": \\\"Pablo\\\", \\\"text22\\\": \\\"Miser\\\" }\"\n\n}\n</code></pre>\n<p>Here’s a screenshot:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/452229bb340f0c2df541c1b953a9b7c36152a83a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/452229bb340f0c2df541c1b953a9b7c36152a83a_2_690x388.png\" alt=\"image\" width=\"690\" height=\"388\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1054×594 29.4 KB</span>\n</div></a></div><p></p>\n<p>What should I try next?</p>\n<p>Thanks,<br />\nPaul</p>"
+    },
+    {
+      "id": 49805,
+      "postNumber": 2,
+      "createdAt": "2021-05-04T07:49:22.243Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/paulmiller3000\">@paulmiller3000</a></p>\n<p>Welcome to the community. I believe the \\ character is a special character for Postman and needs to be escaped by a . I am not 100% sure but you could try:</p>\n<p><code>column_values: {\\\\\"text03\\\\\":</code></p>"
+    },
+    {
+      "id": 49820,
+      "postNumber": 3,
+      "createdAt": "2021-05-04T09:27:17.392Z",
+      "author": "paulmiller3000 (Paul Miller)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>Thank you for the welcome, and for the suggestion!</p>\n<p>Unfortunately, the double slashes don’t make much of a difference. Postman underline the resulting string as malformed and the API simply returns <code>{}</code> with a 500.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/433c901c86aa14a357bfb78186ea322eccade6d4.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/433c901c86aa14a357bfb78186ea322eccade6d4_2_690x230.png\" alt=\"image\" width=\"690\" height=\"230\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1097×367 24.1 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 49873,
+      "postNumber": 4,
+      "createdAt": "2021-05-04T12:14:00.766Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 49874,
+      "postNumber": 5,
+      "createdAt": "2021-05-04T12:16:44.907Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/paulmiller3000\">@paulmiller3000</a>!</p>\n<p>I see you’re missing a single quotation mark outside of the curly brackets for your <code>column_values()</code> value.</p>\n<p>I think it should be something like this: <code>column_values: \"{\\\"text03\\\":\\\"Pablo\\\", \\\"text22\\\":\\\"Miser\\\"}\"</code></p>\n<p>Try this out and let me know if it helps!</p>"
+    },
+    {
+      "id": 49924,
+      "postNumber": 6,
+      "createdAt": "2021-05-04T15:53:50.706Z",
+      "author": "paulmiller3000 (Paul Miller)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a> ,</p>\n<p>No luck there, either. The entire mutation string is encased in quotation marks, hence the need to escape additional quotes. I tried wrapping my <code>column_values</code> value in quotes, like this:</p>\n<pre><code>{\n\n    \"query\":\n\n        \"mutation {change_multiple_column_values (board_id: 12345, item_id: 67890, column_values: \"{\\\"text03\\\": \\\"Pablo\\\", \\\"text22\\\": \\\"Miser\\\" }\"\"\n\n}\n</code></pre>\n<p>Postman didn’t like that, and the API returned a 500 (surprising, would have expected a 400).</p>\n<p>Then I tried escaping those quotes, like so:</p>\n<pre><code>{\n\n    \"query\":\n\n        \"mutation {change_multiple_column_values (board_id: 12345, item_id: 67890, column_values: \\\"{\\\"text03\\\": \\\"Pablo\\\", \\\"text22\\\": \\\"Miser\\\" }\\\"\"\n\n}\n</code></pre>\n<p>Postman liked it, but the API returned the following parse error:</p>\n<pre><code>{\n\n    \"errors\": [\n\n        {\n\n            \"message\": \"Parse error on \\\": \\\" (STRING) at [1, 108]\",\n\n            \"locations\": [\n\n                {\n\n                    \"line\": 1,\n\n                    \"column\": 108\n\n                }\n\n            ]\n\n        }\n\n    ],\n\n    \"account_id\": 12345\n\n}\n</code></pre>\n<p>I think, given the troubles were having and the youthful nature of the API documentation, we’ll have to give up on using JSON in Postman.</p>\n<p>Hopefully someone else can solve this and post an answer here for future visitors!</p>\n<p>Thanks,<br />\nPaul</p>"
+    },
+    {
+      "id": 50037,
+      "postNumber": 7,
+      "createdAt": "2021-05-05T06:33:17.516Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/paulmiller3000\">@paulmiller3000</a>,</p>\n<p>I’d love to try and have a go at this one <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I’ve just used the following query and it seems to have worked for me:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6f59935c37d4b1822e8bd93bbeb61d3883a0d5bb.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/6f59935c37d4b1822e8bd93bbeb61d3883a0d5bb_2_690x470.png\" alt=\"image\" width=\"690\" height=\"470\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2010×1370 183 KB</span>\n</div></a></div><p></p>\n<p>And on the board:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/dbd3fdc9d56f1f8e284f982d8415bb5c4d42d985.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/d/dbd3fdc9d56f1f8e284f982d8415bb5c4d42d985.png\" alt=\"image\" width=\"517\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">638×616 9.05 KB</span>\n</div></a></div><p></p>\n<p>Here is the query itself:</p>\n<pre><code class=\"lang-auto\">{\"query\": \"mutation { change_multiple_column_values ( board_id: 1232810882, item_id:1267356806, column_values: \\\"{\\\\\\\"text\\\\\\\":\\\\\\\"this is some text\\\\\\\",\\\\\\\"text_1\\\\\\\":\\\\\\\"this is some other text\\\\\\\"}\\\") { id column_values (ids: [\\\"text\\\",\\\"text_1\\\"]) { text }}}\"}\n</code></pre>\n<p>Please note that you should send your Postman mutations as a single string, if you are using JSON! I think that might have been part of the issue you were having.</p>\n<p>I hope this helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 50133,
+      "postNumber": 10,
+      "createdAt": "2021-05-05T11:42:51.205Z",
+      "author": "paulmiller3000 (Paul Miller)",
+      "cookedHtml": "<p>Thank you, <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> . The problem was I was escaping quotes with a single backlash (<code>\\\"</code>), rather than three (<code>\\\\\\\"</code>) as you recommended. I’m all set.</p>\n<p>Thanks again!</p>"
+    },
+    {
+      "id": 50304,
+      "postNumber": 11,
+      "createdAt": "2021-05-06T06:32:24.466Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/paulmiller3000\">@paulmiller3000</a></p>\n<p>Amazing, I’m glad that did the trick <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 51250,
+      "postNumber": 12,
+      "createdAt": "2021-05-13T06:32:55.255Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

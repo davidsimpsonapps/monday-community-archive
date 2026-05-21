@@ -1,0 +1,48 @@
+{
+  "id": 74750,
+  "title": "Optimizing API Queries for Reading Column Contents of an Item with Various Field Types",
+  "slug": "optimizing-api-queries-for-reading-column-contents-of-an-item-with-various-field-types",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2024-01-10T13:48:50.702Z",
+  "lastPostedAt": "2024-01-11T05:18:02.849Z",
+  "postsCount": 3,
+  "excerpt": "Hello Monday API Community, \nI’m currently working on a project where I need to retrieve the contents of all columns of a specific item, including various field types such as mirror and connected boards. My current appro&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 179,
+  "posts": [
+    {
+      "id": 161322,
+      "postNumber": 1,
+      "createdAt": "2024-01-10T13:48:50.782Z",
+      "author": "Marek1 (Marek)",
+      "cookedHtml": "<p>Hello Monday API Community,</p>\n<p>I’m currently working on a project where I need to retrieve the contents of all columns of a specific item, including various field types such as mirror and connected boards. My current approach involves making at least three separate API queries, but I’m wondering if there’s a more efficient way to accomplish this.</p>\n<p><strong>First Query</strong>: I start with a basic query to fetch the dataset, like so:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids: XXXXXXX) {\n    name,\n    column_values {\n      column { id title }\n      id\n      type\n      text\n      value\n    }\n  }\n}\n\n</code></pre>\n<ul>\n<li>However, this returns null or empty values for mirrored or connected fields.</li>\n<li><strong>Second Query</strong>: To retrieve mirrored field values, I use:</li>\n</ul>\n<pre><code class=\"lang-auto\">query {\n  items (ids:XXXXXXXXX) {\n    column_values {\n      ... on MirrorValue {\n        id\n        display_value\n        text\n        value\n      }\n    }\n  }\n}\n\n</code></pre>\n<p>Third Query**: Finally, for connected board fields, I query:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids:XXXXXXXXX) {\n    column_values {\n      ... on BoardRelationValue {\n        id\n        display_value\n      }\n    }\n  }\n}\n\n</code></pre>\n<p><strong>My Question</strong>: Is this the best approach to access all field contents of an item? Sending three separate queries to fetch data from a single dataset seems inefficient, and I can’t help but feel there might be a better method that I’m overlooking. Could any experienced Monday developers advise if there’s a more efficient way to achieve this?</p>\n<p>Thank you for your guidance!</p>"
+    },
+    {
+      "id": 161378,
+      "postNumber": 2,
+      "createdAt": "2024-01-10T17:20:34.245Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The fragments are only evaluated on the specified column type. so <code>... on MirrorValue</code> means its only evaluated on column_value of the type MirrorValue. This means you can list many ColumnValue fragments</p>\n<p>Since some of the fields listed are the same don’t duplicate them within the fragments and only supply the unique fields.</p>\n<pre><code class=\"lang-auto\">query ($itemId: ID!, $columnIds: [String!]) {\n  items(ids: [$itemId]) {\n    name\n    column_values(ids: $columnIds) {\n      column {\n        id\n        title\n      }\n      id\n      type\n      text\n      value\n      ... on MirrorValue {\n        display_value\n      }\n      ... on BoardRelationValue {\n        display_value\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 161484,
+      "postNumber": 3,
+      "createdAt": "2024-01-11T05:18:02.849Z",
+      "author": "Marek1 (Marek)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>, that takes me a lot further. Thank you</p>"
+    },
+    {
+      "id": 161614,
+      "postNumber": 4,
+      "createdAt": "2024-01-11T14:16:51.270Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/codyfrisch\">@codyfrisch</a> !!!</p>"
+    }
+  ]
+}

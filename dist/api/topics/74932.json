@@ -1,0 +1,96 @@
+{
+  "id": 74932,
+  "title": "How to get text value from mirror column via api",
+  "slug": "how-to-get-text-value-from-mirror-column-via-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    103
+  ],
+  "createdAt": "2024-01-12T05:42:46.348Z",
+  "lastPostedAt": "2024-03-27T16:02:21.175Z",
+  "postsCount": 8,
+  "excerpt": "Dear Sirs, \nplease advise i’m try get value from my board &amp; group but have some trouble. \n\n\ncan we filter or give column value condition such as grater than 2000 and less than 3500. what topic which we can read \n\n\nwhen i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 501,
+  "posts": [
+    {
+      "id": 161700,
+      "postNumber": 1,
+      "createdAt": "2024-01-12T05:42:46.418Z",
+      "author": "kitjarw (kitjar)",
+      "cookedHtml": "<p>Dear Sirs,</p>\n<p>please advise i’m try get value from my board &amp; group but have some trouble.</p>\n<ol>\n<li>\n<p>can we filter or give column value condition such as grater than 2000 and less than 3500. what topic which we can read</p>\n</li>\n<li>\n<p>when i’m get response from api - version 2023-10 seem i cannot found text value from mirror column. How to get them if they are more than one column value</p>\n</li>\n</ol>\n<p>this is my syntax</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: [18084084XX]) {\n    groups(ids: [\"new_group269XX\"]) {\n      title\n      items_page {\n        items {\n          id\n          column_values {\n            id\n            text\n            column {\n              title\n            }\n            ... on BoardRelationValue {\n              linked_items {\n                id\n                name\n              }\n            }\n            ... on MirrorValue {\n              text\n              column {\n                id\n                title  \n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 161701,
+      "postNumber": 2,
+      "createdAt": "2024-01-12T05:58:40.123Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>When using the … on MirrorValue fragment the property you are looking for is called display_text not just text. This is also the case for other fragments.</p>"
+    },
+    {
+      "id": 161713,
+      "postNumber": 3,
+      "createdAt": "2024-01-12T07:55:29.634Z",
+      "author": "kitjarw (kitjar)",
+      "cookedHtml": "<p>Thank you very much<br />\n.<br />\nDo you meant change</p>\n<p>… on MirrorValue {<br />\ndisplay_text<br />\ncolumn {<br />\nid<br />\ntitle<br />\n}</p>\n<p>And how about the first question if I set condition in column value</p>"
+    },
+    {
+      "id": 161716,
+      "postNumber": 4,
+      "createdAt": "2024-01-12T08:37:55.289Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Actually it is display_value, not display_text, sorry for the confusion. As for the conditions, see <a href=\"https://developer.monday.com/api-reference/docs/other-types#itemsqueryrule\" class=\"inline-onebox\">Other types</a> and the specifics for filtering a number column here <a href=\"https://developer.monday.com/api-reference/docs/number\" class=\"inline-onebox\">Numbers</a></p>\n<p>The total query looks like this:</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: [18084084XX]) {\n    groups (ids: [\"new_group269XX\"]){\n      title\n      items_page (query_params: {rules: [{column_id: \"numbers\", compare_value: [2500], operator:greater_than}, {column_id: \"numbers\", compare_value: [3000], operator:lower_than}]}){\n        items {\n          id\n          column_values {\n            id\n            text\n            column {\n              title\n            }\n            ... on BoardRelationValue {\n              linked_items {\n                id\n                name\n              }\n            }\n            ... on MirrorValue {\n              display_value\n              column {\n                id\n                title  \n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>I recommend to play around in the API Playground. It is designed to play around <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 161962,
+      "postNumber": 5,
+      "createdAt": "2024-01-14T11:39:44.406Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 162274,
+      "postNumber": 6,
+      "createdAt": "2024-01-16T05:55:55.963Z",
+      "author": "kitjarw (kitjar)",
+      "cookedHtml": "<p>Thank you very much</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: [18084084xx]) {\n    groups(ids: [\"new_group269xx\"]) {\n      title\n      items_page (query_params: {rules: [{column_id: \"property_id\", compare_value: [\"26d090f1-8ad6-Ac35-8a62-fc9e38b81ec5\",\"9853c253-1b2c-Ada7-97f4-33b7d6f7a14c\",\"19768d04-b806-Abf3-b7cc-ec43722e1a48\"]}]}) \n      {\n        items {\n          id\n          column_values {\n            id\n            text\n            column {\n              title\n            }\n            ... on BoardRelationValue {\n              linked_items {\n                id\n                name\n              }\n            }\n            ... on MirrorValue {\n              display_value\n              column {\n                id\n                title  \n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>and get proper items already<br />\nbut please advise more if we should have more condition such as … and…, …or…, …nor…</p>\n<p>how to modify query_params rule?</p>"
+    },
+    {
+      "id": 162279,
+      "postNumber": 7,
+      "createdAt": "2024-01-16T06:22:40.579Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Everything is in the docs, I suggest you play around in the API Playground. The query_params accepts an operator that can be either and or or.</p>"
+    },
+    {
+      "id": 162360,
+      "postNumber": 8,
+      "createdAt": "2024-01-16T13:36:18.062Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 175326,
+      "postNumber": 9,
+      "createdAt": "2024-03-27T10:59:05.876Z",
+      "author": "pbgci9 (Phil)",
+      "cookedHtml": "<p>Hi Bas, is it possible to read a number value in a mirror column?</p>\n<p>I’ve tried this query:</p>\n<pre><code class=\"lang-auto\">\n\nquery {\n items (ids:[1234567890]) {\n column_values {\n ... on MirrorValue {\n display_value\n id\n }\n }\n }\n}```\n\nand it returns empty value for any mirror that contains numbers, for example subitems total column:\n\n</code></pre>\n<p>{<br />\n“data”: {<br />\n“items”: [<br />\n{<br />\n“column_values”: [<br />\n{},<br />\n{<br />\n“display_value”: “”,<br />\n“id”: “subitems_total”<br />\n},<br />\n{},<br />\n{}</p>\n<pre><code>    ]\n  }\n]\n</code></pre>\n<p>},<br />\n“account_id”: 12345678<br />\n}</p>\n<pre><code class=\"lang-auto\">Thank you!</code></pre>"
+    },
+    {
+      "id": 175405,
+      "postNumber": 10,
+      "createdAt": "2024-03-27T16:02:21.175Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>It is possible to get an array of all numbers in the mirror column making up the total. In this query</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 123456789) {\n    column_values (ids: \"subitems_numbers\") {\n      id\n      value\n      ... on MirrorValue {\n        display_value\n      }\n    }\n  }\n}\n</code></pre>\n<p>the display value shows</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"items\": [\n      {\n        \"column_values\": [\n          {\n            \"id\": \"subitems_numbers\",\n            \"value\": null,\n            \"display_value\": \"8, 7, 60, 7, 8, 2, 4, 3, 10, 2, 3, 4, 6, 7, 7, 8, 9, 5, 1, 2, 3, 4, 6, 7, 7, 8, 9, 5, 1, 2, 3, 4, 6, 7, 7, 8, 9, 5\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": 123456\n}\n</code></pre>"
+    },
+    {
+      "id": 175611,
+      "postNumber": 11,
+      "createdAt": "2024-03-28T13:49:03.614Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

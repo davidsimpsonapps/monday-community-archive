@@ -1,0 +1,41 @@
+{
+  "id": 41162,
+  "title": "Gravity Forms – Monday creating single link from multiple files",
+  "slug": "gravity-forms-monday-creating-single-link-from-multiple-files",
+  "categoryId": 6,
+  "tagIds": [
+    5,
+    6,
+    46
+  ],
+  "createdAt": "2022-08-18T03:04:54.244Z",
+  "lastPostedAt": "2022-08-26T02:51:54.572Z",
+  "postsCount": 3,
+  "excerpt": "Hi, I am adding a list of uploaded files via Gravity Forms to a Monday.com board using Zapier (“Create update in Monday.com”). However, when there’s multiple files, Monday.com is treating the whole list as a single link &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2275,
+  "posts": [
+    {
+      "id": 95141,
+      "postNumber": 1,
+      "createdAt": "2022-08-18T03:04:54.366Z",
+      "author": "christiaank (Christiaan Knol)",
+      "cookedHtml": "<p>Hi, I am adding a list of uploaded files via Gravity Forms to a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> board using Zapier (“Create update in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>”). However, when there’s multiple files, <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> is treating the whole list as a single link and auto-generating an incorrect URL.</p>\n<p>Returned code example via gravity forms</p>\n<pre><code class=\"lang-auto\">[Files] =&gt; Array\n        (\n            [0] =&gt; https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file1.png\n            [1] =&gt; https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file2.png\n        )\n</code></pre>\n<p>However, when I insert the “Files” field into <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> it’s returned as a single link such as</p>\n<p><code>&lt;a href=\"https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file1.png,https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file2.png\"&gt;https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file1.png,https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file2.png&lt;/a&gt;</code></p>\n<p><a href=\"https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file1.png,https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file2.png\" rel=\"noopener nofollow ugc\">https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file1.png,https://www.domain.com/wp-content/uploads/gravity_forms/path/to/file2.png</a></p>\n<p>How can this be returned a the correct 2 file references?</p>\n<p>Thanks,</p>\n<p>— Christiaan</p>"
+    },
+    {
+      "id": 96031,
+      "postNumber": 2,
+      "createdAt": "2022-08-26T02:51:54.572Z",
+      "author": "christiaank (Christiaan Knol)",
+      "cookedHtml": "<p>Ended up fixing this by returning full HTML formatted links from a Gravity Forms Zapier hook – below for reference.</p>\n<pre><code class=\"lang-auto\">// returns files to Zapier as HTML rather than CSV / json to fix Monday.com integration\nadd_filter( 'gform_zapier_field_value', function ( $value, $form_id, $field_id, $entry ) {\n    $field = GFAPI::get_field( $form_id, $field_id );\n\n    if ( $field instanceof GF_Field_FileUpload &amp;&amp; $field-&gt;multipleFiles &amp;&amp; ! empty( $value ) ) {\n        $files = json_decode( $value );\n\t\t$value = \"\";\n\n\t\tforeach ($files as $file) {\n\n\t\t\t$value .= '&lt;a href=\"'.$file.'\"&gt;'.$file.'&lt;/a&gt;&lt;br&gt;&lt;br&gt;';\n\t\t}\n    }\n\n    return $value;\n}, 10, 4 );\n</code></pre>"
+    },
+    {
+      "id": 96751,
+      "postNumber": 3,
+      "createdAt": "2022-09-02T02:52:20.811Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

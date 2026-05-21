@@ -1,0 +1,92 @@
+{
+  "id": 16681,
+  "title": "File upload extension issue",
+  "slug": "file-upload-extension-issue",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    41,
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2021-02-23T14:56:00.066Z",
+  "lastPostedAt": "2021-03-01T22:39:21.325Z",
+  "postsCount": 9,
+  "excerpt": "Hi all, \nI’m developing an application for the marketplace and facing an issue with the files API. \nExcept for .png files, all the files I’m trying to upload, contain a ‘null’ extension and as a result, the file cannot b&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 3532,
+  "posts": [
+    {
+      "id": 41756,
+      "postNumber": 1,
+      "createdAt": "2021-02-23T14:56:00.157Z",
+      "author": "shaharsamira (Shahar Samira)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I’m developing an application for the marketplace and facing an issue with the files API.</p>\n<p>Except for .png files, all the files I’m trying to upload, contain a ‘null’ extension and as a result, the file cannot be previewed.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/8/86e9b1da61056b01e97845d30069488ffd5dda87.png\" alt=\"image\" width=\"255\" height=\"120\" /></p>\n<p>I’m using the code below in Node.js:</p>\n<pre><code>  const upfile = req.file.path;\n  // set auth token and query\n  const API_KEY = req.owner;\n  let query = `mutation ($file: File!) { add_file_to_column (file: $file, item_id: ${parseInt(\n    req.body.itemId\n  )}, column_id: \"${req.body.columnId}\") { id } }`;\n  const url = 'https://api.monday.com/v2/file';\n  let boundary = 'xxxxxxxxxx';\n  let data = '';\n  fs.readFile(upfile, function (err, content) {\n    data += '--' + boundary + '\\r\\n';\n    data += 'Content-Disposition: form-data; name=\"query\"; \\r\\n';\n    data += 'Content-Type:application/json\\r\\n\\r\\n';\n    data += '\\r\\n' + query + '\\r\\n';\n    data += '--' + boundary + '\\r\\n';\n    data +=\n      'Content-Disposition: form-data; name=\"variables[file]\"; filename=\"' +\n      req.file.originalname +\n      '\"\\r\\n';\n    data += 'Content-Type:application/octet-stream\\r\\n\\r\\n';\n    let payload = Buffer.concat([\n      Buffer.from(data, 'utf8'),\n      new Buffer.from(content, 'binary'),\n      Buffer.from('\\r\\n--' + boundary + '--\\r\\n', 'utf8'),\n    ]);\n\n    const options = {\n      method: 'post',\n      headers: {\n        'Content-Type': 'multipart/form-data; boundary=' + boundary,\n        Authorization: API_KEY,\n      },\n      body: payload,\n    };\n\n    fetch(url, options)\n      .then((res) =&gt; res.json())\n      .then((json) =&gt; {\n        fs.unlink(upfile, function (err) {\n          if (err) throw err;\n          console.log('File deleted');\n        });\n      }).catch((err) =&gt; {\n        console.log(err);\n      });\n  });\n</code></pre>\n<p>It’s important to mention that the <code>req.file.originalname</code> contains the name as well as the extension of the file, does someone know what can cause such a problem?</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 41941,
+      "postNumber": 2,
+      "createdAt": "2021-02-24T18:04:41.889Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/shaharsamira\">@shaharsamira</a>!</p>\n<p>Can’t say that I have come across this issue before, but I’m happy to try to figure it out with you.</p>\n<p>If you console.log() the req.file.originalname, what does it give you? I would definitely recommend setting up some prints to try and get the information to show, so you know where the issue is occurring.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41942,
+      "postNumber": 3,
+      "createdAt": "2021-02-24T18:04:46.093Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 42071,
+      "postNumber": 4,
+      "createdAt": "2021-02-25T12:06:19.891Z",
+      "author": "shaharsamira (Shahar Samira)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p>Thanks for your advise.</p>\n<p>Actually, there is no problem with the file name, the req.file.originalname is set as expected.</p>"
+    },
+    {
+      "id": 42072,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T12:11:35.859Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Can you confirm that the original file has a file extension by sending us an example of your full request? Please remove any API keys and other private info from the example.</p>\n<p>The only time I’ve seen this before is when the file extension was not included in the API call, so I’d love to verify that this is not the issue here.</p>"
+    },
+    {
+      "id": 42198,
+      "postNumber": 6,
+      "createdAt": "2021-02-25T12:59:11.780Z",
+      "author": "shaharsamira (Shahar Samira)",
+      "cookedHtml": "<p>Below is the logs from the server:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/f/fbcecba0d2f7e59ab1287ad4b484b3239064d158.png\" alt=\"image\" width=\"472\" height=\"291\" /></p>\n<p>As you can see, the originalname as well as the filename itself, contains the extension, in addition, I’m getting a success message from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> api.</p>\n<p>Is there another place, except for <code>filename=\"' +       req.file.originalname</code> to specify the file extension?</p>\n<p>Any thoughts?</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 42902,
+      "postNumber": 7,
+      "createdAt": "2021-03-01T13:15:12.522Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hmm super strange!</p>\n<p>We did recently update our API to better support file mutations. While we haven’t had a chance to come out with documentation on our SDK ReadMe or in our API documentation, check out Alex’s post in the community: <a href=\"https://community.monday.com/t/announcement-uploading-files-to-monday-com-has-just-become-easier/16803\" class=\"inline-onebox\">Announcement: Uploading files to monday.com has just become easier :)</a>.</p>\n<p>Do you mind checking this out and implementing this new method for uploading files and letting us know if this changes anything for you?</p>"
+    },
+    {
+      "id": 42903,
+      "postNumber": 8,
+      "createdAt": "2021-03-01T13:23:24.036Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shaharsamira\">@shaharsamira</a></p>\n<p>Spoke with our developer, and it looks like your file upload method is accurate.</p>\n<p>Do you mind sending over the file that you’re trying to upload so that we can try ourselves (feel free to DM me if it contains sensitive information).</p>\n<p>I was able to upload a CSV to a files column! While there was no preview, it was indeed recognized as a CSV, and there was no “null” for the file type:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/febe3bddae2b59ffc2af1503c59d41b2d66d82bc.jpeg\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/febe3bddae2b59ffc2af1503c59d41b2d66d82bc_2_690x351.jpeg\" alt=\"image\" width=\"690\" height=\"351\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2682×1368 125 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 43036,
+      "postNumber": 9,
+      "createdAt": "2021-03-01T22:39:21.325Z",
+      "author": "ofir_geller (ofir geller)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shaharsamira\">@shaharsamira</a> Hi can you try changing the content type to “text/csv” and when building the buffer from ‘content’ not specifying binary as the second parameter?</p>\n<p>So:<br />\ndata += ‘Content-text/csv\\r\\n\\r\\n’;<br />\nAnd:<br />\nnew Buffer.from(content), // ‘utf8’ is the default which should be good</p>"
+    },
+    {
+      "id": 44812,
+      "postNumber": 10,
+      "createdAt": "2021-03-15T14:01:29.704Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

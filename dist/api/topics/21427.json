@@ -1,0 +1,92 @@
+{
+  "id": 21427,
+  "title": "Upload file using Python and getting 'Unsupported query' error",
+  "slug": "upload-file-using-python-and-getting-unsupported-query-error",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    53,
+    94,
+    139,
+    351
+  ],
+  "createdAt": "2021-06-17T15:06:42.165Z",
+  "lastPostedAt": "2021-06-28T10:28:10.465Z",
+  "postsCount": 9,
+  "excerpt": "I’m trying to upload an image to a monday update using the add_file_to_update mutation. \nI’ve referenced the following posts: \n\nAnnouncement: Uploading files to monday.com has just become easier :)\nUpload File using API &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 4690,
+  "posts": [
+    {
+      "id": 55089,
+      "postNumber": 1,
+      "createdAt": "2021-06-17T15:06:42.399Z",
+      "author": "chelseaw (Chew)",
+      "cookedHtml": "<p>I’m trying to upload an image to a monday update using the <a href=\"https://monday.com/developers/v2#mutations-section-files\" rel=\"noopener nofollow ugc\">add_file_to_update mutation</a>.</p>\n<p>I’ve referenced the following posts:</p>\n<ul>\n<li><a href=\"https://community.monday.com/t/announcement-uploading-files-to-monday-com-has-just-become-easier/16803\" class=\"inline-onebox\">Announcement: Uploading files to monday.com has just become easier :)</a></li>\n<li><a href=\"https://community.monday.com/t/upload-file-using-api-and-python-and-requests-add-file-to-column/16970\" class=\"inline-onebox\">Upload File using API and python and requests ( add_file_to_column)</a></li>\n</ul>\n<p>With the help of those posts, I have the following code:<br />\n<strong>My code</strong></p>\n<pre><code class=\"lang-auto\">import requests\nimport os\n\ndef add_file_to_update(update_id):\n    api_key = os.environ.get(\"MONDAY_API_KEY\")\n    headers = {\"Authorization\" : api_key}\n    apiUrl = \"https://api.monday.com/v2/file\"\n\n    mutate_query = 'mutation ($updateId: Int!, $file: File!) { add_file_to_update (update_id: $updateId, file: $file) { id } }'\n    vars = {\n        'updateId' : int(update_id),\n    }\n\n    add_file = {'query' : mutate_query, 'variables' : vars}\n    dir_path = os.path.dirname(os.path.realpath(__file__))\n    files = [('variables[file]',('image.png',open(dir_path+'/image.png','rb'),'image/png'))]\n    r = requests.post(url=apiUrl, json=add_file, files=files, headers=headers)\n</code></pre>\n<p>The image.png file is a file that has no issues, as in I am able to open and view the file.</p>\n<p>Unfortunately, I’m getting this error message, and I’m not sure how to debug the error.</p>\n<p><strong>Error message</strong></p>\n<pre><code class=\"lang-bash\">{'error_message': 'Unsupported query', 'status_code': 400}\n</code></pre>\n<p>Does anyone have any idea where/what the issue is?</p>"
+    },
+    {
+      "id": 55115,
+      "postNumber": 2,
+      "createdAt": "2021-06-17T17:42:52.764Z",
+      "author": "chelseaw (Chew)",
+      "cookedHtml": "<p>I’ve tried to send this request with Postman, copying the method used by <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> <a href=\"https://community.monday.com/t/errors-message-no-query-string-was-present-account-id-8845295/19584/8\">here</a>:</p>\n<pre><code class=\"lang-auto\">mutation add_file($update_id:Int!, $file: File!) {add_file_to_update(update_id: $update_id, file:$file) {id}}\n</code></pre>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/e/e1427c51c3cdb7c526154ebeac4929f6876fea58.png\" alt=\"image\" width=\"386\" height=\"500\" /></p>\n<p>But when I try, I’m getting a 500 Internal Server Error*:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/fa3e0265d109a2ebc8651a3442149cdf8612e8bc.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/fa3e0265d109a2ebc8651a3442149cdf8612e8bc_2_374x499.png\" alt=\"image\" width=\"374\" height=\"499\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">727×970 49.4 KB</span>\n</div></a></div><p></p>\n<p>*I get this error for both the <code>https://api.monday.com/v2/</code> and <code>https://api.monday.com/v2/file</code> endpoints.</p>"
+    },
+    {
+      "id": 55158,
+      "postNumber": 3,
+      "createdAt": "2021-06-18T10:53:41.005Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 55159,
+      "postNumber": 4,
+      "createdAt": "2021-06-18T10:57:07.423Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/chelseaw\">@chelseaw</a>!</p>\n<p>Do you mind sending your full mutation request? This way I can check for errors.</p>\n<p>Thanks!<br />\nHelen</p>"
+    },
+    {
+      "id": 55164,
+      "postNumber": 5,
+      "createdAt": "2021-06-18T11:16:50.356Z",
+      "author": "chelseaw (Chew)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a></p>\n<p>This is the cURL command generated from Postman:</p>\n<pre><code class=\"lang-bash\">curl --location --request POST 'https://api.monday.com/v2/file' \\\n\n--header 'Authorization: XXXX' \\\n\n--header 'Cookie: __cf_bm=dd17f964e4380b3f79205e08deaa980092c327c8-1624024759-1800-AZbhDH93kC+21Vo+sFmGdM5etK29Nt8QQcQQfk/8NoQXUzB2Gqx7dN7BHnrVkAlm5v1Y8OBTMJ7npI79qfxq0js=' \\\n\n--form 'query=\"mutation add_file($update_id:Int!, $file: File!) {add_file_to_update(update_id: $update_id, file:$file) {id}}\"' \\\n\n--form 'variables=\"{“update_id”:1397157612}\"' \\\n\n--form 'map=\" {“image”:“variables.file”}\"' \\\n\n--form 'image=\"/full/path/to/image.png\n\n\"'\n</code></pre>\n<p>I get the following error messages for the 2 endpoints:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/f/f5210807d78cfa9c4ebff3dab48a94b9d74f4cc0.png\" alt=\"Screen Shot 2021-06-18 at 10.20.14 AM\" width=\"364\" height=\"139\" /></p>\n<p>And here’s the python code again. I cleaned it up here so the variable inputs are clear:</p>\n<pre><code class=\"lang-python\">apiUrl = \"https://api.monday.com/v2\"\napi_key = \"XXXXXXXX\"\nheaders = {\"Authorization\" : api_key}\nupdate_id = \"1397157612\"\n\ndef add_file_to_update(update_id):\n    mutate_query = 'mutation ($updateId: Int!, $file: File!) { add_file_to_update (update_id: $updateId, file: $file) { id } }'\n    vars = {\n        'updateId' : int(update_id)\n    }\n\n    add_file = {'query' : mutate_query, 'variables' : vars}\n\n    files = [('variables[file]',('image.png',open('/full/path/to/image.png','rb'), 'png'))]\n    r = requests.post(url=apiUrl, json=add_file, files=files, headers=headers)\n    r_json = r.json()\n    print(r_json)\n</code></pre>\n<p>I get the following error messages for the 2 endpoints:</p>\n<pre><code class=\"lang-bash\"># https://api.monday.com/v2\n{'errors': [{'message': 'No query string was present'}], 'account_id': XXXXXX}\n# https://api.monday.com/v2/file\n{'error_message': 'Unsupported query', 'status_code': 400}\n</code></pre>"
+    },
+    {
+      "id": 55173,
+      "postNumber": 6,
+      "createdAt": "2021-06-18T13:49:26.664Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/chelseaw\">@chelseaw</a>,</p>\n<p>Hmm weird, I’m unable to spot any errors in the query that you’re sending. There are a few things that I think could be going on:</p>\n<ol>\n<li>\n<p>Could there be file upload permissions for your account implemented by the admin of your account? I know there is a permissions setting that prevents users (all except admins) from uploading files into the account. A simple test would be: are you able to upload files in the UI, and are only experiencing trouble when uploading files with the API?</p>\n</li>\n<li>\n<p>Do you mind double-checking if the ID you’re using for your update is indeed the right one? To check, just copy the link for your update (see the screenshot below), and see if the last set of digits in the update URL are the ones you’re sending in your query:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6b70998701d18b3e390f3a30131c840cc1f8832d.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/6b70998701d18b3e390f3a30131c840cc1f8832d_2_252x250.png\" alt=\"image\" width=\"252\" height=\"250\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">726×720 31.6 KB</span>\n</div></a></div><p></p>\n</li>\n<li>\n<p>Does the issue persist for you for any other update? What about for updates on a separate board? What if you sent a different image file?</p>\n</li>\n</ol>\n<p>Thanks for your patience and assistance here! I want to make sure we cover all of our bases in case this is a bug.</p>"
+    },
+    {
+      "id": 55186,
+      "postNumber": 7,
+      "createdAt": "2021-06-18T15:28:09.848Z",
+      "author": "chelseaw (Chew)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p>Thank you for taking the time to help me with this, I appreciate it.</p>\n<ol>\n<li>\n<p>I am able to upload files in the UI. I am only experiencing trouble when uploading files with the API. But I will double-check with the team admin to see if there is a file upload permission that is not enabled for my account.  See video below.<br />\n</p>\n<div class=\"video-container\">\n    \n      \n      <a href=\"https://global.discourse-cdn.com/monday/original/2X/8/8de1d405a7d4a172330b6bc2f005c86f4add1efd.mov\" rel=\"noopener nofollow ugc\">https://global.discourse-cdn.com/monday/original/2X/8/8de1d405a7d4a172330b6bc2f005c86f4add1efd.mov</a>\n    \n  </div>\n<p></p>\n</li>\n<li>\n<p>I’ve double-checked and can confirm that I’m using the last set of digits in the update URL.</p>\n</li>\n<li>\n<p>The issue persists for other updates on (a) the same board and (b) a separate board. The issue persists if I send a different image. <img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=12\" title=\":confused:\" class=\"emoji\" alt=\":confused:\" width=\"20\" height=\"20\" /></p>\n</li>\n</ol>\n<p>Other details that may be helpful, I’m using the API token under Developer &gt; My Access Tokens.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9012f5262b5c4b73bc8b388701ed47eaed66f463.png\" title=\"Screen Shot 2021-06-18 at 2.23.49 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9012f5262b5c4b73bc8b388701ed47eaed66f463_2_524x500.png\" alt=\"Screen Shot 2021-06-18 at 2.23.49 PM\" width=\"524\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2021-06-18 at 2.23.49 PM</span><span class=\"informations\">1016×969 34.4 KB</span>\n</div></a></div><p></p>\n<p>Other mutations have been working for me successfully thus far (create an item, update various columns of an item, create an update within an item) .</p>"
+    },
+    {
+      "id": 55222,
+      "postNumber": 8,
+      "createdAt": "2021-06-19T13:48:14.902Z",
+      "author": "chelseaw (Chew)",
+      "cookedHtml": "<p>I now have working <code>add_file_to_update</code> and <code>add_file_to_column</code> queries.</p>\n<p>See below for a number of fixes.</p>\n<ol>\n<li>I switched to using f-strings in Python for my mutation query. See below the updated python code:<br />\n<strong>Add file to column</strong>\n</li>\n</ol>\n<pre><code class=\"lang-python\">item_id = \"1054445315\"\n\ndef add_file_to_column(item_id):\n    api_key = \"XXXXXXX\"\n    headers = {\"Authorization\" : api_key}\n    apiUrl = \"https://api.monday.com/v2/file\"\n    q = f\"\"\"\n            mutation add_file($file: File!) {{\n                add_file_to_column (item_id: {int(item_id)},\n                            column_id: files,\n                            file: $file\n                        ){{\n                    id\n                }}\n            }}\n        \"\"\"\n\n    dir_path = os.path.dirname(os.path.realpath(__file__))\n    f = dir_path+'/image.png'\n\n    files = {\n        'query': (None, q, 'image/png'),\n        'variables[file]': (f, open(f, 'rb'), 'multipart/form-data', {'Expires': '0'})\n    }\n    \n    r = requests.post(url=apiUrl, files=files, headers=headers)\n    r_json = r.json()\n    print(r_json)\n</code></pre>\n<p><strong>Add file to update</strong></p>\n<pre><code class=\"lang-python\">update_id = \"13971576121\"\n\ndef add_file_to_update(update_id):\n    api_key = \"XXXXXXX\"\n    headers = {\"Authorization\" : api_key}\n    apiUrl = \"https://api.monday.com/v2/file\"\n    q = f\"\"\"\n            mutation add_file($file: File!) {{\n                add_file_to_update (update_id: {int(update_id)},\n                            file: $file\n                        ){{\n                    id\n                }}\n            }}\n        \"\"\"\n    dir_path = os.path.dirname(os.path.realpath(__file__))\n    f = dir_path+'/image.png'\n\n    files = {\n        'query': (None, q, 'image/png'),\n        'variables[file]': (f, open(f, 'rb'), 'multipart/form-data', {'Expires': '0'})\n    }\n\n    r = requests.post(url=apiUrl, files=files, headers=headers) #\n    r_json = r.json()\n    print(r_json)\n</code></pre>\n<ol>\n<li>I was not using the correct set of digits for the update_id. Thank you <a class=\"mention\" href=\"/u/helen\">@Helen</a>. I was using the item_id. For future reference: <code>/pulses/item_id/posts/update_id</code>. This led to a successful curl POST request:</li>\n</ol>\n<pre><code class=\"lang-bash\">curl --location --request POST 'https://api.monday.com/v2/file' \\\n--header 'Authorization: XXXXXXX' \\\n--form 'query=\"mutation add_file($file: File!, $update_id: Int!) {add_file_to_update(update_id: $update_id, file: $file) {id}}\"' \\\n--form 'variables=\"{\\\"update_id\\\":1053334092}\"' \\\n--form 'map=\"{\\\"image\\\":\\\"variables.file\\\"}\"' \\\n--form 'image=@\"/Users/chelsea/workdir/git-box/db-ops/slack-monday/image.png\"'\n</code></pre>\n<ol>\n<li>The team admins made me an admin for the account, in case it was the file permissions issue.</li>\n</ol>"
+    },
+    {
+      "id": 55282,
+      "postNumber": 9,
+      "createdAt": "2021-06-21T10:27:22.840Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>I’m so glad to hear <a class=\"mention\" href=\"/u/chelseaw\">@chelseaw</a>!</p>\n<p>Congrats on resolving this!</p>\n<p>Helen</p>"
+    },
+    {
+      "id": 56420,
+      "postNumber": 10,
+      "createdAt": "2021-06-28T10:28:10.465Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

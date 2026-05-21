@@ -1,0 +1,40 @@
+{
+  "id": 94469,
+  "title": "Integration action - 429 should pause queue for board integration",
+  "slug": "integration-action-429-should-pause-queue-for-board-integration",
+  "categoryId": 58,
+  "tagIds": [
+    208,
+    355
+  ],
+  "createdAt": "2024-08-02T12:10:40.745Z",
+  "lastPostedAt": "2024-08-02T12:20:25.261Z",
+  "postsCount": 2,
+  "excerpt": "Currently when we return a 429 to an integration action, the action will retry (or at least is supposed to @basdebruin) at 60 seconds from when it last tried. I have a separate request open for honoring retry-after heade&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 13,
+  "posts": [
+    {
+      "id": 195867,
+      "postNumber": 1,
+      "createdAt": "2024-08-02T12:10:40.820Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Currently when we return a 429 to an integration action, the action will retry (or at least is supposed to <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>) at 60 seconds from when it last tried. I have a separate request open for honoring retry-after headers.</p>\n<p>Scenario: User has changed status on 500 items, triggering an integration. Monday queues these 500 operations and begins processing (I think its about 20 initially). If we return a 429 with a retry-after then the entire queue should pause. Any actions with a 429 should be considered outstanding still and keep the max outstanding requests for the queue</p>\n<p>Currently, the action will retry after 60 seconds (from its initial invocation). But while it waits to retry, the queue continues to process - the remaining 489 actions in the queue all get sent to our app back ends, and all receive a 429.</p>\n<p>Monday should pause the queue processing for that integration if an integration has received a 429 until the 429 is resolved. This will reduce load on app developer back ends, on monday code, on the monday infrastructure, etc.</p>\n<p>Further, with the 429 we should have a way to return a “pause all app integrations” request. This would be if API complexity is hit and we can’t process further actions - regardless of which integration. This would cause all new actions to automatically queue and wait for the app until the retry-after. Now there is no further request load on servers until that time.</p>\n<p>Significantly, this will reduce energy consumption. Making our apps greener should be a goal, right? It is supposed to be  - <a href=\"https://monday.com/p/esg/\" class=\"inline-onebox\">ESG at monday.com</a></p>"
+    },
+    {
+      "id": 195869,
+      "postNumber": 2,
+      "createdAt": "2024-08-02T12:20:25.261Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Fully agree. I have a few apps where sending a 429 on an action does <strong>not</strong> trigger a retry. I have a support case open but that is open for over a month now. Providing all the logs to monday support, so let’s see what they come up with.</p>"
+    },
+    {
+      "id": 195991,
+      "postNumber": 3,
+      "createdAt": "2024-08-04T08:08:43.303Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

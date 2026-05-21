@@ -1,0 +1,82 @@
+{
+  "id": 80882,
+  "title": "Getting Data from API using python - getting certificate error",
+  "slug": "getting-data-from-api-using-python-getting-certificate-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-03-12T14:55:57.500Z",
+  "lastPostedAt": "2024-03-13T11:13:58.869Z",
+  "postsCount": 8,
+  "excerpt": "Hi All, \nWe are evaluating Monday as a possible new platform to replace our current PMO solution, and I’m trying to test out the API. \nI was able to generate an API key using an admin account and attempted to connect to &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1888,
+  "posts": [
+    {
+      "id": 172845,
+      "postNumber": 1,
+      "createdAt": "2024-03-12T14:55:57.594Z",
+      "author": "ryfrank (Ryan Frank)",
+      "cookedHtml": "<p>Hi All,</p>\n<p>We are evaluating Monday as a possible new platform to replace our current PMO solution, and I’m trying to test out the API.</p>\n<p>I was able to generate an API key using an admin account and attempted to connect to the API using the simple example code provided in the documentation.</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\napiKey = \"NotMyRealAPIKey\"\nheaders = {\"Authorization\" : apiKey, \"API-Version\" : \"2023-04\"}\n\nquery2 = 'query { boards (limit:1) {id name} }'\ndata = {'query' : query2}\n\nr = requests.post(url=apiUrl, json=data, headers=headers)\n</code></pre>\n<p>However I was surprised to immediately get an error when running this:</p>\n<p>Exception has occurred: SSLError</p>\n<p>HTTPSConnectionPool(host=‘<a href=\"http://api.monday.com\" rel=\"noopener nofollow ugc\">api.monday.com</a>’, port=443): Max retries exceeded with url: /v2 (Caused by SSLError(SSLCertVerificationError(1, ‘[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1108)’)))</p>\n<p>ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1108)</p>\n<p>Would appreciate if I’m missing something obvious here.</p>"
+    },
+    {
+      "id": 172853,
+      "postNumber": 2,
+      "createdAt": "2024-03-12T15:32:37.730Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ryfrank\">@ryfrank</a>,</p>\n<p>Welcome to the community!</p>\n<p>Not 100% sure if this will resolve that specific error, but I see you’re calling API version <code>2023-04</code> which is no longer supported. Try calling <code>2024-04</code> (RC), <code>2024-01</code> (stable), or <code>2023-10</code> (maintenance) and let me know what happens!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 172869,
+      "postNumber": 3,
+      "createdAt": "2024-03-12T16:34:09.317Z",
+      "author": "ryfrank (Ryan Frank)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">import requests\nimport json\n\napiKey = \"notForSharing\"\napiUrl = \"https://api.monday.com/v2\"\nheaders = {\"Authorization\" : apiKey, \"API-Version\" : \"2024-01\"}\n\nquery2 = 'query { boards (limit:1) {id name} }'\ndata = {'query' : query2}\n\nr = requests.post(url=apiUrl, json=data, headers=headers)\n</code></pre>\n<p>Same response.  Got the same when I tried another box here as well.  I took the code from <a href=\"https://developer.monday.com/api-reference/docs/getting-started\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Making your first request</a></p>"
+    },
+    {
+      "id": 172889,
+      "postNumber": 4,
+      "createdAt": "2024-03-12T18:48:49.530Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Gotcha - well at least we got that updated!</p>\n<p>I just tested the same code sample on my end, and I didn’t get any errors. In my experience, the error you’re getting is for the SSL cert on the client-side. I did a little research and found this <a href=\"https://stackoverflow.com/questions/51390968/python-ssl-certificate-verify-error\">discussion</a> which may be helpful for resolving it!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 172893,
+      "postNumber": 5,
+      "createdAt": "2024-03-12T19:03:05.032Z",
+      "author": "ryfrank (Ryan Frank)",
+      "cookedHtml": "<p>100% appears to be some kind of proxy issue that I’m going to have to try and understand on my end - is I use verify=False as part of the post call it works fine.  Thanks for the linked resources</p>"
+    },
+    {
+      "id": 172897,
+      "postNumber": 6,
+      "createdAt": "2024-03-12T19:16:17.657Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Glad you at least have a workaround! Feel free to reach out with any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 172907,
+      "postNumber": 7,
+      "createdAt": "2024-03-12T20:22:22.070Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>My assumption would your environment hasn’t been configured to trust the Root CA used for their certificate. Depending on environment you may need to add it to some certificate store.</p>"
+    },
+    {
+      "id": 173017,
+      "postNumber": 8,
+      "createdAt": "2024-03-13T11:13:58.869Z",
+      "author": "ryfrank (Ryan Frank)",
+      "cookedHtml": "<p>That appears to be the issue - using the resources provided I installed the pip-system-certs module that seems to be forcing the correctly trusted root CA cert to be used and I can query with no issues.  Thanks everyone!</p>"
+    },
+    {
+      "id": 173062,
+      "postNumber": 9,
+      "createdAt": "2024-03-13T14:16:38.561Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

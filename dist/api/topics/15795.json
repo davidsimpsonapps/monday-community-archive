@@ -1,0 +1,96 @@
+{
+  "id": 15795,
+  "title": "General caster - formula for specific weekday",
+  "slug": "general-caster-formula-for-specific-weekday",
+  "categoryId": 80,
+  "tagIds": [
+    108,
+    152
+  ],
+  "createdAt": "2021-02-03T08:33:23.790Z",
+  "lastPostedAt": "2021-05-13T18:38:33.143Z",
+  "postsCount": 11,
+  "excerpt": "Hello Community and GC-Team, \nI am in need of a certain formula. We have different release dates for our products in a week and they are produced a day before. There is a product that officially releases every sunday but&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3671,
+  "posts": [
+    {
+      "id": 39519,
+      "postNumber": 1,
+      "createdAt": "2021-02-03T08:33:24.034Z",
+      "author": "MNie (Marcos)",
+      "cookedHtml": "<p>Hello Community and GC-Team,</p>\n<p>I am in need of a certain formula. We have different release dates for our products in a week and they are produced a day before. There is a product that officially releases every sunday but is produced thursday. Otherwise its produced a day before. Can I make a formula that,</p>\n<p><code>if release date is sunday, display date of thursday</code><br />\nor more like<br />\n<code>if release date is sunday, - 3 (so its thursday)</code>?</p>\n<p>Edit: Right now, I have come up with this:<br />\n<code>IF({ET} = WEEKDAY(7), FORMAT_DATE(SUBTRACT_DAYS({ET}, 1), FORMAT_DATE(SUBTRACT_DAYS({ET}, 3))))</code><br />\n(ET is the release date column)<br />\nBut it sets any date - 3 weekdays, not only when it’s sunday.<br />\nThis is probably because monday doesnt understand Weekday or Weekday (7).</p>\n<p>I hope you understand what I mean.<br />\nSince I need automations to work with this, I need General Caster for it, right?</p>\n<p>I’d be very glad if you can help me out here.</p>"
+    },
+    {
+      "id": 39529,
+      "postNumber": 2,
+      "createdAt": "2021-02-03T10:59:23.473Z",
+      "author": "MNie (Marcos)",
+      "cookedHtml": "<p>I managed to get it to work, but not quite. I need help from the GENERAL CASTER team.</p>\n<p>I made a formula column (it is named “Sonntag”) that says:<br />\n<code>FORMAT_DATE({ET}, \"dddd\")</code><br />\nET is the release date</p>\n<p>Then I created another formula column:<br />\n<code>IF({Sonntag} = \"Sunday\", FORMAT_DATE(SUBTRACT_DAYS({ET}, 3)), FORMAT_DATE(SUBTRACT_DAYS({ET}, 1)))</code></p>\n<p>which subtracts 3 days if “Sonntag” says “Sunday” and subtracts 1 if “Sonntag” says something else (Friday for example)</p>\n<p>Now I used the General Caster App to perform this last formular and cast it to an actual column, which I can use in my automations. I used the Date column (because this is the production day).<br />\nI have one item where it works. For example the release date {ET} is the 6th February, my {Sonntag}-formula casts “Saturday”, my other formula casts “Feb. 05, 2021” - which is correct! Now the General cast formula \"When any column changes, perform “Formula” and cast result to “Production date” projects the Feb. 05, 2021 as well. It does work in this case.<br />\nI tried it with the 7th February, which is a sunday, and my last formula casts “4th Febraury” - which is also correct. Now the General Caster casts “Feb. 06, 2021”.<br />\nWhy?</p>\n<p>Btw. what column needs to change so that the general caster activates. Any? So I can also use any other column, like status?</p>"
+    },
+    {
+      "id": 39900,
+      "postNumber": 3,
+      "createdAt": "2021-02-05T15:59:54.592Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mnie\">@MNie</a>!</p>\n<p>I believe <a class=\"mention\" href=\"/u/rob\">@rob</a> from the General Caster team may be the better candidate to answer this question, but I’m happy to take a look for you as well.</p>\n<p>It seems like the issue here is that the General Caster isn’t casting the correctly calculated date (i.e. Feb 6 instead of Feb 4), is that right?</p>\n<p>Regarding your last question about which column to change, this would depend on the recipe you’re using! For instance, if you’re using the “When any column changes…” recipe, then indeed when any column on this board is altered, the formula will be performed and then cast.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 39986,
+      "postNumber": 5,
+      "createdAt": "2021-02-08T07:01:12.968Z",
+      "author": "MNie (Marcos)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a> and maybe at one point <a class=\"mention\" href=\"/u/rob\">@rob</a>,</p>\n<p>This I actually got to bypass somehow, so this problem is solved now.</p>\n<p>I do have another Problem.</p>\n<p>Forget what I said before, I have new formulas etc.</p>\n<p>I will need to explain it again:</p>\n<p>We are a news company, publishing different news papers every day.<br />\nProduct 1 is published every day, produced the day before.<br />\nProduct 2 is published every sunday and wednesday, produced thursday and monday.</p>\n<p>Now in my board I have the following (for this topic relevant) columns:<br />\n{Product} - A dropdown. “Product 1” and “Product 2” are the options.<br />\n{Release} - Date column for the release date.<br />\n{Production} - Date column for the production date.</p>\n<p>Now I have different Formula columns:<br />\n{Weekday} - <code>FORMAT_DATE({Release}, \"dddd\")</code><br />\n{Text} -  a text column used for a GC-Integration to bypass the problem in my comment before.</p>\n<p>{Formula 1} -<br />\n<code>SWITCH({Text}, \"Wednesday\", FORMAT_DATE(SUBTRACT_DAYS({ET}, 2)),  \"Sunday\", FORMAT_DATE(SUBTRACT_DAYS({ET}, 3)), \"Monday\", FORMAT_DATE(SUBTRACT_DAYS({ET}, 1)), \"Tuesday\", FORMAT_DATE(SUBTRACT_DAYS({ET}, 1)), \"Thursday\", FORMAT_DATE(SUBTRACT_DAYS({ET}, 1)), \"Friday\", FORMAT_DATE(SUBTRACT_DAYS({ET}, 1)), \"Saturday\", FORMAT_DATE(SUBTRACT_DAYS({ET}, 1)))</code></p>\n<p>{Formula 2} -<br />\n<code>SWITCH({Product}, \"Product 2\", {Formula 1}, \"Product 1\", FORMAT_DATE(SUBTRACT_DAYS({Release}, 1)))</code></p>\n<p>Now my General Caster Integrations:<br />\n\"When any column changes, perform “Weekday” and cast result to “Text”,<br />\n\"When any column changes, perform “Formula 2” and cast result to “Production”.</p>\n<p>The first integraton works fine.<br />\nThe second one does not.<br />\nIt casts the dates of Formula 2 for “Product 1” but not for “Product 2”, it is an invalid date.<br />\nI also tried casting it into a new text column, but it only casts “Product 1” and for “Product 2” nothing at all, not even “invalid date”.</p>\n<p>Here I tried to recreate the problem for you to see and GC decided to cast one correctly, but the other one is still “invalid date”.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d51191dff8966ad63836c80ace2208fb959ae5b0.png\" title=\"Bildschirmfoto 2021-02-08 um 12.12.02\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/d51191dff8966ad63836c80ace2208fb959ae5b0_2_690x149.png\" alt=\"Bildschirmfoto 2021-02-08 um 12.12.02\" width=\"690\" height=\"149\" /><div class=\"meta\"><span class=\"filename\">Bildschirmfoto 2021-02-08 um 12.12.02</span><span class=\"informations\">838×182 22.7 KB</span></div></a></div><p></p>\n<p>Why cant General Caster just cast what is in the Formula 2 column? <a class=\"mention\" href=\"/u/rob\">@rob</a></p>"
+    },
+    {
+      "id": 40009,
+      "postNumber": 6,
+      "createdAt": "2021-02-08T10:47:03.806Z",
+      "author": "MNie (Marcos)",
+      "cookedHtml": "<p>I found a comment by <a class=\"mention\" href=\"/u/rob\">@rob</a> linking to how a date must be formatted, that helped… kinda but the issue is that General Caster cant retrieve information out of a formula if in this formula another formula is used. So everytime I use a formula, I need to use GC to cast its result to a text column, then use another formula using the new text column, then use GC again. On my board are 3 GC-Integrations active now but thats ok. I can hide all “useless” columns for my coworkers so I guess that works. Still not perfect tho.</p>\n<p>Any chance GC will get updated for this?</p>\n<p>Also, whenever I want to use GC for anything timeline-related, it just doesnt comply. Sometimes its “invalid date, invalid date” (even though I only have one Date in my formula) or it just doesnt do anything at all and leaves it blank.</p>"
+    },
+    {
+      "id": 40019,
+      "postNumber": 7,
+      "createdAt": "2021-02-08T12:18:10.258Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/m/5daacb/48.png\" class=\"avatar\" /> MNie:</div>\n<blockquote>\n<p>Any chance GC will get updated for this?</p>\n</blockquote>\n</aside>\n<p>Currently we have no plans for adding support to nested formulas in GC.</p>"
+    },
+    {
+      "id": 40025,
+      "postNumber": 8,
+      "createdAt": "2021-02-08T12:51:24.545Z",
+      "author": "MNie (Marcos)",
+      "cookedHtml": "<p>Any tips for using GC with timelines (start date) <a class=\"mention\" href=\"/u/rob\">@rob</a>?</p>"
+    },
+    {
+      "id": 40029,
+      "postNumber": 9,
+      "createdAt": "2021-02-08T13:08:50.443Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mnie\">@MNie</a><br />\nGet inspiration here:</p><aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/rob/48/33058_2.png\" class=\"avatar\" />\n    <div class=\"quote-title__text-content\">\n      <a href=\"https://community.monday.com/t/general-caster-formula-tip-from-timeline-to-timeline/11577\"><img width=\"20\" height=\"20\" src=\"https://emoji.discourse-cdn.com/apple/light_bulb.png?v=15\" title=\"light_bulb\" alt=\"light_bulb\" class=\"emoji\" /> General Caster - Formula Tip - From Timeline to Timeline</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/share-monday-apps/61\"><span style=\"--category-badge-color:#66CCFF;--category-badge-text-color:#000000;--parent-category-badge-color:#00ca72\" class=\"badge-category --style-square --has-parent\"><span class=\"badge-category__name\">Share your monday apps!</span></span></a>\n    </div>\n  </div>\n  <blockquote>\n    <a name=\"general-caster-1\" class=\"anchor\" href=\"#general-caster-1\"></a>General Caster\n<a href=\"https://general-caster.omnidea.it/documentation.html\">General Caster</a> includes a collection of automation recipes aimed at performing enhanced calculations in <a href=\"https://monday.omnidea.it/\">monday.com</a>  without using a formula column . \nComplete documentation is available <a href=\"https://general-caster.omnidea.it/documentation.html#how-formula-works\">here</a>. \n\n<a name=\"from-timeline-to-timeline-formula-2\" class=\"anchor\" href=\"#from-timeline-to-timeline-formula-2\"></a>From Timeline to Timeline Formula\nGiven {item.timeline} your first Timeline column placeholder, use the following formula: \nCONCATENATE(FORMAT_DATE(ADD_DAYS(LEFT({item.timeline}, 10), 7), \"YYYY-MM-DD\"), \";\", FORMAT_DATE (ADD_DAYS(RIGHT({item.timeline}, 10), 7), \"YYYY-MM-DD\")) \nto update yo…\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 40118,
+      "postNumber": 10,
+      "createdAt": "2021-02-09T10:08:05.476Z",
+      "author": "MNie (Marcos)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rob\">@rob</a><br />\nI dont get any inspiration from this. I also tried the exact formula from this comment (even though I dont need it) but that doesnt even work for me. General Caster just doesnt work with Timelines. Needs a fix at least.</p>"
+    },
+    {
+      "id": 51349,
+      "postNumber": 11,
+      "createdAt": "2021-05-13T18:38:33.143Z",
+      "author": "jennap (Jenna)",
+      "cookedHtml": "<p>Hey MNie,</p>\n<p>It’s awesome that you’re using this monday App - we love it! General Caster was built by the folks over at Omnidea S.r.l., and I can see that you are already troubleshooting with Rob!</p>\n<p>You can also reach them by sending an email over to <a href=\"mailto:roberto.tremonti@omnidea.it\">roberto.tremonti@omnidea.it</a>.</p>\n<p>While we are happy to support with questions about our core platform (including the Apps Marketplace in general), we are unable to help with questions about apps developed by third party developers.</p>\n<p>Let us know if you have any follow-up questions!</p>\n<p>Cheers,<br />\nJenna</p>"
+    },
+    {
+      "id": 52179,
+      "postNumber": 12,
+      "createdAt": "2021-05-20T18:38:34.278Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

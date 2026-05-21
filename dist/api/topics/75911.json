@@ -1,0 +1,110 @@
+{
+  "id": 75911,
+  "title": "... on MirrorValue \"Internal Server Error\"",
+  "slug": "on-mirrorvalue-internal-server-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    203
+  ],
+  "createdAt": "2024-01-23T13:41:50.486Z",
+  "lastPostedAt": "2025-04-24T04:32:35.633Z",
+  "postsCount": 13,
+  "excerpt": "I have found a condition with ... on MirrorValue which results in an Internal Server Error. \nIt appears if the board contains an “orphan” mirror column. While normally if you delete a connect boards column, all connected&hellip;",
+  "solvedPostId": null,
+  "likeCount": 12,
+  "views": 354,
+  "posts": [
+    {
+      "id": 163670,
+      "postNumber": 1,
+      "createdAt": "2024-01-23T13:41:50.576Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I have found a condition with <code>... on MirrorValue</code> which results in an Internal Server Error.</p>\n<p>It appears if the board contains an “orphan” mirror column. While normally if you delete a connect boards column, all connected mirror columns are deleted, it seems possible for them to not be deleted due to an error.</p>\n<p>The mirror column, via API still returns a settings_str that points to the deleted connect boards column, it also contains board-column mappings. The API user has access to the boards pointed to.</p>\n<p>My suspicion is that something isn’t getting cleaned up correctly under the hood as well. It doesn’t affect all items on the board. (Maybe it only affects items that were previously connected and there is some orphan connection, or the reverse, only those that were not previously connected?)</p>\n<p><em>for reference this is an accounts board in monday crm, so there could be special things happening nobody knows about. The board is also reporting 84% connections used, yet no connect boards columns appear to have any connections - but the owner can see items to select on the visible connect boards columns. if the owner didn’t have access to underlying boards they’d still see the connect boards column. It is almost like there is ghost connect boards column.</em></p>"
+    },
+    {
+      "id": 163901,
+      "postNumber": 2,
+      "createdAt": "2024-01-24T09:50:15.545Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Very nice catch, <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !</p>"
+    },
+    {
+      "id": 163923,
+      "postNumber": 3,
+      "createdAt": "2024-01-24T12:33:08.208Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Thanks. It should be easy enough for monday to fix if they want to. It just need to handle the situation correctly and when its encountered, return an empty string since it is an empty cell.</p>\n<p>Until then at least everyone knows this is something to look for, and have the customer either delete the column or reconnect it with a connect boards column.</p>"
+    },
+    {
+      "id": 163951,
+      "postNumber": 4,
+      "createdAt": "2024-01-24T14:30:08.116Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>Thanks for letting us know. I sent this to the team, and they asked for you to open a <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">ticket</a> as it might actually be a bug.</p>\n<p>Thanks,<br />\nRachel</p>"
+    },
+    {
+      "id": 163955,
+      "postNumber": 5,
+      "createdAt": "2024-01-24T15:00:58.394Z",
+      "author": "Jenni (Jenni Vibert)",
+      "cookedHtml": "<p>We’ve been getting internal server errors when accessing the Monday API since 12:10pm yesterday, with no immediately discernible cause.  Not every call is affected.<br />\nWhilst I’m not sure our error is the same, this post at least gives me another option to investigate, thank you for posting your findings.</p>"
+    },
+    {
+      "id": 163970,
+      "postNumber": 6,
+      "createdAt": "2024-01-24T15:55:44.762Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Ticket is opened. Oh I know its a bug! Actually two bugs.</p>\n<ol>\n<li>unhandled exception for the orphaned mirror</li>\n<li>mirrors are sometimes not deleted when the connect board column is deleted.</li>\n</ol>"
+    },
+    {
+      "id": 163981,
+      "postNumber": 7,
+      "createdAt": "2024-01-24T16:40:38.392Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Ticket is 3170931, if you could take a look. Seems it may be getting misrouted.</p>"
+    },
+    {
+      "id": 163988,
+      "postNumber": 8,
+      "createdAt": "2024-01-24T17:07:17.935Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/joseph.monday\">@joseph.monday</a> is on it!</p>"
+    },
+    {
+      "id": 164151,
+      "postNumber": 9,
+      "createdAt": "2024-01-25T14:53:22.227Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jenni\">@Jenni</a>,</p>\n<p>Welcome to the community!</p>\n<p>Are you still having this issue? And to confirm, what version are you using?</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 164273,
+      "postNumber": 10,
+      "createdAt": "2024-01-26T10:51:08.677Z",
+      "author": "Jenni (Jenni Vibert)",
+      "cookedHtml": "<p>Hi Rachel, thank you for your reply <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>We’re still getting this error unfortunately.  Our version number is 2023-10.</p>\n<p>Is there any other information that would be helpful diagnostically or for recording?</p>\n<p>My instinct was to re-check our query, as we had a major overhaul of our code in line with the 15th January change over from 2023-07.<br />\nThe query in question is a fairly standard (I think) board-items call &amp; works for all but 2 of our boards.  This is mirrored in the dev playground - where the query silently fails(?) for those particular board ids, but is fine otherwise.</p>"
+    },
+    {
+      "id": 164330,
+      "postNumber": 11,
+      "createdAt": "2024-01-26T14:25:11.292Z",
+      "author": "Jenni (Jenni Vibert)",
+      "cookedHtml": "<p>Have also logged this as a ticket now as, after looking into things our side, I cannot confirm if it’s the same issue <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\nTicket number: <span class=\"hashtag-raw\">#3175310</span></p>"
+    },
+    {
+      "id": 164518,
+      "postNumber": 12,
+      "createdAt": "2024-01-28T13:45:45.003Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/jenni\">@Jenni</a>,</p>\n<p>Thank you for opening a ticket with us!</p>\n<p>Our team will take a look into this!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 227689,
+      "postNumber": 13,
+      "createdAt": "2025-04-24T04:32:35.633Z",
+      "author": "Adnene (Adnene)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Just to let you know that this issue is still happening with mirror columns.</p>\n<p>For instance, we have an itemId and one column id that points to a mirror. If we send this request:</p>\n<pre><code class=\"lang-auto\">query GetItemsById($columnIds: [String!], $itemIds: [ID!]) {\n  items(ids: $itemIds) {\n    id\n    column_values(ids: $columnIds) {\n      id\n      type\n      value\n      text\n      ... on MirrorValue {\n        display_value\n      }\n    }\n  }\n}\n</code></pre>\n<p>We get:</p>\n<pre><code class=\"lang-auto\">{\n    \"status_code\": 500,\n    \"error_message\": \"Internal server error\",\n    \"error_code\": \"INTERNAL_SERVER_ERROR\",\n    \"errors\": [\n        {\n            \"message\": \"Internal server error\",\n            \"extensions\": {\n                \"status_code\": 500,\n                \"error_code\": \"INTERNAL_SERVER_ERROR\"\n            }\n        }\n    ]\n}\n</code></pre>\n<p>by removing the <code>display_value</code> we get the result:</p>\n<pre><code class=\"lang-auto\">{\n    \"data\": {\n        \"items\": [\n            {\n                \"id\": \"xxxxx\",\n                \"column_values\": [\n                    {\n                        \"id\": \"mirror0\",\n                        \"type\": \"mirror\",\n                        \"value\": null,\n                        \"text\": null\n                    },\n                    {\n                        \"id\": \"mirror05\",\n                        \"type\": \"mirror\",\n                        \"value\": null,\n                        \"text\": null\n                    }\n                ]\n            }\n        ]\n    },\n    \"account_id\": xxxxxx\n}\n</code></pre>\n<p>We tried with different versions of the API <code>2024-10</code>, <code>2025-01</code> without success.</p>\n<p>We already created a support ticket for this.</p>"
+    }
+  ]
+}

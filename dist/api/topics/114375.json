@@ -1,0 +1,33 @@
+{
+  "id": 114375,
+  "title": "Align board view filter, dashboard widget filter, and GraphQL APIs",
+  "slug": "align-board-view-filter-dashboard-widget-filter-and-graphql-apis",
+  "categoryId": 58,
+  "tagIds": [
+    17,
+    196
+  ],
+  "createdAt": "2025-05-11T22:58:07.615Z",
+  "lastPostedAt": "2025-06-18T23:03:41.613Z",
+  "postsCount": 2,
+  "excerpt": "The monday.get(&#39;filter&#39;) API is not quite complete and symmetric when comparing board view vs dashboard widget vs GraphQL API. \n1. Board view vs. dashboard widget\nAs discussed in this topic, it’s currently possible to ac&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 10,
+  "posts": [
+    {
+      "id": 229144,
+      "postNumber": 1,
+      "createdAt": "2025-05-11T22:58:07.697Z",
+      "author": "reinier (Reinier ― 📅 Calendar Plus 🍅 Automato)",
+      "cookedHtml": "<p>The <code>monday.get('filter')</code> API is not quite complete and symmetric when comparing board view vs dashboard widget vs GraphQL API.</p>\n<h1><a name=\"p-229144-h-1-board-view-vs-dashboard-widget-1\" class=\"anchor\" href=\"#p-229144-h-1-board-view-vs-dashboard-widget-1\"></a>1. Board view vs. dashboard widget</h1>\n<p>As discussed in <a href=\"https://community.monday.com/t/how-to-access-dashboard-widget-filter/72809/4\">this topic</a>, it’s currently possible to access the board-wide filter from a board view by using <a href=\"https://developer.monday.com/apps/docs/mondayget#getting-the-search-term-from-the-board-search\" rel=\"noopener nofollow ugc\"><code>monday.get('filter')</code></a>, but the same is <em>not</em> possible for a dashboard widget. It would be good to support this for feature symmetry. We’d be able to offer the same experience/feature parity for our board view as for our dashboard widget view.</p>\n<p>It would be great if the filter would also be (mostly) compatible with <code>item_page(query_params)</code> just like the board view’s filters.</p>\n<h1><a name=\"p-229144-h-2-mondaygetfilter-vs-items_page-api-incompatibility-2\" class=\"anchor\" href=\"#p-229144-h-2-mondaygetfilter-vs-items_page-api-incompatibility-2\"></a>2. <code>monday.get('filter')</code> vs <code>items_page</code> API incompatibility</h1>\n<p><code>monday.get('filter')</code> returns:</p>\n<pre><code class=\"lang-typescript\">{\n  term: string;\n  rules: (Record&lt;string, any&gt; &amp; {\n    column_id?: string;\n    compare_value?: string[];\n    compare_attribute?: string;\n    operator?: string;\n  })[];\n  operator: string | null;\n}\n</code></pre>\n<p><a href=\"https://developer.monday.com/api-reference/reference/items-page\" rel=\"noopener nofollow ugc\"><code>boards { items_page(query_params) } }</code></a> accepts:</p>\n<pre><code class=\"lang-auto\">operator ItemsQueryOperator\norder_by [ItemsQueryOrderBy!]\nrules [ItemsQueryRule!]\n</code></pre>\n<p>The string <code>term</code> is not accepted. Additionally, the <code>operator</code> and <code>compare_value</code> are type <code>string</code> vs a string enum like <code>ItemsQueryOperator</code>.</p>\n<p>I’d love to be able to apply the filters from our back end.</p>\n<h1><a name=\"p-229144-h-3-person-filter-is-missing-3\" class=\"anchor\" href=\"#p-229144-h-3-person-filter-is-missing-3\"></a>3. Person filter is missing</h1>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/4/f/4fcb6a874e59ab5a7448ddb612ff1d7f9669ee3b.png\" alt=\"image\" width=\"424\" height=\"50\" /></p>\n<p>The search term and filters are included in <code>monday.get('filter')</code>'s <code>FilterResponse</code>, but the person is not visible at all to the board view an dashboard widget view.</p>\n<p>This means I cannot apply the complete filter from our back end, and, worse, I cannot even detect that a customer has this filter enabled. The latter means they have an expectation that the view is filtered correctly, but it might not be.</p>"
+    },
+    {
+      "id": 232396,
+      "postNumber": 2,
+      "createdAt": "2025-06-18T23:03:41.613Z",
+      "author": "reinier (Reinier ― 📅 Calendar Plus 🍅 Automato)",
+      "cookedHtml": "<h1><a name=\"p-232396-h-4-ambiguous-column-filters-1\" class=\"anchor\" href=\"#p-232396-h-4-ambiguous-column-filters-1\"></a>4. Ambiguous column filters</h1>\n<p>When applying column filters, it is not clear which board is targeted. You can filter by item name, and by subitem name, and the filters just says <code>name</code>. Or a item status and subitem status, and the filters just say <code>status</code> for the column ID.</p>\n<h1><a name=\"p-232396-why-are-the-points-in-this-feature-request-important-2\" class=\"anchor\" href=\"#p-232396-why-are-the-points-in-this-feature-request-important-2\"></a>Why are the points in this feature request important?</h1>\n<p>We want to apply the view filters in our back end. We offer a board view and dash widget app that our customers can share/embed/etc. outside monday. At this point, we cannot apply the filters.</p>"
+    }
+  ]
+}

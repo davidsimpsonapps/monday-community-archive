@@ -1,0 +1,30 @@
+{
+  "id": 104682,
+  "title": "Script PHP para conectar tablero monday y regresar datos",
+  "slug": "script-php-para-conectar-tablero-monday-y-regresar-datos",
+  "categoryId": 98,
+  "tagIds": [
+    22,
+    94,
+    155,
+    165,
+    166,
+    167
+  ],
+  "createdAt": "2024-12-04T10:42:43.389Z",
+  "lastPostedAt": "2024-12-04T10:42:43.472Z",
+  "postsCount": 1,
+  "excerpt": "Tengo un script en php que se conecta a mis tableros, pero no me regresa datos de la consulta. Alguien puede ayudarme… les comparto el código: \n&lt;?php\n$api_token = &quot;acá va mi acceso&quot;;\n$api_url = &quot;https://api.monday.com/v2&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 16,
+  "posts": [
+    {
+      "id": 212736,
+      "postNumber": 1,
+      "createdAt": "2024-12-04T10:42:43.472Z",
+      "author": "AsesorNica (Danilo)",
+      "cookedHtml": "<p>Tengo un script en php que se conecta a mis tableros, pero no me regresa datos de la consulta. Alguien puede ayudarme… les comparto el código:</p>\n<pre><code class=\"lang-auto\">&lt;?php\n$api_token = \"acá va mi acceso\";\n$api_url = \"https://api.monday.com/v2\";\n$headers = [\n    \"Content-Type: application/json\",\n    \"Authorization: $api_token\"\n];\n\n// GraphQL query\n$query = &lt;&lt;&lt;GRAPHQL\n{\n    items(ids: [Acá va mi id de tablero]) {\n        name\n        column_values {\n            id\n            text\n        }\n    }\n}\nGRAPHQL;\n\n// Configuración de la solicitud HTTP\n$options = [\n    'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; implode(\"\\r\\n\", $headers),\n        'content' =&gt; json_encode(['query' =&gt; $query]),\n    ]\n];\n\n// Hacer la solicitud\n$response = file_get_contents($api_url, false, stream_context_create($options));\nif ($response === FALSE) {\n    die(\"Error al conectarse a Monday.com\");\n}\n\n// Decodificar la respuesta\n$data = json_decode($response, true);\nif (isset($data['errors'])) {\n    die(\"Error en la consulta: \" . json_encode($data['errors']));\n}\n\n// Procesar los datos obtenidos\nif (!empty($data['data']['items'])) {\n    foreach ($data['data']['items'] as $item) {\n        echo \"Nombre del ítem: \" . $item['name'] . \"\\n\";\n        foreach ($item['column_values'] as $columna) {\n            echo \"ID: \" . $columna['id'] . \", Valor: \" . $columna['text'] . \"\\n\";\n        }\n    }\n} else {\n    echo \"No se encontraron datos para el ID proporcionado.\\n\";\n}\n?&gt;\n</code></pre>"
+    }
+  ]
+}

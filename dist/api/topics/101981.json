@@ -1,0 +1,70 @@
+{
+  "id": 101981,
+  "title": "When an item is moved from one board to another and we have a recipe sentence for that, how do you capture the old board id?",
+  "slug": "when-an-item-is-moved-from-one-board-to-another-and-we-have-a-recipe-sentence-for-that-how-do-you-capture-the-old-board-id",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    351
+  ],
+  "createdAt": "2024-10-31T13:39:22.317Z",
+  "lastPostedAt": "2024-12-31T04:06:40.268Z",
+  "postsCount": 6,
+  "excerpt": "I have an item that is moved from one board to another. \nHow do you capture the board id of the original board? \nIn the workflow block, you can get the new board id from the context and item id from trigger output, but I&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 35,
+  "posts": [
+    {
+      "id": 208002,
+      "postNumber": 1,
+      "createdAt": "2024-10-31T13:39:22.403Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I have an item that is moved from one board to another.</p>\n<p>How do you capture the board id of the original board?</p>\n<p>In the workflow block, you can get the new board id from the context and item id from trigger output, but I can’t find a way to get the id of the original board.</p>\n<p>The POST body currently looks something like this:</p>\n<pre><code class=\"lang-auto\">{\n\t\"payload\": {\n\t\t\"blockKind\": \"action\",\n\t\t\"inboundFieldValues\": {\n\t\t\t\"boardId\": 2662470531,\n\t\t\t\"itemId\": 2687058843\n\t\t},\n\t\t\"inputFields\": {\n\t\t\t\"boardId\": 2662470531,\n\t\t\t\"itemId\": 2687058843\n\t\t},\n\t\t\"recipeId\": ...,\n\t\t\"integrationId\": ...\n\t},\n\t\"runtimeMetadata\": {\n\t\t\"actionUuid\": \"...\",\n\t\t\"triggerUuid\": \"...\"\n\t}\n}\n</code></pre>\n<p>We’re moving the item between board ids:</p>\n<pre><code class=\"lang-auto\">1642425449 -&gt; 2662470531\n</code></pre>\n<p>How do I get hold of <code>1642425449</code> in the POST body?</p>"
+    },
+    {
+      "id": 208452,
+      "postNumber": 2,
+      "createdAt": "2024-11-04T08:01:41.010Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>,</p>\n<p>You can not get that from the request when using the native “When item is moved to a board” trigger.</p>\n<p>As a workaround, what I can think about is checking the last updated boards (the one the item belonged to should be there):</p>\n<pre><code class=\"lang-auto\">{\n  boards(limit:100, order_by:used_at){\n    name\n    id\n  }\n}\n</code></pre>\n<p>And then check the activity logs using those board IDs and the ID of the item, to see in which board you see the “move_pulse_from_board” event:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1743196779, 1596123062, 1832418637, 3428809499, ...]) {\n    name\n    id\n    activity_logs(item_ids: 2440689797) {\n      data\n      event\n    }\n  }\n}\n</code></pre>\n<p>Not super comfortable, but should work.</p>\n<p>What do you think?</p>"
+    },
+    {
+      "id": 208732,
+      "postNumber": 3,
+      "createdAt": "2024-11-05T15:11:15.154Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>As a workaround, what I can think about is checking the last updated boards (the one the item belonged to should be there):</p>\n</blockquote>\n</aside>\n<p>Wow, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> that feels both insane and pretty cool actually. Thank you.</p>"
+    },
+    {
+      "id": 208744,
+      "postNumber": 4,
+      "createdAt": "2024-11-05T17:18:43.356Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> It’s actually easier than that.</p>\n<p>Use this query</p>\n<pre><code class=\"lang-auto\">  query get_activity_logs (\n    $boardId: ID!, \n    $itemId: ID!\n  ) {\n      boards(ids: [$boardId]) {\n        name\n        id\n        activity_logs(\n          item_ids: [$itemId]\n        ) {\n          data\n          event\n        }\n      }\n  }\n</code></pre>\n<p>Pass in variables (<code>boardId</code> is in the context, <code>itemId</code> comes from the trigger output):</p>\n<pre><code class=\"lang-auto\">{\n  \"boardId\": newBoardId, \n  \"itemId\": itemId \n} \n</code></pre>\n<p>In the results, look for the first event named <code>move_pulse_into_board</code>, parse the JSON data string returned and look for <code>source_board</code> in the JSON.</p>"
+    },
+    {
+      "id": 208874,
+      "postNumber": 5,
+      "createdAt": "2024-11-06T11:27:24.402Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>That is a great workaround <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> !!!</p>"
+    },
+    {
+      "id": 215484,
+      "postNumber": 6,
+      "createdAt": "2024-12-31T04:06:40.268Z",
+      "author": "AnishJ (Anish)",
+      "cookedHtml": "<p>Thanks you saved my life haha</p>"
+    },
+    {
+      "id": 215489,
+      "postNumber": 7,
+      "createdAt": "2024-12-31T06:11:39.417Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

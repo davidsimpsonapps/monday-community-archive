@@ -1,0 +1,84 @@
+{
+  "id": 84246,
+  "title": "Escaping JSON",
+  "slug": "escaping-json",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    351
+  ],
+  "createdAt": "2024-04-17T04:41:37.003Z",
+  "lastPostedAt": "2024-04-18T10:46:11.960Z",
+  "postsCount": 7,
+  "excerpt": "Hello, searched on the forum and couldn’t a good topic/old post for my question. \nI’m using a postman flow to collect data from our reporting system to monday. \nI got it to work just fine. \nMy question is there another w&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 213,
+  "posts": [
+    {
+      "id": 179167,
+      "postNumber": 1,
+      "createdAt": "2024-04-17T04:41:37.087Z",
+      "author": "DanielSoderlund (Daniel)",
+      "cookedHtml": "<p>Hello, searched on the forum and couldn’t a good topic/old post for my question.</p>\n<p>I’m using a postman flow to collect data from our reporting system to monday.<br />\nI got it to work just fine.</p>\n<p>My question is there another way to format create item column fields?<br />\nDoing it now needing to escape all \" makes it hard to read and maintain.<br />\nLucky I have only 5 columns to handla but if it comes up to 10+ columns it’s going to be hard to read and maintain.</p>\n<p>any plans to change the API ?</p>"
+    },
+    {
+      "id": 179221,
+      "postNumber": 2,
+      "createdAt": "2024-04-17T08:44:57.472Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/danielsoderlund\">@DanielSoderlund</a>,</p>\n<p>As of today, there are no plans of changing this in the near future.</p>\n<p>With the structure as it is, there will be places in which you will need to escape outer quotes and there is no workaround to avoid it.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 179229,
+      "postNumber": 3,
+      "createdAt": "2024-04-17T09:03:44.405Z",
+      "author": "DanielSoderlund (Daniel)",
+      "cookedHtml": "<p>Okay, thanks. I tried to read up on the GraphQL and I couldn’t find any way to convert to JSON.</p>\n<p>I changed to so each column is on it’s own line. Makes it a bit easier to read and manage</p>\n<pre><code class=\"lang-auto\">mutation CreateItem($boardID: ID!, $itemName: String!) {\n  create_item(\n    board_id: $boardID,\n    group_id: \"{{group_id}}\",\n    item_name: $itemName,\n    column_values: \"{\n        \\\"text\\\": \\\"{{Company}}\\\", \n        \\\"text2\\\": \\\"{{Project}}\\\", \n        \\\"time\\\": \\\"{{Time}}\\\", \n        \\\"date_1\\\": \\\"{{Date}}\\\", \n        \\\"text20\\\": \\\"{{ProjectID}}\\\", \n        \\\"people4\\\": \\\"{{consultant}}\\\",\n        \\\"text7\\\":\\\"{{ActivityName}}\\\",\n        \\\"text03\\\":\\\"{{OrgNo}}\\\"\n        }\"\n  ) {\n    id\n  }\n}```</code></pre>"
+    },
+    {
+      "id": 179267,
+      "postNumber": 4,
+      "createdAt": "2024-04-17T11:20:36.841Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Just use a regular object and use your languages facilities to convert to JSON. Why make this hard on yourself doing it by hand??? Here is a Javascript example</p>\n<pre><code class=\"lang-auto\">const values = JSON.stringify({\n  text: companyName //these variables used as values come from your code elsewhere\n  text2: projectName\n  time: timeString\n  date_1: dateString\n})\n</code></pre>\n<p>Then just use the “values” string (which is JSON) as a GraphQL variable.</p>\n<pre><code class=\"lang-auto\">mutation CreateItem($boardID: ID!, $itemName: String!, $values: JSON!, $groupID: String) {\n  create_item(\n    board_id: $boardID,\n    group_id: $groupID,\n    item_name: $itemName,\n    column_values: $values\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Now you don’t have to worry about escaping or quoting JSON right. create JSON using your language and then use that JSON string as a variable. This also solved all the mess you get when a value includes quotes and you can’t control if it does or not.</p>\n<p>Stop substituting into the query string (that is all the query is, a string). There is zero need to put yourself through that misery. Create your JSON as actual JSON in code, then use a variable to use it in the mutation.</p>"
+    },
+    {
+      "id": 179277,
+      "postNumber": 5,
+      "createdAt": "2024-04-17T11:59:30.604Z",
+      "author": "DanielSoderlund (Daniel)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p><code>JSON.stringify(</code></p>\n</blockquote>\n</aside>\n<p>The script didn’t work as pre-request script in postman, I guess I could tested some more with that but I tried this  but it didn’t work. It looks about the same. It creates a array</p>\n<pre><code class=\"lang-auto\">mutation CreateItem($boardID: ID!, $itemName: String!, $values: JSON!, $groupID: String) {\n  create_item(\n    board_id: $boardID,\n    group_id: $groupID,\n    item_name: $itemName,\n    column_values: $values\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>GraphQL variables</p>\n<pre><code class=\"lang-auto\">{\n  \"boardID\": \"{{boardID}}\",\n  \"itemName\": \"{{ItemName}}\",\n  \"values\":{ \n        \"text\": \"{{Company}}\",\n        \"text2\": \"{{projectName}}\",\n        \"time\": \"{{timeString}}\",\n        \"date_1\": \"{{dateString}}\"\n  }\n}\n</code></pre>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/f/4f3dafd111c76c7759a23537fa973d35668ed8e4.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/f/4f3dafd111c76c7759a23537fa973d35668ed8e4_2_690x397.png\" alt=\"image\" width=\"690\" height=\"397\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1869×1077 150 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 179406,
+      "postNumber": 6,
+      "createdAt": "2024-04-18T04:18:43.192Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 179529,
+      "postNumber": 7,
+      "createdAt": "2024-04-18T10:29:36.724Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You’re going to be only developing for postman? I expected you’re developing code that will run regularly and had access to a full javascript environment you were programming within (UI app feature, or node.js backend, or some other backend in another language.) and were just using postman for testing your queries.</p>\n<p>I know a bit about postman’s pre-execution scripting but I haven’t built any of this in it before.</p>"
+    },
+    {
+      "id": 179536,
+      "postNumber": 8,
+      "createdAt": "2024-04-18T10:46:11.960Z",
+      "author": "DanielSoderlund (Daniel)",
+      "cookedHtml": "<p>Built a POC in postman for a integration between our reporting system and Monday.<br />\nI got it working.  Just that create item was a bit of hassle to setup.</p>"
+    },
+    {
+      "id": 180020,
+      "postNumber": 9,
+      "createdAt": "2024-04-21T10:29:50.788Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

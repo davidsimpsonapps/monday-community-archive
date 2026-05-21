@@ -1,0 +1,86 @@
+{
+  "id": 10868,
+  "title": "Adding file to column via v2 API",
+  "slug": "adding-file-to-column-via-v2-api",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-09-03T12:19:58.975Z",
+  "lastPostedAt": "2021-03-04T01:22:11.328Z",
+  "postsCount": 9,
+  "excerpt": "Hi, \nTrying unsuccessfully to upload a file to an existing column following the API docs, but I receive a Bad Request error without too much information regarding what is bad. \nI’m working with Python, first I generate a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 8051,
+  "posts": [
+    {
+      "id": 27629,
+      "postNumber": 1,
+      "createdAt": "2020-09-03T12:19:59.048Z",
+      "author": "aviadm (Aviad Moreshet)",
+      "cookedHtml": "<p>Hi,</p>\n<p>Trying unsuccessfully to upload a file to an existing column <a href=\"https://monday.com/developers/v2#mutations-section-add-file-to-column\" rel=\"noopener nofollow ugc\">following the API docs</a>, but I receive a Bad Request error without too much information regarding what is bad.</p>\n<p>I’m working with Python, first I generate a request data:</p>\n<blockquote>\n<p>req_data = “”“mutation{<br />\nadd_file_to_column(item_id: %s, column_id: “%s”, $file: “%s”) {<br />\nid<br />\n}<br />\n}”“” % (item_id, column_id, self.to_base_64(fpath))</p>\n</blockquote>\n<p>The file path is opened and then converted to a base64 string, this is the final request:</p>\n<blockquote>\n<p>mutation {<br />\nadd_file_to_column(<br />\nitem_id: 724825528<br />\ncolumn_id: “Files”<br />\n$file: “LHByb2plY3RfbmFtZSxncm91cAowLGJhdHJ1LAoxLGJpc2Vhc2ssCjIsY2JjZGFpcnlpbCwKMyxjY2JvdHRsZXJzdXMsCjQsY2Nici1wcm9kLAo1LGNjbGliZXJ0eXVzLAo2LGNjdHJhZG14LAo3LGRpYWdlb2FyLAo4LGRpYWdlb2JlbmVsdXgsCjksZGlhZ2VvaW4sCjEwLGRpYWdlb2l0LAoxMSxkaWFnZW9rZSwKMTIsZGlhZ2VvbXgsCjEzLGRpYWdlb25nLAoxNCxkaWFnZW9ub3JkaWNzLAoxNSxkaWFnZW9ydSwKMTYsZ3NrbnosCjE3LGluYmV2Y2ksCjE4LGluYmV2bmwsCjE5LGluYmV2dHJhZG14LAoyMCxtb25kZWxlemRtaXVzLAoyMSxuZXN0bGVpbCwKMjIscG5nanAsCjIzLHJpbmllbHNlbnVzLGdyb3VwX2EKMjQscmluaWVsc2VudXMsZ3JvdXBfYgoyNSxyaW5pZWxzZW51cyxncm91cF9jCjI2LHJpbmllbHNlbnVzLGdyb3VwX2QKMjcscmluaWVsc2VudXMsZ3JvdXBfZQoyOCxyd2ZhaXJwcnNnLGdyb3VwX2EKMjksc2Fub2ZpY2ksCjMwLHNhbm9maWNtLAozMSxzYW5vZmlqcCwKMzIsc2Fub2ZpbnosCjMzLHNhbm9maXNuLAozNCxzYW5vZml0ciwKMzUsc2h1ZmVyc2FsaWwsCg==”<br />\n) {<br />\nid<br />\n}<br />\n}</p>\n</blockquote>\n<p>I am sending it as a POST to the /v2/file API, I can add items and do other manipulations, it’s just that this query keep failing with Bad Request.<br />\nI tried omitting the $ in $file, tried escaping it, nothing worked.</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 27639,
+      "postNumber": 2,
+      "createdAt": "2020-09-03T12:52:51.808Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 27646,
+      "postNumber": 3,
+      "createdAt": "2020-09-03T14:29:55.219Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/aviadm\">@aviadm</a> - welcome!</p>\n<p>Right now you wouldn’t be able to upload the file this way - it would need to be sent over as a multipart file. We’re working on having more documentation on this, but in the meanwhile I would recommend <a href=\"https://community.monday.com/t/you-can-now-access-and-upload-files-using-our-api/5997\">following this guide from our community</a>.</p>\n<p>Let me know if we can help with anything else.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 30966,
+      "postNumber": 4,
+      "createdAt": "2020-10-12T20:28:26.328Z",
+      "author": "Knowa (Noah)",
+      "cookedHtml": "<p>Any update to this? I tried reading the community guide but I am still having trouble getting it to work and formatting it correctly with Python.</p>"
+    },
+    {
+      "id": 31154,
+      "postNumber": 5,
+      "createdAt": "2020-10-14T17:59:35.371Z",
+      "author": "andrew.shatz (Andrew Shatz)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/knowa\">@Knowa</a>,</p>\n<p>We recently pushed out a new release of <a href=\"https://github.com/trix-solutions/moncli\" rel=\"noopener nofollow ugc\">moncli</a> that includes uploading files to a column or update.</p>\n<p>The readme contains documentation regarding this, but the below code example may help get things started:</p>\n<pre><code>&gt;&gt;&gt; from moncli import MondayClient\n&gt;&gt;&gt; \n&gt;&gt;&gt; client = MondayClient('username', '', 'api_v2_key')\n&gt;&gt;&gt; board = client.get_board(id='board_id')\n&gt;&gt;&gt; item = [item for item in board.get_items() if item.id == 'item_id'][0] # Keyword arguments to be supported soon.\n&gt;&gt;&gt; file_column = item.get_column_value(id='column_id')\n&gt;&gt;&gt; file_asset = item.add_file(file_column, 'upload_file_path')\n</code></pre>\n<p>Best of luck, and please let me know if you have any questions.</p>\n<p>All the best!</p>"
+    },
+    {
+      "id": 31157,
+      "postNumber": 6,
+      "createdAt": "2020-10-14T18:18:26.693Z",
+      "author": "Knowa (Noah)",
+      "cookedHtml": "<p>Interesting, I will check this out. I tried using moncli a couple months ago but had an issue with a complexity error when querying groups. I’ll let you know if I have any issues.</p>"
+    },
+    {
+      "id": 31160,
+      "postNumber": 7,
+      "createdAt": "2020-10-14T18:27:59.059Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/knowa\">@Knowa</a> - at this time the multipart upload I listed above would still be the main way to upload files to the API (you can use something like Postman for this).</p>\n<p>I haven’t personally tried the new release of moncli above, but I’d be curious to hear your results <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 31165,
+      "postNumber": 8,
+      "createdAt": "2020-10-14T19:16:27.617Z",
+      "author": "Knowa (Noah)",
+      "cookedHtml": "<p>When using what you posted, when I use board.get_items(), I get a TypeError for an unexpected keyword argument ‘ids’. This is also true for other variations of ‘ids’.</p>\n<pre><code>client = MondayClient(user_name='EMAIL', api_key_v1='', api_key_v2='APIV2KEY')\n\nboard = client.get_board(id='123456789')\n\nitem = board.get_items(ids=[790942328])  \n\n    File \"c:\\Python38\\Scripts\\Projects\\mondayTest.py\", line 10, in &lt;module&gt;\n        item = board.get_items(ids=[790942328])\nTypeError: get_items() got an unexpected keyword argument 'ids'</code></pre>"
+    },
+    {
+      "id": 31167,
+      "postNumber": 9,
+      "createdAt": "2020-10-14T19:27:07.894Z",
+      "author": "andrew.shatz (Andrew Shatz)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/knowa\">@Knowa</a>,</p>\n<p>I must apologize.  The current release does not support keyword arguments for get_items() <img src=\"https://emoji.discourse-cdn.com/apple/frowning_face.png?v=9\" title=\":frowning_face:\" class=\"emoji\" alt=\":frowning_face:\" />. You can work around this with list comprehension.</p>\n<pre><code>item = [item for item in board.get_items() if item.id == '790942328'][0]\n</code></pre>\n<p>I have been side-tracked by other work-related projects and am actually looking into the complexity issue that you submitted earlier.  I will add the keyword argument support for this in the meantime.</p>\n<p>I know that our current dev codebase (for the official release) does support keyword arguments for these types of query methods.  I will be working on getting this released within the next week or two.</p>\n<p>Thank you for your patience, and please let me know if this works out for you!</p>"
+    },
+    {
+      "id": 43373,
+      "postNumber": 10,
+      "createdAt": "2021-03-04T01:22:11.328Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

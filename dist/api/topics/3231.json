@@ -1,0 +1,130 @@
+{
+  "id": 3231,
+  "title": "Creating a webhook through the api does not return the creation id but null",
+  "slug": "creating-a-webhook-through-the-api-does-not-return-the-creation-id-but-null",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2019-11-26T15:35:42.439Z",
+  "lastPostedAt": "2021-02-25T12:23:04.115Z",
+  "postsCount": 16,
+  "excerpt": "When doing a mutation create_webhook \nmutation {\n  create_webhook(board_id: 123123123123, \n      url: &quot;https://some.domain.com/api/v1/webhooks/dapulse/receive&quot;, \n      event: change_column_value){\n    id board_id\n  }\n}\n\nI&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 4615,
+  "posts": [
+    {
+      "id": 8725,
+      "postNumber": 1,
+      "createdAt": "2019-11-26T15:35:42.540Z",
+      "author": "mientjan (mient-jan)",
+      "cookedHtml": "<p>When doing a mutation create_webhook</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_webhook(board_id: 123123123123, \n      url: \"https://some.domain.com/api/v1/webhooks/dapulse/receive\", \n      event: change_column_value){\n    id board_id\n  }\n}\n</code></pre>\n<p>I always get the response null.</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"create_webhook\": null\n  },\n  \"account_id\": 123123123\n}\n</code></pre>\n<p>Is this a bug?</p>"
+    },
+    {
+      "id": 8790,
+      "postNumber": 2,
+      "createdAt": "2019-11-28T08:29:55.182Z",
+      "author": "avivtzo (Aviv Tsu)",
+      "cookedHtml": "<p>+1<br />\nI experience the same problem.</p>"
+    },
+    {
+      "id": 8972,
+      "postNumber": 3,
+      "createdAt": "2019-12-03T15:52:42.225Z",
+      "author": "mientjan (mient-jan)",
+      "cookedHtml": "<p>solved the issue.</p>\n<p>So it will return null if it cant create a webhook because the challenge that was posted to your url was not returned.</p>\n<p>So when doing a the call</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_webhook(board_id: 123123123123, \n      url: \"https://some.domain.com/api/v1/webhooks/dapulse/receive\", \n      event: change_column_value){\n    id board_id\n  }\n}\n</code></pre>\n<p>this endpoint will receive a POST request with</p>\n<pre><code class=\"lang-auto\">{\n   \"challenge\":\"RANDOM_CODE\"\n} \n</code></pre>\n<p>if you dont return the same json, you will see null as seen above.<br />\nBut if you do return the same json the request will succeed.</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"create_webhook\": {\n      \"id\": \"123123123123\",\n      \"board_id\": 123123\n    }\n  },\n  \"account_id\": 123123\n}```</code></pre>"
+    },
+    {
+      "id": 9007,
+      "postNumber": 4,
+      "createdAt": "2019-12-04T12:20:55.785Z",
+      "author": "avivtzo (Aviv Tsu)",
+      "cookedHtml": "<p>I think they fixed it in the last 2 days ± because I did returned the same json but still got null.<br />\nNow it works <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 23991,
+      "postNumber": 5,
+      "createdAt": "2020-07-29T12:33:52.009Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/avivtzo\">@avivtzo</a>, <a class=\"mention\" href=\"/u/mientjan\">@mientjan</a></p>\n<p>I am currently experiencing the same. Looks like my endpoint is not receiving the challenge POST. How did you construct your backend? Mine is Node JS with a few exposed endpoints:</p>\n<blockquote>\n<p>router.post(“/autoid/subscribe”, authenticationMiddleware, autoIdController.subscribe);</p>\n<p>router.post(“/autoid/unsubscribe”, authenticationMiddleware, autoIdController.unsubscribe);</p>\n<p>router.post(“/autoid/webhookaction”, authenticationMiddleware, autoIdController.webhookAction);</p>\n</blockquote>\n<p>The first two routers (subscribe and unsubscribe) are receiving request from the custom trigger and are working just fine. The 3rd one was meant to be an endpoint to receive request from a webhook I am trying to insert from my backend into a board.</p>\n<p>Tips are always welcome <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 24014,
+      "postNumber": 6,
+      "createdAt": "2020-07-29T15:56:17.260Z",
+      "author": "kamescg (kames)",
+      "cookedHtml": "<p>Where are you creating the webhook? In the developer playground or via an endpoint in your backend?</p>\n<p>I setup my Express server with the following and snippet and when creating webhook in the developer playground had now issues.</p>\n<pre><code class=\"lang-auto\">export const incomingItem = async (req, res) =&gt; {\n  try {\n    const { challenge } = req.body;\n    if (challenge) return res.send({ challenge });\n    // Custom Logic\n    res.status(200).send();\n  } catch (e) {\n    console.log(e);\n    res.status(400).send();\n  }\n};\n</code></pre>"
+    },
+    {
+      "id": 24027,
+      "postNumber": 7,
+      "createdAt": "2020-07-29T16:34:36.413Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kamescg\">@kamescg</a></p>\n<p>Thank you very much. I am creating the webhook via an endpoint in my backend. Using custom triggers I have 4 endpoint for this feature (subscribe, unsubscribe, webhookaction and recipeaction).</p>\n<blockquote>\n<p>router.post(“/autoid/subscribe”, authenticationMiddleware, autoIdController.subscribe);<br />\nrouter.post(“/autoid/unsubscribe”, authenticationMiddleware, autoIdController.unsubscribe);<br />\nrouter.post(“/autoid/webhookaction”, authenticationMiddleware, autoIdController.webhookAction);<br />\nrouter.post(“/autoid/recipeaction”, authenticationMiddleware, autoIdController.recipeAction);</p>\n</blockquote>\n<p>In autoIdController I have a function where I put you example code:</p>\n<blockquote>\n<p>export async function webhookAction(req, res) {<br />\nconst { challenge } = req.body;<br />\nconsole.log(req.body);<br />\ntry {<br />\nif (challenge) return res.send({ challenge });<br />\n// Custom Logic<br />\nres.status(200).send();<br />\n} catch (e) {<br />\nconsole.log(e);<br />\nres.status(400).send();<br />\n}<br />\n}</p>\n</blockquote>\n<p>The subscribe and unsubscribe endpoint are working fine. It looks like the webhookaction endpoint never receives the request (nothing in the console.log). Any ideas?</p>"
+    },
+    {
+      "id": 24066,
+      "postNumber": 8,
+      "createdAt": "2020-07-30T06:37:37.878Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Thanks to <a class=\"mention\" href=\"/u/kamescg\">@kamescg</a> and amazing <a class=\"mention\" href=\"/u/dipro\">@dipro</a> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I managed to get this working. The webhook post (including the initial challenge) does not contain the app signing secret and therefore the authenticationMiddleware will reject the request.</p>\n<p>Modified:<br />\nrouter.post(\"/autoid/webhookaction\", authenticationMiddleware, autoIdController.webhookAction);<br />\nTo:<br />\nrouter.post(\"/autoid/webhookaction\", autoIdController.webhookAction);</p>\n<p>resolved the issue. My code inserts the webhook (create_item) that now posts to my endpoint.</p>"
+    },
+    {
+      "id": 24838,
+      "postNumber": 9,
+      "createdAt": "2020-08-07T09:18:42.034Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Can you tell how you are returning the challenge i am using this method but i am getting <strong>creation id</strong> —&gt; <strong>null</strong>  instead of webhook id.</p>\n<pre><code>exports.handler = async event =&gt; {\n  console.log( {\"challenge\": JSON.parse(event.body).challenge});\n  const response = {\n    statusCode: 200,\n    body: event.body\n    \n  };\n  console.log(response);\n  return response;\n};\n</code></pre>\n<p>Can you help me out?</p>"
+    },
+    {
+      "id": 24839,
+      "postNumber": 10,
+      "createdAt": "2020-08-07T09:31:57.289Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/krishna\">@krishna</a></p>\n<p>Not sure I fully understand your question. How did you create the webhook on your board, is it by code or through the UI?  Are you sure the webhook is fired and how does the event look like? If there is no challenge in the event apparently the monday side (where the webhook gets triggered) already “trust” your side (where you process the request) and you can use the data in the event. The challenge handshake will only take place on the first request generated by the triggered webhook.</p>\n<p>Does that make sense?</p>"
+    },
+    {
+      "id": 24841,
+      "postNumber": 11,
+      "createdAt": "2020-08-07T09:36:39.895Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>Thanks for the reply <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>I am trying to create webhook using <strong>API v2 mutation</strong> request,So while registering they will send a challenge to our endpoint to verify ,we need to return it back as repsonse.</p>\n<p>I am returning the response but webhook is not getting created and it is returning <strong>null</strong> instead of <strong>webhook id</strong>.</p>"
+    },
+    {
+      "id": 24842,
+      "postNumber": 12,
+      "createdAt": "2020-08-07T09:39:04.496Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/krishna\">@krishna</a></p>\n<p>How does the very first event you get look like? Does it contain a challenge at all?</p>"
+    },
+    {
+      "id": 24843,
+      "postNumber": 13,
+      "createdAt": "2020-08-07T09:46:21.924Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>This is how i tried to register</p>\n<p><code>mutation{ create_webhook(board_id:XXXXX, url:CUSTOM_URL event: change_column_value ) {id}}</code></p>\n<p>then they sent a challenge to the custom url for verification<br />\n<code>{challenge:SOME_CODE}</code><br />\nNow for successful creation of webhook we need to return this challenge from our CUSTOM_URL</p>\n<p>I did that using this function</p>\n<pre><code>exports.handler = async event =&gt; {\n  console.log( {\"challenge\": JSON.parse(event.body).challenge});\n  const response = {\n    statusCode: 200,\n    body: event.body\n    \n  };\n  console.log(response);\n  return response;\n};\n</code></pre>\n<p>But even after doing all of this i am getting this</p>\n<pre><code>{\n  \"data\": {\n    \"create_webhook\": null\n  },\n  \"account_id\": 123123123\n}</code></pre>"
+    },
+    {
+      "id": 24844,
+      "postNumber": 14,
+      "createdAt": "2020-08-07T10:06:11.948Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>So you got the challenge in the first request? Looks like your are returning the full body.event as a response, where monday only expects the challenge (req.body.challenge). Therefore you always need to do something like this:</p>\n<ul>\n<li>check if there is a challenge in the request<br />\n– if so, return the challenge (not the full body)<br />\n–if not, do whatever you want with the event</li>\n</ul>"
+    },
+    {
+      "id": 24845,
+      "postNumber": 15,
+      "createdAt": "2020-08-07T10:19:47.168Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>Thank you so much <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> <strong>It worked <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=9\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" /></strong>.I was sending whole body that was the reason why i was getting <strong>null</strong> instead of <strong>webhook id</strong>.</p>"
+    },
+    {
+      "id": 42097,
+      "postNumber": 16,
+      "createdAt": "2021-02-25T12:23:04.115Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": 19500,
+  "title": "File Uploads using Python",
+  "slug": "file-uploads-using-python",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    139
+  ],
+  "createdAt": "2021-04-30T10:15:12.061Z",
+  "lastPostedAt": "2021-05-26T15:44:20.814Z",
+  "postsCount": 6,
+  "excerpt": "I was able to successfully upload a file to a column using the following python code, using the requests library. Fair warning, here be dragons. \nitem_id = 12345678 #example only\nf = &#39;file-path/file-name.ext&#39;\nq = f&quot;&quot;&quot;\n  &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 5767,
+  "posts": [
+    {
+      "id": 49415,
+      "postNumber": 1,
+      "createdAt": "2021-04-30T10:15:12.167Z",
+      "author": "hamptonpaulk (Hampton Paulk)",
+      "cookedHtml": "<p>I was able to successfully upload a file to a column using the following python code, using the requests library. Fair warning, here be dragons.</p>\n<pre><code>item_id = 12345678 #example only\nf = 'file-path/file-name.ext'\nq = f\"\"\"\n        mutation add_file($file: File!) {{\n            add_file_to_column (item_id: {int(item_id)},\n                        column_id: files,\n                        file: $file\n                    ){{\n                id\n            }}\n        }}\n    \"\"\"\n    \nfiles = {\n    'query': (None, q, 'application/json'),\n    'variables[file]': (f, open(f, 'rb'), 'application/octet-stream', {'Content-Transfer-Encoding': 'binary'})\n}\nr = requests.post(\n    url='https://api.monday.com/v2/file',\n    headers=headers,\n    files=files\n)\n</code></pre>\n<p>One thing worth noting is you cannot pass other variables to the request, if you are also passing a file. I had to use string interpolation in order to pass the item_id to make it work.</p>\n<p>I was also able to reproduce this issue in JavaScript as well.</p>\n<p>Though my issue was worked around, I would be interested to know why this issue exists. Is this expected behavior according to the spec?</p>"
+    },
+    {
+      "id": 49427,
+      "postNumber": 2,
+      "createdAt": "2021-04-30T12:11:01.312Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 49429,
+      "postNumber": 3,
+      "createdAt": "2021-04-30T12:20:48.235Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/hamptonpaulk\">@hamptonpaulk</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks for reaching out here and I’m sorry to hear uploading files has given you some trouble here. To be transparent with you, you can indeed use multiple variables when making the call, but youwill need to construct the request slightly differently. I’ve made a couple of guides you could reference on this as well:</p>\n<p><a href=\"https://community.monday.com/t/uploading-a-file-to-monday-com-with-variables-example-in-nodejs/18526\">Using Variables in File Uploads - NodeJS</a><br />\n<a href=\"https://community.monday.com/t/announcement-uploading-files-to-monday-com-has-just-become-easier/16803/2\">Uploading files with variables</a></p>\n<p>Let me know if this helps <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 49451,
+      "postNumber": 4,
+      "createdAt": "2021-04-30T13:54:14.375Z",
+      "author": "hamptonpaulk (Hampton Paulk)",
+      "cookedHtml": "<p>Thanks for your reply, but those methods did not work when implemented in python using the requests library. Do you have code, in python, that accomplished this? I also attempted the postman example as well with no luck. I spent quite some time reviewing your older posts and other languages to no avail, before I posted this.</p>"
+    },
+    {
+      "id": 50134,
+      "postNumber": 5,
+      "createdAt": "2021-05-05T11:45:28.712Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/hamptonpaulk\">@hamptonpaulk</a></p>\n<p>Sorry for the delay on this! I would love to troubleshoot your Postman setup! Could you please provide a screenshot of the way you are currently trying to send files with variables in Postman?</p>\n<p>In the meantime, here’s the code Postman provides as the Python equivalent of the example I’ve used:</p>\n<pre><code class=\"lang-auto\">import requests\n\nurl = \"https://api.monday.com/v2/file\"\n\npayload={'query': 'mutation add_file($file: File!, $update_id: Int!) {add_file_to_update(update_id: $update_id, file: $file) {id}}',\n\n'variables': '{\"update_id\":967485603}',\n\n'map': '{\"image\":\"variables.file\"}'}\n\nfiles=[\n\n('image',('300px-All_Right_Then,_Keep_Your_Secrets.jpg',open('/Users/alexsavchuk/Downloads/300px-All_Right_Then,_Keep_Your_Secrets.jpg','rb'),'image/jpeg'))\n\n]\n\nheaders = {\n\n'Authorization': 'YourAPIKey',\n}\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload, files=files)\n\nprint(response.text)\n</code></pre>"
+    },
+    {
+      "id": 52015,
+      "postNumber": 6,
+      "createdAt": "2021-05-19T15:44:07.511Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/hamptonpaulk\">@hamptonpaulk</a>,</p>\n<p>Since it’s been a while since we’ve heard from you, I’m going to mark Alex’s response as the solution. This thread will then be closed after 7 days.</p>\n<p>If this is still an issue for you, feel free to respond before then or start a new thread.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 52760,
+      "postNumber": 7,
+      "createdAt": "2021-05-26T15:44:20.814Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

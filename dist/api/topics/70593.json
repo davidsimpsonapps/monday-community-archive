@@ -1,0 +1,82 @@
+{
+  "id": 70593,
+  "title": "API Playground and Actual API Call have different outcomes",
+  "slug": "api-playground-and-actual-api-call-have-different-outcomes",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-13T00:29:58.156Z",
+  "lastPostedAt": "2023-11-14T23:56:19.966Z",
+  "postsCount": 8,
+  "excerpt": "I have the following query: \nquery ($itemID: [ID!]) {\n  items(ids: $itemID) {\n    column_values(ids: [&quot;text1&quot;, &quot;email1&quot;, &quot;text8&quot;, &quot;email4&quot;]) {\n      id\n      text\n    }\n  }\n}\nWith a variable of the ItemID set in the API &hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 405,
+  "posts": [
+    {
+      "id": 152777,
+      "postNumber": 1,
+      "createdAt": "2023-11-13T00:29:58.227Z",
+      "author": "Sometom (Thomas)",
+      "cookedHtml": "<p>I have the following query:</p>\n<pre><code class=\"lang-auto\">query ($itemID: [ID!]) {\n  items(ids: $itemID) {\n    column_values(ids: [\"text1\", \"email1\", \"text8\", \"email4\"]) {\n      id\n      text\n    }\n  }\n}</code></pre>\n<p>With a variable of the ItemID set in the API Playground, this is happy to return results.</p>\n<p>When called from an actual API call from Nodejs using the Monday SDK (version set to “^0.4.12”), including the exact same variable, I am getting an error message:</p>\n<pre><code class=\"lang-auto\">Arguments are invalid. The argument 'ids' should be used</code></pre>\n<p>I’m not even sure what to investigate next…</p>"
+    },
+    {
+      "id": 152798,
+      "postNumber": 2,
+      "createdAt": "2023-11-13T06:21:13.094Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/sometom\">@Sometom</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Can you please send over the full script you are using?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 152971,
+      "postNumber": 3,
+      "createdAt": "2023-11-14T01:11:54.508Z",
+      "author": "Sometom (Thomas)",
+      "cookedHtml": "<p>This works:</p>\n<pre><code class=\"lang-auto\">const functions = require('@google-cloud/functions-framework');\nconst monday = require('monday-sdk-js');\n\nfunctions.http('helloHttp', (req, res) =&gt; {\n  const mondayClient = monday();\n  mondayClient.setApiVersion(\"2023-10\");\n  mondayClient.setToken(\"?????\");\n\n  try {\n    const id = req.body.payload.inputFields.itemId;\n    const query = `query {\n     items(ids: ` + id + ` ) {\n        column_values(ids: [\"text1\", \"email1\", \"text8\", \"email4\"]) {\n          id\n          text\n        }\n      }\n    }`;\n    const response = mondayClient.api(query);\n    response.then(r =&gt; console.log(r.data));\n    res.status(200).send(req.body);\n  } catch (err) {\n    console.error(err);\n  }\n});</code></pre>\n<p>This doesn’t:</p>\n<pre><code class=\"lang-auto\">const functions = require('@google-cloud/functions-framework');\nconst monday = require('monday-sdk-js');\n\nfunctions.http('helloHttp', (req, res) =&gt; {\n  const mondayClient = monday();\n  mondayClient.setApiVersion(\"2023-10\");\n  mondayClient.setToken(\"?????\");\n\n  try {\n    const id = req.body.payload.inputFields.itemId;\n    const query = `query ($itemId: [ID!]) {\n      items(ids: $itemId ) {\n        column_values(ids: [\"text1\", \"email1\", \"text8\", \"email4\"]) {\n          id\n          text\n        }\n      }\n    }`;\n    const response = mondayClient.api(query, { \"itemId\" : id });\n    response.then(r =&gt; console.log(r.data));\n    res.status(200).send(req.body);\n  } catch (err) {\n    console.error(err);\n  }\n});</code></pre>\n<p>(obviously left out the tokens <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />  )</p>"
+    },
+    {
+      "id": 152987,
+      "postNumber": 4,
+      "createdAt": "2023-11-14T06:21:15.008Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I am not sure I understand the issue.</p>\n<p>The first script looks good and it is working for you. Why is that not an option?</p>\n<p>Why are you trying to pass the id as <code>mondayClient.api(query, { \"itemId\" : id })</code>?</p>"
+    },
+    {
+      "id": 153036,
+      "postNumber": 5,
+      "createdAt": "2023-11-14T13:29:01.709Z",
+      "author": "Sometom (Thomas)",
+      "cookedHtml": "<p>The issue is that both of the examples work in the App Playground.  I’d expect both of them to work in scripts as well.</p>\n<p>I prefer the second example because the first one is subject to injection attacks that can completely change the meaning of the query.  I suspect many other developers would agree the second structure is vastly preferred.  We’re dealing with PII, so I want to make sure we’re respecting the sensitivity of the data we have…</p>\n<p>I need to implement updates as well, so I’d like to figure out how to do variable substitution to lower the risk of corruption.</p>"
+    },
+    {
+      "id": 153075,
+      "postNumber": 6,
+      "createdAt": "2023-11-14T16:05:48.361Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Pretty easy -</p>\n<ol>\n<li>you should pass the variables object to the api method as the variables key of the options object (options is the second argument <code>.api(query: string, options: { variables: object, ...moreOptions})</code>).</li>\n</ol>\n<p><code>const response = mondayClient.api(query, { variables: { itemId : id} });</code> would work.</p>\n<p>I 100% agree with you that string manipulation is a terrible for graphql unless its concatenating query fragments (that are fixed strings).</p>\n<p>That said, you are not validating Id in any way before using it! I like <code>zod</code> plus <code>validator</code> for this - something like the following.</p>\n<pre><code class=\"lang-auto\">const z = require('zod');\nconst validator = require('validator');\n\n// define your validation schema outside the function\nconst inputFieldsSchema = z.object({\n  itemId: z.coerce.string().refine(validator.isInt),\n});\n\n// i've moved this to the file scope, instead of function scope, this way you don't have to\n// allocate the query on every request.\nconst query = `query ($itemId: [ID!]) {\n      items(ids: $itemId ) {\n        column_values(ids: [\"text1\", \"email1\", \"text8\", \"email4\"]) {\n          id\n          text\n        }\n      }\n    }`;\n\nfunctions.http('helloHttp', (req, res) =&gt; {\n  //setup code\n\n  try {\n   const { itemId: id } = inputFieldsSchema.parse(req.body.payload.inputFields);\n //rest of your code\n  } catch (err) {\n   console.error(err)\n  }\n\n});\n</code></pre>"
+    },
+    {
+      "id": 153115,
+      "postNumber": 7,
+      "createdAt": "2023-11-14T21:44:27.979Z",
+      "author": "Sometom (Thomas)",
+      "cookedHtml": "<p>Beautiful, thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>.</p>\n<p>Yes, the example was a bit reckless and reduced to fit, but I also appreciate the pointers to other libraries; I’m still learning what javascript libraries are available…</p>"
+    },
+    {
+      "id": 153123,
+      "postNumber": 8,
+      "createdAt": "2023-11-14T23:56:19.966Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Glad that was just for the example/test you were doing!</p>\n<p>Zod is pretty decent for what we do with monday. If you were doing something with defined JSON schemas there are other tools which may work better. But for inputFields there isn’t anything generic since the developer defines it, and we also often need to manipulate things at the same time - such as coercing to string.</p>"
+    },
+    {
+      "id": 153184,
+      "postNumber": 9,
+      "createdAt": "2023-11-15T08:16:59.783Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

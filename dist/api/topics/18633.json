@@ -1,0 +1,54 @@
+{
+  "id": 18633,
+  "title": "\"change_specific_column_value\" creates webhook for any column if columnid has integer",
+  "slug": "change-specific-column-value-creates-webhook-for-any-column-if-columnid-has-integer",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    144
+  ],
+  "createdAt": "2021-04-08T08:42:19.653Z",
+  "lastPostedAt": "2021-04-09T12:34:55.264Z",
+  "postsCount": 3,
+  "excerpt": "Hello, \nSeems like there is a bug related with creating webhooks from API on boards. \nTo reproduce this: \n\nCreate new column with API:\n\nRequest: \n{“query”:“mutation { create_column (board_id: 1195853715, title: “Y”, colu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1712,
+  "posts": [
+    {
+      "id": 47238,
+      "postNumber": 1,
+      "createdAt": "2021-04-08T08:42:19.781Z",
+      "author": "tgurler (Turan Gurler)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Seems like there is a bug related with creating webhooks from API on boards.</p>\n<p>To reproduce this:</p>\n<ol>\n<li>Create new column with API:</li>\n</ol>\n<p><strong>Request:</strong></p>\n<p>{“query”:“mutation { create_column (board_id: 1195853715, title: “Y”, column_type: text) { id } }”}</p>\n<ol>\n<li>Create webhook on this column (id is “y” from response of 1):</li>\n</ol>\n<p><strong>Request:</strong></p>\n<p>{“query”:“mutation { create_webhook (board_id: 1195853715, url: “https://*******.com/monday/webhook.php”, event: change_specific_column_value config: “{\\“columnId\\”:\\“y\\”}”) { id } }”}</p>\n<p>It works fine and created webhook on column “Y”:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0c367c3f6f1d02c02318751411165bb28bcc15e2.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0c367c3f6f1d02c02318751411165bb28bcc15e2_2_690x231.png\" alt=\"image\" width=\"690\" height=\"231\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2298×772 93.9 KB</span>\n</div></a></div><p></p>\n<ol>\n<li>\n<p>Delete Y column manually</p>\n</li>\n<li>\n<p>Create Y column again with API</p>\n</li>\n</ol>\n<p><strong>Request:</strong></p>\n<p><strong>{“query”:“mutation { create_column (board_id: 1195853715, title: “Y”, column_type: text) { id } }”}</strong></p>\n<p><strong>Response:</strong></p>\n<p><strong>{“data”:{“create_column”:{“id”:“y2”}},“account_id”:8431610}</strong> //see that id becomes y2</p>\n<ol>\n<li>Create webhook again for this column:</li>\n</ol>\n<p><strong>Request:</strong></p>\n<p><strong>{“query”:“mutation { create_webhook (board_id: 1195853715, url: “https://**********.com/monday/webhook.php”, event: change_specific_column_value config: “{\\“columnId\\”:\\“y2\\”}”) { id } }”}</strong></p>\n<p><strong>Response:</strong></p>\n<p>stdClass Object ( [data] =&gt; stdClass Object ( [create_webhook] =&gt; stdClass Object ( [id] =&gt; 40518843 ) ) [account_id] =&gt; 8431610 )</p>\n<p>It has response like it created change_specific_column_value; but when user goes to integrations; he sees:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/7dcac3c2379eb1b673e9cce9923d774586e3a43e.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/7dcac3c2379eb1b673e9cce9923d774586e3a43e_2_690x84.png\" alt=\"image\" width=\"690\" height=\"84\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2072×254 36.2 KB</span>\n</div></a></div><p></p>\n<p>It creates webhook for “a column” instead of column Y and it’s not calling webhook when value is changed.</p>\n<p>Are we doing something wrong? Can you help about this?</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 47239,
+      "postNumber": 2,
+      "createdAt": "2021-04-08T08:55:34.652Z",
+      "author": "tgurler (Turan Gurler)",
+      "cookedHtml": "<p>Additional Note: we tried to add new column with name “Z” after deleting “Y”, webhook created as expected. There is a problem with deleting and creating column with same title. Fyi.</p>"
+    },
+    {
+      "id": 47380,
+      "postNumber": 3,
+      "createdAt": "2021-04-09T12:34:13.698Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 47381,
+      "postNumber": 4,
+      "createdAt": "2021-04-09T12:34:55.264Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/tgurler\">@tgurler</a>,</p>\n<p>Thank you for pointing this out! Happy to submit this as a bug for our developers to investigate.</p>\n<p>For now, I would recommend sticking with a new column name as you identified.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 47458,
+      "postNumber": 5,
+      "createdAt": "2021-04-09T18:57:53.766Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    }
+  ]
+}

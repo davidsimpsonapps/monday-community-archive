@@ -1,0 +1,61 @@
+{
+  "id": 77757,
+  "title": "Lost in new API. Help constructing a query",
+  "slug": "lost-in-new-api-help-constructing-a-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-02-09T19:56:03.830Z",
+  "lastPostedAt": "2024-02-19T08:34:20.226Z",
+  "postsCount": 6,
+  "excerpt": "Can someone assist in converting this query to the new API using items_page?  I need to pull the information for roughly 6000 subitems.  As a noob, I was just wrapping my head around GraphQL with the last API version but&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 315,
+  "posts": [
+    {
+      "id": 167073,
+      "postNumber": 1,
+      "createdAt": "2024-02-09T19:56:03.904Z",
+      "author": "mcdemon (M.McD)",
+      "cookedHtml": "<p>Can someone assist in converting this query to the new API using items_page?  I need to pull the information for roughly 6000 subitems.  As a noob, I was just wrapping my head around GraphQL with the last API version but now I am just lost.  Any help is appreciated:<br />\n{<br />\n“query”: “query {items(ids: [XXX,XXX,XXX,XXX,XXX]) {id column_values{value text}}}”<br />\n}</p>\n<p>Can this type of query be done at the item/subitem board ID level or do I need to feed each item ID into the query?</p>"
+    },
+    {
+      "id": 167081,
+      "postNumber": 2,
+      "createdAt": "2024-02-09T21:03:52.275Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hello,</p>\n<p>To confirm, if you do know the specific item IDs, you can still use the <code>items</code> query in this way. Per the documentation on <code>items</code> linked <a href=\"https://developer.monday.com/api-reference/reference/items\">here</a>, you can still query with <code>items</code> at the root to retrieve specific items.  If this query is already working for you, I would suggest keep it!</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 167385,
+      "postNumber": 3,
+      "createdAt": "2024-02-12T15:03:06.390Z",
+      "author": "mcdemon (M.McD)",
+      "cookedHtml": "<p>Hi Joseph,</p>\n<p>The 100 item limitation is a challenge when attempting to query 6000 +/- items.  I’m looking for a query which will allow me to retrieve all the required information in a single query or at least significantly fewer than 60+ queries.  Will items_page allow for an increase in the limit?</p>"
+    },
+    {
+      "id": 167436,
+      "postNumber": 4,
+      "createdAt": "2024-02-12T23:09:18.049Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Are all the items you’re retrieving from the same board? Thats required for items_page. items_page is the paginator of a boards items (and a filter/sorter too) so you can retrieve 500 items at a time (there are limitations, large items with many columns take longer to retrieve and you could timeout the request).</p>\n<p>You can also use the 500 to quickly fetch all the item Ids then use some technique to parallelize getting the items in batches of 100. You’re making more calls but doing them at the same time so there may in fact be a performance increase.</p>"
+    },
+    {
+      "id": 167559,
+      "postNumber": 5,
+      "createdAt": "2024-02-13T12:45:48.467Z",
+      "author": "mcdemon (M.McD)",
+      "cookedHtml": "<p>Yes.  All items are on the same board.  How would I construct an items_page query to pull 500 at a time and filter to include records where any one of three columns (numbers1, numbers2 and numbers3) is &gt; 0 and return {id column_values{text}} for the matching records?</p>"
+    },
+    {
+      "id": 168736,
+      "postNumber": 6,
+      "createdAt": "2024-02-19T08:34:20.226Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mcdemon\">@mcdemon</a>,</p>\n<p>What about something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1111111) {\n    items_page(\n      limit: 500\n      query_params: {rules: [{column_id: \"numbers\", compare_value: [0], operator: greater_than}, {column_id: \"numbers_1\", compare_value: [0], operator: greater_than}, {column_id: \"numbers_2\", compare_value: [0], operator: greater_than}], operator: or}\n    ) {\n      cursor\n      items {\n        id\n        column_values {\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>You can then use the cursor to paginate as explained <a href=\"https://developer.monday.com/api-reference/reference/items-page#cursor-based-pagination-using-next_items_page\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Let me know what you think!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

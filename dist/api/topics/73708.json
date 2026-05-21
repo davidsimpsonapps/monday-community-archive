@@ -1,0 +1,68 @@
+{
+  "id": 73708,
+  "title": "Query by connect boards column (board_relation) using id instead of name",
+  "slug": "query-by-connect-boards-column-board-relation-using-id-instead-of-name",
+  "categoryId": 8,
+  "tagIds": [
+    20,
+    94
+  ],
+  "createdAt": "2023-12-27T16:06:56.724Z",
+  "lastPostedAt": "2024-01-03T12:39:33.737Z",
+  "postsCount": 6,
+  "excerpt": "Hi, I’m using the query documented here to get items from a board that has a specific board_relation to another one. \nThe following query: \nquery_params: {rules: [{column_id: \\&quot;connect_boards\\&quot;, compare_value: [\\&quot;test123&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 327,
+  "posts": [
+    {
+      "id": 159373,
+      "postNumber": 1,
+      "createdAt": "2023-12-27T16:06:56.795Z",
+      "author": "leonardo1 (leonardo)",
+      "cookedHtml": "<p>Hi, I’m using the query documented here to get items from a board that has a specific board_relation to another one.</p>\n<p>The following query:</p>\n<pre><code class=\"lang-auto\">query_params: {rules: [{column_id: \\\"connect_boards\\\", compare_value: [\\\"test123\\\"], operator:contains_text}]}\n</code></pre>\n<p>will try to get items by item name (i.e. items named “test123”). The problem is that this value is not unique and can be easily changed on the frontend. How can I get this same relation, but using the item id as the parameter?</p>"
+    },
+    {
+      "id": 159500,
+      "postNumber": 2,
+      "createdAt": "2023-12-28T18:28:41.971Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Leonardo,</p>\n<p>Welcome to the community!</p>\n<p>If you are looking to query items from a specific board, you can use <code>items_page</code> , documented <a href=\"https://developer.monday.com/api-reference/docs/items_page\">here</a>, as now being used in version <code>2023-10</code> and onward.</p>\n<p>Hope this helps with your request!</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 159506,
+      "postNumber": 3,
+      "createdAt": "2023-12-28T18:45:35.318Z",
+      "author": "leonardo1 (leonardo)",
+      "cookedHtml": "<p>Hi Joseph, thanks for the response. I’ve already solved my problem creating an external id field to link the two boards; but what I meant is, for instance:<br />\nImagine there are two boards, “business” and “contacts”. A business can have one or multiple contacts. If I want to get the businesses that are associated with a certain contact, I need to query the “business” board using the contact’s “item_name” (at least that’s how it works based on my quick tests). Can I use another field instead of the item_name? For instance, its id, or any other field?</p>"
+    },
+    {
+      "id": 159512,
+      "postNumber": 4,
+      "createdAt": "2023-12-28T20:28:04.213Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Leonardo,</p>\n<p>From my understanding, in this scenario, a single contact will be a single item on the <code>Contacts</code> board and there is a different board, <code>Business</code>, that has a connected column to <code>Contacts</code>. If this is the case that there is a connect column, then you can query via the connect boards column, documented <a href=\"https://developer.monday.com/api-reference/docs/connect#reading-the-connect-boards-column\">here</a>.</p>\n<p>Does this help clarify your request?</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 159632,
+      "postNumber": 6,
+      "createdAt": "2023-12-30T13:29:43.061Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Scenario:</p>\n<p>Board A has a connect board column to Board B. Now we have a webhook on board B to tell us a column changed. We need to know what items on Board A are linked to that item on Board B.</p>\n<p>There is only a one-way connection involved, so items on Board A are connected to Board B.</p>\n<p>When the webhook triggers, we need to find items on Board A that are connected to Board B. We currently cannot do this because items_page querying a Connect Board column only searches based on text, to see if one of the items has the name we are searching for. But the name is not unique!</p>\n<p><strong>board_relation columns need to be enhanced for ItemsQueryRule to have  compare_attribute of “linked_item_id” and “linked_item_name” so we can compare either the item name or the item ID with items_page.</strong></p>\n<p>Same with mirror columns and dependency columns. This way we can easily perform reverse lookups. (though the attributes for these may be different)</p>\n<p><strong>Alternatively on columns, and items in general expose access to the reverse linking map.</strong> That is the data structure which says what items are linking to a column. For example if Board A People Mirror mirrors Board B Owner column, we can query Board B Owner for <code>linking_items {id, columns {id}, board {id}}</code> and then we can see what is “mirroring” this column. 99% sure the reverse linking map exists someplace because otherwise the <strong>when status changes, do something</strong> templates that trigger off mirror statuses would not perform well at all.</p>"
+    },
+    {
+      "id": 159979,
+      "postNumber": 7,
+      "createdAt": "2024-01-03T11:12:47.466Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Leaving for Joseph</p>"
+    },
+    {
+      "id": 159987,
+      "postNumber": 8,
+      "createdAt": "2024-01-03T12:39:33.737Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Cody,</p>\n<p>Thank you for bringing this up. I will flag this for our developers to look into this enhancement. Thank you for the feedback!</p>\n<p>Best,<br />\nJoseph</p>"
+    }
+  ]
+}

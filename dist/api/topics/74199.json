@@ -1,0 +1,54 @@
+{
+  "id": 74199,
+  "title": "Observed complexity budget exhausted for board graphQL api with latest version",
+  "slug": "observed-complexity-budget-exhausted-for-board-graphql-api-with-latest-version",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94
+  ],
+  "createdAt": "2024-01-05T04:17:12.684Z",
+  "lastPostedAt": "2024-01-08T06:39:06.751Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nWe are observing complexity issue with board graphQL api with minimal response properties and a limit of 10 records only. \nIs this an expected behavior?",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 177,
+  "posts": [
+    {
+      "id": 160349,
+      "postNumber": 1,
+      "createdAt": "2024-01-05T04:17:12.764Z",
+      "author": "csprod2box (csprod2box)",
+      "cookedHtml": "<p>Hi,<br />\nWe are observing complexity issue with board graphQL api with minimal response properties and a limit of 10 records only.<br />\nIs this an expected behavior?<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/8/b82be2eef13a7296d91fe085af4b4598b6045aea.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/8/b82be2eef13a7296d91fe085af4b4598b6045aea_2_690x248.png\" alt=\"image\" width=\"690\" height=\"248\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1813×652 72.8 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 160366,
+      "postNumber": 2,
+      "createdAt": "2024-01-05T05:23:29.836Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><code>items_count</code> carries a very high complexity compared to any other property. It is 5000 per board returned.</p>\n<p>10 for board root = 10<br />\n10 boards X 5000 = 50000<br />\n10 boards X 5 properties (beside items_count) = 50</p>\n<p>50000+50+10 = 50060.</p>"
+    },
+    {
+      "id": 160374,
+      "postNumber": 3,
+      "createdAt": "2024-01-05T06:32:44.469Z",
+      "author": "csprod2box (csprod2box)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/codyfrisch\">@codyfrisch</a><br />\nDo we have any documentation on which properties are high in complexity?</p>"
+    },
+    {
+      "id": 160409,
+      "postNumber": 4,
+      "createdAt": "2024-01-05T12:04:43.262Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>monday has never published a list, nor details on how its calculated specifically.</p>\n<p>Use this rule of thumb:<br />\nQueries like items_page and items_page_by_column_value are going to be expensive to start with. 3000 for items_page, each board its called on, if you query multiple boards at once, 3000* number of boards.</p>\n<p>Root query objects like boards, items, workspaces, etc. are 10, updates i believe is 25 due to the large size.</p>\n<p>Most properties are 1, but a few are large, the only one that jumps at me is items_count on boards or groups.</p>\n<p>Nesting subitems in items is expensive - 1000 * the number of properties requested for the subitem, even if none are returned.</p>\n<p>Best way to figure it out, is to experiment in the playground, and return complexity. Once you get a feel for it, you can start to learn when and how to split queries up (maybe get items and the subitems column value, then parse the value for a list of subitems to query directly using an items query.) To what extent you take it is up to the needs of your application.</p>\n<p><strong>I am not an employee of <a href=\"http://monday.com\">monday.com</a></strong></p>"
+    },
+    {
+      "id": 160743,
+      "postNumber": 5,
+      "createdAt": "2024-01-08T06:39:06.751Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/csprod2box\">@csprod2box</a>,</p>\n<p>You can also calculate the complexity usage for your calls by adding something like this:</p>\n<pre><code class=\"lang-auto\">mutation {\n  complexity {\n    query\n    before\n    after\n    reset_in_x_seconds\n  }\n  create_item(board_id:1234567890, item_name:\"test item\") {\n    id\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

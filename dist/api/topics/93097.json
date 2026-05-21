@@ -1,0 +1,46 @@
+{
+  "id": 93097,
+  "title": "What is the accepted solution for querying/updating Column Name instead of ID?",
+  "slug": "what-is-the-accepted-solution-for-querying-updating-column-name-instead-of-id",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    13,
+    94,
+    157,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-07-16T11:51:36.240Z",
+  "lastPostedAt": "2024-07-16T22:51:26.684Z",
+  "postsCount": 2,
+  "excerpt": "I’ve seen a number of posts asking the same thing, but want to know what is the definitive way of querying/updating columns across multiple boards that have the same COLUMN NAME, but because of changing circumstances dur&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 27,
+  "posts": [
+    {
+      "id": 193499,
+      "postNumber": 1,
+      "createdAt": "2024-07-16T11:51:36.348Z",
+      "author": "Jof (Jof Davies)",
+      "cookedHtml": "<p>I’ve seen a number of posts asking the same thing, but want to know what is the definitive way of querying/updating columns across multiple boards that have the same COLUMN NAME, but because of changing circumstances during setup have different Column IDs? e.g. Column ‘My Column Name’ in board 1 had ColumnID ‘text_1’, but in board2 has ColumnID ‘text2’.</p>\n<p>We cannot rename ColumnID after creation.</p>\n<p>I cannot seem to pull ColumnName using the API.</p>\n<p>e.g.</p>\n<pre><code class=\"lang-auto\">function fetchMondayData(boardId, limit) {\n  const query = `{\n    boards(ids: ${boardId}) {\n      items_page(limit: ${limit}) {\n        items {\n          id\n          column_values {\n            title\n            text\n          }\n        }\n      }\n    }\n  }`;\n</code></pre>\n<p>the API always returns an error that ‘title’ doesn’t exist.</p>\n<p>I’m obviously not alone in wanting to create a function that queries and updates columns in multiple boards. So what is the solution if we can’t rely on ColumnID?</p>\n<p>I look forward to anyone’s help.</p>\n<p>Many thanks.</p>"
+    },
+    {
+      "id": 193653,
+      "postNumber": 2,
+      "createdAt": "2024-07-16T22:51:26.684Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">{\n   boards {\n      columns {\n         id\n         title\n      }\n      items_page(limit: ${limit}) {\n        items {\n          id\n          column_values {\n            column {\n               id\n               title\n            }\n            id\n            text\n          }\n        }\n   }\n}\n</code></pre>\n<p>Title is no longer directly part of the column_value, but can be accessed through <code>column</code> on the <code>column_value</code>. You can also get any other fields of a column within that subquery.</p>\n<p>The reason for this, is that they don’t have to go to the column object itself for those values unless you explicitly want them with your column value. Or you can get them directly from the board itself rather than the item as shown. <code>id</code> is obviously on both column and column_value - and the same.</p>"
+    },
+    {
+      "id": 195124,
+      "postNumber": 3,
+      "createdAt": "2024-07-28T08:56:03.770Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

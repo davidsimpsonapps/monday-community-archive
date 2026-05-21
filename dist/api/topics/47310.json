@@ -1,0 +1,77 @@
+{
+  "id": 47310,
+  "title": "Creating item with dynamic mapping doesn't work",
+  "slug": "creating-item-with-dynamic-mapping-doesnt-work",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    144,
+    351
+  ],
+  "createdAt": "2022-12-13T06:53:52.491Z",
+  "lastPostedAt": "2022-12-14T12:22:44.640Z",
+  "postsCount": 8,
+  "excerpt": "Hi devs, \nI’ve created a recipe with dynamic mapping and want to trigger it now. I want to trigger the recipe with data from other software and update monday according to the dynamic values set by the user. \nWhen trigger&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1039,
+  "posts": [
+    {
+      "id": 107191,
+      "postNumber": 1,
+      "createdAt": "2022-12-13T06:53:52.574Z",
+      "author": "patrick7 (Patrick Kool)",
+      "cookedHtml": "<p>Hi devs,</p>\n<p>I’ve created a recipe with dynamic mapping and want to trigger it now. I want to trigger the recipe with data from other software and update monday according to the dynamic values set by the user.</p>\n<p>When triggering it, it returns: &lt;Response [200]&gt; - {‘success’: True}’</p>\n<p>Although that sounds good, it does not create an item in monday.<br />\nI added more screenshots below.</p>\n<p>I feel like it has something to do with how I structure the json data that I return to monday. I tried a lot of options, but can’t seem to get it right.</p>\n<p>Extra context: for some reason it never calls the field definitions URL. Might also be part of the issue.</p>\n<p>Thanks in advance for the help. If anything needs clarification, please let me know.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/1383bbab02ddd2adb2a7043dba2258e08d7ec73f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/1383bbab02ddd2adb2a7043dba2258e08d7ec73f_2_690x330.png\" alt=\"image\" width=\"690\" height=\"330\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">949×455 31.7 KB</span>\n</div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e92cf4039b84f2bf54ae2a862aa254ff60857e8a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e92cf4039b84f2bf54ae2a862aa254ff60857e8a_2_504x500.png\" alt=\"image\" width=\"504\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1015×1005 26.7 KB</span>\n</div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/ab50334baf610f66403e759548293a4051953552.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/a/ab50334baf610f66403e759548293a4051953552_2_629x500.png\" alt=\"image\" width=\"629\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1355×1077 41.2 KB</span>\n</div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/51892b72bee6b7d96aa852cb940cae0b822b7ed0.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/51892b72bee6b7d96aa852cb940cae0b822b7ed0_2_645x499.png\" alt=\"image\" width=\"645\" height=\"499\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1266×981 35.8 KB</span>\n</div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/56c1007e9718680e9ab8e1cb1ff51dbedec9d274.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/56c1007e9718680e9ab8e1cb1ff51dbedec9d274_2_690x150.png\" alt=\"image\" width=\"690\" height=\"150\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1663×362 31.9 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 107196,
+      "postNumber": 2,
+      "createdAt": "2022-12-13T08:26:17.347Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/patrick7\">@patrick7</a>,</p>\n<p>This is odd. I tested this with an almost identical context and it worked for me. There might be something I am missing because I do not usually use that language (I am a JS guy).</p>\n<p>What is strange is that the /dynamic endpoint is not being called. Are you sure you don’t have a typo somewhere? Do you see your print? (‘dynamic call’)</p>\n<p>Also, I am not sure about your available_fields array. Can you try not using quotes for id, title, outboundType and inboundTypes?</p>\n<p>This is my function as a reference (js):</p>\n<pre><code class=\"lang-auto\">app.post(\"/getFields\", function(req, res) {\n\tconsole.log(\"GET FIELDS BEING CALLED\", req);\n\treturn res.status(200).send([\n\t\t{ id: 'text', title: 'Text', outboundType: ['text', 'numeric'], inboundTypes: ['text', 'numeric', 'empty_value'] },\n\t\t{ id: 'number', title: 'Number', outboundType: 'numeric', inboundTypes: ['empty_value', 'numeric'] },\n\t  ]);\n\t}\n);\n</code></pre>\n<p>Also, not sure if it is relevant in your case, but I am testing using Postman and in the body of my request, if I use a coma after the last value in my object, I get an error. Can you, just in case erase that coma?</p>\n<p>This is my body as a reference:</p>\n<pre><code class=\"lang-auto\">{\n  \"trigger\": {\n    \"outputFields\": { \n      \"objectInAnotherPlatform\": {\n        \"number\" : 123,\n        \"text\" : \"This is my text\"\n      }\n    }\n  }\n}\n</code></pre>\n<p>Let us know what happens!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 107319,
+      "postNumber": 3,
+      "createdAt": "2022-12-14T06:34:01.857Z",
+      "author": "patrick7 (Patrick Kool)",
+      "cookedHtml": "<p>Hi Matias, thanks for your answer.</p>\n<p>The /dynamic endpoint does get called. It’s the /definitions endpoint that is not called for some reason. I configured this one in ‘Field Types’ → ‘Field Definitions URL’ field in monday. (See attached screenshot)</p>\n<p>Changing the available_fields array as you mentioned causes an error. It’s a Python related error though.</p>\n<p>Removing the ‘,’ at the end of the body didn’t make a difference unfortunately.</p>\n<p>I’ll keep trying. Let me know if you have any ideas or things you want me to check!</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/171dd62b3f6d292ee21d8b92c213fc20c6999629.png\" alt=\"image\" width=\"543\" height=\"300\" /></p>"
+    },
+    {
+      "id": 107320,
+      "postNumber": 4,
+      "createdAt": "2022-12-14T06:37:59.694Z",
+      "author": "patrick7 (Patrick Kool)",
+      "cookedHtml": "<p>Just tested in Postman. Exact same result as in Python.<br />\nDo you see, based on my app settings, what I’m not returning correctly?</p>\n<p>Maybe you can share your app settings <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> so I can copy it and make sure that’s not the issue?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/3575db60d7b51665115c6fe7c99297f6e76cab7c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/3575db60d7b51665115c6fe7c99297f6e76cab7c_2_500x500.png\" alt=\"image\" width=\"500\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">897×897 33.8 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 107331,
+      "postNumber": 5,
+      "createdAt": "2022-12-14T08:52:03.913Z",
+      "author": "patrick7 (Patrick Kool)",
+      "cookedHtml": "<p>I created a recipe that sends the data back to myself when I call the webhook URL that monday gave me.</p>\n<p>So I created a test integration. Monday returned this URL: <a href=\"https://api-gw.monday.com/automations/apps-events/182572812\" rel=\"noopener nofollow ugc\">https://api-gw.monday.com/automations/apps-events/182572812</a></p>\n<p>I set it up in a way that when I send data to this URL, it sends it to another endpoint of me, so I can see what monday received.</p>\n<p>It seems like the body doesn’t get passed for some reason</p>\n<p>I sent this:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9d9e5d5fc61201c3a70f98767f8a02df72a81b3d.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9d9e5d5fc61201c3a70f98767f8a02df72a81b3d_2_622x500.png\" alt=\"image\" width=\"622\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1064×854 31 KB</span>\n</div></a></div><p></p>\n<p>And received this:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/29119797df2abdb662bbd48879e6d84ef21d3cb5.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/2/29119797df2abdb662bbd48879e6d84ef21d3cb5.png\" alt=\"image\" width=\"588\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">820×697 42.4 KB</span>\n</div></a></div><p></p>\n<p>It’s weird though. Literally everything I send to the webhook URL return ‘success: true’. Here’s an example:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5ed006755c55eb567bbe7013173dd29987b101b2.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/5ed006755c55eb567bbe7013173dd29987b101b2_2_621x499.png\" alt=\"image\" width=\"621\" height=\"499\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1031×829 28.3 KB</span>\n</div></a></div><p></p>\n<p>Not sure if this helps at all with finding out what is going wrong, but thought it was worth sharing</p>"
+    },
+    {
+      "id": 107354,
+      "postNumber": 6,
+      "createdAt": "2022-12-14T11:45:33.394Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Can you please try one more thing for me? If it doesn’t work, we can jump on a call to see if we can get to the bottom of it.</p>\n<p>Can you try, in Postman, using JSON instead of “Text”? (at the top, on the right, next to where it says “GraphQL”).</p>"
+    },
+    {
+      "id": 107359,
+      "postNumber": 7,
+      "createdAt": "2022-12-14T12:15:37.349Z",
+      "author": "patrick7 (Patrick Kool)",
+      "cookedHtml": "<p>Wow that worked. Immediately was able to find the problem in the code as well…</p>\n<p>I first had:<br />\nresponse = requests.post(url, headers=headers, data=data).json()</p>\n<p>And changed it to:<br />\nresponse = requests.post(url, headers=headers, json=data).json()</p>\n<p>Very weird though, because I also tried adding :<br />\ndata = json.dumps(data)<br />\nwhile keeping data=data in the response.<br />\nThat didn’t work either.</p>\n<p>Weird, but I’m very happy it finally works. Thanks a lot!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/063f6ec5d790a188df8dd456f96299fa125eda01.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/063f6ec5d790a188df8dd456f96299fa125eda01_2_690x284.png\" alt=\"image\" width=\"690\" height=\"284\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">968×399 24 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 107362,
+      "postNumber": 8,
+      "createdAt": "2022-12-14T12:22:44.640Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello Patrick,</p>\n<p>Amazing!</p>\n<p>I am very happy it works for you with that change <img src=\"https://emoji.discourse-cdn.com/apple/metal.png?v=12\" title=\":metal:\" class=\"emoji\" alt=\":metal:\" width=\"20\" height=\"20\" /></p>\n<p>Let us know if you need anything else in the future!</p>"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "id": 108013,
+  "title": "Is it possible to get item_views ID?",
+  "slug": "is-it-possible-to-get-item-views-id",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2025-01-21T02:13:35.206Z",
+  "lastPostedAt": "2025-01-23T02:49:47.972Z",
+  "postsCount": 4,
+  "excerpt": "So for an event from timeline and activities, the url is in the following format: \nhttps://.monday.com/boards/8140312713/pulses/8140355862/item_views/174255419?timelineItemId=c9bca32d-b635-43c0-a0d8-670fed4a7b46 \nI’m try&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 23,
+  "posts": [
+    {
+      "id": 218173,
+      "postNumber": 1,
+      "createdAt": "2025-01-21T02:13:35.276Z",
+      "author": "douglas (Douglas)",
+      "cookedHtml": "<p>So for an event from timeline and activities, the url is in the following format:</p>\n<p>https://<span class=\"chcklst-box fa fa-square-o fa-fw\"></span>.monday.com/boards/8140312713/pulses/8140355862/item_views/174255419?timelineItemId=c9bca32d-b635-43c0-a0d8-670fed4a7b46</p>\n<p>I’m trying to get 174255419, after item_views/ which appears to be the item_view ID for Timeline and Activities.</p>\n<p>Is this possible through the API?</p>"
+    },
+    {
+      "id": 218198,
+      "postNumber": 2,
+      "createdAt": "2025-01-21T06:15:42.572Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking with Jonathan Segalovsky Koblenz</p>"
+    },
+    {
+      "id": 218201,
+      "postNumber": 3,
+      "createdAt": "2025-01-21T06:23:00.812Z",
+      "author": "Clarey (MondayMotivator)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/douglas\">@douglas</a>,</p>\n<p>Yes, it is possible to retrieve the <code>item_view</code> ID or related data through the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API, depending on the specific details and your use case. Here’s how you can approach it:</p>\n<h3><a name=\"p-218201-understanding-the-url-1\" class=\"anchor\" href=\"#p-218201-understanding-the-url-1\"></a>Understanding the URL</h3>\n<p>In your URL:</p>\n<p>bash</p>\n<p>CopyEdit</p>\n<pre><code class=\"lang-auto\">https://&lt;workspace&gt;.monday.com/boards/8140312713/pulses/8140355862/item_views/174255419?timelineItemId=c9bca32d-b635-43c0-a0d8-670fed4a7b46\n</code></pre>\n<ul>\n<li><code>8140312713</code> is the board ID.</li>\n<li><code>8140355862</code> is the pulse (or item) ID.</li>\n<li><code>174255419</code> appears to be the <code>item_view</code> ID.</li>\n</ul>\n<p>The <code>item_view</code> ID is not explicitly documented in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>’s API as a separate entity, but you can often work around this by fetching associated views or timeline data for the item.</p>\n<hr />\n<h3><a name=\"p-218201-fetching-data-via-mondaycom-api-2\" class=\"anchor\" href=\"#p-218201-fetching-data-via-mondaycom-api-2\"></a>Fetching Data via <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API</h3>\n<h4><a name=\"p-218201-step-1-get-board-views-3\" class=\"anchor\" href=\"#p-218201-step-1-get-board-views-3\"></a>Step 1: Get Board Views</h4>\n<p>To retrieve available views on a board, you can query the board’s data:</p>\n<p>graphql</p>\n<p>CopyEdit</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: 8140312713) {\n    views {\n      id\n      name\n      type\n    }\n  }\n}\n</code></pre>\n<p>This fetches all views associated with the board, including timeline or activity views. However, it doesn’t directly link to the <code>item_view</code> ID in the URL.</p>\n<hr />\n<h4><a name=\"p-218201-step-2-fetch-timeline-data-4\" class=\"anchor\" href=\"#p-218201-step-2-fetch-timeline-data-4\"></a>Step 2: Fetch Timeline Data</h4>\n<p>If you are working with timeline data, you can use the <code>items</code> query to get the relevant timeline details:</p>\n<p>graphql</p>\n<p>CopyEdit</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: 8140355862) {\n    column_values {\n      id\n      value\n      text\n    }\n  }\n}\n</code></pre>\n<p>Check for the <code>timeline</code> column and its value. It might help you identify relevant information linked to <code>timelineItemId</code>.</p>\n<hr />\n<h4><a name=\"p-218201-step-3-identify-item-view-id-5\" class=\"anchor\" href=\"#p-218201-step-3-identify-item-view-id-5\"></a>Step 3: Identify Item View ID</h4>\n<p>Unfortunately, the <code>item_view</code> ID (<code>174255419</code>) used in the URL is not directly accessible through the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API based on current documentation. If you need it specifically:</p>\n<ol>\n<li>Confirm if this ID is tied to a board view or specific item property by reviewing available API fields.</li>\n<li>Contact <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>’s support for clarification if this ID is undocumented or hidden.</li>\n</ol>\n<hr />\n<h3><a name=\"p-218201-suggested-solution-6\" class=\"anchor\" href=\"#p-218201-suggested-solution-6\"></a>Suggested Solution</h3>\n<p>To work with timeline and activity data:</p>\n<ol>\n<li>Retrieve the item and its timeline details using the <code>items</code> query.</li>\n<li>Use <code>views</code> from the board query to fetch metadata about available views.</li>\n</ol>\n<p>If this has helped let me know with a like or hopefully others will also jump in!</p>"
+    },
+    {
+      "id": 218206,
+      "postNumber": 4,
+      "createdAt": "2025-01-21T06:41:00.550Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 218212,
+      "postNumber": 5,
+      "createdAt": "2025-01-21T07:12:12.031Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>You can get the current instance id on the client side using monday.get(‘context’) if you’re in an item view.</p>\n<p>Also if you’re accessing it for a particular  item view, have a look in the JWT. It might be hidden in there too.</p>"
+    },
+    {
+      "id": 218248,
+      "postNumber": 6,
+      "createdAt": "2025-01-21T11:55:33.021Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 218532,
+      "postNumber": 7,
+      "createdAt": "2025-01-23T02:49:47.972Z",
+      "author": "douglas (Douglas)",
+      "cookedHtml": "<p>Thank you both! JWT might have what I’m looking for since I’m trying to access the email and activities item view ID from another item view</p>"
+    },
+    {
+      "id": 218563,
+      "postNumber": 8,
+      "createdAt": "2025-01-23T08:40:30.075Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

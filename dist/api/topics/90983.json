@@ -1,0 +1,68 @@
+{
+  "id": 90983,
+  "title": "Race condition with \"when item created\" trigger and mirror columns",
+  "slug": "race-condition-with-when-item-created-trigger-and-mirror-columns",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-06-25T11:47:43.812Z",
+  "lastPostedAt": "2025-01-29T19:23:05.748Z",
+  "postsCount": 5,
+  "excerpt": "Until recently one of our automations worked as expected for customers. However, it seems something has changed late last week, at least for one customer. \nNow “when item created” trigger happens, its occurring before th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 136,
+  "posts": [
+    {
+      "id": 190360,
+      "postNumber": 1,
+      "createdAt": "2024-06-25T11:47:43.894Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Until recently one of our automations worked as expected for customers. However, it seems something has changed late last week, at least for one customer.</p>\n<p>Now “when item created” trigger happens, its occurring before the mirror column “mirrored_items” object gets populated. When we receive the action event and query the the mirrored_items object of the MirrorValue, it is coming back as an empty array now. But if we’re busy, or something is delaying things on our side just enough, then the value is populated when we query the column value.</p>\n<p><strong>I was wondering if something changed on how values are populated when a new item is created?</strong></p>\n<p>We did try triggering off the connect boards column changing but it doesn’t trigger as a column change on item creation (some columns do still I believe).</p>\n<p>I should note this customer is creating the new item from the connect boards column on another board - they are going to select the item, and then using the add item row at the bottom of the group. I’m wondering if this method of creating the item might be part of the issue?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/1/51a020453b59471810179941fb8e35c728fa5fed.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/5/1/51a020453b59471810179941fb8e35c728fa5fed.png\" alt=\"image\" width=\"411\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">413×502 13.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 190693,
+      "postNumber": 2,
+      "createdAt": "2024-06-26T08:20:19.300Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it (such as account ID, board IDs, item IDs, timestamps, etc. and ideally a screen recording) so that our team can take a look into it?</p>"
+    },
+    {
+      "id": 190817,
+      "postNumber": 3,
+      "createdAt": "2024-06-26T10:05:03.710Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> also please update this with your findings.</p>\n<p>I’d hate for the answer to be a secret <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 190860,
+      "postNumber": 4,
+      "createdAt": "2024-06-26T11:51:41.448Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I think I understand whats up. In the above image its not clear, but when there is a “connected items” section in the “Choose Item” dialog (not just an All items section) and you do “+Add Item” it will create the item connected already.</p>\n<p>However, the item is not created with any values, the item connection on the new item is a “passive” change due to a two-way connection and isn’t getting reflected until the creating (where you are interacting) item’s connect board column updates and only then does the new item get its value.</p>\n<p>This is in opposition to if an item was created via an automation, where you “connect both boards” In that case the new item is being created with its connect boards column having a link to the item it was created from.</p>\n<p>In other words I don’t think any behaviors have changed, but rather a race condition has shown up because either monday has slowed down the reflection of the two way connection - or our app has sped up (though I am not sure how, nothing has changed). This reveals the difference in how the values are being populated though.</p>"
+    },
+    {
+      "id": 191189,
+      "postNumber": 5,
+      "createdAt": "2024-06-27T06:25:31.090Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 219415,
+      "postNumber": 6,
+      "createdAt": "2025-01-29T19:23:05.748Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Good find! I too have ran into this problem before. A monday support dev reccommended to wait a few seconds in between each post request I was making. For a while I was using 5 seconds and that seemed to fix the issue, but yes recently, I’ve been running into the same issue.</p>\n<p>Unfortuantly (at least for my case) users can’t wait that long if dealing with thousands of groups/items. It already takes upward of 15+ hours for my processes to run due to this limitation.</p>\n<p>I’ve tried a multitude of solutions ranging from throttling to monday’s batch mutations to quering the previous post result. What happens is I’ll create a group and receive the id of that group (from monday) and then later create an item in that group and monday will tell me the group_id does not exist.</p>\n<p>Very annoyed with this limitation. Hopefully this is being addressed!</p>"
+    },
+    {
+      "id": 219487,
+      "postNumber": 7,
+      "createdAt": "2025-01-30T07:38:19.418Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

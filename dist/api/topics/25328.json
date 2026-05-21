@@ -1,0 +1,57 @@
+{
+  "id": 25328,
+  "title": "Upload files on column from API's Monday using Node.js",
+  "slug": "upload-files-on-column-from-apis-monday-using-node-js",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    41,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2021-09-25T11:24:29.799Z",
+  "lastPostedAt": "2021-09-27T06:28:16.563Z",
+  "postsCount": 4,
+  "excerpt": "Hello Monday Team! \nI previously used API-Monday for simple forms (text only), but now I need to improve my form with file uploads to CRM. \nHere is my previous code for a form only with simple input.text fields: \nconst f&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 3035,
+  "posts": [
+    {
+      "id": 64567,
+      "postNumber": 1,
+      "createdAt": "2021-09-25T11:24:29.897Z",
+      "author": "devhance (devhance)",
+      "cookedHtml": "<p>Hello Monday Team!</p>\n<p>I previously used API-Monday for simple forms (text only), but now I need to improve my form with file uploads to CRM.</p>\n<p>Here is my previous code for a form only with simple input.text fields:</p>\n<pre><code class=\"lang-auto\">const fetch = require('node-fetch');\n\nconst API_TOKEN =  'API_TOKEN ';\n\nmodule.exports = async (req, res) =&gt; {\n  const { BOARD_ID, GROUP_ID, itemName, values } = req.body;\n\n  var jsonResponse = {};\n  const columnValues = JSON.stringify(values).replace(/\"/g, '\\\\\"');\n\n  try {\n    const response = await fetch('https://api.monday.com/v2/', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: API_TOKEN,\n      },\n      body: JSON.stringify({\n        query: `\n          mutation {\n            create_item(board_id: ${BOARD_ID}, group_id: ${GROUP_ID}, item_name: \"${itemName}\", column_values: \"${columnValues}\") {\n              id\n            }\n          }\n        `,\n      }),\n    });\n    jsonResponse = await response.json();\n    if (jsonResponse.errors || jsonResponse.status_code === 500) {\n      throw new Error('Oops, something went wrong');\n    }\n  } catch (error) {\n    return res\n      .status(error.statusCode || 500)\n      .json({ error: error.message, dataError: jsonResponse });\n  }\n\n  return res.status(200).json({ success: true, data: jsonResponse });\n};\n</code></pre>\n<p>And it works - perfectly!</p>\n<p>But I’m having trouble uploading the files. I’ve read the documentation - <a href=\"https://developer.monday.com/api-reference/docs/files-queries\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Files (assets)</a>, both GraphQL and Javascript tabs, but it’s not clear to me how to properly convert the file if I get it from an HTML form.<br />\nHere is my client code:</p>\n<pre><code class=\"lang-auto\">    const fileData = new FormData();\n    const fileField = document.querySelector('input[type=\"file\"]');\n    fileData.append('file', fileField.files[0]);\n\n    await fetch('/api/monday-asset', {\n      method: 'POST',\n      body: fileData,\n    });\n</code></pre>\n<p>Here is my server-code:</p>\n<pre><code class=\"lang-auto\">'use strict';\nconst fetch = require('node-fetch');\nconst Busboy = require('busboy');\n\nconst API_TOKEN = \"API_TOKEN \";\n\nconst itemID = 1710448354;\n\nmodule.exports = async (req, res) =&gt; {\n  var jsonResponse = {};\n  const busboy = new Busboy({ headers: req.headers });\n\n  busboy.on('file', async function (fieldname, file, filename, encoding, mimetype) {\n    console.log('File', fieldname, file, filename, encoding, mimetype);\n\n    try {\n      const response = await fetch('https://api.monday.com/v2/', {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n          Authorization: API_TOKEN,\n        },\n        body: JSON.stringify({\n          query: `\n            mutation {\n              add_file_to_column (item_id: ${itemID}, column_id: \"files\", file: ${file}) {\n                id\n              }\n            }\n          `,\n        }),\n      });\n      jsonResponse = await response.json();\n      if (jsonResponse.errors || jsonResponse.status_code === 500) {\n        throw new Error('Oops, something went wrong');\n      }\n    } catch (error) {\n      return res\n        .status(error.statusCode || 500)\n        .json({ error: error.message, dataError: jsonResponse });\n    }\n\n    return res.status(200).json({ success: true, data: jsonResponse });\n  });\n\n  req.pipe(busboy);\n};\n\n</code></pre>\n<p>I’ve also checked this link - <a href=\"https://github.com/AlexSavchuk-hash/file-upload-fetch/blob/main/uploader.js\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">file-upload-fetch/uploader.js at main · AlexSavchuk-hash/file-upload-fetch · GitHub</a><br />\nBut in this example the file is taken from the local system, not from request and it’s not clear how to do that correctly from this output (File):</p>\n<pre><code class=\"lang-auto\">FileStream {\n  _readableState: ReadableState {\n    objectMode: false,\n    highWaterMark: 16384,\n    buffer: BufferList { head: null, tail: null, length: 0 },\n    length: 0,\n    pipes: [],\n    flowing: null,\n    ended: false,\n    endEmitted: false,\n    reading: false,\n    constructed: true,\n    sync: true,\n    needReadable: false,\n    emittedReadable: false,\n    readableListening: false,\n    resumeScheduled: false,\n    errorEmitted: false,\n    emitClose: true,\n    autoDestroy: true,\n    destroyed: false,\n    errored: null,\n    closed: false,\n    closeEmitted: false,\n    defaultEncoding: 'utf8',\n    awaitDrainWriters: null,\n    multiAwaitDrain: false,\n    readingMore: false,\n    decoder: null,\n    encoding: null,\n    [Symbol(kPaused)]: null\n  },\n</code></pre>\n<p>Would be glad if you can propose the full-example, with HTML-Form + input type file or showing how to transform File data from “FormData”.<br />\nThanks!</p>"
+    },
+    {
+      "id": 64570,
+      "postNumber": 2,
+      "createdAt": "2021-09-25T13:46:57.390Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/devhance\">@devhance</a></p>\n<p>Welcome to the community. To upload a file to monday you have to send the binary data. It is not possible to send a link without downloading the file first. See alseo: <a href=\"https://community.monday.com/t/upload-files-on-column-from-monday-api-using-php/25232/9\" class=\"inline-onebox\">Upload files on column from monday API using PHP - #9 by preetamkumarjoshi</a></p>"
+    },
+    {
+      "id": 64658,
+      "postNumber": 3,
+      "createdAt": "2021-09-27T06:20:50.178Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 64660,
+      "postNumber": 4,
+      "createdAt": "2021-09-27T06:28:16.563Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/devhance\">@devhance</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>That’s a great question! I can confirm <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>’s response here. Perhaps you could use a node module like <a href=\"https://www.npmjs.com/package/multer\" rel=\"noopener nofollow ugc\">Multer</a> or <a href=\"https://www.npmjs.com/package/form-data\" rel=\"noopener nofollow ugc\">form-data</a> to store the file, get the binary data output and then send that to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>.</p>\n<p>I hope this helps as a general poitner!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 67730,
+      "postNumber": 5,
+      "createdAt": "2021-11-02T22:31:11.216Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

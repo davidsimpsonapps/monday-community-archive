@@ -1,0 +1,41 @@
+{
+  "id": 43017,
+  "title": "Sending via Postman to create_item",
+  "slug": "sending-via-postman-to-create-item",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107
+  ],
+  "createdAt": "2022-09-26T15:03:47.731Z",
+  "lastPostedAt": "2022-10-05T12:03:36.836Z",
+  "postsCount": 3,
+  "excerpt": "{\n    &quot;query&quot;:&quot;{mutation(myItemName: String){ create_item (board_id:2364371628, group_id:XXXXXX, item_name:\\&quot;New Leads\\&quot;, column_values: $variables) { id } }&quot;,\n    &quot;variables&quot;: {&quot;email&quot;:&quot;test2@test2.com&quot;,&quot;firstName&quot;:&quot;tes&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1032,
+  "posts": [
+    {
+      "id": 98641,
+      "postNumber": 1,
+      "createdAt": "2022-09-26T15:03:47.810Z",
+      "author": "bhattibytes (Jason Bhatti)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">{\n    \"query\":\"{mutation(myItemName: String){ create_item (board_id:2364371628, group_id:XXXXXX, item_name:\\\"New Leads\\\", column_values: $variables) { id } }\",\n    \"variables\": {\"email\":\"test2@test2.com\",\"firstName\":\"test2\", \"lastName\":\"test2\", \"companyName\":\"test2\", \"phoneNumber\":\"1234567890\", \"message\": \"here is a sample message\"}\n}\n</code></pre>\n<p>I’m trying to pull lead data from Marketo and send it into <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> via a webhook but can’t figure out how to write the correct query?  I’ve added my key to headers so I know it is working. “New Leads” is the group Name but not sure how to get the Group ID.  What else am I missing and how do I fix the query? The error I am getting is:</p>\n<pre><code class=\"lang-auto\">{\n    \"errors\": [\n        {\n            \"message\": \"Unexpected end of document\",\n            \"locations\": []\n        }\n    ],\n    \"account_id\": 6562763\n}\n</code></pre>"
+    },
+    {
+      "id": 99599,
+      "postNumber": 2,
+      "createdAt": "2022-10-05T12:03:36.836Z",
+      "author": "bhattibytes (Jason Bhatti)",
+      "cookedHtml": "<p>Had to figure this out on my own as unfortunately the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> &amp; Marketo support teams were not so helpful. Please do better.  I will explain my solution here so if other people are having the same problem they’ll have a starting point.</p>\n<p>The main blocking issue was the fact that Marketo’s Webhook does not send as JSON even if their support tells you otherwise.  This forced me to forego using a Marketo Webhook altogether and do everything on-page with JavaScript.</p>\n<p>The tricky part was getting the form data to populate in the URL string on the confirmation page where the script for parsing the form fields into parsedVariables from the URL string was executed and sent via a fetch request. I found this workaround article that helped me get the job done: <a href=\"https://nation.marketo.com/t5/product-blogs/appending-form-fields-to-the-thank-you-url/ba-p/313573\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Appending form fields to the Thank You URL - Marketing Nation</a> There is no easy way to do this out-of-the-box with Marketo.</p>\n<p>The other blocking issue was formatting of the query to add variables in through string interpolation using back-ticks and template literals.</p>\n<p>I fixed this by sending the query using string concatenation like so:</p>\n<pre><code class=\"lang-auto\">\n{\n    'query' : 'mutation ($boardId: Int!, $group_id: String!, $item_name: String!, $columnVals: JSON!) {create_item (board_id: $boardId, group_id: $group_id, item_name: $item_name, column_values: $columnVals) {id}}',\n    'variables': {\n     'boardId': 9999999999,\n     'group_id': \"topics\",\n     'item_name': parsedCompany,\n     'columnVals': \"{\\\"phone\\\":\\\"\" + parsedPhone + \"\\\",\\\"text\\\":\\\"\" + parsedFirst +\"\\\", \\\"text4\\\":\\\"\" + parsedLast + \"\\\", \\\"long_text\\\":\\\"\" + parsedMessage +\"\\\", \\\"status4\\\":\\\"Website Form\\\",\\\"email\\\":{\\\"text\\\":\\\"\" + parsedEmail + \"\\\",\\\"email\\\":\\\"\" + parsedEmail + \"\\\"}}\"\n }\n  }\n</code></pre>\n<p>The parsedValues were instantiated from the form fields taken from the url.  Some things to note in the code above</p>\n<pre><code class=\"lang-auto\"> 'item_name': parsedCompany \n</code></pre>\n<p>no quotes needed on parsedCompany because the value of parsedCompany is already a string.  And all the escaped fields that had variables, needed to be added via string concatenation. Another strange behavior of Monday is when sending the email over you will notice the fields need to be sent like this:</p>\n<pre><code class=\"lang-auto\">\"email\\\":{\\\"text\\\":\\\"\" + parsedEmail + \"\\\",\\\"email\\\":\\\"\" + parsedEmail + \"\\\"}\n</code></pre>\n<p>Otherwise you will get an error for the email.</p>\n<p>Finally, if you’re trying to figure out what Marketo uses for CompanyNotes as it’s not just CompanyNotes or Notes as one would expect but it is actually MktoCompanyNotes so when you parse fields into the URL you need the right form field names.</p>\n<pre><code class=\"lang-auto\">MktoForms2.whenReady(function(mktoForm){ const appendFieldsToTYQuery = [ \n{ mktoField: \"Email\" }, \n{ mktoField: \"Phone\" }, \n{ mktoField: \"FirstName\" }, \n{ mktoField: \"LastName\" }, \n{ mktoField: \"Company\" }, \n{ mktoField: \"MktoCompanyNotes\", } ];\n</code></pre>\n<p>Hope this helps!</p>"
+    },
+    {
+      "id": 100323,
+      "postNumber": 3,
+      "createdAt": "2022-10-12T12:03:41.836Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

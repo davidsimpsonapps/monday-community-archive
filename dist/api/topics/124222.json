@@ -1,0 +1,53 @@
+{
+  "id": 124222,
+  "title": "Extract Calculated values using the API",
+  "slug": "extract-calculated-values-using-the-api",
+  "categoryId": 6,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2026-03-12T12:31:56.067Z",
+  "lastPostedAt": "2026-03-19T07:37:55.059Z",
+  "postsCount": 5,
+  "excerpt": "I have created an API call  extracting values from my boards, but it Appears that ALL CALCULATED values are dropped. \nTried to feed Monday chat bot with my data structure and it came back with suggestion, but I still do &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 21,
+  "posts": [
+    {
+      "id": 247077,
+      "postNumber": 1,
+      "createdAt": "2026-03-12T12:31:56.167Z",
+      "author": "JI-LCI (JI-LCI)",
+      "cookedHtml": "<p>I have created an API call  extracting values from my boards, but it Appears that ALL CALCULATED values are dropped.</p>\n<p>Tried to feed Monday chat bot with my data structure and it came back with suggestion, but I still do not see any values in the Calculated values columns that I have in my boards.</p>\n<p>According to the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> Chat bot this Data Structure should be correct. I get the basic data values, BUT NOT the Calculated values<br />\nboard_query = “”\"<br />\nquery {<br />\nboards(ids: [%s]) {<br />\nid<br />\nname<br />\ndescription<br />\nstate<br />\ncolumns {<br />\nid<br />\ntitle<br />\ntype<br />\ndescription<br />\nsettings_str<br />\n}<br />\ngroups {<br />\ntitle<br />\nid<br />\nitems_page {<br />\nitems {<br />\nid<br />\nname}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n“”\" % board_id</p>"
+    },
+    {
+      "id": 247086,
+      "postNumber": 2,
+      "createdAt": "2026-03-13T00:53:04.989Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ji-lci\">@JI-LCI</a> !</p>\n<p>Calculated values in <a href=\"http://monday.com\">monday.com</a> usually aren’t returned through the API the same way regular column values are. Columns like formulas, rollups, mirrors, and some other calculated fields are generated in the UI, and the API often only returns their underlying structure unless you explicitly query the column values.</p>\n<p>In your query, you’re currently pulling the board structure and the item IDs and names, but not the column values themselves. You would need to include the column_values field in the items query to retrieve those.</p>\n<p>For example, the query would typically look more like this:</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: BOARD_ID) {\n    groups {\n      items_page {\n        items {\n          id\n          name\n          column_values {\n            id\n            text\n            value\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Even with that, some calculated columns may return limited data depending on the column type. In many cases the text field will contain the rendered value you see in the board.</p>\n<p>If you’re still seeing empty results after including column_values, it may be related to the specific column type (for example formulas, mirrors, or rollups). In those cases it can help to check the API documentation for that column type or reach out to monday’s support team with the exact column type and a sample response so they can confirm what should be returned.</p>\n<p><strong>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:</strong><br />\n<img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=15\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" /> <strong><a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\">Calendly</a></strong></p>"
+    },
+    {
+      "id": 247099,
+      "postNumber": 3,
+      "createdAt": "2026-03-13T08:49:10.530Z",
+      "author": "YOGESHP (Yogesh Pokale)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ji-lci\">@JI-LCI</a></p>\n<p>At the moment your query is only pulling the item id and name, so the API is actually doing exactly what you’re asking it to do.</p>\n<p>Calculated columns (Formula, Mirror, etc.) won’t come through unless you explicitly request column_values in the items section of your query.</p>\n<p>You’ll need to expand it to something like:</p>\n<p>items {<br />\nid<br />\nname<br />\ncolumn_values {<br />\nid<br />\ntype<br />\ntext<br />\nvalue<br />\n}<br />\n}</p>\n<p>If the columns are Mirror columns, you may also need to use the relevant fragment (for example … on MirrorValue) to see the displayed value.</p>\n<p>So, it’s not that the calculated values are being dropped they’re just not being requested in the query.</p>"
+    },
+    {
+      "id": 247416,
+      "postNumber": 4,
+      "createdAt": "2026-03-19T06:40:51.648Z",
+      "author": "JI-LCI (JI-LCI)",
+      "cookedHtml": "<p>Appears that I submitted the wrong data structure. I am  still trying to extract the Calculated values.</p>\n<pre><code class=\"lang-auto\">items_query = f\"\"\"\n            query {{\n              boards(ids: [{board_id}]) {{\n                items_page(limit: 100{cursor_param}) {{\n                  cursor\n                  items {{\n                    id\n                    name\n                    group {{\n                    id\n                    title}}\n                    created_at\n                    updated_at\n                    column_values(capabilities: [CALCULATED]) {{\n                      id\n                      column {{\n                        id\n                        title\n                        type\n                      }}\n                      text\n                      value\n                    }}\n                  }}\n                }}\n              }}\n            }}\n            \"\"\"\n</code></pre>"
+    },
+    {
+      "id": 247417,
+      "postNumber": 5,
+      "createdAt": "2026-03-19T07:37:55.059Z",
+      "author": "JI-LCI (JI-LCI)",
+      "cookedHtml": "<p>Img 1 ) The column is build using the {Group} function in Monday</p>\n<p>Img 2 ) This is the result in my Excel file.  I get the column header, but not content</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/a/7a7914d5d78b4990eb9856093991f01a3b3fe525.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/7/a/7a7914d5d78b4990eb9856093991f01a3b3fe525.png\" alt=\"image\" width=\"516\" height=\"183\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">516×183 10.3 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/1/61616fef03c6b526dbdca8acd85c361cf83694a3.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/6/1/61616fef03c6b526dbdca8acd85c361cf83694a3.png\" alt=\"image\" width=\"368\" height=\"119\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">368×119 2.48 KB</span></div></a></div><p></p>"
+    }
+  ]
+}

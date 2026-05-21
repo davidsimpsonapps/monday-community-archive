@@ -1,0 +1,114 @@
+{
+  "id": 10712,
+  "title": "Creating multiple columns?",
+  "slug": "creating-multiple-columns",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-08-31T09:06:53.802Z",
+  "lastPostedAt": "2021-02-25T14:38:36.410Z",
+  "postsCount": 13,
+  "excerpt": "3 columns should be created on one board: \n \nBut only 1 or 2 columns get added to the board, inconsistently: \n  \ncode: \nthis.createBoard(&quot;Test&quot;, null).then(boardId =&gt; {\n    const { columnNames } = this.state;\n    columnN&hellip;",
+  "solvedPostId": null,
+  "likeCount": 13,
+  "views": 2676,
+  "posts": [
+    {
+      "id": 27160,
+      "postNumber": 1,
+      "createdAt": "2020-08-31T09:06:53.862Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>3 columns should be created on one board:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/0/05a6990e160d47471c2f5dfcce27a27e78686f5b.png\" alt=\"mon-columns\" width=\"510\" height=\"197\" /></p>\n<p>But only 1 or 2 columns get added to the board, inconsistently:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/0/0cc3bb961eb585345bce0b46f9cae9fa6d0ef89a.png\" alt=\"1-col\" width=\"232\" height=\"191\" /> <img src=\"https://global.discourse-cdn.com/monday/original/2X/1/101c8961fde1858353d0ae5c9d714cce604c0e47.png\" alt=\"2-cols\" width=\"350\" height=\"176\" /></p>\n<p>code:</p>\n<pre><code>this.createBoard(\"Test\", null).then(boardId =&gt; {\n    const { columnNames } = this.state;\n    columnNames.forEach(title =&gt; {\n        this.createColumn(boardId, title, \"text\");\n    })\n})\n\nasync createColumn(boardId, title, type) {\n    const query = `mutation { \n      create_column (board_id: ${boardId}, title: ${title}, column_type: ${type}) {\n        id }}`;\n    await monday.api(query).then(res =&gt; {\n        console.log(`col created: ${JSON.stringify(res.data)}`);\n    });\n};\n</code></pre>"
+    },
+    {
+      "id": 27205,
+      "postNumber": 2,
+      "createdAt": "2020-08-31T13:37:11.257Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 27206,
+      "postNumber": 3,
+      "createdAt": "2020-08-31T13:40:59.436Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/supernova\">@supernova</a>,</p>\n<p>Let me check in with the team on this - more on this soon!</p>\n<p>Best,<br />\nDaniel</p>"
+    },
+    {
+      "id": 27295,
+      "postNumber": 4,
+      "createdAt": "2020-09-01T08:31:19.866Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a> , I figured it out <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Solution:</p>\n<p>Add delay between each column creation with setTimeout so that the calls are made consecutively</p>\n<pre><code>  componentDidMount() {\n      this.addColumns();\n  }\n\n  addColumns = () =&gt; {\n      this.createBoard(\"Test\", \"share\").then((boardId) =&gt; {\n          this.addColumn(boardId, 'text');\n          setTimeout(() =&gt; { this.addColumn(boardId, 'text') }, 2000);\n          setTimeout(() =&gt; { this.addColumn(boardId, 'date') }, 3000);\n      })\n  }\n\n  addColumn = (boardId, type) =&gt; {\n      const { columnTitles, colIndex } = this.state;\n      if (colIndex &lt; columnTitles.length) {\n          this.setState({ colIndex: colIndex + 1 }, () =&gt; {\n              this.createColumn(boardId, columnTitles[colIndex], type);\n          });\n      }\n  }\n</code></pre>\n<br />\nOr more concisely:\n<pre><code>columnTitles: [\n  {title: \"url\", type:\"text\"}, \n  {title: \"name\", type: \"text\"},\n  {title: \"date\", type :\"date\"}\n]\n\ncreateBoardWithColumns = (boardName, boardType) =&gt; {\n    this.createBoard(boardName, boardType).then(boardId =&gt; {\n       let offset = 0;\n       this.state.columnTitles.forEach(col =&gt; {\n         setTimeout(() =&gt; {\n         this.createColumn(boardId, col.title, col.type)\n       }, 1000 + offset);\n       offset += 1000;\n       })\n    })\n}</code></pre>"
+    },
+    {
+      "id": 27336,
+      "postNumber": 5,
+      "createdAt": "2020-09-01T15:58:47.027Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/supernova\">@supernova</a>,</p>\n<p>Apologies for the delay here - but amazing job figuring it out! Giving those calls a bit of breathing room so they can be made consecutively should do the trick - but if you run into any other issues please let us know <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 27361,
+      "postNumber": 6,
+      "createdAt": "2020-09-01T18:09:38.238Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>That’s awesome! you got it!</p>\n<p>Take my suggestion with a grain of salt especially since you’ve already got it, but I still want to throw it out there just in case it’s useful.<br />\nI think you should take advantage of the async / await you already have. I did it locally and everything still works.</p>\n<p>So instead of using setTimeout, you can use:</p>\n<pre><code class=\"lang-auto\">this.state.columnTitles.forEach(async col =&gt; {\n   await this.createColumn(boardId, col.title, col.type)\n})\n</code></pre>"
+    },
+    {
+      "id": 27554,
+      "postNumber": 7,
+      "createdAt": "2020-09-03T03:52:57.704Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Hi <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=9\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" /> , I just tested it on my end but can’t get it to work for some reason. It’s still adding only 1 or 2 of the 3 columns to the board like before <img src=\"https://emoji.discourse-cdn.com/apple/hushed.png?v=9\" title=\":hushed:\" class=\"emoji\" alt=\":hushed:\" /></p>"
+    },
+    {
+      "id": 27558,
+      "postNumber": 8,
+      "createdAt": "2020-09-03T04:09:35.164Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a> - thanks for jumping in here and sharing a different way to approach this, that’s awesome!</p>\n<p><a class=\"mention\" href=\"/u/supernova\">@supernova</a> what I think is happening here is you are hitting the complexity rate per minute cap of our API when making those calls, which is why the setTimeout solution works as well. By adding a delay between the calls, the queries are more spread out and they are less likely to hit the limit. Does that make sense?</p>\n<p>I hope that helps get this to work in the most efficient way possible <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27562,
+      "postNumber": 9,
+      "createdAt": "2020-09-03T04:14:42.609Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> yes, but what I meant was setTimeout works for me but async/await doesn’t…</p>"
+    },
+    {
+      "id": 27563,
+      "postNumber": 10,
+      "createdAt": "2020-09-03T04:18:18.805Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/supernova\">@supernova</a></p>\n<p>Thank you for clarifying further! I think the async/await doesn’t work in this case because the calls are still running too close to each other - either way, I’m glad that adding timeouts would work for your use case.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27564,
+      "postNumber": 11,
+      "createdAt": "2020-09-03T04:22:31.982Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>But I’m confused cause it worked for <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=9\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" /> …<br />\nPlease confirm <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a>? cause async/await is obv the cleaner solution if I could only get that to work instead</p>"
+    },
+    {
+      "id": 27643,
+      "postNumber": 12,
+      "createdAt": "2020-09-03T13:50:40.114Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hey! I was wrong. Sorry.</p>\n<p>I only counted for the console log as the success and jumped at that, but when previewing my actual Monday app, the columns didn’t show. Bummer. Sorry about that!</p>\n<p>So, I tried a different method. I think the problem more aligns with <code>forEach()</code> as it fires them all at once and instead of a one-at-a-time thing which is what we want. I tried a <code>for loop</code> and that works. haha. I tested it twice and have seen the three columns show each of those times. Before that, I’ve tried <code>.map()</code> with <code>Promise.all</code> and that didn’t work. <code>columnTitles.reduce()</code> didn’t work either… but a generic for loop does. <img src=\"https://emoji.discourse-cdn.com/apple/woman_shrugging.png?v=9\" title=\":woman_shrugging:\" class=\"emoji\" alt=\":woman_shrugging:\" /></p>\n<pre><code class=\"lang-auto\">      const boardId = data.data.create_board.id\n      for (const col of columnTitles) {\n        await createColumn(boardId, col.title, col.type)\n      }\n</code></pre>\n<p>If that doesn’t work, it may be because of the other stuff I added with it. My code is in functional component so it’s a bit different than your class components.</p>\n<pre><code class=\"lang-auto\">\n  const createColumn = async (boardId, title, type) =&gt; {\n    const query = `mutation { \n      create_column (board_id: ${boardId}, title: ${title}, column_type: ${type}) {\n        id }}`;\n    return await monday.api(query).then(async (res) =&gt; {\n      await console.log(`col created: ${JSON.stringify(res.data)}`);\n    });\n  };\n\n  const createBoard = async (e) =&gt; {\n    const query = `mutation {\n    create_board (board_name: \"wuddup\", board_kind: public) {\n    id\n    }\n    }`;\n    return await monday.api(query).then((boardId) =&gt; boardId);\n  };\n  const createBoardWithColumns = async (boardName, boardType) =&gt; {\n    const columnTitles = [\n      { title: \"url\", type: \"text\" },\n      { title: \"name\", type: \"text\" },\n      { title: \"date\", type: \"date\" },\n    ];\n\n    await createBoard(boardName, boardType).then(async (data) =&gt; {\n      const boardId = data.data.create_board.id;\n      for (const col of columnTitles) {\n        await createColumn(boardId, col.title, col.type);\n      }\n    });\n  };\n</code></pre>"
+    },
+    {
+      "id": 27653,
+      "postNumber": 13,
+      "createdAt": "2020-09-03T15:36:58.453Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>Ahh ok np I see, yup in this case the log in console is misleading. That’s why I created this thread haha I also tried it before with Promise.all &amp; .map ( sorry for making you repeat the same mistakes I did <img src=\"https://emoji.discourse-cdn.com/apple/stuck_out_tongue_closed_eyes.png?v=9\" title=\":stuck_out_tongue_closed_eyes:\" class=\"emoji\" alt=\":stuck_out_tongue_closed_eyes:\" /> ) - should’ve been clearer in my initial post as it seems like it’s stirred up quite a bit of confusion here!</p>\n<p>Interesting that a simple for loop does the trick…I haven’t tested it yet but I’ll take your word for it <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=9\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /> I appreciate the time you took to follow up &amp; recreate this on your end <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=9\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" /> Thanks <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a> &lt;3</p>"
+    },
+    {
+      "id": 42489,
+      "postNumber": 14,
+      "createdAt": "2021-02-25T14:38:36.410Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": 22074,
+  "title": "Trigger custom action: update URL when TEXT changes",
+  "slug": "trigger-custom-action-update-url-when-text-changes",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2021-07-08T06:53:19.043Z",
+  "lastPostedAt": "2021-07-09T04:59:43.503Z",
+  "postsCount": 4,
+  "excerpt": "We’ve got a LINK type column in our board. The user is supposed to enter the TEXT, and we should find the URL based on the text. The text in this case is a Quote ID, the URL should link to our CRM system. \nIn the below e&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1801,
+  "posts": [
+    {
+      "id": 57144,
+      "postNumber": 1,
+      "createdAt": "2021-07-08T06:53:19.153Z",
+      "author": "Jaap-CAD2M (Jaap Holweg)",
+      "cookedHtml": "<p>We’ve got a LINK type column in our board. The user is supposed to enter the TEXT, and we should find the URL based on the text. The text in this case is a Quote ID, the URL should link to our CRM system.</p>\n<p>In the below example, the user enters “QUO07313”, and the URL should be updated accordingly. I’ve triggered from the “Update Any Column” event and then invoke a custom action. In that action, I cannot update the item (I’ve found many articles in the community about this, suggesting to use variables instead of a string - I’ve tried that as well). I don’t get an error back, but the response is the unmodified item data.</p>\n<p>Could this be because this could cause a cascading trigger? (And is therefore prevented by <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>?) How could we still realise this? (Other then needing the user to enter the url himself…)</p>\n<p>The GraphiQL query is: (it works fine when using <a href=\"https://graphiql-online.com/graphiql\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Public GraphiQL - Hasura</a>)</p>\n<p>mutation {<br />\nchange_column_value (board_id: 11111111, item_id: 22222222, column_id: “link”, value: \"{\"url\":\"<a href=\"https://url.web.com/index.php?module=Quotes&amp;view=Detail&amp;record=662840%5C%22,%5C%22text%5C%22:%5C%22QUO07313%5C%22%7D%22\" rel=\"noopener nofollow ugc\">https://url.web.com/index.php?module=Quotes&amp;view=Detail&amp;record=662840\\“,\\“text\\”:\\“QUO07313\\”}”</a>) {<br />\nid<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 57213,
+      "postNumber": 2,
+      "createdAt": "2021-07-08T15:11:43.902Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jaap-cad2m\">@Jaap-CAD2M</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>That’s a great question! Since the query works in the online environment you’ve mentioned, I’m wondering if this might be related to the way you are sending the values?</p>\n<p>Based on the query you’ve provided, I’m wondering if:</p>\n<ul>\n<li>There might be an issue with the IDs you are using. I would recommend checking the Item, Board and column IDs;</li>\n<li>There is an issue with the formatting of the request. When sending a mutation to our GraphQL API, it must be formatted as a JSON string, and the column values will need to be escaped further in the JSON;</li>\n<li>You will also need to specify that you are sending a query to the API, and then declare it is a mutation;</li>\n<li>Please make sure you are using <code>\"</code> as the quote symbol;</li>\n</ul>\n<p>Here’s a Postman request that updates a Link column value</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/1bcb896cd4a91bc9d20d10c25ef93772ab610145.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/1bcb896cd4a91bc9d20d10c25ef93772ab610145_2_690x243.png\" alt=\"image\" width=\"690\" height=\"243\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2690×950 138 KB</span>\n</div></a></div><p></p>\n<p>Here is the query itself:</p>\n<pre><code class=\"lang-auto\">{\"query\" : \"mutation { change_column_value (board_id: 589795234, item_id: 589795238, column_id: \\\"link\\\", value: \\\"{\\\\\\\"url\\\\\\\":\\\\\\\"https://url.web.com/index.php?module=Quotes&amp;view=Detail&amp;record=662840\\\\\\\",\\\\\\\"text\\\\\\\":\\\\\\\"QUO07313\\\\\\\"} \\\") {id }}\"}\n</code></pre>\n<p>Here is a cURL code example too:</p>\n<pre><code class=\"lang-auto\">curl --location --request POST 'https://api.monday.com/v2' \\\n--header 'Authorization: YourApiKey' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\"query\" : \"mutation { change_column_value (board_id: 589795234, item_id: 589795238, column_id: \\\"link\\\", value: \\\"{\\\\\\\"url\\\\\\\":\\\\\\\"https://url.web.com/index.php?module=Quotes&amp;view=Detail&amp;record=662840\\\\\\\",\\\\\\\"text\\\\\\\":\\\\\\\"QUO07313\\\\\\\"} \\\") {id }}\"}'\n</code></pre>\n<p>-Alex</p>"
+    },
+    {
+      "id": 57222,
+      "postNumber": 3,
+      "createdAt": "2021-07-08T15:55:37.126Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 57254,
+      "postNumber": 4,
+      "createdAt": "2021-07-09T04:59:43.503Z",
+      "author": "Jaap-CAD2M (Jaap Holweg)",
+      "cookedHtml": "<p>It’s working. I was staring blind on the possibility of a cascading update, but the problem was much simpler: I had a wrong variable that I passed to the monday client <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=9\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /></p>\n<p>Final working code:</p>\n<pre><code>          const mutation = `mutation changeValue ($board_id: Int!, $item_id: Int!, $column_id: String!, $value: JSON!) {\n              change_column_value (board_id: $board_id, item_id: $item_id, column_id: $column_id, value: $value) {\n                id \n              }\n            }`;\n          \n\n          const variables = { board_id: parseInt (itemDetails.board.id), item_id: parseInt(itemDetails.id), column_id: COL_QUOTE, value: JSON.stringify (linkValue) };\n\n          const response = await mondayClient.api(mutation, { variables });</code></pre>"
+    },
+    {
+      "id": 57964,
+      "postNumber": 5,
+      "createdAt": "2021-07-16T04:59:44.304Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

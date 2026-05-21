@@ -1,0 +1,75 @@
+{
+  "id": 25337,
+  "title": "Is there a way to provide application access token and user name/email as Jira integration does?",
+  "slug": "is-there-a-way-to-provide-application-access-token-and-user-name-email-as-jira-integration-does",
+  "categoryId": 7,
+  "tagIds": [
+    5,
+    6
+  ],
+  "createdAt": "2021-09-26T10:13:44.543Z",
+  "lastPostedAt": "2022-03-04T01:40:38.877Z",
+  "postsCount": 8,
+  "excerpt": "Hello, \nI’m building an integration recipe for my app, but struggle with the way of defining additional step (before adding to board) when user have to specify some parameters (email, access token) and then continue conn&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2097,
+  "posts": [
+    {
+      "id": 64582,
+      "postNumber": 1,
+      "createdAt": "2021-09-26T10:13:44.625Z",
+      "author": "Maksim (Maksim)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’m building an<code> integration recipe</code> for my app, but struggle with the way of defining additional step (before adding to board) when user have to specify some parameters (<code>email</code>, <code>access token</code>) and then continue connecting a board. The only way I can configure here is <code>Authentication url</code>, but not Token base authentication params.</p>\n<p>Is there a way to configure this parameters? As <a href=\"https://apps.developer.monday.com/docs/choosing-auth\" rel=\"noopener nofollow ugc\">https://apps.developer.monday.com/docs/choosing-auth</a>, does not explain this flow, but as I’ve noticed some apps has this options.</p>"
+    },
+    {
+      "id": 64600,
+      "postNumber": 2,
+      "createdAt": "2021-09-26T12:49:56.088Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/maksim\">@Maksim</a></p>\n<p>Welcome to the community. Is you app an integration app or is it a (dash) boardview. If it is an integration app and you want to check user credentials <strong>before</strong> the recipe is added to the board you have to use custom triggers. Custom triggers call (un)subscribe endpoint in your app and that endpoint receives the authentication object in the payload, that has to be decoded with the app’s signing secret to obtain the userId and acountId. Something like this:</p>\n<pre><code class=\"lang-auto\">async function subscribe(req, res) {\n  const { payload } = req.body;\n  const { inputFields, webhookUrl, subscriptionId } = payload;\n  const { boardId, columnIdStatus, valueStatus, startAt } = inputFields;\n  const { authorization } = req.headers;\n\n  const { accountId, userId, aud, exp, iat, shortLivedToken } = jwt.verify(authorization, envVars.signingSecret);\n</code></pre>\n<p>With that shortLivedToken you can query the user object in monday to retrieve their email.</p>\n<p>Hope that makes sense.</p>"
+    },
+    {
+      "id": 64675,
+      "postNumber": 3,
+      "createdAt": "2021-09-27T10:21:55.815Z",
+      "author": "Maksim (Maksim)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> , thank you!</p>\n<p>Your answer explain, the way my side should work, but, could you please clarify the Monday side configuration, as I need additional information in that request, such as email and MyApp’s access token.</p>\n<p>I mean the following step (Jira) as an example.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c715cc6481700b93e8db76593ea9bf9269cc3202.jpeg\" title=\"Screenshot 2021-09-27 at 16.16.45\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c715cc6481700b93e8db76593ea9bf9269cc3202_2_345x168.jpeg\" alt=\"Screenshot 2021-09-27 at 16.16.45\" width=\"345\" height=\"168\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2021-09-27 at 16.16.45</span><span class=\"informations\">3314×1622 269 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 64682,
+      "postNumber": 4,
+      "createdAt": "2021-09-27T11:31:17.602Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/maksim\">@Maksim</a></p>\n<p>Understood (I think). This is about getting access to your Jira account from monday, isn’t it. To do that you need to go through an OAuth handshake. In the monday app this is configured like this:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/2a9ec92320fbbcc688623a0337b2210cc3b77d16.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/2a9ec92320fbbcc688623a0337b2210cc3b77d16_2_579x500.png\" alt=\"image\" width=\"579\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1033×891 63.5 KB</span>\n</div></a></div><p></p>\n<p>Now, when a user added the app to a board the OAuth flow will kick in, see <a href=\"https://apps.developer.monday.com/docs/oauth\">https://apps.developer.monday.com/docs/oauth</a>. It has been some time ago I used this as I always use seamless integration, but the idea of the OAuth flow is that you can authenticate user access to third party platform (like Jira). All the examples provided is the documents are for authenticating your monday account, but it looks like you want to authenticate the Jira account.</p>\n<p>I don’t have specific experience with Jira, but this is what I found with regards to their OAuth flow. <a href=\"https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/\">https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/</a></p>\n<p>Also: notice that the app on the monday side always runs under the credentials of the user who added the app to the board (e.g. a board admin).</p>\n<p>Hope this gives you some directions.</p>"
+    },
+    {
+      "id": 64688,
+      "postNumber": 5,
+      "createdAt": "2021-09-27T12:29:49.468Z",
+      "author": "Maksim (Maksim)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, thank you a lot, for pure explanation!</p>\n<p>Yes, it was the case I’m looking for. Jira is an example)</p>\n<p>Could you please, just clarify the UI aspect for this form as displayed on screenshot attached to previous comment. Where can I configure this parameters, like displayed on the screenshot (<code>Email</code>, <code>Token</code>),  inputs/tooltips, external links on Monday side?</p>\n<p>I’ve finished recipe development process, but can not proceed without this screen configuration.</p>"
+    },
+    {
+      "id": 64691,
+      "postNumber": 6,
+      "createdAt": "2021-09-27T12:47:11.734Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/maksim\">@Maksim</a></p>\n<p>To be honest, I don’t know. Isn’t that shown whenever you redirect the user to the Jira authorization URL?</p>"
+    },
+    {
+      "id": 64695,
+      "postNumber": 7,
+      "createdAt": "2021-09-27T13:22:48.712Z",
+      "author": "Maksim (Maksim)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, no it happens on Monday side before any redirections. It seems like here we have to specify some hooks and provide UI, but I can’t find solution in docs and examples from <a href=\"https://apps.developer.monday.com/docs/intro\" rel=\"noopener nofollow ugc\">https://apps.developer.monday.com/docs/intro</a>.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5d56e7f9025115b0ecfd4058a7171552134b8350.gif\" alt=\"jira\" width=\"690\" height=\"325\" class=\"animated\" /></p>"
+    },
+    {
+      "id": 78844,
+      "postNumber": 8,
+      "createdAt": "2022-03-04T01:40:38.877Z",
+      "author": "luiggi.vilca (Luiggi Vilca)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/maksim\">@Maksim</a>,<br />\nI have the same problem. I don’t find the way to implement the UI screen.  Do you know the solution?  maybe, can yo help me?</p>"
+    }
+  ]
+}

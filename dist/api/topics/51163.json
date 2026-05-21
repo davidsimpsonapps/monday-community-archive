@@ -1,0 +1,83 @@
+{
+  "id": 51163,
+  "title": "Finds all items in which a specific column has a specific value",
+  "slug": "finds-all-items-in-which-a-specific-column-has-a-specific-value",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    133,
+    351
+  ],
+  "createdAt": "2023-02-08T13:15:33.868Z",
+  "lastPostedAt": "2023-02-14T06:45:27.188Z",
+  "postsCount": 8,
+  "excerpt": "Hi all \nI’ve been trying to create a query for about 6 hours which I think is pretty straightforward. \nGiven a certain board, find all the elements in which the State column is valued with “YES” and the Number column is &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1808,
+  "posts": [
+    {
+      "id": 114533,
+      "postNumber": 1,
+      "createdAt": "2023-02-08T13:15:33.965Z",
+      "author": "jackalope (Simone B.)",
+      "cookedHtml": "<p>Hi all<br />\nI’ve been trying to create a query for about 6 hours which I think is pretty straightforward.<br />\nGiven a certain board, find all the elements in which the State column is valued with “YES” and the Number column is greater than 3, but i am not finding solution.<br />\nCan you give me a case study that I can study and understand?<br />\nUnfortunately I’m not understanding much from the API documentation.<br />\nThank you</p>"
+    },
+    {
+      "id": 114824,
+      "postNumber": 2,
+      "createdAt": "2023-02-09T20:36:02.692Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jackalope\">@jackalope</a>,</p>\n<p>You could use the Items query to achieve this, for example:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids: 123456789) {\n    column_values (ids: [\"status\", \"numbers\"]) {\n      value\n      id\n    }\n  }\n}\n</code></pre>\n<p>You can work with this response to parse out the items whose values match your conditions (“YES” and “&gt;3”)</p>\n<p>I hope this helps!</p>"
+    },
+    {
+      "id": 114863,
+      "postNumber": 3,
+      "createdAt": "2023-02-10T05:38:17.232Z",
+      "author": "jackalope (Simone B.)",
+      "cookedHtml": "<p>Thanks Alessandra.<br />\nThanks to your suggestion i created this query:</p>\n<pre><code class=\"lang-auto\"> {\n   boards (ids:3948979414) {\n     id\n     name\n     items {\n       column_values (ids: [\"person\", \"status\", \"date4\"]){\n         id\n         text\n       }\n     } \n   }\n }\n</code></pre>\n<p>I get status text and date text (i changed “number” with date) inside the given board.<br />\nNow, the goal I would like to achieve is to extract only the items where status = YES and date = “01/01/2023”.<br />\nSubsequently extract the owner for these (“person” column) and send them a notification linked to the item that I have recovered.<br />\nIs it possible to do this?<br />\nthanks</p>"
+    },
+    {
+      "id": 115173,
+      "postNumber": 4,
+      "createdAt": "2023-02-13T10:34:46.717Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jackalope\">@jackalope</a></p>\n<p>I think your best option for this would be using the <code>items_by_column_values</code> query - <a href=\"https://developer.monday.com/api-reference/docs/items-by-column-values-queries\" class=\"inline-onebox\">Items By Column Values</a></p>\n<p>This will allow you to get all items based on the status (or another column if you prefer), you can then loop through the returned items and filter based on your other column values.</p>\n<p>A query like this would work:</p>\n<pre><code class=\"lang-auto\">query {\n    items_by_column_values (board_id: 1234567, column_id: \"status5\", column_value:\"YES\") {\n        id\n        name\n        column_values (ids: [\"person\", \"status\", \"date4\"]){\n             id\n             text\n             value\n       }\n    }\n}\n</code></pre>\n<p>Currently you can only search based on a single column.</p>"
+    },
+    {
+      "id": 115217,
+      "postNumber": 5,
+      "createdAt": "2023-02-13T18:13:18.742Z",
+      "author": "jackalope (Simone B.)",
+      "cookedHtml": "<p>Thanks Mitchell. Tomorrow i will test you case-study and i will give you the final result.<br />\n<strong>Last but not least:</strong> with this solution (testing just one column) can i set a test, for example, on the date column and extract all the rows with the date4 column empty?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 115357,
+      "postNumber": 6,
+      "createdAt": "2023-02-14T06:29:02.676Z",
+      "author": "jackalope (Simone B.)",
+      "cookedHtml": "<p>Thanks Mitchell. Your suggestion works perfectly. Unfortunately i cannot query more than one column and i cannot query null columns but it’s something i can start with.</p>\n<p>Regards</p>"
+    },
+    {
+      "id": 115361,
+      "postNumber": 7,
+      "createdAt": "2023-02-14T06:42:38.589Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>A quick side note.<br />\nThe <code>items_by_column_values</code> has a delay in returning changed values. After you change any data on your board, it might take sometime for it to finally propagate into the API. You can test it out changing some data on your board and querying right away.<br />\nThe query might return the previous data.<br />\nCurrent workaround is to wait for some seconds after the data is changed on your board before querying or query every item on your board and filter them by their column values</p>"
+    },
+    {
+      "id": 115364,
+      "postNumber": 8,
+      "createdAt": "2023-02-14T06:45:27.188Z",
+      "author": "jackalope (Simone B.)",
+      "cookedHtml": "<p>Thanks kolaai for this note. I actually noticed that it takes a while to update the results recovered following a value change but for us it’s passable in terms of timing</p>"
+    },
+    {
+      "id": 115710,
+      "postNumber": 9,
+      "createdAt": "2023-02-15T19:13:45.753Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

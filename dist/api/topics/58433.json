@@ -1,0 +1,131 @@
+{
+  "id": 58433,
+  "title": "Split text from a column into 3 or more parts into different columns",
+  "slug": "split-text-from-a-column-into-3-or-more-parts-into-different-columns",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    108
+  ],
+  "createdAt": "2023-05-17T11:30:35.111Z",
+  "lastPostedAt": "2023-08-28T10:52:39.990Z",
+  "postsCount": 16,
+  "excerpt": "Hello, \nHere is my request for help, I would like the text in the column “description” to be divided as many times as there are commas. \nFor example if in the description column it says: “bed, table”. \nOne column will re&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 3977,
+  "posts": [
+    {
+      "id": 128348,
+      "postNumber": 1,
+      "createdAt": "2023-05-17T11:30:35.211Z",
+      "author": "steph68 (Stéphane PIERRE)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Here is my request for help, I would like the text in the column “description” to be divided as many times as there are commas.<br />\nFor example if in the description column it says: “bed, table”.<br />\nOne column will receive the word “bed” and another column the word “table”.<br />\nI searched this forum for solutions to my problem and I found this which is quite close to the solution I am looking for:</p>\n<p>Column 1 : IF(SEARCH(“,”, {Description}&amp;“,”)&lt;LEN({Description}), LEFT({Description}, SEARCH(“,”, {Description}&amp;“,”)-1), {Description})</p>\n<p>Column 2: IF(SEARCH(“,”, {Description}&amp;“,”)&lt;LEN({Description}), MID({Description}, SEARCH(“,”, {Description}&amp;“,”)+1,9999), “”)</p>\n<p>The problem is that I can’t apply and modify this formula if there is a third word or even a fourth (so 2 more columns)</p>\n<p>Can someone please help me?</p>"
+    },
+    {
+      "id": 128361,
+      "postNumber": 2,
+      "createdAt": "2023-05-17T11:59:27.061Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Stephane,</p>\n<p>I solved something similar in this post:</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/franciselliott/48/17772_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/split-text-using-formula-and-a-special-character/58104/3\">Split text using formula and a special character</a> <a class=\"badge-category__wrapper \" href=\"/c/platform-discussions/6\"><span class=\"badge-category \"><span class=\"badge-category__name\">Platform discussions</span></span></a>\n  </div>\n  <blockquote>\n    This is tough, especially with so many instances of your separator. \nIt doesn’t seem like a particularly good use case for <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>. However… it is possible to achieve. \nI’d strongly suggest using some helper columns to organize this more effectively: \n <a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/8/e890948f30adcf502229e31787b9a98b2d6319e0.png\" title=\"Screenshot 2023-05-13 at 09.23.16\" rel=\"noopener nofollow ugc\">[Screenshot 2023-05-13 at 09.23.16]</a> \nSecond Colon POS formula: \nSEARCH(\n    \":\",\n    RIGHT(\n        {Text},\n        LEN({Text})-{First Colon POS}\n    )\n)+{First Colon POS}\n\nThird String formula: \nLEFT(\n    RIGHT(\n        {Text},\n        LEN({Te…\n  </blockquote>\n</aside>\n\n<p>Perhaps you can take this approach. Good Luck!</p>"
+    },
+    {
+      "id": 128531,
+      "postNumber": 3,
+      "createdAt": "2023-05-18T07:02:23.507Z",
+      "author": "steph68 (Stéphane PIERRE)",
+      "cookedHtml": "<p>Hello, yes I have seen your solution, but I do not know why it does not work, I have adapted to my columns:<br />\nSEARCH(<br />\n“,”,<br />\nRIGHT(<br />\n{Description},<br />\nLEN({Description})-{produit 1}<br />\n)<br />\n)+{produit 1}</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/9/a92a7d193245c6acd1fe9b93038efe74739aab45.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/a/9/a92a7d193245c6acd1fe9b93038efe74739aab45.png\" alt=\"image\" width=\"501\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">635×633 38 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 128534,
+      "postNumber": 4,
+      "createdAt": "2023-05-18T07:12:39.712Z",
+      "author": "steph68 (Stéphane PIERRE)",
+      "cookedHtml": "<p>I’m sorry if I don’t understand your solution there’s definitely something I’m doing wrong, or I don’t understand your approach and way of doing this formula…</p>"
+    },
+    {
+      "id": 128682,
+      "postNumber": 5,
+      "createdAt": "2023-05-19T09:06:44.343Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Stephane,</p>\n<p>I can see that you’re new to using formulae. What’s going wrong here is that you need to create a “First Comma Pos” column using a much more simple formula:</p>\n<pre><code class=\"lang-auto\">SEARCH(\n    \",\",\n    {Description}\n)\n</code></pre>\n<p>Then you need to create a column called “Second Comma Pos” like so</p>\n<pre><code class=\"lang-auto\">SEARCH(\n    \",\",\n    RIGHT(\n        {Description},\n        LEN({Description})-{First Comma Pos}\n    )\n)+{First Comma Pos}\n</code></pre>\n<p>Increment this by creating new columns and replacing each new “Pos” (position) in the formula for as many strings as you’d like to detect. These columns are just getting the positions of each comma.</p>\n<p>The next columns you create will isolate the strings by using those positions.</p>\n<p>Your first string formula will be very simple:</p>\n<pre><code class=\"lang-auto\">LEFT(\n    {Text},\n    {First Comma POS}-1\n)\n</code></pre>\n<p>Then you need to use this more complex formula for further strings. This would be the third string:</p>\n<pre><code class=\"lang-auto\">LEFT(\n    RIGHT(\n        {Text},\n        LEN({Text})-{Second Comma POS}\n    ),\n    {Third Comma POS}-{Second Comma POS}-1\n)\n</code></pre>\n<p>And naturally you need to change “Second” and “Third” just up or down depending on which string you need. Create as many columns as you like and change these values to get the right string.</p>\n<p>I should stress though that if you don’t have a fundamental understanding of how formulae work, you’re likely to consistently struggle. It would probably be wise to reach out to an expert for help. I’m available and <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> can easily point you in the direction of many competent partners.</p>"
+    },
+    {
+      "id": 128701,
+      "postNumber": 6,
+      "createdAt": "2023-05-19T10:32:56.715Z",
+      "author": "steph68 (Stéphane PIERRE)",
+      "cookedHtml": "<p>Ok now I understand your Formula, Bu t I don’t understand why sometimes, there are a number and sometimes no…<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/b/abcceaa4a7772d818bc884cfba31b51ba4664438.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/b/abcceaa4a7772d818bc884cfba31b51ba4664438_2_690x300.png\" alt=\"image\" width=\"690\" height=\"300\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">983×428 37.4 KB</span>\n</div></a></div><p></p>\n<p>It’s the same formula but it doesn’t work every time</p>"
+    },
+    {
+      "id": 128726,
+      "postNumber": 7,
+      "createdAt": "2023-05-19T14:37:22.660Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>If there is no comma, there is no number. What would you expect to see?</p>"
+    },
+    {
+      "id": 129083,
+      "postNumber": 8,
+      "createdAt": "2023-05-23T11:05:38.813Z",
+      "author": "steph68 (Stéphane PIERRE)",
+      "cookedHtml": "<p>Sorry it’s not the good screenshot.<br />\nHere you can see the good<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/a/0a8173f1c982099b86d2d0ad59d63473f566f2bb.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/a/0a8173f1c982099b86d2d0ad59d63473f566f2bb_2_690x173.png\" alt=\"image\" width=\"690\" height=\"173\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1564×394 38.7 KB</span>\n</div></a></div><p></p>\n<p>Like you can see, in red I have words before comma and after comma, but nothing is write on my second column…<br />\nIn green, There are 3 word, but in my third column le word is not completed…</p>"
+    },
+    {
+      "id": 129089,
+      "postNumber": 9,
+      "createdAt": "2023-05-23T11:35:03.135Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>It’s not working because there is no comma at the end of your string.</p>\n<p>So one approach here would be to create a helper formula column. Let’s call it “Formula Description”.</p>\n<p>We’re going to add a comma at the end using the concatenate function, so there will always be a comma at the end.</p>\n<p>Here’s the formula for “Formula Description”:</p>\n<pre><code class=\"lang-auto\">CONCATENATE({Description},\",\")\n</code></pre>\n<p>Now in all your other formulae, replace {Description} with {Formula Description}.</p>"
+    },
+    {
+      "id": 129094,
+      "postNumber": 10,
+      "createdAt": "2023-05-23T11:49:50.518Z",
+      "author": "steph68 (Stéphane PIERRE)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/franciselliott/48/17772_2.png\" class=\"avatar\" /> Francis Elliott:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">CONCATENATE({Description},\",\")\n</code></pre>\n</blockquote>\n</aside>\n<p>I understand and it’s near perfect, but for the third and Fourth column I’ve got a problem. Like you can see , in the Third column the word is not complete and the other part is in the fourth column. And when I’ve got this problem le fourth word is not complete also.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/2/42f6259e953cd958dbfe1874dd72681b0d5012fb.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/4/2/42f6259e953cd958dbfe1874dd72681b0d5012fb.png\" alt=\"image\" width=\"690\" height=\"47\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">862×59 4.46 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 129095,
+      "postNumber": 11,
+      "createdAt": "2023-05-23T11:51:29.489Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Please share:</p>\n<ol>\n<li>Your “Third Comma POS” column formula.</li>\n<li>Your “Third Product” column formula.</li>\n</ol>\n<p>These are almost certainly incorrectly configured.</p>"
+    },
+    {
+      "id": 129104,
+      "postNumber": 12,
+      "createdAt": "2023-05-23T12:31:48.592Z",
+      "author": "steph68 (Stéphane PIERRE)",
+      "cookedHtml": "<p>Third comma POS:<br />\nSEARCH(<br />\n“,”,<br />\nLEFT(<br />\n{Formula Description},<br />\nLEN({Formula Description})-{Second Comma Pos}<br />\n)<br />\n)+{Second Comma Pos}</p>\n<p>Third Product :<br />\nLEFT(<br />\nRIGHT(<br />\n{Formula Description},<br />\nLEN({Formula Description})-{Second Comma Pos}<br />\n),<br />\n{Third Comma Pos}-{Second Comma Pos}-1<br />\n)</p>"
+    },
+    {
+      "id": 129109,
+      "postNumber": 13,
+      "createdAt": "2023-05-23T12:38:58.205Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Looks like you’re using the <code>LEFT</code> function in your Comma Pos columns. It should be <code>RIGHT</code>. Double check all of those.</p>\n<p>Here is the corrected formula for “Third Comma Pos”</p>\n<pre><code class=\"lang-auto\">SEARCH(\n    \",\",\n    RIGHT(\n        {Formula Description},\n        LEN({Formula Description})-{Second Comma Pos}\n    )\n)+{Second Comma Pos}\n</code></pre>"
+    },
+    {
+      "id": 129110,
+      "postNumber": 14,
+      "createdAt": "2023-05-23T12:43:21.200Z",
+      "author": "steph68 (Stéphane PIERRE)",
+      "cookedHtml": "<p>Yes it’s true , I’m really sorry<br />\nThank you to have taked the time with me…</p>"
+    },
+    {
+      "id": 129111,
+      "postNumber": 15,
+      "createdAt": "2023-05-23T12:44:14.157Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Great to hear it’s working! Feel free to reach out if you ever want some professional assistance with your <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> solution.</p>"
+    },
+    {
+      "id": 141013,
+      "postNumber": 17,
+      "createdAt": "2023-08-28T10:52:39.990Z",
+      "author": "hunterofanswers (Hunter)",
+      "cookedHtml": "<p>Hi Francis, I’m currently in need of a similar solution (I think) &amp; likely need professional assistance. What’s the best way to reach out?</p>"
+    }
+  ]
+}

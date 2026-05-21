@@ -1,0 +1,88 @@
+{
+  "id": 42213,
+  "title": "Issue with create item and column_values",
+  "slug": "issue-with-create-item-and-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-09-08T13:54:35.113Z",
+  "lastPostedAt": "2022-09-29T11:18:54.193Z",
+  "postsCount": 10,
+  "excerpt": "Hi all, I was using the api in bubble.io and can’t seem to edit the column values within the call. \nHere is the POST call \n{“query”:“mutation { create_item (board_id: 3188858191, group_id: “topics”, item_name: “”, column&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1672,
+  "posts": [
+    {
+      "id": 97243,
+      "postNumber": 1,
+      "createdAt": "2022-09-08T13:54:35.193Z",
+      "author": "Buatcls (tayz)",
+      "cookedHtml": "<p>Hi all, I was using the api in <a href=\"http://bubble.io/\" rel=\"noopener nofollow ugc\">bubble.io</a> and can’t seem to edit the column values within the call.<br />\nHere is the POST call</p>\n<p>{“query”:“mutation { create_item (board_id: 3188858191, group_id: “topics”, item_name: “”, column_values: “{“what_is_your_first_name_” : “value”}” ,) {id, name, column_values {id, title, value}}}”<br />\n}<br />\nif i remove the column_values section it works fine and if I make a separate call just to change an existing items columns, that works too but I can’t seem to get it to function when making a create_item call.</p>\n<p>error message:<br />\n“message”: “Parse error on “what_is_your_first_name_” (STRING) at [1, 99]”,<br />\n“locations”: [<br />\n{<br />\n“line”: 1,<br />\n“column”: 99<br />\n}<br />\n]</p>"
+    },
+    {
+      "id": 97366,
+      "postNumber": 2,
+      "createdAt": "2022-09-11T04:13:58.549Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/buatcls\">@Buatcls</a>!</p>\n<p>I believe the issue may lie in the inner quotes not escaping the outer quotes.</p>\n<p>Also, you need to use an item name.</p>\n<p>Please try something like this and let me know what happens:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 3188858191, group_id: \"topics\", item_name: \"Item Name\", column_values: \"{\\\"what_is_your_first_name_\\\" : \\\"value\\\"}\") {\n    id\n    name\n    column_values {\n      id\n      title\n      value\n    }\n  }\n}\n</code></pre>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 97742,
+      "postNumber": 3,
+      "createdAt": "2022-09-14T12:37:39.711Z",
+      "author": "Buatcls (tayz)",
+      "cookedHtml": "<p>Thanks for the reply! I managed to make some headway but as I’m not too familiar with the curl language, having some trouble and I seem to need to use curl</p>\n<p>I created this call:<br />\n{“query”:“mutation { create_item (board_id: 3188858191, group_id: \"topics\", item_name: \"Name\", column_values:\"{\\\"text8\\\":\\\"Gender\\\"}\") {id, name, column_values {id, title, value}}}”<br />\n}<br />\n}</p>\n<p>Which works fine however when I try to make more than one change to the column values like in this example it doesn’t work :</p>\n<p>{“query”:“mutation { create_item (board_id: 3188858191, group_id: \"topics\", item_name: \"Name\", column_values:\"{\\\"text8\\\":\\\"Gender\\\"}, {\\\"what_is_your_first_name_\\\" : \\\"FName\\\"}\") {id, name, column_values {id, title, value}}}”<br />\n}</p>\n<p>Raw response for the API<br />\nStatus code 500<br />\n{“error_message”:“809: unexpected token at ‘, {\"what_is_your_first_name_\" : \"yom\"}’”,“status_code”:500}</p>\n<p>I’m using variables to input data which is why name is yom</p>"
+    },
+    {
+      "id": 97829,
+      "postNumber": 4,
+      "createdAt": "2022-09-15T04:34:32.618Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>It looks like you are closing your column_values object early. Also, you are trying to  Something like this should work:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 3217125868, group_id: \"topics\", item_name: \"Name\", column_values: \"{\\\"text8\\\":\\\"Gender\\\", \\\"what_is_your_first_name_\\\" : \\\"FName\\\"}\") {\n    id\n    name\n    column_values {\n      id\n      title\n      value\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 97840,
+      "postNumber": 5,
+      "createdAt": "2022-09-15T07:29:05.281Z",
+      "author": "Buatcls (tayz)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias.Monday:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 3217125868, group_id: \"topics\", item_name: \"Name\", column_values: \"{\\\"text8\\\":\\\"Gender\\\", \\\"what_is_your_first_name_\\\" : \\\"FName\\\"}\") {\n    id\n    name\n    column_values {\n      id\n      title\n      value\n    }\n  }\n}\n</code></pre>\n</blockquote>\n</aside>\n<p>it didn’t seem to work but I think its because the layout was different :</p>\n<p>There was an issue setting up your call.</p>\n<p>Raw response for the API<br />\nStatus code 500<br />\n{}</p>"
+    },
+    {
+      "id": 98018,
+      "postNumber": 6,
+      "createdAt": "2022-09-18T04:44:55.954Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/buatcls\">@Buatcls</a> !</p>\n<p>I rechecked the mutation I sent and it works.</p>\n<p>You just need to change the board ID for your board ID and the column IDs for your column IDs <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Check it in the Playground (go to your account, click on the left panel on your profile picture or initials, click on “Developers”, click on “Developer”, click on API Playground).</p>\n<p>If it works there with your IDs, and it does not work in your script, then it is a syntax issue.</p>\n<p>Hope this helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 98206,
+      "postNumber": 7,
+      "createdAt": "2022-09-20T11:06:37.930Z",
+      "author": "Buatcls (tayz)",
+      "cookedHtml": "<p>I see, I’ve had the most luck with curl and it seems that the html on this forum removes some of the syntax I did but essentially all the values and parameters that have \\ next to them should have \\ \\ \\ (no spaces) instead. The weirdest part is that this call:</p>\n<pre><code class=\"lang-auto\">{“query”:“mutation { create_item (board_id: 3188858191, group_id: \"topics\", item_name: \"Name\", column_values:\"{\\\"text8\\\":\\\"Gender\\\"}\") {id, name, column_values {id, title, value}}}”\n}\n}\n</code></pre>\n<p>actually works so is there something wrong with the syntax from this next one?  All it adds is a new line within column values:</p>\n<p><code>{\\\\\\\"text8\\\\\\\":\\\\\\\"&lt;Gender&gt;\\\\\\\", {\\\\\\\"what_is_your_first_name_\\\\\\\":\\\\\\\"&lt;fname&gt;\\\\\\\"}}</code></p>\n<p>but I seem to get errors.</p>\n<pre><code class=\"lang-auto\">Raw response for the API \nStatus code 500\n{\"error_message\":\"809: unexpected token at '{\\\"text8\\\":\\\"male\\\", {\\\"what_is_your_first_name_\\\":\\\"gui\\\"}}'\",\"status_code\":500}\n</code></pre>\n<p>is there something I am missing in terms of syntax with the full call?</p>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation { create_item ( board_id: 3188858191, group_id: \\\"topics\\\", item_name: \\\"&lt;Name&gt;\\\", column_values:\\\"{\\\\\\\"text8\\\\\\\":\\\\\\\"&lt;Gender&gt;\\\\\\\", {\\\\\\\"what_is_your_first_name_\\\\\\\":\\\\\\\"&lt;fname&gt;\\\\\\\"}}\\\") {id, name, column_values {id, title, value}}}\"\n}\n</code></pre>"
+    },
+    {
+      "id": 98290,
+      "postNumber": 8,
+      "createdAt": "2022-09-21T03:40:57.351Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>The issue is that you are opening curly brackets were there are not supposed to be curly brackets.</p>\n<p>Instead of this:</p>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation { create_item ( board_id: 3188858191, group_id: \\\"topics\\\", item_name: \\\"&lt;Name&gt;\\\", column_values:\\\"{\\\\\\\"text8\\\\\\\":\\\\\\\"&lt;Gender&gt;\\\\\\\", {\\\\\\\"what_is_your_first_name_\\\\\\\":\\\\\\\"&lt;fname&gt;\\\\\\\"}}\\\") {id, name, column_values {id, title, value}}}\"\n}\n</code></pre>\n<p>You should use this:</p>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation { create_item ( board_id: 3188858191, group_id: \\\"topics\\\", item_name: \\\"&lt;Name&gt;\\\", column_values:\\\"{\\\\\\\"text8\\\\\\\":\\\\\\\"&lt;Gender&gt;\\\\\\\", \\\\\\\"what_is_your_first_name_\\\\\\\":\\\\\\\"&lt;fname&gt;\\\\\\\"}\\\") {id, name, column_values {id, title, value}}}\"\n}\n</code></pre>"
+    },
+    {
+      "id": 98427,
+      "postNumber": 9,
+      "createdAt": "2022-09-22T11:18:49.008Z",
+      "author": "Buatcls (tayz)",
+      "cookedHtml": "<p>Perfect, this helped. Thank you very much</p>"
+    },
+    {
+      "id": 99063,
+      "postNumber": 10,
+      "createdAt": "2022-09-29T11:18:54.193Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

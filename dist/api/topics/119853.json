@@ -1,0 +1,33 @@
+{
+  "id": 119853,
+  "title": "Make.com not updating connect/relationship columns",
+  "slug": "make-com-not-updating-connect-relationship-columns",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    242
+  ],
+  "createdAt": "2025-09-07T01:49:20.821Z",
+  "lastPostedAt": "2025-09-07T06:25:51.438Z",
+  "postsCount": 2,
+  "excerpt": "I have Make.com scenarios I used for many automations with Monday.com. \nI have two identical (except for the boards they interact with) scenarios that update columns in the lead boards in two workspaces on Monday. \nThe m&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 14,
+  "posts": [
+    {
+      "id": 238330,
+      "postNumber": 1,
+      "createdAt": "2025-09-07T01:49:20.899Z",
+      "author": "inspiredearth (Jonathan)",
+      "cookedHtml": "<p>I have <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a> scenarios I used for many automations with <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>.</p>\n<p>I have two identical (except for the boards they interact with) scenarios that update columns in the lead boards in two workspaces on Monday.</p>\n<p>The module in question updates two connect/relationship columns, one status column, and one text column. The text column updates. But the other three do not.</p>\n<p>The two connect/relationship columns are simply being updated with the ID of a newly created item (a Contact, and an Account respectively) which the two prior modules handle.</p>\n<p>I am fairly certain it was working when I set the scenarios up in early August, and last tested (Aug 19th). I would have noticed if it was not. Nothing I am aware of has changed in the scenarios or on Monday since that time.</p>\n<p>I don’t believe it’s a permissions issue, as many other modules in the scenario are able to interact with Monday as per normal (creating new items, updating statuses, etc.).</p>\n<p>ChatGPT suggested it was because the Monday API is expecting an array for the connect columns. So I modified the module to sent the itemID in an array. That didn’t help.</p>\n<p>What else should I be looking into or considering regarding this issue?</p>\n<p>The input bundle (the data being passed to the Monday API) is:</p>\n<pre><code class=\"lang-auto\">[\n    {\n        \"itemId\": \"2069891476\",\n        \"boardId\": \"2003597746\",\n        \"columnValuesToChange\": [\n            {\n                \"columnId\": \"board_relation_mkrqchz9\",\n                \"columnValue\": {\n                    \"item_ids\": 2069960031\n                }\n            },\n            {\n                \"columnId\": \"board_relation_mkrvcqbt\",\n                \"columnValue\": {\n                    \"item_ids\": 2069960022\n                }\n            },\n            {\n                \"columnId\": \"long_text_mkta2a14\",\n                \"columnValue\": {\n                    \"text\": \"2025-09-07 16:09:  Created New Contact. Linked it to an existing Account. Linked to Lead. (Branch 6)\"\n                }\n            }\n        ],\n        \"create_labels_if_missing\": false\n    }\n]\n</code></pre>\n<p>I see in <a href=\"https://community.make.com/t/updating-connect-columns-for-monday-com/13013\" rel=\"noopener nofollow ugc\">this post</a> the the OP ended up having to “execute GraphQL query”. Is that really necessary? Does the respective Monday module in Make really not handle Connect columns correctly, even after recognising the column type and providing a UI for mapping the data?</p>\n<p>Also, one response to the OP suggested,</p>\n<blockquote>\n<p>You should use the following: {“item_ids”:[1192506081]}</p>\n</blockquote>\n<p>But that results in custom JSON embedded within the JSON the module outputs. E.g.</p>\n<pre><code class=\"lang-auto\"> \"columnId\": \"board_relation_mkrvcqbt\",\n                \"columnValue\": {\n                    \"item_ids\": \"{“item_ids”:[2069961483]}\"\n                }\n</code></pre>"
+    },
+    {
+      "id": 238339,
+      "postNumber": 2,
+      "createdAt": "2025-09-07T06:25:51.438Z",
+      "author": "inspiredearth (Jonathan)",
+      "cookedHtml": "<p>I’ve since discovered the Make module was working fine.</p>\n<p>The issue is that when using the Monday API (via the Make modules) to update Connect columns, the data in my browser was not dynamically updating. I’d not come across that before. Normally my view of the data in the browser updates in front of me.</p>\n<p>It was only showing the update after a page refresh.</p>\n<p>So this is the issue, not the one I described in my post. I have now resolved this issue by changing the scenario configuration so that it creates the link from the other side. Meaning, when I create the Contact I use that module to link it to the Lead. Likewise when I create the Account.</p>\n<p>Previously I was creating the Contact and Account, and then updating the Lead to connect to those new items.</p>"
+    }
+  ]
+}

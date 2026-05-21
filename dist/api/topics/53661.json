@@ -1,0 +1,61 @@
+{
+  "id": 53661,
+  "title": "Make calls to Monday API from my localhost",
+  "slug": "make-calls-to-monday-api-from-my-localhost",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-03-13T14:50:21.226Z",
+  "lastPostedAt": "2023-03-21T11:42:29.575Z",
+  "postsCount": 6,
+  "excerpt": "Hey, \nIm running axios call (in nodeJS) service from my local host to Monday API. \nbut I get - “self signed certificate in certificate chain”/ \nSearched the web a bit, and saw I can skip it by adding this (Only for debug&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1093,
+  "posts": [
+    {
+      "id": 119384,
+      "postNumber": 1,
+      "createdAt": "2023-03-13T14:50:21.305Z",
+      "author": "eitanal (Eitan)",
+      "cookedHtml": "<p>Hey,<br />\nIm running axios call (in nodeJS) service from my local host to Monday API.<br />\nbut I get - “self signed certificate in certificate chain”/<br />\nSearched the web a bit, and saw I can skip it by adding this (Only for debug purpose)<br />\n“process.env.NODE_TLS_REJECT_UNAUTHORIZED = “0”;”.<br />\nBut then I get a new error: “socket hang up”.</p>\n<p>Is there a way you can point me to do something to allow me running queries to Monday in order to be able to debug my code? Through postman, I do mange making calls, and I guess the reason is its creates some self sign certificate.</p>\n<p>How do I do that?</p>\n<p>Thanks for the helper!</p>"
+    },
+    {
+      "id": 119493,
+      "postNumber": 2,
+      "createdAt": "2023-03-14T07:46:54.163Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/eitanal\">@eitanal</a>,</p>\n<p>I am not experienced with Axios but I installed it and tested it to try to figure out what might be causing the issue for you.</p>\n<p>I tried this using nodeJS and exposing my file via <a href=\"https://ngrok.com/\">ngrok</a> to the internet and it worked for me.</p>\n<p>My endpoint is:</p>\n<pre><code class=\"lang-auto\">app.post(\"/axios\", function(req, res) {\n\taxios({\n\t\turl: 'https://api.monday.com/v2',\n\t\tmethod: 'post',\n\t\theaders: {\n\t\t\t'Content-Type': 'application/json',\n\t\t\t'Authorization' : 'MYAPIKEYHERE'\n\t\t  },\t\t\n\t\t  data: {\n\t\t  query: `\n\t\t  {\n\t\t\tboards(ids:1234567890){\n\t\t\t  name\n\t\t\t}\n\t\t  }\n\t\t\t`\n\t\t}\n\t  }).then((result) =&gt; {\n\t\tconsole.log(result.data)\n\t  });\n\t  res.status(200).send(req.body);\n})\n</code></pre>\n<p>What are you doing differently? Or what am I missing?</p>\n<p>Also, maybe someone in the community who has experienced this in the past might know how to solve it <img src=\"https://emoji.discourse-cdn.com/apple/crossed_fingers.png?v=12\" title=\":crossed_fingers:\" class=\"emoji\" alt=\":crossed_fingers:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 120306,
+      "postNumber": 3,
+      "createdAt": "2023-03-19T17:18:02.000Z",
+      "author": "eitanal (Eitan)",
+      "cookedHtml": "<p>Hey,</p>\n<p>I cant use NGROK for now at my office…</p>\n<p>When I try to make a call to Monday, from my <strong>localhost</strong>, I receive this error: “self signed certificate in certificate chain”.</p>\n<p>What I think that happens, is that Monday blocks me, because my origin is <strong>localhost</strong> and im not running behind <strong>any certificate</strong>.</p>\n<p>So my question is, what do I need to do in order to pass this?</p>\n<p>Because calls through Postman to Monday are working (what postman calls has which I don’t <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=12\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" width=\"20\" height=\"20\" />) and how can I configure it also?</p>\n<p>Appreciate you assistant!</p>\n<p>Thanks,</p>\n<p>Eitan.</p>"
+    },
+    {
+      "id": 120339,
+      "postNumber": 4,
+      "createdAt": "2023-03-20T06:37:56.888Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/eitanal\">@eitanal</a>,</p>\n<p>What if you use our <a href=\"https://github.com/mondaycom/tunnel\">monday tunnel</a>?</p>\n<p>If not, I was advised to try <a href=\"https://chrome.google.com/webstore/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino?hl=pl\">this extension</a> to disable CORS. You can check out if it fits what you need. As a disclaimer, we do not build or maintain that extension so I can not assure anything about it, I was just advised to check it out and since we are thinking out loud here, I wanted to share it with you.</p>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 120353,
+      "postNumber": 5,
+      "createdAt": "2023-03-20T09:24:12.460Z",
+      "author": "eitanal (Eitan)",
+      "cookedHtml": "<p>Hey,</p>\n<p>I’m very limited using Tunnels, Proxies, NGRock in our network.<br />\nWhat im asking, using Postman, I manage to make calls to Monday API.<br />\nBut from my local nodeJs service I cant.<br />\nSomething in the Headers of the request is allowed by Monday when using Postman but not my axios request.</p>\n<p>This is what I’m trying to achive…</p>\n<p>Thanks!<br />\nEitan</p>"
+    },
+    {
+      "id": 120507,
+      "postNumber": 6,
+      "createdAt": "2023-03-21T11:42:29.575Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Taking into account your limitations, I am not sure how else this can be solved. The ways I found to solve it are to use ngrok, our monday tunnel, any other tunneling solution, or that Chrome extension.</p>\n<p>Maybe someone in the community has a different solution that does not require any of these things <img src=\"https://emoji.discourse-cdn.com/apple/crossed_fingers.png?v=12\" title=\":crossed_fingers:\" class=\"emoji\" alt=\":crossed_fingers:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

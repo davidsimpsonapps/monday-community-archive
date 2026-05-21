@@ -1,0 +1,68 @@
+{
+  "id": 6718,
+  "title": "Board events through API",
+  "slug": "board-events-through-api",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94
+  ],
+  "createdAt": "2020-04-27T09:05:45.947Z",
+  "lastPostedAt": "2021-02-25T14:33:01.963Z",
+  "postsCount": 7,
+  "excerpt": "Hello, \nwe use Monday and Clockify and I am trying to automate the following processes (always from monday to Clockify) : \n\nWhen a board is created → create a client\nWhen a group is created within a board → create a proj&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2218,
+  "posts": [
+    {
+      "id": 16782,
+      "postNumber": 1,
+      "createdAt": "2020-04-27T09:05:46.069Z",
+      "author": "Contreforme (Sam Rossetti)",
+      "cookedHtml": "<p>Hello,<br />\nwe use Monday and Clockify and I am trying to automate the following processes (always from monday to Clockify) :</p>\n<ul>\n<li>When a board is created → create a client</li>\n<li>When a group is created within a board → create a project linked to client</li>\n<li>When an item is created inside a group → create a task in appropriate project</li>\n</ul>\n<p>I tried with the following :</p>\n<ul>\n<li>Zapier : but it has problems discriminating between board and sub-items creation (?)</li>\n<li>Webhooks : has no way to handle board creation events</li>\n<li>Integromat : works on a recurrence basis not on a per event basis, lacks some access to board properties and Clockify clients’ and projects’ properties</li>\n</ul>\n<p>So i am considering making this through PHP and the API but i need to handle board creation event’s in order to avoid to parse all our boards structure every minute…<br />\nAny insight about where to start from ?</p>"
+    },
+    {
+      "id": 16804,
+      "postNumber": 2,
+      "createdAt": "2020-04-27T11:54:11.226Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/contreforme\">@Contreforme</a>, Sam</p>\n<p>Welcome to the community. Interesting scenario’s you are requesting <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>First of all: remember that the monday API key is a personal key. That means that if boards are created and the owner of the API key does not have access to the newly created board you will never be able to see that board through the API.</p>\n<p>For board creation I would suggest an Integromat scenario that on regular intervals list all boards (that is: all boards visible to the owner of the API key) and put the boardids in an Integromat database. In the next run check if boards are already in the database and if not you have your trigger to continue (and add it to the database).</p>\n<p>For group creation: you can do the same thing with the database (so store boardids and Group names in the same database</p>\n<p>For the item creation: you can use a webhook into another Integromat scenario</p>\n<p>Depending on your use case: wouldn’t it be possible to create a webhook on item creation only. So create your client and project late (when the first task is created inside a board)? To make sure your newly created board triggers the webhook you should be able to use my “board creation” solution from above and use the Integromat HTTP module to put the webhook in the board. This would require:</p>\n<ul>\n<li>a Integromat scenario on regular intervals and a database, which creates your client, updates the database and update the board with by inserting a webhook (next Integromat)</li>\n<li>second Integromat which listens to a webhook (create item) and then create the project (will fail if project already exist?) and create the task</li>\n</ul>\n<p>Have fun <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 16876,
+      "postNumber": 3,
+      "createdAt": "2020-04-28T06:45:37.385Z",
+      "author": "Contreforme (Sam Rossetti)",
+      "cookedHtml": "<p>Hi and thanks a lot for your insights !</p>\n<p>You confirm what i was fearing, i didn’t wanted to rely on a cron like solution as it has two major drawback : first, it is most of the time a waste of ressources – we create rarely new boards but more often items or sub-items – and second, we need something reactive – if i create new board/client i want my team to be able to start working on it the next minute.</p>\n<p>As Zapier has access to a “board created” event : where do they get it from ? Shall/can i develop my own integration plugin to have access to more events ?</p>"
+    },
+    {
+      "id": 16879,
+      "postNumber": 4,
+      "createdAt": "2020-04-28T07:41:52.356Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Sam,</p>\n<p>I am not 100% sure but it looks like Zapier can watch for board creation as they are still using V1 API. Integromat can also do more with V1 than V2 and that is because V2 is not at the same level yet.</p>\n<p>Personally I would not worry to poll every 15 minutes to see if there is are boards in the account that weren’t there 15 minutes ago. These kind op HTTP request are light by nature and it will not have a measurable effect on your performance experience. I do understand that it looks like waste but hey… ever analyzed what data is sent over to show a simpel “Hello World” webpage <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />.</p>"
+    },
+    {
+      "id": 16906,
+      "postNumber": 5,
+      "createdAt": "2020-04-28T12:16:36.878Z",
+      "author": "Contreforme (Sam Rossetti)",
+      "cookedHtml": "<p>Hi Basdebruin,</p>\n<p>i know how it goes around the web indeed …But i am not this kind of coder anyway <img src=\"https://emoji.discourse-cdn.com/apple/stuck_out_tongue_winking_eye.png?v=9\" title=\":stuck_out_tongue_winking_eye:\" class=\"emoji\" alt=\":stuck_out_tongue_winking_eye:\" /></p>\n<p>I have asked for a developer account explaining the problem : maybe i can develop a proper clockify integration plugin/app/whatever and meanwhile i will follow your advice and make a cron batch.</p>\n<p>Thanks again for your Help !</p>"
+    },
+    {
+      "id": 17163,
+      "postNumber": 6,
+      "createdAt": "2020-05-03T11:06:14.613Z",
+      "author": "Contreforme (Sam Rossetti)",
+      "cookedHtml": "<p>So here’s what i did :</p>\n<p>i have setup a webhook that calls a custom PHP page on item creation and walk its way up to create projects and clients if necessary. That was the cleanest way to go about it. I then store data in a MySQL table to avoid useless calls to the API.</p>\n<p>I have come now to a secondary problem : When I parse boards through the API it returns sub-items as boards. Is there a way to filter sub-items ?</p>\n<p>Here’s my query :</p>\n<pre><code>query {\n    boards (board_kind:share) {\n        id,\n        name\n    }\n}</code></pre>"
+    },
+    {
+      "id": 42478,
+      "postNumber": 7,
+      "createdAt": "2021-02-25T14:33:01.963Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "id": 1278,
+  "title": "\"No Query String Present\" for Python-based queries",
+  "slug": "no-query-string-present-for-python-based-queries",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2019-08-05T13:36:13.953Z",
+  "lastPostedAt": "2021-02-25T11:59:55.227Z",
+  "postsCount": 9,
+  "excerpt": "I can successfully place a very simple query in the interactive client, as well as using cURL: \nquery{account{id, name}}\n\nBut when I place the same query using Python, I get the following response: \n&#39;{&quot;errors&quot;:[{&quot;message&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 6665,
+  "posts": [
+    {
+      "id": 3487,
+      "postNumber": 1,
+      "createdAt": "2019-08-05T13:36:14.017Z",
+      "author": "jmeehan (John Meehan)",
+      "cookedHtml": "<p>I can successfully place a very simple query in the interactive client, as well as using cURL:</p>\n<pre><code class=\"lang-auto\">query{account{id, name}}\n</code></pre>\n<p>But when I place the same query using Python, I get the following response:</p>\n<pre><code class=\"lang-auto\">'{\"errors\":[{\"message\":\"No query string was present\"}],\"account_id\":XXXXXXX}'\n</code></pre>\n<p>The API authentication works, because I am getting my account id back with the response. But every method I use returns “No query string was present”. Any ideas?</p>\n<p>My relevant code snippet:</p>\n<pre><code class=\"lang-auto\">headers = {\"Authorization\" : creds.api_token}\n\nrequest = requests.post(creds.monday_api_url,\n                        json={\"query\" : \"{account{id, name}}\"},\n                        headers=headers)\n\nif request.status_code == 200:\n    return request.json()\nelse:\n    raise Exception(\n    \"\"\"\n    Query failed to run by returning code of {}. {}\n    \"\"\".format(request.status_code, query))\n</code></pre>"
+    },
+    {
+      "id": 3693,
+      "postNumber": 2,
+      "createdAt": "2019-08-05T16:57:39.235Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jmeehan\">@jmeehan</a> – welcome to the community!</p>\n<p>I built a little Python program last week and used this function to create a new item. Looks like I’m also passing the data as a dict, and works fine:</p>\n<pre><code>def add_to_board(name, status=\"\", high_tag=\"\", low_tag=\"\", link=\"\"):\n\theaders = {\"Authorization\" : monday_key}\n\tmonday_url = 'https://api.monday.com/v2'\n\t\n\t# store column data in a dict\n\tcolumn_data = {\"link\" : {\"url\" : link, \"text\" : \"ZD Link\"}, \"status1\" : status, \"high_level9\" : high_tag, \"low_level3\" : low_tag}\n\n\t# store request body in a dict, including variables\n\treq_data = {\"query\" : \"mutation($name: String!, $columns: JSON!)\\\n\t\t\t\t{create_item(item_name:$name, board_id:XXXX, column_values:$columns) \\\n\t\t\t\t{name id column_values {id value}}\\\n\t\t\t\t}\",\n\n                # send columns as a variable to prevent string manipulation\n\t\t\t\t\"variables\" : {\"name\" : name, \"columns\" : json.dumps(column_data)}} \n\n\tr = requests.post(url=monday_url, json=req_data, headers=headers)\n\tif r.status_code != 200:\n\t\tprint('Status:', response.status_code)\n\t\traise Exception(\"Add to board failed.\")\n</code></pre>\n<p>Let me know if that helps! I’ll post the rest of my code as a little example and tutorial later this week <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 3736,
+      "postNumber": 4,
+      "createdAt": "2019-08-05T17:57:45.280Z",
+      "author": "jmeehan (John Meehan)",
+      "cookedHtml": "<p>Thanks for the quick reply!</p>\n<p>I have also tried the query without the outer brackets:</p>\n<pre><code class=\"lang-auto\">json={'query' : 'account{id}'}\n</code></pre>\n<p>And received the same result… I’ve also tried a few other variations including:</p>\n<pre><code class=\"lang-auto\">json={'query':'query{account{id}}'}\n</code></pre>\n<p>Unfortunately, I keep receiving the same error message.</p>"
+    },
+    {
+      "id": 3904,
+      "postNumber": 5,
+      "createdAt": "2019-08-06T12:08:34.006Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jmeehan\">@jmeehan</a> – thanks for the context.</p>\n<p>I opened up a Python interpreter and did exactly what you’re doing, and received the data:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/1X/69ab4495aaffb64230d67b4313683ea1753bce0c.png\" title=\"Screen Shot 2019-08-06 at 10.59.27 AM.png\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/original/1X/69ab4495aaffb64230d67b4313683ea1753bce0c.png\" alt=\"27%20AM\" width=\"690\" height=\"41\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2019-08-06 at 10.59.27 AM.png</span><span class=\"informations\">971×58 8.24 KB</span>\n</div></a></div><p></p>\n<p>I did try without the outer braces and that didn’t work. You do need to include the outer braces.</p>\n<p>However, I think there’s something else going on here – a “no query string was present” error means the server thinks the body of your request is empty. If there was a syntax error, you’d receive a ParseError like this:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/1X/3aa77e486b50c3ac34bf61262b4a72fad4bf3cdf.png\" title=\"Screen Shot 2019-08-06 at 11.06.07 AM.png\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/original/1X/3aa77e486b50c3ac34bf61262b4a72fad4bf3cdf.png\" alt=\"07%20AM\" width=\"690\" height=\"26\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2019-08-06 at 11.06.07 AM.png</span><span class=\"informations\">1017×39 2.77 KB</span>\n</div></a></div><p></p>\n<p>Are you using any middleware that might change the request before it is sent to our server? What version of Python or requests are you using?</p>"
+    },
+    {
+      "id": 3940,
+      "postNumber": 6,
+      "createdAt": "2019-08-06T13:18:01.836Z",
+      "author": "jmeehan (John Meehan)",
+      "cookedHtml": "<p>Well, this is interesting - If I make the request in the terminal just as you did, the query is successful and I get the account information back.</p>\n<p>However, when I run the same exact code in my script, I get an error message. There must be something else going on that I need to troubleshoot.</p>\n<p>Python==3.7.3<br />\nrequests==2.22.0</p>"
+    },
+    {
+      "id": 3947,
+      "postNumber": 7,
+      "createdAt": "2019-08-06T13:48:28.338Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Oh interesting! Looks like there might be something else happening here. Do let us know what the solve here is, and if you need anything else <img src=\"https://emoji.discourse-cdn.com/apple/sunny.png?v=9\" title=\":sunny:\" class=\"emoji\" alt=\":sunny:\" /></p>"
+    },
+    {
+      "id": 3955,
+      "postNumber": 8,
+      "createdAt": "2019-08-06T14:58:33.547Z",
+      "author": "jmeehan (John Meehan)",
+      "cookedHtml": "<p>Well, I’ve got things working now - embarrassingly, the URL I was using was: <code>http://api.monday.com/v2</code>, when it should have been <code>https://api.monday.com/v2</code></p>\n<p>Thanks for your help!<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/grimacing.png?v=9\" title=\":grimacing:\" class=\"emoji\" alt=\":grimacing:\" /></p>"
+    },
+    {
+      "id": 3962,
+      "postNumber": 9,
+      "createdAt": "2019-08-06T15:59:12.027Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey John! No worries, it happens <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=9\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" /> Glad to know I’m not the only one who takes https:// for granted! <img src=\"https://emoji.discourse-cdn.com/apple/3rd_place_medal.png?v=9\" title=\":3rd_place_medal:\" class=\"emoji\" alt=\":3rd_place_medal:\" /></p>"
+    },
+    {
+      "id": 42061,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T11:59:55.227Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

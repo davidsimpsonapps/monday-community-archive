@@ -1,0 +1,140 @@
+{
+  "id": 25542,
+  "title": "Add subscribers to board using json",
+  "slug": "add-subscribers-to-board-using-json",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2021-09-30T19:00:55.407Z",
+  "lastPostedAt": "2021-10-15T12:37:03.537Z",
+  "postsCount": 16,
+  "excerpt": "Trying to add subscribers to a board… Multiple errors. \nconst variables = ({\n    boardId : suptBoardId,\n    producerId: producer,\n    kind: &quot;owner&quot;,\n});\n\nconst mutate = `mutation add_subscribers_to_board ($boardId: Int!,&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 2166,
+  "posts": [
+    {
+      "id": 65032,
+      "postNumber": 1,
+      "createdAt": "2021-09-30T19:00:55.497Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p>Trying to add subscribers to a board… Multiple errors.</p>\n<pre><code class=\"lang-auto\">const variables = ({\n    boardId : suptBoardId,\n    producerId: producer,\n    kind: \"owner\",\n});\n\nconst mutate = `mutation add_subscribers_to_board ($boardId: Int!, $producerId: Int!, $kind: SubscriberKind!) {\n    add_subscribers_to_board(\n      board_id: $boardId,\n      user_id: $producerId,\n      kind: $kind,\n    )\n    {\n      id\n    }\n}`\n\nmonday.api(mutate, {variables}).then((res) =&gt; {\n    console.log('add subscriber: ', res);\n});\n</code></pre>"
+    },
+    {
+      "id": 65051,
+      "postNumber": 2,
+      "createdAt": "2021-10-01T05:45:07.317Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>i’m sorry to hear you are having issues with this mutation. I’ve just tried running one on my end, and was able to add a subscriber to a board within my account. Could you clarify if you are sending your user IDs as an array, i.e. [12345,678912,91266]?</p>\n<p>Also, is the board within a Main Workspace or a Closed one?<br />\nI would also recommend removing quotes around owner, as this is a boolean and not a string value. That might help here!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65052,
+      "postNumber": 3,
+      "createdAt": "2021-10-01T05:45:10.974Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 65098,
+      "postNumber": 4,
+      "createdAt": "2021-10-01T19:24:40.063Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/s/779978/48.png\" class=\"avatar\" /> ShawnBaden:</div>\n<blockquote>\n<p><code>const mutate = </code>mutation add_subscribers_to_board ($boardId: Int!, $producerId: Int!, $kind: SubscriberKind!) {`</p>\n</blockquote>\n</aside>\n<p>I changed SubscriberKind!  to   BoardSubscriberKind!  and it worked. Not sure today how I arrived at that but it works.</p>\n<p>I’m having a similar issue today with a board duplication though and can’t resolve it.</p>"
+    },
+    {
+      "id": 65101,
+      "postNumber": 5,
+      "createdAt": "2021-10-01T21:06:43.296Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p>Here’s another example. The structure is slightly different…</p>\n<pre><code class=\"lang-auto\">const suptTemplateVars = ({\n          boardId : suptTemplateId,\n          duplicateType: \"duplicate_board_with_structure\",\n          folderId: suptBoardFolderId,\n        });\n      \n        console.log('!suptBoardExists: ')\n        \n        const mutateTemplate = `mutation duplicate_board ($boardId: Int!, $duplicateType: DuplicateBoardType!, $folderId: Int!) {\n            duplicate_board(\n              board_id: $boardId,\n              duplicate_type: $duplicateType,\n              folder_id: $folderId,\n            )\n            {\n              id\n            }\n        }`\n        \n        monday.api(mutateTemplate, {suptTemplateVars}).then((res) =&gt; {\n            console.log('add suptBoard: ', res);\n        });\n      }\n</code></pre>\n<p>I can’t get this to work.</p>\n<p>I would love to understand how to build this from looking at the api documentation.</p>"
+    },
+    {
+      "id": 65188,
+      "postNumber": 6,
+      "createdAt": "2021-10-04T06:28:43.061Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Got it, I’m glad you were able to tackle the adding subscribers mutation!</p>\n<p>I think the same issue is occurring here, as duplication type is also a boolean, and not a String, so sending it within quotes will not work. Could you try out that approach and let us know if it works?</p>\n<p>Here’s how this works within Postman:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d6b9de1772ac8317b74f80ead230a2559bd27962.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/d6b9de1772ac8317b74f80ead230a2559bd27962_2_690x288.png\" alt=\"image\" width=\"690\" height=\"288\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2074×868 74.1 KB</span>\n</div></a></div><p></p>\n<p>I’d love to understand how we could make the documentation better in that sense. Could you please shed more light on how we could improve that part of our docs? I’d love to get any kind of documentation improvements added <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65261,
+      "postNumber": 7,
+      "createdAt": "2021-10-04T21:44:31.371Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> - I don’t understand how it can be a boolean when there are 3 options:</p>\n<ul>\n<li>duplicate_board_with_structure</li>\n<li>duplicate_board_with_pulses</li>\n<li>duplicate_board_with_pulses_and_updates</li>\n</ul>\n<p>If it were a boolean I could pass in true or false right?</p>"
+    },
+    {
+      "id": 65262,
+      "postNumber": 8,
+      "createdAt": "2021-10-04T21:46:32.232Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>  - I would be interested in getting on a call with you to talk about where I’m not making the connection between the documentation and the code.</p>"
+    },
+    {
+      "id": 65301,
+      "postNumber": 9,
+      "createdAt": "2021-10-05T06:32:54.611Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Sorry, that’s an inaccuracy on my part. It is an enumerated type instead, and after testing this further, you should indeed pass it within quotes when sending it as a variable. Here’s a StackOverflow thread I’ve found with other GraphQL examlpes:</p>\n<p><a class=\"attachment\" href=\"https://stackoverflow.com/questions/47704615/graphql-passing-an-enum-value-directly-to-a-mutation-as-an-argument\">GraphQL - Passing an enum value directly to a mutation as an argument?</a></p>\n<p>I’d love to discuss this further on the call.</p>\n<p>In the future, it would really help us troubleshoot and understand how we can best assist with the issues you have using our API/Apps Framework if you could provide the exact errors you are seeing using the code you’ve provided. Those errors can be quite helpful to narrow down the root cause. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65466,
+      "postNumber": 10,
+      "createdAt": "2021-10-06T20:26:45.165Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> - I’m still not having any success using the code sample you gave me. I’m guessing that something isn’t translating between the vanilla javascript and the Monday SDK.</p>\n<p>When I use this…</p>\n<pre><code class=\"lang-auto\">let mutateTemplate = `mutation duplicate_board ($boardId: Int!, $duplicate_type: DuplicateBoardType!, $folderId: Int!, $board_name: String!) {\n          duplicate_board ( board_id: $boardId, duplicate_type: $duplicate_type, folder_id: $folderId, board_name: $board_name ) {\n            {\n              id\n            }\n          }\n      }`;\n</code></pre>\n<p>I get one error:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/dfa7eeee189bd65057ffbd5720a96c73707a8120.png\" title=\"Screen Shot 2021-10-06 at 4.18.50 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/dfa7eeee189bd65057ffbd5720a96c73707a8120_2_690x301.png\" alt=\"Screen Shot 2021-10-06 at 4.18.50 PM\" width=\"690\" height=\"301\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2021-10-06 at 4.18.50 PM</span><span class=\"informations\">928×406 43.5 KB</span>\n</div></a></div><p></p>\n<p>When I use this…</p>\n<pre><code class=\"lang-auto\">let mutateTemplate = `mutation duplicate_board ($boardId: Int!, $duplicate_type: DuplicateBoardType!, $folderId: Int!, $board_name: String!) {\n          duplicate_board ( board_id: $boardId, duplicate_type: $duplicate_type, folder_id: $folderId, board_name: $board_name ) {\n            board {\n              id\n            }\n          }\n      }`;\n</code></pre>\n<p>I get 4 errors:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/8be243d773d3125e5aa25825c44a2b1f04769beb.png\" title=\"Screen Shot 2021-10-06 at 4.19.48 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/8be243d773d3125e5aa25825c44a2b1f04769beb_2_527x500.png\" alt=\"Screen Shot 2021-10-06 at 4.19.48 PM\" width=\"527\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2021-10-06 at 4.19.48 PM</span><span class=\"informations\">1182×1120 120 KB</span>\n</div></a></div><p></p>\n<p>It works in the API Playground…<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/a/ada2890a3d6ddd170fb966db678364c9b15b9eb5.png\" title=\"Screen Shot 2021-10-06 at 5.54.22 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/a/ada2890a3d6ddd170fb966db678364c9b15b9eb5_2_573x500.png\" alt=\"Screen Shot 2021-10-06 at 5.54.22 PM\" width=\"573\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2021-10-06 at 5.54.22 PM</span><span class=\"informations\">2006×1750 255 KB</span>\n</div></a></div><p></p>\n<p>Still can’t get it to work in my app though.</p>"
+    },
+    {
+      "id": 65492,
+      "postNumber": 11,
+      "createdAt": "2021-10-07T05:55:30.427Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Thank you, that helps identify what might be happening here.</p>\n<p>In both cases, the error is thrown likely due to formatting errors. In the first case, using the following API request:</p>\n<pre><code class=\"lang-auto\">let mutateTemplate = `mutation duplicate_board ($boardId: Int!, $duplicate_type: DuplicateBoardType!, $folderId: Int!, $board_name: String!) {\n          duplicate_board ( board_id: $boardId, duplicate_type: $duplicate_type, folder_id: $folderId, board_name: $board_name ) {\n            {\n              id\n            }\n          }\n      }\n</code></pre>\n<p>You have an extra right curly bracket, but either way, simply requesting <code>id</code> after a duplicate_board request will not work either, I’m afraid. it will always need to be <code>{ board { id }}</code>.</p>\n<p>In the second case, when you are sending your variables, they all arrive as “null” values to our API. Perhaps this is something to do with the way you are getting the values from a previous step in your code, or this might be related to the way those are JSON stringified:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e9b8b4800cd27e72890fab82d37cd3acec3ae3c1.jpeg\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e9b8b4800cd27e72890fab82d37cd3acec3ae3c1_2_510x500.jpeg\" alt=\"image\" width=\"510\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1612×1580 123 KB</span>\n</div></a></div><p></p>\n<p>The query seems to be formatted correctly in the API playground, and with providing exact values as variables, it does seem to work. Now, we just need to figure out how those variables should be passed to the SDK.</p>\n<p>If you’re open to that, it would help us identify the issue if you share more of your code with us, as it seems like it’s not an API formatting issue, but might be related to the way those values are passed to the query.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65552,
+      "postNumber": 12,
+      "createdAt": "2021-10-07T15:04:50.857Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>  - The extra curly brace is because I just copied too much of the code.<br />\nWhen I console log all of the variables before the api call they all log valid values…<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/7c0a314c1891cb257e1f862d632515c01f97b7d4.png\" title=\"Screen Shot 2021-10-07 at 10.58.15 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/7c0a314c1891cb257e1f862d632515c01f97b7d4_2_394x500.png\" alt=\"Screen Shot 2021-10-07 at 10.58.15 AM\" width=\"394\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2021-10-07 at 10.58.15 AM</span><span class=\"informations\">1046×1326 140 KB</span>\n</div></a></div><p></p>\n<p>Here is my code block for the useEffect()</p>\n<pre><code class=\"lang-auto\">useEffect(() =&gt; {\n    let filteredBoards = suptBoards.filter(board =&gt; (board.name === 'SUPT_' + showAbbr));\n    console.log('boardNameExists: ', filteredBoards)\n\n    if(filteredBoards.length){\n      filteredBoards.forEach(board =&gt; {\n        setSuptBoardId(Number(board.id));\n        setSuptBoardSubscribers(board.subscribers);\n        console.log('subscribers: ', board.subscribers);\n        console.log('producer: ', producer)\n        console.log('boardName: ', board.name)\n      })\n    }\n    else{\n      console.log('!suptBoardExists: ')\n      console.log('templateId: ', suptTemplateId);\n      console.log('suptBoardFolderId: ', suptBoardFolderId);\n      console.log('showAbbr: ', showAbbr)\n      \n      let suptTemplateVars = ({\n        boardId : suptTemplateId,\n        duplicateType: \"duplicate_board_with_structure\",\n        folderId: suptBoardFolderId,\n        boardName: \"SUPT_\"+ showAbbr,\n      });\n      console.log('boardId: ', suptTemplateVars.boardId)\n    \n      let mutateTemplate = `mutation duplicate_board ($boardId: Int!, $duplicateType: DuplicateBoardType!, $folderId: Int!, $boardName: String!) {\n        duplicate_board (\n          board_id: $boardId,\n          duplicate_type: $duplicateType,\n          folder_id: $folderId,\n          board_name: $boardName\n        )\n        {board {id}}\n      }`;\n      \n      monday.api(mutateTemplate, {suptTemplateVars}).then((res) =&gt; {\n          console.log('add suptBoard: ', res);\n      });\n    }\n  }, [showAbbr]);\n</code></pre>\n<p>I’ll email you the entire app.js</p>"
+    },
+    {
+      "id": 65608,
+      "postNumber": 14,
+      "createdAt": "2021-10-08T07:52:49.979Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Thanks for being so open to collaborate on this, and receptive to feedback <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I’ll try and review this in detail as soon as I can and get back to you with further suggstions.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65648,
+      "postNumber": 15,
+      "createdAt": "2021-10-08T12:19:28.558Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>To anyone curious, we actually managed to figure this one out, although it’s quite silly.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/efb7122dd1c678cd13904243efbd8c4c97fb1944.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/efb7122dd1c678cd13904243efbd8c4c97fb1944_2_690x89.png\" alt=\"image\" width=\"690\" height=\"89\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1248×162 16.3 KB</span>\n</div></a></div><p></p>\n<p>The monday.api syntax is:</p>\n<p>monday.api(query, options = {})</p>\n<p>So in this case, we’d needed to make sure that we’re not sending suptTemplateVars, but instead, we’re sending a <code>variables</code> object. As soon as we’d made the adjustment, the values were recognized correctly.</p>\n<p>Instead of sending:<br />\n<code> monday.api(mutateTemplate, {suptTemplateVars})</code></p>\n<p>We needed to send:<br />\n<code>Monday.api(mutateTemplate, {variables})</code></p>\n<p>Thank you for being available to review together, <a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a>  <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65653,
+      "postNumber": 16,
+      "createdAt": "2021-10-08T12:34:36.862Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>  - Thank you for all the help!</p>\n<p>Wasn’t the issue also the naming convention? My variables object had to be named “variables”<br />\n<code>Monday.api(mutateTemplate, {variables})</code></p>"
+    },
+    {
+      "id": 65654,
+      "postNumber": 17,
+      "createdAt": "2021-10-08T12:36:56.854Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Yes, exactly that! I’ll edit my post so that gets the same point across <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Thank you!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 66277,
+      "postNumber": 18,
+      "createdAt": "2021-10-15T12:37:03.537Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

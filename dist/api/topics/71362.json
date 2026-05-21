@@ -1,0 +1,61 @@
+{
+  "id": 71362,
+  "title": "Problem with column_values and variables",
+  "slug": "problem-with-column-values-and-variables",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-22T17:29:45.436Z",
+  "lastPostedAt": "2023-11-23T08:38:25.377Z",
+  "postsCount": 6,
+  "excerpt": "Hi, struggling to use Graph API for basic stuff. \nI can create new items in a board using long hand query mutation, but the same query wont work when using column_values. \nThis works fine \n{\n    &quot;query&quot;: &quot;mutation ($boar&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 324,
+  "posts": [
+    {
+      "id": 154394,
+      "postNumber": 1,
+      "createdAt": "2023-11-22T17:29:45.521Z",
+      "author": "adrw (adrw)",
+      "cookedHtml": "<p>Hi, struggling to use Graph API for basic stuff.</p>\n<p>I can create new items in a board using long hand query mutation, but the same query wont work when using column_values.</p>\n<p>This works fine</p>\n<pre><code class=\"lang-auto\">{\n    \"query\": \"mutation ($boardId: Int!, $itemName: String!){create_item(board_id: $boardId, item_name: $itemName, column_values: \\\"{\\\\\\\"text\\\\\\\":\\\\\\\"a text value\\\\\\\"}\\\"){id}}\",\n    \"variables\": {\n        \"boardId\": 12345,\n        \"itemName\": \"new item\"\n    }\n}\n</code></pre>\n<p>But when i try convert column_values to a variable, it doesn’t work, 500 Internal Server Error.</p>\n<pre><code class=\"lang-auto\">{\n    \"query\": \"mutation ($boardId: Int!, $itemName: String!, $columnValues: JSON!){create_item(board_id: $boardId, item_name: $itemName, column_values: $columnValues){id}}\",\n    \"variables\": {\n        \"boardId\": 1234,\n        \"itemName\": \"new item\",\n        \"columnValues\": {\n            \"text\": \"some text\"\n        }\n    }\n}\n</code></pre>"
+    },
+    {
+      "id": 154398,
+      "postNumber": 2,
+      "createdAt": "2023-11-22T17:37:11.768Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>you need to take the object that is the columnValues value and serialize it before adding it to the variables object.</p>\n<pre><code class=\"lang-auto\">const columnValues = JSON.stringify({text:\"some text\"});\nconst boardId = \"1234\";\nconst itemName = \"new item\";\n\nconst query = \"mutation ($boardId: ID!, $itemName: String!, $columnValues: JSON!){create_item(board_id: $boardId, item_name: $itemName, column_values: $columnValues){id}}\"\n\nconst variables = {\n  boardId,\n  itemName,\n  columnValues,\n}\n\nconst data = JSON.stringify({query,variables});\n</code></pre>\n<p>all that said! you look like you’re not using API-Version 2023-10. In 2023-10, board_id is now an ID type not Int. This can be a number or a string, but string is probably what you’ll use since queries return IDs as strings.</p>\n<p>API Version 2023-07 will be discontinued January 15th, 2024. So less than 2 months! Just don’t want you to experience a break when its removed.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/api-versioning\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/api-versioning\" target=\"_blank\" rel=\"noopener\">API Versioning</a></h3>\n\n  <p>This guide walks through the release schedule, how to make a request to a specific version, and various examples to further explain versioning.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 154403,
+      "postNumber": 3,
+      "createdAt": "2023-11-22T17:57:54.525Z",
+      "author": "adrw (adrw)",
+      "cookedHtml": "<p>Ok i feel like i’m almost there, but still getting 500.  I also included the <code>API-Version:2023-10</code>  header.</p>\n<pre><code class=\"lang-auto\">{\n    \"query\": \"mutation ($boardId: ID!, $itemName: String!, $columnValues: JSON!){create_item(board_id: $boardId, item_name: $itemName, column_values: $columnValues){id}}\",\n    \"variables\": \"{\\\\\\\"boardId\\\\\\\":12345,\\\\\\\"itemName\\\\\\\":\\\\\\\"my item name\\\\\\\",\\\\\\\"columnValues\\\\\\\":\\\\\\\"text\\\\\\\":\\\\\\\"my text value\\\\\\\"}\"\n}\n</code></pre>"
+    },
+    {
+      "id": 154404,
+      "postNumber": 4,
+      "createdAt": "2023-11-22T17:59:29.584Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>That looks like you passed the whole variables through serialization first. You need to just pass the value of <code>columnValues</code> through <code>JSON.stringify()</code> then use the string from that in the variables.</p>"
+    },
+    {
+      "id": 154407,
+      "postNumber": 5,
+      "createdAt": "2023-11-22T18:04:10.866Z",
+      "author": "adrw (adrw)",
+      "cookedHtml": "<p>You rippa!</p>\n<p>Here is the working request.</p>\n<pre><code class=\"lang-auto\">{\n    \"query\": \"mutation ($boardId: ID!, $itemName: String!, $columnValues: JSON!){\\n  create_item(board_id: $boardId, item_name: $itemName, column_values: $columnValues)\\n    {id}\\n}\\n\",\n    \"variables\": {\n        \"boardId\": 12345,\n        \"itemName\": \"new item\",\n        \"columnValues\": \" {\\\"text\\\": \\\"my text value\\\"}\"\n    }\n}\n</code></pre>"
+    },
+    {
+      "id": 154515,
+      "postNumber": 6,
+      "createdAt": "2023-11-23T08:38:25.377Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you for the help here <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!</p>"
+    }
+  ]
+}

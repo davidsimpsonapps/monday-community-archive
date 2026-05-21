@@ -1,0 +1,84 @@
+{
+  "id": 68751,
+  "title": "AWS lambda and API Gateway and monday.com",
+  "slug": "aws-lambda-and-api-gateway-and-monday-com",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    26,
+    94,
+    351
+  ],
+  "createdAt": "2023-10-19T12:43:31.230Z",
+  "lastPostedAt": "2023-11-01T06:36:54.652Z",
+  "postsCount": 9,
+  "excerpt": "Hello, I am trying to create a webhook in monday that will commnicate with api gateway and lambda from aws but I am having troubles returning the challenge.",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 635,
+  "posts": [
+    {
+      "id": 148982,
+      "postNumber": 1,
+      "createdAt": "2023-10-19T12:43:31.313Z",
+      "author": "raki (Raki Diallo)",
+      "cookedHtml": "<p>Hello, I am trying to create a webhook in monday that will commnicate with api gateway and lambda from aws but I am having troubles returning the challenge.</p>"
+    },
+    {
+      "id": 149033,
+      "postNumber": 2,
+      "createdAt": "2023-10-19T19:35:41.995Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>What language are you using?</p>\n<p>Do you have some rough initial code you could share?</p>\n<p>I can tell you without doubt that what you’re trying to do has been done before.</p>\n<p>Are you using API Gateway HTTP API or REST API (I highly recommend HTTP API for monday because its faster, cheaper, and 99% of the time with monday all you are doing is a proxy to lambda). A lambda function URL is another alternative, if you don’t need a custom domain and don’t want to build out routes (for example a one off lambda for something).</p>\n<p>Depending on if its REST API or HTTP API/Lambda Function URL the payload sent to the lambda is different.</p>\n<p>First step is <code>console.log(event.body)</code> to start seeing what is actually being sent. 99/100 times the struggle is that you’re not actually accessing something that exists yet - its a string, not object.</p>\n<pre><code class=\"lang-auto\">async function handler(event, context) {\n    if (typeof event.body !== \"string\") {\n        return {\n            statusCode: 400,\n            body: \"missing body\",\n            headers: {\n                \"content-type\": \"text/plain\"\n            }\n        }\n    }\n\n    const body = JSON.parse(event.body);\n\n    if (typeof body.challenge === \"string\") {\n        return {\n            statusCode: 200,\n            body: JSON.stringify({\n                challenge: body.challenge\n            }),\n            headers: {\n                \"content-type\": \"application/json\"\n            }\n        }\n    }\n\n        // now you can handle the actual webhooks here\n}\n\n</code></pre>"
+    },
+    {
+      "id": 149082,
+      "postNumber": 3,
+      "createdAt": "2023-10-20T07:11:56.707Z",
+      "author": "raki (Raki Diallo)",
+      "cookedHtml": "<p>Hello, I am using python3.9 and a REST API Gateway. I am just trying to return the challenge. Not sure it’s the good way:</p>\n<pre><code class=\"lang-auto\">import json\nimport urllib3\n\ndef lambda_handler(event, context):\n    \n    print(\"Printing event -------------\")\n    print(event)\n    print(\"Printed event -------------\")\n\n    \n    return {\n        'statusCode': 200,\n            'headers': {\n            \"Access-Control-Allow-Origin\": \"*\",\n            \"Access-Control-Allow-Methods\": 'GET, POST, PUT, DELETE, OPTIONS'\n            },\n            'body': json.dumps(event)\n    }\n</code></pre>"
+    },
+    {
+      "id": 149187,
+      "postNumber": 4,
+      "createdAt": "2023-10-20T16:39:12.395Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The event object has a significant structure BESIDE the request body - the body is a property on the event, and is delivered as a JSON string.</p>\n<p>You need to be looking at:</p>\n<pre><code class=\"lang-auto\">body = json.dumps(event.body)\n</code></pre>\n<p>that will be the body you need to return for the challenge. But you really need to look to see if <code>body.challenge</code>  is a string to see if the request even IS a challenge or is an actual webhook payload.</p>"
+    },
+    {
+      "id": 149463,
+      "postNumber": 5,
+      "createdAt": "2023-10-23T11:43:44.062Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!</p>"
+    },
+    {
+      "id": 150776,
+      "postNumber": 6,
+      "createdAt": "2023-10-31T13:33:34.691Z",
+      "author": "raki (Raki Diallo)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for your contribution. Yes actually that was it, just returning the body property of the event and problem solved? That’s it looks like in nodeJs:</p>\n<pre><code class=\"lang-auto\">export const lambdaHandler = async (event, context) =&gt; {\n\n    console.log(event)\n    \n    const body = event.body\n    console.log(body)\n    try {\n        return {\n            'statusCode': 200,\n            body\n        }\n    } catch (err) {\n        console.log(err);\n        return err;\n</code></pre>"
+    },
+    {
+      "id": 150778,
+      "postNumber": 7,
+      "createdAt": "2023-10-31T13:36:18.644Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>fairly close, just remember this is your challenge response.</p>\n<p>Regular payloads will ALSO be sent to this same lambda - so you have to determine if the payload is a challenge or a response when it comes in.</p>\n<p>If this is a one time use - a single webhook instance on one board, you can pass the challenge once and remove the code. But you’ll need to readd it if you then add a new webhook or such that uses the same lambda. Or you JSON.parse(body) and then check if challenge exists and handle it, otherwise you continue to your regular code.</p>"
+    },
+    {
+      "id": 150783,
+      "postNumber": 8,
+      "createdAt": "2023-10-31T13:45:58.885Z",
+      "author": "raki (Raki Diallo)",
+      "cookedHtml": "<p>Right! I thought of that and I just passed the challenge once to set the url and removed the code for the next step</p>\n<p>Thanks so much <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> . Really appreciate your help</p>"
+    },
+    {
+      "id": 150906,
+      "postNumber": 9,
+      "createdAt": "2023-11-01T06:36:54.652Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> <img src=\"https://emoji.discourse-cdn.com/apple/crown.png?v=12\" title=\":crown:\" class=\"emoji\" alt=\":crown:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

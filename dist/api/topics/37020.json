@@ -1,0 +1,37 @@
+{
+  "id": 37020,
+  "title": "How to display firstname and lastname in item query",
+  "slug": "how-to-display-firstname-and-lastname-in-item-query",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2022-05-30T18:45:17.603Z",
+  "lastPostedAt": "2022-06-03T14:55:42.618Z",
+  "postsCount": 3,
+  "excerpt": "I created an Item as follows and  it got created successfully \n\n$query = &#39;mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:641098600, item_name:$myItemName, column_values:$columnVals) { id } }&#39;&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1329,
+  "posts": [
+    {
+      "id": 87193,
+      "postNumber": 1,
+      "createdAt": "2022-05-30T18:45:17.674Z",
+      "author": "fredo (Esedo Fredrick)",
+      "cookedHtml": "<p>I created an Item as follows and  it got created successfully</p>\n<pre><code class=\"lang-auto\">\n$query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:641098600, item_name:$myItemName, column_values:$columnVals) { id } }';\n$vars = ['myItemName' =&gt; \"My Personal Task\",\n  'columnVals' =&gt; json_encode([\n    'status' =&gt; ['label' =&gt; 'Done'], \n    'date4' =&gt; ['date' =&gt; '1993-08-27'],\n'firstname1' =&gt; ['firstname' =&gt; 'Tony'],\n'lastname1' =&gt; ['lastname' =&gt; 'Paul'],\n])];\n</code></pre>\n<p>Now I want to query the items that I created as the code below to get item name, firstname, lastname etc.</p>\n<pre><code class=\"lang-auto\">\n$query = ' query{ items { id name  firstname lastname  } }';\n</code></pre>\n<p>Here is the error it displays</p>\n<p><code>{\"errors\":[{\"message\":\"Field 'firstname' doesn't exist on type 'Item'\",\"locations\":[{\"line\":1,\"column\":26}],\"fields\":[\"query\",\"items\",\"firstname\"]},{\"message\":\"Field 'lastname' doesn't exist on type 'Item'\",\"locations\":[{\"line\":1,\"column\":36}],\"fields\":[\"query\",\"items\",\"lastname\"]}],\"account_id\":66xxxx}</code></p>"
+    },
+    {
+      "id": 87571,
+      "postNumber": 2,
+      "createdAt": "2022-06-03T14:55:42.618Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/fredo\">@fredo</a>!</p>\n<p>With just some small tweaks, we can get this query working.</p>\n<p>Column names are not fields that can be used to query items. Instead, we can make queries with column values to achieve the same result.</p>\n<p>The issue with this query specifically is that firstname and lastname are not fields that can be used in the items query. (See Item query fields: <a href=\"https://api.developer.monday.com/docs/items-queries#fields\">https://api.developer.monday.com/docs/items-queries#fields</a>)</p>\n<p>In order to get column data, you can pass the column_values field with the <code>ids</code> argument to specify the exact columns you’d like to return using the column ID. (See Column Values query fields: <a href=\"https://api.developer.monday.com/docs/column-values\">https://api.developer.monday.com/docs/column-values</a>)</p>\n<p>Be sure to also include the <code>boards</code> field in your query, as it will make your call more specific.</p>\n<p>This query will work instead:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 1234567890) {\n    items {\n      id\n      name\n      column_values (ids: [\"examplecolumnID\", \"examplecolumnID\"]) {\n        title\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>Cheers,</p>\n<p>Alessandra</p>"
+    },
+    {
+      "id": 88208,
+      "postNumber": 3,
+      "createdAt": "2022-06-10T14:56:04.360Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

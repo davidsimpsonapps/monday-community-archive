@@ -1,0 +1,103 @@
+{
+  "id": 70612,
+  "title": "Creating a formula",
+  "slug": "creating-a-formula",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    108
+  ],
+  "createdAt": "2023-11-13T08:13:22.490Z",
+  "lastPostedAt": "2023-11-14T07:14:14.922Z",
+  "postsCount": 12,
+  "excerpt": "Hello, \nI’m looking for someone who can help me about creating a formula into Monday.com. I’ve integrate in Monday.com the apps Aircall (an apps to make and receive calls), with that integration I got multiple informatio&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 581,
+  "posts": [
+    {
+      "id": 152818,
+      "postNumber": 1,
+      "createdAt": "2023-11-13T08:13:22.563Z",
+      "author": "gestion.echirolles (Gestion Echirolles)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’m looking for someone who can help me about creating a formula into <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>. I’ve integrate in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> the apps Aircall (an apps to make and receive calls), with that integration I got multiple informations about calls made and receive, such as “Created at”, “Answered at”, “Ended at”, this informations are about when I dial. a contact, when he replies and when the call ended.</p>\n<p>I want to create a formula to show in a specific column the duration of a call.</p>\n<p>Warning : sometimes the contact doesn’t answer, in this case the column “Answered at” will be empty, in this case we’ll write in the formula’s column the mention : “Has not reply”</p>\n<p>Also, unfortunately, aircall is showing the date and hours of the call, but not the seconds… I would like to  write in the formula’s column the mention : “Not succeed” if the duration of the call is under 15 seconds, but I’m sure we’ll be able to do it as we do not have the informations about the seconds. In this case, “Not succeed” can be shown when the duration of the call is under 1 minute.</p>\n<p>Thanks,</p>"
+    },
+    {
+      "id": 152854,
+      "postNumber": 2,
+      "createdAt": "2023-11-13T12:04:45.830Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Gestion,</p>\n<p>Happy to help.</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/g/f0a364/48.png\" class=\"avatar\" /> Gestion Echirolles:</div>\n<blockquote>\n<p>I would like to write in the formula’s column the mention : “Not succeed” if the duration of the call is under 15 seconds, but I’m sure we’ll be able to do it as we do not have the informations about the seconds. In this case, “Not succeed” can be shown when the duration of the call is under 1 minute.</p>\n</blockquote>\n</aside>\n<p>Unfortunately, even the latter requirement here is not reliably possible. Since we do not know at what point in the minute the call is answered and ends, we cannot reliable determine the duration of a call between 1-119 seconds.</p>\n<p>However, I have put a formula together nevertheless. In this one, it just says “Not Succeeded” if the Answered at and Ended at values are same. In practical terms, this means any call of 60 seconds or more will always be considered a success. Whereas any call 1-59 seconds long may be considered a failure (although the chance of that is decreased as the time of the call increases).</p>\n<pre><code class=\"lang-auto\">IF(\n    {Answered at}=\"\",\n    \"Not Answered\",\n    IF(\n        {Ended at}={Answered at},\n        \"Not Succeeded\",\n        HOURS_DIFF(\n            {Ended at}, \n            {Answered at}\n        )\n    )\n)\n</code></pre>"
+    },
+    {
+      "id": 152855,
+      "postNumber": 3,
+      "createdAt": "2023-11-13T12:24:36.196Z",
+      "author": "gestion.echirolles (Gestion Echirolles)",
+      "cookedHtml": "<p>Hi Francis,</p>\n<p>Thanks a lot for your explanations.<br />\nWill this formula be able to determine the duration of a call and write it in the column? For example : 12 minutes?</p>"
+    },
+    {
+      "id": 152856,
+      "postNumber": 4,
+      "createdAt": "2023-11-13T12:25:52.141Z",
+      "author": "gestion.echirolles (Gestion Echirolles)",
+      "cookedHtml": "<p>On my side I was able to calculate the duration of a call with this formula : (((HOUR({Ended At})*60+MINUTE({Ended At}))-(HOUR({Answered At})*60+MINUTE({Answered At}))))+((DAY({Ended At})-DAY({Ended At})))</p>\n<p>but it doesn’t write “not answered” if the call is &lt; 1 minute</p>"
+    },
+    {
+      "id": 152872,
+      "postNumber": 5,
+      "createdAt": "2023-11-13T12:40:06.841Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gestion.echirolles\">@gestion.echirolles</a></p>\n<p>Sorry I perhaps wasn’t clear. My formula absolutely does calculate the duration.</p>"
+    },
+    {
+      "id": 152877,
+      "postNumber": 6,
+      "createdAt": "2023-11-13T12:48:54.118Z",
+      "author": "gestion.echirolles (Gestion Echirolles)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/c/ec69d63e677140b699a1ad15257811f1a33e094d.png\" title=\"Capture d’écran 2023-11-13 à 15.48.12\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/c/ec69d63e677140b699a1ad15257811f1a33e094d_2_690x460.png\" alt=\"Capture d’écran 2023-11-13 à 15.48.12\" width=\"690\" height=\"460\" /><div class=\"meta\"><span class=\"filename\">Capture d’écran 2023-11-13 à 15.48.12</span><span class=\"informations\">1012×676 46.1 KB</span></div></a></div><p></p>\n<p>Oh yes ok, in fact for some items I got something weird like that, the duration is negative</p>"
+    },
+    {
+      "id": 152881,
+      "postNumber": 7,
+      "createdAt": "2023-11-13T13:03:24.300Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gestion.echirolles\">@gestion.echirolles</a> Did you paste my formula in exactly? Could you please share a screenshot of your formula in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>?</p>"
+    },
+    {
+      "id": 152897,
+      "postNumber": 8,
+      "createdAt": "2023-11-13T14:40:34.695Z",
+      "author": "gestion.echirolles (Gestion Echirolles)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/5/d5e534955e386048ee66edeef7eacb51c0717230.png\" title=\"Capture d’écran 2023-11-13 à 17.40.13\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/5/d5e534955e386048ee66edeef7eacb51c0717230_2_690x237.png\" alt=\"Capture d’écran 2023-11-13 à 17.40.13\" width=\"690\" height=\"237\" /><div class=\"meta\"><span class=\"filename\">Capture d’écran 2023-11-13 à 17.40.13</span><span class=\"informations\">860×296 21.3 KB</span></div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/2/62fdf8c290e776ebf9b613348fd3fe241308c0f5.png\" title=\"Capture d’écran 2023-11-13 à 17.40.26\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/6/2/62fdf8c290e776ebf9b613348fd3fe241308c0f5_2_690x272.png\" alt=\"Capture d’écran 2023-11-13 à 17.40.26\" width=\"690\" height=\"272\" /><div class=\"meta\"><span class=\"filename\">Capture d’écran 2023-11-13 à 17.40.26</span><span class=\"informations\">860×340 17.3 KB</span></div></a></div><br />\nSure there it’s<p></p>"
+    },
+    {
+      "id": 152908,
+      "postNumber": 9,
+      "createdAt": "2023-11-13T16:38:26.777Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Are your date columns actually <em>date</em> columns or are they text columns used by your integration?</p>\n<p>Perhaps this will work better for you:</p>\n<pre><code class=\"lang-auto\">IF(\n    {Answered at}=\"\",\n    \"Not Answered\",\n    IF(\n        {Ended at}={Answered at},\n        \"Not Succeeded\",\n        HOURS_DIFF(\n            RIGHT({Ended at},5), \n            RIGHT({Answered at},5)\n        )\n    )\n)\n</code></pre>"
+    },
+    {
+      "id": 152950,
+      "postNumber": 10,
+      "createdAt": "2023-11-13T20:01:10.127Z",
+      "author": "gestion.echirolles (Gestion Echirolles)",
+      "cookedHtml": "<p>Thank for your time Francis, now all the duration are working, “not succeed” works also, but all the call considered as “not answered” shown a formula error</p>"
+    },
+    {
+      "id": 152955,
+      "postNumber": 11,
+      "createdAt": "2023-11-13T20:39:17.555Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Of course. We need a workaround for that:</p>\n<pre><code class=\"lang-auto\">IF(\n    {Answered at}=\"\",\n    \"Not Answered\",\n    IF(\n        {Ended at}={Answered at},\n        \"Not Succeeded\",\n        HOURS_DIFF(\n            RIGHT({Ended at},5), \n            RIGHT(\n            \tCONCATENATE(\"emptystring\",{Answered at}),\n                5\n            )\n        )\n    )\n)\n</code></pre>"
+    },
+    {
+      "id": 152998,
+      "postNumber": 12,
+      "createdAt": "2023-11-14T07:14:14.922Z",
+      "author": "gestion.echirolles (Gestion Echirolles)",
+      "cookedHtml": "<p>It works perfectly, thanks Francis</p>"
+    }
+  ]
+}

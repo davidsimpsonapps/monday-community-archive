@@ -1,0 +1,68 @@
+{
+  "id": 69171,
+  "title": "Counting time based on dates formula",
+  "slug": "counting-time-based-on-dates-formula",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    108
+  ],
+  "createdAt": "2023-10-25T06:21:50.651Z",
+  "lastPostedAt": "2023-11-02T10:12:50.632Z",
+  "postsCount": 7,
+  "excerpt": "For a long time I have been struggling with a formula that counts hours based on 2 columns with dates. I’ve gotten to the point where I don’t take into account dates, just hours. Do you know any proven way to display the&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1032,
+  "posts": [
+    {
+      "id": 149876,
+      "postNumber": 1,
+      "createdAt": "2023-10-25T06:21:50.729Z",
+      "author": "karsmie (Karol)",
+      "cookedHtml": "<p>For a long time I have been struggling with a formula that counts hours based on 2 columns with dates. I’ve gotten to the point where I don’t take into account dates, just hours. Do you know any proven way to display the differences in HH:MM also taking into account the date? Dateif unfortunately only shows minutes.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/2/92eb4bbecfd691cfe6a6ee424dcca7d0f5e0f8c5.png\" title=\"chrome_A1zehHRRLD\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/9/2/92eb4bbecfd691cfe6a6ee424dcca7d0f5e0f8c5_2_690x42.png\" alt=\"chrome_A1zehHRRLD\" width=\"690\" height=\"42\" /><div class=\"meta\"><span class=\"filename\">chrome_A1zehHRRLD</span><span class=\"informations\">1623×99 19.2 KB</span></div></a></div><p></p>\n<pre><code class=\"lang-auto\">IF(OR({Typ}=\"Nieobecność\",{Typ}=\"Nadgodziny\", {Typ}=\"Praca w dni wolne od pracy\", {Typ}=\"Praca w nocy\"),HOURS_DIFF(FORMAT_DATE({Data zakończenia},\"HH:mm\"), FORMAT_DATE({Data rozpoczęcia},\"HH:mm\")),\"\")\n</code></pre>"
+    },
+    {
+      "id": 149878,
+      "postNumber": 2,
+      "createdAt": "2023-10-25T06:23:47.371Z",
+      "author": "karsmie (Karol)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/f/ff5a4ee2f610078b9b0c891b8d410f6098c759b3.png\" title=\"chrome_C2CIykzO7l\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/f/ff5a4ee2f610078b9b0c891b8d410f6098c759b3_2_690x54.png\" alt=\"chrome_C2CIykzO7l\" width=\"690\" height=\"54\" /><div class=\"meta\"><span class=\"filename\">chrome_C2CIykzO7l</span><span class=\"informations\">1562×123 27.7 KB</span></div></a></div><br />\nI’m adding another screenshot.<p></p>"
+    },
+    {
+      "id": 149990,
+      "postNumber": 3,
+      "createdAt": "2023-10-25T16:02:42.389Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Karol,</p>\n<p>I think the key here is what is your desired format?</p>\n<p>For instance if you have a start datetime as Oct 3rd 10:00 and an end datetime as Oct 5th 22:00</p>\n<p>Would you expect:</p>\n<ol>\n<li>2.5 days</li>\n<li>60 hours</li>\n<li>2 days 12 hours 0 minutes</li>\n<li>60:00</li>\n<li>something else?</li>\n</ol>\n<p>This is really important. All are possible, but they will change the formula significantly. If you let me know, I’ll help you.</p>\n<p>(just reformatting your formula now for practical reasons)</p>\n<pre><code class=\"lang-auto\">IF(\n    OR(\n        {Typ}=\"Nieobecność\",\n        {Typ}=\"Nadgodziny\",\n        {Typ}=\"Praca w dni wolne od pracy\",\n        {Typ}=\"Praca w nocy\"\n    ),\n    HOURS_DIFF(\n        FORMAT_DATE(\n            {Data zakończenia},\n            \"HH:mm\"\n        ), \n        FORMAT_DATE(\n            {Data rozpoczęcia},\n            \"HH:mm\"\n        )\n    ),\n    \"\"\n)\n</code></pre>"
+    },
+    {
+      "id": 150085,
+      "postNumber": 4,
+      "createdAt": "2023-10-26T03:04:29.293Z",
+      "author": "karsmie (Karol)",
+      "cookedHtml": "<p>Hi Francis,</p>\n<p>Thanks for the help!<br />\nAfter thinking about it for a while, I would like the “Wartość nadgodzin/nieobecności” column to be in the format “DD HH:MM” (E.g. 2[days] 10:30 [hh:mm), but to also take into account differences in days.<br />\nCurrently, my formula if “start datetime as Oct 3rd 10:00 and an end datetime as Oct 5th 22:00”, will return the value 12:00 - does not take into account the difference in days.<br />\nAdditionally, if the dates are e.g. start date Oct 5th 22:00, end date Oct 6th 00:30, the formula will return the value “-21:30” and it should be 2:30.</p>\n<p>I would be able to do this in Excel so that it would count correctly, but unfortunately I have a big problem here.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/d/4dbc41548950f22ea15e45c928b12bf277266e0b.png\" title=\"chrome_qJd7i9qnn1\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/d/4dbc41548950f22ea15e45c928b12bf277266e0b_2_690x145.png\" alt=\"chrome_qJd7i9qnn1\" width=\"690\" height=\"145\" /><div class=\"meta\"><span class=\"filename\">chrome_qJd7i9qnn1</span><span class=\"informations\">1653×348 60 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 150134,
+      "postNumber": 5,
+      "createdAt": "2023-10-26T09:31:51.415Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Karol,</p>\n<p>So there are a few approaches here:</p>\n<ol>\n<li>To get exactly what you describe, I’d recommend breaking this down into columns. Unfortunately, <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> does not make formatting easy, so maintaining and structuring a single formula would be really convoluted. There <em>may</em> be an easier way of doing this, but I can’t think of or find one right now.</li>\n</ol>\n<p>Here’s a screenshot and the formulas for each column. Formatted Duration has what you are ultimately looking for and you can easily include the final value in your above formula. Beware that this returns an error if a date is missing, so it might cause you problems if you want to conditionally display some other data for instance.</p>\n<p>Also, this will not work at all well if your End Time is before your Start Time.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/c/6c591610631d93520e6c59c027b733c5bbdfd718.png\" title=\"Screenshot 2023-10-26 at 08.07.15\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/6/c/6c591610631d93520e6c59c027b733c5bbdfd718_2_690x174.png\" alt=\"Screenshot 2023-10-26 at 08.07.15\" width=\"690\" height=\"174\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-26 at 08.07.15</span><span class=\"informations\">1806×456 20.8 KB</span></div></a></div><p></p>\n<p>Minutes Difference:</p>\n<pre><code class=\"lang-auto\">DAYS(\n    {Data zakończenia},\n    {Data rozpoczęcia}\n)*24*60\n</code></pre>\n<p>Days:</p>\n<pre><code class=\"lang-auto\">MAX(\n    ROUNDDOWN(\n\t    {Minutes Difference}/1440,\n        0\n    ),\n    0\n)\n</code></pre>\n<p>Hours:</p>\n<pre><code class=\"lang-auto\">ROUNDDOWN(\n    MOD(\n        {Minutes Difference}/60,\n        24\n    ),\n    0\n)\n</code></pre>\n<p>Minutes:</p>\n<pre><code class=\"lang-auto\">ROUNDDOWN(\n    MOD(\n        {Minutes Difference},\n        60\n    ),\n    0\n)\n</code></pre>\n<p>Formatted Duration:</p>\n<pre><code class=\"lang-auto\">CONCATENATE(\n\tIF({Days}&lt;10,0,\"\"),\n    {Days},\n    \" \",\n\tIF({Hours}&lt;10,0,\"\"),\n    {Hours},\n    \":\",\n\tIF({Minutes}&lt;10,0,\"\"),\n    {Minutes}\n)\n</code></pre>\n<ol>\n<li>Another approach could be to just use the DAYS() function. It gives you a time in days with a decimal. You can easily multiply this by 24 to get an hours difference. It’s not a natural format, however this will be far more useful for things like creating charts. You might want to have this <em>in addition</em> to your formatted duration.</li>\n</ol>\n<p>Hope that helps!</p>"
+    },
+    {
+      "id": 151098,
+      "postNumber": 6,
+      "createdAt": "2023-11-02T05:10:56.580Z",
+      "author": "karsmie (Karol)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/franciselliott/48/17772_2.png\" class=\"avatar\" /> Francis Elliott:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">IF(\n    OR(\n        {Typ}=\"Nieobecność\",\n        {Typ}=\"Nadgodziny\",\n        {Typ}=\"Praca w dni wolne od pracy\",\n        {Typ}=\"Praca w nocy\"\n    ),\n    HOURS_DIFF(\n        FORMAT_DATE(\n            {Data zakończenia},\n            \"HH:mm\"\n        ), \n        FORMAT_DATE(\n            {Data rozpoczęcia},\n            \"HH:mm\"\n        )\n    ),\n    \"\"\n)\n</code></pre>\n</blockquote>\n</aside>\n<p>Hi Francis,</p>\n<p>What should be added to the formula below to also take into account differences in days? I don’t want to separate the days column and the hours column.</p>\n<p>IF(<br />\nOR(<br />\n{Typ}=“Nieobecność”,<br />\n{Typ}=“Nadgodziny”,<br />\n{Typ}=“Praca w dni wolne od pracy”,<br />\n{Typ}=“Praca w nocy”<br />\n),<br />\nHOURS_DIFF(<br />\nFORMAT_DATE(<br />\n{Data zakończenia},<br />\n“HH:mm”<br />\n),<br />\nFORMAT_DATE(<br />\n{Data rozpoczęcia},<br />\n“HH:mm”<br />\n)<br />\n),<br />\n“”<br />\n)</p>"
+    },
+    {
+      "id": 151159,
+      "postNumber": 7,
+      "createdAt": "2023-11-02T10:12:50.632Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Karol,</p>\n<p>The separated columns are not data—they are just formula columns. So once you have created them, you can just hide them from the view. You do not need to update them manually. They are there as helpers to format the data in the way that you have requested.</p>\n<p>The simpler approach could be to just use the “DAYS()” function as I outlined in point (2).</p>\n<p>Please feel free to reach out if you want some help getting this configured.</p>"
+    }
+  ]
+}

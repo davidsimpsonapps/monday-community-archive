@@ -1,0 +1,47 @@
+{
+  "id": 123862,
+  "title": "Security emergency bug in monday workflow triggers",
+  "slug": "security-emergency-bug-in-monday-workflow-triggers",
+  "categoryId": 98,
+  "tagIds": [
+    430,
+    455
+  ],
+  "createdAt": "2026-02-20T19:37:48.515Z",
+  "lastPostedAt": "2026-02-23T19:00:51.307Z",
+  "postsCount": 4,
+  "excerpt": "The bug touches “Monday workflows” feature, specifically - custom triggers. \nI’ve setup triggers logic with /subscribe and /unsubscribe endpoints. \nNow i want to trigger the endpoint (webhook_url) and trigger my block on&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 9,
+  "posts": [
+    {
+      "id": 246323,
+      "postNumber": 1,
+      "createdAt": "2026-02-20T19:37:48.599Z",
+      "author": "pavlo-vasylenko (Pavlo Vasylenko)",
+      "cookedHtml": "<p>The bug touches “Monday workflows” feature, specifically - custom triggers.<br />\nI’ve setup triggers logic with /subscribe and /unsubscribe endpoints.<br />\nNow i want to trigger the endpoint (webhook_url) and trigger my block on monday.</p>\n<p>Here is a link to docs:</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/279d6c49c26dd38347d668ffb26c0ba4637a6ce5.png\" class=\"site-icon\" alt=\"\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/workflows-triggers#triggering-your-block\" target=\"_blank\" rel=\"noopener nofollow ugc\">Apps Framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/3/f/3f0cb5bd47b475c26884f54882be53b78665c3f8_2_690x362.jpeg\" class=\"thumbnail\" alt=\"\" width=\"690\" height=\"362\" /></div>\n\n<h3><a href=\"https://developer.monday.com/apps/docs/workflows-triggers#triggering-your-block\" target=\"_blank\" rel=\"noopener nofollow ugc\">Triggering your block - Triggers</a></h3>\n\n  <p>Triggers are events that start an integration. This reference guide describes the API that your app will use to start integrations.\nBackground\nTrigger blocks control when an integration is run. Many apps run their triggers based on webhooks from a...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>What they say to do:<br />\nMake a POST request and create a JWT with appId in payload, sign it with <code>signing secret</code> and put JWT in Authorization header.<br />\nI think this is a correct way of it working, however this is not working and returns status 401 Unauthorized.</p>\n<p>The only way I made it work is passing in Authorization header <code>raw signing secret</code> which made my trigger block finally execute.</p>\n<p>Please fix this annoying  issue (which is also security issue, noone wants to pass signing secret in raw format) and make your API follow the documentation provided.</p>"
+    },
+    {
+      "id": 246335,
+      "postNumber": 2,
+      "createdAt": "2026-02-20T22:09:46.819Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/pavlo-vasylenko\">@pavlo-vasylenko</a><br />\nHi Pavlo, thanks for the clear breakdown.</p>\n<p>A 401 usually means the JWT is not being generated or sent correctly. For trigger endpoints you should:</p>\n<p>• Sign a JWT with your app’s Signing Secret using HS256<br />\n• Include the required payload<br />\n• Send it as <code>Authorization: Bearer &lt;your_jwt&gt;</code></p>\n<p>Passing the raw signing secret is not expected and suggests the JWT signature or formatting is off. Double check the secret matches your app, the token is valid, and the header format is exact.</p>\n<p>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=15\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" /> <a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\" class=\"inline-onebox\">Calendly</a></p>"
+    },
+    {
+      "id": 246390,
+      "postNumber": 3,
+      "createdAt": "2026-02-23T19:00:32.728Z",
+      "author": "pavlo-vasylenko (Pavlo Vasylenko)",
+      "cookedHtml": "<p>And the only way I made it work is this:</p>\n<pre><code class=\"lang-auto\">    const res = await axios.post(url, data, {\n      headers: {\n\"Content-Type\": \"application/json\",\nAuthorization: `${signingSecretRawValue}`,\n      },\ntimeout: 10000,\n    });\n</code></pre>"
+    },
+    {
+      "id": 246391,
+      "postNumber": 4,
+      "createdAt": "2026-02-23T19:00:51.307Z",
+      "author": "pavlo-vasylenko (Pavlo Vasylenko)",
+      "cookedHtml": "<p>I’d like to share it live, but I’m not willing to pay 50$ so you can fix a potential bug in your system <img src=\"https://emoji.discourse-cdn.com/apple/thinking.png?v=15\" title=\":thinking:\" class=\"emoji\" alt=\":thinking:\" width=\"20\" height=\"20\" /></p>\n<p>Let me share a code I was using to generate a JWT:</p>\n<pre><code class=\"lang-auto\">const secret = \"APP SIGNING SECRET FROM APP SETTINGS\";\nconst payload = {\n  appId: 102…., // my app id from app settings\n};\n\n  const token = jwt.sign(payload, secret, { expiresIn: \"1m\" });\n  const url = \"URL THAT MONDAY GAVE ME IN /subscribe REQUEST\";\n  const data = {\n    trigger: {\noutputFields: {\nassetId: \"some content here\"\n      },\n    },\n  };\n\nconst res = await axios.post(url, data, {\n      headers: {\n\"Content-Type\": \"application/json\",\nAuthorization: `Bearer ${token}`,\n      },\ntimeout: 10000,\n    });\n</code></pre>\n<p>Request failed<br />\nStatus: 401</p>\n<p>This code fully satisfies documentation:</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/279d6c49c26dd38347d668ffb26c0ba4637a6ce5.png\" class=\"site-icon\" alt=\"\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/triggers-recipes#triggering-your-block\" target=\"_blank\" rel=\"noopener nofollow ugc\">Apps Framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/c/0cd736e05c5f38bfcd68e342ae3e864d1bb6e6f2_2_690x362.jpeg\" class=\"thumbnail\" alt=\"\" width=\"690\" height=\"362\" /></div>\n\n<h3><a href=\"https://developer.monday.com/apps/docs/triggers-recipes#triggering-your-block\" target=\"_blank\" rel=\"noopener nofollow ugc\">Triggering your block - Triggers</a></h3>\n\n  <p>This app feature will be deprecated soon. We recommend building on the monday workflows infrastructure. Learn more about the migration here. | Technical reference to build your own trigger blocks</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p><a class=\"mention\" href=\"/u/drtanvisachar\">@drtanvisachar</a>  please can you help?</p>"
+    }
+  ]
+}

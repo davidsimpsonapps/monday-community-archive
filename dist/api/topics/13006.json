@@ -1,0 +1,51 @@
+{
+  "id": 13006,
+  "title": "How do I create a new item via the API with the Assigned To field set to a specific user?",
+  "slug": "how-do-i-create-a-new-item-via-the-api-with-the-assigned-to-field-set-to-a-specific-user",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-11-09T20:41:27.867Z",
+  "lastPostedAt": "2020-11-19T18:35:21.484Z",
+  "postsCount": 5,
+  "excerpt": "I’m trying to use the Monday.com API to create a new item with the Assigned To field prepopulated with a specific user. \nI can currently create new items via the API without the Assigned To field set but with other field&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 5475,
+  "posts": [
+    {
+      "id": 33159,
+      "postNumber": 1,
+      "createdAt": "2020-11-09T20:41:27.936Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>I’m trying to use the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API to create a new item with the <strong>Assigned To</strong> field prepopulated with a specific user.</p>\n<p>I can currently create new items via the API without the Assigned To field set but with other fields set with the following type of query:</p>\n<pre><code>mutation {\n    create_item (\n        board_id: xxxxxxxxx,\n        group_id: \"some-group-id\",\n        item_name: \"Testing\",\n        column_values: \"{\\\"text0\\\":\\\"Some text\\\",\\\"text1\\\":\\\"Some other text\\\"}\"\n    ) {\n        id\n    }\n}\n</code></pre>\n<p>The problem I think I’m having is that the <code>column_values</code> value is already an escaped JSON string, and within that, I’d have to add another (escaped?) JSON string for the <strong>Assigned To</strong> field.</p>\n<p>At this point, I’ve tried every combination I can think of, but nothing seems to work. Here’s an example of what I’ve tried:</p>\n<pre><code>mutation {\n    create_item (\n        board_id: xxxxxxxxx,\n        group_id: \"some-group-id\",\n        item_name: \"Testing\",\n        column_values: \"{\\\"text0\\\":\\\"Some text\\\",\\\"text1\\\":\\\"Some other text\\\",\\\"people\\\":\\\"{\\\\\\\"personsAndTeams\\\\\\\":[{\\\\\\\"id\\\\\\\":xxxxxxxx,\\\\\\\"kind\\\\\\\":\\\\\\\"person\\\\\\\"}]}\\\"}\"\n    ) {\n        id\n    }\n}\n</code></pre>\n<p>That does not work though.</p>\n<p>If it matters, I’m currently just testing this with Postman and trying to send the data with a GraphQL body set like the above examples, and while the first example without the <strong>Assigned To</strong> field set works and correctly creates a new item, the second one doesn’t.</p>\n<p>What am I missing / doing wrong? Thank you.</p>"
+    },
+    {
+      "id": 33371,
+      "postNumber": 2,
+      "createdAt": "2020-11-11T17:38:51.670Z",
+      "author": "LOIJon (Jonathan)",
+      "cookedHtml": "<p>After much trial and error, I finally gave up on trying to do what I was doing, and I ended up doing the <code>create_item</code> call without adding the Assigned To field bit, and once that was done, I took the returned ID of the new item and made a second API call with the <code>change_column_value</code> to update the existing item. That seemed to work.</p>"
+    },
+    {
+      "id": 33415,
+      "postNumber": 3,
+      "createdAt": "2020-11-11T21:56:59.576Z",
+      "author": "cryptocharlie404 (charlie)",
+      "cookedHtml": "<p>I had similar issues and got my code to work eventually. lessons i learned was to not expect the API to be handling data properly <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />  you’re probably on the right track with escaping. try different combinations in the playground if you’re not already, cause you will get more verbose errors then running node inspector, if you’re using js on the server.</p>"
+    },
+    {
+      "id": 34141,
+      "postNumber": 4,
+      "createdAt": "2020-11-19T18:35:21.484Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>One way I’ve personally tackled this before is (depending where you are running this code) is to use things like the JSON encode library in Python. This will make it so you can use variables and not need to worry about escaping <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 44574,
+      "postNumber": 5,
+      "createdAt": "2021-03-12T12:38:43.667Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

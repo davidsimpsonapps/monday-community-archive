@@ -1,0 +1,47 @@
+{
+  "id": 84897,
+  "title": "Getting all board item values from columns",
+  "slug": "getting-all-board-item-values-from-columns",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-23T16:57:31.485Z",
+  "lastPostedAt": "2024-04-23T19:24:07.056Z",
+  "postsCount": 3,
+  "excerpt": "Hello, \nI am having trouble pulling column values from my boards. I am trying to use the below query, but I keep getting the error “Field ‘items’ doesn’t exist on type ‘Board’”. I’ve tried to shift this around and mess w&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 198,
+  "posts": [
+    {
+      "id": 180418,
+      "postNumber": 1,
+      "createdAt": "2024-04-23T16:57:31.565Z",
+      "author": "tcraig004 (Tyler Craig)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I am having trouble pulling column values from my boards. I am trying to use the below query, but I keep getting the error “Field ‘items’ doesn’t exist on type ‘Board’”. I’ve tried to shift this around and mess with the syntax with no luck.</p>\n<p>{<br />\n“query”: “{ boards(ids: 1234567890) { items(limit: 50) { column_values(ids: [“text”, “date_1”]) { title value } } } }}”<br />\n}</p>"
+    },
+    {
+      "id": 180428,
+      "postNumber": 2,
+      "createdAt": "2024-04-23T17:42:52.530Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/tcraig004\">@tcraig004</a>,</p>\n<p>Welcome to the community!</p>\n<p>We recently did an API migration in which we deprecated <code>items</code> queries on <code>boards</code>. This is now replaced with <code>items_page</code> (read more <a href=\"https://developer.monday.com/api-reference/reference/items-page\">here</a>) to help accommodate for bigger boards.</p>\n<p>Here’s an example that is similar to yours:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids: 1234567890, limit: 50) {\n    items_page (query_params: {rules: [{column_id: \"text\", compare_value: \"\", operator: not_any_of}, {column_id: \"date4\", compare_value: \"$$$blank$$$\", operator: not_any_of}] operator: or}) {\n      items {\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>This essentially would return the name of the first 50 items on board 1234567890 that do not have an empty <code>text</code> or an empty <code>date_1</code> column.</p>\n<p>You can play around with these new APIs to find something that will work for you - just keep <a href=\"https://developer.monday.com/api-reference/docs/rate-limits\">complexity limits</a> in mind!</p>\n<p>Here are some other useful resources to check out:</p>\n<ul>\n<li>Query column values for specific items using items_page_by_column_values (read more <a href=\"https://developer.monday.com/api-reference/reference/items-page-by-column-values\">here</a>)</li>\n<li>Query <code>items</code> at the root (see more <a href=\"https://developer.monday.com/api-reference/reference/items\">here</a>)</li>\n<li>Filter columns by specific values (see more <a href=\"https://developer.monday.com/api-reference/reference/date\">here</a>)</li>\n</ul>\n<p>Let us know if you have any other questions!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 180475,
+      "postNumber": 3,
+      "createdAt": "2024-04-23T19:24:07.056Z",
+      "author": "tcraig004 (Tyler Craig)",
+      "cookedHtml": "<p>Thank you for the response! I was able to get it to work with:</p>\n<p>{<br />\n“query”: “{ boards(ids: 1234567890) { items_page(limit: 500) { cursor items { id name column_values { id text value } } } } }”<br />\n}</p>"
+    },
+    {
+      "id": 180677,
+      "postNumber": 4,
+      "createdAt": "2024-04-24T10:53:08.957Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

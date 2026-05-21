@@ -1,0 +1,53 @@
+{
+  "id": 16626,
+  "title": "Updating subitems via API",
+  "slug": "updating-subitems-via-api",
+  "categoryId": 58,
+  "tagIds": [
+    187
+  ],
+  "createdAt": "2021-02-22T15:37:22.706Z",
+  "lastPostedAt": "2021-02-23T16:51:10.290Z",
+  "postsCount": 4,
+  "excerpt": "I’m attempting to use the API to update the status of a subitem, but I’m not having any luck. \n\nIs it possible to do this through the API?\nIf not, is my workaround below the best way possible currently?\n\nI’ve seen the di&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 6619,
+  "posts": [
+    {
+      "id": 41630,
+      "postNumber": 1,
+      "createdAt": "2021-02-22T15:37:22.784Z",
+      "author": "SirOnion (Ryan Jones)",
+      "cookedHtml": "<p>I’m attempting to use the API to update the status of a subitem, but I’m not having any luck.</p>\n<ul>\n<li>Is it possible to do this through the API?</li>\n<li>If not, is my workaround below the best way possible currently?</li>\n</ul>\n<p>I’ve seen the discussion here that indicates that perhaps this wasn’t possible last year, but we’re a good few months on from that so it might have changed.</p><aside class=\"quote\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dsilva/48/3854_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/sub-item-api-support/5444/31\">[RELEASED] Sub-item API support</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/api-feature-requests/58\"><span class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Feature Requests - API and Apps Framework</span></span></a>\n  </div>\n  <blockquote>\n    Hey <a class=\"mention\" href=\"/u/eddyirwan\">@eddyirwan</a> - not just yet. It’s something we’re hoping to support in the future though. \nWe did recently add support for <a href=\"https://monday.com/developers/v2#mutations-section-subitems-create\" rel=\"noopener nofollow ugc\">creating subitems through a mutation</a> on the API as a first step. We’ll be sure to post here on the community once we have more news to report on this. \n-Daniel\n  </blockquote>\n</aside>\n<p>\nI’ve also tried to update an subitem’s status, as I would for an item, but with the board_id as the parent item’s id and the item_id as the sub item id. I was not successful with this.</p>\n<p>My current thinking of a work around is horrible, but as follows:</p>\n<ul>\n<li>Query the board to get all of the fields of the subitems.</li>\n<li>Delete the subitem.</li>\n<li>Create a new subitem with all of the same data, but an updated status.</li>\n</ul>\n<p>Thank you for any help and input!</p>"
+    },
+    {
+      "id": 41637,
+      "postNumber": 2,
+      "createdAt": "2021-02-22T15:53:39.822Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sironion\">@SirOnion</a>!</p>\n<p>Great question-- you can absolutely change a subitem’s status column.</p>\n<p>You would first need to query the parent board items, then these item’s column values to find the board ID of the subitems (since subitems have their own board Id). You can then utilize this board Id to change the subitem’s status columns.</p>\n<p>Try this out and let me know if you run into any trouble!</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41638,
+      "postNumber": 3,
+      "createdAt": "2021-02-22T15:53:43.044Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 41749,
+      "postNumber": 4,
+      "createdAt": "2021-02-23T14:00:19.354Z",
+      "author": "SirOnion (Ryan Jones)",
+      "cookedHtml": "<p>Thanks Helen, I have it working now, but in a bit of a strange way. It’s working fine, but there may be a better way to do things. Either way, I thought I’d write it up for others.</p>\n<p>Starting with the item_id of a subitem, first query to find the board that the subitem is part of:</p>\n<pre><code class=\"lang-auto\">query {items (ids: [1234]) {\n    board { id }\n  }\n}\n</code></pre>\n<p>You get a response like this:</p>\n<pre><code class=\"lang-auto\">{ \n  \"data\": {\"items\": [{\"board\": {\"id\": \"2345\"}}]},\n  \"account_id\": 1111\n}\n</code></pre>\n<p>This board id can then be fed into a modify query:</p>\n<pre><code class=\"lang-auto\"> mutation{\n  change_column_value(\n    board_id: 2345,\n    item_id: 1234,\n    column_id: \"status\",\n    value: \"{\\\"label\\\": \\\"Some new status!\\\"}\") {\n  id\n  }\n}\n</code></pre>\n<p>I’m not sure why you need to find out the board ID when the subitem’s item_id is unique, I’m also not sure whether it’s possible to nest graphql queries so you can use the result of the first as part of the second in one API request. On the other hand, I guess it’s pretty rare to start with a subitem’s item_id and not know which board it’s from. <em>shrug</em></p>"
+    },
+    {
+      "id": 41770,
+      "postNumber": 5,
+      "createdAt": "2021-02-23T16:51:10.290Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>This is perfect! The exact same steps I would take if I wanted to mutate subitem column data as well.</p>\n<p>Yes-- the fact that you need to query the board Id is a bit unorthodox. This is something that our developers are aware of and are currently hoping to implement/fix.</p>\n<p>Thank you for sharing! I’m sure many of our users will find this helpful.</p>"
+    }
+  ]
+}

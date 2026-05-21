@@ -1,0 +1,35 @@
+{
+  "id": 13640,
+  "title": "Using Formula column as input for date-based views",
+  "slug": "using-formula-column-as-input-for-date-based-views",
+  "categoryId": 5,
+  "tagIds": [
+    13,
+    38,
+    108,
+    117
+  ],
+  "createdAt": "2020-11-25T16:56:35.336Z",
+  "lastPostedAt": "2022-12-24T10:37:32.020Z",
+  "postsCount": 2,
+  "excerpt": "I am currently using a ‘People’ board to track various details about individual team members across the org. This board includes which team they’re on, their start date, birthday, location, etc. Our HRMS includes all emp&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3185,
+  "posts": [
+    {
+      "id": 34581,
+      "postNumber": 1,
+      "createdAt": "2020-11-25T16:56:35.431Z",
+      "author": "dallasmoore (Dallas Moore)",
+      "cookedHtml": "<p>I am currently using a ‘People’ board to track various details about individual team members across the org. This board includes which team they’re on, their start date, birthday, location, etc. Our HRMS includes all employee information, but we needed a place to track contractor info as well so we use Monday for that.</p>\n<p><strong>Using the Formula Column to set Performance Review Dates</strong></p>\n<p>We have an annual and mid-year performance review schedule for employees (depending on role) for which I have set up a formula column to help us determine the date of their next review. This is the formula step-by-step:</p>\n<pre><code>// Get the number of days since the team member started\n\nROUNDDOWN(DAYS(TODAY(),{Start Date}),0)\n\n// Divide by 365.25 (a year) to get the number of reviews they should have had to this point.\n\nROUNDDOWN(DIVIDE(ROUNDDOWN(DAYS(TODAY(),{Start Date}),0),365.25),0)\n\n// Add 1 to get the number of their next review\n\nROUNDDOWN(DIVIDE(ROUNDDOWN(DAYS(TODAY(),{Start Date}),0),365.25),0)+1\n\n// Multiply by 365.25 to get the number of days from their start date of that review.\n\nMULTIPLY(ROUNDDOWN(DIVIDE(ROUNDDOWN(DAYS(TODAY(),{Start Date}),0),365.25),0)+1,365.25)\n\n// Return the date\n\nADD_DAYS({Start Date},MULTIPLY(ROUNDDOWN(DIVIDE(ROUNDDOWN(DAYS(TODAY(),{Start Date}),0),365.25),0)+1,365.25))\n\n// Format the date\n\nFORMAT_DATE(ADD_DAYS({Start Date},MULTIPLY(ROUNDDOWN(DIVIDE(ROUNDDOWN(DAYS(TODAY(),{Start Date}),0),365.25),0)+1,365.25)), \"MMM DD, YYYY\")\n</code></pre>\n<p>To get the mid-year review we use a separate column to subtract 182 and if that date has already passed we add 182 to the next annual instead.</p>\n<p><strong>Next Steps - Need Input</strong></p>\n<p>Ideally I wanted to create one calendar view that we can then share with different leaders across the org to see their teams review calendar so they can plan accordingly. Unfortunately the formula column isn’t recognized as a datetime column in order to create a calendar view. I’m wondering if anyone has suggestions on next steps or how I can improve on this to make it more efficient or functional.</p>\n<p>As of now the plan is to download an export of the board and drop it into a pre-defined Google Sheet which will then pull different departments into different tabs and sort based on review dates. We’ll do this quarterly to give leaders the most recent schedule of reviews coming up.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/4/4ae4d574924a08982efa192fad75b45de7ef20df.png\" alt=\"image\" width=\"594\" height=\"384\" /></p>"
+    },
+    {
+      "id": 108249,
+      "postNumber": 2,
+      "createdAt": "2022-12-24T10:37:32.020Z",
+      "author": "rholb (Reinhard Hopp)",
+      "cookedHtml": "<p>i need same functionality. Any idea?</p>"
+    }
+  ]
+}

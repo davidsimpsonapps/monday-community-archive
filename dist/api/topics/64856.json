@@ -1,0 +1,58 @@
+{
+  "id": 64856,
+  "title": "API Migration Bootcamp – Follow up with resources",
+  "slug": "api-migration-bootcamp-follow-up-with-resources",
+  "categoryId": 70,
+  "tagIds": [],
+  "createdAt": "2023-08-31T12:08:39.235Z",
+  "lastPostedAt": "2023-09-07T15:40:48.498Z",
+  "postsCount": 6,
+  "excerpt": "Hello everyone who joined the webinar today! \nFirst off, apologies for the abrupt end to the meeting… We had some technical issues and were dropped from Zoom. \nHere are some resources that I discussed on the call: \nWebin&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 940,
+  "posts": [
+    {
+      "id": 141511,
+      "postNumber": 1,
+      "createdAt": "2023-08-31T12:08:39.459Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hello everyone who joined the webinar today!</p>\n<p>First off, apologies for the abrupt end to the meeting… We had some technical issues and were dropped from Zoom.</p>\n<p><strong>Here are some resources that I discussed on the call:</strong></p>\n<p><a href=\"https://youtu.be/NcM1JpFQoug\">Webinar recording</a><br />\n<a href=\"https://gist.github.com/yuhgto/c8880df24d2bdb4ebf29462c9865b0cd\">Query samples that we covered</a><br />\n<a href=\"https://developer.monday.com/api-reference/docs/release-notes\">Release notes with all changes</a><br />\n<a href=\"https://developer.monday.com/api-reference/docs/migrating-to-v-2023-10\">Migration guide</a><br />\n<a href=\"https://gist.github.com/yuhgto/ca671bf55bd48137e86fca17bb9675b7\">Guide to column names and what’s changing</a></p>\n<p>PS <a class=\"mention\" href=\"/u/polishedgeek\">@PolishedGeek</a> – I was in the middle of your question when we dropped off. Make will be migrating their connector to the new API. I’ve reached out to them already – they are aware of these changes and making the required updates. I don’t know the exact status of it though; if you need a timeline please reach out to them for the most updated information.</p>\n<p>I will write up the other questions here and post them later today (along with the recording).</p>"
+    },
+    {
+      "id": 141564,
+      "postNumber": 2,
+      "createdAt": "2023-08-31T18:19:31.576Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey y’all, here are answers to the most popular &amp; relevant questions from today’s stream. Thank you everyone for joining!</p>\n<h2><a name=\"p-141564-how-tos-1\" class=\"anchor\" href=\"#p-141564-how-tos-1\"></a>How to’s</h2>\n<h3><a name=\"p-141564-how-can-we-specify-the-new-version-when-using-the-monday-sdk-2\" class=\"anchor\" href=\"#p-141564-how-can-we-specify-the-new-version-when-using-the-monday-sdk-2\"></a>How can we specify the new version when using the monday SDK?</h3>\n<p>You can set the version to be used by the mondaySDK object:</p>\n<pre><code class=\"lang-javascript\">import mondaySdk from \"monday-sdk-js\";\n\nconst monday = mondaySdk();\nmonday.setApiVersion(\"2023-10\");\n</code></pre>\n<p>Or you can pass the version in the options of a specific API call:</p>\n<pre><code class=\"lang-javascript\">import mondaySdk from \"monday-sdk-js\";\nconst monday = mondaySdk();\n\nconst data = await monday.api(query, { variables, apiVersion: \"2023-10\"});\n</code></pre>\n<h3><a name=\"p-141564-can-i-return-specific-columns-with-the-items_page-object-3\" class=\"anchor\" href=\"#p-141564-can-i-return-specific-columns-with-the-items_page-object-3\"></a>Can I return specific columns with the <code>items_page</code> object?</h3>\n<p>Yes, you can still return specific columns using the item_page object. Here’s how:</p>\n<pre><code class=\"lang-graphql\">query  {\n  boards(ids: 872058179) {\n    items_page (limit:1) {\n      cursor\n      items {\n        id\n        name\n        column_values (ids:[\"status\"]) {\n          id\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<h3><a name=\"p-141564-currently-many-ids-are-a-string-of-numbers-eg-my-account-id-is-1825528-are-they-going-to-become-text-anytime-soon-4\" class=\"anchor\" href=\"#p-141564-currently-many-ids-are-a-string-of-numbers-eg-my-account-id-is-1825528-are-they-going-to-become-text-anytime-soon-4\"></a>Currently many IDs are a string of numbers – e.g. my account ID is 1825528. Are they going to become text anytime soon?</h3>\n<p>From a type-safety perspective, we want developers to think of IDs as an arbitrary alphanumeric string.</p>\n<p>Transparently, we don’t have any plans to change the structure of these IDs. But plans change and your applications should work regardless of what the ID string looks like.</p>\n<hr />\n<h2><a name=\"p-141564-third-party-integrations-5\" class=\"anchor\" href=\"#p-141564-third-party-integrations-5\"></a>Third party integrations</h2>\n<h3><a name=\"p-141564-will-these-api-updates-change-external-integrations-like-zapier-or-make-is-monday-working-directly-with-these-companies-6\" class=\"anchor\" href=\"#p-141564-will-these-api-updates-change-external-integrations-like-zapier-or-make-is-monday-working-directly-with-these-companies-6\"></a><strong>Will these API updates change external integrations like Zapier or Make? Is monday working directly with these companies</strong></h3>\n<p>Third-party integrators like Make will need to update their connectors, and depending on how you’re using those connectors, you may need to update your workflows too.</p>\n<p>We have reached out to them and shared the deprecation plan, and will continue to work with them to ensure they’re keeping up with our timeline.</p>\n<p>I’m also going to pass the feedback from today over to their teams so they know that our shared customers (aka you) are expecting a prompt update from them.</p>\n<h3><a name=\"p-141564-if-i-only-use-a-few-marketplace-apps-and-no-third-party-integrations-will-this-migration-really-affect-me-7\" class=\"anchor\" href=\"#p-141564-if-i-only-use-a-few-marketplace-apps-and-no-third-party-integrations-will-this-migration-really-affect-me-7\"></a><strong>If I only use a few marketplace apps and no third-party integrations, will this migration really affect me?</strong></h3>\n<p>Candidly, not really.</p>\n<p>These migration materials are aimed at app developers or admins who run externally-integrated workflows inside their monday account.</p>\n<p>As I mentioned on the call, the majority of apps can update to the new version with no user impact. Majority doesn’t mean all, so just keep an eye out for communications from the app developers (via email) and you’ll be fine.</p>\n<hr />\n<h2><a name=\"p-141564-future-plans-and-requests-8\" class=\"anchor\" href=\"#p-141564-future-plans-and-requests-8\"></a>Future plans and requests</h2>\n<h3><a name=\"p-141564-are-there-plans-to-increase-complexity-limits-9\" class=\"anchor\" href=\"#p-141564-are-there-plans-to-increase-complexity-limits-9\"></a><strong>Are there plans to increase complexity limits?</strong></h3>\n<p>We are working on an infrastructure to better measure complexity so that low-volume use cases are not penalized as much.</p>\n<p>We don’t have plans to increase the limit per se, but we want to make the calculation more fair and usage-based.</p>\n<h3><a name=\"p-141564-will-the-new-api-support-more-columns-like-formula-10\" class=\"anchor\" href=\"#p-141564-will-the-new-api-support-more-columns-like-formula-10\"></a><strong>Will the new API support more columns like formula?</strong></h3>\n<p>Good question – we’re working on it! A side benefit of mondayDB is being able to eventually support formulas in the API <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=15\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> <a href=\"https://monday.com/ap/mondaydb\">If you look at our mondayDB website</a>, you’ll see that “Formula column in automations” is on the roadmap for 2024 – API support will be released with it or soon after!</p>\n<blockquote>\n<p>Have any further questions? Create a new topic in the community and we’ll be happy to help <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=15\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n</blockquote>"
+    },
+    {
+      "id": 141683,
+      "postNumber": 3,
+      "createdAt": "2023-09-01T13:29:13.617Z",
+      "author": "gary (Gary Singh)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>  Thanks for that.</p>\n<p>I am trying to find answer for this question, can you please suggest something?</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/g/839c29/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/counting-the-items-from-a-group-in-php/26369/8\">Counting the items from a group in PHP</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Thanks for that, first query works but can I ask you whats the max limit we can use for that query? \nalso when using query_params in item_page, the limit is decreased to 500? is that right? \nhere is the query I have which gives error that limit can be max 500. \n  let query =\n        \"query { boards(ids:\" +\n        this.boardID +\n        \"){ items_page(limit:50000, query_params: {ids: [\" +\n        itemIdsArray +\n        \"]}) {  items {id name group {  title id color}} } }}\";\n\nBasically I need to …\n  </blockquote>\n</aside>\n\n<p>Basically trying to replicate how <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> shows number of items in each group</p>"
+    },
+    {
+      "id": 141786,
+      "postNumber": 4,
+      "createdAt": "2023-09-03T05:20:38.367Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/gary\">@gary</a>,</p>\n<p>I replied in the other topic!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 142140,
+      "postNumber": 5,
+      "createdAt": "2023-09-06T09:57:17.513Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>Thank you for your writeup. I was not able to find monday.setApiVersion in other docs / posts. Is there a minimum version for this function? I get “is not a function” using 0.4.11</p>\n<p>Also, what is the recommended way to call the API from a front-end (view). I am using monday.api but I noticed most of your examples in the migration guide are using a fetch to “<a href=\"https://api.monday.com/v2\">https://api.monday.com/v2</a>”</p>"
+    },
+    {
+      "id": 142438,
+      "postNumber": 6,
+      "createdAt": "2023-09-07T15:40:48.498Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> –</p>\n<p><strong>Minimum version</strong> - 0.4.11 should work. I managed to get it to work here with a small demo on my local machine:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/8/7/87e791f666862dedad638ece1f226b1989411d3f.png\" alt=\"image\" width=\"648\" height=\"398\" /></p>\n<p><strong>Recommended way to call API from frontend</strong> – <code>monday.api()</code> is best because it lets you use seamless authentication. I use fetch in the migration guide to make it slightly more understandable for people who aren’t using JS.</p>"
+    }
+  ]
+}

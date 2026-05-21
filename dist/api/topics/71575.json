@@ -1,0 +1,47 @@
+{
+  "id": 71575,
+  "title": "I can't insert values into my monday table via PHP",
+  "slug": "i-cant-insert-values-into-my-monday-table-via-php",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-27T11:44:58.310Z",
+  "lastPostedAt": "2023-11-28T08:46:46.448Z",
+  "postsCount": 4,
+  "excerpt": "I can insert an item if it looks like this \n$mutationQuery = &#39;mutation {\n        create_item(\n            board_id: &#39; . $boardId . &#39;,\n            group_id: &quot;&#39; . $groupId . &#39;&quot;,\n            item_name: &quot;&#39; . $cursus . &#39;&quot;\n   &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 270,
+  "posts": [
+    {
+      "id": 154869,
+      "postNumber": 1,
+      "createdAt": "2023-11-27T11:44:58.384Z",
+      "author": "joshua378 (joshua)",
+      "cookedHtml": "<p>I can insert an item if it looks like this</p>\n<pre><code class=\"lang-auto\">$mutationQuery = 'mutation {\n        create_item(\n            board_id: ' . $boardId . ',\n            group_id: \"' . $groupId . '\",\n            item_name: \"' . $cursus . '\"\n        ) {\n            id\n        }\n    }';\n</code></pre>\n<p>but when i try to insert any value to another column i always get an error, am i doing something wrong?. this the code i have</p>\n<pre><code class=\"lang-auto\">$mutationQuery = 'mutation {\n        create_item(\n            board_id: ' . $boardId . ',\n            group_id: \"' . $groupId . '\",\n            item_name: \"' . $cursus . '\",\n            column_values: {\n                 \"lange_tekst\": { \"text\": \"'.$cursus.'\" }\n            }\n        ) {\n            id\n        }\n    }';\n</code></pre>\n<p>this is my full code if you want to know</p>\n<pre><code class=\"lang-auto\">if ($_SERVER[\"REQUEST_METHOD\"] == \"POST\") {\n    $token = 'MY_API';\n    $apiUrl = 'https://api.monday.com/v2';\n    $headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n    $cursus = 'lolinit';\n\n    $boardId = '5554649549';\n    $groupId = 'topics';\n\n\n    // Prepare mutation query\n    $mutationQuery = 'mutation {\n        create_item(\n            board_id: ' . $boardId . ',\n            group_id: \"' . $groupId . '\",\n            item_name: \"' . $cursus . '\",\n            column_values: {\n                 \"lange_tekst\": { \"text\": \"'.$cursus.'\" }\n            }\n        ) {\n            id\n        }\n    }';\n\n    $data = @file_get_contents($apiUrl, false, stream_context_create([\n        'http' =&gt; [\n            'method' =&gt; 'POST',\n            'header' =&gt; $headers,\n            'content' =&gt; json_encode(['query' =&gt; $mutationQuery]),\n        ]\n    ]));\n\n    $responseContent = json_decode($data, true);\n\n    // Handle the response as needed\n    if (isset($responseContent['data']['create_item']['id'])) {\n        echo 'Item created successfully!';\n    } else {\n        echo 'Error creating item.';\n        if (isset($responseContent['errors'])) {\n            echo 'API Error: ' . print_r($responseContent['errors'], true);\n            echo '&lt;pre&gt;';\n            print_r($responseContent);\n            echo '&lt;/pre&gt;';\n        }\n    }\n}\n</code></pre>"
+    },
+    {
+      "id": 154903,
+      "postNumber": 2,
+      "createdAt": "2023-11-27T13:30:56.207Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>It would be helpful if errors were included, since those often provide the direction to know whats wrong. If there were errors.</p>\n<p>However, I do see the issue, the value of “column_values” needs to be a JSON string. You need create the column_values value as an object then serialize it, and then use that string in your query. Not just substitute the one bit of text into the object.</p>\n<p>Also, investigate GraphQL variables, since that lets you make the query a simple string you don’t need to do any manipulation to. The API server just takes the a variables alongside the query in the request and then it handles all of the substitution, and you don’t have to worry about escaping quotes etc.</p>\n<p>Lastly, remember the query is only a string. While its a string that looks like JSON it is not JSON. The <em><strong>request</strong></em> is JSON though, with the structure:</p>\n<pre><code class=\"lang-auto\">{\n   \"query\": \"mutation($boardId: ID!, $groupId: ID!, $cursus: String!, $values: JSON!)  {\n        create_item(\n            board_id: $boardId,\n            group_id: $groupId,\n            item_name: $cursus,\n            column_values: $values\n        ) {\n            id\n        }\n    }\"\n   \"variables\": {\n      \"boardId\": \"5554649549\",\n      \"groupId\": \"topics\",\n      \"cursus\": \"lolinit\",\n      \"values:  \"json_encoded value of the values object\"\n   }\n}\n</code></pre>"
+    },
+    {
+      "id": 155032,
+      "postNumber": 3,
+      "createdAt": "2023-11-28T06:12:08.899Z",
+      "author": "joshua378 (joshua)",
+      "cookedHtml": "<p>thanks! it worked.</p>"
+    },
+    {
+      "id": 155054,
+      "postNumber": 4,
+      "createdAt": "2023-11-28T08:46:46.448Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!!</p>"
+    }
+  ]
+}

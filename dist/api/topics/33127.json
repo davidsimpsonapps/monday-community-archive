@@ -1,0 +1,76 @@
+{
+  "id": 33127,
+  "title": "API: Upload Files from Google Drive in GAS",
+  "slug": "api-upload-files-from-google-drive-in-gas",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    105
+  ],
+  "createdAt": "2022-03-15T19:17:34.138Z",
+  "lastPostedAt": "2024-08-20T17:28:14.909Z",
+  "postsCount": 6,
+  "excerpt": "CODE EXAMPLE for those who use Google Apps Script… \nHope this helps others! Enjoy! \n*Credit goes to the countless posters I piggy-backed off of to figure it out. \nI call this function in a loop where ‘key’ is my super se&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 3112,
+  "posts": [
+    {
+      "id": 79958,
+      "postNumber": 1,
+      "createdAt": "2022-03-15T19:17:34.219Z",
+      "author": "TheWes (Wes Myers)",
+      "cookedHtml": "<p>CODE EXAMPLE for those who use Google Apps Script…<br />\nHope this helps others! Enjoy!<br />\n*Credit goes to the countless posters I piggy-backed off of to figure it out.</p>\n<p>I call this function in a loop where ‘key’ is my super secret API key and everything else is pretty much spelled out. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<pre><code class=\"lang-auto\">function apiUpload(key, itemID, columnID, fileURL) {\n\n  //GET THE GOOGLE DRIVE FILE ID FROM THE FILE URL TO GET THE FILE.\n  var fileID = fileURL.match(/[-\\w]{25,}/);\n  var file = DriveApp.getFileById(fileID);\n\n  //YOU'LL PROBABLY NEED TO '.toString()' YOUR 'itemID' BEFORE IT GETS HERE.\n  let query = \"mutation ($file: File!) { add_file_to_column (file: $file, item_id: \" + itemID + \", column_id: \\\"\" + columnID + \"\\\") { id } }\";\n\n  //BUILD THE MULTIPART REQUEST...\n  //***NOTE (BECAUSE I'VE SEEN A LOT OF CONFUSION ABOUT THIS IN OTHER POSTS): THE \"xxxxxxxxxx\" IS LITERALLY WHAT I USE FOR 'boundary'. IT'S NOT A SECRET CODE OR ANYTHING. IT CAN PRETTY MUCH BE WHATEVER YOU WANT AS LONG AS IT DOESN'T APPEAR ANYWHERE ELSE IN THE BODY OF THE REQUEST. IT JUST ACTS AS A BOUNDARY SO THAT MONDAY KNOWS WHERE EACH CHUNK OF THE MULTIPART REQUEST TEXT (A.K.A. 'data') BEGINS AND ENDS.\n  var data = \"\";\n  var boundary = \"xxxxxxxxxx\";\n  //QUERY PART\n  data += \"--\" + boundary + \"\\r\\n\";\n  data += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n  data += \"Content-Type:application/json\\r\\n\\r\\n\";\n  data += \"\\r\\n\" + query + \"\\r\\n\";\n  //FILE PART\n  data += \"--\" + boundary + \"\\r\\n\";\n  data += \"Content-Disposition: form-data; name=\\\"variables[file]\\\"; filename=\\\"\" + file.getName() + \"\\\"\\r\\n\";\n  data += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\n\n  //THIS IS HOW WE DO IT IN G.A.S.\n  var payload = Utilities.newBlob(data).getBytes()\n    .concat(file.getBlob().getBytes())\n    .concat(Utilities.newBlob(\"\\r\\n--\" + boundary + \"--\").getBytes());\n\n  //FILE UPLOADS REQUIRE A DIFFERENT ENDPOINT THAN OTHER REQUESTS (ADD \"/file\").\n  var url = \"https://api.monday.com/v2/file\";\n  var options = {\n    \"method\": \"post\",\n    \"headers\": { \"Content-Type\": \"multipart/form-data; boundary=\" + boundary, \"Authorization\": key },\n    \"payload\": payload\n  };\n  var response = UrlFetchApp.fetch(url, options);\n  return response;\n}\n</code></pre>"
+    },
+    {
+      "id": 80416,
+      "postNumber": 2,
+      "createdAt": "2022-03-21T15:50:57.679Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p>THANK YOU!!!</p>\n<p>I have just avoided using file columns and put files in Google folder with links to the folder on the item because I gave up making it work.</p>\n<p>This works like a charm!!! And I did not need to convert my itemID to a string.</p>"
+    },
+    {
+      "id": 80419,
+      "postNumber": 3,
+      "createdAt": "2022-03-21T16:23:53.492Z",
+      "author": "TheWes (Wes Myers)",
+      "cookedHtml": "<p>Yay!!! Thanks for letting me know this helped you, Chris! I had to bash a few bricks in with my head to get there and I’m so glad to know my work is benefiting more than just me.</p>"
+    },
+    {
+      "id": 104954,
+      "postNumber": 4,
+      "createdAt": "2022-11-23T02:56:28.100Z",
+      "author": "rjfullstack (RJ V)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/thewes\">@TheWes</a> this is working but my file is not readable on monday. Will this apply to pdf files?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/766572b11332f31ad7eb2c1f4592e901cd480625.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/766572b11332f31ad7eb2c1f4592e901cd480625_2_616x500.png\" alt=\"image\" width=\"616\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">802×650 21.1 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 107343,
+      "postNumber": 5,
+      "createdAt": "2022-12-14T11:12:01.886Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/rjfullstack\">@rjfullstack</a>,</p>\n<p>Sorry about the late reply. Is this issue persisting? Is it happening for other file types?</p>\n<p>Does it happen with other PDF files?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 198168,
+      "postNumber": 6,
+      "createdAt": "2024-08-20T17:28:14.909Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/thewes\">@TheWes</a> I have been successfully using the script for sometime. I have a client though that is keeps throwing an error and I am having trouble working around it. Any insight?</p>\n<p>The error I am getting is: The JavaScript runtime exited unexpectedly.<br />\nThe GAS is currently running V8. No issues previously. From what I can tell it happens with ‘larger’ items but sizes monday’s API should be able to handle. Currently I am testing a PDF that is 44 MB but it continues to produce the same results…</p>"
+    },
+    {
+      "id": 198210,
+      "postNumber": 7,
+      "createdAt": "2024-08-21T08:22:11.759Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 211586,
+      "postNumber": 9,
+      "createdAt": "2024-11-25T12:16:48.750Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

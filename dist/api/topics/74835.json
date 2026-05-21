@@ -1,0 +1,70 @@
+{
+  "id": 74835,
+  "title": "[2024-01 API:] items_page query limits - 500 or 100?",
+  "slug": "2024-01-api-items-page-query-limits-500-or-100",
+  "categoryId": 8,
+  "tagIds": [
+    53,
+    94,
+    107,
+    203
+  ],
+  "createdAt": "2024-01-11T05:58:46.544Z",
+  "lastPostedAt": "2024-01-14T11:41:34.111Z",
+  "postsCount": 6,
+  "excerpt": "Hey guys, \nWe are working on API 2024-01 migration because it offers a higher limit when it comes to items_page query (500 in 2024-01 against 100 in 2023-10). \nYou can see it clearly documented in the graphQL Schema and A&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 939,
+  "posts": [
+    {
+      "id": 161488,
+      "postNumber": 1,
+      "createdAt": "2024-01-11T05:58:46.630Z",
+      "author": "Adnene (Adnene)",
+      "cookedHtml": "<p>Hey guys,</p>\n<p>We are working on API 2024-01 migration because it offers a higher limit when it comes to items_page query (500 in 2024-01 against 100 in 2023-10).</p>\n<p>You can see it clearly documented in the graphQL Schema and <a href=\"https://developer.monday.com/api-reference/docs/items_page\" rel=\"noopener nofollow ugc\">API Docs</a></p>\n<pre><code class=\"lang-graphql\">items_page(\n    \"An opaque token representing the position in the result set from which to resume fetching items. Use this to paginate through large result sets.\"\n    cursor: String,\n    \"The maximum number of items to fetch in a single request. Use this to control the size of the result set and manage pagination. Maximum: 500.\"\n    limit: Int! = 25,\n    \"A set of parameters to filter, sort, and control the scope of the items query. Use this to customize the results based on specific criteria.\"\n    query_params: ItemsQuery\n  ): ItemsResponse!\n</code></pre>\n<p>Buuuuuut, when we set <code>limit</code> parameter to 500 and use <code>query_params</code> .<code>ids</code> to set more than 100 item ids we get an error:</p>\n<pre><code class=\"lang-auto\">INVALID_ARGUMENT_EXCEPTION: Invalid request: the number of provided IDs cannot exceed the limit of 100\n</code></pre>\n<p>This is confusing, what’s the benefit of increasing the limit to 500 while limiting the number of IDs to 100 ? <img src=\"https://emoji.discourse-cdn.com/apple/thinking.png?v=12\" title=\":thinking:\" class=\"emoji\" alt=\":thinking:\" width=\"20\" height=\"20\" /></p>\n<p>How can we get 500 items in one call using their IDs ?</p>"
+    },
+    {
+      "id": 161491,
+      "postNumber": 2,
+      "createdAt": "2024-01-11T06:19:16.064Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Makes perfect sense – seems like it slipped someone’s mind</p>"
+    },
+    {
+      "id": 161497,
+      "postNumber": 3,
+      "createdAt": "2024-01-11T06:44:07.836Z",
+      "author": "TomFri (Tom Fridman)",
+      "cookedHtml": "<p>Checking with API team here: <a href=\"https://monday.slack.com/archives/C04GUR5FEN9/p1704962315776229\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 161516,
+      "postNumber": 4,
+      "createdAt": "2024-01-11T08:25:43.159Z",
+      "author": "Adnene (Adnene)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, do you have any information from your side on such limitation at <code>query_params.ids</code> level of <code>items_page</code> ? Can’t find any documentation related to this <img src=\"https://emoji.discourse-cdn.com/apple/smiling_face_with_tear.png?v=12\" title=\":smiling_face_with_tear:\" class=\"emoji\" alt=\":smiling_face_with_tear:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 161533,
+      "postNumber": 5,
+      "createdAt": "2024-01-11T10:36:02.988Z",
+      "author": "Shanee (Shanee Radzewsky)",
+      "cookedHtml": "<p>Hey Khalfa,<br />\nFetching items by ids is always limited to 100 items, I will pass on this feedback so we make it more clear in the items_page documentation that this will happen too as is deatiled for items query here:</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/changelog/new-limits-to-the-items-query-in-90-days\" target=\"_blank\" rel=\"noopener\">GraphQL API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/changelog/new-limits-to-the-items-query-in-90-days\" target=\"_blank\" rel=\"noopener\">Breaking changes: New limits to the Items query after Oct 3rd</a></h3>\n\n  <p>Later this year, we will be adding new limits to the root Items query: The ids argument is now requiredYou cannot return more than 100 items per query This change will go into effect on Sunday, October 3rd, so please review your applications' API...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>I will say though that it looks like using the items query passing ids would be better for your use case, although it’s also limited to 100 - worth looking into <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 161600,
+      "postNumber": 6,
+      "createdAt": "2024-01-11T13:15:55.907Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There really needs to be an improvement in documentation that if you have item Ids to use the items root query. I can think of only one use case for using item IDs with items_page: you want to filter within a set of item IDs. All this talk about nesting items inside boards being “faster” never made sense if you have specific IDs you need (totally legit for purposes of returning unknown items for a board!). Its still the same items query resolver in both cases, and nesting it inside boards just means boards has to get executed first. If you need board info AND a list of items by ID just put boards and items both at the root of the same query!</p>"
+    },
+    {
+      "id": 161965,
+      "postNumber": 7,
+      "createdAt": "2024-01-14T11:41:34.111Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>I will share your feedback with the team <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

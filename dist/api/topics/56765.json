@@ -1,0 +1,34 @@
+{
+  "id": 56765,
+  "title": "Zapier javascript not working, but Postman code does?!",
+  "slug": "zapier-javascript-not-working-but-postman-code-does",
+  "categoryId": 80,
+  "tagIds": [
+    5,
+    6,
+    46
+  ],
+  "createdAt": "2023-04-24T21:01:02.261Z",
+  "lastPostedAt": "2023-04-25T04:48:50.833Z",
+  "postsCount": 2,
+  "excerpt": "Hello! I hope someone came across this behavior and can help out! \nI have this javascript code I am attempting to execute in Zapier to create a new Taskboard: \n\nfetch (&quot;https://api.monday.com/v2&quot;, {\n  method: &#39;post&#39;,\n  h&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1452,
+  "posts": [
+    {
+      "id": 125255,
+      "postNumber": 1,
+      "createdAt": "2023-04-24T21:01:02.359Z",
+      "author": "Rio (Rio)",
+      "cookedHtml": "<p>Hello! I hope someone came across this behavior and can help out!</p>\n<p>I have this javascript code I am attempting to execute in Zapier to create a new Taskboard:</p>\n<pre><code class=\"lang-plaintext\">\nfetch (\"https://api.monday.com/v2\", {\n  method: 'post',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization' : 'YOUR_API_KEY_HERE'\n   },\n   body: JSON.stringify({\n     'query' : query\n   })\n  })\n   .then(res =&gt; res.json())\n   .then(res =&gt; console.log(JSON.stringify(res, null, 2)));\n</code></pre>\n<p>Which come straight from the Monday API documentation: <a href=\"https://developer.monday.com/api-reference/docs/boards\" rel=\"noopener nofollow ugc\">Boards (monday.com)</a></p>\n<p>When I put that code into my Zapier “Run Javascript in Code by Zapier”  it complains about not having a output variable, so I add one, i.e. output = <span class=\"chcklst-box fa fa-square-o fa-fw\"></span>;<br />\nBut nothing happens. No new board named “my board” is being created in Monday.</p>\n<p>However, when I use postman to send the code it works and the “my board” is created:<br />\n<a href=\"https://web.postman.co/workspace/My-Workspace~cbc06e02-1111-476f-860b-9bf2f42656a4/request/27082447-3a7357ac-f58c-42cb-bfb1-dfbd2a491bdb?ctx=code\" rel=\"noopener nofollow ugc\">Create a board - My Workspace (postman.co)</a></p>\n<p>I also tried copying the postman code into Zapier, but that didn’t work either as I am ending up with this error message:<br />\n“If you are doing async (with fetch library) you need to use a callback!”</p>\n<p>I’m kinda stuck - any ideas?</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 125269,
+      "postNumber": 2,
+      "createdAt": "2023-04-25T04:48:50.833Z",
+      "author": "Rio (Rio)",
+      "cookedHtml": "<p>I was able to figure it out - here the solution hoping it helps somebody else in the future:</p>\n<p>Adding the ‘await’ in front of the fetch fixes the ‘you need to use a callback’ error…</p>\n<pre><code class=\"lang-auto\">let query = 'mutation { create_board (board_name: \\\"my board\\\", board_kind: public) {   id }}';\n\nawait fetch (\"https://api.monday.com/v2\", {\n  method: 'post',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization' : inputData.api_key\n   },\n   body: JSON.stringify({\n     'query' : query\n   })\n  })\n   .then(res =&gt; res.json())\n   .then(res =&gt; { return output = (res) });\n</code></pre>"
+    }
+  ]
+}

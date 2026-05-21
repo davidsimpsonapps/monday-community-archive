@@ -1,0 +1,68 @@
+{
+  "id": 27214,
+  "title": "Bug in persons updates",
+  "slug": "bug-in-persons-updates",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-11-10T08:38:00.949Z",
+  "lastPostedAt": "2021-11-17T16:57:58.221Z",
+  "postsCount": 7,
+  "excerpt": "Hi, \nJust want to report what seems like a bug, and ask you to resolve it quick. \nI’m trying to update the people column, and getting errors.  I even tried using the api graph playground, with the mutation command copied&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1507,
+  "posts": [
+    {
+      "id": 68360,
+      "postNumber": 1,
+      "createdAt": "2021-11-10T08:38:01.017Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>Hi,</p>\n<p>Just want to report what seems like a bug, and ask you to resolve it quick.</p>\n<p>I’m trying to update the people column, and getting errors.  I even tried using the api graph playground, with the mutation command copied directly from the documentation, and this is what I got (Other column updates worked fine thru the api playground):</p>\n<p>mutation {<br />\nchange_multiple_column_values(item_id:1889308806, board_id:1889308796, column_values: “{\"people\" : {\"personsAndTeams\":[{\"id\":2292943,\"kind\":\"person\"}]}}”) {<br />\nid<br />\n}<br />\n}</p>\n<p>SyntaxError: Unexpected token &lt; in JSON at position 0</p>"
+    },
+    {
+      "id": 68364,
+      "postNumber": 2,
+      "createdAt": "2021-11-10T08:50:59.374Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/msh\">@Msh</a>,</p>\n<p>Looks like you aren’t passing the right column values format for it to work. Try this:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:1889308806, board_id:1889308796, column_values: \"{\\\"people\\\" : {\\\"personsAndTeams\\\":[{\\\"id\\\":2292943,\\\"kind\\\":\\\"person\\\"}]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>Tip: If you ever receive an error message like the SyntaxError above, open your browser developer console and paste in the column_values in <code>JSON.parse()</code> method. If you receive a parsing error, it means your formatting is wrong and you might receive a SyntaxError when you try running a mutation.<br />\nHere is an example:</p>\n<pre><code class=\"lang-auto\">JSON.parse(\"{\\\"people\\\" : {\\\"personsAndTeams\\\":[{\\\"id\\\":2292943,\\\"kind\\\":\\\"person\\\"}]}}\")\n</code></pre>\n<p>Hope this helps</p>"
+    },
+    {
+      "id": 68369,
+      "postNumber": 3,
+      "createdAt": "2021-11-10T09:22:12.406Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/msh\">@Msh</a> ,</p>\n<p>I agree with <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> here, it seems like you are missing the JSON escapes for the API playground. Most likely, this part of the documentation is somewhat confusing:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/68445060873d1e58c4499ccc14cdb4e59e0d0a3e.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/68445060873d1e58c4499ccc14cdb4e59e0d0a3e_2_690x195.png\" alt=\"image\" width=\"690\" height=\"195\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2158×612 79.6 KB</span>\n</div></a></div><p></p>\n<p>Great tip about JSON.parse in the console, <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a>  <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Thanks for sharing that!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 68375,
+      "postNumber": 4,
+      "createdAt": "2021-11-10T10:01:55.683Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I don’t know why my text appeared like it did (no slashes), maybe a “smart” copy-paste routine.  Anyway, I actually ran the command exactly like kolaii suggested beforehand, with the slashes in place (and then again copy-pasted his text into the playground and ran it), and that is what was giving me the error.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5de0eeee6fad034f7131e4b11eea2215d70c21bb.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/5de0eeee6fad034f7131e4b11eea2215d70c21bb_2_690x193.png\" alt=\"image\" width=\"690\" height=\"193\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1683×471 23 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 68377,
+      "postNumber": 5,
+      "createdAt": "2021-11-10T10:36:02.061Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/msh\">@Msh</a></p>\n<p>It seems like you are trying to use 2292943 as the User ID, but that User ID doesn’t exist within the account. After checking the logs, it seems like the User ID 22929493 should be used instead - would you be able to give that a shot?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 68431,
+      "postNumber": 6,
+      "createdAt": "2021-11-10T16:57:48.465Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>Embarrassing…but effective.  I’ll take it <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=10\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>\n<p>Thanks so much.</p>\n<p>Moshe</p>"
+    },
+    {
+      "id": 69096,
+      "postNumber": 7,
+      "createdAt": "2021-11-17T16:57:58.221Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

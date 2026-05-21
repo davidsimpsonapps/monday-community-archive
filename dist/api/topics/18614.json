@@ -1,0 +1,100 @@
+{
+  "id": 18614,
+  "title": "Timetracking, substitute columns",
+  "slug": "timetracking-substitute-columns",
+  "categoryId": 58,
+  "tagIds": [],
+  "createdAt": "2021-04-07T22:26:38.156Z",
+  "lastPostedAt": "2023-10-19T04:08:04.102Z",
+  "postsCount": 12,
+  "excerpt": "As has been discussed previously in this forum, there is no ability to add timetracking info as a mutation with the API. \nI was told from support this morning that this is not even on the radar for adding/implementing an&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2991,
+  "posts": [
+    {
+      "id": 47179,
+      "postNumber": 1,
+      "createdAt": "2021-04-07T22:26:38.222Z",
+      "author": "Adurm (Adam Cranch)",
+      "cookedHtml": "<p>As has been discussed previously in this forum, there is no ability to add timetracking info as a mutation with the API.</p>\n<p>I was told from support this morning that this is not even on the radar for adding/implementing any time soon as it isn’t a part of any roadmap.</p>\n<p>Is anyone substituting this column in a way to circumvent the issue? I was considering whether anyone had tried to stringify JSON values into a long text column, or updates, something similar etc.</p>"
+    },
+    {
+      "id": 47292,
+      "postNumber": 2,
+      "createdAt": "2021-04-08T16:54:46.878Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/adurm\">@Adurm</a>,</p>\n<p>Happy to relay this as feedback for our team!</p>\n<p>For now, I think a Long Text column would definitely work. One thing to keep in mind is that these values in the Time Tracking column will now be stored in accordance with ISO8601, so this may affect the length of text.</p>\n<p>Keeping this up for the other amazing members of our community to weight in on.</p>"
+    },
+    {
+      "id": 50868,
+      "postNumber": 3,
+      "createdAt": "2021-05-10T23:41:40.191Z",
+      "author": "Adurm (Adam Cranch)",
+      "cookedHtml": "<p>Just to clarify if anyone is looking for a substitute due to the serious inadequacy of the time tracking and API - I have implemented my own version via serialising/parsing a time tracking schema into the “updates” for board items.</p>\n<p>It’s a messy approach if people are relying on the updates with the Monday interface for anything else, but in my case it will suffice as the updates aren’t being used much elsewhere and I am filtering them into my own app by searching for a keyword that is built into the schema.</p>"
+    },
+    {
+      "id": 50942,
+      "postNumber": 4,
+      "createdAt": "2021-05-11T11:47:43.387Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/adurm\">@Adurm</a></p>\n<p>Thanks so much for your feedback on this, and I’m glad you were able to find a somewhat messy, but working solution. I definitely realize it would be great to see improvements in this area moving forward, and I’ve passed your comments on this to our product team directly.</p>\n<p>I’m sure other users would appreciate if you shared your solution as well <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Thanks so much for participating in our community.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 51367,
+      "postNumber": 5,
+      "createdAt": "2021-05-14T01:49:12.574Z",
+      "author": "Adurm (Adam Cranch)",
+      "cookedHtml": "<pre><code>//model\nimport * as moment from \"moment\";\nimport * as _ from 'underscore';\n\nexport class TimeEntry {\n    id: string;\n    user: string;\n    date: string;\n    duration: number;\n    item: string;\n    editing: boolean=false;\n    isNew:boolean = false;\n\n    object() {\n        return { user: this.user, date: this.date, duration: this.duration, item: this.item, type: 'TimeEntry' }\n    }\n\n    static parse(id, stringified) {\n        let result = new TimeEntry();\n\n        result.id = id;\n        console.log(stringified);\n        Object.assign(result, JSON.parse(stringified));\n        return result;\n    }\n    \n    constructor() {\n        \n    }\n}\n\n//services (angular/rxjs)\n\nTimeTracking$(ids: string[]): Observable&lt;any&gt; {\n\n    let query = `items(ids:[${ids.join(' ')}]){\n\n      id\n\n      updates {\n\n        id\n\n        text_body\n\n      }\n\n    }`\n\n    return this.Query$(query).pipe(\n\n      map((result:any) =&gt; result &amp;&amp; result.items ? result.items : []),\n\n      map((items) =&gt; _.map(items, i =&gt; i.updates)),\n\n      map((updates) =&gt; _.flatten(updates)),\n\n      map((updates) =&gt; _.filter(updates, u =&gt; u.text_body.indexOf('TimeEntry') &gt; -1)),\n\n      map((updates) =&gt; _.map(updates, u =&gt; TimeEntry.parse(u.id, u.text_body))),\n\n      take(1)\n\n      )\n\n  }\n\n  UpdateTimeEntry$(entry: TimeEntry) {\n\n    return this.DeleteTimeEntry$(entry).pipe(\n\n      switchMap(id =&gt; this.CreateTimeEntry$(entry)),\n\n      take(1)\n\n    )\n\n  }\n\n  DeleteTimeEntry$(entry: TimeEntry) {\n\n    let m = `delete_update (id: ${entry.id}) {\n\n      id\n\n      }`;\n\n    return this.Mutate$(m).pipe(take(1));\n\n  }\n\n  CreateTimeEntry$(entry: TimeEntry) {\n\n    let m = `create_update (item_id: ${entry.item}, body:${JSON.stringify(\n\n      JSON.stringify(entry.object())\n\n    )}) {\n\n      id\n\n      }`\n\n    return this.Mutate$(m).pipe(take(1));\n\n  }</code></pre>"
+    },
+    {
+      "id": 51411,
+      "postNumber": 6,
+      "createdAt": "2021-05-14T12:33:59.040Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/adurm\">@Adurm</a>,</p>\n<p>I also want to add that while you’re unable to add Time Tracking information using the API (i.e. add in past time tracking data), you can start and stop time tracking using the API.</p>\n<p>To start a time tracking session, send <code>{\"running\" : \"true\"}</code> as an argument in the <code>change_column_value()</code> mutation. To stop a time tracking session,  send <code>{\"running\" : \"false\"}</code>.</p>\n<p>Thanks,<br />\nHelen</p>"
+    },
+    {
+      "id": 51466,
+      "postNumber": 7,
+      "createdAt": "2021-05-14T22:34:45.519Z",
+      "author": "Adurm (Adam Cranch)",
+      "cookedHtml": "<p>Yes. i find this a particularly unuseful feature for my team.</p>"
+    },
+    {
+      "id": 73933,
+      "postNumber": 8,
+      "createdAt": "2022-01-14T10:40:44.605Z",
+      "author": "NodarDavituri (Nodar Davituri)",
+      "cookedHtml": "<p>Same issue here - we needed to set time tracking column values via the API but I can see that it’s impossible.<br />\nIs this feature still absent from Monday’s roadmap?</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/h/a88e57/48.png\" class=\"avatar\" /> Helen:</div>\n<blockquote>\n<p>To start a time tracking session, send <code>{\"running\" : \"true\"}</code> as an argument in the <code>change_column_value()</code> mutation. To stop a time tracking session, send <code>{\"running\" : \"false\"}</code> .</p>\n</blockquote>\n</aside>\n<p>Could you please link the API documentation page describing mutations for the Time Tracking column? I can’t seem to find any mention of that column type in API docs <a href=\"https://developer.monday.com/api-reference/docs/guide-to-changing-column-data\" rel=\"noopener nofollow ugc\">column type reference</a>.<br />\nThanks!</p>"
+    },
+    {
+      "id": 77676,
+      "postNumber": 9,
+      "createdAt": "2022-02-17T21:53:15.850Z",
+      "author": "bstramsek (Borut)",
+      "cookedHtml": "<p>How is this column still completely unsupported as a mutation throught the API?!? It has beed really long time from what I read in the forums here, when this was first brought up and yet no option to do anything. The proposed solution from Helen (from 21 May 2021) is STILL not working… Are you joking?</p>\n<p>No documentation, no actual guidence. I finnaly manipilate the query to a point that the API actually processed it correctly and not just had a 500 fit and then get an error saying that the time_tracking column type is not supported yet… When will it be supported?? Will it be?</p>\n<p>For anyone else on this long journey:</p>\n<pre><code class=\"lang-auto\">mutation { \n    change_column_value (\n        board_id: xxx,\n        item_id: yyy,\n        column_id: \"time_tracking\",\n        value: \"{ \\\"running\\\": true }\"\n    ) { id } \n}\n</code></pre>\n<pre><code class=\"lang-auto\">{\n    \"error_code\": \"ColumnValueException\",\n    \"status_code\": 200,\n    \"error_message\": \"This column type is not supported yet in the api\",\n    \"error_data\": {\n        \"column_type\": \"DurationColumn\"\n    }\n}\n</code></pre>"
+    },
+    {
+      "id": 77693,
+      "postNumber": 10,
+      "createdAt": "2022-02-18T03:23:48.334Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Can you provide an example of a working mutation call for this?</p>\n<p>Seems others have, and myself, and it doesnt work.</p>\n<p>We get around it by flipping a status and having an automation follow that, but its kludgy and just adds yet another trigger that the platform has to process.</p>"
+    },
+    {
+      "id": 148820,
+      "postNumber": 11,
+      "createdAt": "2023-10-18T13:47:45.286Z",
+      "author": "gary (Gary Singh)",
+      "cookedHtml": "<p>Is this still not supported? is there any workaround?</p>"
+    },
+    {
+      "id": 148910,
+      "postNumber": 12,
+      "createdAt": "2023-10-19T04:08:04.102Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/gary\">@gary</a>,</p>\n<p>If what you are trying to do is update the time tracking column via API, it can not be done as of today and we do not have an ETA on when that could change.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

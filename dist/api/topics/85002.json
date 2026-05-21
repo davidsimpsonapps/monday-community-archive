@@ -1,0 +1,61 @@
+{
+  "id": 85002,
+  "title": "Monday API items_page_by_column_values",
+  "slug": "monday-api-items-page-by-column-values",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    139
+  ],
+  "createdAt": "2024-04-24T08:23:08.142Z",
+  "lastPostedAt": "2024-04-25T08:00:22.203Z",
+  "postsCount": 6,
+  "excerpt": "I was going through monday code but I am unable to use \nitems_page_by_column_values \ncolumns=“” \nquery =fr’‘‘query {{ \nitems_page_by_column_values (limit: 50, board_id: 1234, columns: “[{columns}]”) {{ \nitems {{ \nid \nnam&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 88,
+  "posts": [
+    {
+      "id": 180615,
+      "postNumber": 1,
+      "createdAt": "2024-04-24T08:23:08.224Z",
+      "author": "Abcd (Abcd)",
+      "cookedHtml": "<p>I was going through monday code but I am unable to use<br />\nitems_page_by_column_values</p>\n<p>columns=“”<br />\nquery =fr’‘‘query {{<br />\nitems_page_by_column_values (limit: 50, board_id: 1234, columns: “[{columns}]”) {{<br />\nitems {{<br />\nid<br />\nname<br />\n}}<br />\n}}<br />\n}}’’’<br />\ndata = {‘query’: query}<br />\nprint(data)<br />\nr = requests.post(url=apiUrl, json=data, headers=headers)<br />\nr.json()</p>\n<p>I am problem assigning column when I run code is shows error</p>\n<p>Can anyone help me how can I assign variable \" columns \" so that I can filter item by columns. I want to filter multiple columns by multiple values.</p>"
+    },
+    {
+      "id": 180660,
+      "postNumber": 2,
+      "createdAt": "2024-04-24T10:26:26.367Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/abcd\">@Abcd</a> and welcome to the community!</p>\n<p>As explained <a href=\"https://developer.monday.com/api-reference/reference/items-page-by-column-values\">here</a>, you need to pass one object per column if you want to filter by multiple columns. Something like this:</p>\n<pre><code class=\"lang-auto\">query {\n  items_page_by_column_values (limit: 50, board_id: 1234567890, columns: [{column_id: \"text__1\", column_values: [\"This is a text column\"]}, {column_id: \"country__1\", column_values: [\"US\", \"IL\"]}]) {\n    cursor\n    items {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<p>If you wanted to use variables, you would need something like this:</p>\n<pre><code class=\"lang-auto\">query itemsPage($columnIdOne: String!) {\n  items_page_by_column_values(\n    limit: 50\n    board_id: 1234567890\n    columns: [{column_id: $columnIdOne, column_values: [\"This is a text column\"]}, {column_id: \"country__1\", column_values: [\"US\", \"IL\"]}]\n  ) {\n    cursor\n    items {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<p>A Python version would look something like this (this was “translated” by using Postman):</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\nurl = \"https://api.monday.com/v2/\"\n\npayload = \"{\\\"query\\\":\\\"query itemsPage($columnIdOne: String!) {\\\\n  items_page_by_column_values(\\\\n    limit: 50\\\\n    board_id: 1234567890\\\\n    columns: [{column_id: $columnIdOne, column_values: [\\\\\\\"This is a text column\\\\\\\"]}, {column_id: \\\\\\\"country__1\\\\\\\", column_values: [\\\\\\\"US\\\\\\\", \\\\\\\"IL\\\\\\\"]}]\\\\n  ) {\\\\n    cursor\\\\n    items {\\\\n      id\\\\n      name\\\\n    }\\\\n  }\\\\n}\\\",\\\"variables\\\":{\\\"columnIdOne\\\":\\\"text__1\\\"}}\"\nheaders = {\n  'Content-Type': 'application/json',\n  'Authorization': 'APIKEYHERE',\n}\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\n\nprint(response.text)\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 180815,
+      "postNumber": 3,
+      "createdAt": "2024-04-25T02:52:18.149Z",
+      "author": "Abcd (Abcd)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ,<br />\nThanks for quick reply.<br />\nWhen I run your code, I got this error<br />\n{‘errors’: [{‘message’: ‘No query string was present’}], ‘account_id’: 123456}</p>\n<p>Can anyone share correct python code?</p>"
+    },
+    {
+      "id": 180846,
+      "postNumber": 4,
+      "createdAt": "2024-04-25T05:58:18.512Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/abcd\">@Abcd</a>,</p>\n<p>I am afraid I do not have experience with Python. The two other things I can share is what Postman suggests for Python http client:</p>\n<pre><code class=\"lang-auto\">import http.client\nimport json\n\nconn = http.client.HTTPSConnection(\"api.monday.com\")\npayload = \"{\\\"query\\\":\\\"query itemsPage($columnIdOne: String!) {\\\\n  items_page_by_column_values(\\\\n    limit: 50\\\\n    board_id: 1234567890\\\\n    columns: [{column_id: $columnIdOne, column_values: [\\\\\\\"This is a text column\\\\\\\"]}, {column_id: \\\\\\\"country__1\\\\\\\", column_values: [\\\\\\\"US\\\\\\\", \\\\\\\"IL\\\\\\\"]}]\\\\n  ) {\\\\n    cursor\\\\n    items {\\\\n      id\\\\n      name\\\\n    }\\\\n  }\\\\n}\\\",\\\"variables\\\":{\\\"columnIdOne\\\":\\\"text__1\\\"}}\"\nheaders = {\n  'Content-Type': 'application/json',\n  'Authorization': 'APITOKEN'\n}\nconn.request(\"POST\", \"/v2/\", payload, headers)\nres = conn.getresponse()\ndata = res.read()\nprint(data.decode(\"utf-8\"))\n</code></pre>\n<p>And the cURL for it:</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: APITOKEN \\\n--data '{\"query\":\"query itemsPage($columnIdOne: String!) {\\n  items_page_by_column_values(\\n    limit: 50\\n    board_id: 1234567890\\n    columns: [{column_id: $columnIdOne, column_values: [\\\"This is a text column\\\"]}, {column_id: \\\"country__1\\\", column_values: [\\\"US\\\", \\\"IL\\\"]}]\\n  ) {\\n    cursor\\n    items {\\n      id\\n      name\\n    }\\n  }\\n}\",\"variables\":{\"columnIdOne\":\"text__1\"}}'\n</code></pre>"
+    },
+    {
+      "id": 180851,
+      "postNumber": 5,
+      "createdAt": "2024-04-25T06:20:48.761Z",
+      "author": "Abcd (Abcd)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>he two other things I can share is what Postman suggests for Python http client:</p>\n</blockquote>\n</aside>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>he two other things I can share is what Postman suggests for Python http client:</p>\n</blockquote>\n</aside>\n<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ,</p>\n<p>Still getting same error.<br />\nCould you tag anyone who can solve this issue for me</p>"
+    },
+    {
+      "id": 180865,
+      "postNumber": 6,
+      "createdAt": "2024-04-25T08:00:22.203Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/abcd\">@Abcd</a>,</p>\n<p>I am afraid I would not know who can provide insight on this Python issue.</p>\n<p>But let’s wait for other users here! Lots of Python users here!</p>"
+    }
+  ]
+}

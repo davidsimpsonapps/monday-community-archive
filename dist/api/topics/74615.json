@@ -1,0 +1,40 @@
+{
+  "id": 74615,
+  "title": "New 2023-10 API query complexity is 20 times bigger!",
+  "slug": "new-2023-10-api-query-complexity-is-20-times-bigger",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-09T14:20:14.942Z",
+  "lastPostedAt": "2024-01-09T15:23:48.614Z",
+  "postsCount": 2,
+  "excerpt": "I’m migrating some code to the new 2023-10 api format, and the complexity of a query increated from 15049 to 354652 (more than 20 times) - this renders the integration useless, as my complexity budget is only 1m - meanin&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 232,
+  "posts": [
+    {
+      "id": 161057,
+      "postNumber": 1,
+      "createdAt": "2024-01-09T14:20:15.026Z",
+      "author": "noam.honig (Noam Honig)",
+      "cookedHtml": "<p>I’m migrating some code to the new 2023-10 api format, and the complexity of a query increated from 15049 to <strong>354652</strong> (more than 20 times) - this renders the integration useless, as my complexity budget is only 1m - meaning I can run this query twice a minute - and I need more than that.</p>\n<p>The query is a simple query of a single item with it’s sub items (has 4 sub items)</p>\n<p>Here’s the original query:</p>\n<pre><code class=\"lang-auto\">query ($id: Int!) {\n  complexity{\n  query\n  }\n  boards(ids: [2673923561]) {\n    id\n    name\n    board_folder_id\n    board_kind\n    items(ids: [$id]) {\n      id\n      name\n      column_values{\n        id\n        title\n        value\n      }\n      subitems {\n        name\n        id\n        column_values {\n          id\n          title\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>And here’s the same query after migrating it to the 2023-10 api structure - which costs 354652:</p>\n<pre><code class=\"lang-auto\">query ($id: ID!) {\n  complexity{\n  query\n  }\n\n  boards(ids: [2673923561]) {\n    id\n    name\n    board_folder_id\n    board_kind\n    columns{\n      id\n      title\n    }\n    items_page(query_params: {ids: [$id]}) {\n      items {\n        id\n        name\n        column_values (ids:[\"text7\"]) {\n          id\n          value\n        }\n        subitems {\n          name\n          id\n          column_values(ids:[\"text7\"]) {\n            id\n            value\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>This query is supposed to return only one row (as stated in the ids parameter) and 4 subitem rows - but still it costs so much.</p>\n<p>I found a workaround by setting limit:1 and that brought it down to 18000 but still this is not cool</p>"
+    },
+    {
+      "id": 161070,
+      "postNumber": 2,
+      "createdAt": "2024-01-09T15:23:48.614Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You’re only getting a single item you have the ID for, don’t use the board as the root in the first place. This is likely to be even less than your original query was. The issue it that nesting queries compounds them. If you have item IDs there is almost no benefit to nesting items inside boards - the documentation saying its “Faster” is in reference to the ability of the nested in a board to return 500 items vs 100 items when items is the root query. With a single item, this is best - esp. when returning subitems.</p>\n<p>The <code>items</code> query only requires <code>items_page</code> within boards and groups. the root items query still exists.</p>\n<pre><code class=\"lang-auto\">query ($itemId: ID!) {\n  complexity {\n    query\n  }\n  items(ids: [$itemId]) {\n    board {\n      id\n      name\n      board_folder_id\n      board_kind\n    }\n    id\n    name\n    column_values(ids: [\"text7\"]) {\n      id\n      value\n      column {\n        title\n      }\n    }\n    subitems {\n      name\n      id\n      column_values(ids: [\"text7\"]) {\n        id\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>It is the subitems though thats soaring it regardless.</p>"
+    },
+    {
+      "id": 161303,
+      "postNumber": 3,
+      "createdAt": "2024-01-10T13:17:50.930Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

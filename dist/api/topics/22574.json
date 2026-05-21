@@ -1,0 +1,54 @@
+{
+  "id": 22574,
+  "title": "Date format Documentation - activity_log.created_at field",
+  "slug": "date-format-documentation-activity-log-created-at-field",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2021-07-19T22:28:06.763Z",
+  "lastPostedAt": "2021-08-13T12:21:48.739Z",
+  "postsCount": 4,
+  "excerpt": "First off, the following closed thread is related and it would have been nice to comment there: \n\nI’m doing the same, querying and parsing activity_log queries. I’ve validated that the following Python/Pandas code conver&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1983,
+  "posts": [
+    {
+      "id": 58284,
+      "postNumber": 1,
+      "createdAt": "2021-07-19T22:28:06.970Z",
+      "author": "jumbled_query (Colin Dietrich)",
+      "cookedHtml": "<p>First off, the following closed thread is related and it would have been nice to comment there:</p><aside class=\"quote\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/b/ce73a5/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/date-format-of-activity-log-created-at-field/7754\">Date format of activity_log.created_at field</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Hi, I’m building an integration and I cannot see how to convert the activity_log.created_at field from an integer to a date. Cannot find anything in your KB, nor online in general. \nAn example of a returned “date” field is “15905438472681046”, which corresponds to approx May 28th 2020 (give or take a few days) \nThe number is too big to be Unix Epoch. \nThanks\n  </blockquote>\n</aside>\n\n<p>I’m doing the same, querying and parsing <code>activity_log</code> queries. I’ve validated that the following Python/Pandas code converts <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> Unix timestamps correctly:</p>\n<pre><code class=\"lang-auto\">import pandas as pd  \npd.to_datetime(16155031105053254 / 10000000, unit='s')  \n&gt;&gt; Timestamp('2021-03-11 22:51:50.505325312')\n</code></pre>\n<p>But the following also works:</p>\n<pre><code class=\"lang-auto\">pd.to_datetime(16155031105053254 / 10000, unit='ms')\n&gt;&gt; Timestamp('2021-03-11 22:51:50.505325312')\npd.to_datetime(16155031105053254 / 10, unit='us')\n&gt;&gt; Timestamp('2021-03-11 22:51:50.505325568')\npd.to_datetime(16155031105053254 * 100, unit='ns')\nTimestamp('2021-03-11 22:51:50.505325400')\n</code></pre>\n<p>My question is where is the documentation for these timestamps? The above linked thread was the only reference I could find on the units for this value. The v2 API documentation says only this:</p>\n<pre><code class=\"lang-auto\">created_at !String\tThe time of the event in 10 digit unix time.\n</code></pre>\n<p>which does not describe the <em>units</em> this integer represents.</p>\n<p>Additionally, the <code>activity_log</code> arguments <code>from</code> and <code>to</code> are described in the docs as:</p>\n<p>from <code>ISO8601DateTime</code> From timestamp (ISO8601).</p>\n<p>to <code>ISO8601DateTime</code> To timestamp (ISO8601).</p>\n<p>but I can find no description of the <code>ISO8601DateTime</code> object (as it appears to be formatted to describe). The name is of course in reference to ISO 8601 timestamp formatting (see <a href=\"https://en.wikipedia.org/wiki/ISO_8601\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">ISO 8601 - Wikipedia</a>), but does not help understand what strings are supported (i.e. ‘2021-07-18T00:00:00Z’ or ‘2021-07-18T00:00:00+00:00’?)</p>\n<p>In the end, my GraphQL arguments were:</p>\n<pre><code class=\"lang-auto\">activity_logs (page: 1, limit: 25, from: \"2021-03-11T00:00:00Z\", to: \"2021-03-12T00:00:00Z\")\n</code></pre>\n<p>Note that the ISO 8601 timestamp is a string with double quotes.<br />\nIt would be nice if the API examples included use of all the arguments and some of these timestamp details were included in the API docs.</p>"
+    },
+    {
+      "id": 58349,
+      "postNumber": 2,
+      "createdAt": "2021-07-20T11:28:10.848Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 58350,
+      "postNumber": 3,
+      "createdAt": "2021-07-20T11:32:56.071Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jumbled_query\">@jumbled_query</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>My warmest welcome to the community, and I have to say, I am really impressed with your first post as well <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Thank you for bringing this to our attention.</p>\n<p>I really appreciate your feedback on this, and I agree that having more specific and precise documentation can go a long way towards making development a smoother process. I will personally try to update our documentation with the points you’ve raised to make sure the info is both up to date, and gives a fuller picture of the way this is set up.</p>\n<p>As soon as the updates are ready, I’ll share a link you could view and suggest edits on the spot <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I hope that would work.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 60067,
+      "postNumber": 4,
+      "createdAt": "2021-08-06T12:21:25.141Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Marking this as closed as I believe our documentation has been updated.</p>"
+    },
+    {
+      "id": 60834,
+      "postNumber": 5,
+      "createdAt": "2021-08-13T12:21:48.739Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

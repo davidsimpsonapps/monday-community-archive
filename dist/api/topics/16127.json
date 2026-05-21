@@ -1,0 +1,123 @@
+{
+  "id": 16127,
+  "title": "Mutation giving error",
+  "slug": "mutation-giving-error",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2021-02-10T15:00:36.375Z",
+  "lastPostedAt": "2021-03-03T14:16:15.499Z",
+  "postsCount": 14,
+  "excerpt": "I am trying to build a Power BI Report that can modify information on Monday.com. \nThe below query works to get information from a board: \n“{”“query”“: ““query { boards(ids: ####)  {activity_logs(limit: 1000) {event, ent&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2297,
+  "posts": [
+    {
+      "id": 40276,
+      "postNumber": 1,
+      "createdAt": "2021-02-10T15:00:36.470Z",
+      "author": "mark.mccoy (Mark)",
+      "cookedHtml": "<p>I am trying to build a Power BI Report that can modify information on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>.</p>\n<p>The below query works to get information from a board:<br />\n<code>“{”“query”“: ““query { boards(ids: ####)  {activity_logs(limit: 1000) {event, entity, data, created_at, user_id, id}, name, id} }””}”</code></p>\n<p>The below mutation is giving me an error message:<br />\n<code>\"{“query”: \"\"mutation change_simple_column_value (board_id: ####, item_id: ####, column_id: ““column””, value: ““1\"”) {} “”}” </code></p>\n<p>Error Message:<br />\n<code><br />\nDataSource.Error: Web.Contents failed to get contents from ‘<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>’ (400): Bad Request<br />\nDetails:<br />\nDataSourceKind=Web<br />\nDataSourcePath=<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a><br />\nUrl=<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a><br />\n</code></p>\n<p>Any tips are appreciated. I am an absolute beginner when it comes to GraphQL.</p>"
+    },
+    {
+      "id": 40425,
+      "postNumber": 2,
+      "createdAt": "2021-02-11T11:35:07.400Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey-ho <a class=\"mention\" href=\"/u/mark.mccoy\">@mark.mccoy</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Glad to hear that querying is working well for you! That’s aweosme.</p>\n<p>I’d love to clarify the kind of value you are attempting to change - is it a number column value within a board? Have you tested this mutation in the API Playground?</p>\n<p>Having a little more context to what you are hoping to accomplish would be awesome right off the bat!</p>\n<p>Here’s how a mutation looks like in Postman when sending an HTTP request to adjust Numebrs column value:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/dd0ef811d7e55a891fdceb9dda5eb48c123b17df.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/dd0ef811d7e55a891fdceb9dda5eb48c123b17df_2_690x409.png\" alt=\"image\" width=\"690\" height=\"409\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2042×1212 131 KB</span></div></a></div><p></p>\n<p>Perhaps the following API Mutation might help reformat your Power BI request too:</p>\n<pre><code>{\"query\" :\"mutation{ change_simple_column_value (board_id:1045147004, item_id:1045147008, column_id:\\\"numbers\\\", value:\\\"3\\\") {id name}}\"}\n</code></pre>\n<p>I hope this helps <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 40465,
+      "postNumber": 3,
+      "createdAt": "2021-02-11T14:35:51.775Z",
+      "author": "mark.mccoy (Mark)",
+      "cookedHtml": "<p>Thanks for the reply Alex.</p>\n<p>I am trying to add a text value to a column based off information in a Power BI report.</p>\n<p>The below query works for me in the API playground:<br />\n<code><br />\nmutation { change_simple_column_value(board_id: 929960697, item_id: 1006655013, column_id: “text3”, value: “New Value”) {id, name}}<br />\n</code></p>\n<p>Below is the entire Power Query M code. This file returns the error message in my original post.</p>\n<p>Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”, <br /><br />\n[<br />\nHeaders=[<br />\n#“Method”=“GET”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent = Text.ToBinary(”{““query””: ““mutation { change_simple_column_value(board_id: 929960697, item_id: 1006655013, column_id: ““text3\"”, value: “new value””) {id, name}}””}\")<br />\n]<br />\n)</p>"
+    },
+    {
+      "id": 41242,
+      "postNumber": 4,
+      "createdAt": "2021-02-18T14:26:39.436Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mark.mccoy\">@mark.mccoy</a>!</p>\n<p>Hmm I would try changing the method to POST (all calls to our API will require the POST method) just right off the bat.</p>\n<p>Additionally, a 400 error indicates bad syntax. Is there a reason why you use two pairs of double quotes in your query string?</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41243,
+      "postNumber": 5,
+      "createdAt": "2021-02-18T14:26:42.839Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 41251,
+      "postNumber": 6,
+      "createdAt": "2021-02-18T15:20:02.363Z",
+      "author": "mark.mccoy (Mark)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p>Thanks for the reply. I updated the Method to Post. Double quotes in M language is how strings are escaped.</p>\n<code>\nWeb.Contents( <br />\n        \"https://api.monday.com/v2\",<br />\n        [<br />\n            Headers=[<br />\n                #\"Method\"=\"POST\",<br />\n                #\"Content-Type\"=\"application/json\",<br />\n                #\"Authorization\"=\"Bearer \" &amp; Key<br />\n            ],<br />\n            Content = Text.ToBinary(\"{\"\"query\"\": \"\"mutation { change_simple_column_value(board_id: 929960697, item_id: 1006655013, column_id: \"\"text3\"\", value: \"\"new value\"\") {id, name}}\"\"}\") <br />\n        ]<br />\n    )<br />\n</code>\n<p>The above code gives me the below error message.</p>\n<code>\nDataSource.Error: Web.Contents failed to get contents from 'https://api.monday.com/v2' (400): Bad Request\nDetails:\n<pre><code>DataSourceKind=Web\nDataSourcePath=https://api.monday.com/v2\nUrl=https://api.monday.com/v2\n</code></pre>\n</code>\n<p>My first thought is that it is not parsing the strings properly.</p>"
+    },
+    {
+      "id": 41253,
+      "postNumber": 7,
+      "createdAt": "2021-02-18T15:31:43.927Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mark.mccoy\">@mark.mccoy</a>,</p>\n<p>I agree-- I think that might be the case as well!</p>\n<p>Do you mind trying to replicate this query in your Developer’s Playground in your <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> account to see if it’s working there? Maybe the answer is a lot more simple than we think.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 41254,
+      "postNumber": 8,
+      "createdAt": "2021-02-18T15:48:40.830Z",
+      "author": "mark.mccoy (Mark)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p><code> mutation { change_simple_column_value(board_id: 929960697, item_id: 1006655013, column_id: “text3”, value: “new value”) {id, name}} </code></p>\n<p>The above query returns the expected result below.</p>\n<p><code>{<br />\n“data”: {<br />\n“change_simple_column_value”: {<br />\n“id”: “1006655013”,<br />\n“name”: “This is a new item”<br />\n}<br />\n},<br />\n“account_id”: 1292737<br />\n}<br />\n</code></p>"
+    },
+    {
+      "id": 41275,
+      "postNumber": 9,
+      "createdAt": "2021-02-18T17:40:28.127Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi Mark,</p>\n<p>Okay that’s good! It sounds like the issue here may just be related to the M language. I’m honestly not familiar with this language, so I’m not sure what the formatting should be.</p>\n<p>However, if I were you, I would probably try the query in single quotes, and see if that throws an error for me.</p>\n<p>Out of curiosity, why are you using Text.ToBinary() before the query? Is this necessary for M?</p>\n<p>Thanks!<br />\nHelen</p>"
+    },
+    {
+      "id": 42000,
+      "postNumber": 10,
+      "createdAt": "2021-02-24T22:50:05.278Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Not sure if you’ve been able to solve this one yet <a class=\"mention\" href=\"/u/mark.mccoy\">@mark.mccoy</a>!</p>\n<p>After some additional investigation, it looks like maybe the reason Power BI won’t work with <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> is because it seems to only work with RESTful APIs, and <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>’s is GraphQL?</p>"
+    },
+    {
+      "id": 42608,
+      "postNumber": 11,
+      "createdAt": "2021-02-25T16:22:13.472Z",
+      "author": "mark.mccoy (Mark)",
+      "cookedHtml": "<p>Thanks for the reply <a class=\"mention\" href=\"/u/helen\">@Helen</a>.</p>\n<p>This project got pushed to back burner last week, apologies for not responding sooner.</p>\n<p>The code cannot run with single quotes due to the way strings are escaped in Power Query. Text.ToBinary() is being used because content requires binary input.<br />\nNeither of these should be causing an error because they are both present in the code I provided that works.</p>\n<p>My understanding is that GraphQL is simply a HTTP Post request. I am able to query Monday’s API and get the needed data. I ran into an issue when trying to change data.</p>\n<p>The below returns the intended data:<br />\n<code><br />\nWeb.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\nMethod=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: 929960697)  {activity_logs(limit: 1000) {event, entity, data, created_at, user_id, id}, name, id} }””}\" )<br />\n]<br />\n)<br />\n</code><br />\nThe graphQL bit is:<br />\n<code><br />\n{“query”: “query { boards(ids: 929960697)  {activity_logs(limit: 1000) {event, entity, data, created_at, user_id, id}, name, id} }”}<br />\n</code></p>\n<p>The below is calling the API for a mutation.<br />\n<code><br />\nWeb.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\nMethod=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\n//GraphQL Query<br />\nContent=Text.ToBinary(”{““query””: \"“mutation { change_simple_column_value(board_id: 929960697, item_id: 1006655013, column_id: “&amp; ColumnID &amp;”, value: “&amp; value &amp;”) {id, name}} “”}” )<br />\n]<br />\n)</code></p>\n<p>The GraphQL is:<br />\n<code><br />\n{“query”: \"mutation { change_simple_column_value(board_id: 929960697, item_id: 1006655013, column_id: “text3”, value: “new value”) {id, name}} \"}<br />\n</code></p>\n<p>What I am struggling to understand is why an identical piece of code other than the graphql query returns a 400 error code, when the first returns the intended data. Is there something wrong how my mutation query is structured? I have tested it in the API playground and it changed the value as intended.</p>"
+    },
+    {
+      "id": 42649,
+      "postNumber": 12,
+      "createdAt": "2021-02-25T19:53:16.702Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>No problem Mark!</p>\n<p>Hmm that is indeed quite strange. If it’s working in your API playground, then there is nothing wrong with the mutation query you’re sending.</p>\n<p>From a quick search online, it looks like the issue here might actually be pertaining to your headers. What happens if you remove the “&amp;” between Bearer and your actual key? It’s confusing that you’re only getting this error when mutating though.</p>\n<p>Is it possible for you to install something like Fiddler to troubleshoot your Power BI code?</p>"
+    },
+    {
+      "id": 43284,
+      "postNumber": 13,
+      "createdAt": "2021-03-03T13:01:56.052Z",
+      "author": "mark.mccoy (Mark)",
+      "cookedHtml": "<p>Hi Helen,</p>\n<p>Thanks for the suggestion of using Fiddler I’ll have to look into that.</p>\n<p>The “&amp;” is concatenating the strings \"Bearer \" and the variable Key I am storing my API token in.</p>"
+    },
+    {
+      "id": 43296,
+      "postNumber": 14,
+      "createdAt": "2021-03-03T14:16:15.499Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Sure! Let me know if Fiddler gives you any more insight into the error.</p>"
+    },
+    {
+      "id": 44809,
+      "postNumber": 15,
+      "createdAt": "2021-03-15T14:00:30.732Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

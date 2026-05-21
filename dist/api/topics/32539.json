@@ -1,0 +1,49 @@
+{
+  "id": 32539,
+  "title": "Problems performing a query",
+  "slug": "problems-performing-a-query",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    105,
+    152,
+    154
+  ],
+  "createdAt": "2022-03-04T10:04:43.765Z",
+  "lastPostedAt": "2022-03-10T06:58:49.056Z",
+  "postsCount": 4,
+  "excerpt": "Good morning, I’m developing an API in Node.js that will be integrated with a company system. The API needs to perform queries against our Monday task boards. I’m having problems performing API queries, I used the exampl&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1681,
+  "posts": [
+    {
+      "id": 78875,
+      "postNumber": 1,
+      "createdAt": "2022-03-04T10:04:43.888Z",
+      "author": "Thiago_Taura (Thiago Ianzer)",
+      "cookedHtml": "<p>Good morning, I’m developing an API in Node.js that will be integrated with a company system. The API needs to perform queries against our Monday task boards. I’m having problems performing API queries, I used the example codes from the documentation to perform the queries but it’s not working, after that I tried several other ways, using several other NPM modules and I still can’t perform the queries.</p>\n<p>The only method that worked to perform the queries was using the ‘https’ module, but I am not able to process the query result, which should basically convert the JSON result into an object.</p>\n<p>Below is the query already tested on the PlayGround of the Monday API:</p>\n<h2><a name=\"p-78875-boardsids-447377089-name-state-board_folder_id-items-id-name-column_values-title-text-1\" class=\"anchor\" href=\"#p-78875-boardsids-447377089-name-state-board_folder_id-items-id-name-column_values-title-text-1\"></a>{<br />\nboards(ids: 447377089) {<br />\nname<br />\nstate<br />\nboard_folder_id<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\ntitle<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}</h2>\n<p>API query code per example from Monday’s documentation:</p>\n<p>const fetch = require(‘node-fetch’);</p>\n<p>let query = “query {\\n boards(ids: 447377089) {\\n name\\n state\\n board_folder_id\\n items {\\n id\\n name\\n column_values {\\n title\\n text \\n }\\n }\\n }\\n}”;</p>\n<h2><a name=\"p-78875-fetch-httpsapimondaycomv2-method-post-headers-content-type-applicationjson-authorization-acceskey-body-jsonstringify-query-query-thenres-resjson-thenres-consolelogjsonstringifyres-null-2-2\" class=\"anchor\" href=\"#p-78875-fetch-httpsapimondaycomv2-method-post-headers-content-type-applicationjson-authorization-acceskey-body-jsonstringify-query-query-thenres-resjson-thenres-consolelogjsonstringifyres-null-2-2\"></a>fetch (“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”, {<br />\nmethod: ‘post’,<br />\nheaders: {<br />\n‘Content-Type’: ‘application/json’,<br />\n‘Authorization’ : ‘ACCESKEY’<br />\n},<br />\nbody: JSON.stringify({<br />\nquery : query<br />\n})<br />\n})<br />\n.then(res =&gt; res.json())<br />\n.then(res =&gt; console.log(JSON.stringify(res, null, 2)));</h2>\n<p>Query code in API with ‘https’ module:</p>\n<p>const http = require(“https”);</p>\n<p>const options = {<br />\n“method”: “POST”,<br />\n“hostname”: “<a href=\"http://api.monday.com\" rel=\"noopener nofollow ugc\">api.monday.com</a>”,<br />\n“port”: null,<br />\n“path”: “<a href=\"https://api.monday.com/v2?=\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2?=</a>”,<br />\n“headers”: {<br />\n“Content-Type”: “application/json”,<br />\n“Authorization”: “ACCESSKEY”,<br />\n“Content-Length”: “201”<br />\n}<br />\n};</p>\n<p>const req = http.request(options, function (res) {<br />\nconst chunks = <span class=\"chcklst-box fa fa-square-o fa-fw\"></span>;</p>\n<p>res.on(“data”, function (chunk) {<br />\nchunks.push(chunk);<br />\n});</p>\n<p>res.on(“end”, function () {<br />\nconst body = Buffer.concat(chunks);<br />\nconsole.log(body.toString());<br />\n});<br />\n});</p>\n<p>req.write(JSON.stringify({<br />\nquery: ‘query {\\n boards(ids: 447377089) {\\n name\\n state\\n board_folder_id\\n items {\\n id\\n name\\n column_values {\\n title\\n text \\n }\\n }\\n }\\n}’<br />\n}));<br />\nreq.end();</p>"
+    },
+    {
+      "id": 78981,
+      "postNumber": 2,
+      "createdAt": "2022-03-06T07:13:02.991Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/thiago_taura\">@Thiago_Taura</a>!</p>\n<p>Welcome to the community!</p>\n<p>If the API key you are showing here is yours, I recommend you to edit it NOW so that no one else has that information. I also recommend you to regenerate it in your developer section.</p>\n<p>Having said that, I can see that you might be missing fetch. You have to <a href=\"https://www.npmjs.com/package/node-fetch\">install it</a> and import it in your file:<br />\n<code>import fetch from \"node-fetch\";</code></p>\n<p>Here is a working example:</p>\n<pre><code class=\"lang-auto\">fetch (\"https://api.monday.com/v2\", {\n\t\tmethod: 'post',\n\t\theaders: {\n\t\t\t'Content-Type': 'application/json',\n\t\t\t'Authorization': YOUR_API_KEY_HERE\n\t\t},\n\t\tbody: JSON.stringify({\n\t\t\t'query' : `mutation {change_simple_column_value (board_id: 111111111, item_id: 22222222, column_id: \"text\", value: \"This is text\") {id}}`,\n\t\t})\n\t})\n</code></pre>\n<p>Let me know if that helps <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 79308,
+      "postNumber": 3,
+      "createdAt": "2022-03-09T09:19:42.273Z",
+      "author": "Thiago_Taura (Thiago Ianzer)",
+      "cookedHtml": "<p>Good morning, Thanks for the answer, I already tried this method and the same problem remains. I tried both types of import from fetch and also from other modules like axios, I already reinstalled nodejs and also the project modules.</p>\n<p>How do I edit the topic, I searched a lot but I don’t find the option, not even in the topics created in my account.</p>"
+    },
+    {
+      "id": 79482,
+      "postNumber": 4,
+      "createdAt": "2022-03-10T06:58:49.056Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/thiago_taura\">@Thiago_Taura</a>,</p>\n<p>I just edited the post for you <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Since this is not related to monday’s apps framework but rather to your node environment, I recommend you to search in the community or to search in other platforms like Stackoverflow to check if anyone else has experienced these kind of issues.</p>\n<p>You might find some useful posts about it <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

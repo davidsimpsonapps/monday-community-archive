@@ -1,0 +1,134 @@
+{
+  "id": 65880,
+  "title": "New `next_items_page` object for cursor-based pagination",
+  "slug": "new-next-items-page-object-for-cursor-based-pagination",
+  "categoryId": 70,
+  "tagIds": [
+    94,
+    245,
+    406,
+    410,
+    418
+  ],
+  "createdAt": "2023-09-13T14:52:27.653Z",
+  "lastPostedAt": "2024-02-13T16:34:03.802Z",
+  "postsCount": 13,
+  "excerpt": "In the 2023-10 API release, we introduced the items_page object which utilizes cursor-based pagination to retrieve smaller groups of items from a large data set. This object must be nested inside of a boards query, so it&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1755,
+  "posts": [
+    {
+      "id": 143417,
+      "postNumber": 1,
+      "createdAt": "2023-09-13T14:52:27.733Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>In the <a href=\"https://developer.monday.com/api-reference/docs/release-notes#2023-10\" target=\"_blank\" rel=\"noopener\"><code>2023-10</code></a> API release, we introduced the <a href=\"https://developer.monday.com/api-reference/docs/items_page\" target=\"_blank\" rel=\"noopener\"><code>items_page</code></a> object which utilizes cursor-based pagination to retrieve smaller groups of items from a large data set. This object must be nested inside of a <code>boards</code> query, so it has a high <a href=\"https://developer.monday.com/api-reference/docs/rate-limits\" target=\"_blank\" rel=\"noopener\">complexity cost</a>.</p>\n<p>To help reduce that cost, we created the <a href=\"https://developer.monday.com/api-reference/docs/items_page#cursor-based-pagination-using-next_items_page\" target=\"_blank\" rel=\"noopener\"><code>next_items_page</code></a> object which can be used at the root of your query to paginate through the data set. It takes both the <code>cursor</code> and <code>limit</code> <a href=\"https://developer.monday.com/api-reference/docs/items_page#arguments-1\" target=\"_blank\" rel=\"noopener\">arguments</a> and retrieves the following page of items in the data set.</p>\n<p><strong>Now let’s break it down a bit…</strong></p>\n<p>Say you only want to retrieve items with a blank status column from board 1234567890. This board contains thousands of items that cannot be retrieved simultaneously, so you can use cursor-based pagination.</p>\n<p>The query below would return the ID and name of the first 50 items with a blank status column and a cursor value that represents the position in the data set after returning 50 items.</p>\n<pre><code class=\"lang-graphql\">query {  \n  boards (ids:1234567890) {  \n    items_page (limit: 50, query_params: {rules: {column_id: \"status\", compare_value: [5], operator:any_of}}) {  \n      cursor  \n      items {  \n        id  \n        name  \n      }  \n    }  \n  }  \n}\n</code></pre>\n<p>You can then use the <code>next_items_page</code> object with the cursor argument from the first query to return the following 50 relevant items in the data set. After returning the next cursor value, you can continue paginating through the entire data set.</p>\n<pre><code class=\"lang-graphql\">query {  \n  next_items_page (limit: 50, cursor: \"MSw5NzI4MDA5MDAsaV9YcmxJb0p1VEdYc1VWeGlxeF9kLDg4MiwzNXw0MTQ1NzU1MTE5\") {  \n    cursor  \n    items {  \n      id  \n      name  \n    }  \n  }  \n}\n</code></pre>"
+    },
+    {
+      "id": 143468,
+      "postNumber": 2,
+      "createdAt": "2023-09-13T19:46:05.959Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a></p>\n<p>Love this concept and implemented is straight away. The app did not show expected behavior (my fault) but I think this is worth a warning to fellow developers.</p>\n<p>Obviously the JSON data structure returned from the initial call differs from consecutive calls (using next_items_page). If you want to return all data you need to take care of the different data structures. After the initial call I do:</p>\n<pre><code class=\"lang-auto\">      if (response?.data?.boards[0]?.items_page) {\n        cursor = response?.data?.boards[0]?.items_page.cursor;\n        resultArray = response?.data?.boards[0]?.items_page.items;\n      }\n</code></pre>\n<p>But now (using next_items_page) the follow on calls (assuming you got the cursor) need to be handled a little differently, e.g.:</p>\n<pre><code class=\"lang-auto\">        cursor = response?.data?.next_items_page.cursor;\n        resultArray.push(...response?.data?.next_items_page.items);\n</code></pre>\n<p>Hope this helps others to make use of this great feature.</p>"
+    },
+    {
+      "id": 143492,
+      "postNumber": 3,
+      "createdAt": "2023-09-14T03:47:14.722Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for sharing your experience and script!</p>"
+    },
+    {
+      "id": 159452,
+      "postNumber": 4,
+      "createdAt": "2023-12-28T13:04:30.788Z",
+      "author": "Jmiller1 (Jack )",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, I am understanding the structure, the issue I’m having is the response received of the cursor is a string wrapped in single quotes. See picture<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/7/0/708c954181506fa21f36a339dc74d5328d91fafc.png\" alt=\"cursor\" width=\"665\" height=\"114\" /><br />\nThis is throwing an error, if I extract the cursor manually and place it in my call wrapped in double quotes it works as intended. Do you have any tips for formatting that correctly within a pagination loop?</p>\n<p>I’m working in python and originally saved a variable named cursor to the parse path shown in the picture. Then when I call it in subsequent loops I tried inserting via an f’string which failed. I also tried string concatenation using + operators with the variable called via the str() method. This also produces a string wrapped in single quotes and throws an error. I can’t save double quotes to a variable to insert because I don’t believe python allows you to set those types of operators to a variable. An ideas for what might work?</p>"
+    },
+    {
+      "id": 159464,
+      "postNumber": 5,
+      "createdAt": "2023-12-28T13:34:44.790Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jmiller1\">@Jmiller1</a></p>\n<p>What I do is very straightforward</p>\n<pre><code class=\"lang-auto\">      var resultArray = [];\n      var cursor = null;\n\n      var query = `query getItemIdsInBoard ($boardId: ID!, $rules: [ItemsQueryRule!])  {\n        complexity {\n          reset_in_x_seconds\n          before\n          after\n        }\n        boards (ids: [$boardId]) {\n          items_page (limit:100, query_params: {rules: $rules}) {\n            cursor\n            items {\n              id\n              state\n              subitems {\n                id\n              }\n            }\n          }\n        }\n      }`;\n\n      var variables = { boardId, rules };\n      var response = await mondayClient.api(query, { variables });\n      if (response?.data?.boards[0]?.items_page) {\n        cursor = response?.data?.boards[0]?.items_page.cursor;\n        resultArray = response?.data?.boards[0]?.items_page.items;\n      }\n\n      while (cursor) {\n        var query = `query getItemIdsInBoardNext ($cursor: String!) {\n          complexity {\n            reset_in_x_seconds\n            before\n            after\n          }\n          next_items_page (limit:100, cursor: $cursor) {\n            cursor\n            items {\n              id\n              state\n            }\n          }\n        }`;\n        var variables = { cursor };\n        var response = await mondayClient.api(query, { variables });\n        cursor = response?.data?.next_items_page.cursor;\n        resultArray.push(...response?.data?.next_items_page.items);\n      }\n      return resultArray.length == 0 ? { data: false } : { data: resultArray };\n\n</code></pre>"
+    },
+    {
+      "id": 159469,
+      "postNumber": 6,
+      "createdAt": "2023-12-28T13:58:09.426Z",
+      "author": "Jmiller1 (Jack )",
+      "cookedHtml": "<p>hmmm this is javascript? My structure is very similar and agree using the cursor to access a next page is straight forward. I believe the way python is unpacking the response into json is what’s causing me issues.</p>\n<p>Here is what my loop looks like for context:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/d/dd4067b2d9fb5bba5dc710e1fcc832e31f399e42.png\" title=\"pagination_loop\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/d/dd4067b2d9fb5bba5dc710e1fcc832e31f399e42.png\" alt=\"pagination_loop\" width=\"690\" height=\"241\" /><div class=\"meta\"><span class=\"filename\">pagination_loop</span><span class=\"informations\">1483×519 11.8 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 159488,
+      "postNumber": 7,
+      "createdAt": "2023-12-28T16:07:04.759Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Sure, my example is Javascript. I’m not a Python expert but why do you format the cursor like:</p>\n<pre><code class=\"lang-auto\">'f\"{cursor}\"'\n</code></pre>\n<p>can’t you just pass the cursor string you got?</p>"
+    },
+    {
+      "id": 159491,
+      "postNumber": 8,
+      "createdAt": "2023-12-28T16:38:45.133Z",
+      "author": "Jmiller1 (Jack )",
+      "cookedHtml": "<p>I was not able to and I couldn’t explain exactly why just because I don’t know, but passing the f string like that ignores the \" \" on the outside of {} and just passes the cursor variable through but the response of the cursor is received like this:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/7/0/708c954181506fa21f36a339dc74d5328d91fafc.png\" alt=\"cursor\" width=\"665\" height=\"114\" /></p>\n<p>Luckily, I was able to find a way to reformate the quotes like this picture below which when plugged into my loop works as intended. (spent way too much time finding this <img src=\"https://emoji.discourse-cdn.com/apple/sob.png?v=12\" title=\":sob:\" class=\"emoji\" alt=\":sob:\" width=\"20\" height=\"20\" />)<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/b/f/bf0885ec5dba5df69970a5b17e28843d5e9710bd.png\" alt=\"reformatted_cursor\" width=\"663\" height=\"152\" /></p>\n<p>side note, the syntax is a requirement on the graphql side as python classifies these both as strings so most stuff I found were talking about how you can rewrite a string with ’ or \" but functionally it doesn’t matter which wasn’t helpful when the string received was already formatted one way and it had to be changed within the code.</p>\n<p>Thanks for the responses <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, talking through always helps me figure stuff out/order my thoughts.</p>"
+    },
+    {
+      "id": 159662,
+      "postNumber": 9,
+      "createdAt": "2023-12-31T05:45:53.699Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 161753,
+      "postNumber": 10,
+      "createdAt": "2024-01-12T11:46:53.143Z",
+      "author": "angel_ch (Angel_Ch)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jmiller1\">@Jmiller1</a> ,</p>\n<p>I am working on a task to query some data with python and have the same issue with passing the cursor string to graphql query request. The cursor string is formatted with double quotes but when plugged in the loop the response still returns error: <strong>“Argument ‘cursor’ on Field ‘next_items_page’ has an invalid value (formated_cursor). Expected type ‘String!’.”</strong>. Would you mind to share your way of cursor string reference in the query request?</p>\n<p>Best,<br />\nAngel</p>"
+    },
+    {
+      "id": 161765,
+      "postNumber": 11,
+      "createdAt": "2024-01-12T12:34:56.612Z",
+      "author": "Jmiller1 (Jack )",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/angel_ch\">@angel_ch</a>,</p>\n<p>I had to save it as a reformatted variable. I’ve attached my entire loop below here. Hopefully that will help resolve your issue, but lmk if you have any other questions.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/e/9e0817695ce8af21a8d8a664f0249fde82841862.png\" title=\"cursor_pagination\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/e/9e0817695ce8af21a8d8a664f0249fde82841862.png\" alt=\"cursor_pagination\" width=\"690\" height=\"315\" /><div class=\"meta\"><span class=\"filename\">cursor_pagination</span><span class=\"informations\">1520×696 15.7 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 161773,
+      "postNumber": 12,
+      "createdAt": "2024-01-12T12:50:37.738Z",
+      "author": "angel_ch (Angel_Ch)",
+      "cookedHtml": "<p>Thanks a lot <a class=\"mention\" href=\"/u/jmiller1\">@Jmiller1</a>! It worked like a charm! Btw I would have never guessed the syntax of the cursor reference …</p>\n<p>Best,<br />\nAngel</p>"
+    },
+    {
+      "id": 161783,
+      "postNumber": 13,
+      "createdAt": "2024-01-12T13:03:54.353Z",
+      "author": "Jmiller1 (Jack )",
+      "cookedHtml": "<p>Glad it worked! Yeah it took me the better part of a few days to get figured out… was very frustrating</p>"
+    },
+    {
+      "id": 161961,
+      "postNumber": 14,
+      "createdAt": "2024-01-14T11:38:19.581Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 167613,
+      "postNumber": 15,
+      "createdAt": "2024-02-13T16:34:03.802Z",
+      "author": "BruceB (Bruce Baldwin)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/jmiller1\">@Jmiller1</a> .  This helped me out greatly too.</p>"
+    },
+    {
+      "id": 167871,
+      "postNumber": 16,
+      "createdAt": "2024-02-14T14:06:48.854Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

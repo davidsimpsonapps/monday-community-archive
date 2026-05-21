@@ -1,0 +1,99 @@
+{
+  "id": 23164,
+  "title": "Get/fetch subitems from multiple items in a board",
+  "slug": "get-fetch-subitems-from-multiple-items-in-a-board",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    94,
+    107,
+    115,
+    187
+  ],
+  "createdAt": "2021-08-03T08:53:13.898Z",
+  "lastPostedAt": "2021-08-03T12:12:59.981Z",
+  "postsCount": 11,
+  "excerpt": "hi folks, hope all are doing well. i am working on monday apis in nodeJs using monday SDK, i got into a problem of fetching the subitems. i tried every possible way to fetch the data but no success \n  \ni am trying to get&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2867,
+  "posts": [
+    {
+      "id": 59637,
+      "postNumber": 1,
+      "createdAt": "2021-08-03T08:53:14.023Z",
+      "author": "abdul (Abdul Rahman)",
+      "cookedHtml": "<p>hi folks, hope all are doing well. i am working on monday apis in nodeJs using monday SDK, i got into a problem of fetching the subitems. i tried every possible way to fetch the data but no success<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9992a5a812e7ff690b252e4399811385c9f61ff4.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9992a5a812e7ff690b252e4399811385c9f61ff4_2_690x153.png\" alt=\"image\" width=\"690\" height=\"153\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1551×344 23.7 KB</span>\n</div></a></div><br />\ni am trying to get sub1 and sub 2, i have ids for “Legal Information” which is a group, then “Power of attorney” as subItem.<br />\nactually i want to get 3rd level items.<p></p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [board_id]) {\n    name\n    id\n    items(ids: some_item_id) {\n      id\n      name\n      column_values(ids: \"subitem_column_id\") {\n        id\n        title\n        value\n      }\n    }\n  }\n}\n\n</code></pre>"
+    },
+    {
+      "id": 59647,
+      "postNumber": 2,
+      "createdAt": "2021-08-03T10:58:04.930Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/abdul\">@abdul</a></p>\n<p>Welcome to the community. Not sure what you mean with 3rd level items, there are items and subitems and there is no third level. When you run your query the value from the subitems column should return something like this</p>\n<blockquote>\n<p>“value”: “{\"linkedPulseIds\":[{\"linkedPulseId\":111111111},{\"linkedPulseId\":2222222}]}”</p>\n</blockquote>\n<p>If you JSON.parse that you can access the array with the itemIds of the subitems that you can query as a normal item.</p>"
+    },
+    {
+      "id": 59665,
+      "postNumber": 3,
+      "createdAt": "2021-08-03T11:11:28.950Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/abdul\">@abdul</a>,</p>\n<p>It is also important to note that subitems exist in a seperate board.</p>"
+    },
+    {
+      "id": 59672,
+      "postNumber": 4,
+      "createdAt": "2021-08-03T11:29:18.104Z",
+      "author": "abdul (Abdul Rahman)",
+      "cookedHtml": "<p>thanks <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>  for looking into issue, but it does not work, it i query the items using the values from linkedPulseIds, then it is not showing any item.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [board_id]) {\n    name\n    id\n    items(ids: \"value_from_linkedPulseId\") {\n      id\n      name\n    }\n  }\n}\n\n</code></pre>"
+    },
+    {
+      "id": 59673,
+      "postNumber": 5,
+      "createdAt": "2021-08-03T11:30:13.424Z",
+      "author": "abdul (Abdul Rahman)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>  thanks, but i did not get how to treat it like a separate board.</p>"
+    },
+    {
+      "id": 59675,
+      "postNumber": 6,
+      "createdAt": "2021-08-03T11:52:45.449Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/abdul\">@abdul</a><br />\nYou can’t query linkedPulseIds, you query the column_values (ids: “the-id-of-the-subitems column”) {value}. That returns: data.boards[0].items[0].column_values[0].value</p>\n<p>You need to JSON.parse that into let’s say mySubitems, and then you can access: mySubitems.linkedPulseIds[ x ].linkedPulseId</p>"
+    },
+    {
+      "id": 59685,
+      "postNumber": 7,
+      "createdAt": "2021-08-03T11:57:11.272Z",
+      "author": "abdul (Abdul Rahman)",
+      "cookedHtml": "<p>i got your point,<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/17665ed06571da67777712b0ddccd5dcccd04804.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/17665ed06571da67777712b0ddccd5dcccd04804_2_690x199.png\" alt=\"image\" width=\"690\" height=\"199\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1508×437 27.2 KB</span>\n</div></a></div><br />\nbut i want to get the sub-item name of the highlighted ones<p></p>"
+    },
+    {
+      "id": 59686,
+      "postNumber": 8,
+      "createdAt": "2021-08-03T12:00:15.547Z",
+      "author": "abdul (Abdul Rahman)",
+      "cookedHtml": "<p>i want to get these highlighted values<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/bc017afc3297d486a6491ad58a921e28e61f42f8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/bc017afc3297d486a6491ad58a921e28e61f42f8_2_690x166.png\" alt=\"image\" width=\"690\" height=\"166\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1549×373 26.8 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 59688,
+      "postNumber": 9,
+      "createdAt": "2021-08-03T12:10:22.923Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Sure, so you need to do a second query to query that item. In your example the second query will be:</p>\n<blockquote>\n<p>query {<br />\nitems(ids: 1540909612) {<br />\nname<br />\n}<br />\n}</p>\n</blockquote>"
+    },
+    {
+      "id": 59690,
+      "postNumber": 10,
+      "createdAt": "2021-08-03T12:12:59.981Z",
+      "author": "abdul (Abdul Rahman)",
+      "cookedHtml": "<p>great thanks, this worked for me.</p>"
+    },
+    {
+      "id": 60335,
+      "postNumber": 11,
+      "createdAt": "2021-08-10T12:13:53.769Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "id": 71824,
+  "title": "Need help with create_item via the api using C#",
+  "slug": "need-help-with-create-item-via-the-api-using-c",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2023-11-29T18:41:40.823Z",
+  "lastPostedAt": "2023-12-03T13:37:33.886Z",
+  "postsCount": 5,
+  "excerpt": "I am coding an api in C# .net. Here is a query I send to Monday.com which works just fine and retrieves the items: \n{“query”: &quot;{boards (ids: 5493163446) { items { id name state } } } &quot;} \nI have patterned create_item afte&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 307,
+  "posts": [
+    {
+      "id": 155397,
+      "postNumber": 1,
+      "createdAt": "2023-11-29T18:41:40.904Z",
+      "author": "ITguy (Jim Thomas)",
+      "cookedHtml": "<p>I am coding an api in C# .net. Here is a query I send to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> which works just fine and retrieves the items:</p>\n<p>{“query”: \"{boards (ids: 5493163446) { items { id name state } } } \"}</p>\n<p>I have patterned create_item after that but all of these seven mutations result in a Server Error 500. This is my first create so I could use some basic help, for example, do I need to use the word query or just mutation and is the mutation in quotes or curly braces, etc. I have removed any column values to try and simply the query as much as possible - could it be complaining because there are no column values, just the name?</p>\n<p>{“query”: \"mutation: create_item (“board_id”: 5493163446, “group_id”: “new_group”, “item_name”: “This item imported programmatically”) \" { id } }</p>\n<p>{“query”: \"mutation {create_item (“board_id”: 5493163446, “group_id”: “new_group”, “item_name”: “This item imported programmatically”) } \" { id } }</p>\n<p>{“query”:“mutation { create_item (board_id: 5493163446, group_id: “new_group”, item_name: “MyNewItem”, column_values: “{“state”:“active”}”) { id } }”}</p>\n<p>{\"mutation {create_item (“board_id”: 5493163446, “group_id”: “new_group”, “item_name”: “This item imported programmatically”) } \" { id } }</p>\n<p>{“mutation”: {create_item (“board_id”: “5493163446”, “group_id”: “new_group”, “item_name”: “This item imported programmatically”) } { id } }</p>\n<p>{“mutation”: “{create_item (“board_id”: “5493163446”, “group_id”: “new_group”, “item_name”: “This item imported programmatically”) }” { id } }</p>\n<p>mutation { create_item (board_id: 5493163446, group_id: new_group, item_name: “This item imported programmatically”) { id } }</p>\n<p>Be grateful for any suggestions you may have - willing to try anything.</p>"
+    },
+    {
+      "id": 155436,
+      "postNumber": 2,
+      "createdAt": "2023-11-29T22:38:24.376Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>It appears you have quotes around argument names in the string, some extraneous quotes, which shouldn’t be there. Additionally, your quotes around strings are not straight quotes but the fancy MS Word/Wordpad typographers “quotes”.</p>\n<p>GraphQL queries are strings, not JSON. GraphQL requests are a object with the structure <code>{query: \"graphqlstring\"}</code> that has been serialized to JSON.</p>\n<pre><code class=\"lang-auto\">const request = JSON.stringify({\n   query: `mutation: create_item (board_id: 5493163446, group_id: \"new_group\", \n           item_name: \"This item imported programmatically\") { id }`\n});\n</code></pre>"
+    },
+    {
+      "id": 155608,
+      "postNumber": 3,
+      "createdAt": "2023-11-30T17:40:46.019Z",
+      "author": "ITguy (Jim Thomas)",
+      "cookedHtml": "<p>Thanks-you very much. Those basics really helped.</p>\n<p>I had some trouble working through the stringify aspect as C# does not have such a method. Here is what ended up working for me, where GraphQLQuery class is downloaed from the web.</p>\n<p>query = “mutation {create_item (board_id: 5493163446, group_id: \"new_group\", item_name: \"New Imported task3\", column_values: \"{\\\"status\\\": \\\"Working on it\\\" } \" ) { id } }”;<br />\njson = JsonConvert.SerializeObject(new GraphQLQuery() { Query = query });</p>\n<p>Now this forum is modifying what I pasted: in query the single double quote should be backslash doublequote and the backslash double quote should be backslash backslash backslash double quote</p>"
+    },
+    {
+      "id": 155618,
+      "postNumber": 4,
+      "createdAt": "2023-11-30T18:03:28.035Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Correct, the forum itself is making changes to quotes, smartquotes etc. Therefore it is a good idea to always</p>\n<pre><code class=\"lang-auto\">copy / past code inside preformatted text (cntrl-e)\n</code></pre>"
+    },
+    {
+      "id": 155952,
+      "postNumber": 5,
+      "createdAt": "2023-12-03T13:37:33.886Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you for the help <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> !!</p>"
+    }
+  ]
+}

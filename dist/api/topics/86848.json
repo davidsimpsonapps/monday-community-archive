@@ -1,0 +1,46 @@
+{
+  "id": 86848,
+  "title": "API: List all items that is created past 30 days",
+  "slug": "api-list-all-items-that-is-created-past-30-days",
+  "categoryId": 58,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-05-14T08:49:05.732Z",
+  "lastPostedAt": "2024-05-16T08:42:04.105Z",
+  "postsCount": 4,
+  "excerpt": "Hello, \nI have a flow in Postman where I get data from our Economic system and create a item in monday for each post. Now I’m doing in blinde, don’t know if the post is in monday or not. \nMy next version I like to list a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 83,
+  "posts": [
+    {
+      "id": 183733,
+      "postNumber": 1,
+      "createdAt": "2024-05-14T08:49:05.795Z",
+      "author": "DanielSoderlund (Daniel)",
+      "cookedHtml": "<p>Hello,<br />\nI have a flow in Postman where I get data from our Economic system and create a item in monday for each post. Now I’m doing in blinde, don’t know if the post is in monday or not.</p>\n<p>My next version I like to list all items and check if the post ID in Economic system is in monday.</p>\n<p>My ide was to get a list of all items created past 30 days ones and then check eatch time I’m going to create a new item in Monday.</p>\n<p>Can’t find a way to list items and get the column data</p>"
+    },
+    {
+      "id": 184064,
+      "postNumber": 2,
+      "createdAt": "2024-05-15T09:56:29.162Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/danielsoderlund\">@DanielSoderlund</a>!</p>\n<p>You could list all of your items from a board and their creation date with a query like this one and using cursor-based pagination as explained <a href=\"https://developer.monday.com/api-reference/reference/items-page#cursor-based-pagination-using-next_items_page\">here</a>:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 500) {\n      cursor\n      items {\n        name\n        id\n        created_at\n      }\n    }\n  }\n}\n</code></pre>\n<p>You can also use the activity logs like this and look for the “create_item” event:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids:1234567890){\n    activity_logs(limit:10000, from:\"2024-01-01\", to:\"2024-02-01\" ){\n      data\n      event\n      id\n      created_at\n    }\n  }\n}\n</code></pre>\n<p>Note: The activity logs will give you up to 10k records. Anything older than that will not be retrieved.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 184098,
+      "postNumber": 3,
+      "createdAt": "2024-05-15T10:30:05.770Z",
+      "author": "DanielSoderlund (Daniel)",
+      "cookedHtml": "<p>Hmm, what I want is list all items that created the last 30 days and give the column with the ID text03</p>"
+    },
+    {
+      "id": 184278,
+      "postNumber": 4,
+      "createdAt": "2024-05-16T08:42:04.105Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/danielsoderlund\">@DanielSoderlund</a>,</p>\n<p>Both of the approaches I explained can work for that.</p>\n<p>In the first one, you would need to add the column values for that column in the query:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 500) {\n      cursor\n      items {\n        name\n        id\n        created_at\n        column_values(ids:\"text03\"){\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>With the second approach, you would get the IDs of those items, and then you can query for the column values for that text column as explained <a href=\"https://developer.monday.com/api-reference/reference/items\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>In both cases you will need to do some work on your end as the data does not come filtered as you mention.</p>"
+    }
+  ]
+}

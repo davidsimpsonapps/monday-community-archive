@@ -1,0 +1,41 @@
+{
+  "id": 71243,
+  "title": "How to pass a variable to GraphQL query?",
+  "slug": "how-to-pass-a-variable-to-graphql-query",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2023-11-21T15:25:21.546Z",
+  "lastPostedAt": "2023-11-21T15:41:53.451Z",
+  "postsCount": 2,
+  "excerpt": "I have a query where I am trying to obtain the id and name for a board item based on a column value. I am trying to pass the variable $name to the query like this: \n$name = “Test Practice Full Service”; \n$query = &#39;query &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 885,
+  "posts": [
+    {
+      "id": 154150,
+      "postNumber": 1,
+      "createdAt": "2023-11-21T15:25:21.637Z",
+      "author": "adouglas_ivet (Alex Douglas)",
+      "cookedHtml": "<p>I have a query where I am trying to obtain the id and name for a board item based on a column value. I am trying to pass the variable $name to the query like this:</p>\n<p>$name = “Test Practice Full Service”;</p>\n<pre><code>$query = 'query ($name: String!){\n  items_by_column_values (board_id: 3873753003, column_id: \"name\", column_value: $name) {\n\tid\n\tname\n  }\n}';\n</code></pre>\n<p>However, I get an error message:</p>\n<p>Variable $name of type String! was provided invalid value</p>\n<p>what am I doing wrong here, and how should I structure this query so that I can pass the $name variable into the query?</p>"
+    },
+    {
+      "id": 154152,
+      "postNumber": 2,
+      "createdAt": "2023-11-21T15:41:53.451Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>firstly I would avoid the <code>items_by_column_values</code> as it will be removed on January 15th, 2024 (8 weeks) from the available API versions. (2023-07, the last version to support it, will be discontinued).</p>\n<p>Going forward use <code>items_page</code> but don’t forget to set the API-Version header to 2023-10 until at least January 15. 2024 when API 2024-01 becomes default where this is no longer needed to support <code>items_page</code>.</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/items_page\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/items_page\" target=\"_blank\" rel=\"noopener\">Items page</a></h3>\n\n  <p>Every board has advanced filters that enable you to retrieve items based on specified criteria quickly. You can replicate this behavior via the API using the items_page object and customized parameters to filter your results. As the monday.com...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<pre><code class=\"lang-auto\">query ($itemName: CompareValue!, $boardId: [ID!]) {\n  boards(ids: $boardId) {\n    items_page(query_params: {rules: {column_id: \"name\", compare_value: $itemName}}) {\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n\n//variables are sent separately of course, in the variables of the request\n{\n  \"itemName\": \"Test Practice Full Service\",\n  \"boardId\": [\"3873753003\"]\n}\n</code></pre>\n<p>Alternatively use <code>items_page_by_column_value</code>:</p>\n<pre><code class=\"lang-auto\">query ($itemName: [String]!, $boardId: ID!) {\n    items_page_by_column_values(board_id: $boardId, columns: {column_id: \"name\", column_values: $itemName}) {\n      items {\n        id\n        name\n      }\n    }\n  }\n\n//variables are sent separately of course, in the variables of the request\n{\n  \"itemName\": \"Test Practice Full Service\",\n  \"boardId\": \"3873753003\"\n}\n</code></pre>\n<p>Note the change of the board ID to a string, instead of Int. ID technically can support both, but string is probably preferred because that is also how IDs are returned for boards and items by the API. (in other words, don’t make things harder for yourself)</p>"
+    },
+    {
+      "id": 154242,
+      "postNumber": 3,
+      "createdAt": "2023-11-22T06:17:25.387Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": 2575,
+  "title": "POST request using PHP",
+  "slug": "post-request-using-php",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94
+  ],
+  "createdAt": "2019-10-09T16:24:16.883Z",
+  "lastPostedAt": "2021-02-25T12:23:06.025Z",
+  "postsCount": 4,
+  "excerpt": "Hi, really need your help, im trying to post some data from a website into monday \nthis is the below code. I am new to php and monday, can you please help me with this? Its urgent \nif(isset($_POST[‘submit’])){\n\n// all th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 8926,
+  "posts": [
+    {
+      "id": 6941,
+      "postNumber": 1,
+      "createdAt": "2019-10-09T16:24:17.027Z",
+      "author": "M65D85 (Madushan)",
+      "cookedHtml": "<p>Hi, really need your help, im trying to post some data from a website into monday</p>\n<p>this is the below code. I am new to php and monday, can you please help me with this? Its urgent</p>\n<pre><code class=\"lang-auto\">if(isset($_POST[‘submit’])){\n\n// all the datas are saved into the variables here fro the global variables;\n\n\n$name = $_POST['Name'];\n$email = $_POST['Email'];\n$phone = $_POST['Phone'];\n$message = $_POST['Message'];\n$user_ip = $_SERVER['REMOTE_ADDR'];\n$browser = $_SERVER['HTTP_USER_AGENT'];\ndate_default_timezone_set('Asia);\n$date = date('d/m/Y h:i:s a', time());\n\n\nif($message == “”){\n\n$message = “NIL”;\n\n}\n\n$recipient = “email_id” ;\n$subject = \"Message from \".$name ;\n$message = \"\n**Name:**  \".$name. \"\n\n**Email:**  \" .$email. \"\n\n**Phone:**  \" .$phone. \"\n\n**Message:**  \" .$message. \"\n\n**Ip Address:**  \" .$user_ip. \"\n\n**Browser:**  \" .$browser. \"\n\n**Date:**  \" .$date. “\n”\n;\n\n\n$body = \"&lt;html&gt;\\n\";\n$body .= \"&lt;body style=\\\"font-family:Verdana, Verdana, Geneva, sans-serif; font-size:12px; color:#666666;\\\"&gt;\\n\";\n$body = $message;\n$body .= \"&lt;/body&gt;\\n\";\n$body .= \"&lt;/html&gt;\\n\";\n\n$headers  = \".$email.\";\n$headers .= \"Reply-To: \".$mail_id.\"\\r\\n\";\n$headers .= \"X-Mailer: PHP\\n\";\n$headers .= 'MIME-Version: 1.0' . \"\\n\";\n$headers .= 'Content-type: text/html; charset=iso-8859-1' . \"\\r\\n\";\n\n\nif( mail($recipient, $subject, $message, $headers) ) {\n// Insert you code for processing the form here, e.g emailing the submission, entering it into a database.\n\n\n$token = '[ token]';\n\n$url = 'https://user.monday.com/v2/';\n\n$query=' mutation { create_item (board_id: id, item_name: \"Website Lead\", column_values:\"{\\\"text43\\\": \\\"Composed message\\\", \\\"email\\\": \\\"someone@ddf.com\\\", \\\"client_phone2\\\": \\\"516565156\\\", \\\"text5\\\":\\\"John\\\"}\"} ' ; \n</code></pre>\n<p>How do i send the dynamic variables above inside column values such as these:<br />\n$name = $_POST[‘Name’];<br />\n$email = $_POST[‘Email’];<br />\n$phone = $_POST[‘Phone’];<br />\n$message = $_POST[‘Message’];</p>\n<p>This is my header:</p>\n<pre><code class=\"lang-auto\">$headers = ['Content-Type: application/json', 'Authorization:' . $token]; $data = @file_get_contents($url, false, stream_context_create([ 'https' =&gt; [ 'method' =&gt; 'POST', 'header' =&gt; $headers, 'content' =&gt; json_encode(['query' =&gt; $query]), ] ]));\n\n$tempContents = json_decode($data, true);\t\n\n\techo '\n\t\t&lt;div class=\"row thank-card\"&gt;\n   &lt;h1&gt;Thank You!&lt;/h1&gt;\n   &lt;p&gt;Your enquiry request has been successfully submitted&lt;/p&gt;\n  &lt;a class=\"pxp-agent-contact-modal-btn\" href=\"index.php\"&gt;Back to Page&lt;/a&gt;\n  &lt;/div&gt;\n\t';\n\n\n} else {\n// Insert your code for showing an error message here\n\n\n\t//echo 'Sorry, you have provided an invalid security code';\n\techo '&lt;div class=\"row error-card\"&gt;\n   &lt;h1&gt;Failed!&lt;/h1&gt;\n   &lt;p&gt;Please check your Name or Email.&lt;/p&gt;\n  &lt;a class=\"pxp-agent-contact-modal-btn\" href=\"index.php\"&gt;Back to Page&lt;/a&gt;\n  &lt;/div&gt;';\n\n\n}\n\n}else{\n\n\nheader('location:index.php');\n</code></pre>\n<p>finally do i need to execute this command or will the post request get activated automatically?</p>\n<p>Preferably if i could get the right code to execute this would be perfect. Because ive tried everything and i cant seem to figure it out</p>\n<p>Thanks a lot for your help!</p>\n<p>EDIT:</p>\n<p>I ended up changing the code a bit after looking around. Dont know if i have gone further away from solving my problem or gotten closer</p>\n<pre><code class=\"lang-auto\">   $token = '[token]';\n    $tempUrl = \"https://user.monday.com/v2/\";\n    $query = '\n        mutation ($board: Int!, $column: JSON!) { \n        create_item( board_id: $board, item_name: \"Website Lead\", column_values:$column) { \n        id \n        column_values { \n          id \n          value \n        } \n      } \n    } \n    ';\n    \n    $variables = '{\"board\": id, \n     \"column\" : \"{\\\"text5\\\": $name, \\\"email\\\": $email, \\\"client_phone2\\\": $phone, \\\"text31\\\": $message}\"\n    }';\n    \n\n    $headers = ['Content-Type: application/json', 'User-Agent: [user] GraphQL Client', 'Authorization: ' . $token];\n    $data = @file_get_contents($tempUrl, false, stream_context_create([\n    'https' =&gt; [\n    'method' =&gt; 'POST',\n    'header' =&gt; $headers,\n    'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $variables]),\n    ]\n    ]));\n    $tempContents = json_decode($data, true);\n</code></pre>"
+    },
+    {
+      "id": 6996,
+      "postNumber": 3,
+      "createdAt": "2019-10-10T11:10:29.380Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Madushan,</p>\n<p>Dipro here! Are you finding that the item is created successfully but the column values are not added?</p>\n<p>Not super familiar with PHP but I can definitely help with the <a href=\"http://monday.com\">monday.com</a> side <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> When you send a value to a column, you need to ensure it is formatted appropriately based on the type of column. Your code does not do this. An email column has different fields than a text column, and therefore the data you send needs to be structured differently.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/7540cfb5f0a645bb8c4473700e33c6214f110f92.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/7540cfb5f0a645bb8c4473700e33c6214f110f92_2_690x127.png\" alt=\"image\" width=\"690\" height=\"127\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1500×278 34 KB</span>\n</div></a></div><p></p>\n<p>Here’s an example of what the email column’s formatting should look like (column1 is the column ID in this example):<br />\n<code>{\"column1\" : {\"email\"  : \"john.doe@gmail.com\", \"text\" : \"John's Email\"}}</code></p>\n<p>When you send this data to the column, the results in the GUI will be as such:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/180b9477f882669bd2a5f6fbf19a2ae727b6a60e.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/180b9477f882669bd2a5f6fbf19a2ae727b6a60e_2_393x500.png\" alt=\"image\" width=\"393\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">534×678 17.9 KB</span>\n</div></a></div><p></p>\n<p>You can get a list of all of the column structures <a href=\"https://monday.com/developers/v2#column-values-section\">in our documentation.</a></p>\n<p>As for the code itself, I noticed that the variables section you should be passing the board ID as <code>$id</code> and not simply <code>id</code>.</p>\n<p>Cheers,<br />\nDipro</p>"
+    },
+    {
+      "id": 6997,
+      "postNumber": 4,
+      "createdAt": "2019-10-10T11:41:30.803Z",
+      "author": "M65D85 (Madushan)",
+      "cookedHtml": "<p>Hey,</p>\n<p>tried this. but didnt work here is how it looks now:</p>\n<pre><code class=\"lang-auto\">    $query = `\n        mutation ($board: Int!, $column: JSON!) { \n        create_item( board_id: $board, item_name: \"Website Lead\", column_values:$column) { \n        id \n        column_values { \n          id \n          value \n        } \n      } \n    } \n    `;\n    \n     \n    $variables = `{\"board\": $id,{\"email\" : {\"email\" : \"john.doe@gmail.com\", \"text\" : \"John's Email\"}}\n    }`;\n\n</code></pre>"
+    },
+    {
+      "id": 42118,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T12:23:06.025Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

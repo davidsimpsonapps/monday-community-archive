@@ -1,0 +1,44 @@
+{
+  "id": 16934,
+  "title": "CORS Issue: Jquery ajax Upload file to monday.com",
+  "slug": "cors-issue-jquery-ajax-upload-file-to-monday-com",
+  "categoryId": 58,
+  "tagIds": [],
+  "createdAt": "2021-03-01T02:12:08.694Z",
+  "lastPostedAt": "2021-03-02T06:48:15.680Z",
+  "postsCount": 4,
+  "excerpt": "I am trying to upload a file from a custom form and there are no issues updating other fields except for adding a file. Here are the codes below. Can anybody tell me, what’s wrong with this. \nError: Access to XMLHttpRequ&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 5512,
+  "posts": [
+    {
+      "id": 42857,
+      "postNumber": 1,
+      "createdAt": "2021-03-01T02:12:08.762Z",
+      "author": "rickyparamio (Ricky Paramio)",
+      "cookedHtml": "<p>I am trying to upload a file from a custom form and there are no issues updating other fields except for adding a file. Here are the codes below. Can anybody tell me, what’s wrong with this.</p>\n<p><strong>Error</strong>: Access to XMLHttpRequest at ‘<a href=\"https://api.monday.com/v2/file\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file</a>’ from origin ‘null’ has been blocked by CORS policy: Response to preflight request doesn’t pass access control check: No ‘Access-Control-Allow-Origin’ header is present on the requested resource.</p>\n<pre><code>    var url = \"https://api.monday.com/v2/file\";\n    var boundary = \"------WebKitFormBoundary7MA4YWxkTrZu0gW--\";\n    var data = \"\";\n    var payload = \"\";\n\t\n    // File Reader\n    var fileReader = new FileReader();\n    fileReader.onloadend = function (e) {\n      data += boundary + \"\\r\\n\";\n      data += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n      data += \"Content-Type:application/pdf\\r\\n\\r\\n\";\n      data += \"\\r\\n\" + query + \"\\r\\n\";\n\n      // construct file part\n      data += boundary + \"\\r\\n\";\n      data += \"Content-Disposition: form-data; name=\\\"variables[file]\\\"; filename=\\\"\" + fileName + \"\\\"\\r\\n\";\n      data += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\t\t  \n      data += e.target.result + \"\\r\\n\";\n      data += (\"\\r\\n\" + boundary + \"\\r\\n\");\n    }\n    fileReader.readAsBinaryString(fileUpload);\n\n    $.ajax({\n      url: url,\n      method: \"POST\",\n      body: data,\n      headers: {\n        \"Content-Type\": \"multipart/form-data; boundary=\" + boundary,\n        \"Authorization\": myToken\n      }\n    }).done(function (res) {\n         console.log(res);\n    }).fail(function (res) {\n      console.log(res);\n    });\n</code></pre>"
+    },
+    {
+      "id": 42931,
+      "postNumber": 3,
+      "createdAt": "2021-03-01T14:36:13.560Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rickyparamio\">@rickyparamio</a>, welcome to the community!</p>\n<p>Yes indeed, this is an issue that some of our devs have run into. It might help to check out this thread: <a href=\"https://community.monday.com/t/cors-issue-when-uploading-file-with-api-v2/9993/7\" class=\"inline-onebox\">CORS issue when uploading file with API v2 - #7 by pepperaddict</a></p>\n<p>There is another thread linked within as well, and that should also help.</p>\n<p>I will keep this in the “Feature Requests” area until we get an update about this from our team.</p>\n<p>-Helen</p>"
+    },
+    {
+      "id": 42960,
+      "postNumber": 5,
+      "createdAt": "2021-03-01T15:21:34.892Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/rickyparamio\">@rickyparamio</a> !</p>\n<p>Unfortunately, I think the endpoint is blocked by cors if you’re accessing it from the front-end from an outside source. It would work if it was a published build.</p>\n<p>Also, have you tried the <strong>new</strong> SDK for file upload?? I’m going to try and implement it today so I can’t say for sure how it goes. Here’s the link to learn more about it just in case you didn’t know about it:</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/alexsavchuk/48/3454_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/announcement-uploading-files-to-monday-com-has-just-become-easier/16803\">Announcement: Uploading files to monday.com has just become easier <img width=\"20\" height=\"20\" src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\"slight_smile\" alt=\"slight_smile\" class=\"emoji\" /></a> <a class=\"badge-category__wrapper \" href=\"/c/developers/dev-guides/70\"><span class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Announcements</span></span></a>\n  </div>\n  <blockquote>\n    New feature alert! <img width=\"20\" height=\"20\" src=\"https://emoji.discourse-cdn.com/apple/tophat.png?v=12\" title=\"tophat\" alt=\"tophat\" class=\"emoji\" /> \nI’m excited to announce that uploading files to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> has just become a bit simpler using our API, and even easier when using our SDK. \nNow, when making direct calls to our API, you can upload files in a more GraphQL-like way. With your query you can now include query variables alongside files! This is compared to before when you’d need to use inline variables in the query. \nNow, the following request to our API is possible: \nconst query = \n\n    mutation add_fil…\n  </blockquote>\n</aside>\n\n<p>Good luck!</p>"
+    },
+    {
+      "id": 43068,
+      "postNumber": 6,
+      "createdAt": "2021-03-02T06:48:15.680Z",
+      "author": "rickyparamio (Ricky Paramio)",
+      "cookedHtml": "<p>Hi pepperaddict,</p>\n<p>Thanks for the recommendation but I got the same both when debugging and also in publish mode. You can take a look at the screenshot below.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6162c84eee843c7061914c69e1b04ab25ffc658c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/6/6162c84eee843c7061914c69e1b04ab25ffc658c.png\" alt=\"image\" width=\"690\" height=\"65\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1248×119 8.23 KB</span>\n</div></a></div><p></p>\n<p>I’m using simple ajax call but no go.</p>"
+    }
+  ]
+}

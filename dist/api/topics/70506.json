@@ -1,0 +1,121 @@
+{
+  "id": 70506,
+  "title": "Querying all items on a board results in column values being null",
+  "slug": "querying-all-items-on-a-board-results-in-column-values-being-null",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    22,
+    94,
+    107,
+    351,
+    410
+  ],
+  "createdAt": "2023-11-10T06:53:28.247Z",
+  "lastPostedAt": "2024-10-27T22:49:55.673Z",
+  "postsCount": 11,
+  "excerpt": "I am attempting to retrieve all the content from a Monday board that has recently been shared with me. My task is to write this board to a Google sheet and to Google BigQuery on a daily basis. I do not seem to have editi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 557,
+  "posts": [
+    {
+      "id": 152602,
+      "postNumber": 1,
+      "createdAt": "2023-11-10T06:53:28.342Z",
+      "author": "DylanSolms (Dylan)",
+      "cookedHtml": "<p>I am attempting to retrieve all the content from a Monday board that has recently been shared with me. My task is to write this board to a Google sheet and to Google BigQuery on a daily basis. I do not seem to have editing permissions but I can view the board.</p>\n<p>It may be that my lack of permissions are preventing me from retrieving column values for each item. Here is the query and the results:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/3/13adcd81d9366fe1d1a0f759f1cfc5af715ff283.png\" title=\"monday_query\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/3/13adcd81d9366fe1d1a0f759f1cfc5af715ff283_2_690x333.png\" alt=\"monday_query\" width=\"690\" height=\"333\" /><div class=\"meta\"><span class=\"filename\">monday_query</span><span class=\"informations\">1783×861 43.1 KB</span></div></a></div><p></p>\n<p>Note the presence of only null values. Here is the actual table as to confirm that it does not actually contain null values at these fields:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/c/1c0cdb9b53dd6a418248cd8fd73afa9ce96ecd85.png\" title=\"master_list_monday\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/c/1c0cdb9b53dd6a418248cd8fd73afa9ce96ecd85_2_690x345.png\" alt=\"master_list_monday\" width=\"690\" height=\"345\" /><div class=\"meta\"><span class=\"filename\">master_list_monday</span><span class=\"informations\">1176×588 70.4 KB</span></div></a></div><p></p>\n<p>Please help me figure out why I keep getting nulls for my column values. Perhaps an issue in my query or the lack or permissions.</p>"
+    },
+    {
+      "id": 152604,
+      "postNumber": 2,
+      "createdAt": "2023-11-10T07:15:32.386Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dylansolms\">@DylanSolms</a></p>\n<p>Welcome to the community! It looks some of the columns are mirror columns (or board relation columns) and those do not return anything unless explicitly asked for in a fragment</p>\n<p>See: <a href=\"https://developer.monday.com/api-reference/docs/mirror\" class=\"inline-onebox\">Mirror</a></p>"
+    },
+    {
+      "id": 152610,
+      "postNumber": 3,
+      "createdAt": "2023-11-10T08:26:41.043Z",
+      "author": "DylanSolms (Dylan)",
+      "cookedHtml": "<p>Good day <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Thank you very much for this useful explanation and link to the solution. It turns out that the board I am working with is constructed from 7 other boards which it mirrors.</p>\n<p>I tried using the display_value field once conditioning on … MirrorValue. Unfortunately, it does not always work. I have attached the below query and error response. My guess is that display_value must return text but is unable to.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/0/70a14a7d7b44b3e478af2bd4103a90fe21903b5d.png\" title=\"monday_display_value_error\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/0/70a14a7d7b44b3e478af2bd4103a90fe21903b5d_2_690x236.png\" alt=\"monday_display_value_error\" width=\"690\" height=\"236\" /><div class=\"meta\"><span class=\"filename\">monday_display_value_error</span><span class=\"informations\">1683×578 21.2 KB</span></div></a></div><p></p>\n<p>The following seems to work though but is very slow:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/a/da36b6f98f2fd216b2eb98e093592fc421c67d3b.png\" title=\"monday_working_query\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/a/da36b6f98f2fd216b2eb98e093592fc421c67d3b_2_502x500.png\" alt=\"monday_working_query\" width=\"502\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">monday_working_query</span><span class=\"informations\">793×789 14.8 KB</span></div></a></div><p></p>\n<p>I suppose the next best thing is to query each original table separately as these queries will be less complex such that queries don’t crash.</p>"
+    },
+    {
+      "id": 152618,
+      "postNumber": 4,
+      "createdAt": "2023-11-10T10:31:23.459Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Reach out to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> about the first error. <code>Display_value</code> definitely works so there must be further issue and its not with your query.</p>\n<p>A couple bits of advice, always include the <code>id</code> field <code>column_value</code> because while <code>title</code> is the nice name it is not immutable. <code>id</code> is immutable so you can be assured you can reference it in the future.</p>\n<p>Also include <code>type</code> so you know when its a mirror or not, and can know when to pull <code>text</code> or <code>displayed_value</code>.</p>"
+    },
+    {
+      "id": 152732,
+      "postNumber": 5,
+      "createdAt": "2023-11-12T12:48:35.250Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dylansolms\">@DylanSolms</a>,</p>\n<p>As <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> said, you can send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> and we will be happy to take a look into it <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 152791,
+      "postNumber": 6,
+      "createdAt": "2023-11-13T04:15:15.593Z",
+      "author": "DylanSolms (Dylan)",
+      "cookedHtml": "<p>Thank you for your reply and supporting the query not to be incorrect. I also appreciate the additional advice to use in future queries; this will most certainly prove useful.</p>"
+    },
+    {
+      "id": 152792,
+      "postNumber": 7,
+      "createdAt": "2023-11-13T04:19:33.092Z",
+      "author": "DylanSolms (Dylan)",
+      "cookedHtml": "<p>Good day <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>.</p>\n<p>I have reached out to the support team. They have been very friendly and helpful. Unfortunately, a permanent solution has not been reached yet. It seems that the issue lies with the 2023-10 API being slow. The 2023-07 API has no issue extracting mirrored text values (my goal). The old API also seems much more simple to use and requires  less code and concepts. I am sure that it addresses limitations of the old API but at the moment it would seem to be an inferior API. Hopefully, the new API’s issues are addresses soon so that we can appreciate it.</p>"
+    },
+    {
+      "id": 152805,
+      "postNumber": 8,
+      "createdAt": "2023-11-13T06:51:43.529Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/dylansolms\">@DylanSolms</a>,</p>\n<p>I know the team is investigating some cases of slow API responses and working on that, so hopefully you will get some good news soon in the email thread you have with us <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 152810,
+      "postNumber": 9,
+      "createdAt": "2023-11-13T07:11:45.064Z",
+      "author": "DylanSolms (Dylan)",
+      "cookedHtml": "<p>This is excellent news; I wish them much success.</p>"
+    },
+    {
+      "id": 152843,
+      "postNumber": 10,
+      "createdAt": "2023-11-13T11:29:56.087Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 152850,
+      "postNumber": 11,
+      "createdAt": "2023-11-13T11:47:38.540Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I somewhat agree and am concerned the final deprecation of 2023-07 is premature, as 2023-10 does not seem stable yet in several areas. I know 2023-10 will be immediately deprecated on January 15th 2024 in favor of 2024-01 becoming the stable default as well. I don’t suspect that 2024-01 is going to magically fix things on release - as the issues here are probably common to both.</p>\n<p>I don’t think the new API requires significantly more code anywhere (unless you consider one line in a query a lot), except maybe dealing with moving display_value to text (this is how I am doing it, I’m running a quick iteration of columns, and on mirror columns, copying display_value to text so that I don’t have to treat it any different in other code.)</p>\n<p>To me, working with some of the things I do, is requires significantly less actually. I’ve been able to eliminate one and even two queries when working with linked items.</p>"
+    },
+    {
+      "id": 152993,
+      "postNumber": 12,
+      "createdAt": "2023-11-14T06:49:07.484Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 207389,
+      "postNumber": 13,
+      "createdAt": "2024-10-27T22:49:55.673Z",
+      "author": "tomweiss (Tom Weiss)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dylansolms\">@DylanSolms</a>, jumping late to the party.</p>\n<p>Since the original thread was written, we’ve released the <a href=\"https://auth.monday.com/marketplace/listing/10000401/bigquery-integration\" rel=\"noopener nofollow ugc\">BigQuery integration</a> to the monday app marketplace. It allows you to sync any monday board to bigquery on a daily basis, automatically, removing the overhead of having to maintain the api integration by yourself.</p>\n<p>Putting this here in case it helps you or anyone else that reads this <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 208348,
+      "postNumber": 14,
+      "createdAt": "2024-11-03T13:04:11.108Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": 37311,
+  "title": "Formula to format Phone Number?",
+  "slug": "formula-to-format-phone-number",
+  "categoryId": 7,
+  "tagIds": [
+    13,
+    108
+  ],
+  "createdAt": "2022-06-06T13:07:29.188Z",
+  "lastPostedAt": "2022-06-07T12:29:09.546Z",
+  "postsCount": 4,
+  "excerpt": "Hi. I am trying to format a phone number column so the data will be easier to read when inserted into a DocuGen document. I have found ways to format dates and numbers but can’t seem to figure out phone numbers. I would &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 3239,
+  "posts": [
+    {
+      "id": 87719,
+      "postNumber": 1,
+      "createdAt": "2022-06-06T13:07:29.268Z",
+      "author": "psperry (Accidental Selfie )",
+      "cookedHtml": "<p>Hi. I am trying to format a phone number column so the data will be easier to read when inserted into a DocuGen document. I have found ways to format dates and numbers but can’t seem to figure out phone numbers. I would like to take the standard 11 digit phone number and format it like below.</p>\n<p>14445551212 &gt;&gt;  (444) 555-1212</p>\n<p>Any help will be greatly appreciated!</p>"
+    },
+    {
+      "id": 87735,
+      "postNumber": 2,
+      "createdAt": "2022-06-06T16:36:10.582Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/psperry\">@psperry</a></p>\n<p>These examples might get you started. Both basically assume all numbers are US.</p>\n<p>The first is simple and will remove a leading “1”, numbers that don’t match the pattern will be returned but not formatted:</p>\n<pre><code class=\"lang-auto\">REGEXREPLACE({Phone}, \"1\" &amp; CHAR(123) &amp; \"0,1\" &amp; CHAR(125) &amp; \"(...)(...)(....)\", \"($1) $2-$3\")\n</code></pre>\n<p>The second is more complex formatting longer <span class=\"hashtag\">#s</span> as with extensions, shorter number will not be returned at all:</p>\n<pre><code class=\"lang-auto\">IF(AND(LEN({Phone})=10,LEFT({Phone}, 1) &lt;&gt; \"1\"), REGEXREPLACE({Phone}, \"(...)(...)(....)\",\"($1) $2-$3\"), \"\") &amp; \n\nIF(AND(LEN({Phone})=11,LEFT({Phone}, 1) = \"1\"), REGEXREPLACE({Phone}, \"1(...)(...)(....)\", \"($1) $2-$3\"), \"\") &amp;\n\nIF(AND(LEN({Phone})&gt;10,LEFT({Phone}, 1) &lt;&gt; \"1\"), REGEXREPLACE({Phone}, \"(...)(...)(....)\", \"($1) $2-$3 x\"), \"\")\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/LRWLhnktNs0\">Creating subitems using Make/Integromat The Monday Man (EASY) Way</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 87819,
+      "postNumber": 3,
+      "createdAt": "2022-06-07T12:29:09.546Z",
+      "author": "psperry (Accidental Selfie )",
+      "cookedHtml": "<p>Thanks so much for your help! I made an adjustment and am posting it below in case someone else has the same issue. I have three possible phone number formats in my case 4445551212, 14445551212, and +14445551212. Extensions are not currently an issue for us. The change I made:</p>\n<pre><code class=\"lang-auto\">IF(AND(LEN({Phone})=10,LEFT({Phone}, 1) &lt;&gt; \"1\"), REGEXREPLACE({Phone}, \"(...)(...)(....)\",\"($1) $2-$3\"), \"\") &amp; \n\nIF(AND(LEN({Phone})=11,LEFT({Phone}, 1) = \"1\"), REGEXREPLACE({Phone}, \"1(...)(...)(....)\", \"($1) $2-$3\"), \"\") &amp;\n\nIF(AND(LEN({Phone})&gt;11,LEFT({Phone}, 1) &lt;&gt; \"1\"), REGEXREPLACE({Phone}, \"(..)(...)(...)(....)\", \"($2) $3-$4\"), \"\")\n</code></pre>\n<p>Thanks again!</p>"
+    },
+    {
+      "id": 88536,
+      "postNumber": 4,
+      "createdAt": "2022-06-14T12:29:18.019Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": 80280,
+  "title": "Monday.listen(\"events\") is not working",
+  "slug": "monday-listen-events-is-not-working",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2024-03-06T07:37:26.238Z",
+  "lastPostedAt": "2024-03-08T10:23:58.541Z",
+  "postsCount": 6,
+  "excerpt": "Hi, \nI’m working on an application that identifies formulas columns on a board and listens to changes in formulas. \nI’m able to get information from the context via monday.listen(“context”), but I don’t get any callbacks&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 190,
+  "posts": [
+    {
+      "id": 171716,
+      "postNumber": 1,
+      "createdAt": "2024-03-06T07:37:26.318Z",
+      "author": "edkiseki (Eddie)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m working on an application that identifies formulas columns on a board and listens to changes in formulas.</p>\n<p>I’m able to get information from the context via monday.listen(“context”), but I don’t get any callbacks on this callback, even after modifying a formula column on the board.</p>\n<pre><code class=\"lang-auto\">    monday.listen(\"events\", (res) =&gt; {\n      console.log(`*** now it seems the events has changed:`, res.data);\n    })\n</code></pre>\n<p>I was initially running the app in Preview mode with the tunnel, and I thought maybe it was due to this. So I created a new build of the app, upload it, and then loaded the app on my board.</p>\n<p>Even after I install the app and make changes to the formula column, I cannot see anything printed in the console.</p>\n<p>Could you please help with this issue.</p>\n<p>Many thanks.</p>"
+    },
+    {
+      "id": 171859,
+      "postNumber": 2,
+      "createdAt": "2024-03-06T22:00:13.996Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Formula columns cannot be use in this way, as formula columns are calculated and displayed outside the data layer in the browser (in the view layer).</p>\n<p>Listening for changes calls when data in the data structure backing the board changes, such as a user changing a column will update the data structure and those changes then get pushed to the <a href=\"http://monday.com\">monday.com</a> back end.</p>\n<p>Formula columns however are based on the view layer, so no data changes occur to create the change event.</p>\n<p>This is also why apps can’t natively use formula columns, since the values are not stored in the API (since its not getting pushed from the view to data layer).</p>"
+    },
+    {
+      "id": 171885,
+      "postNumber": 3,
+      "createdAt": "2024-03-07T02:14:37.768Z",
+      "author": "edkiseki (Eddie)",
+      "cookedHtml": "<p>Thanks for the detailed reply <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> .</p>\n<p>It’s all making sense to me now. Late yesterday I tried adding new items and I got notifications on the <code>events</code> callback. But when I tried changing the formula I got nothing.</p>\n<p>Do you know if there is a way to get updates to column formulas via webhooks to a back-end API?</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 172085,
+      "postNumber": 4,
+      "createdAt": "2024-03-07T19:40:07.604Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There is not. the backend is devoid of formula values. We can return the formula itself from the column settings of a formula column, but the column value of it on an item is null.</p>\n<p>This is, as mentioned, because the view layer doesn’t push the formula to the data later in the browser. if it did that the data layer could push to the back end.</p>\n<p>I hope one day monday will implement formula calculations on the back end… but alas, I don’t expect that any time soon.</p>\n<p>Your only option, is to parse the formula in the settings_str of the column and listen for changes in all of the columns in the formula. The problem with that is you don’t know if those changes actually resulted in a value change, or were in a dead path when the formula is evaluated (for example if statements)</p>"
+    },
+    {
+      "id": 172129,
+      "postNumber": 5,
+      "createdAt": "2024-03-08T03:07:31.928Z",
+      "author": "edkiseki (Eddie)",
+      "cookedHtml": "<p>Understood Cody.</p>\n<p>I had high hopes to get live update to formula values via the API… I hope Monday make this available soon. It would unlock so many things if they did.</p>"
+    },
+    {
+      "id": 172147,
+      "postNumber": 6,
+      "createdAt": "2024-03-08T10:23:58.541Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Soon? No don’t expect it ever. Its been this way for years, and there has never been any hint of it being changed. I have zero hope of seeing that change.</p>\n<p>They have announced calculating formulas in automations on the roadmap, but thats different than storing a formula value into the back end.</p>"
+    },
+    {
+      "id": 172366,
+      "postNumber": 7,
+      "createdAt": "2024-03-10T11:51:12.465Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

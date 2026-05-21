@@ -1,0 +1,151 @@
+{
+  "id": 39495,
+  "title": "Please explain the new fields in the install webhook",
+  "slug": "please-explain-the-new-fields-in-the-install-webhook",
+  "categoryId": 8,
+  "tagIds": [
+    144
+  ],
+  "createdAt": "2022-07-20T05:53:11.691Z",
+  "lastPostedAt": "2022-08-10T04:54:05.764Z",
+  "postsCount": 17,
+  "excerpt": "I’m seeing new fields in the install webhook: \n{\n  &quot;type&quot;: &quot;install&quot;,\n  &quot;data&quot;: {\n    ...\n    &quot;user_cluster&quot;: &quot;information_technology&quot;,\n    &quot;account_tier&quot;: null,\n    &quot;account_max_users&quot;: null,\n\t...\n  }\n}\n\nSome questions: &hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 1704,
+  "posts": [
+    {
+      "id": 91828,
+      "postNumber": 1,
+      "createdAt": "2022-07-20T05:53:11.766Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I’m seeing new fields in the install webhook:</p>\n<pre><code class=\"lang-auto\">{\n  \"type\": \"install\",\n  \"data\": {\n    ...\n    \"user_cluster\": \"information_technology\",\n    \"account_tier\": null,\n    \"account_max_users\": null,\n\t...\n  }\n}\n</code></pre>\n<p><strong>Some questions:</strong></p>\n<ul>\n<li>What are valid values for <code>user_cluster</code> and what is it for? So far I’ve seen :\n<ul>\n<li><code>crm</code></li>\n<li><code>education</code></li>\n<li><code>information_technology</code></li>\n<li><code>ngo</code></li>\n<li><code>operations </code></li>\n<li><code>other</code></li>\n<li><code>product_management</code></li>\n<li><code>tech</code></li>\n</ul>\n</li>\n<li>Are you aware that <code>account_tier</code> and <code>account_max_users</code> are not populated?</li>\n<li>Do these new fields have exact equivalents in the <code>{{account}}</code> in the graphQL API?</li>\n</ul>"
+    },
+    {
+      "id": 91980,
+      "postNumber": 2,
+      "createdAt": "2022-07-21T08:12:57.146Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>!</p>\n<p>The cluster is used for the user’s area of work.</p>\n<p><code>account_tier</code> and <code>account_max_users</code> will not have a value when the tier is “trial”.</p>\n<p>You can get this information (all but the cluster) with this query:</p>\n<pre><code class=\"lang-auto\">{\n  account {\n    plan {\n      tier\n      max_users\n    }\n  }\n}\n</code></pre>\n<p>Hope that helps <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 92183,
+      "postNumber": 3,
+      "createdAt": "2022-07-22T08:18:03.027Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Thanks for the response.</p>\n<p>I’m seeing <code>account_tier</code> having values of both <code>free</code> and <code>null</code> (as well as <code>standard</code>, <code>pro</code>, &amp; <code>enterprise</code>, and probably <code>basic</code>).</p>\n<p>Can I assume that both <code>free</code> and <code>null</code> are the <strong>free</strong> tier, and as such, the <code>null</code> value for <code>account_max_users</code> actually means a maximum of <code>2</code> users?</p>\n<p>Cheers, David.</p>"
+    },
+    {
+      "id": 92330,
+      "postNumber": 4,
+      "createdAt": "2022-07-24T16:44:23.435Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> !</p>\n<p>I am sorry, that was a mistake on my end. I meant the “trial” tier comes as null.</p>"
+    },
+    {
+      "id": 92394,
+      "postNumber": 5,
+      "createdAt": "2022-07-25T08:03:07.795Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> Please note that</p>\n<pre><code class=\"lang-auto\">account {\n  plan {\n    tier\n  }\n}\n</code></pre>\n<p>returns a non-catchable <code>Cannot return null for non-nullable field Plan.tier</code> error sometimes.</p>"
+    },
+    {
+      "id": 92401,
+      "postNumber": 6,
+      "createdAt": "2022-07-25T08:21:43.732Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Thanks for this <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>.</p>\n<p>So to clear up any misunderstandings, I believe that this ..</p>\n<h2><a name=\"p-92401-trial-tier-1\" class=\"anchor\" href=\"#p-92401-trial-tier-1\"></a>Trial tier</h2>\n<pre><code class=\"lang-auto\">// account_tier === null\n//   &amp;&amp; account_max_users === null\n\n{\n  \"type\": \"install\",\n  \"data\": {\n    ...\n    \"account_tier\": null,\n    \"account_max_users\": null,\n\t...\n  }\n}\n</code></pre>\n<h2><a name=\"p-92401-free-tier-2\" class=\"anchor\" href=\"#p-92401-free-tier-2\"></a>Free tier</h2>\n<pre><code class=\"lang-auto\">// account_tier === 'free' \n//   &amp;&amp; (account_max_users === null || account_max_users === 0)\n\n{\n  \"type\": \"install\",\n  \"data\": {\n    ...\n    \"account_tier\": \"free\",\n    \"account_max_users\": null \n      // actually up to 2 users ( or `0` in graphQL result)\n    ...\n  }\n}\n</code></pre>\n<h2><a name=\"p-92401-other-tiers-3\" class=\"anchor\" href=\"#p-92401-other-tiers-3\"></a>Other tiers</h2>\n<p><strong>Tiers:</strong> basic |  standard | pro | enterprise</p>\n<pre><code class=\"lang-auto\">// typeof account_tier === 'string'\n//   &amp;&amp; Number.isInteger(account_max_users)\n//   &amp;&amp; account_max_users &gt; 0\n\n{\n  \"type\": \"install\",\n  \"data\": {\n    ...\n    \"account_tier\": \"free\",\n    \"account_max_users\": 5, \n\t...\n  }\n}\n</code></pre>\n<h2><a name=\"p-92401-an-internal-mondaycom-instance-4\" class=\"anchor\" href=\"#p-92401-an-internal-mondaycom-instance-4\"></a>An internal monday.com instance</h2>\n<pre><code class=\"lang-auto\">// account_tier === null\n//   &amp;&amp; user_cluster === null\n//   &amp;&amp; Number.isInteger(account_max_users)\n//   &amp;&amp; account_max_users &gt; 0\n\n{\n  \"type\": \"install\",\n  \"data\": {\n    ...\n    \"user_cluster\": null,\n    \"account_tier\": null,\n    \"account_max_users\": 10000,\n\t...\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 92402,
+      "postNumber": 7,
+      "createdAt": "2022-07-25T08:26:52.741Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rob\">@rob</a> Thanks for this.</p>\n<p>I think that <code>account.plan.tier</code> is null for trial monday.com accounts and some of monday.com’s internal instances too.</p>\n<p>Likely, we can assume that it’s a trial if that query comes back with an error code <img src=\"https://emoji.discourse-cdn.com/apple/crossed_fingers.png?v=12\" title=\":crossed_fingers:\" class=\"emoji\" alt=\":crossed_fingers:\" width=\"20\" height=\"20\" />.</p>"
+    },
+    {
+      "id": 92410,
+      "postNumber": 8,
+      "createdAt": "2022-07-25T09:45:05.205Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a><br />\nI mean that in our experience, querying the tier sometimes returns the error above.<br />\nIf you have a more complex query, like:</p>\n<pre><code class=\"lang-auto\">account {\n  id\n  name\n  plan {\n    tier\n    max_users\n  }\n}\n</code></pre>\n<p>and you get the error, you need to re-run it without the <code>tier</code> option:</p>\n<pre><code class=\"lang-auto\">account {\n  id\n  name\n  plan {\n    max_users\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 92424,
+      "postNumber": 9,
+      "createdAt": "2022-07-25T10:55:04.524Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>!</p>\n<p><a href=\"https://community.monday.com/t/please-explain-the-new-fields-in-the-install-webhook/39495/6\">Your examples</a> look good!</p>"
+    },
+    {
+      "id": 92436,
+      "postNumber": 10,
+      "createdAt": "2022-07-25T12:31:19.566Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><span class=\"mention\">@mattias.monday</span> OK, here’s a new one to me:</p>\n<pre><code class=\"lang-auto\">{\n  \"type\": \"install\",\n  \"data\": {\n    ...\n    \"account_tier\": \"pro\",\n    \"account_max_users\": 0,\n  }\n}\n</code></pre>\n<p>If it’s a <code>pro</code> tier with <code>account_max_users</code> as <code>0</code>, what’s going on here?</p>\n<p>Does <code>0</code> users really mean (up to) <code>2</code> users? and if so, how can a pro tier have 2 users?<br />\n<a href=\"https://monday.com/pricing\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com pricing and plans</a> suggests that the pro tier starts at 3 users.</p>\n<p>I am confused once more.</p>"
+    },
+    {
+      "id": 92537,
+      "postNumber": 11,
+      "createdAt": "2022-07-26T09:16:33.975Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>!</p>\n<p>Can you please send us to “<a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a>” the account ID of the account that gave you that result?</p>\n<p>Please mention this post in the email and mention that the email is addressed specifically to Matias.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 92538,
+      "postNumber": 12,
+      "createdAt": "2022-07-26T09:36:11.562Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/rob\">@rob</a>!</p>\n<p>Can you please send us to “<a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a>” the account ID of the account that gave you the <code>Cannot return null for non-nullable field Plan.tier</code> error?</p>\n<p>Please mention this post in the email and mention that the email is addressed specifically to Matias.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 93200,
+      "postNumber": 13,
+      "createdAt": "2022-08-01T17:15:40.554Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> further to our conversation elsewhere (support emails), you said that in the install hook below…</p>\n<pre><code class=\"lang-auto\">{\n  \"type\": \"install\",\n  \"data\": {\n    ...\n    \"user_cluster\": \"ngo\",\n    \"account_tier\": \"pro\",\n    \"account_max_users\": 0,\n    ...\n  }\n}\n</code></pre>\n<p>… NPO (non profit organisation) plans “will show 0 seats in our backend”.</p>\n<p><strong>Is there a way to get hold of the <code>user_cluster</code> in graphQL, so that we can spot the NPOs using our apps?</strong></p>\n<p>– I’ve looked, but couldn’t find anything useful.</p>\n<p><strong>What values will be in <code>user_cluster</code> for NPOs?</strong></p>\n<p>– <code>ngo</code> and some others?</p>\n<p>I see that <a href=\"https://monday.com/nonprofits/pricing\" rel=\"noopener nofollow ugc\">you currently charge NPOs for &gt;10 seats</a>.</p>\n<p>Does this mean that NPOs:</p>\n<ul>\n<li>with &gt;10 seats will have the correct value set in <code>account_max_users</code>?</li>\n<li>with &lt;10 seats will have <code>\"account_max_users\": 0</code>?</li>\n</ul>\n<p>– I’m only guessing at this point.</p>\n<p>Best wishes, David.</p>"
+    },
+    {
+      "id": 93253,
+      "postNumber": 14,
+      "createdAt": "2022-08-02T04:33:25.520Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Asking Ziv Ventura on Slack.</p>"
+    },
+    {
+      "id": 93267,
+      "postNumber": 15,
+      "createdAt": "2022-08-02T06:12:22.928Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>!</p>\n<p>As of today, the cluster can not be retrieved via API.</p>\n<p>I will come back to you about the other question.</p>"
+    },
+    {
+      "id": 93270,
+      "postNumber": 16,
+      "createdAt": "2022-08-02T06:19:24.631Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Asking Shahaf Melamed on Slack</p>"
+    },
+    {
+      "id": 93302,
+      "postNumber": 17,
+      "createdAt": "2022-08-02T11:36:16.218Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Done. Waiting for a feedback from your side.<br />\nThanks.</p>"
+    },
+    {
+      "id": 93363,
+      "postNumber": 18,
+      "createdAt": "2022-08-03T04:53:21.637Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> !</p>\n<p>Our team confirms me that an NPO (non profit) can have any cluster value.</p>\n<p>Regarding your questions about NPOs, yes. What you guessed was correct <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 94277,
+      "postNumber": 19,
+      "createdAt": "2022-08-10T04:54:05.764Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "id": 23978,
+  "title": "Create an item and link to other item",
+  "slug": "create-an-item-and-link-to-other-item",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    139,
+    351
+  ],
+  "createdAt": "2021-08-20T11:39:57.709Z",
+  "lastPostedAt": "2021-08-20T18:32:03.417Z",
+  "postsCount": 9,
+  "excerpt": "I am trying to create an item on a board, then have the ID of the Item and create another Item in another board and link to items. \nHere is the code that create the first Item and retrieves the Id of the new item: \nnew_c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 3691,
+  "posts": [
+    {
+      "id": 61448,
+      "postNumber": 1,
+      "createdAt": "2021-08-20T11:39:57.797Z",
+      "author": "Doricm (Dori Shabat)",
+      "cookedHtml": "<p>I am trying to create an item on a board, then have the ID of the Item and create another Item in another board and link to items.</p>\n<p>Here is the code that create the first Item and retrieves the Id of the new item:</p>\n<pre><code class=\"lang-auto\">new_client_name = 'test new client'\npeople = '774666386' # The Owner ID of the task\nphone = '123456789'\nemail = 'email@email.com'\ntext0 = 'CEO' #Title\nstatus4 = 'Kick Off' # Stage\ndate = datetime.today().strftime('%Y-%m-%d') # Created date\nstatus = 'Customer' # Type of item - Customer / Other\ndropdown = 'No' # Some Yes / No question\n\n# # CREATE A NEW CLIENT\ncreate_a_new_client = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:1405312628, group_id:\"1624094797_clients\" item_name:$myItemName, column_values:$columnVals) { id } }'\nvars = {\n'myItemName' : new_client_name,\n'columnVals' : json.dumps({\n      'people' : people,\n     'date' : {'date' : str(date)},\n     'phone' : phone,\n     'email' : {'email': email, 'text': email},\n     'text0' : text0,\n     'status4' : status4,\n     'status' : status,\n     'dropdown' : dropdown\n })\n }\ndata = {'query' : create_a_new_client, 'variables' : vars}\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request\n\nnew_item_id = r.json()['data']['create_item']['id']\n</code></pre>\n<p>And than I would like to create an item on another board and link it to the above Item:</p>\n<pre><code class=\"lang-auto\">## CREATE THE TASKS FOR NEW CUSTOMER\nlist_of_tasks = ['task1', 'task2']\n\n## CREATE ITEMS IN AUTOMATED TASKS\nfor indx, tsk in enumerate(list_of_tasks):\n    dateforitem = datetime.today() + timedelta(days=indx)\n    # Check if Friday or Saturday\n    if dateforitem.weekday() == 4:\n        dateforitem = datetime.today() + timedelta(days=indx+2)\n    elif dateforitem.weekday() == 5:\n        dateforitem = datetime.today() + timedelta(days=indx+3)\n   \n    # Change to correct format for Monday\n    dateforitem = dateforitem.strftime('%Y-%m-%d')\n\n    query5 = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:3123123666, group_id:\"next_week\" item_name:$myItemName, column_values:$columnVals) { id } }'\n    vars = {\n    'myItemName' : str(dateforitem),\n    'columnVals' : json.dumps({\n    'date' : {'date' : str(dateforitem)}\n    })\n    }\n    data = {'query' : query5, 'variables' : vars}\n    r = requests.post(url=apiUrl, json=data, headers=headers) # make request\n    new_item_id_ie = r.json()['data']['create_item']['id']\n\n    query6 = '''mutation ($myItemiddd: String!, $columnVals: JSON!) {\n                change_multiple_column_values(item_id:$myItemiddd, board_id:3123123666, column_values: \"{\\\"contacts_1\\\" : {\\\"item_ids\\\" : [$linktoitemid]}}\") {\n                   id\n                }\n                }'''\n    vars22 = {\n    'myItemiddd' : new_item_id_ie,\n    'linktoitemid' : new_item_id\n    }\n    data2 = {'query' : query6, 'variables' : vars22}\n    r = requests.post(url=apiUrl, json=data, headers=headers) # make request\n    print(r.json())\n\n</code></pre>\n<p>The Item were created but not linked to the original item…<br />\nAny Ideas?</p>"
+    },
+    {
+      "id": 61464,
+      "postNumber": 2,
+      "createdAt": "2021-08-20T15:04:18.479Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 61465,
+      "postNumber": 3,
+      "createdAt": "2021-08-20T15:17:45.598Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/doricm\">@Doricm</a>, welcome to our community!</p>\n<p>When it comes to any and all inquiries about updating a Connect column, the first thing I check is to see if the board to be connected (board B) has been manually linked in the UI to the original board (board A) already.</p>\n<p>This is currently a limitation for updating this column-- the boards must be manually linked first.</p>\n<p>If you don’t mind confirming this for me, I can see why these items are not being linked.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 61466,
+      "postNumber": 4,
+      "createdAt": "2021-08-20T15:22:31.674Z",
+      "author": "Doricm (Dori Shabat)",
+      "cookedHtml": "<p>Thanks, Helen.<br />\nYes, the boards are connected.<br />\nI know they should be connected.</p>"
+    },
+    {
+      "id": 61468,
+      "postNumber": 5,
+      "createdAt": "2021-08-20T15:35:30.472Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/doricm\">@Doricm</a>,</p>\n<p>Thank you for confirming.</p>\n<p>Are you seeing any error messages when you’re trying to link these two items together? If so, what is the error message?</p>\n<p>What are you seeing in the UI (on board A) when you’re trying to connect the item from board B?</p>"
+    },
+    {
+      "id": 61470,
+      "postNumber": 6,
+      "createdAt": "2021-08-20T15:39:25.995Z",
+      "author": "Doricm (Dori Shabat)",
+      "cookedHtml": "<p>I don’t see any errors<br />\nThe Item on board B is created without the link to the item on board A.</p>"
+    },
+    {
+      "id": 61472,
+      "postNumber": 7,
+      "createdAt": "2021-08-20T15:46:56.707Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Here is my understanding of the sequence of events:</p>\n<ol>\n<li>Create item on board A</li>\n<li>Create item on board B</li>\n<li>Change multiple column values for the item created on board B to link to the item created on board A</li>\n</ol>\n<p>It sounds like the third step is the one that’s not working, right? Yet this third mutation is not leading to any error messages.</p>\n<p>Do you mind trying this change multiple column values mutation in your <a href=\"https://monday.com/developers/v2/try-it-yourself\" rel=\"noopener nofollow ugc\">Developer’s Playground</a> or in Postman? This way I can confirm if there is an issue with your <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> account/API token, or if there’s an issue within the code that you’re sending.</p>\n<p>If you’ve tried in these other areas and the issue persists with no error message do you mind letting me know:</p>\n<ol>\n<li>What is the exact time you last sent this mutation? I need to check our logs and narrow it down to a specific time.</li>\n<li>What is the ID of the item that you’re trying to change the multiple column values for?</li>\n</ol>\n<p>I know this is a lot of information, so I appreciate your help in this due diligence!</p>"
+    },
+    {
+      "id": 61473,
+      "postNumber": 8,
+      "createdAt": "2021-08-20T16:10:17.862Z",
+      "author": "Doricm (Dori Shabat)",
+      "cookedHtml": "<p>OK it worked in the Playground.<br />\nAnd I find that I didn’t see any error because I was referring to data instead data2:</p>\n<pre><code class=\"lang-auto\">    r = requests.post(url=apiUrl, json=data2, headers=headers) # make request\n</code></pre>\n<p>So, now I get this error:</p>\n<blockquote>\n<p>{‘errors’: [{‘message’: ‘Type mismatch on variable $myItemiddd and argument item_id (String! / Int)’, ‘locations’: [{‘line’: 2, ‘column’: 47}], ‘fields’: [‘mutation’, ‘change_multiple_column_values’, ‘item_id’]}], ‘account_id’: 9263951}</p>\n</blockquote>"
+    },
+    {
+      "id": 61487,
+      "postNumber": 9,
+      "createdAt": "2021-08-20T18:32:03.417Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/doricm\">@Doricm</a> glad to see it!</p>\n<p>It looks like this is a simple error in which the item ID you’re passing is of the <code>String!</code> type, and not the <code>Int!</code> type, which is what it needs to be.</p>\n<p>See in your code here:</p>\n<pre><code class=\"lang-auto\">query6 = '''mutation ($myItemiddd: String!, $columnVals: JSON!) {\n                change_multiple_column_values(item_id:$myItemiddd, board_id:3123123666, column_values: \"{\\\"contacts_1\\\" : {\\\"item_ids\\\" : [$linktoitemid]}}\") {\n                   id\n                }\n                }'''\n</code></pre>\n<p>you’re declaring your variable <code>$myItemiddd</code> as a <code>String!</code> when it needs to be declared as an <code>Int!</code>.</p>\n<p>If you switch this, you should be good to go!</p>"
+    },
+    {
+      "id": 62067,
+      "postNumber": 10,
+      "createdAt": "2021-08-27T18:32:38.232Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "id": 107695,
+  "title": "Custom action cannot be applied to new items",
+  "slug": "custom-action-cannot-be-applied-to-new-items",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2025-01-15T17:47:33.112Z",
+  "lastPostedAt": "2025-01-17T06:21:52.067Z",
+  "postsCount": 7,
+  "excerpt": "I have built an app which exposes a recipe and custom Action. I am able to use the recipe to react to changes on an existing item, but I cannot figure out how to use it for new items. I have selected ‘enable for publish’&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 20,
+  "posts": [
+    {
+      "id": 217612,
+      "postNumber": 1,
+      "createdAt": "2025-01-15T17:47:33.207Z",
+      "author": "cdeely (Chris Deely)",
+      "cookedHtml": "<p>I have built an app which exposes a recipe and custom Action. I am able to use the recipe to react to changes on an existing item, but I cannot figure out how to use it for new items. I have selected ‘enable for publish’  on my action, but it does not appear in the custom automation screen.</p>\n<p>I tried to build a custom recipe, but there is no way for me to map a column input from that trigger.</p>\n<p>Here is the definition of my inputs:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/2/1271a8f3a510c32e23f099f9432b3ff247f49917.png\" title=\"Screenshot 2025-01-15 at 1.33.25 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/1/2/1271a8f3a510c32e23f099f9432b3ff247f49917.png\" alt=\"Screenshot 2025-01-15 at 1.33.25 PM\" width=\"690\" height=\"401\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2025-01-15 at 1.33.25 PM</span><span class=\"informations\">702×408 10.9 KB</span></div></a></div><p></p>\n<p>Any help would be greatly appreciated!</p>"
+    },
+    {
+      "id": 217623,
+      "postNumber": 2,
+      "createdAt": "2025-01-15T20:27:58.430Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I think it is because the item creation trigger does not have a solumnId in it’s trigger output. Your custom action expects sourceColumnId to be present, but that isn’t the case on an item creation trigger.</p>"
+    },
+    {
+      "id": 217636,
+      "postNumber": 3,
+      "createdAt": "2025-01-16T06:53:02.020Z",
+      "author": "cdeely (Chris Deely)",
+      "cookedHtml": "<p>Thanks, <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, that makes sense, but is there any way to allow this action to be used during item creation?</p>\n<p>Building a custom automation doesn’t seem to allow any kind of sentence creation where I can ask the user to select additional inputs. Do i need to also create a custom trigger?</p>"
+    },
+    {
+      "id": 217712,
+      "postNumber": 4,
+      "createdAt": "2025-01-16T09:17:17.866Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>If the above screenshot is showing all your input fields I guess a standard trigger “When column changes” would work as that trigger send the columnId as it’s output, along with the required itemId).</p>"
+    },
+    {
+      "id": 217752,
+      "postNumber": 5,
+      "createdAt": "2025-01-16T15:31:41.625Z",
+      "author": "cdeely (Chris Deely)",
+      "cookedHtml": "<p>Yes, a <em>column change</em> trigger can be used, however that leaves me high and dry for <em>item creation</em>. Specifically, my use case is for handling items added to a board via a Form. The form includes the requester’s email address which I want to use to look up additional account information and update the item with the details.</p>\n<p>It seems I cannot build a recipe which allows the user to say “When an item is created, update column X using the email address in column Y”. Or, really, do <em>anything</em> on item creation if I need more context than just the item itself.</p>\n<p>Custom triggers seem to be designed around changing items based on <em>external</em> events, which is not right for this scenario.</p>\n<p>Maybe it is possible to design my action to respond to item creation but use hard-coded column names to drive the updates? I am new to the Monday API, and the trigger output appears to deliver column IDs - can an item’s columns be retrieved by name?</p>\n<p>Even so, that feels like a hack and will be non-obvious to users of the app. Simply renaming a column would break the integration.</p>"
+    },
+    {
+      "id": 217756,
+      "postNumber": 6,
+      "createdAt": "2025-01-16T15:47:42.937Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>But if you want “When an item is created, update column X using the email address in column Y”, you could simply ask the user for both column X and Y in the action part sentence. Just change sourceColumnId to com from the Recipe Sentence.</p>"
+    },
+    {
+      "id": 217839,
+      "postNumber": 7,
+      "createdAt": "2025-01-17T06:21:52.067Z",
+      "author": "cdeely (Chris Deely)",
+      "cookedHtml": "<p>You’re a life saver! Switching the column input to being sourced from the recipe sentence let’s me leverage the action in custom automations and custom recipes! (after publishing a new app version)</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/0/c03efb3ba8fd92ac9a3bd28ff4c6ff152373cb9f.png\" title=\"Screenshot 2025-01-16 at 3.58.55 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/0/c03efb3ba8fd92ac9a3bd28ff4c6ff152373cb9f.png\" alt=\"Screenshot 2025-01-16 at 3.58.55 PM\" width=\"690\" height=\"404\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2025-01-16 at 3.58.55 PM</span><span class=\"informations\">690×404 19.8 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/0/904d3aac06354bfc0414573a6cc4c845b2ae9218.png\" title=\"Screenshot 2025-01-16 at 4.01.48 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/9/0/904d3aac06354bfc0414573a6cc4c845b2ae9218_2_690x346.png\" alt=\"Screenshot 2025-01-16 at 4.01.48 PM\" width=\"690\" height=\"346\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2025-01-16 at 4.01.48 PM</span><span class=\"informations\">877×441 31.9 KB</span></div></a></div><p></p>\n<p>This was a real mental hurdle for me - I was not groking how the trigger output and recipe sentence features worked.</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 217965,
+      "postNumber": 8,
+      "createdAt": "2025-01-19T12:45:36.584Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

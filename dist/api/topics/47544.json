@@ -1,0 +1,54 @@
+{
+  "id": 47544,
+  "title": "Create Item View App to display link column data as iFrame",
+  "slug": "create-item-view-app-to-display-link-column-data-as-iframe",
+  "categoryId": 8,
+  "tagIds": [
+    97,
+    239
+  ],
+  "createdAt": "2022-12-18T01:19:37.222Z",
+  "lastPostedAt": "2022-12-19T06:19:57.176Z",
+  "postsCount": 5,
+  "excerpt": "Hello, \nPrefacing this by saying I am by no means a developer at all - but I am trying my best to learn what I can to create custom, workable solutions for my organization. \nI’m looking to create a very simple item view &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1227,
+  "posts": [
+    {
+      "id": 107662,
+      "postNumber": 1,
+      "createdAt": "2022-12-18T01:19:37.302Z",
+      "author": "nadiah (Nadia)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Prefacing this by saying I am by no means a developer at all - but I am trying my best to learn what I can to create custom, workable solutions for my organization.<br />\nI’m looking to create a very simple item view app that simply displays the contents of a link column as an iframe. Any preliminary guidance on how to approach such a thing? I’ve created simple item views where I’ve just been able to embed the static website I would like (in my use case, an online form). However, I would like the item view to display dynamic links specific to the item. Any guidance on how to create an app on how to do this? Happy to even just get some articles I can read to learn about how to start.</p>\n<p>Essentially, the app will need to be able to read the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> item data and display the link column’s content as the iframe src.</p>\n<p>Thank you in advance!</p>"
+    },
+    {
+      "id": 107671,
+      "postNumber": 2,
+      "createdAt": "2022-12-18T06:03:20.794Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/nadiah\">@nadiah</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You will need to use code for this one.</p>\n<p>You could use our <a href=\"https://github.com/mondaycom/monday-sdk-js\">SDK</a> (documentation <a href=\"https://developer.monday.com/apps/docs/introduction-to-the-sdk\">here</a>) and use the <a href=\"https://developer.monday.com/apps/docs/mondayget\">monday.get method</a> using “context” as an argument to get the context of where the item view is being opened (in which item). This will give you an itemId.</p>\n<p>You can then use that itemId with the method <a href=\"https://developer.monday.com/apps/docs/mondayapi\">monday.api</a> to get the URL inside your link column. <a href=\"https://developer.monday.com/api-reference/docs\">This</a> is our API documentation.</p>\n<p>Once you have that URL, you can use it in your HTML code to display it inside your view.</p>\n<p>You can also check an app that uses the SDK in a basic way <a href=\"https://github.com/mondaycom/welcome-apps/tree/master/apps/onboarding-example\">here</a>.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 107688,
+      "postNumber": 3,
+      "createdAt": "2022-12-18T13:38:25.932Z",
+      "author": "nadiah (Nadia)",
+      "cookedHtml": "<p>Thank you so much for your help! The example code really helps <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> I will check this solution out</p>"
+    },
+    {
+      "id": 107697,
+      "postNumber": 4,
+      "createdAt": "2022-12-18T14:36:15.114Z",
+      "author": "nadiah (Nadia)",
+      "cookedHtml": "<p>2 follow-up questions - but I think I’m figuring something out! :</p>\n<p>This is what I have:</p>\n<pre><code class=\"lang-auto\">import React from \"react\";\nimport \"./App.css\";\nimport mondaySdk from \"monday-sdk-js\";\nimport \"monday-ui-react-core/dist/main.css\"\n//Explore more Monday React Components here: https://style.monday.com/\nimport AttentionBox from \"monday-ui-react-core/dist/AttentionBox.js\"\n\nconst monday = mondaySdk();\n\nclass App extends React.Component {\n  constructor(props) {\n    super(props);\n\n    // Default state\n    this.state = {\n      settings: {},\n      name: \"\",\n    };\n  }\n\n  componentDidMount() {\n    monday.listen(\"context\", res =&gt; {\n      this.setState({contextData: res.data});\n      console.log(res.data);\n    })\n  }\n\n  render() {\n    return &lt;div className=\"App\"&gt;\n      {JSON.stringify(this.state.contextData)}\n    &lt;/div&gt;;\n  }\n}\n\nmonday.api('query {\n  items(ids: itemid) {\n    name\n    column_values (ids:link82) {\n      id\n      text\n    }\n  }\n}\n\n');\n\nexport default App;\n</code></pre>\n<ol>\n<li>How do I refer back to the item id into this part of the code?:</li>\n</ol>\n<pre><code class=\"lang-auto\">monday.api('query {\n  items(ids: ?--&gt;itemid&lt;--?) {\n    name\n    column_values (ids:link82) {\n      id\n      text\n    }\n  }\n}\n');\n</code></pre>\n<ol>\n<li>Then after that: how do I refer to the returned url in the html?</li>\n</ol>"
+    },
+    {
+      "id": 107725,
+      "postNumber": 5,
+      "createdAt": "2022-12-19T06:19:57.176Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/nadiah\">@nadiah</a>,</p>\n<p>I do not understand the questions you sent. What do you mean refer back to the item ID?</p>\n<p>And what do you mean when you say “refer to the returned url in the html”?</p>\n<p>What would “refer” mean in this context?</p>\n<p>And what url in what html?</p>"
+    }
+  ]
+}

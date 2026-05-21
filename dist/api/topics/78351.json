@@ -1,0 +1,89 @@
+{
+  "id": 78351,
+  "title": "GraphQL Parse error on \\\"ids\\\" (IDENTIFIER)",
+  "slug": "graphql-parse-error-on-ids-identifier",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-02-15T20:18:08.353Z",
+  "lastPostedAt": "2024-02-21T10:26:14.587Z",
+  "postsCount": 9,
+  "excerpt": "Hello, \nI have a board and can query the column names fine (1st code block below + image).  But when I try to query the column values I get &quot;“message”: “Parse error on &quot;ids&quot; (IDENTIFIER) at [1, 14]” (2nd code block below&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 560,
+  "posts": [
+    {
+      "id": 168208,
+      "postNumber": 1,
+      "createdAt": "2024-02-15T20:18:08.438Z",
+      "author": "penasm (Scott Pena)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I have a board and can query the column names fine (1st code block below + image).  But when I try to query the column values I get \"“message”: “Parse error on \"ids\" (IDENTIFIER) at [1, 14]” (2nd code block below + 2nd screenshot). Any help is appreciated, thx!!</p>\n<p>{<br />\n“query”:<br />\n“query boards(ids: 6035791171) {items {column_values {column {id title} id type value}}}”<br />\n}</p>\n<p>{<br />\n“query”:<br />\n“query boards(ids: 6035791171) {items(limit: 50) {column_values(ids:[name, project_owner]) {title value}}}”<br />\n}</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/e/6ee438e5fdb43ccf5ab05c90ef40cd60c881aac3.png\" title=\"monday_issue\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/6/e/6ee438e5fdb43ccf5ab05c90ef40cd60c881aac3_2_690x378.png\" alt=\"monday_issue\" width=\"690\" height=\"378\" /><div class=\"meta\"><span class=\"filename\">monday_issue</span><span class=\"informations\">2064×1131 40.5 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/5/652984c40e60f7ae7fce568c8377f52a4d6e9b2b.png\" title=\"monday_issue2\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/6/5/652984c40e60f7ae7fce568c8377f52a4d6e9b2b_2_690x337.png\" alt=\"monday_issue2\" width=\"690\" height=\"337\" /><div class=\"meta\"><span class=\"filename\">monday_issue2</span><span class=\"informations\">2064×1010 52.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 168402,
+      "postNumber": 2,
+      "createdAt": "2024-02-16T19:29:06.339Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>non-integer IDs must be quoted, look in your <code>column_values(ids: [columnID])</code> should have quotes around each column Id in the array. Also board, item, etc. IDs accept strings not just integers. I would recommend treating them as such, since monday returns them as strings not integers in queries.</p>\n<p>I also suggest <a href=\"https://graphql.org/learn/queries/#variables\">https://graphql.org/learn/queries/#variables</a> for a better way to pass in values that avoids the need to ensure things are escaped appropriately. This crops up with column changes and such where you need to send in JSON (send the JSON string as a variable, not part of the mutation string).</p>\n<p>Secondly, you can no longer embed <code>items</code> directly in <code>boards</code> but must use <a href=\"https://developer.monday.com/api-reference/reference/items-page\">items_page</a>.</p>\n<p>Lastly, you cannot return the item name as a column value, it is a property directly on an item.</p>\n<pre><code class=\"lang-auto\">{\n items {\n   name\n }\n} \n</code></pre>"
+    },
+    {
+      "id": 168543,
+      "postNumber": 3,
+      "createdAt": "2024-02-18T11:22:29.305Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 168978,
+      "postNumber": 4,
+      "createdAt": "2024-02-20T13:59:33.438Z",
+      "author": "penasm (Scott Pena)",
+      "cookedHtml": "<p>Thx Cody. I made the changes you suggested. Using items_page without any compare_value, and adding quotes for non integer fields (seems I must use \"COLUMN\") I’m still getting parse errors. Do you see any problems with this?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/8/a84cc955b092df5643db7ff106ff5fb514cee521.png\" title=\"monday_syntax_2_20\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/8/a84cc955b092df5643db7ff106ff5fb514cee521_2_690x288.png\" alt=\"monday_syntax_2_20\" width=\"690\" height=\"288\" /><div class=\"meta\"><span class=\"filename\">monday_syntax_2_20</span><span class=\"informations\">2064×864 32.2 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 168989,
+      "postNumber": 5,
+      "createdAt": "2024-02-20T14:45:23.767Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The query should be something like this. Also the error is because <code>rules</code> is an array of objects, since you’re not trying to filter by column value, just omit the query_params entirely. You specify the column Ids you want as arguments to the <code>column_values</code> subquery inside the items.</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: [\"123123\"]) {\n    items_page (limit: 10) {\n      items {\n        id\n        name\n        column_values(ids: [\"text4\"]) {\n          id\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 169019,
+      "postNumber": 6,
+      "createdAt": "2024-02-20T16:37:27.362Z",
+      "author": "penasm (Scott Pena)",
+      "cookedHtml": "<p>Thx. I did try in Postman using GraphQL as well as raw. Looks like it’s treating items_page as a field:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/9/59a40797eceac76b88d55cf9e35b810267ffe182.png\" title=\"monday_syntax_2_20\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/9/59a40797eceac76b88d55cf9e35b810267ffe182_2_690x349.png\" alt=\"monday_syntax_2_20\" width=\"690\" height=\"349\" /><div class=\"meta\"><span class=\"filename\">monday_syntax_2_20</span><span class=\"informations\">2064×1045 49.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 169024,
+      "postNumber": 7,
+      "createdAt": "2024-02-20T17:05:43.583Z",
+      "author": "penasm (Scott Pena)",
+      "cookedHtml": "<p>I’m a little bit closer. I can get the IDs but column values still null. Any ideas?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/7/172ff08864cc64d7d8bf0b2a3d04211c8768ceba.png\" title=\"monday_syntax_2_20\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/7/172ff08864cc64d7d8bf0b2a3d04211c8768ceba_2_690x288.png\" alt=\"monday_syntax_2_20\" width=\"690\" height=\"288\" /><div class=\"meta\"><span class=\"filename\">monday_syntax_2_20</span><span class=\"informations\">2064×864 33 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 169029,
+      "postNumber": 8,
+      "createdAt": "2024-02-20T17:44:50.375Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>your postman is not sending the API version header for 2024-01. So items_page isn’t going to work.</p>\n<p>Its odd you’re still able to use the old API version but I don’t control that.</p>\n<p>you need an “api-version” header with the value “2024-01” in post man.</p>"
+    },
+    {
+      "id": 169033,
+      "postNumber": 9,
+      "createdAt": "2024-02-20T18:29:05.617Z",
+      "author": "penasm (Scott Pena)",
+      "cookedHtml": "<p>Thx Cody!!! Works fine now. I sincerely appreciate all your help!!!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/2/62433fef34f0220ea77484c3bcb1401f50450a12.png\" title=\"monday_syntax_2_20\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/6/2/62433fef34f0220ea77484c3bcb1401f50450a12_2_690x288.png\" alt=\"monday_syntax_2_20\" width=\"690\" height=\"288\" /><div class=\"meta\"><span class=\"filename\">monday_syntax_2_20</span><span class=\"informations\">2064×864 22.3 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 169168,
+      "postNumber": 10,
+      "createdAt": "2024-02-21T10:26:14.587Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you so much <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!</p>"
+    }
+  ]
+}

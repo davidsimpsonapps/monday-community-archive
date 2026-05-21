@@ -1,0 +1,39 @@
+{
+  "id": 48779,
+  "title": "Automation for \"If X hours passed, do this\"",
+  "slug": "automation-for-if-x-hours-passed-do-this",
+  "categoryId": 5,
+  "tagIds": [
+    6
+  ],
+  "createdAt": "2023-01-10T13:05:47.910Z",
+  "lastPostedAt": "2025-07-31T02:19:40.241Z",
+  "postsCount": 3,
+  "excerpt": "Hello, \nWe use Monday to process and manage bookings and inquiries in our company. \nThe problem is that sometimes the agents forget or miss an inquiry or task so we want to create an automation that will alert us is an i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 976,
+  "posts": [
+    {
+      "id": 109876,
+      "postNumber": 1,
+      "createdAt": "2023-01-10T13:05:47.985Z",
+      "author": "OrSeaNRent (Or Mar)",
+      "cookedHtml": "<p>Hello,</p>\n<p>We use Monday to process and manage bookings and inquiries in our company.<br />\nThe problem is that sometimes the agents forget or miss an inquiry or task so we want to create an automation that will alert us is an inquiry is not closed after X time.<br />\nI can see that it’s possible to create alerts based on due date, but without time.<br />\nWe want either to start a timer and alert “after X hours have passed and item is in group”, or set a due date WITH TIME when an item is created.<br />\nBoth options I don’t see availble.</p>\n<p>How can we create a similar automation to what we want?</p>"
+    },
+    {
+      "id": 235916,
+      "postNumber": 2,
+      "createdAt": "2025-07-30T18:45:22.451Z",
+      "author": "trevor13 (Trevor Chauvin-DeCaro)",
+      "cookedHtml": "<p>Could you try one of these?</p>\n<h2><a name=\"p-235916-use-a-creation-date-formula-automation-setup-native-1\" class=\"anchor\" href=\"#p-235916-use-a-creation-date-formula-automation-setup-native-1\"></a><strong>Use a “Creation Date + Formula + Automation” Setup (Native)</strong></h2>\n<ol>\n<li><strong>Add a Creation Log column</strong> to capture the exact date and time an inquiry is created.</li>\n<li><strong>Add a Formula column</strong> to calculate how long the item has been open:</li>\n</ol>\n<p>less</p>\n<p>CopyEdit</p>\n<pre><code class=\"lang-auto\">ROUND(DAYS(TODAY(), {Creation Log}))\n</code></pre>\n<p>Or, if you want <strong>hours</strong>, use:</p>\n<p>pgsql</p>\n<p>CopyEdit</p>\n<pre><code class=\"lang-auto\">(HOURS_DIFF(NOW(), {Creation Log}))\n</code></pre>\n<ol>\n<li><strong>Use an Automation</strong>:</li>\n</ol>\n<blockquote>\n<p><strong>When formula is greater than X → Notify someone / change status</strong><br />\n<img src=\"https://emoji.discourse-cdn.com/apple/warning.png?v=15\" title=\":warning:\" class=\"emoji\" alt=\":warning:\" width=\"20\" height=\"20\" /> Limitation: Native automations don’t directly read formula outputs as triggers, so this method is a partial workaround—you can visually track aging but can’t natively trigger it automatically without a helper column (see below).</p>\n</blockquote>\n<hr />\n<h2><a name=\"p-235916-option-2-use-a-status-date-combo-to-trigger-alerts-2\" class=\"anchor\" href=\"#p-235916-option-2-use-a-status-date-combo-to-trigger-alerts-2\"></a><strong>Option 2: Use a Status + Date Combo to Trigger Alerts</strong></h2>\n<ol>\n<li><strong>Add a “Follow-Up Deadline” Date column</strong>.</li>\n<li><strong>Use an automation to set it when the item is created</strong>, for example:</li>\n</ol>\n<blockquote>\n<p><strong>When item is created → Set Date to Creation Date + 1 Day</strong></p>\n</blockquote>\n<ol>\n<li>Then, use this alert automation:</li>\n</ol>\n<blockquote>\n<p><strong>When date arrives and status is not Done → Notify someone</strong><br />\n<img src=\"https://emoji.discourse-cdn.com/apple/white_check_mark.png?v=15\" title=\":white_check_mark:\" class=\"emoji\" alt=\":white_check_mark:\" width=\"20\" height=\"20\" /> This works well for <strong>hours or next-day checks</strong> if you approximate the window you need.</p>\n</blockquote>"
+    },
+    {
+      "id": 235926,
+      "postNumber": 3,
+      "createdAt": "2025-07-31T02:19:40.241Z",
+      "author": "Sjurd (Sjurd Skutlaberg)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/orseanrent\">@OrSeaNRent</a><br />\nI think there is a much simpler solution.<br />\nMonday has a native pre-built automation where you can notify someone after some time.</p>\n<p>You can’t build this from scratch, so go to Automations and search for “notify someone after some time”.<br />\nDepending on your workflow, choose a trigger (move to group or status change).<br />\nNext set up your notification message and what time it should occur (you can choose minutes, hours, days, weeks or months).</p>\n<p>No extra date column or workaround needed. Just set up an automation that will trigger this setup (move to group or status change).</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/4/245cd8d48e2e732862bd5a3debdcf94a83421bb1.png\" title=\"Screenshot\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/4/245cd8d48e2e732862bd5a3debdcf94a83421bb1_2_690x429.png\" alt=\"Screenshot\" width=\"690\" height=\"429\" /><div class=\"meta\"><span class=\"filename\">Screenshot</span><span class=\"informations\">2164×1346 163 KB</span></div></a></div><p></p>"
+    }
+  ]
+}

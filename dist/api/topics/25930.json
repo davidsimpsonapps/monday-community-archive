@@ -1,0 +1,77 @@
+{
+  "id": 25930,
+  "title": "Issues with creating an item Via API",
+  "slug": "issues-with-creating-an-item-via-api",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2021-10-11T18:55:36.141Z",
+  "lastPostedAt": "2021-10-15T19:06:57.287Z",
+  "postsCount": 7,
+  "excerpt": "Hi, I am new to the world of Monday.com and am having an issue trying to connect my custom form on my wix website to a board I have setup in monday.com. \nI can create an item with a name, no problem but when I try to add&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2566,
+  "posts": [
+    {
+      "id": 65798,
+      "postNumber": 1,
+      "createdAt": "2021-10-11T18:55:36.222Z",
+      "author": "qcasburn (Quinton)",
+      "cookedHtml": "<p>Hi, I am new to the world of <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> and am having an issue trying to connect my custom form on my wix website to a board I have setup in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>.</p>\n<p>I can create an item with a name, no problem but when I try to add a column value it simply wont work from my javascript request.  This exact same query works from the monday API playground though.</p>\n<p>Help!</p>\n<p>mutation { create_item (board_id: XXX, group_id: “XXX”, item_name: “tests from wix”, column_values: “{\"status\": {\"label\":\"Sign-Up\"}}”) { id }}</p>"
+    },
+    {
+      "id": 65799,
+      "postNumber": 2,
+      "createdAt": "2021-10-11T18:58:49.726Z",
+      "author": "qcasburn (Quinton)",
+      "cookedHtml": "<p>If it helps here is the full function</p>\n<pre><code class=\"lang-auto\">function submitToMonday() {\n\tlet query = \"mutation { create_item (board_id: XXX, group_id: XXX, item_name: \\\"direct from wix\\\", column_values: “{\\“status\\”: {\\“label\\”:\\“Sign-Up\\”}}”) { id }}\";\n\n\tfetch (\"https://api.monday.com/v2\", {\n\tmethod: 'post',\n\theaders: {\n\t\t'Content-Type': 'application/json',\n\t\t'Authorization' : 'XXX.XXX'\n\t},\n\tbody: JSON.stringify({\n\t\tquery : query\n\t})\n\t})\n\t.then(res =&gt; res.json())\n\t.then(res =&gt; console.log(JSON.stringify(res, null, 2)));\n}\n</code></pre>"
+    },
+    {
+      "id": 65801,
+      "postNumber": 3,
+      "createdAt": "2021-10-11T19:13:50.948Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/qcasburn\">@qcasburn</a>,<br />\nIf you are creating a status label that doesn’t already exist on your board, you will have to add the <code>create_labels_if_missing: true</code> argument. Without that, your mutation will throw an error. Additionally, it is necessary to use the right quotation marks. The quotation marks for your column values aren’t valid.<br />\nYour query will therefore look like this:</p>\n<pre><code class=\"lang-auto\">let query = \"mutation { create_item (board_id: XXX, group_id: XXX, create_labels_if_missing: true, item_name: \\\"direct from wix\\\", column_values: \"{\\\"status\\\": {\\\"label\\\":\\\"Sign-Up\\\"}}\") { id }}\";\n</code></pre>"
+    },
+    {
+      "id": 65803,
+      "postNumber": 4,
+      "createdAt": "2021-10-11T19:31:34.432Z",
+      "author": "qcasburn (Quinton)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a><br />\nThank you so much for your response.  The column “status” is already on my board and I have been able to post to it via the API playground before.  It only gives me issues when I try to make the same request via javascript on my client side script.</p>\n<p>I updated my code with your suggestion but now I receive a javascript syntax error.</p>\n<p>The syntax error states a missing semicolon at the end of column_values:</p>\n<pre><code class=\"lang-auto\">let query = \"mutation { create_item (board_id: XXX, group_id: XXX, create_labels_if_missing: true, item_name: \\\"direct from wix\\\", column_values: \"{\\\"status\\\": {\\\"label\\\":\\\"Sign-Up\\\"}}\") { id }}\";\n</code></pre>"
+    },
+    {
+      "id": 65816,
+      "postNumber": 5,
+      "createdAt": "2021-10-12T03:13:46.839Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/qcasburn\">@qcasburn</a>,</p>\n<p>I’d love to help with this! To me, it seems like you are not escaping the column values correctly, in this case. I’d recommend using GraphQL variables in order to store your column values, and then JSON.stringify those, instead of opting to escape JSON manually.</p>\n<p>Here’s an example that will populate the following column types with data:</p>\n<ul>\n<li>Date</li>\n<li>Dropdown</li>\n<li>Status</li>\n<li>Text</li>\n<li>Numbers</li>\n</ul>\n<pre><code class=\"lang-auto\">let query4 = 'mutation ($myItemName: String!, $boardId: Int!, $column_values: JSON!) { create_item (board_id:$boardId, item_name:$myItemName, create_labels_if_missing: true, column_values: $column_values) { id } }';\nlet today = new Date().toISOString().split(\"T\")[0]\nlet vars = \n{\"myItemName\" : \"Hello, world!\",\n\"boardId\":**YOUR_BOARD_ID**,\n\"column_values\": JSON.stringify({\n\"status\":\"New request\",\n\"numbers\":100,\n\"dropdown\":\"Size M\",\n\"text\":\"Next day delivery would be great\",\n\"date4\" : today})}\n\n\nfetch (\"https://api.monday.com/v2\", {\n  method: 'post',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization' : 'YOUR_API_KEY'\n  },\n  body: JSON.stringify({\n    'query' : query4,\n    'variables' : JSON.stringify(vars)\n  })\n})\n  .then(res =&gt; res.json())\n  .then(res =&gt; console.log(JSON.stringify(res, null, 2)));\n</code></pre>\n<p>And the result:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5f3d9d6da46575be9bd83407202b24d34cc70768.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/5f3d9d6da46575be9bd83407202b24d34cc70768_2_690x39.png\" alt=\"image\" width=\"690\" height=\"39\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2468×142 18.3 KB</span>\n</div></a></div><p></p>\n<p>I hope this helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65817,
+      "postNumber": 6,
+      "createdAt": "2021-10-12T03:14:33.454Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 66305,
+      "postNumber": 7,
+      "createdAt": "2021-10-15T19:06:57.287Z",
+      "author": "qcasburn (Quinton)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>!<br />\nThank you so much for that, it works perfect!</p>"
+    },
+    {
+      "id": 66824,
+      "postNumber": 8,
+      "createdAt": "2021-10-22T19:07:41.349Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

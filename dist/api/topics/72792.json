@@ -1,0 +1,84 @@
+{
+  "id": 72792,
+  "title": "How to insert newline or tab using the API",
+  "slug": "how-to-insert-newline-or-tab-using-the-api",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2023-12-11T17:43:58.633Z",
+  "lastPostedAt": "2023-12-11T21:32:37.559Z",
+  "postsCount": 8,
+  "excerpt": "I want to insert a newline and a tab in a long_text field using the API from my C# program. I have tried  , “\\r\\n”, “\\n” and “\\u21B5” but they are either rejected or do not cause a linebreak. Kind of weird cause when I l&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 534,
+  "posts": [
+    {
+      "id": 157311,
+      "postNumber": 1,
+      "createdAt": "2023-12-11T17:43:58.713Z",
+      "author": "ITguy (Jim Thomas)",
+      "cookedHtml": "<p>I want to insert a newline and a tab in a long_text field using the API from my C# program. I have tried <br />, “\\r\\n”, “\\n” and “\\u21B5” but they are either rejected or do not cause a linebreak. Kind of weird cause when I look inside <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> items I see they store it as \\n. Something downstream has decided to reject control chars. How do I accomplish this?</p>"
+    },
+    {
+      "id": 157312,
+      "postNumber": 2,
+      "createdAt": "2023-12-11T17:47:12.711Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I have had no trouble just putting a \\n in the string and having it work, however, the column in the UI, without clicking on the column (or hovering over it) doesn’t display line breaks. So it looks line its missing in the UI until click into the long text column and see the full box.</p>\n<p>Just want to rule that out before spending time looking at queries and such to see if something is haywire.</p>"
+    },
+    {
+      "id": 157315,
+      "postNumber": 3,
+      "createdAt": "2023-12-11T17:54:59.838Z",
+      "author": "ITguy (Jim Thomas)",
+      "cookedHtml": "<p>Thanks for replying - it offers some encouragement that this does work. However for me when I put \\n in a string it gets rejected as an invalid token before the item is ever created.</p>"
+    },
+    {
+      "id": 157318,
+      "postNumber": 4,
+      "createdAt": "2023-12-11T18:04:02.608Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Most likely its not being properly escaped when the query string gets serialized then. Are you using graphql variables in the query, then passing a serialized column_values object as a variable in the request?</p>"
+    },
+    {
+      "id": 157331,
+      "postNumber": 5,
+      "createdAt": "2023-12-11T18:55:57.937Z",
+      "author": "ITguy (Jim Thomas)",
+      "cookedHtml": "<p>Thanks, I will try \\n, \\\\n, \\\\n, \\\\\\n, \\\\\\n as I found up to seven backslashes were sometimes inserted when I submitted the GraphQL query to JSON.</p>"
+    },
+    {
+      "id": 157341,
+      "postNumber": 6,
+      "createdAt": "2023-12-11T19:45:50.654Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I’d investigate graphQL variables, because then you just serialize an object for the column values to JSON and use that string the variable value. This way you do not need to worry about escaping that string manually in any way. Let the computer do it for you.</p>"
+    },
+    {
+      "id": 157353,
+      "postNumber": 7,
+      "createdAt": "2023-12-11T21:14:35.667Z",
+      "author": "ITguy (Jim Thomas)",
+      "cookedHtml": "<p>And the magic number was 3 backslashes before the \\n in my C# string:</p>\n<pre><code class=\"lang-auto\">\"mutation {create_item (board_id: 5666592830, group_id: \\\"topics\\\" , item_name: \\\"Paragraph\\\" , \ncolumn_values: \\\"{\\\\\\\"long_text4\\\\\\\":\\\\\\\"Line 1\\\\\\\\nLine2\\\\\\\"}\\\" ) { id } }\"\n</code></pre>\n<p>When translated to JSON it becomes 7 backslashes before the \\n:</p>\n<pre><code class=\"lang-auto\">\"{\\\"query\\\":\\\"mutation {create_item (board_id: 5666592830, group_id: \\\\\\\"topics\\\\\\\" , item_name: \\\\\\\"Paragraph\\\\\\\" , \ncolumn_values: \\\\\\\"{\\\\\\\\\\\\\\\"long_text4\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"Line 1\\\\\\\\\\\\\\\\nLine2\\\\\\\\\\\\\\\"}\\\\\\\" ) { id } }\\\",\n\\\"variables\\\":null}\"\n</code></pre>\n<p>Having to figure out how many backslashes is pretty tedious. Hence, I will be trying your suggestion to use variables which I have not touched to this point, especially since it is already defined in the GraphQL object which is being JSONified.</p>"
+    },
+    {
+      "id": 157354,
+      "postNumber": 8,
+      "createdAt": "2023-12-11T21:32:37.559Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>This is Javascript but I hope it can assist a bit.</p>\n<pre><code class=\"lang-auto\">const query = `mutation ($boardId: ID!, $groupId: String!, $itemName: String!, $values: JSON!) {create_item (board_id: $boardId, group_id: $groupId , item_name: $itemName ,\ncolumn_values: $values){id}}`\n\nconst values = {\n  [columnId]: {text: paragraphString} \n  //structure for a long_text column, varies by ColumnType\n}\n//note that in API 2023-10, many IDs have changed to ID type\n//which is either String or Int. String is recommended since the API \n//returns strings\nconst variables = {\n   boardId: \"5666592830\", \n   groupId: \"topic\",\n   itemName: \"Paragraph\",\n   values: JSON.stringify(values)\n}\n \n\nconst requestBody = JSON.stringify({query, variables});\n</code></pre>"
+    },
+    {
+      "id": 157396,
+      "postNumber": 9,
+      "createdAt": "2023-12-12T06:11:44.194Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

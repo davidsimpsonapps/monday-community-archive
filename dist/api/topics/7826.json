@@ -1,0 +1,58 @@
+{
+  "id": 7826,
+  "title": "Board and item ID spec/convention for input validation",
+  "slug": "board-and-item-id-spec-convention-for-input-validation",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-06-08T13:37:10.128Z",
+  "lastPostedAt": "2021-02-25T14:33:00.949Z",
+  "postsCount": 6,
+  "excerpt": "Hi! \nWhat I’m doing\nI’m currently parsing Monday board URLs to get their board IDs. \nI can see that the board IDs that I happen to be working with are strings of 9 digits, like 123456789. \nThe issue\nWhen I parse a URL, I&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1558,
+  "posts": [
+    {
+      "id": 19447,
+      "postNumber": 1,
+      "createdAt": "2020-06-08T13:37:10.213Z",
+      "author": "Ash (Ash)",
+      "cookedHtml": "<p>Hi!</p>\n<h1><a name=\"p-19447-what-im-doing-1\" class=\"anchor\" href=\"#p-19447-what-im-doing-1\"></a>What I’m doing</h1>\n<p>I’m currently parsing Monday board URLs to get their board IDs.</p>\n<p>I can see that the board IDs that I happen to be working with are strings of 9 digits, like <code>123456789</code>.</p>\n<h1><a name=\"p-19447-the-issue-2\" class=\"anchor\" href=\"#p-19447-the-issue-2\"></a>The issue</h1>\n<p>When I parse a URL, I’d like to be able to match against the ID spec so I know that what I have is an ID.</p>\n<p>Grabbing the ID from its expected position in the URL (<code>url.split(\"/\")[4]</code>) isn’t enough, since I need to guard against user input errors.</p>\n<h1><a name=\"p-19447-what-im-wondering-about-3\" class=\"anchor\" href=\"#p-19447-what-im-wondering-about-3\"></a>What I’m wondering about</h1>\n<p>Is <em>string-of-9-digits</em> a convention I can rely on for IDs? Will IDs ever:</p>\n<ul>\n<li>Include alphabet characters?</li>\n<li>Include punctuation or special characters?</li>\n<li>Vary in length?</li>\n</ul>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 19507,
+      "postNumber": 2,
+      "createdAt": "2020-06-08T20:47:43.539Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>In my opinion, having an ID that matches a specification is only slightly better than nothing.</p>\n<p>Validating by querying the database with the “suspected” ID would be better. Especially, if it is possible to verify against other expected information like the board name or an expected item, group, subscribers etc.</p>"
+    },
+    {
+      "id": 19626,
+      "postNumber": 3,
+      "createdAt": "2020-06-09T12:28:00.269Z",
+      "author": "Ash (Ash)",
+      "cookedHtml": "<blockquote>\n<p>Validating by querying the database with the “suspected” ID</p>\n</blockquote>\n<p>I can see value in this as well. It really depends on the use case as to which would be more suitable.</p>\n<p>I’m hoping to make net fewer API calls to Monday in my current script. If I’m understanding correctly, sending a query to validate IDs would end up doubling the API calls I need to make. Although I’m convincible on pros and cons of any approach. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 19627,
+      "postNumber": 4,
+      "createdAt": "2020-06-09T13:15:09.164Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>If it is necessary to do the validation on the frontend then you are correct. If the number of API calls  is a significant factor, maybe you could “validate” at processing time by adding some type of error handling for invalid IDs.</p>"
+    },
+    {
+      "id": 19724,
+      "postNumber": 5,
+      "createdAt": "2020-06-10T09:06:29.715Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ash\">@Ash</a>, Some additional thoughts…</p>\n<p>I 'm working on something using APIs from excel. Partially based on your ideas, I put together a formula to extract a board ID from a cell that the user will paste a board link into. The user will be able to enter a board ID, a board URL, or board email address. The formula extracts the ID from this. It’s not perfect. But I think it will be sufficient. It does not depend a specific number of digits.</p>\n<p>Here is the formula text just in case anyone is interested:</p>\n<p>=IFS(ISNUMBER(B1), B1,<br />\nLEFT(LOWER(TRIM(B1)),6)=“board-”, VALUE(MID(B1,7,SEARCH(\"@\",B1)-7)),<br />\nSEARCH(\"/boards/\",B1&amp;\"/boards/\")&lt;LEN(B1), VALUE(MID(B1,SEARCH(\"/boards/\",B1)+8,SEARCH(\"/\",B1&amp;\"/\",SEARCH(\"/boards/\",B1)+8)-(SEARCH(\"/boards/\",B1)+8))),<br />\n1, “ERROR”)</p>"
+    },
+    {
+      "id": 42468,
+      "postNumber": 6,
+      "createdAt": "2021-02-25T14:33:00.949Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

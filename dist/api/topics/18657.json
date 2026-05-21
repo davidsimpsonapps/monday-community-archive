@@ -1,0 +1,58 @@
+{
+  "id": 18657,
+  "title": "Create_item and column value",
+  "slug": "create-item-and-column-value",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2021-04-09T05:01:50.180Z",
+  "lastPostedAt": "2021-04-27T10:16:42.655Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nI’m receiving a ton of issues creating an item with column_values. I’ve gotten both the HTTP 500 error, parse errors on the column_id and parse errors on “{” and etc. \nCan someone kindly help with this, here’s the r&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 4039,
+  "posts": [
+    {
+      "id": 47331,
+      "postNumber": 1,
+      "createdAt": "2021-04-09T05:01:50.246Z",
+      "author": "yuhaocooper (yuhao tan)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m receiving a ton of issues creating an item with column_values. I’ve gotten both the HTTP 500 error, parse errors on the column_id and parse errors on “{” and etc.</p>\n<p>Can someone kindly help with this, here’s the rough code:</p>\n<pre><code>function createItem(){\n  var column = JSON.stringify({numbers:'88'});\n  var mutation = 'mutation{create_item(board_id:my_board_id, group_id:my_group_id, item_name:testingname, column_values:{numbers: 88}) {id} }';\n  var mutation1 = 'mutation{create_item(board_id:my_board_id, group_id:my_group_id, item_name:testingname, column_values:'+column+') {id} }';\n  var response = UrlFetchApp.fetch(\"https://api.monday.com/v2\", {\n    method: 'post',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': apiKey\n    },\n    payload: JSON.stringify({\n      'query': mutation1\n    }),\n    muteHttpExceptions: true\n  })\n  Logger.log(JSON.stringify({'query': mutation}))\n  var json = response.getContentText()\n  var returndata = JSON.parse(json)\n  Logger.log(returndata)\n}\n</code></pre>\n<p>Using <code>mutation1</code> returns me “Parse error on “numbers” (STRING) at [1, 103]”<br />\nWhile using <code>mutation</code> returns me “Internal server error”</p>\n<p>And “numbers” is the id for the column within the board that I would like to change as an example. The create_item works fine without the column_value input.</p>"
+    },
+    {
+      "id": 47373,
+      "postNumber": 2,
+      "createdAt": "2021-04-09T12:23:32.913Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/yuhaocooper\">@yuhaocooper</a></p>\n<p>I’d love to help with this!</p>\n<p>FIrst off, it doesn’t seem like you are sending your request with GraphQL Variables, but rather simply inputting the values from your code into the query. Is my understanding correct?</p>\n<p>If you are not sending the Item Name as part of your variables, you will also need to properly escape it. Let me know if the following example makes sense;</p>\n<pre><code class=\"lang-auto\">const fetch = require('node-fetch');\n\nlet query4 = 'mutation ($myItemName: String!, $columnValues: JSON!, $boardId: Int!) { create_item (board_id:$boardId, item_name:$myItemName, column_values: $columnValues) { id } }';\nlet vars = {\n  \"myItemName\" : \"Hello, world!\",\n  \"columnValues\": \"{\\\"numbers\\\":88}\",\n  \"boardId\": 1199874661\n};\n\nfetch (\"https://api.monday.com/v2\", {\n  method: 'post',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization' : 'ReplaceWithYourAPIKey'\n   },\n   body:  JSON.stringify({\n   'query': query4,\n   'variables' : JSON.stringify(vars)\n  })\n})\n   .then(res =&gt; res.json())\n   .then(res =&gt; console.log(JSON.stringify(res, null, 2)));\n</code></pre>\n<p>This works well for me on my end. Notice the escaping in column values as well <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>You can also avoid escaping by using <code>JSON.stringify</code> dirctly within your variables, and the nagain in making your request:</p>\n<pre><code class=\"lang-auto\">let vars = {\n  \"myItemName\" : \"Hello, world!\",\n  \"columnValues\": JSON.stringify({\"numbers\":88}),\n  \"boardId\": 1199874661\n};\n\n   body:  JSON.stringify({\n   'query': query4,\n   'variables' : JSON.stringify(vars)\n</code></pre>\n<p>What do you think? Let me know.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 47376,
+      "postNumber": 3,
+      "createdAt": "2021-04-09T12:26:09.435Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 49005,
+      "postNumber": 4,
+      "createdAt": "2021-04-27T05:31:03.713Z",
+      "author": "yuhaocooper (yuhao tan)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> ,</p>\n<p>Thanks for the examples! I’ve just changed my code to use the GraphQL variables and it is working on my end while following your formatting.</p>\n<p>A separate issue I’m facing right now with the formatting of the GraphQL variable is with using the JSON.stringify directly on an array variable. E.g:</p>\n<blockquote>\n<p>var personids = [{“id”:16200593,“kind”:“person”}, {“id”:9055423,“kind”:“person”}]</p>\n</blockquote>\n<blockquote>\n<p>“columnValues”: JSON.stringify({“numbers”:num,“person”:{“personsAndTeams”:personids},“timeline”:{“from”:“2021-04-25”,“to”:“2021-04-27”}})</p>\n</blockquote>\n<p>How should I format <code>personids</code> or the <code>columnValues</code> variable to make this work?</p>\n<p>Best regards,<br />\nYuhao</p>"
+    },
+    {
+      "id": 49023,
+      "postNumber": 5,
+      "createdAt": "2021-04-27T10:16:42.655Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/yuhaocooper\">@yuhaocooper</a></p>\n<p>That’s a great question!</p>\n<p>When wanting to assign multiple users to a People column using the API, you will need to send an array of User IDs, as well as the user kind (team/person). Here’s an example of how this query looks in the GraphQL playground:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value (board_id: 1244760373, item_id: 1244760382, column_id: \"person\", value: \"{\\\"personsAndTeams\\\": [{\\\"id\\\":9603417,\\\"kind\\\":\\\"person\\\"}, {\\\"id\\\":14205740, \\\"kind\\\":\\\"person\\\"}]}\") {\n    id\n  }\n}\n</code></pre>\n<p>From wha it looks like, you might need to add a right curly bracket after the Numbers column value you are sending. I hope this helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 52032,
+      "postNumber": 6,
+      "createdAt": "2021-05-19T15:55:08.309Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": 73714,
+  "title": "ERRATA: remote options columnType uses old string not modern enum still",
+  "slug": "errata-remote-options-columntype-uses-old-string-not-modern-enum-still",
+  "categoryId": 8,
+  "tagIds": [
+    203,
+    208
+  ],
+  "createdAt": "2023-12-27T17:51:29.650Z",
+  "lastPostedAt": "2023-12-30T18:23:09.421Z",
+  "postsCount": 5,
+  "excerpt": "With API 2023-10, the column types have changed to an enum, with changed values. \nWhen you have a custom field for remote options, and the dependency is the “Column” of a trigger like “when column changes” it sends the f&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 393,
+  "posts": [
+    {
+      "id": 159383,
+      "postNumber": 1,
+      "createdAt": "2023-12-27T17:51:29.737Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>With API 2023-10, the column types have changed to an enum, with changed values.</p>\n<p>When you have a custom field for remote options, and the dependency is the “Column” of a trigger like “when column changes” it sends the following structure:</p>\n<pre><code class=\"lang-auto\">\"dependencyData\": {\n                \"boardId\": 123324234,\n                \"columnId\": {\n                    \"boardId\": 123324234,\n                    \"columnId\": \"status\",\n                    \"columnType\": \"color\",\n                    \"invalid\": false\n                }\n            }\n</code></pre>\n<p>(ignore that the field is called columnId - thats a side effect this field having been intended originally to use an action column field and not a trigger output column field. )</p>\n<p>Note the “columnType” being sent is using the OLD string values, and not the modern enum.</p>\n<p>I’ve written a preprocessor function for my parser (Zod) to solve this (it just takes in the original value and returns the modern value), but I’d say this is something that needs to get addressed, at least as documented errata.</p>\n<p>Ideally we’d have the option to pick a “version” of the apps framework for an app/feature for the mode for this, which would also send the boardId as a string so it matches the API as well. Then we can get everything in the modern types.</p>"
+    },
+    {
+      "id": 159501,
+      "postNumber": 2,
+      "createdAt": "2023-12-28T18:33:12.219Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Cody,</p>\n<p>Thank you for raising this behavior. I’ll go ahead and bring this up with our developers to make sure this is documented and addressed. Thanks!</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 159524,
+      "postNumber": 3,
+      "createdAt": "2023-12-29T02:23:44.232Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I haven’t verified but I would not be surprised if the Column Type field in an integration block behaves the same.</p>"
+    },
+    {
+      "id": 159641,
+      "postNumber": 4,
+      "createdAt": "2023-12-30T17:44:34.329Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>I had this issue too but with the timeline column returning <code>timerange</code> instead of the new <code>timeline</code>. This shows that it problem is across the various columns, that is they are still using the previous column types in the new api.</p>"
+    },
+    {
+      "id": 159643,
+      "postNumber": 5,
+      "createdAt": "2023-12-30T18:23:09.421Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I’ve not experienced the API itself returning the old values in valid responses. However I have seen it use the old values in errors!</p>\n<p>The payloads for integration blocks though, and remote options for custom fields still use the old values exclusively - which I suppose makes sense since those aren’t versioned at all.</p>\n<p>For reference for anyone who hasn’t seen the chart:</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/changelog/type-change-for-type-field-on-columns-queries\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/changelog/type-change-for-type-field-on-columns-queries\" target=\"_blank\" rel=\"noopener\">Breaking change: Type change for type field/argument on columns queries</a></h3>\n\n  <p>The type field on columns queries will change from a string to ColumnType! in API version 2023-10. The columns field on boards queries, which takes the types argument, will also change from a string to [ColumnType!].This update also impacts the...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>The below TypeScript should assist anyone who needs to modernize old column type strings to the modern ColumnType enum. You can also use the ColumnType enum generally in your code, makes it easier to specify column types.</p>\n<pre><code class=\"lang-auto\">export enum ColumnType {\n    /** Number items according to their order in the group/board */\n    AutoNumber = \"auto_number\",\n    /** Connect data from other boards */\n    BoardRelation = \"board_relation\",\n    /** Perform actions on items by clicking a button */\n    Button = \"button\",\n    /** Check off items and see what's done at a glance */\n    Checkbox = \"checkbox\",\n    /** Manage a design system using a color palette */\n    ColorPicker = \"color_picker\",\n    /** Choose a country */\n    Country = \"country\",\n    /** Add the item's creator and creation date automatically */\n    CreationLog = \"creation_log\",\n    /** Add dates like deadlines to ensure you never drop the ball */\n    Date = \"date\",\n    /** Set up dependencies between items in the board */\n    Dependency = \"dependency\",\n    /** Instantly add collaborative rich text editor */\n    Doc = \"doc\",\n    /** Create a dropdown list of options */\n    Dropdown = \"dropdown\",\n    /** Email team members and clients directly from your board */\n    Email = \"email\",\n    /** Add files &amp; docs to your item */\n    File = \"file\",\n    /** Use functions to manipulate data across multiple columns */\n    Formula = \"formula\",\n    /** Add times to manage and schedule tasks, shifts and more */\n    Hour = \"hour\",\n    /** Integration is really cool... */\n    Integration = \"integration\",\n    /** Show all item's assignees */\n    ItemAssignees = \"item_assignees\",\n    /** Show a unique ID for each item */\n    ItemId = \"item_id\",\n    /** Add the person that last updated the item and the date */\n    LastUpdated = \"last_updated\",\n    /** Simply hyperlink to any website */\n    Link = \"link\",\n    /** Place multiple locations on a geographic map */\n    Location = \"location\",\n    /** Add large amounts of text without changing column width */\n    LongText = \"long_text\",\n    /** Show and edit columns' data from connected boards */\n    Mirror = \"mirror\",\n    /** Name is really cool... */\n    Name = \"name\",\n    /** Add revenue, costs, time estimations and more */\n    Numbers = \"numbers\",\n    /** Assign people to improve team work */\n    People = \"people\",\n    /** Call your contacts directly from monday.com */\n    Phone = \"phone\",\n    /** Show progress by combining status columns in a battery */\n    Progress = \"progress\",\n    /** Rate or rank anything visually */\n    Rating = \"rating\",\n    /** Get an instant overview of where things stand */\n    Status = \"status\",\n    /** Use the subtasks column to create another level of tasks */\n    Subtasks = \"subtasks\",\n    /** Add tags to categorize items across multiple boards */\n    Tags = \"tags\",\n    /** Assign a full team to an item  */\n    Team = \"team\",\n    /** Add textual information e.g. addresses, names or keywords */\n    Text = \"text\",\n    /** Easily track time spent on each item, group, and board */\n    TimeTracking = \"time_tracking\",\n    /** Visualize your item’s duration, with a start and end date */\n    Timeline = \"timeline\",\n    /** Unsupported column type */\n    Unsupported = \"unsupported\",\n    /** Vote on an item e.g. pick a new feature or a favorite lunch place */\n    Vote = \"vote\",\n    /** Select the week on which each item should be completed */\n    Week = \"week\",\n    /** Keep track of the time anywhere in the world */\n    WorldClock = \"world_clock\",\n}\n\nexport type ColumnTypeUnion = `${ColumnType}`; //a type union from enum ColumnType\n\nexport function modernizeColumnTypes(columnType: string | ColumnType): ColumnType {\n    /** ColumnType is a string enum, so will pass as a string*/\n    if (typeof columnType !== \"string\") {\n        throw new Error(\"columnType must be a string\");\n    }\n\n   /** There are many ways to do this. Maps, objects, switch statements. Switch was the shortest though not least verbose path. */\n    switch (columnType) {\n        case \"autonumber\": {\n            return ColumnType.AutoNumber;\n        }\n        case \"boolean\": {\n            return ColumnType.Checkbox;\n        }\n        case \"color-picker\": {\n            return ColumnType.ColorPicker;\n        }\n        case \"board-relation\": {\n            return ColumnType.BoardRelation;\n        }\n        case \"dependent_on\": {\n            return ColumnType.Dependency;\n        }\n        case \"files\": {\n            return ColumnType.File;\n        }\n        case \"pulse-log\": {\n            return ColumnType.CreationLog;\n        }\n        case \"pulse-id\": {\n            return ColumnType.ItemId;\n        }\n        case \"pulse-updated\": {\n            return ColumnType.LastUpdated;\n        }\n        case \"long-text\": {\n            return ColumnType.LongText;\n        }\n        case \"lookup\": {\n            return ColumnType.Mirror;\n        }\n        case \"monday_doc\": {\n            return ColumnType.Doc;\n        }\n        case \"numeric\": {\n            return ColumnType.Numbers;\n        }\n        case \"multiple-person\": {\n            return ColumnType.People;\n        }\n        case \"columns-battery\": {\n            return ColumnType.Progress;\n        }\n        case \"color\": {\n            return ColumnType.Status;\n        }\n        case \"tag\": {\n            return ColumnType.Tags;\n        }\n        case \"timerange\": {\n            return ColumnType.Timeline;\n        }\n        case \"duration\": {\n            return ColumnType.TimeTracking;\n        }\n        case \"votes\": {\n            return ColumnType.Vote;\n        }\n        case \"timezone\": {\n            return ColumnType.WorldClock;\n        }\n        case \"team\": {\n            return ColumnType.Team;\n        }\n        case \"person\": {\n            return ColumnType.Unsupported;\n        }\n        default: {\n            return columnType as ColumnType;\n        }\n    }\n}\n\n</code></pre>"
+    },
+    {
+      "id": 159667,
+      "postNumber": 6,
+      "createdAt": "2023-12-31T06:06:41.429Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Leaving it for Joseph</p>"
+    }
+  ]
+}

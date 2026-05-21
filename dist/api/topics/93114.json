@@ -1,0 +1,64 @@
+{
+  "id": 93114,
+  "title": "OAuth \"missing client_id\" error",
+  "slug": "oauth-missing-client-id-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-07-16T11:53:54.934Z",
+  "lastPostedAt": "2024-07-21T05:25:34.531Z",
+  "postsCount": 5,
+  "excerpt": "Surfacing this here bc it was buried in another thread… \nHi, I’m proceeding with OAuth testing. Not sure what the problem is but I get a response from the token service with the error \n{“error”:“invalid_request”,“error_d&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 63,
+  "posts": [
+    {
+      "id": 193547,
+      "postNumber": 1,
+      "createdAt": "2024-07-16T11:53:55.032Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p><em>Surfacing this here bc it was buried in another thread…</em></p>\n<p>Hi, I’m proceeding with OAuth testing. Not sure what the problem is but I get a response from the token service with the error</p>\n<p>{“error”:“invalid_request”,“error_description”:“Missing client_id param”}</p>\n<pre><code class=\"lang-auto\">  (log) ControllerMonday: sending request to get token with - {\"client_id\":\"NNNNN\",\"client_secret\":\"NNNNN\",\"redirect_uri\":\"MY_REDIRECT_URI\",\"code\":\"NNNN\"}\n  (log) ControllerMonday: token response, getting access token\n  (log) ControllerMonday: token response, body is - {\"error\":\"invalid_request\",\"error_description\":\"Missing client_id param\"}\n</code></pre>\n<p>I’m receiving the redirect callback with the access code just fine. But, then I set all the values including “client_id” and calling <a href=\"https://auth.monday.com/oauth2/token\" rel=\"noopener nofollow ugc\">https://auth.monday.com/oauth2/token</a> and I get the response that “client_id” is missing…</p>\n<p>I had a similar error when I first started testing OAuth for Monday apps and it was because my app settings had changed and I had to redeploy the app so that my OAuth settings had taken effect. But, my app hasn’t changed and I’ve verified the client_id and client_secret as well as the code being sent are correct.</p>\n<p>But, at this point, I’m at a loss. I’m passing the client_id and what I thought was odd was that in the sample code that you referenced, they used this for their POST configuration:</p>\n<pre><code class=\"lang-auto\">GITHUB EXAMPLE CODE\n\n    var authRequest = {\n      url: 'THE_TOKEN_URI',\n      form: {\n        redirect_uri: redirect_uri + \"/oauth/callback\",\n        client_id: client_id,\n        client_secret: client_secret,\n        code: code,\n      },\n    };\n</code></pre>\n<p>They’re using “form” instead of “body” to POST the data to the token service. I tried both with “body” and with “form” and get the same response. Here’s my code…</p>\n<pre><code class=\"lang-auto\">        // Call monday enpoint\n        var config = {\n            method: 'POST',            \n            body: JSON.stringify({\n                client_id: this.Env.MONDAY_CLIENT_ID,\n                client_secret: this.Env.MONDAY_CLIENT_SECRET,\n                redirect_uri: ControllerMonday.OAUTH_REDIRECT_URI,\n                code: code     \n            })\n        };\n        console.log(\"ControllerMonday: sending request to get token with - \"+ config.body);\n        var req = new Request(ControllerMonday.OAUTH_TOKEN_URI);\n        var res = await fetch(req, config);      \n</code></pre>\n<p>Any ideas? Thanks</p>"
+    },
+    {
+      "id": 193652,
+      "postNumber": 2,
+      "createdAt": "2024-07-16T22:43:33.634Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Are you sure its supposed to be in the body of the post? The documentation says they are “parameter” in the table, not “key” so that indicates they are part of the query string - which is what I found I had to do to make it work.</p>"
+    },
+    {
+      "id": 193723,
+      "postNumber": 3,
+      "createdAt": "2024-07-17T11:32:12.697Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p>Query string parameters for POSTing data?  Ok…</p>"
+    },
+    {
+      "id": 193788,
+      "postNumber": 4,
+      "createdAt": "2024-07-17T18:15:41.253Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yeah it seems quite weird but… its actually not against any specification as far as I know. POST is just for sending non-idempotent data in REST. Can be in the body or query string.</p>"
+    },
+    {
+      "id": 194166,
+      "postNumber": 5,
+      "createdAt": "2024-07-21T05:25:34.531Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p>Yep, thanks!  Will report back when I finish testing, thanks again.</p>"
+    },
+    {
+      "id": 195147,
+      "postNumber": 6,
+      "createdAt": "2024-07-28T09:50:20.131Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

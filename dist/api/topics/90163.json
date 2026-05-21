@@ -1,0 +1,72 @@
+{
+  "id": 90163,
+  "title": "Retreiving Blocks from a Workdoc stored in a board's monday Doc column?",
+  "slug": "retreiving-blocks-from-a-workdoc-stored-in-a-boards-monday-doc-column",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351,
+    362
+  ],
+  "createdAt": "2024-06-17T09:59:07.114Z",
+  "lastPostedAt": "2024-07-07T06:04:41.177Z",
+  "postsCount": 6,
+  "excerpt": "Hi there. \nI want to build an app for monday.com, and would like to read the contents of Workdocs. \nI know I can get all docs via: \nquery {\n  docs {\n    id\n\t\tname\n  }\n}\n\nThen, get the blocks for a specific doc via: \n{\n  &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 182,
+  "posts": [
+    {
+      "id": 189100,
+      "postNumber": 1,
+      "createdAt": "2024-06-17T09:59:07.199Z",
+      "author": "wnm (Wolfram Müller)",
+      "cookedHtml": "<p>Hi there.</p>\n<p>I want to build an app for <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>, and would like to read the contents of Workdocs.</p>\n<p>I know I can get all docs via:</p>\n<pre><code class=\"lang-auto\">query {\n  docs {\n    id\n\t\tname\n  }\n}\n</code></pre>\n<p>Then, get the blocks for a specific doc via:</p>\n<pre><code class=\"lang-auto\">{\n  docs(ids: \"1528931161\") {\n    blocks {\n      type\n      content\n      id\n    }\n  }\n}\n</code></pre>\n<p>That works for “regular” Workdocs. It doesn’t work for Workdocs that are stored inside a board’s monday Doc column:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/9/099f047bf3075616defa5c7e5aded340b48debeb.png\" title=\"Screenshot 2024-06-14 at 11-03-22 Articles\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/9/099f047bf3075616defa5c7e5aded340b48debeb_2_690x378.png\" alt=\"Screenshot 2024-06-14 at 11-03-22 Articles\" width=\"690\" height=\"378\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-14 at 11-03-22 Articles</span><span class=\"informations\">2940×1612 380 KB</span></div></a></div><p></p>\n<p>There is some documentation about reading the <a href=\"https://developer.monday.com/api-reference/reference/document#read-the-monday-doc-column\" rel=\"noopener nofollow ugc\">mondy Doc column</a>, but I’m struggling to understand how to read the docs’s blocks?</p>\n<p>Also, I’m wondering why does the api not return the workdocs that are stored inside boards, when I query for ALL workdocs. (the first query posted)</p>"
+    },
+    {
+      "id": 189286,
+      "postNumber": 2,
+      "createdAt": "2024-06-18T08:34:01.191Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C023GQWGZ51/p1718710425062329\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 189490,
+      "postNumber": 3,
+      "createdAt": "2024-06-19T10:26:37.349Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/wnm\">@wnm</a>,</p>\n<p>You can use a query like this one to get the “object ID” of the doc:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1234567890) {\n    column_values(ids: \"monday_doc__1\") {\n      value\n    }\n  }\n}\n</code></pre>\n<p>Then you can use that ID in a new query to get the content of the doc:</p>\n<pre><code class=\"lang-auto\">{\n  docs(object_ids: [1112223334]) {\n    blocks {\n      content\n      type\n    }\n  }\n}\n</code></pre>\n<p>As of today, the general “docs” query will only get docs from the left pane.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 189509,
+      "postNumber": 4,
+      "createdAt": "2024-06-19T11:50:03.079Z",
+      "author": "wnm (Wolfram Müller)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>thanks so much for your reply! that makes total sense… quite obvious in hindsight <img src=\"https://emoji.discourse-cdn.com/apple/sweat_smile.png?v=12\" title=\":sweat_smile:\" class=\"emoji\" alt=\":sweat_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I actually do have another question. I’ve been playing around with the api quite a bit, and one thing I tried to do was to find out how the different blocks where returned by the api. And I stumbled upon something weird, when using a “notice box” block.</p>\n<p>In monday, it looks like this:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/8/1898e301f072d822715ff38be7ed038095af206f.jpeg\" title=\"Untitled\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/8/1898e301f072d822715ff38be7ed038095af206f_2_690x359.jpeg\" alt=\"Untitled\" width=\"690\" height=\"359\" /><div class=\"meta\"><span class=\"filename\">Untitled</span><span class=\"informations\">3317×1728 134 KB</span></div></a></div><p></p>\n<p>But the api, returns the blocks in a strange order:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"docs\": [\n      {\n        \"blocks\": [\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[]}\",\n            \"id\": \"92a7db06-2826-4bd7-9dde-6a7f779b9ae3\"\n          },\n          {\n            \"type\": \"notice box\",\n            \"content\": \"{\\\"theme\\\":\\\"tips\\\",\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\"}\",\n            \"id\": \"87e4dd41-6640-4050-bd62-e0ea2aabeb5d\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[]}\",\n            \"id\": \"5aa5baba-e51d-4998-82cb-3887d8df3091\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"Ah wrong order\\\"}]}\",\n            \"id\": \"d6521d56-3192-4f76-9874-5c730eab2034\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[]}\",\n            \"id\": \"8725f941-f1eb-4fb7-bec4-78659eedb16a\"\n          },\n          {\n            \"type\": \"notice box\",\n            \"content\": \"{\\\"theme\\\":\\\"info\\\",\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\"}\",\n            \"id\": \"78434a45-21e7-4fab-96a8-2387386b6edb\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[]}\",\n            \"id\": \"08537fc9-4550-4f42-9684-8277b9b2deed\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"mh, that is strange\\\"}]}\",\n            \"id\": \"1c485b60-aced-4c50-846a-2dcd7ba51fb9\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[]}\",\n            \"id\": \"9a82a053-c4f4-47dc-a022-dc56204bd806\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"Yes, this might be a good idea!\\\"}]}\",\n            \"id\": \"5b490486-28b2-4f1e-b4a5-0d049ddf166f\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"Attention!\\\"}]}\",\n            \"id\": \"a385cfa1-4393-4c2a-8b23-84e57bcd3332\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": ...\n}\n</code></pre>\n<p>I noticed that when I use a “code” block, or a “quote” block, the api returns the content within the block, in an insert attribute… but the notice box block returns the text part of the block in a different block, completely out of order:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"docs\": [\n      {\n        \"blocks\": [\n          {\n            \"type\": \"notice box\",\n            \"content\": \"{\\\"theme\\\":\\\"info\\\",\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\"}\",\n            \"id\": \"cd89d37c-0b7a-41ad-a15a-9745b3d28600\"\n          },\n          {\n            \"type\": \"quote\",\n            \"content\": \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"quote of the thing\\\"}]}\",\n            \"id\": \"2e011825-448d-409d-927e-e8e19741c905\"\n          },\n          {\n            \"type\": \"code\",\n            \"content\": \"{\\\"language\\\":\\\"ruby\\\",\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"# code block \\\\n\\\\ndef method\\\\nend\\\"},{\\\"insert\\\":\\\"\\\\n\\\",\\\"attributes\\\":{\\\"code-block\\\":true}}]}\",\n            \"id\": \"7225cd17-88c5-4d3b-a39f-c0361f298970\"\n          },\n          {\n            \"type\": \"normal text\",\n            \"content\": \"{\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"test notice\\\"}]}\",\n            \"id\": \"4d2b3dd3-1485-47e6-92b2-e6c8e537ef52\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": ...\n}\n</code></pre>\n<p>Is that a bug potentially?</p>"
+    },
+    {
+      "id": 189684,
+      "postNumber": 5,
+      "createdAt": "2024-06-20T10:20:40.637Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/wnm\">@wnm</a>,</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it so that our team can take a look into it?</p>"
+    },
+    {
+      "id": 192374,
+      "postNumber": 6,
+      "createdAt": "2024-07-07T05:43:14.269Z",
+      "author": "manishaghosh (MG)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>in this query<br />\n{<br />\ndocs(object_ids: [1112223334]) {<br />\nblocks {<br />\ncontent<br />\ntype<br />\n}<br />\n}<br />\n},</p>\n<p>shouldn’t we be able to use more than one object ids? For example ’ docs(object_ids: [1112223334, 12345678])'? Such a query does not seem to return the desired result. Am I doing something wrong here? I want to fetcch two docs at once here.</p>"
+    },
+    {
+      "id": 192397,
+      "postNumber": 7,
+      "createdAt": "2024-07-07T06:04:41.177Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/manishaghosh\">@manishaghosh</a>!</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it so that our team can take a look into it?</p>"
+    }
+  ]
+}

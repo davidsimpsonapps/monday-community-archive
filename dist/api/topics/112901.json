@@ -1,0 +1,29 @@
+{
+  "id": 112901,
+  "title": "File Upload Executes Recursively 3 Times and Returns HTML Response",
+  "slug": "file-upload-executes-recursively-3-times-and-returns-html-response",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    41,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2025-04-09T15:51:44.351Z",
+  "lastPostedAt": "2025-04-09T15:51:44.429Z",
+  "postsCount": 1,
+  "excerpt": "I’m running into unexpected behavior: \n\nThe file upload request is being executed 3 times instead of once.\nThe response is HTML (possibly an error page), not JSON as expected.\n\nHere’s the code snippet: \nconst API_TOKEN =&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 9,
+  "posts": [
+    {
+      "id": 226487,
+      "postNumber": 1,
+      "createdAt": "2025-04-09T15:51:44.429Z",
+      "author": "surya (surya)",
+      "cookedHtml": "<p>I’m running into unexpected behavior:</p>\n<ol>\n<li>The file upload request is being executed <strong>3 times</strong> instead of once.</li>\n<li>The response is <strong>HTML</strong> (possibly an error page), not JSON as expected.</li>\n</ol>\n<p>Here’s the code snippet:</p>\n<pre><code class=\"lang-auto\">const API_TOKEN = \"&lt;API key&gt;\";\nconst formData = new FormData();\nconst ITEM_ID = \"&lt;Item ID&gt;\";\nconst COLUMN_ID = \"files\";\n\nconst query = `\n  mutation ($file: File!) {\n    add_file_to_column(item_id: ${ITEM_ID}, column_id: \"${COLUMN_ID}\", file: $file) {\n      id\n    }\n  }\n`;\n\nconst imageResponse = await fetch(\n  \"https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&amp;q=60&amp;w=3000&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D\",\n);\nconst buffer = await imageResponse.buffer();\n\nformData.append(\"query\", query);\nformData.append(\"variables[file]\", buffer, {\n  filename: \"image.png\",\n  contentType: imageResponse.headers.get(\"content-type\"),\n});\n\nconst res = await fetch('https://api.monday.com/v2/file', {\n  method: 'POST',\n  headers: {\n    Authorization: API_TOKEN,\n  },\n  body: formData,\n});\n\nconst data = await res.json();\nconsole.log(data);\n</code></pre>"
+    }
+  ]
+}

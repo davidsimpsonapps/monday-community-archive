@@ -1,0 +1,67 @@
+{
+  "id": 32521,
+  "title": "Country name is not strictly required when updating a country column",
+  "slug": "country-name-is-not-strictly-required-when-updating-a-country-column",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-03-03T23:48:15.456Z",
+  "lastPostedAt": "2022-03-06T08:20:39.478Z",
+  "postsCount": 7,
+  "excerpt": "The API documentation indicates that both the ISO 3166-1 alpha-2 code and the full country name are required in order to update a column with type Country.  While it’s not necessarily difficult to map between the two if &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1350,
+  "posts": [
+    {
+      "id": 78841,
+      "postNumber": 1,
+      "createdAt": "2022-03-03T23:48:15.545Z",
+      "author": "riosd (Danny)",
+      "cookedHtml": "<p>The API documentation indicates that both the ISO 3166-1 alpha-2 code and the full country name are required in order to update a column with type <code>Country</code>.  While it’s not necessarily difficult to map between the two if one only has one or the other, I wanted to test its requirements and drill down into edge cases.</p>\n<p>In doing so, it seems that the country name is not strictly required to have a value and is only required for its property to be present. That is, the column will update, and do so correctly, based entirely on the code.</p>\n<p>For example, all of the following mutations update a country column with United States as the visible value and a U.S. flag within the column.</p>\n<pre><code class=\"lang-json\">mutation ($itemId: Int!, $boardId: Int!) {\n  change_multiple_column_values (\n    item_id: $itemId, \n    board_id: $boardId, \n    column_values: \"{ \\\"country_1\\\": { \\\"countryCode\\\": \\\"US\\\", \\\"countryName\\\": \\\"United States\\\" }}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<pre><code class=\"lang-json\">mutation ($itemId: Int!, $boardId: Int!) {\n  change_multiple_column_values (\n    item_id: $itemId, \n    board_id: $boardId, \n    column_values: \"{ \\\"country_1\\\": { \\\"countryCode\\\": \\\"US\\\", \\\"countryName\\\": \\\"\\\" }}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<pre><code class=\"lang-json\">mutation ($itemId: Int!, $boardId: Int!) {\n  change_multiple_column_values (\n    item_id: $itemId, \n    board_id: $boardId, \n    column_values: \"{ \\\"country_1\\\": { \\\"countryCode\\\": \\\"US\\\", \\\"countryName\\\": \\\"monday.com\\\" }}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Now, if you query the item back, it will indeed contain whatever <code>countryName</code> you updated it with, whether that’s a valid country name (like the first example) or something useless (like examples 2 and 3).</p>\n<p>So, it seems the <code>countryName</code> is not strictly required for updating the field. Now, using a country code that is either obviously bad (<code>\"\"</code>, <code>lj09u9</code>, among others) results in a <code>ColumnValueException</code>, even if <code>countryName</code> is valid (e.g. <code>United States</code>).</p>\n<p>It appears, then, that the code is the only true requirement. Is this behavior something I can rely on?</p>"
+    },
+    {
+      "id": 78885,
+      "postNumber": 2,
+      "createdAt": "2022-03-04T13:34:40.467Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/r/9d8465/48.png\" class=\"avatar\" /> riosd:</div>\n<blockquote>\n<p>It appears, then, that the code is the only true requirement. Is this behavior something I can rely on?</p>\n</blockquote>\n</aside>\n<p>It seems quite clear to me.<br />\nYou must send a 2-letter ISO-2 Country code (so a valid code) and the Country name.<br />\nThere’s no restriction on how the Country name must be formatted, it can be any text, so I guess it’s for localization purposes.<br />\nYou can either send <code>\"countryName\": \"United States\"</code> or <code>\"countryName\": \"Stati Uniti d'America\"</code>. They are both accepted.</p>"
+    },
+    {
+      "id": 78896,
+      "postNumber": 3,
+      "createdAt": "2022-03-04T15:07:18.674Z",
+      "author": "riosd (Danny)",
+      "cookedHtml": "<p>As seen in my second example, you can send an empty string for the country name. The existence of the property is the only thing that’s required, but not any meaningful value, localized or otherwise. Personally, sending no text at all does not qualify as sending the country name.</p>"
+    },
+    {
+      "id": 78914,
+      "postNumber": 4,
+      "createdAt": "2022-03-04T16:32:32.336Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Ok, so what’s the point?<br />\nSorry but I don’t get the reason of your post.</p>"
+    },
+    {
+      "id": 78919,
+      "postNumber": 5,
+      "createdAt": "2022-03-04T17:20:38.170Z",
+      "author": "riosd (Danny)",
+      "cookedHtml": "<p>The point is the question at the bottom of the post: Is this behavior something I can rely on? That is, I’m making sure it isn’t simply unintended to not validate the <code>countryName</code> as things can easily get missed when considering the entire API surface.</p>\n<p>If it is unintended, then it could be fixed at some point. If I’m then relying on the behavior that the string doesn’t matter, it could cause issues. Sure, once errors start cropping up for others, I could be notified of that, but I’d prefer to avoid that in the first place by confirming the intended behavior.</p>"
+    },
+    {
+      "id": 78983,
+      "postNumber": 6,
+      "createdAt": "2022-03-06T08:20:39.478Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/riosd\">@riosd</a>!</p>\n<p>What you say is correct. And it is like this by design so you can use it as it is <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 79723,
+      "postNumber": 7,
+      "createdAt": "2022-03-13T08:20:40.587Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

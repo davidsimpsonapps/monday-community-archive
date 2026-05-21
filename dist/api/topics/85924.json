@@ -1,0 +1,35 @@
+{
+  "id": 85924,
+  "title": "Custom trigger without a subscribe URL",
+  "slug": "custom-trigger-without-a-subscribe-url",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    208,
+    351
+  ],
+  "createdAt": "2024-05-05T11:20:15.854Z",
+  "lastPostedAt": "2024-05-06T02:20:55.064Z",
+  "postsCount": 2,
+  "excerpt": "Hi, I want to have a custom trigger of “column change” but the user will be able to select ONLY file type column. \nHow can i achieve this? \nWhen creating a custom trigger I need to select a subscribe URL, which I don’t n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 102,
+  "posts": [
+    {
+      "id": 182211,
+      "postNumber": 1,
+      "createdAt": "2024-05-05T11:20:15.942Z",
+      "author": "tavorp (Tavor)",
+      "cookedHtml": "<p>Hi, I want to have a custom trigger of “column change” but the user will be able to select <strong>ONLY</strong> file type column.<br />\nHow can i achieve this?</p>\n<p>When creating a custom trigger I need to select a subscribe URL, which I don’t need in this case because I am not using any external system.</p>\n<p>So - How can i create a custom trigger “When a File column changes”?</p>\n<p>Thanks in advance!</p>"
+    },
+    {
+      "id": 182251,
+      "postNumber": 2,
+      "createdAt": "2024-05-06T02:20:55.064Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/tavorp\">@tavorp</a>,</p>\n<p>You could use a built-in trigger with a custom action and in the action you could add a custom field of type “list” (source: recipe sentence) that has “boardId” as a dependency. Then when the user clicks on that custom field, your endpoint would be called and the board ID would be sent to you, then you can use that board ID to query via API all the “files” columns in the board, and then display them as a list for the user to choose from. The downside about this is that this would trigger each time anything changes if you use the “whenever any column changes”, and then you would need to check on your end if the change that happened is coming from the same column the user selected or not.</p>\n<p>The other way to do this would be to do something similar from a custom trigger instead of a custom action, adding the custom field here, and then adding a webhook whenever any column changes, to use that as your trigger event to then call your custom trigger’s webhook URL.</p>\n<p>You could also create a webhook that gets triggered when the selected files column changes:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_webhook (board_id: 1234567890, url: \"https://myserver.com/webhook\", event: change_status_column_value, config: \"{\\\"columnId\\\":\\\"files__1\\\", \\\"columnValue\\\":{\\\"$any$\\\":true}}\") {\n    id\n    board_id\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

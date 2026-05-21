@@ -1,0 +1,77 @@
+{
+  "id": 42821,
+  "title": "Link Column Query",
+  "slug": "link-column-query",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2022-09-20T16:46:24.780Z",
+  "lastPostedAt": "2022-09-29T16:13:22.733Z",
+  "postsCount": 8,
+  "excerpt": "Hi Everyone, \nI’m trying to use the API to input a url generated from on board elements into a link column in python. I’ve C&amp;P’d my query as you can see the url and text for the link column are variables I’m unsure how t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1150,
+  "posts": [
+    {
+      "id": 98255,
+      "postNumber": 1,
+      "createdAt": "2022-09-20T16:46:24.860Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>Hi Everyone,</p>\n<p>I’m trying to use the API to input a url generated from on board elements into a link column in python. I’ve C&amp;P’d my query as you can see the url and text for the link column are variables I’m unsure how to actually write the query so that the API understand what I’m sending.</p>\n<pre><code class=\"lang-auto\">query = 'mutation ($boardID:Int!,$itemID:Int!,$colID:String!,$linkVal: JSON!) { change_multiple_column_values(item_id:[$itemID],board_id:[boardID],column_values:$linkVal)}'\n    vars = {\n        'boardID':boardID,\n        'itemID':itemID,\n        'colID': colID,\n        'linkVal': {\n            'colID': {'url': itemURL, 'text': itemName}\n        }\n    }\n</code></pre>\n<p>Full Code:</p>\n<pre><code class=\"lang-auto\">boardID= myBoardID\n\nquery = 'query ($boardID:Int!) {boards(ids:[$boardID]){items {id name}}}'\nvars={\n    'boardID': boardID\n}\n\ndata = {'query': query, 'variables': vars}\nr = requests.post(url=apiUrl, json=data, headers=headers)  # make request\nitemsInjest=r.json()\nitemsDict=itemsInjest['data']\nitemsVal=itemsDict['boards']\nitemsURL = []\nboardID=str(boardID)\nfor items in itemsVal:\n    for itemsIDs in items['items']:\n        url= str(\"https://acep-space.monday.com/boards/\"+ boardID+ \"/pulses/\"+ itemsIDs['id'])\n        itemsURL.append([int(itemsIDs['id']),itemsIDs['name'],url])\n\nboardID = int(boardID)\n\n\nquery = 'query ($boardID:Int!) {boards(ids:[$boardID]){items(limit:1){column_values{id type}}}}'\nvars = {\n    'boardID': boardID\n}\n\ndata = {'query': query, 'variables': vars}\nr = requests.post(url=apiUrl, json=data, headers=headers)  # make request\n\ncolInjest = r.json()\ncolDict = colInjest['data']\ncolItems = colDict['boards']\nfor items in colItems:\n    for colVals in items['items']:\n        break\n    break\ncolData = colVals['column_values']\n\ni = 0\nwhile i &lt; len(colData):\n    colVal = colData[i]\n    colType = colVal['type']\n    if colType == 'link':\n        colID = colVal['id']\n    i += 1\n\ni=0\nwhile i&lt;len(itemsURL):\n    itemData=itemsURL[i]\n    itemID=itemData[0]\n    itemName=itemData[1]\n    itemURL=itemData[2]\n    query = 'mutation ($boardID:Int!,$itemID:Int!,$colID:String!,$linkVal: JSON!) { change_multiple_column_values(item_id:[$itemID],board_id:[boardID],column_values:$linkVal)}'\n    vars = {\n        'boardID':boardID,\n        'itemID':itemID,\n        'colID': colID,\n        'linkVal': {\n            'colID': {'url': itemURL, 'text': itemName}\n        }\n    }\n\n    data = {'query': query, 'variables': vars}\n    r = requests.post(url=apiUrl, json=data, headers=headers)  # make request\n    print(r.json())\n    i+=1\n</code></pre>"
+    },
+    {
+      "id": 98320,
+      "postNumber": 2,
+      "createdAt": "2022-09-21T11:21:32.169Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>Doing some more testing the issue seems to be within how python formats quotes when passing this data</p>\n<pre><code class=\"lang-auto\">output = '{\"query\":\"mutation{change_multiple_column_values(item_id:$myItemID, board_id:$myBoardID, column_values:\\\"{\\\\\\\"link9\\\\\\\" : {\\\\\\\"url\\\\\\\" : \\\\\\\"https://acep-space.monday.com/boards/$myBoardID/pulses/$myItemID\\\\\\\", \\\\\\\"text\\\\\\\" : \\\\\\\"Sandbox Task 13\\\\\\\"}}\\\"){id}}\"}'\ntest = output\nprint(test)\n\n\nquery = '\"mutation{change_multiple_column_values(item_id:$myItemID, board_id:$myBoardID, column_values:\\\"{\\\\\\\"link9\\\\\\\" : {\\\\\\\"url\\\\\\\" : \\\\\\\"https://acep-space.monday.com/boards/$myBoardID/pulses/$myItemID\\\\\\\", \\\\\\\"text\\\\\\\" : \\\\\\\"Sandbox Task 13\\\\\\\"}}\\\"){id}}\"'\ntest = query\nprint(test)\n\nquery = \"mutation{change_multiple_column_values(item_id:$myItemID, board_id:$myBoardID, column_values:\\\"{\\\\\\\"link9\\\\\\\" : {\\\\\\\"url\\\\\\\" : \\\\\\\"https://acep-space.monday.com/boards/$myBoardID/pulses/$myItemID\\\\\\\", \\\\\\\"text\\\\\\\" : \\\\\\\"Sandbox Task 13\\\\\\\"}}\\\"){id}}\"\ndata = {\"query\": query}\ntest = (data)\nprint(test)\n</code></pre>\n<p>The top format is what is expected by Monday, the middle format was used to test various implementations of passing the query, the final format is what I’m using so that I can also pass variables into the final request in this the escape characters are formatted incorrectly.</p>"
+    },
+    {
+      "id": 98394,
+      "postNumber": 3,
+      "createdAt": "2022-09-21T23:28:12.983Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/neelpi\">@NeelPi</a>!</p>\n<p>It looks like you have more slashes than necessary. The column values should be formatted like this, for example:</p>\n<p><code>column_values: \"{\\\"status\\\": \\\"Done\\\"}\"</code></p>"
+    },
+    {
+      "id": 98439,
+      "postNumber": 4,
+      "createdAt": "2022-09-22T13:28:23.931Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>Specifically with the link column type what would be the best way pass variables into the post request?</p>"
+    },
+    {
+      "id": 98440,
+      "postNumber": 5,
+      "createdAt": "2022-09-22T13:30:55.858Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>I have tried multiple ways of providing column values and the json parser in python seems to not be able to understand what is being sent.</p>"
+    },
+    {
+      "id": 98442,
+      "postNumber": 6,
+      "createdAt": "2022-09-22T14:16:06.911Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>I ask because this is what the API is looking for</p>\n<pre><code class=\"lang-auto\">query: mutation {change_multiple_column_values(item_id: 2973227073, board_id: 2973227049, column_values: \"{\\\"link\\\" : {\\\"url\\\" : \\\"\\\", \\\"text\\\" : \\\"\\\"}}\") { id} }\n</code></pre>\n<p>however I want to use mutations since the values for columnID, url, and text are variable and determined by my code from other queries so my final query would look something like</p>\n<pre><code class=\"lang-auto\">query: mutation ($boardID:Int!,$itemID:Int!,$colID:String!,$itemURL:String!,$itemName:String!,$linkVal: JSON!) {change_multiple_column_values(item_id:[$itemID], board_id:[$boardID],column_values:[$linkVal]){id}}, variables: {'boardID': boardID, 'itemID': itemID, 'colID': colID, 'itemURL': itemURL, 'itemName': itemName, 'linkVal': \"{ [$colID] : {\"url\" : [$itemURL], \"text\": [$itemName]}}\"}\n</code></pre>\n<p>or</p>\n<pre><code class=\"lang-auto\">query: mutation ($boardID:Int!,$itemID:Int!,$colID:String!,$itemURL:String!,$itemName:String!) {change_multiple_column_values(item_id:[$itemID], board_id:[$boardID],column_values:\"{[$colID] : {\\\"url\\\" : [$itemURL], \\\"text\\\" : [itemName]}}\"){id}}, variables: {'boardID': boardID, 'itemID': itemID, 'colID': colID, 'itemURL': itemURL, 'itemName': itemName}\n</code></pre>\n<p>However with either solution I am unable to understand where to place the escape characters so that the json parser understands and I get to use my variables as inputs.</p>"
+    },
+    {
+      "id": 99103,
+      "postNumber": 7,
+      "createdAt": "2022-09-29T16:13:22.733Z",
+      "author": "NeelPi (Neel Pai)",
+      "cookedHtml": "<p>Solution: I ended up having to remove the square brackets around my variables in the mutation and passed the value for linkVal through JSON.dumps.</p>\n<p>For anyone curious this was how the POST request query had to be set up:</p>\n<pre><code class=\"lang-nohighlight\">    vars = {\n        'boardID':boardID,\n        'itemID':itemID,\n        'linkVal': json.dumps({\n            colID: {'url': itemURL, 'text': itemName}\n        })\n    }\n</code></pre>\n<p>And this is the full code:</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\napiKey = \"myAPIKey” \npiUrl = https://api.monday.com/v2\nheaders = {\"Authorization\": apiKey}\n\nboardID = myBoardID\n\nquery = 'query ($boardID:Int!) {boards(ids:[$boardID]){items{id name}}}'\nvars={\n    'boardID': boardID\n}\n\ndata = {'query': query, 'variables': vars}\nr = requests.post(url=apiUrl, json=data, headers=headers)  # make request\nitemsInjest=r.json()\nitemsVal=itemsInjest['data']['boards']\nboardID=str(boardID)\nitemsURL=sum(([\n    [\n        int(itemsIDs['id']),\n        itemsIDs['name'],\n        f'https://acep-space.monday.com/boards/{boardID}/pulses/{itemsIDs[\"id\"]}'\n    ]\n    for itemsIDs in items['items']] for items in itemsVal),[])\n\nboardID = int(boardID)\n\nquery = 'query ($boardID:Int!) {boards(ids:[$boardID]){items(limit:1){column_values{id title type}}}}'\nvars = {\n    'boardID': boardID\n}\n\ndata = {'query': query, 'variables': vars}\nr = requests.post(url=apiUrl, json=data, headers=headers)  # make request\n\ncolInjest = r.json()\ncolData=colInjest['data']['boards'][0]['items'][0]['column_values']\ncolID = [colVal['id'] for colVal in colData if colVal['type'] == 'link' and colVal['title'] == 'Email Link'][0]\n\nfor itemID,itemName,itemURL in itemsURL:\n    query = 'mutation ($boardID:Int!,$itemID:Int!,$linkVal: JSON!) { change_multiple_column_values(item_id: $itemID, board_id: $boardID, column_values: $linkVal){id}}'\n    vars = {\n        'boardID':boardID,\n        'itemID':itemID,\n        'linkVal': json.dumps({\n            colID: {'url': itemURL, 'text': itemName}\n        })\n    }\n\n    data = {'query': query, 'variables': vars}\n    r = requests.post(url=apiUrl, json=data, headers=headers)  # make request\n</code></pre>"
+    },
+    {
+      "id": 99778,
+      "postNumber": 8,
+      "createdAt": "2022-10-06T16:13:46.298Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

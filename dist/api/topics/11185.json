@@ -1,0 +1,37 @@
+{
+  "id": 11185,
+  "title": "Ever wishes you had an app code or id?",
+  "slug": "ever-wishes-you-had-an-app-code-or-id",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-09-14T17:07:10.112Z",
+  "lastPostedAt": "2021-02-25T14:43:37.204Z",
+  "postsCount": 3,
+  "excerpt": "Hi builders, \nI share this because it took me some time to figure out how I could connect 2 apps to the same backend code on my server. I had build one app with several integrations and was looking for a way to split the&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1323,
+  "posts": [
+    {
+      "id": 28459,
+      "postNumber": 1,
+      "createdAt": "2020-09-14T17:07:10.180Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi builders,</p>\n<p>I share this because it took me some time to figure out how I could connect 2 apps to the same backend code on my server. I had build one app with several integrations and was looking for a way to split these features so that every feature is part of its own app. But also wanted the “old” sithuation (one app / multiple features) to work.</p>\n<p>On the backend I did not want to copy/paste code so the requirement was that APP1 (with feature XYZ) could use exactly the same code as APP2 (with the same feature XYZ). Off course APP1 and APP2 had different signing secrets and client ids. Not to hard to decide in code which client ids, client secrets and signing secrets you need to use. The hard part is to know (in your backend) which app sends the request to your server. There is no such thing as an appId (yet). <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>So, I thought, let’s make use of a “appCode” and put it in the run URL path (and off course the (un)subcribe paths if you are using custom triggers). Now we can distinguish between APP1 and APP2  but they are both pointing to different endpoints (because the appCode is in the path).</p>\n<p>Let’s configure nginx to solve that for us and at the same time put the appCode in the request header. So now every request has the appCode in its header. The nginx config looks like this (screenshot from my Plesk server):</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/7389b059872e65095f3ae4ef2cbfe9dd720e12c8.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7389b059872e65095f3ae4ef2cbfe9dd720e12c8.png\" alt=\"image\" width=\"690\" height=\"363\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">736×388 10.6 KB</span>\n</div></a></div><p></p>\n<p>What is does is that it proxies passes <a href=\"https://mondayapps.excellent-team.nl/VTG/path/to/backend\">https://mondayapps.excellent-team.nl/VTG/path/to/backend</a> to <a href=\"https://mondayapps.excellent-team.nl/path/to/backend\">https://mondayapps.excellent-team.nl/path/to/backend</a> and at the same time sets a header (MondayApp) to VTG. The same /path/to/backend can be used in another app (in my case the generic app that has APP as the appCode). In your backend you expose just one endpoint for both apps and the code checks the req.header.mondayapps value to make sure it uses the correct app client id, secret and signing secret.</p>\n<p>Have fun with it.</p>"
+    },
+    {
+      "id": 28463,
+      "postNumber": 2,
+      "createdAt": "2020-09-14T17:37:13.356Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> - thank you so much for sharing!</p>\n<p>This is awesome!! Hope this helps other developers in the community with this.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 42535,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T14:43:37.204Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

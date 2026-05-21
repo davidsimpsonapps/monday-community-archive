@@ -1,0 +1,107 @@
+{
+  "id": 101038,
+  "title": "PHP Developers have any luck inserting a item into a group from a webform?",
+  "slug": "php-developers-have-any-luck-inserting-a-item-into-a-group-from-a-webform",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    29,
+    94,
+    107,
+    302,
+    351
+  ],
+  "createdAt": "2024-10-20T21:49:30.605Z",
+  "lastPostedAt": "2024-10-22T12:39:09.499Z",
+  "postsCount": 11,
+  "excerpt": "Monday.com staff apperars to be highly inefficient in one of the most popular programming languages on earth, PHP. \nDoes anyone have the proper syntax for adding a date, email, and phone from a php script? \nI am trying t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 30,
+  "posts": [
+    {
+      "id": 206458,
+      "postNumber": 1,
+      "createdAt": "2024-10-20T21:49:30.709Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p><a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> staff apperars to be highly inefficient in one of the most popular programming languages on earth, PHP.</p>\n<p>Does anyone have the proper syntax for adding a date, email, and phone from a php script?</p>\n<p>I am trying to post a new item to a group from a webpage.  These three items appear as blanks.</p>\n<p>Here’s the string:</p>\n<pre><code class=\"lang-auto\">'email__1' =&gt; ['email : ' . $contactEmail . ', text : ' . $firstName . ' ' . $lastName ], \n</code></pre>\n<p>Here’s the error message:</p>\n<pre><code class=\"lang-auto\">\"error_data\":{\"column_value\":\"[\\\"email : test@example.com, text : Test Example\\\"]\",\"column_type\":\"EmailColumn\"}`\n</code></pre>\n<p>From what I can see from the documentation, it appears to have been formatted properly.</p>\n<p>Thanks,<br />\nMark</p>"
+    },
+    {
+      "id": 206468,
+      "postNumber": 2,
+      "createdAt": "2024-10-21T04:19:32.545Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mark.stout\">@mark.stout</a> please supply a more complete example of your code. Are you using graphql to achieve this? It’s difficult to tell.</p>\n<p>If so, please don’t try to concatenate strings together, but use graphql variables instead, it’s much less error prone.</p>\n<p>If you can use JavaScript  or nodejs instead, that’s awesome, there are lots of fantastic examples supplied for that.</p>"
+    },
+    {
+      "id": 206540,
+      "postNumber": 3,
+      "createdAt": "2024-10-21T10:49:46.487Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mark.stout\">@mark.stout</a> Also take a look at <a href=\"https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP#01GQWDQQ56KM10HZB24YK9CM9Z\" rel=\"noopener nofollow ugc\">Creating a new item using GraphQL variables</a> for a PHP example that shows you how to use GraphQL variables to correctly format input.</p>"
+    },
+    {
+      "id": 206551,
+      "postNumber": 4,
+      "createdAt": "2024-10-21T12:45:24.878Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>Hi David,</p>\n<p>No, I’m using PHP.</p>\n<p>My config.php contains my $apiKey, $apiUrl, and $header informartion.</p>\n<p>Everything updates but the email and phone.  I’ve commented. out the phone unti I get then correct syntax.</p>\n<p>From what I can tell, it looks like the email is being formatted properly.</p>\n<p>I can successfully post tghe itenm from tghe phone if I comment out the eail and phone.</p>\n<pre><code class=\"lang-auto\">&lt;?php\n  include('config.php');\n\n  $board_id = $groups['testBoard'];\n\n  if ($_SERVER[\"REQUEST_METHOD\"] == \"POST\") {\n    // Get the input values from the form\n    $companyName    = $_POST['companyName'];\n    $firstName      = $_POST['firstName'];\n    $lastName       = $_POST['lastName'];\n    $contactEmail   = $_POST['contactEmail'];\n    $contactPhone   = $_POST['contactPhone'];\n    $projectState   = $_POST['projectState'];\n    $projectMessage = $_POST['projectMessage'];\n    $boardId = $board_id;   //$boardId = $_POST['board_id'];\n\n    $todaysDate = date(\"Y-m-d\");\n    $query = 'mutation ($itemName: String!, $columnVals: JSON!) { create_item (board_id:'. $board_id . ' item_name:$itemName, column_values:$columnVals) { id } }';\n    $vars = ['itemName'     =&gt; $companyName, \n             'columnVals'   =&gt; json_encode([\n               'person'       =&gt; ['Person'        =&gt; 'Contact Person'],\n               'status'       =&gt; ['label'         =&gt; 'New Lead'], \n               'date4'        =&gt; ['Date'          =&gt; ' . todaysDate . '],\n               'text__1'      =&gt; $firstName,\n               'text5__1'     =&gt; $lastName,\n               'email__1'     =&gt; ['\"email\" : \"' . $contactEmail . '\", \"text\" : \"'  . $firstName . ' ' . $lastName ],\n               //'phone__1'     =&gt; ['phone : ' . $contactPhone . ', countryShortName : US' ],\n               'text7__1'     =&gt; $projectState,  \n               'long_text__1' =&gt; $projectMessage\n             ])\n            ];\n  \n    $data = @file_get_contents($apiUrl, false, stream_context_create([\n      'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n      ]\n    ]));\n \n    $responseContent = json_decode($data, true);\n\n    echo json_encode($responseContent);\n \n  }\n\n\n?&gt;\n\n</code></pre>"
+    },
+    {
+      "id": 206554,
+      "postNumber": 5,
+      "createdAt": "2024-10-21T13:15:48.704Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Nice to see some GraphQL variables in there. That’s much better.</p>\n<p>Are you really taking the raw $_POST and using its content? No data cleansing?</p>\n<p>That’s brave.</p>\n<p>You’ll need to find the documentation on the structure of the email field and go from there.</p>"
+    },
+    {
+      "id": 206561,
+      "postNumber": 6,
+      "createdAt": "2024-10-21T14:32:58.365Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>Hi David,</p>\n<p>I’m just trying to get the basics to work for now.</p>\n<p>I got this to work for the email.</p>\n<pre><code class=\"lang-auto\">'email__1'  =&gt; ['email' =&gt; $contactEmail, 'text' =&gt; $contactEmail ],\n</code></pre>\n<p>This sets the country code, but not the phone number.  Any idea why the number won’t update?</p>\n<pre><code class=\"lang-auto\">'phone__1' =&gt; ['PhoneColumn' =&gt; $contactPhone, 'countryShortName' =&gt; 'US' ],\n</code></pre>\n<p>So close!</p>"
+    },
+    {
+      "id": 206569,
+      "postNumber": 7,
+      "createdAt": "2024-10-21T14:57:31.865Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Have you checked the docs?<br />\n<a href=\"https://developer.monday.com/api-reference/reference/phone#update-the-phone-column\" rel=\"noopener nofollow ugc\">Update the phone column</a></p>\n<p>In JavaScript, with a simple string:</p>\n<blockquote>\n<p>To update a phone column, send “+”, the phone number, and the <a href=\"http://country.io/names.json\" rel=\"noopener nofollow ugc\">ISO-2 country code</a> (capitalized) as a string. Make sure to capitalize the country code and separate it from the phone number with a space to avoid errors!</p>\n</blockquote>\n<pre><code class=\"lang-auto\">fetch (\"https://api.monday.com/v2\", {\n  method: 'post',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization' : 'YOUR_API_KEY_HERE'\n  },\n  body: JSON.stringify({\n    query : \"mutation ($myBoardId:Int!, $myItemId:Int!, $myColumnValue: String!, $columnId: String!) { change_simple_column_value (item_id:$myItemId, board_id:$myBoardId, column_id: $columnId, value: $myColumnValue) { id } }\",\n    variables : JSON.stringify({\n      myBoardId: 1234567890,\n      myItemId: 9876543210,\n      columnId: \"phone\",\n      myColumnValue: \"+19175998722 US\"\n      })\n    })\n  })\n</code></pre>\n<p>In JavaScript, with JSON:</p>\n<blockquote>\n<p>To update a phone column using JSON, send “+”, the phone number for the <code>phone</code> key, and the <a href=\"http://country.io/names.json\" rel=\"noopener nofollow ugc\">ISO-2 country code</a> (capitalized) for the <code>countryShortName</code> key. Make sure to capitalize the country code to avoid errors!</p>\n</blockquote>\n<pre><code class=\"lang-auto\">fetch (\"https://api.monday.com/v2\", {\n  method: 'post',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization' : 'YOUR_API_KEY_HERE'\n  },\n  body: JSON.stringify({\n    query : \"mutation ($myBoardId:Int!, $myItemId:Int!, $myColumnValues:JSON!) { change_multiple_column_values(item_id:$myItemId, board_id:$myBoardId, column_values: $myColumnValues) { id }}\",\n    variables : JSON.stringify({\n      myBoardId: 1234567890,\n      myItemId: 9876543210,\n      myColumnValues: \"{\\\"phone\\\" : {\\\"phone\\\" : \\\"+12025550169\\\", \\\"countryShortName\\\" : \\\"US\\\"}}\"\n    })\n  })\n})\n</code></pre>\n<p>Or I’d probably go with:</p>\n<pre><code class=\"lang-auto\">fetch (\"https://api.monday.com/v2\", {\n  method: 'post',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization' : 'YOUR_API_KEY_HERE'\n  },\n  body: JSON.stringify({\n    query : \"mutation ($myBoardId:Int!, $myItemId:Int!, $myColumnValues:JSON!) { change_multiple_column_values(item_id:$myItemId, board_id:$myBoardId, column_values: $myColumnValues) { id }}\",\n    variables : JSON.stringify({\n      myBoardId: 1234567890,\n      myItemId: 9876543210,\n      myColumnValues: JSON.stringify({\n        \"phone\": {\n          \"phone\": \"+12025550169\",\n          \"countryShortName\": \"US\"\n        }\n      })\n    })\n  })\n})\n</code></pre>\n<p>These examples give actual real values that are valid, so please make sure you have valid input and reply with the definitive answer for PHP <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 206575,
+      "postNumber": 8,
+      "createdAt": "2024-10-21T15:29:14.517Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>This throws an error:</p>\n<pre><code class=\"lang-auto\">['phone'   =&gt; $contactPhone, 'countryShortName' =&gt; 'US' ],\n</code></pre>\n<p>This is the error:</p>\n<pre><code class=\"lang-auto\">[\"create_item\"],\"extensions\":{\"code\":\"ColumnValueException\",\"status_code\":200,\"error_data\":{\"column_value\":\"{\\\"phone\\\"=&gt;\\\"888-614-8338\\\", \\\"countryShortName\\\"=&gt;\\\"US\\\"}\",\"column_type\":\"PhoneColumn\"}}\n</code></pre>\n<p>This does not throw any errors, and it also updates the country short name.</p>\n<pre><code class=\"lang-auto\">['PhoneColumn' =&gt; $contactPhone, 'countryShortName' =&gt; 'US' ],\n</code></pre>\n<p>Not sure why the phone number is not updating.  If the countryShortName is updating, shouldn’t the number be updating too?</p>\n<p>I haven’t tried using Javascript for this yet.</p>"
+    },
+    {
+      "id": 206577,
+      "postNumber": 9,
+      "createdAt": "2024-10-21T15:39:11.694Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>It looks like your phone number is not valid (enough).</p>\n<p>Have you tried this?</p>\n<pre><code class=\"lang-auto\">[\n  'phone' =&gt; '+18886148338', \n  // a valid phone number prefixed with country code,\n  // rather than '888-614-8338' which looks invalid to me.\n  'countryShortName' =&gt; 'US' \n],\n</code></pre>\n<p>If you accept phone nos like that, you’ll have to convert them into a valid international phone no in your PHP code.</p>"
+    },
+    {
+      "id": 206579,
+      "postNumber": 10,
+      "createdAt": "2024-10-21T15:46:28.157Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>Isn’t that the purpose of the countryShortName?</p>\n<p>In any case, that didn’t work.  Using <code>'phone' =&gt; '+18886148338',</code> throws an error.</p>"
+    },
+    {
+      "id": 206678,
+      "postNumber": 11,
+      "createdAt": "2024-10-22T12:39:09.499Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>Got it working.</p>\n<p>Here’s the code I got to work in case anyone else is having troubles inserting a PHP form into a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> board.  It’s something you can build from.</p>\n<pre><code class=\"lang-auto\">&lt;?php\n  include('config.php');\n  \n  if ($_SERVER[\"REQUEST_METHOD\"] == \"POST\") {\n    // Get the input values from the form\n    $companyName    = $_POST['companyName'];\n    $firstName      = $_POST['firstName'];\n    $lastName       = $_POST['lastName'];\n    $contactEmail   = $_POST['contactEmail'];\n    $contactPhone   = $_POST['contactPhone'];\n    $projectState   = $_POST['projectState'];\n    $contactWebSite   = $_POST['contactWebSite'];\n    $projectMessage = $_POST['projectMessage'];\n    $boardId = $groups['testBoard']; \n    \n    // These values are on in config.php\n    // Your Monday.com API key\n    //$apiKey = $token; // Replace with your actual API key\n\n    // API Endpoint URL\n    //$url = 'https://api.monday.com/v2';\n\n    $todaysDate = date(\"Y-m-d\");\n    $query = 'mutation ($itemName: String!, $columnVals: JSON!) { create_item (board_id:'. $board_id . ' item_name:$itemName, column_values:$columnVals) { id } }';\n    $vars = ['itemName'     =&gt; $companyName, \n             'columnVals'   =&gt; json_encode([\n               'person'       =&gt; ['Person'        =&gt; 'Your Name'],\n               'status'       =&gt; ['label'         =&gt; 'New Lead'], \n               'date4'        =&gt; ['date'          =&gt; $todaysDate ],\n               'text__1'      =&gt; $firstName,\n               'text5__1'     =&gt; $lastName,\n               'email__1'     =&gt; ['email'         =&gt; $contactEmail, 'text'  =&gt; $contactEmail ],\n               'phone__1'     =&gt; ['phone'         =&gt; $contactPhone, 'countryShortName' =&gt; 'US' ],\n               'text7__1'     =&gt; $projectState,\n               'long_text4__1' =&gt; $projectMessage,\n               //'link9__1'      =&gt; ['link' =&gt; $contactWebSite, 'text' =&gt; $contactWebSite ]\n             ])\n            ];\n  \n    $data = @file_get_contents($apiUrl, false, stream_context_create([\n      'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n      ]\n    ]));\n \n    $responseContent = json_decode($data, true);\n    echo json_encode($responseContent);\n  }\n?&gt;\n</code></pre>\n<p>Now the issue with the <strong>link</strong> column.   You’d think the syntax would be similar to <strong>email</strong>.</p>\n<p>The command I’m using is.</p>\n<pre><code class=\"lang-auto\">'link9__1' =&gt; ['link' =&gt; $contactWebSite, 'text' =&gt; $contactWebSite ]\n</code></pre>\n<p>This looks like it should work.</p>"
+    },
+    {
+      "id": 208331,
+      "postNumber": 12,
+      "createdAt": "2024-11-03T12:28:43.611Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "id": 95615,
+  "title": "How to return a month based on unusual month start dates and end dates?",
+  "slug": "how-to-return-a-month-based-on-unusual-month-start-dates-and-end-dates",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-08-18T11:10:17.921Z",
+  "lastPostedAt": "2024-12-04T14:24:38.409Z",
+  "postsCount": 24,
+  "excerpt": "Hi All, \nI am needing to create a formula that will will return a month based on the date in another column. \nCurrently I have FORMAT_DATE(Today(),“MMMM”) which works great, except our revenue month starts on the 11th an&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 135,
+  "posts": [
+    {
+      "id": 197865,
+      "postNumber": 1,
+      "createdAt": "2024-08-18T11:10:17.994Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Hi All,</p>\n<p>I am needing to create a formula that will will return a month based on the date in another column.</p>\n<p>Currently I have FORMAT_DATE(Today(),“MMMM”) which works great, except our revenue month starts on the 11th and ends on the 10th.</p>\n<p>How do I compensate for this unusual month start and end in my formula?</p>"
+    },
+    {
+      "id": 198114,
+      "postNumber": 2,
+      "createdAt": "2024-08-20T07:41:25.970Z",
+      "author": "DipaliPatankar (Dipali Patankar)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/c/c37758/48.png\" class=\"avatar\" /> Crystal Atkins:</div>\n<blockquote>\n<p>FORMAT_DATE(Today(),“MMMM”)</p>\n</blockquote>\n</aside>\n<p>You need a conditional formula for this</p>\n<p>Try the following using the column Date in this example. Change the column name to the column in your board</p>\n<p>IF(Day({Date})&gt;10,FORMAT_DATE({Date},“MMMM”),<br />\nIF(MONTH({Date})=1,“December”,FORMAT_DATE(ADD_DAYS({Date},-20),“MMMM”))<br />\n)</p>"
+    },
+    {
+      "id": 198150,
+      "postNumber": 3,
+      "createdAt": "2024-08-20T14:24:05.912Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Thank you so much! This works perfectly for every day but the 1st lol. Do you know of any workaround for that?</p>"
+    },
+    {
+      "id": 198170,
+      "postNumber": 4,
+      "createdAt": "2024-08-20T17:53:40.317Z",
+      "author": "DipaliPatankar (Dipali Patankar)",
+      "cookedHtml": "<p>Hi Crystal</p>\n<p>Do you mean the 1st of the month? Because its working when I tried it on my board</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/4/345dbf8fb4b6b8fbaca9eff257e1028dabfc45c9.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/3/4/345dbf8fb4b6b8fbaca9eff257e1028dabfc45c9.png\" alt=\"image\" width=\"297\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">299×502 16.5 KB</span></div></a></div><p></p>\n<p>Could you share the date that its not working for and also an image of the board?</p>"
+    },
+    {
+      "id": 198251,
+      "postNumber": 5,
+      "createdAt": "2024-08-21T09:48:41.986Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Hi Dipali,</p>\n<p>Thank you so much for helping me with this. Yes, it is the first of the month that is giving me trouble. If I change it to the 2nd, it works but when it is the 1st, it returns the same month.</p>\n<p>I have included a picture for you.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/9/c910c4c9b196ecabec1bdfb5195d5f910c09d200.png\" alt=\"image\" width=\"308\" height=\"322\" /></p>"
+    },
+    {
+      "id": 198417,
+      "postNumber": 6,
+      "createdAt": "2024-08-22T07:42:00.576Z",
+      "author": "DipaliPatankar (Dipali Patankar)",
+      "cookedHtml": "<p>Can you paste the formula you used here. This seems to work correctly in my board but I may be missing something</p>"
+    },
+    {
+      "id": 198481,
+      "postNumber": 7,
+      "createdAt": "2024-08-22T13:25:03.696Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Sure, here it is.</p>\n<p>IF(Day({ACM Ship Date})&gt;10,FORMAT_DATE({ACM Ship Date},“MMMM”),<br />\nIF(MONTH({ACM Ship Date})=1,“December”,FORMAT_DATE(ADD_DAYS({ACM Ship Date},-20),“MMMM”))<br />\n)</p>"
+    },
+    {
+      "id": 198498,
+      "postNumber": 8,
+      "createdAt": "2024-08-22T15:43:18.142Z",
+      "author": "DipaliPatankar (Dipali Patankar)",
+      "cookedHtml": "<p>I modified the formula so this should work</p>\n<p>IF(Day({Date})&gt;10, FORMAT_DATE({Date},“MMMM”),if(Month({Date})=1,“December”,FORMAT_DATE(Date(YEAR({Date}),Month({Date})-1,1),“MMMM”)))<br />\nBasically I have calculated the date in the last bit so that it is the 1st of the previous month and then extracted the month from it.</p>"
+    },
+    {
+      "id": 198679,
+      "postNumber": 9,
+      "createdAt": "2024-08-25T03:44:14.067Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Here is the thread I found pertaining to this exact problem.</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/apicaptain/48/14317_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/month-function-formula-evaluates-february-1st-wrong-month-february-1-1-but-should-be-2/57690\">Month() function/formula evaluates February 1st wrong, Month(February 1) =&gt; 1 but should be 2</a> <a class=\"badge-category__wrapper \" href=\"/c/platform-discussions/6\"><span style=\"--category-badge-color:#00ca72;--category-badge-text-color:#FFFFFF\" class=\"badge-category \"><span class=\"badge-category__name\">Platform discussions</span></span></a>\n  </div>\n  <blockquote>\n    The Formula column Month() function is supposed to evaluate to the number of the month of the year. Month(January 10) =&gt; 1 \nHowever, I get an invalid result for February 1st. \nI have not verified with all 364 other days of the year, but it would be nice if we could know that this evaluates correctly. \n <a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/8/b8c8e7e8983390b954c637b0c950b2951e0fbcf8.png\" title=\"image\" rel=\"noopener nofollow ugc\">[image]</a>\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 198707,
+      "postNumber": 10,
+      "createdAt": "2024-08-25T03:45:05.062Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>I’m not sure what is happening but when I copy your formulas I have to change the “” symbols for it to not show as an illegal formula. So I’m not sure if that is the cause but this one still does not return the correct month. I have included a snippet of the formulas so that you can see the shape difference.</p>\n<p>This new formula does however, help with the 10th of the month; I didn’t realize I was having that problem as well with the first formula you provided.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/0/e04d8d319e88950213b6e8a9fa76ade49aa69bc7.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/0/e04d8d319e88950213b6e8a9fa76ade49aa69bc7_2_690x458.png\" alt=\"image\" width=\"690\" height=\"458\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">783×520 42.3 KB</span></div></a></div><br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/e/b/eb96fd01143fe5c52c95a16e029dc674849efb11.png\" alt=\"image\" width=\"667\" height=\"184\" /><p></p>"
+    },
+    {
+      "id": 198776,
+      "postNumber": 11,
+      "createdAt": "2024-08-25T19:45:06.125Z",
+      "author": "DipaliPatankar (Dipali Patankar)",
+      "cookedHtml": "<p>Hi Crystal</p>\n<p>I too have had issues while copying things from the community chat into the formula. I have tried pasting into notepad and then copying the formula over. Sometimes it works, more often you have to build the formula again - quite annoying</p>\n<p>I cannot see why you are facing this issue with the 1st of December. It works fine on my board which makes no sense really<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/6/a/6af8270e249dc6117d840cc59219b8ec8ea4112d.png\" alt=\"image\" width=\"219\" height=\"206\" /></p>\n<p>Would you be open to sharing your board with me? If so my email is <a href=\"mailto:anumeghaCSL@gmail.com\">anumeghaCSL@gmail.com</a><br />\nThe instructions to share a board with an external person are here - <a href=\"https://support.monday.com/hc/en-us/articles/115005309925-Shareable-Boards\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/115005309925-Shareable-Boards</a></p>\n<p>It may be prudent to make a duplicate of the board and share that with me rather than changing the type for your original board</p>"
+    },
+    {
+      "id": 198787,
+      "postNumber": 12,
+      "createdAt": "2024-08-26T04:05:01.375Z",
+      "author": "ZakiImtiaz (Zaki | readylogic.co)",
+      "cookedHtml": "<p>Amazing - Very good approach</p>"
+    },
+    {
+      "id": 198850,
+      "postNumber": 13,
+      "createdAt": "2024-08-26T08:44:52.939Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>I truly appreciate the time you have spent to help me figure this out.</p>\n<p>I read in my online searches that it may have to do with time zones and the GMT line with regard to how computers to dates. If this is truly the issue, I am not sure of how to avoid it without simply changing our dates from the 1st to the 2nd. Which is not that huge of an issue in this case, just rather an annoyance.</p>\n<p>I am on the west side of this line in the US. By chance, are you on the east side of it?</p>\n<p>I will need to verify with our IT dept. about sharing outside of our company. We have very strict rules governing our IT systems.</p>"
+    },
+    {
+      "id": 198866,
+      "postNumber": 14,
+      "createdAt": "2024-08-26T10:35:21.000Z",
+      "author": "DipaliPatankar (Dipali Patankar)",
+      "cookedHtml": "<p>Hi Crystal</p>\n<p>I am in the UK.</p>\n<p>The time zone should not matter as Monday usually deals with it in the background. However worth checking your settings.</p>\n<p>Happy to help with this on a test board that has dummy data if that works for your IT team.</p>\n<p>If you are looking for a more formal arrangement with an NDA in place then we can explore that as well.</p>\n<p>Kind regards,</p>\n<p>Dipali</p>"
+    },
+    {
+      "id": 210589,
+      "postNumber": 15,
+      "createdAt": "2024-11-18T17:43:13.219Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Hi Dipali,</p>\n<p>I have another unusual date situation. I need the same thing from above but this time on the 15th of the month, it changes to the next month. How do I modify this formula for this situation?</p>"
+    },
+    {
+      "id": 211962,
+      "postNumber": 16,
+      "createdAt": "2024-11-27T14:01:16.870Z",
+      "author": "DipaliPatankar (Dipali Patankar)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/d/f17d59/48.png\" class=\"avatar\" /> Dipali Patankar:</div>\n<blockquote>\n<p>IF(Day({Date})&gt;10, FORMAT_DATE({Date},“MMMM”),if(Month({Date})=1,“December”,FORMAT_DATE(Date(YEAR({Date}),Month({Date})-1,1),“MMMM”)))</p>\n</blockquote>\n</aside>\n<p>Hi Crystal,</p>\n<p>Apologies for the delay in responding, I had to recreate the formulae as I had deleted the demo.</p>\n<p>I cant see any issues with the calculation if the date is the 15th. I have set the formula on my board on the Start date and it works correctly - see image below.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/6/d61e37b1329b5269b2db012c485ec6751b2ed64a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/6/d61e37b1329b5269b2db012c485ec6751b2ed64a_2_690x204.png\" alt=\"image\" width=\"690\" height=\"204\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">847×251 25.2 KB</span></div></a></div><p></p>\n<p>If you are still facing the issue can you paste the formula and a screenshot?</p>"
+    },
+    {
+      "id": 212483,
+      "postNumber": 17,
+      "createdAt": "2024-12-02T11:50:54.832Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Hi Dipali,</p>\n<p>No worries, I am appreciative of your help. I was able to get the formula to work with the 15th as you have above. Unfortunately, the issue is that if it is, say ,Oct. 15th the month needs to read as Nov. This is the part I cannot figure out.</p>"
+    },
+    {
+      "id": 212535,
+      "postNumber": 18,
+      "createdAt": "2024-12-02T15:22:11.000Z",
+      "author": "DipaliPatankar (Dipali Patankar)",
+      "cookedHtml": "<p>That is strange and an interesting problem. Will investigate further and get back to you</p>\n<p>Kind regards,</p>\n<p>Dipali</p>"
+    },
+    {
+      "id": 212559,
+      "postNumber": 19,
+      "createdAt": "2024-12-02T21:05:34.193Z",
+      "author": "skmdc (SK)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/catkins\">@catkins</a> <a class=\"mention\" href=\"/u/dipalipatankar\">@DipaliPatankar</a> I think the hard coding of the day = 1 in the formula is probably causing the weird behavior. Please see modified formula with the change in bold,</p>\n<blockquote>\n<p>IF(DAY({Date})&gt;10, FORMAT_DATE({Date},“MMMM”),<br />\nFORMAT_DATE(DATE(YEAR({Date}), MONTH({Date})-1, <strong>DAY({Date})</strong>),“MMMM”))</p>\n</blockquote>\n<p>Works for me, hope it does for you all too.</p>"
+    },
+    {
+      "id": 212631,
+      "postNumber": 20,
+      "createdAt": "2024-12-03T11:10:07.302Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Sorry, here is the formula as well. I forgot to attach it in my reply.</p>\n<p>IF(Day({Planned Completion})&gt;15, FORMAT_DATE({Planned Completion},“MMMM”),if(Month({Planned Completion})=1,“December”,FORMAT_DATE(Date(YEAR({Planned Completion}),Month({Planned Completion})+1,DAY({Planned Completion})),“MMMM”)))</p>"
+    },
+    {
+      "id": 212633,
+      "postNumber": 21,
+      "createdAt": "2024-12-03T11:18:48.727Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Actually, I think I just solved this issue with this formula. Could one of you verify on your side as well?</p>\n<p>IF(Day({Planned Completion})&lt;15,FORMAT_DATE({Planned Completion},“MMMM”),if(Month({Planned Completion})=1,“December”,FORMAT_DATE(Date(YEAR({Planned Completion}),Month({Planned Completion})+1,1),“MMMM”)))</p>"
+    },
+    {
+      "id": 212780,
+      "postNumber": 22,
+      "createdAt": "2024-12-04T13:03:24.183Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Hi SK,</p>\n<p>Thank you so much for your input as well.</p>\n<p>I was able to make this formula do “something” but only somewhat, by changing what you suggested and <strong>-1 to +1</strong>. However, it is not performing correctly.</p>\n<p>Here is a snippet of my board. I need all of the dates on the left that are over the 15th, to turn the column month on the right to the following month. i.e. May 21, 2025=June</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/d/4d5a2a55f27852b06bb08806abe18b966d07f539.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/d/4d5a2a55f27852b06bb08806abe18b966d07f539_2_371x500.png\" alt=\"image\" width=\"371\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">475×640 30 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 212789,
+      "postNumber": 23,
+      "createdAt": "2024-12-04T14:05:18.294Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/catkins\">@catkins</a>,</p>\n<p>Try:</p>\n<pre><code>IF(Day({Planned Completion})&lt;15,\n    FORMAT_DATE({Planned Completion},\"MMMM\"),\n    FORMAT_DATE(EDATE({Planned Completion},1),\"MMMM\")\n)\n</code></pre>\n<p>You don’t need to figure out if the date is in December, You just add 1 month to the date (through the EDATE function) if the day is 15+.</p>\n<p> </p>\n<hr />\n<p><strong>What if we could break free of the Formula column?</strong> and write formulas that update any type of columns? What if a formula could update multiple columns at once? This is possible with the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a> app.</p>"
+    },
+    {
+      "id": 212792,
+      "postNumber": 24,
+      "createdAt": "2024-12-04T14:24:38.409Z",
+      "author": "catkins (Crystal Atkins)",
+      "cookedHtml": "<p>Hi Gilles,</p>\n<p>Thank you so much! I just compared this to what I have above and it does work for me. It works better than my solution; I hadn’t noticed my January ones were incorrect.</p>\n<p>The only issue I see at the moment is with the 1st of the month but we can work around that.</p>\n<p>I wish I could do this with an automation instead so that I can use this column in another automation. For some reason <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> will not allow formulas to be used in automations and I cannot find an automation to do this.</p>"
+    }
+  ]
+}

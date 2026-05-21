@@ -1,0 +1,43 @@
+{
+  "id": 115566,
+  "title": "API Errors",
+  "slug": "api-errors",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    22,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2025-06-02T23:30:34.807Z",
+  "lastPostedAt": "2025-06-04T06:37:10.337Z",
+  "postsCount": 3,
+  "excerpt": "Can someone help me decipher this error message? \n03-Jun-2025 02:27:08 UTC] Monday.com API Error (HTTP 200): [{“message”:“invalid value, please check our API documentation for the correct data structure for this column. &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 22,
+  "posts": [
+    {
+      "id": 231100,
+      "postNumber": 1,
+      "createdAt": "2025-06-02T23:30:34.908Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>Can someone help me decipher this error message?</p>\n<p>03-Jun-2025 02:27:08 UTC] <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API Error (HTTP 200): [{“message”:“invalid value, please check our API documentation for the correct data structure for this column. https://developer.monday.com/api-reference/docs/change-column-values”,“locations”:[{“line”:1,“column”:76}],“path”:[“create_item”],“extensions”:{“code”:“ColumnValueException”,“status_code”:200,“error_data”:{“column_type”:“phone”,“column_id”:“phone_mknjb3xj”,“column_value”:“{\"phone\"=&gt;\"(919) 929-0202\", \"countryShortName\"=&gt;\"US\"}”,“column_validation_error_code”:“”,“column_name”:“Mobile Phone”}}}]</p>\n<p>[03-Jun-2025 02:27:08 UTC] Failed to create <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> item: No item ID returned. Full result: {“error”:“<a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API Error”,“http_code”:200,“details”:{“data”:{“create_item”:null},“errors”:[{“message”:“invalid value, please check our API documentation for the correct data structure for this column. https://developer.monday.com/api-reference/docs/change-column-values”,“locations”:[{“line”:1,“column”:76}],“path”:[“create_item”],“extensions”:{“code”:“ColumnValueException”,“status_code”:200,“error_data”:{“column_type”:“phone”,“column_id”:“phone_mknjb3xj”,“column_value”:“{\"phone\"=&gt;\"(919) 929-0202\", \"countryShortName\"=&gt;\"US\"}”,“column_validation_error_code”:“”,“column_name”:“Mobile Phone”}}}],“extensions”:{“request_id”:“fc97a292-9de4-99db-a8bd-95ba174a59c9”}}}</p>\n<p>[03-Jun-2025 02:27:08 UTC] Failed to create <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> item for new client: billyj. Monday API response: false</p>"
+    },
+    {
+      "id": 231101,
+      "postNumber": 2,
+      "createdAt": "2025-06-02T23:35:23.538Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>The challenge I have is that, while the documentation and other columns accept <code>countryShortName</code>, but the error message I keep getting is specifically for <strong><code>column_id:\"phone_mknjb3xj\"</code></strong>:</p>\n<p><code>\"column_value\":\"{\\\"phone\\\"=&gt;\\\"(919) 929-0202\\\", \\\"countryShortName\\\"=&gt;\\\"US\\\"}\"</code> <code>\"message\":\"invalid value, please check our API documentation for the correct data structure for this column.\"</code> <code>\"column_name\":\"Mobile Phone\"</code></p>"
+    },
+    {
+      "id": 231182,
+      "postNumber": 3,
+      "createdAt": "2025-06-04T06:37:10.337Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>tl;dr – Format your JSON correctly.</p>\n<p>monday’s own Ask AI/ “Need Help?” button on <a href=\"https://developer.monday.com/api-reference/docs/basics\" rel=\"noopener nofollow ugc\">this page</a> says:</p>\n<blockquote>\n<p>The error message you’re seeing:</p>\n<pre><code class=\"lang-auto\">\"invalid value, please check our API documentation for the correct data structure for this column. https://developer.monday.com/api-reference/docs/change-column-values\"\n...\n\"error_data\":{\"column_type\":\"phone\",\"column_id\":\"phone_mknjb3xj\",\"column_value\":\"{\\\"phone\\\"=&gt;\\\"(919) 929-0202\\\", \\\"countryShortName\\\"=&gt;\\\"US\\\"}\"}\n</code></pre>\n<p>means that the value you’re sending for the phone column is not in the correct format expected by the monday.com API.</p>\n<p><strong>Key issues:</strong></p>\n<ul>\n<li>The value you’re sending uses Ruby-style hash rockets (<code>=&gt;</code>) instead of JSON colons (<code>:</code>).</li>\n<li>The phone number format may also be problematic.</li>\n</ul>\n<p><strong>Correct format:</strong><br />\nThe API expects a JSON string with colons, like this:</p>\n<pre><code class=\"lang-json\">{\"phone\": \"(919) 929-0202\", \"countryShortName\": \"US\"}\n</code></pre>\n<p>But when sending this in a GraphQL mutation, it should be a string, for example:</p>\n<pre><code class=\"lang-graphql\">mutation {\n  change_multiple_column_values(\n    item_id: 9876543210,\n    board_id: 1234567890,\n    column_values: \"{\\\"phone_mknjb3xj\\\": {\\\"phone\\\": \\\"(919) 929-0202\\\", \\\"countryShortName\\\": \\\"US\\\"}}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Or, for item creation:</p>\n<pre><code class=\"lang-graphql\">mutation {\n  create_item(\n    board_id: 1234567890,\n    group_id: \"group_one\",\n    item_name: \"New contact\",\n    column_values: \"{\\\"phone_mknjb3xj\\\": {\\\"phone\\\": \\\"(919) 929-0202\\\", \\\"countryShortName\\\": \\\"US\\\"}}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p><strong>Important:</strong></p>\n<ul>\n<li>Make sure you use colons (<code>:</code>) in your JSON, not hash rockets (<code>=&gt;</code>).</li>\n<li>The phone number should be in a valid format, ideally including the country code (e.g., <code>+19199290202</code>). The API uses the <a href=\"https://github.com/google/libphonenumber\" rel=\"noopener nofollow ugc\">Google Phone Library</a> for validation, so the number must be valid for the given country code.</li>\n<li>Double-check that your JSON is properly escaped if you’re building it in code.</li>\n</ul>\n<p><strong>Reference:</strong><br />\nSee the official documentation for the correct phone column format and examples: <a href=\"https://developer.monday.com/api-reference/reference/phone#update-the-phone-column\" rel=\"noopener nofollow ugc\">Update the phone column</a> and <a href=\"https://developer.monday.com/api-reference/docs/change-column-values\" rel=\"noopener nofollow ugc\">Changing column values</a>.</p>\n<p><strong>Summary:</strong><br />\nReplace <code>{\"phone\"=&gt;\"(919) 929-0202\", \"countryShortName\"=&gt;\"US\"}</code> with <code>{\"phone\": \"(919) 929-0202\", \"countryShortName\": \"US\"}</code> (as a JSON string), and ensure the phone number is valid for the US. This should resolve the error.</p>\n</blockquote>"
+    }
+  ]
+}

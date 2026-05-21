@@ -1,0 +1,68 @@
+{
+  "id": 35508,
+  "title": "Automatically set due dates based on timeline",
+  "slug": "automatically-set-due-dates-based-on-timeline",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    104
+  ],
+  "createdAt": "2022-04-29T12:16:03.200Z",
+  "lastPostedAt": "2024-08-05T18:55:42.119Z",
+  "postsCount": 7,
+  "excerpt": "I would LOVE to be able to automatically set a subitem due date by using a timeline column’s end date. Additionally, I am trying to get the last subitem’s due date to roll up to the parent item. I have figured out how to&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 10292,
+  "posts": [
+    {
+      "id": 84499,
+      "postNumber": 1,
+      "createdAt": "2022-04-29T12:16:03.281Z",
+      "author": "kimberlyg (Kimberly Giambrone)",
+      "cookedHtml": "<p>I would LOVE to be able to automatically set a subitem due date by using a timeline column’s end date. Additionally, I am trying to get the last subitem’s due date to roll up to the parent item. I have figured out how to have the parent item (“Project Timeline” in my example) show the subitems start to end timeline.</p>\n<p>In my attached example, this is what I’m trying to accomplish:</p>\n<ul>\n<li>\n<p>Have “Task Due By” date auto-populate with the “Task Timeline” end date for that line</p>\n</li>\n<li>\n<p>Have Parent Item “Due Date” auto-populate the last subitem’s due date or last date in subitems timeline</p>\n</li>\n</ul>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/40b87fda7aa8dcc20b1aca89c06526a5d207582a.jpeg\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/4/40b87fda7aa8dcc20b1aca89c06526a5d207582a_2_690x417.jpeg\" alt=\"image\" width=\"690\" height=\"417\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1906×1154 233 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 87592,
+      "postNumber": 2,
+      "createdAt": "2022-06-03T19:56:02.111Z",
+      "author": "EMorton (Erik Morton)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/kimberlyg\">@kimberlyg</a> I’ve been looking for a similar solution for a while as well, in terms of having date fields get set based on timeline fields. However, I’ve often been frustrated by both the column types and the automation when looking for solutions.<br />\n<em>However</em><br />\nIn looking for a thread to upvote (and finding yours) as well as again following up by looking through the automation formulas, I actually ended up finding a possible fix… in the Automation Center, with a formula that isn’t possible currently with the basic customization. It’s in the Dependencies section and not the Due Dates section though. Specifically, the Dependencies automation of:</p>\n<blockquote>\n<p>“Adjust <strong>this date</strong> to reflect the changes made in <strong>this other date</strong> of the same item”</p>\n</blockquote>\n<p>I was able to set it up so that altering either the Due Date field or the Timeline field would change the other one, and at last I have a solution for my own problem with this… albeit not a fool-proof one. Some caveats to the current automation:</p>\n<ul>\n<li>It does not create something from nothing. If you set it up to update the due date field when the timeline is changed, you need to also manually add the due date (the first time). If the field is blank, it will not set anything within the field. This appears to be because the formula is ‘adjusting’ the due date, and not setting it. So when the timeline moves forward by 4 days, the due date (if set) will move with it automatically.</li>\n<li>Because it is adjusting the date or timeline, and not actively setting it, that also means that if you’re due date is not set up as being your timeline’s end date (again there still doesn’t appear to be any monday-created automation that allows for setting this) and is set differently for some reason, then changing the timeline will still relatively adjust the due date<br />\n– eg. If Due Date is July 2nd, and the timeline is July 1st to July 3rd, changing the timeline to be July 1st to July 4th will adjust the Due Date to July 3rd (it doesn’t care if they have the same date or not, essentially).</li>\n<li>On the inverse side of this, if the automation is set up to adjust the timeline based on the due date changing, it slides the entire timeline relative to the adjustment, and doesn’t just trim down the remaining time to be accurate.<br />\n– eg. If the Due Date is July 22nd, and the Timeline is Juy 4th to July 22nd, changing the Due Date to July 20th wil adjust the Timeline to July 2nd to July 20th, and not July 4th to July 20th.</li>\n<li>Also, something obvious in hindsight, but discovered while experimenting for the sake of this post… if you set up the circular logic of adjusting a date field from timeline changes as well as adjusting the timeline field from date changes, the board is really not sure what to do, and your dates are going to just keep cycling through and never sit static after you make a change to one or the other.</li>\n</ul>\n<h2><a name=\"p-87592-however-1\" class=\"anchor\" href=\"#p-87592-however-1\"></a>However</h2>\n<p>There is one rather large looming caveat though that I also just realized after my initial excitement of cracking the code… This automation, not being a custom one, does not actually work for subitem fields… I was devastated as I went to go plug the automation in, thinking I’d finally figured out something that’s been bugging me for ages… only to find out that it doesn’t support subitems yet. So my use case which appears to be similar to yours, in terms of using subitems to get an overall range of dates and timelines rolled up, runs into an issue right off the bat.</p>\n<h2><a name=\"p-87592-however-the-second-2\" class=\"anchor\" href=\"#p-87592-however-the-second-2\"></a>However the Second</h2>\n<p>I will say that the other half of your question is one that I am fairly familiar with and have an easy solution for you to roll up your Due Dates into a timeline on the main item (you’ll just have to set them each manually in the subitems instead ofhaving them be set by the timelines).</p>\n<ul>\n<li>If you open up the settings dropdown for the subitem’s due date column by clicking on the (…) meatball icon, then select the ‘Settings’ option with the gear icon, you’ll have access to ‘Show Summary on Parent Item’.</li>\n<li>Once you select that, it will create a mirror column at the main item, that acts as a summary of the subtask column (and this can be done for pretty much any subtask column type, I think). And then by default, I am pretty sure it shows up as a timeline view with earliest subitem due date to latest subitem due date (though you can modify the mirror columns settings by selecting ‘Customize Mirror Column’ from the Settings dropdown to only show earliest or latest for dates instead if you like).<br />\n– It looks like you have a few mirror column summaries already, and I’m just now noticing the Due Date column having a lock on it. My guess is you’re using a pre-made Due Date field for some of your workings, but instead if you make a new Date column in the subitem and then roll it up, you should hopefully be able to integrate whatever automations and notifications you had set up on the Due Date field.</li>\n<li>That combined with being able to have multiple mirror summaries of the same subtask column are how I am able to show not only the overall due date of a task, but the <em>next</em> due date as well by having a second summary for earliest date (and then I clear out the due date field as subtasks get completed).</li>\n</ul>\n<p>Anyhow, I hope that either of these factoids helps you with your board, and I hope that they make it so that the automation indicated above is either more robust or at least works for subitems (I started <a href=\"https://community.monday.com/t/dependencies-automation-for-adjusting-dates-based-on-other-date-changes-not-working-with-subitems/37257\">a new thread for it over here</a>).</p>"
+    },
+    {
+      "id": 132688,
+      "postNumber": 3,
+      "createdAt": "2023-06-23T19:58:27.862Z",
+      "author": "jtmmonday (Joy McCracken)",
+      "cookedHtml": "<p>Thank you for this share! you took a lot of time to break this down and I will be trying it myself. Thank you so much!</p>"
+    },
+    {
+      "id": 146393,
+      "postNumber": 4,
+      "createdAt": "2023-10-02T12:50:22.045Z",
+      "author": "EMorton (Erik Morton)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jtmmonday\">@jtmmonday</a> Following up on older replies and the like, and since I don’t have a full workaround yet on my end, and I was curious if that ended up helping or not if you got a chance to try it.</p>"
+    },
+    {
+      "id": 146428,
+      "postNumber": 5,
+      "createdAt": "2023-10-02T15:44:26.761Z",
+      "author": "Fantasy-Media-Team (Fantasy Media Team)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/emorton\">@EMorton</a>,</p>\n<p>Our app <a href=\"https://monday.com/marketplace/10000287\" rel=\"noopener nofollow ugc\">Subitem Automations</a> handles different scenarios related to Subitems and Automations. We’re currently working on a new version and I’d love to work on a fix to the issue your facing.</p>\n<p>If you could send me an email to <a href=\"mailto:daniel@fantasymedia.io\">daniel@fantasymedia.io</a> and share a bit more about your use case, what you’re trying to achieve and where are you currently blocked I’d love to help and try to create a solution.</p>\n<p>Daniel</p>"
+    },
+    {
+      "id": 196078,
+      "postNumber": 6,
+      "createdAt": "2024-08-05T04:37:15.042Z",
+      "author": "Benkazinik (Ben Kazinik)",
+      "cookedHtml": "<p>Want to learn more about how to create a proper project timeline and share it with your team? Here’s a great post we did on the <a href=\"https://monday.com/blog/project-management/project-timeline/\">simplest way to create a project timeline</a></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/9/0998c655a4e3a8a9d7f61536e882b029f8aecaaa.jpeg\" title=\"monday-project-timeline\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/9/0998c655a4e3a8a9d7f61536e882b029f8aecaaa_2_690x359.jpeg\" alt=\"monday-project-timeline\" width=\"690\" height=\"359\" /><div class=\"meta\"><span class=\"filename\">monday-project-timeline</span><span class=\"informations\">1600×834 161 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 196198,
+      "postNumber": 7,
+      "createdAt": "2024-08-05T18:55:42.119Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Erik,</p>\n<p>You may want to take a look at <a href=\"https://blog.mdboosters.com/en/calculate-sub-item-start-dates-backwards-when-settings-the-parent-start-date-in-monday-com\" rel=\"noopener nofollow ugc\">Calculate Sub-Item Start Dates Backwards When Setting the Parent Start Date</a>.</p>"
+    }
+  ]
+}

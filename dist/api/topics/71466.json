@@ -1,0 +1,69 @@
+{
+  "id": 71466,
+  "title": "Get email addresses of all users in people columns of an item",
+  "slug": "get-email-addresses-of-all-users-in-people-columns-of-an-item",
+  "categoryId": 8,
+  "tagIds": [
+    29,
+    94,
+    351
+  ],
+  "createdAt": "2023-11-24T15:59:38.769Z",
+  "lastPostedAt": "2023-11-27T12:49:20.457Z",
+  "postsCount": 6,
+  "excerpt": "Trying to use the API to return email address(es) for any people columns for a given item. \nIt would seem that “email” is not a valid field for “persons_and_teams” and I am only able to get the ID/s.  I’m assuming there &hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 726,
+  "posts": [
+    {
+      "id": 154669,
+      "postNumber": 1,
+      "createdAt": "2023-11-24T15:59:38.850Z",
+      "author": "mtesdell (Matt Tesdell)",
+      "cookedHtml": "<p>Trying to use the API to return email address(es) for any people columns for a given item.</p>\n<p>It would seem that “email” is not a valid field for “persons_and_teams” and I am only able to get the ID/s.  I’m assuming there is a way to accomplish this using variables or nesting queries, but I just  haven’t learned enough about QraphQL yet <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>It would also be nice if there was a way to filter the returned data to only show people columns that are not empty.  That filter only seems to work on items page, but couldn’t figure out how to make that work with just one specific item. (there are 5 people columns on the board, and typically not all of them are set)</p>\n<p>Was hoping someone could point me in the right direction for any work arounds to accomplish this!</p>\n<p>Thanks,</p>\n<p>Matt</p>"
+    },
+    {
+      "id": 154670,
+      "postNumber": 2,
+      "createdAt": "2023-11-24T16:06:50.495Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Its actually rather simple - once you query the people column for <code>persons_and_teams</code> you want to filter <code>kind == \"person\"</code>  and map the <code>id</code> to <code>userIds</code>, and filter <code>kind == \"team\"</code> and map the <code>id</code> to <code>teamIds</code> for the following query:</p>\n<pre><code class=\"lang-auto\">query($userIds: [ID!], $teamIds: [ID!]){\n users(ids:$userIds){\n  id\n  email\n  name\n }\n teams(ids:$teamIds) {\n    id\n    users {\n      id\n      email\n      name\n    }\n  }\n}\n</code></pre>\n<p>The monday graphql implementation lacks directives that would allow you to direct the graphql resolver to create these maps and execute secondary queries. So you have to just get the first set of results and then make another query.</p>\n<p>you may need to modify your original query to return <code>kind</code> in addition to <code>id</code> for <code>persons_and_teams</code></p>"
+    },
+    {
+      "id": 154710,
+      "postNumber": 3,
+      "createdAt": "2023-11-25T11:27:52.869Z",
+      "author": "mtesdell (Matt Tesdell)",
+      "cookedHtml": "<p>Cody,</p>\n<p>Thank you so much for the quick reply and taking the time to help me understand this better!</p>\n<p>Perhaps you’d be able to help me understand how to adapt the solution you’re suggesting to my scenario?</p>\n<p>My query looks like below. I am specifying the ID’s as there are additional people columns on the board I do not want.  I am trying to use Column Values V2 to only return the specific subfield and not the entire JSON string.</p>\n<pre><code class=\"lang-auto\">query{\n  items (ids:[5545187806]) {\n    column_values (ids: [\"person\", \"people\", \"people7\", \"people2\", \"people9\"]) {\n      ... on PeopleValue {\n        persons_and_teams  {\n          id\n          kind  \n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Below, I get the Id’s of persons and teams, but I’m not following how to populate/map those in to variables for the subsequent query(ies) to get the user’s/team members’ emails.  I’m sure I’m looking at this the wrong way.  I was, however, able to use Make’s “Monday Get an Item” module along with a combination of array mapping, merging, deduplication into a String to get the list of ID’s and then send that via the API, but I can’t help but think this could be done in a single GraphQL request.  If a single request (with multiple queries) isn’t the answer, then I think I still have a workable (but seemingly inefficient) method using Make/Monday.</p>\n<p>(And thank you for pointing out that Monday’s implementation doesn’t support directives to create maps. I was working down that path with some examples on <a href=\"http://GraphQL.org\" rel=\"noopener nofollow ugc\">GraphQL.org</a> and wasn’t getting anywhere)</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"items\": [\n      {\n        \"column_values\": [\n          {\n            \"persons_and_teams\": null\n          },\n          {\n            \"persons_and_teams\": [\n              {\n                \"id\": \"14550468\",\n                \"kind\": \"person\"\n              },\n              {\n                \"id\": \"28537619\",\n                \"kind\": \"person\"\n              }\n            ]\n          },\n          {\n            \"persons_and_teams\": [\n              {\n                \"id\": \"14550468\",\n                \"kind\": \"person\"\n              },\n              {\n                \"id\": \"16817987\",\n                \"kind\": \"person\"\n              }\n            ]\n          },\n          {\n            \"persons_and_teams\": [\n              {\n                \"id\": \"51179088\",\n                \"kind\": \"person\"\n              }\n            ]\n          },\n          {\n            \"persons_and_teams\": [\n              {\n                \"id\": \"354444\",\n                \"kind\": \"team\"\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": 123456\n}\n</code></pre>"
+    },
+    {
+      "id": 154715,
+      "postNumber": 4,
+      "createdAt": "2023-11-25T17:19:00.944Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Assuming you’re using Javascript for this…</p>\n<pre><code class=\"lang-auto\">const userIds = [];\nconst teamIds = [];\nfor (const cv of data.items.column_values) {\n   const persons = cv.persons_and_teams.filter((pt)=&gt; pt.kind === \"person\")\n   if (persons) {\n    const personIds = persons.map((pv)=&gt; pv.id);\n    userIds.push(...personIds)\n   }\n   const teams = cv.persons_and_teams.filter((pt)=&gt; pt.kind === \"team\");\n   if (teams) {\n    const tempTeamIds = teams.map((pv)=&gt; pv.id);\n    teamIds.push(...tempTeamIds);\n   }\n}\n</code></pre>\n<p>Now you’ve got the userIds and teamIds for the next query.</p>\n<p>Unfortunately there is no way to do this in less than two queries, sent in two separate requests to <a href=\"http://monday.com\">monday.com</a>. You get the first results, then with code, build your two arrays to use as variables in the next query. (look up graphql variables, you will be in a lot of pain if you try to put the values into your query string!, the monday javascript client does accept variables)</p>\n<p>Don’t overthink trying to get this in a single request - there is latency but its not that great. Unless your primary concern is that using Make you end up with more make operations?</p>\n<p>IF using make, you should be able to use graphql variables, and the Execute GraphQL Query module (probably the one by <a href=\"https://themondayman.com/maketools/\">The Monday Man</a> that supports API-Version 2023-10). Manipulating the arrays down may take effort and expirimentation, but you’d be flattening the cv.persons_and_teams arrays into a single array, then process that array. If you’re persistent you can create all of that in IML within the field defining the variable in the second Execute GraphQL Query module. So you won’t need additional modules. But my make is rusty and its a saturday <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 154766,
+      "postNumber": 5,
+      "createdAt": "2023-11-26T13:48:29.573Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 154872,
+      "postNumber": 6,
+      "createdAt": "2023-11-27T12:20:41.598Z",
+      "author": "mtesdell (Matt Tesdell)",
+      "cookedHtml": "<p>Hi Cody,</p>\n<p>Thanks again for your willingness to provide such detailed suggestions! I’m not a js guy, but your feed back on having to use two requests was helpful. In the end, using that direction along with some (more like lots) of experimentation with <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a> to transform the data has worked out.  Thanks!</p>\n<p>Matt</p>"
+    },
+    {
+      "id": 154891,
+      "postNumber": 7,
+      "createdAt": "2023-11-27T12:49:20.457Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the help here!</p>"
+    }
+  ]
+}

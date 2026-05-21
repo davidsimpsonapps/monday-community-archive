@@ -1,0 +1,71 @@
+{
+  "id": 104176,
+  "title": "Mondaycom/apps-sdk memory leak",
+  "slug": "mondaycom-apps-sdk-memory-leak",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-11-26T13:26:28.624Z",
+  "lastPostedAt": "2024-12-05T06:00:07.982Z",
+  "postsCount": 7,
+  "excerpt": "We have an app for monday and we are working with mondaycom/apps-sdk package to get storage in our backend so when we deployed our backend server we got R14 error (R14 - Memory Quota Exceeded) this line triggers the erro&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 39,
+  "posts": [
+    {
+      "id": 211773,
+      "postNumber": 1,
+      "createdAt": "2024-11-26T13:26:28.716Z",
+      "author": "BOUAA (mohamed amin )",
+      "cookedHtml": "<p>We have an app for monday and we are working with mondaycom/apps-sdk package to get storage in our backend so when we deployed our backend server we got R14 error (R14 - Memory Quota Exceeded) this line triggers the error: <code>let storage = new Storage(token);</code></p>"
+    },
+    {
+      "id": 211775,
+      "postNumber": 2,
+      "createdAt": "2024-11-26T13:45:48.230Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Wait, are you on Heroku? <a href=\"https://devcenter.heroku.com/articles/error-codes\" rel=\"noopener nofollow ugc\">Fix the problem there</a>.</p>\n<p>Isn’t <code>Storage</code> a monday-code thing?</p>\n<p><em>And sorry if it isn’t.</em></p>"
+    },
+    {
+      "id": 211809,
+      "postNumber": 3,
+      "createdAt": "2024-11-26T14:50:53.655Z",
+      "author": "BOUAA (mohamed amin )",
+      "cookedHtml": "<p>hello David,<br />\nwe use heroku for our backend,<br />\nStorage from mondaycom/apps-sdk this this our code</p>\n<pre><code class=\"lang-auto\">const { Storage } = require(\"@mondaycom/apps-sdk\");\nconst getStorage= async ({ id,token}) =&gt; {\n  let storage\n  try { \n   storage = new Storage(token);\n   let { value, version } = await storage.get(`${id}_key`, {shared: true,});\n    return value\n  } catch (error) {\n    return null;\n};\n}\n</code></pre>"
+    },
+    {
+      "id": 211889,
+      "postNumber": 4,
+      "createdAt": "2024-11-27T07:16:23.859Z",
+      "author": "shaika (Shai Katz)",
+      "cookedHtml": "<p>Basically the <code>new Storage()</code> line shouldn’t cause any major memory consumption as it doesn’t do anything other then logger initialization (<a href=\"https://github.com/mondaycom/apps-sdk/blob/15e269ef870e80d2206dbb943d5c5d8bb169ebb6/lib/storage/base-storage.ts#L12\">code</a>).<br />\nCan you explain how do you know that this exact line causes the memory quota exceeded error?</p>"
+    },
+    {
+      "id": 212196,
+      "postNumber": 5,
+      "createdAt": "2024-11-28T14:09:38.699Z",
+      "author": "manishaghosh (MG)",
+      "cookedHtml": "<p>Isn’t that an error from when your app uses more memory than currently available in dyno? Does not seem to be related to monday storage. Correct me if I am wrong.</p>"
+    },
+    {
+      "id": 212436,
+      "postNumber": 6,
+      "createdAt": "2024-12-02T08:47:24.666Z",
+      "author": "BOUAA (mohamed amin )",
+      "cookedHtml": "<p>hello <a class=\"mention\" href=\"/u/shaika\">@shaika</a><br />\nI use storage in many functions and I notice that there is memory leak when I use many call api related with the storage .</p>"
+    },
+    {
+      "id": 212865,
+      "postNumber": 7,
+      "createdAt": "2024-12-05T06:00:07.982Z",
+      "author": "shaika (Shai Katz)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/bouaa\">@BOUAA</a> ,<br />\nIf you think there is a memory leak in the package please open an issue in the repository: <a href=\"https://github.com/mondaycom/apps-sdk\" class=\"inline-onebox\">GitHub - mondaycom/apps-sdk</a></p>"
+    }
+  ]
+}

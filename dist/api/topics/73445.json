@@ -1,0 +1,54 @@
+{
+  "id": 73445,
+  "title": "Mutation Subitems column value",
+  "slug": "mutation-subitems-column-value",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-12-20T13:20:09.095Z",
+  "lastPostedAt": "2023-12-27T11:27:43.820Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nI am trying to mutate multiple column values from a subitem with this query: \nmutation { \nchange_multiple_column_values( \nitem_id: subitemId \nboard_id: boardId \ncreate_labels_if_missing:true \ncolumn_values: “{&quot;text&quot;&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 323,
+  "posts": [
+    {
+      "id": 158755,
+      "postNumber": 1,
+      "createdAt": "2023-12-20T13:20:09.169Z",
+      "author": "MiguelDiaz (Miguel Diaz)",
+      "cookedHtml": "<p>Hi,<br />\nI am trying to mutate multiple column values from a subitem with this query:<br />\nmutation {<br />\nchange_multiple_column_values(<br />\nitem_id: subitemId<br />\nboard_id: boardId<br />\ncreate_labels_if_missing:true<br />\ncolumn_values: “{\"text\": \"New text\", \"status\": \"Done\"}”<br />\n) {<br />\nid<br />\n}<br />\n}</p>\n<p>i get:</p>\n<p>{<br />\n“error_code”: “ResourceNotFoundException”,<br />\n“status_code”: 404,<br />\n“error_message”: “Item not found in board”,<br />\n“error_data”: {<br />\n“resource_type”: “item”,<br />\n“item_id”: 5719698167,<br />\n“pulse_id”: 5719698167,<br />\n“board_id”: 5702744956,<br />\n“error_reason”: null<br />\n}<br />\n}<br />\nI’m not sure if this is the correct way to change the column values, or if I should provide the column values when creating the subitem (I also don’t know how this would be done).</p>\n<p>How can I make this?</p>"
+    },
+    {
+      "id": 158757,
+      "postNumber": 2,
+      "createdAt": "2023-12-20T13:23:52.611Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Are you using the subitem board id, or the primary board ID? Subitems actually exist on a separate board from the main board that’s hidden.</p>\n<p>you may need to query the item for <code>{items(ids: subitemId){board{id}}</code> first to get the subitem board.</p>\n<p>Another method is when creating the subitem instead of just returning the <code>{id}</code> instead return <code>{id,board{id}}</code> which will give you the board it was created on.</p>\n<p>However, when creating a subitem, you can provide column values as JSON (you need to take your column values object and stringify it as JSON before using it in your query, and also escape quotes in that. Or look into graphql variables which will let you avoid the whole having to ensure everything is properly escaped. Setting the values on creation may not trigger column all change automations though, if you want to trigger column change automations do it in a separate query.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/subitems#create-a-subitem\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/subitems#create-a-subitem\" target=\"_blank\" rel=\"noopener\">Subitems</a></h3>\n\n  <p>Learn everything about using the API to read or write sub-item data in monday.com GraphQL API.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 158787,
+      "postNumber": 3,
+      "createdAt": "2023-12-20T16:42:05.906Z",
+      "author": "MiguelDiaz (Miguel Diaz)",
+      "cookedHtml": "<p>Thank you very much!!!<br />\nKnowing that, I have easily solved it.<br />\nWhat I can’t understand is why subitems are assigned a different board ID…</p>"
+    },
+    {
+      "id": 158788,
+      "postNumber": 4,
+      "createdAt": "2023-12-20T16:45:26.812Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Because the subitems require a different board structure (columns, their types, titles, etc.) so they used a separate board entirely for it. There is then a linked_items structure on each item that covers all the connected boards including subitems. The UI then displays those items under each item as subitems.</p>\n<p>a little over simplified.</p>"
+    },
+    {
+      "id": 159324,
+      "postNumber": 5,
+      "createdAt": "2023-12-27T11:27:43.820Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the help!</p>"
+    }
+  ]
+}

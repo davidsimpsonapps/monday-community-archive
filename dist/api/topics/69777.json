@@ -1,0 +1,77 @@
+{
+  "id": 69777,
+  "title": "Filtering items where \"date is greater than a specific date\" via the API",
+  "slug": "filtering-items-where-date-is-greater-than-a-specific-date-via-the-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    196,
+    208,
+    351
+  ],
+  "createdAt": "2023-11-01T19:41:03.701Z",
+  "lastPostedAt": "2023-11-07T17:32:18.946Z",
+  "postsCount": 6,
+  "excerpt": "The new items_page in the API contains multiple ways to filter the date column. I noticed that it’s not possible, as far as I can tell, to filter the date where it’s greater than a specific date. Is this functionality av&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 1221,
+  "posts": [
+    {
+      "id": 151043,
+      "postNumber": 1,
+      "createdAt": "2023-11-01T19:41:03.779Z",
+      "author": "PluginGenie (Oliver Albrecht)",
+      "cookedHtml": "<p>The new items_page in the API contains <a href=\"https://developer.monday.com/api-reference/docs/date\" rel=\"noopener nofollow ugc\">multiple ways to filter the date column</a>. I noticed that it’s not possible, as far as I can tell, to filter the date where it’s greater than a specific date. Is this functionality available, but just not documented?</p>\n<p>I guess it might be possible by misusing the “between” operator and setting the end date sometime very far in the future. Though I’m guessing there may be a better way of doing this.</p>\n<p>In addition, I’m a bit confused what the “PAST_DATETIME” and “FUTURE_DATETIME” compare values mean.</p>\n<p>Thanks in advance for the advice!</p>"
+    },
+    {
+      "id": 151050,
+      "postNumber": 2,
+      "createdAt": "2023-11-01T20:27:23.619Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>The only thing that seems to be close is:</p>\n<p>Oops: I read your sentence</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/plugingenie/48/18591_2.png\" class=\"avatar\" /> Oliver Albrecht:</div>\n<blockquote>\n<p>I guess it might be possible by misusing the “between” operator and setting the end date sometime very far in the future. Though I’m guessing there may be a better way of doing this.</p>\n</blockquote>\n</aside>\n<p>after I finished my post. Anyhow, looks like the only way is to “misuse” the second date and search for “between”.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [4048117859]) {\n    items_page(\n      query_params: {rules: [{column_id: \"date4\", compare_value: [\"2023-02-26\", \"2999-12-31\"], operator: between}]}\n    ) {\n      cursor\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>Where the first ISO date is where you want to filter from and the second on is far in the future (who care about the year 3000 problem <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />). Look like the greater_than operator does not accept an ISO date, just the predefined ones from the documentation</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/c/fcf9c61437cc13e3ed2df8d9a465fda94f1b50ce.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/c/fcf9c61437cc13e3ed2df8d9a465fda94f1b50ce_2_485x499.png\" alt=\"image\" width=\"485\" height=\"499\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">914×941 60.5 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 151057,
+      "postNumber": 3,
+      "createdAt": "2023-11-01T21:49:40.373Z",
+      "author": "PluginGenie (Oliver Albrecht)",
+      "cookedHtml": "<p>Yeah, using the “between” operator should work with a date far in the future.</p>\n<p>I’m curious if this is what monday does internally for board filtering in their board UI (though maybe they’re not using the same public API we’re using).</p>"
+    },
+    {
+      "id": 151108,
+      "postNumber": 4,
+      "createdAt": "2023-11-02T06:14:14.127Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/D02KZ6XTFD4/p1698912843209099\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 151652,
+      "postNumber": 5,
+      "createdAt": "2023-11-05T12:54:04.910Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Re checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1699196030908709\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 152038,
+      "postNumber": 6,
+      "createdAt": "2023-11-07T13:46:28.848Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>Can you try using something like this?</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890]) {\n    items_page(\n      query_params: {rules: [{column_id: \"date4\", compare_value: [\"EXACT\", \"2023-11-05\"], operator: greater_than}]}\n    ) {\n      cursor\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>Please let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 152059,
+      "postNumber": 7,
+      "createdAt": "2023-11-07T15:10:45.179Z",
+      "author": "PluginGenie (Oliver Albrecht)",
+      "cookedHtml": "<p>Looks like that works. Thanks!</p>\n<p>That would probably be a good thing to add to the documentation here: <a href=\"https://developer.monday.com/api-reference/docs/date\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Date</a>.</p>"
+    },
+    {
+      "id": 152103,
+      "postNumber": 8,
+      "createdAt": "2023-11-07T17:32:18.946Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Done! Thanks for the suggestion <a class=\"mention\" href=\"/u/plugingenie\">@PluginGenie</a> and solution <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> <img src=\"https://emoji.discourse-cdn.com/apple/clap.png?v=12\" title=\":clap:\" class=\"emoji\" alt=\":clap:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

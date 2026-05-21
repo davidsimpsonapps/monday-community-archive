@@ -1,0 +1,49 @@
+{
+  "id": 30094,
+  "title": "Subitem can only handle 6 updates at a time?",
+  "slug": "subitem-can-only-handle-6-updates-at-a-time",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    187
+  ],
+  "createdAt": "2022-01-19T11:21:55.031Z",
+  "lastPostedAt": "2022-01-26T12:09:16.221Z",
+  "postsCount": 4,
+  "excerpt": "Hi, \nI’m trying to create sub-items inside an item but Node seem to only send 6 requests to Monday at a time… \nI am making the request through fetch. \nI am cycling through an array. Each cycle a request is sent to node, &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1365,
+  "posts": [
+    {
+      "id": 74330,
+      "postNumber": 1,
+      "createdAt": "2022-01-19T11:21:55.128Z",
+      "author": "AndreasGT (Andreas Lindberg)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m trying to create sub-items inside an item but Node seem to only send 6 requests to Monday at a time…<br />\nI am making the request through fetch.</p>\n<p>I am cycling through an array. Each cycle a request is sent to node, which then sends a request to Monday. I can confirm that the first 6 cycle the node more than keeps up, but after this it stops sending request.</p>\n<p>If I restart the node, it will send another 6 request, if I restart it again, it will send another 6 requests, and so on until the backlog has been emptied.</p>\n<p>Any ideas?</p>"
+    },
+    {
+      "id": 74341,
+      "postNumber": 2,
+      "createdAt": "2022-01-19T12:36:00.815Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/andreasgt\">@AndreasGT</a></p>\n<p>Do you know what the API call returns, does it return an error (which can still be a 200)? Is there a change that you hit rate limiting?</p>\n<p>It is hard to believe this is Node specific, Node just posts request to the monday API. I advise to have a good look at the API response.</p>"
+    },
+    {
+      "id": 74567,
+      "postNumber": 3,
+      "createdAt": "2022-01-20T18:16:22.576Z",
+      "author": "AndreasGT (Andreas Lindberg)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,<br />\nThank you for showing interest, sorry for my late reply!</p>\n<p>I got CORS error when running the subitem request through my root. I do not get this error when using other monday post or query features. Hence the Node.</p>\n<p>I get no errors, only a broken promise error when I kill the Node.</p>\n<p>When I send the requests manually, without using a loop I get Node console.log response that I have received the request for the first 6 subitem request. Then the Node stops responding and I have to kill it to get another 6 request - rinse &amp; repeat until the queue is empty.</p>\n<p>Sending requests to another API using very similar code (GET instead of POST) works!<br />\nHere is my code.<br />\n<strong>ROOT:</strong></p>\n<pre><code class=\"lang-auto\">//createdItemID is previously created Item Id that the subItem will be posted into\n      var info = createdItemID + ',*^GT^*,' + \"PlaceholderText\";\n      var requestOptions = {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n      }\n      }\n\n      fetch(`/subitem/${info}`, requestOptions)\n        .then(console.log(\"Sent subitem request!\"))\n        .catch(error =&gt; console.log('error', error));\n    \n    }\n\n\n</code></pre>\n<p><strong>And Node:</strong></p>\n<pre><code class=\"lang-auto\">\napp.post(\"/subitem/:info\", async (request, response) =&gt; {\n  console.log(\"Node has received a sub item request!\");\n\n  const info = request.params.info.split(\",*^GT^*,\");\n  const itemId = parseInt(info[0]);\n  const itemName = String(info[1]);\n\n  console.log(itemId);\n\n  let query =\n    \"mutation($itemId:Int, $itemName:String){ create_subitem (parent_item_id: $itemId, item_name: $itemName){ id board { id }}}\";\n\n  fetch(\"https://api.monday.com/v2\", {\n    method: \"post\",\n    headers: {\n      \"Content-Type\": \"application/json\",\n      Authorization:\n        ********************,\n    },\n    body: JSON.stringify({\n      variables: { itemId, itemName },\n      query: query,\n    }),\n  })\n    .then((res) =&gt; res.json())\n    .then((res) =&gt; console.log(JSON.stringify(res, null, 2)))\n    .catch((error) =&gt; console.log(\"error\", error));\n});\n</code></pre>\n<p>Thanks in advance!</p>"
+    },
+    {
+      "id": 75091,
+      "postNumber": 4,
+      "createdAt": "2022-01-26T12:09:16.221Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/andreasgt\">@AndreasGT</a>!</p>\n<p>This looks like a very specific issue. Could you send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with this same information + the complete response you are getting so we can take a look?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

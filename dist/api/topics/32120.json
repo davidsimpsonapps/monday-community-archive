@@ -1,0 +1,61 @@
+{
+  "id": 32120,
+  "title": "Pagination in combination with shortLivedTokens",
+  "slug": "pagination-in-combination-with-shortlivedtokens",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-02-24T12:43:33.930Z",
+  "lastPostedAt": "2022-02-28T07:34:47.520Z",
+  "postsCount": 6,
+  "excerpt": "Hi fellow developers \nI am trying to get my head around this. \nI need to query all items and subitems in a given board. Due to the amount of items and the level of nesting the query will hit complexity very soon. I want &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 1468,
+  "posts": [
+    {
+      "id": 78205,
+      "postNumber": 1,
+      "createdAt": "2022-02-24T12:43:34.007Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi fellow developers</p>\n<p>I am trying to get my head around this.</p>\n<p>I need to query all items and subitems in a given board. Due to the amount of items and the level of nesting the query will hit complexity very soon. I want to use pagination to query in smaller pieces but I have to wait for the next minute (reset of complexity) and I am using shortLivedTokens to access the API. If I just wait for 1 minute the shortLivedToken will not be valid anymore.</p>\n<p>At this moment the query takes place during the subscribe of an integration app with a custom trigger. I don’t see a way to “refresh” the short lived token as I can’t respond with non-200 (no retries will be done from monday). I can redesign in a way the query takes place in an action so I can respond with non-200 and wait for the retry (which will contain a new shortLivedToken). The challenge with that is to keep track of which page is required.</p>\n<p>Any ideas are welcome.</p>"
+    },
+    {
+      "id": 78208,
+      "postNumber": 2,
+      "createdAt": "2022-02-24T12:49:55.990Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Concerning the page number, why don’t you keep track of that and then after one minute you request for more data with an increase in page number, since you will be supplying the page number as an argument any way.</p>"
+    },
+    {
+      "id": 78215,
+      "postNumber": 3,
+      "createdAt": "2022-02-24T13:50:44.713Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Sure I can keep track of the page number but I might be a little harder than that. I can’t save it within the action endpoint and return a non-200 to get a retry. And when I do not return the shortLivedToken will be invalid after the 1 minute wait.</p>"
+    },
+    {
+      "id": 78426,
+      "postNumber": 4,
+      "createdAt": "2022-02-27T11:14:05.252Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>!</p>\n<p>Have you considered issuing a <a href=\"https://apps.developer.monday.com/docs/integration-authorization#getting-a-mondaycom-access-token\">permanent token </a>(using OAuth), storing it and using it for this long process? Would this be a possibility?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 78427,
+      "postNumber": 5,
+      "createdAt": "2022-02-27T11:40:57.463Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>I fully understand that this can be solved using permanent (stored) tokens. To be honest I hate storing tokens and I hope our customers hate it as much as I do. ShortLivedTokens is a great way to improve privacy and I love to use them. I would consider using OAuth tokens is they had a more granular scope (like board). In the current state a customer needs to give full access (all boards) to the developer and I would never do that if I was the customer.</p>\n<p>In my opinion <a href=\"http://monday.com\">monday.com</a> needs to rethink this and support pagination in combination with shortLivedTokens. A possible implementation might be that the app does respond like “return res.status(206).json({page: 1});” and that monday sends that JSON in the payload of the retry post (with a new token). In that way the app could retrieve the next page and this continues until the app responds with 200.</p>\n<p>I believe the underlying issue is that monday has implemented just one reaction on non 200 responses and that is “retry the same thing”.</p>\n<p>Another solution would be that the app can store an app specific JSON to the board where the app could keep track on the pagination page number.</p>"
+    },
+    {
+      "id": 78451,
+      "postNumber": 6,
+      "createdAt": "2022-02-28T07:34:47.520Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>Matias here!</p>\n<p>I hear what you say about the shortlived tokens and adding support for pagination in combination with them sounds very interesting :<img src=\"https://emoji.discourse-cdn.com/apple/thinking.png?v=12\" title=\":thinking:\" class=\"emoji\" alt=\":thinking:\" width=\"20\" height=\"20\" /></p>\n<p>I will share this input with our team so that it can be reviewed <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

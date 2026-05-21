@@ -1,0 +1,60 @@
+{
+  "id": 3241,
+  "title": "Trouble creating new item and populating multiple columns",
+  "slug": "trouble-creating-new-item-and-populating-multiple-columns",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2019-11-26T21:30:54.434Z",
+  "lastPostedAt": "2021-02-25T12:23:04.201Z",
+  "postsCount": 6,
+  "excerpt": "I am trying to pull email from GMail (Business) and create an item on a board with the contents of each message. To begin on this I’m just trying to create a new item on a board with test data in multiple columns. I foun&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 3270,
+  "posts": [
+    {
+      "id": 8742,
+      "postNumber": 1,
+      "createdAt": "2019-11-26T21:30:54.559Z",
+      "author": "Scott (Scott Reimert)",
+      "cookedHtml": "<p>I am trying to pull email from GMail (Business) and create an item on a board with the contents of each message. To begin on this I’m just trying to create a new item on a board with test data in multiple columns. I found a previous message (now closed) that started to address this but the ending solution was not posted to the thread: <a href=\"https://community.monday.com/t/creating-an-item-with-columns-populated/1604\" class=\"inline-onebox\">Creating an item with columns populated</a></p>\n<p>What I have now is the following:<br />\nmutation {<br />\ncreate_item (<br />\nboard_id: ,<br />\ngroup_id: “Incoming”,<br />\nitem_name: “NEW API created item”,<br />\ncolumn_values:<br />\n“{<br />\n\"Description\":\"Hello world\",<br />\n\"email\" :{\"email\":\"test@test.com\",\"text\":\"test@test.com\"}<br />\n}”<br />\n) {<br />\nid<br />\n}<br />\n}</p>\n<p>It completes and creates an item, but the Description column is not populated. The previous message indicates that one has to use the numeric ID of the column instead of the “friendly” name, but I don’t know how to get it.</p>\n<p>What is the syntax for creating a new item and populating multiple fields, and how does one get the numeric ID for a column?</p>\n<p>Thanks,</p>"
+    },
+    {
+      "id": 9022,
+      "postNumber": 2,
+      "createdAt": "2019-12-04T22:15:07.002Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Scott, welcome <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Good question! You’re right, you’ll need to use the column ID to assign “hello world” to the description column. Other than that, your syntax looks great so far.</p>\n<p>We’re working on a way to make getting the column IDs easier, but for now I’d suggest using this query to get the title and ID of each column on a given board:</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids:xxxxx) {\n    columns {\n      id\n      title\n    }\n  }\n}\n</code></pre>\n<p>Let me know if that helps!</p>"
+    },
+    {
+      "id": 9064,
+      "postNumber": 3,
+      "createdAt": "2019-12-05T18:42:41.732Z",
+      "author": "Scott (Scott Reimert)",
+      "cookedHtml": "<p>Thanks for the help. I issued the query with the following results:<br />\n{<br />\n“data”: {<br />\n“boards”: [<br />\n{<br />\n“columns”: [<br />\n{<br />\n“id”: “name”,<br />\n“title”: “Name”<br />\n},<br />\n{<br />\n“id”: “person”,<br />\n“title”: “Owner”<br />\n},<br />\n{<br />\n“id”: “long_text”,<br />\n“title”: “Description”<br />\n},<br />\n{<br />\n“id”: “email”,<br />\n“title”: “Email”<br />\n},<br />\n{<br />\n“id”: “status”,<br />\n“title”: “Status”<br />\n},<br />\n{<br />\n“id”: “date”,<br />\n“title”: “Due”<br />\n},<br />\n{<br />\n“id”: “check”,<br />\n“title”: “Emergency”<br />\n}<br />\n]<br />\n}<br />\n]<br />\n},<br />\n“account_id”: <br />\n}</p>\n<p>From this, I changed my call to (this is not exact because your editor is removing slashes and making formatting changes):</p>\n<p>mutation {<br />\ncreate_item (<br />\nboard_id: ,<br />\ngroup_id: “Incoming”,<br />\nitem_name: “Test item:created via API”,<br />\ncolumn_values:<br />\n“{<br />\n\"long_text\":\"Hello world\",<br />\n\"email\" :{\"email\":\"test@test.com\",\"text\":\"test@test.com\"}<br />\n}”<br />\n) {<br />\nid<br />\n}<br />\n}</p>\n<p>But it returned an error:<br />\n{<br />\n“error_code”: “ColumnValueException”,<br />\n“status_code”: 400,<br />\n“error_message”: “change_column_value invalid value”,<br />\n“error_data”: {<br />\n“column_value”: “Hello world”,<br />\n“column_type”: “LongTextColumn”<br />\n}<br />\n}</p>\n<p>I checked the syntax for long text columns (<a href=\"https://monday.com/developers/v2#column-values-section-longtext\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#column-values-section-longtext</a>), and mine seems to be correct. We’re closer, but not quite there yet. Can you offer any more guidance?</p>\n<p>Thanks,</p>"
+    },
+    {
+      "id": 9076,
+      "postNumber": 4,
+      "createdAt": "2019-12-05T20:20:26.704Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Scott!</p>\n<p>Almost there – the text column and long text column have slightly different data structures.</p>\n<p>If you were updating a text column, you’d send something like this (myColumn is the column ID of my imaginary column):</p>\n<pre><code class=\"lang-auto\">column_values: {\n  \"myColumn\" : \"\\\"Hello world\\\"\"\n}\n</code></pre>\n<p>However, for the long text column, you need to send a JSON object with “text” as the key. Something like this:</p>\n<pre><code class=\"lang-auto\">column_values: {\n  \"myColumn\" : \"{\\\"text\\\" : \\\"Hello world\\\"}\"\n}\n</code></pre>\n<p>Let me know if that does the trick.</p>"
+    },
+    {
+      "id": 9077,
+      "postNumber": 5,
+      "createdAt": "2019-12-05T21:44:24.000Z",
+      "author": "Scott (Scott Reimert)",
+      "cookedHtml": "<p>We’re close. I have working code, but I have a question about it:</p>\n<p>mutation {<br />\ncreate_item (</p>\n<pre><code>board_id: 262175425,\ngroup_id: \"Incoming\",\nitem_name: \"Test item:created via API\",\ncolumn_values:\n\"{\n</code></pre>\n<p>“long_text” :{“text” :“This is where the message body was in the email. What happens to paragraphs?”},<br />\n“email”     :{“email”:“<strong>What is this part?</strong>”<a>,“text”:\"sender@invitae.com</a>\"}<br />\n}\"<br />\n) {<br />\nid<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 42098,
+      "postNumber": 6,
+      "createdAt": "2021-02-25T12:23:04.201Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

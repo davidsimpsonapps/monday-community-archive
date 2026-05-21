@@ -1,0 +1,40 @@
+{
+  "id": 58446,
+  "title": "IFERROR or Similar Alternative",
+  "slug": "iferror-or-similar-alternative",
+  "categoryId": 6,
+  "tagIds": [
+    108,
+    187
+  ],
+  "createdAt": "2023-05-17T12:53:14.614Z",
+  "lastPostedAt": "2023-05-17T14:29:21.776Z",
+  "postsCount": 3,
+  "excerpt": "While creating calculated columns on a team board, I continue to run into (quality of life) issues. \nI am attempting to create a field that evaluates the % of Subitems Complete. Because formulas in the parent task cannot&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1304,
+  "posts": [
+    {
+      "id": 128373,
+      "postNumber": 1,
+      "createdAt": "2023-05-17T12:53:14.722Z",
+      "author": "AndrewWellman (Andrew Wellman)",
+      "cookedHtml": "<p>While creating calculated columns on a team board, I continue to run into (quality of life) issues.</p>\n<p>I am attempting to create a field that evaluates the % of Subitems Complete. Because formulas in the parent task cannot reference sub tasks without mirroring, I created a field that determines if the sub task is completed or not (Subitems Completed). This value brings in blank entries for tasks that contain no subtasks.  To overcome this I have attempted to create conditional statements that set the value to 0 and none work on a rollup level. I have tried many variations of this formula with no luck. Any help would be appreciated.</p>\n<p>IF(AND({Subitems Completed SubItems}&gt;=0,{Subitems Completed SubItems}&lt;= 100),(ROUND(DIVIDE({Subitems Completed SubItems},{Subitems#Count}),2) * 100),0)</p>\n<p>The problem, is that even though the IF statement is <em>supposed</em> to set all other values to 0, it will not work when included in additional statements. Having a IFERROR, or a working IF statement, would make this SO much easier.</p>"
+    },
+    {
+      "id": 128393,
+      "postNumber": 2,
+      "createdAt": "2023-05-17T14:16:48.115Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Andrew,</p>\n<p>Looks like a couple of syntax errors and also you’re sometimes dividing by 0. It’s much easier to work with more complicated formulas when you use indentation.</p>\n<p>I’ve cleaned up the formula and clamped the subitem count so it’s always at least 1.</p>\n<p>How is this?</p>\n<pre><code class=\"lang-auto\">IF(\n    AND(\n        {Subitems Completed SubItems}&gt;=0,\n        {Subitems Completed SubItems}&lt;= 100\n    ),\n    ROUND(\n        DIVIDE(\n            {Subitems Completed SubItems},\n            MAX(\n                {Subitems#Count},\n                1\n            )\n        ),\n        2\n    ) * 100,\n    0\n)\n</code></pre>\n<p>As an additional point, I’m not sure I fully understand your condition at the start of the formula. Perhaps it’s not necessary. Was that an attempt to make the formula comply? This might be sufficient:</p>\n<pre><code class=\"lang-auto\">ROUND(\n    DIVIDE(\n        {Subitems Completed SubItems},\n        MAX(\n            {Subitems#Count},\n            1\n        )\n    ),\n    2\n) * 100\n</code></pre>"
+    },
+    {
+      "id": 128395,
+      "postNumber": 3,
+      "createdAt": "2023-05-17T14:29:21.776Z",
+      "author": "AndrewWellman (Andrew Wellman)",
+      "cookedHtml": "<p>Thank you! The 2nd formula works great.</p>\n<p>The If statement was an attempt to make it comply, but no cigar.</p>"
+    }
+  ]
+}

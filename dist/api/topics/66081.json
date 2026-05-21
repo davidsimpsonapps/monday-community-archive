@@ -1,0 +1,62 @@
+{
+  "id": 66081,
+  "title": "How to loop through subitems' ids of an item of a board using API",
+  "slug": "how-to-loop-through-subitems-ids-of-an-item-of-a-board-using-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2023-09-15T12:51:10.646Z",
+  "lastPostedAt": "2023-09-18T04:38:59.707Z",
+  "postsCount": 6,
+  "excerpt": "Hello community, \nI am pretty new to monday.com, and this is my first experience with GraphQL \nI am using Javascript in my API to mutate my board, specifically: \nMy objective: \nI have a board with a few summary columns a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 1047,
+  "posts": [
+    {
+      "id": 143817,
+      "postNumber": 1,
+      "createdAt": "2023-09-15T12:51:10.735Z",
+      "author": "szabelin (Sasha)",
+      "cookedHtml": "<p>Hello community,</p>\n<p>I am pretty new to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>, and this is my first experience with GraphQL<br />\nI am using Javascript in my API to mutate my board, specifically:</p>\n<p>My objective:<br />\nI have a board with a few summary columns and a button. Each of the items of that board has a bunch of subitems. The purpose of the button mentioned above is to trigger my javascript code that writes a number into each of the subitems.</p>\n<p>What is given:<br />\nBoardID and item_id (as pulseId) or rather, which item I clicked the button on.<br />\nFrom here, I seemed to be able to get to the board’s subitems ID:</p>\n<pre><code class=\"lang-auto\">query{boards(ids:$boardID){columns(ids:\"subitems\"){settings_str}}}\nfollowed by: let subID = JSON.parse(data_subs.data.boards[0].columns[0].settings_str).boardIds[0]\n</code></pre>\n<p>If there’s a better way to get to sub-board-id please let me know, but ok.<br />\nSo far so good. but …</p>\n<p>My issue:<br />\nI can’t find a way to traverse the tree, that is, how to go from the given elements to loop through the subitems of a specific item, getting their IDs. Once I have the id, I know how to<br />\nfor each ID I run ‘change_column_value(…)’</p>\n<p>Any recommendation is greatly appreciated.<br />\nThanks in advance,</p>"
+    },
+    {
+      "id": 143833,
+      "postNumber": 2,
+      "createdAt": "2023-09-15T14:23:42.803Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>This is the sort of query used to get a list of subitems in the current API:</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: 4639429787){\n    id\n    column_values(ids: \"subitems\") {\n      value\n    }\n  }\n}\n</code></pre>\n<p>The response, you will need to <code>JSON.parse(data.items[0].column_values[0].value</code> and then you have the array of <code>{linkedPulseId: number}</code> objects which you can iterate.</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": \"4639429787\",\n        \"column_values\": [\n          {\n            \"value\": \"{\\\"changed_at\\\":\\\"2023-09-15 17:10:21 +0000\\\",\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":5170146748}]}\"\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": 10330910\n}\n</code></pre>\n<p>alternatively:</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: 4639429787){\n    subitems {\n      id\n      board {\n        id\n      }\n    }\n    id\n  }\n}\n</code></pre>\n<p>returns:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"items\": [\n      {\n        \"subitems\": [\n          {\n            \"id\": \"5170146748\",\n            \"board\": {\n              \"id\": \"4456254446\"\n            }\n          },\n          {\n            \"id\": \"5170178532\",\n            \"board\": {\n              \"id\": \"4456254446\"\n            }\n          }\n        ],\n        \"id\": \"4639429787\"\n      }\n    ]\n  },\n  \"account_id\": 10330910\n}\n</code></pre>"
+    },
+    {
+      "id": 143895,
+      "postNumber": 3,
+      "createdAt": "2023-09-15T21:15:25.605Z",
+      "author": "szabelin (Sasha)",
+      "cookedHtml": "<p>Hello Cody, thank you so much for such detailed examples.<br />\nThis is absolutely perfect, very clear on my original question.</p>\n<p>Is it possible to know the position of a subitem, which is it in order? Because the array returned, seems like getting it in the order of addition, not how they are listed, and if I moved the subitems with the browser UI interface, the array doesn’t not update the order.</p>\n<p>Warmest regards,</p>\n<p>Sasha</p>"
+    },
+    {
+      "id": 143901,
+      "postNumber": 4,
+      "createdAt": "2023-09-15T22:44:38.804Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Unfortunately, item order is not something the API returns reliably. Esp. for subitems.</p>\n<p>Its been a long standing feature request here… i may be partial to having this too, and in the new API I am hoping that they will implement it (version 2024-01 I hope. 2023-10 is already pretty set in stone) I don’t think its possible there in 2023-10 though we do have the ability to get items returned ordered by a column’s values. So for example if you have them by sorted by a date, then you’re gold - but if you rely on the dragged order then nothing yet.</p>\n<aside class=\"quote\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/expose-board-order-value-on-items-subitems/47226\">Expose board order value on items/subitems</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/api-feature-requests/58\"><span class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Feature Requests - API and Apps Framework</span></span></a>\n  </div>\n  <blockquote>\n    There must be a “board order” value on items and subitems thats used to by the main table (unsorted) view to sort the items. Could this be exposed to us in the API? \nThis way we can sort an items list into the board order, but more importantly if we get subitems, get their order and sort them. It seems when item IDs are not specified, the items are returned in board order usually. But not items.subitems or if you specify an array of items to get - those come back in random order.\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 143902,
+      "postNumber": 5,
+      "createdAt": "2023-09-15T23:37:50.644Z",
+      "author": "szabelin (Sasha)",
+      "cookedHtml": "<p>I just voted that feature up by one. Seemingly trivial feature to implement, and they have this item position already.<br />\nThank you for all your detailed replies.</p>\n<p>Regards,<br />\nSasha</p>"
+    },
+    {
+      "id": 143992,
+      "postNumber": 6,
+      "createdAt": "2023-09-18T04:38:59.707Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!! It is awesome how you help others over here!</p>\n<p><a class=\"mention\" href=\"/u/szabelin\">@szabelin</a> of course let us know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

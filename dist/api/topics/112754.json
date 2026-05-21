@@ -1,0 +1,77 @@
+{
+  "id": 112754,
+  "title": "URGENT: API stopped returning “value\" field for “board_relation” columns",
+  "slug": "urgent-api-stopped-returning-value-field-for-board-relation-columns",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    127,
+    351,
+    466
+  ],
+  "createdAt": "2025-04-07T17:57:46.192Z",
+  "lastPostedAt": "2025-04-09T19:06:20.010Z",
+  "postsCount": 7,
+  "excerpt": "API stopped returning “value” field for “board_relation” columns \n                        \n              \n            \n\n \nOur code depends on these values. Change happened recently but I ﻿cannot tell when exactly. \nI hav&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 48,
+  "posts": [
+    {
+      "id": 226193,
+      "postNumber": 1,
+      "createdAt": "2025-04-07T17:57:46.299Z",
+      "author": "automatonguy9311 (Charles Webb)",
+      "cookedHtml": "<p>API stopped returning “value” field for “board_relation” columns</p>\n<p>                        <a href=\"https://imgur.com/xXgBDXw\" target=\"_blank\" rel=\"noopener nofollow ugc\" class=\"onebox\">\n              <img src=\"https://global.discourse-cdn.com/monday/original/3X/1/f/1f758c704acc0d4d6644a920038b836b2d7db65a.png\" title=\"imgur.com\" alt=\"Imgur\" width=\"689\" height=\"229\" />\n            </a>\n\n</p>\n<p>Our code depends on these values. Change happened recently but I ﻿cannot tell when exactly.</p>\n<p>I have reported this issue to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> on Thursday afternoon. We have not heart anything back since then besides “we’ve escalated the issue.”</p>\n<p>We are desperate for a fix, all development has been entirely halted until we can get this issue resolved. Can someone help!?</p>\n<p>This renders our app unusable for all customers.</p>\n<p><strong>Example:</strong></p>\n<p>query {<br />\nboards(ids: [8853835590]) {<br />\nitems_page(limit: 50) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\nemail<br />\ncreated_at<br />\nupdated_at<br />\nstate<br />\nboard {<br />\nid<br />\n}<br />\ncreator_id<br />\ncolumn_values {<br />\nid<br />\nvalue<br />\ntext<br />\ncolumn {<br />\ntitle<br />\n}<br />\n… on BoardRelationValue {<br />\ndisplay_value<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p><strong>Response:</strong> (showing connect_board response.)</p>\n<pre><code>              \"id\": \"connect_boards_mkn2a222\",\n              \"value\": null,\n              \"text\": null,\n              \"column\": {\n                \"title\": \"Kit Assigned\"\n              },\n              \"display_value\": \"ECS #1\"\n            }\n</code></pre>"
+    },
+    {
+      "id": 226264,
+      "postNumber": 2,
+      "createdAt": "2025-04-07T18:27:08.849Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/automatonguy9311\">@automatonguy9311</a>,</p>\n<p>Which API version are you using? Can you please also confirm which field you’re referring to? Your queries show display_value, but you mentioned the value field (which is <a href=\"https://developer.monday.com/api-reference/changelog/value-field-now-returns-null-on-connect-boards-dependency-and-subtasks-columns\">expected to return null</a>).</p>\n<p>ETA: I see you have multiple posts about the same issue. Let’s centralize it into this one so we can see all info at once and get a faster resolution.</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 226267,
+      "postNumber": 3,
+      "createdAt": "2025-04-07T18:38:36.072Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p><a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1744061482402509\">Slack</a></p>"
+    },
+    {
+      "id": 226303,
+      "postNumber": 4,
+      "createdAt": "2025-04-08T07:55:49.761Z",
+      "author": "automatonguy9311 (Charles Webb)",
+      "cookedHtml": "<p>Rachel, I was able to get the linkedPulseIDs back onto the records by making a request with ‘version 2024-10’</p>\n<p>It looks like last week your API team posted a really significant change to the behavior of the API with regards to connect board columns!</p>\n<p>Would have been really good to get some advance warning. An unexpected change like this could be (and was) pretty damaging to our business.</p>"
+    },
+    {
+      "id": 226318,
+      "postNumber": 5,
+      "createdAt": "2025-04-08T11:20:38.381Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/automatonguy9311\">@automatonguy9311</a>,</p>\n<p>This is likely due to an unexpected bug from a change that was pushed out last week. This was temporarily disabled as of Sunday until a fix can be deployed. Can you please try your calls with the original version you were passing to verify?</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 226408,
+      "postNumber": 6,
+      "createdAt": "2025-04-09T10:08:07.467Z",
+      "author": "automatonguy9311 (Charles Webb)",
+      "cookedHtml": "<p>Rachel, unfortunately no.</p>\n<p>If I make the below API call on the ‘base’ version with no version input, the ‘value’ field is ‘null’ for all items, and there are no linked pulse IDs passed over to me. By talking to your technical team I was told I had to update the system to asked for ‘linked_item_ids’ using a totally different format to the request. But this update would require that I rewrite a lot of our code.</p>\n<p>Have opted to just pass all our API calls through as version 2024-10 going forward. Really disappointing that such a sweeping and potentially damaging change would be made at all. If this had happened at a more inopportune moment, it could have been devastating, and we had no warning!</p>\n<p>If I do it with ‘version = 2024-10’, it works just like it used to.</p>\n<p>query {<br />\nboards(ids: [${boardId}]) {<br />\nid<br />\nname<br />\ncolumns { id title }<br />\nitems_page(limit: 100${cursor ? ‘, cursor: \"’ + cursor + ‘\"’ : ‘’}) {<br />\ncursor<br />\nitems { id name column_values { id text value } }<br />\n}<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 226433,
+      "postNumber": 7,
+      "createdAt": "2025-04-09T14:20:07.239Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/automatonguy9311\">@automatonguy9311</a>,</p>\n<p>I see! So in this case, this is the new expected behavior in versions <code>2025-04</code> and after for the <code>value</code> field.</p>\n<p>This change was <a href=\"https://developer.monday.com/api-reference/changelog/value-field-now-returns-null-on-connect-boards-dependency-and-subtasks-columns\">announced</a> in mid-March and added to the <a href=\"https://developer.monday.com/api-reference/docs/release-notes#breaking-changes\">release notes</a> as a breaking change at the same time.</p>\n<p>I understand the impact this has on your operations and am glad you found a workaround. None of the earlier supported versions have a deprecation date as of now, so you should be good for some time <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=14\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>If you haven’t already, I recommend subscribing to our <a href=\"https://developer.monday.com/api-reference/changelog\">API changelog</a> so you can be notified of each upcoming change!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 226537,
+      "postNumber": 8,
+      "createdAt": "2025-04-09T19:06:20.010Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/automatonguy9311\">@automatonguy9311</a> If you don’t want any nasty surprises, always version your graphQL calls and upgrade every few months <em>after testing</em> all the API calls.</p>\n<p>We use a wrapper similar to the following to ensure our calls are always versioned…</p>\n<p><strong>path/to/my-monday-sdk.js</strong>:</p>\n<pre><code class=\"lang-auto\">import mondaySdk from 'monday-sdk-js';\n\nconst MONDAY_SDK_VERSION = '2025-01';\n\n/**\n * optional `shortLivedToken`\n */\nexport const myMondaySdk = (shortLivedToken) =&gt; {\n\tconst monday = mondaySdk();\n\tmonday.setApiVersion(MONDAY_SDK_VERSION);\n\tshortLivedToken &amp;&amp; monday.setToken(shortLivedToken);\n\treturn monday;\n};\n</code></pre>\n<p>We can then call monday sdk using…</p>\n<pre><code class=\"lang-auto\">import { myMondaySdk } from 'path/to/my-monday-sdk';\n\nconst monday = myMondaySdk();\nconst result = await monday.api(`{ me { name } }`);\n// --&gt; { \"data\": { \"me\": { \"name\": \"David Simpson\" } } }\n</code></pre>\n<p>This will (hopefully) prevent any nasty surprises when a current api version changes without you knowing.</p>"
+    }
+  ]
+}

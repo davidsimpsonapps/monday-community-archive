@@ -1,0 +1,34 @@
+{
+  "id": 88961,
+  "title": "Assistance Needed with Monday.com API Query Issue",
+  "slug": "assistance-needed-with-monday-com-api-query-issue",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2024-06-04T09:29:16.092Z",
+  "lastPostedAt": "2024-06-04T10:34:22.291Z",
+  "postsCount": 2,
+  "excerpt": "I am experiencing an issue with a code that uses the Monday.com API to fetch data from a specific board. Below is the code I am using: \nlet \nSource = Web.Contents(“https://api.monday.com/” &amp; “v2”, \n[ \nHeaders=[ \n#“Method&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 133,
+  "posts": [
+    {
+      "id": 187091,
+      "postNumber": 1,
+      "createdAt": "2024-06-04T09:29:16.161Z",
+      "author": "agustin.gomezdeltoro (agustin gomez)",
+      "cookedHtml": "<p>I am experiencing an issue with a code that uses the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API to fetch data from a specific board. Below is the code I am using:</p>\n<p>let<br />\nSource = Web.Contents(“<a href=\"https://eur02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fapi.monday.com%2F&amp;data=05%7C02%7Cemily.carrasquero%40seidor.com%7C13726331142a4066e7b908dc70fe8cdf%7C654623d615044f22a146b7c72637766a%7C0%7C0%7C638509485820201851%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&amp;sdata=oAFKkQdQqHfdWA7BM8SQF%2BpO5DevwbwFu1%2BBHmIwMmc%3D&amp;reserved=0\" rel=\"noopener nofollow ugc\">https://api.monday.com/</a>” &amp; “v2”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer Enter your API code”<br />\n],<br />\nContent=Text.ToBinary(“{”“query”“: “”{ boards(ids: [YOUR_BOARD_ID]) {items_page {items{column_values{ id value type } } } } }”“}”)<br />\n]<br />\n),<br />\n#“JSON” = Json.Document(Source,65001),<br />\ndata = JSON[data],<br />\nboards = data[boards],<br />\nboards1 = boards{0},<br />\nitems = boards1[items],<br />\n#“Converted to Table” = Table.FromList(items, Splitter.SplitByNothing(), null, null, ExtraValues.Error),<br />\n#“Expanded Column1” = Table.ExpandRecordColumn(#“Converted to Table”, “Column1”, {“name”, “column_values”}, {“Column1.name”, “Column1.column_values”}),<br />\n#“Expanded Column1.column_values” = Table.ExpandListColumn(#“Expanded Column1”, “Column1.column_values”),<br />\n#“Expanded Column1.column_values1” = Table.ExpandRecordColumn(#“Expanded Column1.column_values”, “Column1.column_values”, {“title”, “text”}, {“Column1.column_values.title”, “Column1.column_values.text”}),<br />\n#“Changed Type” = Table.TransformColumnTypes(#“Expanded Column1.column_values1”,{{“Column1.column_values.title”, type text}}),<br />\n#“Pivoted Column” = Table.Pivot(#“Changed Type”, List.Distinct(#“Changed Type”[Column1.column_values.title]), “Column1.column_values.title”, “Column1.column_values.text”),<br />\n#“Renamed Columns” = Table.RenameColumns(#“Pivoted Column”,{{“Column1.name”, “Name”}})<br />\nin<br />\n#“Renamed Columns”</p>\n<p>I believe the issue lies in the query I am using. When I attempt to run this code, I do not get the expected data, and I am unsure what is wrong with the query structure. Could you help me identify and resolve the problem?</p>\n<p>Thank you in advance for your assistance !</p>"
+    },
+    {
+      "id": 187145,
+      "postNumber": 2,
+      "createdAt": "2024-06-04T10:34:22.291Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/agustin.gomezdeltoro\">@agustin.gomezdeltoro</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>The code itself looks fine to me. I just tested this successfully:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page {\n      items {\n        column_values {\n          id\n          value\n          type\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Are you entering your API token in the “Authorization” header and changing “YOUR_BOARD_ID” for your actual board ID?</p>\n<p>What error are you seeing?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

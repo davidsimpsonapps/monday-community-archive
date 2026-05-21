@@ -1,0 +1,43 @@
+{
+  "id": 93685,
+  "title": "What's going on with Date columns, user and browser locales and timezones?",
+  "slug": "whats-going-on-with-date-columns-user-and-browser-locales-and-timezones",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    303,
+    351,
+    489,
+    490
+  ],
+  "createdAt": "2024-07-23T09:03:46.464Z",
+  "lastPostedAt": "2024-07-23T12:46:27.998Z",
+  "postsCount": 2,
+  "excerpt": "My locale is en-GB\nMy browser timezone is Europe/London\nMy MDC user timezone is set to (GMT+00:00) Edinburgh.\n\nWhen I save a date in a date column, we get the following happening… \n\n\nIt is displayed as a Europe/London d&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 53,
+  "posts": [
+    {
+      "id": 194484,
+      "postNumber": 1,
+      "createdAt": "2024-07-23T09:03:46.557Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<ul>\n<li>My locale is <code>en-GB</code></li>\n<li>My browser timezone is <code>Europe/London</code></li>\n<li>My MDC user timezone is set to <code>(GMT+00:00) Edinburgh</code>.</li>\n</ul>\n<p>When I save a date in a date column, we get the following happening…</p>\n<ul>\n<li>\n<p>It is displayed as a <code>Europe/London</code> date “23 Jul, 12:00”</p>\n</li>\n<li>\n<p>It is accessible from graphQL as a <code>value</code> of <code>{ \"date\": \"2024-07-23\", \"time\": \"11:00:00\", ... }</code> and <code>text</code> as <code>2024-07-23 12:00</code></p>\n</li>\n</ul>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/0/20986e5ba12cb1cbc2f63a5c79fc2e109d7ba4fe.png\" title=\"Screenshot 2024-07-23 at 12.34.33\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/0/20986e5ba12cb1cbc2f63a5c79fc2e109d7ba4fe_2_690x325.png\" alt=\"Screenshot 2024-07-23 at 12.34.33\" width=\"690\" height=\"325\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-07-23 at 12.34.33</span><span class=\"informations\">3026×1426 371 KB</span></div></a></div><p></p>\n<p>When I change my MDC user timezone to <code>(GMT-09:00) Alaska</code> things start getting weird:</p>\n<ul>\n<li>It continues to be displayed as a <code>Europe/London</code> date “23 Jul, 12:00” <strong>though I’d expect</strong> “23 Jul, 03:00”</li>\n<li>It is now accessible from graphQL as a <code>value</code> of <code>{ \"date\": \"2024-07-23\", \"time\": \"11:00:00\", ... }</code> <strong>but with a different</strong> <code>text</code> as <code>2024-07-23 03:00</code></li>\n</ul>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/3/a3a617bbd0be3d8dfb6a399b20de586f2f122d0b.png\" title=\"Screenshot 2024-07-23 at 12.41.22\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/3/a3a617bbd0be3d8dfb6a399b20de586f2f122d0b_2_690x354.png\" alt=\"Screenshot 2024-07-23 at 12.41.22\" width=\"690\" height=\"354\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-07-23 at 12.41.22</span><span class=\"informations\">2986×1536 369 KB</span></div></a></div><p></p>\n<ul>\n<li><strong>Is this a bug or expected behaviour?</strong></li>\n<li>Should the displayed date be based on the browser timezone, or the MDC user timezone?</li>\n<li>Also, when programmatically saving dates to date columns, should developers save the date in UTC+0 timezone and let MDC do the rest?</li>\n</ul>\n<p>Cc: <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>"
+    },
+    {
+      "id": 194502,
+      "postNumber": 2,
+      "createdAt": "2024-07-23T12:46:27.998Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Expected.</p>\n<ul>\n<li>API Text for date/time are in the configured mdc timezone of the token user.</li>\n<li>The value (or fragment fields) are always returned in UTC.</li>\n<li>When mutating a date column it must always be in the UTC. //rather are always treated as UTC by mdc - so use UTC to get expected results.</li>\n<li>The display in the browser however, along with formulas is controlled by the local system timezone settings as far as I can tell.</li>\n<li>And of course don’t forget Europe/London is currently in BST so it is UTC+1</li>\n</ul>"
+    },
+    {
+      "id": 195180,
+      "postNumber": 3,
+      "createdAt": "2024-07-28T10:26:20.295Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

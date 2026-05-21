@@ -1,0 +1,69 @@
+{
+  "id": 74015,
+  "title": "Query filter by date is not working. Please help me",
+  "slug": "query-filter-by-date-is-not-working-please-help-me",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    196,
+    351
+  ],
+  "createdAt": "2024-01-03T10:43:51.740Z",
+  "lastPostedAt": "2024-01-04T13:51:48.458Z",
+  "postsCount": 5,
+  "excerpt": "Hi, \nI need a query in which I can filter items by multiple dates. By example, I have an array of dates and I want to retrieve items where the column date4 is exactly that date. Because of that the trick with using betwe&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 226,
+  "posts": [
+    {
+      "id": 159964,
+      "postNumber": 1,
+      "createdAt": "2024-01-03T10:43:51.840Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I need a query in which I can filter items by multiple dates. By example, I have an array of dates and I want to retrieve items where the column <code>date4</code> is exactly that date. Because of that the trick with using <code>between</code> operator doesn’t work.</p>\n<p>As far as I know there are two queries for filtering items by column dates. Unfortunately non of them work properly.</p>\n<ol>\n<li><code>items_page_by_column_values</code>. When I use this query the API returns only the first item. See example below:</li>\n</ol>\n<pre><code class=\"lang-auto\">query {\n  items_page_by_column_values (\n    board_id: 5600134463, \n    columns: [\n      {column_id: \"date4\", column_values: [\"2022-11-01\", \"2023-11-30\", \"2023-11-05\"]}\n    ],\n    limit: 100\n  ) {\n    cursor\n    items { \n        id \n        name \n        updated_at \n        column_values(ids: [\"date4\"]) {\n          id \n          value\n          text\n          type      \n        } \n      }\n    \tcursor \n  }\n}\n</code></pre>\n<p>In my test board I have 3 items that have above listed dates (<code>[\"2022-11-01\", \"2023-11-30\", \"2023-11-05\"]</code>) inside the <code>date4</code> column. The API returns only the first one. If I do 3 API calls for each date then I will get all 3 items but potentially I can have 50 dates to filter by and I want to avoid making 50 API calls.</p>\n<ol>\n<li><code>items_page</code> with <code>query_params</code>. This doesn’t work at all in conjunction with <code>any_of</code> operator. It simply returns empty list. I does returns something when I use a single date with <code>greater_than_or_equals</code> operator but that isn’t what I am looking for.</li>\n</ol>\n<pre><code class=\"lang-auto\">query\n{ \n    \n  boards(ids: [\"5600134463\"]) {\n  \n    items_page( limit: 100\n      query_params: \n      {\n        rules: [{\n          column_id: \"date4\",\n          compare_value: [\"2022-11-01\", \"2023-11-30\", \"2023-11-05\"], \n          operator: any_of\n        }]\n      } \n    )\n    {\n      items { \n        id \n        name \n        updated_at \n        column_values(ids: [\"date4\"]) {\n          id \n          value\n          text\n          type      \n        } \n      }\n    \tcursor \n    } \n  } \n}\n</code></pre>\n<p>I also tried using <code>[\"EXACT\", \"2022-11-01\"]</code> but that also doesn’t work with <code>any_of</code> operator. To me this looks like a huge bug and I don’t think I am the only one who is experiencing it.</p>\n<p>How can filter by date be so hard to make it work? I really want to make as less API calls as possible and ability to filter by date would help me go this path.</p>\n<p>Thanks,<br />\nJosip</p>"
+    },
+    {
+      "id": 159978,
+      "postNumber": 2,
+      "createdAt": "2024-01-03T11:12:06.475Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Leaving it to Joseph</p>"
+    },
+    {
+      "id": 160075,
+      "postNumber": 3,
+      "createdAt": "2024-01-03T19:20:31.485Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Josip,</p>\n<p>For <code>items_page_by_column_values</code>, this does only allow for one string value to be passed in, as stated in our documentation <a href=\"https://developer.monday.com/api-reference/docs/items-page-by-column-values\">here</a>, if you are not using the <code>between</code> operator to find a range. I can raise a feature request to be able to filter using multiple column values and finding any values that match. Thank you for the feedback!</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 160135,
+      "postNumber": 4,
+      "createdAt": "2024-01-04T08:30:12.408Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<p>Hi Joseph,</p>\n<p>Now I see that filtering by date is only supported for a single date value, thanks for pointing me out this. I am not sure how I missed that.</p>\n<p>I would appreciate it if you can raise up a feature request to enable filtering by multiple date values!</p>\n<p>What about <code>items_page</code> with <code>query_params</code>? How come that filtering by date isn’t working there?</p>\n<p>Thanks,<br />\nJosip</p>"
+    },
+    {
+      "id": 160152,
+      "postNumber": 5,
+      "createdAt": "2024-01-04T08:53:12.795Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Leaving for Joseph</p>"
+    },
+    {
+      "id": 160201,
+      "postNumber": 6,
+      "createdAt": "2024-01-04T13:22:05.779Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Josip,</p>\n<p>For the <code>items_page</code> query with <code>query_params</code>, can you try adding “EXACT” to the <code>compare_value</code> and changing the operator to <code>greater_than</code>?</p>\n<pre><code class=\"lang-auto\">query\n{ \n    \n  boards(ids: [\"5600134463\"]) {\n  \n    items_page( limit: 100\n      query_params: \n      {\n        rules: [{\n          column_id: \"date4\",\n          compare_value: [\"EXACT\", \"2022-11-01\", \"2023-11-30\", \"2023-11-05\"], \n          operator: greater_than\n        }]\n      } \n    )\n    {\n      items { \n        id \n        name \n        updated_at \n        column_values(ids: [\"date4\"]) {\n          id \n          value\n          text\n          type      \n        } \n      }\n    \tcursor \n    } \n  } \n}\n</code></pre>\n<p>Let me know if this helps!</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 160205,
+      "postNumber": 7,
+      "createdAt": "2024-01-04T13:51:48.458Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<p>Well that works partially. I tried <code>query_params</code> as following:</p>\n<pre><code class=\"lang-auto\">      query_params: \n      {\n        rules: [{\n          column_id: \"date4\",\n          compare_value: [\"EXACT\", \"2022-11-01\", \"2023-11-05\"], \n          operator: greater_than_or_equals\n        }]\n      }\n</code></pre>\n<p>But the problem is that it doesn’t respect 2023-11-05 as the upper boundary. You might think how that isn’t a problem because I can write a script that does filtering but that is exactly what I want to avoid. Some boards that we have contain a ton of items and by searching for items that are targeted for certain date we try to reduce number of API calls that we make (i.e. paging).<br />\nFor now what I did is that I used between operator and min - max dates. It is not ideal but works until API starts supporting filtering by exact dates.</p>\n<p>Thanks for your assistance!</p>"
+    }
+  ]
+}

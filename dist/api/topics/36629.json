@@ -1,0 +1,117 @@
+{
+  "id": 36629,
+  "title": "Regular re-creation of the big board",
+  "slug": "regular-re-creation-of-the-big-board",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-05-20T13:21:03.423Z",
+  "lastPostedAt": "2022-06-01T05:41:23.868Z",
+  "postsCount": 14,
+  "excerpt": "I have kind of ecommerce solution. Some of my customers have accounts in Monday. I want to upload data from my solution to my customer’s account in Monday. Let’s say I have customer’s token from Monday. \nI need to create&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1454,
+  "posts": [
+    {
+      "id": 86449,
+      "postNumber": 1,
+      "createdAt": "2022-05-20T13:21:03.497Z",
+      "author": "Volodymyr (Volodymyr)",
+      "cookedHtml": "<p>I have kind of ecommerce solution. Some of my customers have accounts in Monday. I want to upload data from my solution to my customer’s account in Monday. Let’s say I have customer’s token from Monday.</p>\n<p>I need to create board which have 8 columns and about ~300 items.<br />\nItems each time might be different. Not all, but a lot of them.<br />\nSo first I want to delete all items then create new.<br />\nThe problem is when I’m deleting or adding items I can do this just with first ~20 items and then I get an error:</p>\n<p><code>{\"errors\":[{\"message\":\"Complexity budget exhausted, query cost 30001 budget remaining 22851 out of 1000000 reset in 47 seconds\"}],\"account_id\":123456789}</code></p>\n<p>All that I’m testing now on my free account.</p>\n<p>Will I face the same limitation on real Monday account? If so, how should I do in my scenario?</p>"
+    },
+    {
+      "id": 86507,
+      "postNumber": 2,
+      "createdAt": "2022-05-21T11:49:56.275Z",
+      "author": "fatih (Fatih Demir)",
+      "cookedHtml": "<p>It depends on the kind of queries/mutations you’re performing. You will definitely face the same limitation on a real Monday account, so make sure that you resolve these issues before releasing your app. For apps the complexity budget is increased to 5M.</p>\n<p>Adding the complexity object to your graphql query or mutation can give you a lot insight which calls are heavy on your complexity budget.</p>\n<p>These two links will help on complexity and rate limits:<br />\n<a href=\"https://api.developer.monday.com/docs/complexity-queries\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://api.developer.monday.com/docs/complexity-queries</a><br />\n<a href=\"https://api.developer.monday.com/docs/rate-limits\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://api.developer.monday.com/docs/rate-limits</a></p>"
+    },
+    {
+      "id": 86556,
+      "postNumber": 3,
+      "createdAt": "2022-05-23T06:18:10.437Z",
+      "author": "Volodymyr (Volodymyr)",
+      "cookedHtml": "<p>Thanks for the answer!<br />\nQuestion is also: is my case correct? I mean when I want to delete and create a lot of items: ~300 delete and ~300 create? Maybe there are some bulk operations to do that rather than delete/create one element at a time or some approach to allow doing this in more efficient way?</p>"
+    },
+    {
+      "id": 86558,
+      "postNumber": 4,
+      "createdAt": "2022-05-23T06:20:44.942Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>There is no bulk delete or create at the moment. You’ll have to create/delete one after the other</p>"
+    },
+    {
+      "id": 86569,
+      "postNumber": 5,
+      "createdAt": "2022-05-23T07:17:58.479Z",
+      "author": "Volodymyr (Volodymyr)",
+      "cookedHtml": "<p>Thanks for the answer. It is sad.</p>"
+    },
+    {
+      "id": 86571,
+      "postNumber": 6,
+      "createdAt": "2022-05-23T07:35:59.453Z",
+      "author": "Volodymyr (Volodymyr)",
+      "cookedHtml": "<p>If I want reload data into board is the only way delete/create items or is there more efficient way in order to decrease complexity of queries?</p>"
+    },
+    {
+      "id": 86718,
+      "postNumber": 7,
+      "createdAt": "2022-05-24T09:30:59.984Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/volodymyr\">@Volodymyr</a>!</p>\n<p>You can either delete everything and create new items, or if the changes might be updates to existing items, use column values changing mutations instead.</p>\n<p>You can also delete entire groups using a query like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  delete_group(board_id: 1234567890, group_id: \"topics\") {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 86824,
+      "postNumber": 8,
+      "createdAt": "2022-05-25T06:24:54.526Z",
+      "author": "Volodymyr (Volodymyr)",
+      "cookedHtml": "<p>Hi! Thanks for the answer!</p>\n<p>I noticed if you delete group, visually items also disappear.</p>\n<p>But if you then try to get items via API you get them. It seems items still exist on the board, they are just hidden. Is it so?</p>\n<p>If yes, doesn’t it lead to some troubles in the future related with some board limits on number of items? I mean you can’t create new items since some time.</p>"
+    },
+    {
+      "id": 86852,
+      "postNumber": 9,
+      "createdAt": "2022-05-25T10:08:52.473Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Matias here!</p>\n<p>Which query are you using for retrieving the items after they have been deleted?</p>"
+    },
+    {
+      "id": 86922,
+      "postNumber": 10,
+      "createdAt": "2022-05-26T04:22:15.429Z",
+      "author": "Volodymyr (Volodymyr)",
+      "cookedHtml": "<p>Hello, Matias!</p>\n<p>I get items with this query:<br />\n<code>query request($id:Int, $itemsLimit:Int, $page:Int) { boards(ids:[$id]) { items(limit: $itemsLimit, page: $page) { id } } }</code></p>\n<p>Board id is set the same I set when delete groups.</p>\n<p>Group I delete with this query:<br />\n<code>mutation request($boardId:Int! $groupId:String!) { delete_group (board_id: $boardId, group_id: $groupId) { id }}</code></p>\n<p>My case is I want fully clear board, so first I delete all groups, then I delete all items.</p>"
+    },
+    {
+      "id": 86926,
+      "postNumber": 11,
+      "createdAt": "2022-05-26T05:59:36.607Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/volodymyr\">@Volodymyr</a>!</p>\n<p>That is odd. I can’t reproduce the issue.</p>\n<p>Could you please send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with screenshots of this issue in the API Playground from monday, showing the query and the response?</p>\n<p>From there, we can do some following and look for the source of the issue.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 87071,
+      "postNumber": 12,
+      "createdAt": "2022-05-28T02:56:57.632Z",
+      "author": "etaytch (Etay Tchechanovski)",
+      "cookedHtml": "<p>Hey <a href=\"https://community.monday.com/u/Volodymyr\">Volodymyr</a>,<br />\nOur app - <a href=\"https://monday.com/marketplace/10000041\" rel=\"noopener nofollow ugc\">Moneylogz</a> faces the same challenge.<br />\nWe sync data from external API to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> boards.<br />\nThe initial sync can be of a size of ~5000 items, and a daily update vary from dozens to hundreds each, depend on the customer’s size.</p>\n<p>As there’s no batch item creation operation, we had to add a layer of rate limit protection to our api calls.<br />\nLooks something like this (node js code):</p>\n<p>(Bare in mind that we might sync multiple boards simultaneously, so we set our minimum available complexity to 500k, and not 0)</p>\n<pre><code class=\"lang-auto\">executeWithRateLimit = async (req, operationName, callApi) =&gt; {\n  const res = await callApi();\n  log({ operationName: operationName, res: JSON.stringify(res)});\n\n  if (res.data.complexity.after &lt;= 500000) {\n    const sleepDuration = res.data.complexity.reset_in_x_seconds + 2; // extra 2 seconds for safety\n    console.log(`complexity sleep ${sleepDuration} secs`);\n\n    await new Promise(resolve =&gt; setTimeout(resolve, sleepDuration * 1000));\n  }\n  return res;\n}\n</code></pre>\n<p>And the actual invocation:</p>\n<pre><code class=\"lang-auto\">  await items.reduce(async (a, item) =&gt; {\n    // Wait for the previous item to finish processing\n    await a;\n    // Process this item\n    const res = await executeWithRateLimit(req, 'create_item', async () =&gt; await createItem(item);\n  }, Promise.resolve());\n\n</code></pre>\n<p>For now it operates well in production, but very slow…<br />\ne.g. 6000 items at ~2 items/sec with the sleep mechanism takes at least 1 hour to complete.</p>\n<p>Hope this helps,<br />\nAnd really looking forward for a batch update api call <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" width=\"20\" height=\"20\" /> .</p>\n<p>Etay.</p>"
+    },
+    {
+      "id": 87343,
+      "postNumber": 13,
+      "createdAt": "2022-06-01T05:32:16.090Z",
+      "author": "Volodymyr (Volodymyr)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> !<br />\nIt’s strange, but now I can’t reproduce this. Maybe I did something wrong.<br />\nThanks!</p>"
+    },
+    {
+      "id": 87344,
+      "postNumber": 14,
+      "createdAt": "2022-06-01T05:41:23.868Z",
+      "author": "Volodymyr (Volodymyr)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/etaytch\">@etaytch</a><br />\nI implemented very similar solution to you.<br />\nI determine when I can do next request and wait until that. I even added 2 seconds as you did <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\nIn my case board with couple of hundreds groups and ~15 item inside each group is uploaded about ~30 minutes. Very similar time to you.</p>"
+    }
+  ]
+}

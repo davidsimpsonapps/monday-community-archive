@@ -1,0 +1,83 @@
+{
+  "id": 36096,
+  "title": "Upload a file as a new version",
+  "slug": "upload-a-file-as-a-new-version",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    351
+  ],
+  "createdAt": "2022-05-11T11:48:51.838Z",
+  "lastPostedAt": "2023-05-14T11:27:30.912Z",
+  "postsCount": 8,
+  "excerpt": "Hi, I’m trying to programmatically upload a file as a new version. \nWhat I have so far: \nvar boardId = 25509xxxxx;\nvar itemId = 25509xxxxx;\nvar assetId = 4888xxxxx;\nconst uploadQuery =\n`\n\tmutation ($file: File!) {\n\t\tadd_&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1805,
+  "posts": [
+    {
+      "id": 85544,
+      "postNumber": 1,
+      "createdAt": "2022-05-11T11:48:51.929Z",
+      "author": "chelien (Andrei)",
+      "cookedHtml": "<p>Hi, I’m trying to programmatically upload a file as a new version.<br />\nWhat I have so far:</p>\n<pre><code class=\"lang-auto\">var boardId = 25509xxxxx;\nvar itemId = 25509xxxxx;\nvar assetId = 4888xxxxx;\nconst uploadQuery =\n`\n\tmutation ($file: File!) {\n\t\tadd_file_to_column (item_id: ${itemId}, column_id: \"files\", file: $file) {\n\t\t\tid\n\t\t}\n\t}\n`;\n\nvar url = \"https://api.monday.com/v2/file\";\nvar buf = fs.readFileSync(\"./package.json\");\nvar formData = new  FormData();\n\nformData.append(\"query\", uploadQuery, { contentType:  \"application/json\" });\nformData.append(\"variables[file]\", buf, { contentType:  \"application/octet-stream\", filename:  \"package.json\" });\n\nvar options = {\n\tmethod:  'post',\n\theaders:  formData.getHeaders(),\n\tbody:  formData,\n};\noptions.headers.Authorization = user.token;\nvar uploadResponse = await fetch(url, options);\nvar json = await  uploadResponse .json();\n\nvar jsonChange = JSON.stringify({\n\tupdated_file:\n\t{\n\t\tfileType:  \"ASSET\",\n\t\tassetId:  json.data.add_file_to_column.id,\n\t\tpreviousAssetId:  assetId,\n\t\tname:  \"package.json\",\n\t\tisImage:  false,\n\t\tisVersion:  true,\n\t}\n}).replace(/\"/g,'\\\\\"');\n\nconst  updateQuery =\n`\nmutation {\n\tchange_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: \"files\", value: \"${jsonChange}\") {\n\t\tid\n\t}\n}\n`;\n\nvar updateResponse = await  monday.api(updateQuery, { token:  user.token });\n</code></pre>\n<p>And it works, except a file is duplicated in a column. I also tried to send <code>removed_file</code> with v1 asset id and it works. But after that you can’t access v1 anymore.</p>\n<p>Is it a bug or am I doing something wrong?</p>"
+    },
+    {
+      "id": 85835,
+      "postNumber": 2,
+      "createdAt": "2022-05-15T06:22:27.235Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>Matias here!</p>\n<ol>\n<li>Would you be able to show a screen shot of the duplication you mention? Is the exact same file added twice in the same column for the same item?</li>\n<li>How are you using removed_file? What v1 are you referring to?</li>\n</ol>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 85891,
+      "postNumber": 3,
+      "createdAt": "2022-05-16T06:29:58.266Z",
+      "author": "chelien (Andrei)",
+      "cookedHtml": "<p>Hello Matias. Thank you for your response.<br />\nAssume this file <code>assetId</code> is <code>123</code>.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c6e6a77a0a9eff3fd7effcf744639428359cc761.png\" title=\"monday1\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c6e6a77a0a9eff3fd7effcf744639428359cc761_2_345x155.png\" alt=\"monday1\" width=\"345\" height=\"155\" /><div class=\"meta\">\n<span class=\"filename\">monday1</span><span class=\"informations\">1187×534 46.2 KB</span>\n</div></a></div><br />\nNow, if you launch a script you get two files in a column, and if you hover over any of them you get two popups open at the same time as well.<br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/56f7f9b728b41fcdd5c96ef4ce44294ef9c86fbd.png\" title=\"monday2\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/56f7f9b728b41fcdd5c96ef4ce44294ef9c86fbd_2_345x155.png\" alt=\"monday2\" width=\"345\" height=\"155\" /><div class=\"meta\">\n<span class=\"filename\">monday2</span><span class=\"informations\">1187×534 48.4 KB</span>\n</div></a></div><br />\nIf you expand Item info, it shows only one file here.<br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/971c5900e9b6ccbeb05bdde4bad82cc155cebe59.png\" title=\"monday3\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/971c5900e9b6ccbeb05bdde4bad82cc155cebe59_2_345x122.png\" alt=\"monday3\" width=\"345\" height=\"122\" /><div class=\"meta\">\n<span class=\"filename\">monday3</span><span class=\"informations\">1500×534 51.2 KB</span>\n</div></a></div><p></p>\n<p>And now, to answer your second question. If you modify a script a little and add <code>removed_file</code> to mutation query, where <code>assetId</code> is <code>123</code>:</p>\n<pre><code class=\"lang-auto\">removed_file:\n{\n    fileType: \"ASSET\",\n    assetId: assetId,\n},\nupdated_file: \n    {\n        fileType: \"ASSET\",\n        assetId: json.data.add_file_to_column.id,\n        previousAssetId: assetId,\n        name: \"package.json\",\n        isImage: false,\n        isVersion: true\n    }\n}\n</code></pre>\n<p>And run it, then it kinda works, nothing is duplicated, you get only one file in a column, but if you expand file info, there is no V1, only the second (uploaded) version.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/f/fce249c8efa2f61ef28af529b08a1c0ad5cb4091.png\" alt=\"monday4\" width=\"268\" height=\"234\" /><br />\nHoping to hear from you soon. <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 123285,
+      "postNumber": 4,
+      "createdAt": "2023-04-10T14:46:05.731Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> I am a bit late to the party here, but is there a way to upload a new file version via the API like chelien described?</p>"
+    },
+    {
+      "id": 123334,
+      "postNumber": 5,
+      "createdAt": "2023-04-11T04:12:44.250Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/samicaracand\">@samicaracand</a>,</p>\n<p>There is no way of uploading a new “file version” via API.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 123364,
+      "postNumber": 6,
+      "createdAt": "2023-04-11T08:00:08.442Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Too bad… would be nice if you guys can consider this in your plans<br />\nThank you for the quick answer!</p>"
+    },
+    {
+      "id": 123628,
+      "postNumber": 7,
+      "createdAt": "2023-04-12T16:39:04.400Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 127780,
+      "postNumber": 8,
+      "createdAt": "2023-05-13T13:08:54.586Z",
+      "author": "MondayUser123123 (Mo)",
+      "cookedHtml": "<p>Any update on this?? This API is ridiculous, nothing is supported. You cannot add a new version, you cannot rename files, you cannot download a file in a safe way (private url with auth), you cannot get the order of subitems, etc. etc. I can go on forever.</p>"
+    },
+    {
+      "id": 127838,
+      "postNumber": 9,
+      "createdAt": "2023-05-14T11:27:30.912Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>A request was created for this as for the ability to rename files, the ability to download a file without using the public URL and the index for subitems. We added your votes!</p>\n<p>Thank you for your feedback!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

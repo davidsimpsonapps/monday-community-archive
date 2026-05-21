@@ -1,0 +1,68 @@
+{
+  "id": 69709,
+  "title": "Item_page with scrolling_Menu on API",
+  "slug": "item-page-with-scrolling-menu-on-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-01T07:07:41.093Z",
+  "lastPostedAt": "2023-11-02T11:36:36.481Z",
+  "postsCount": 6,
+  "excerpt": "Hello, \nI’m contacting you because I would like some clarification on an API-related matter. I wanted to know if it’s currently possible with the “Items_page” function to filter two or more names from a dropdown menu. If&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 201,
+  "posts": [
+    {
+      "id": 150913,
+      "postNumber": 1,
+      "createdAt": "2023-11-01T07:07:41.165Z",
+      "author": "TomDel (Tom Delépine)",
+      "cookedHtml": "<p>Hello,<br />\nI’m contacting you because I would like some clarification on an API-related matter. I wanted to know if it’s currently possible with the “Items_page” function to filter two or more names from a dropdown menu. If so, how? I tested it with this format: “[{column_id: “scrolling_Menu”, compare_value: [“word1”, “word2”], operator: contains_text}]”, but only the information for “word1” is displayed, and “word2” is ignored. I know it works with individuals or text because it worked during testing and in the documentation.</p>\n<p>Sincerely, Delépine Tom</p>"
+    },
+    {
+      "id": 150921,
+      "postNumber": 2,
+      "createdAt": "2023-11-01T08:24:14.251Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/tomdel\">@TomDel</a></p>\n<p>Looks like the contains_text operator does not support an array of compare values. Instead you can do this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [123456789]) {\n    items_page(\n      query_params: {rules: [{column_id: \"dropdown\", compare_value: [\"label1\"], operator: contains_text}, {column_id: \"dropdown\", compare_value: [\"label2\"], operator: contains_text}], operator: or}\n    ) {\n      cursor\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>When using the <strong>labelId</strong> and operator any_of you can use an array of compare values, like:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [123456789]) {\n    items_page(\n      query_params: {rules: [{column_id: \"dropdown\", compare_value: [1, 2], operator: any_of}]}\n    ) {\n      cursor\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 150942,
+      "postNumber": 3,
+      "createdAt": "2023-11-01T11:17:47.852Z",
+      "author": "TomDel (Tom Delépine)",
+      "cookedHtml": "<p>Hello,<br />\nthank you for your response. It is clearer now, and I appreciate it.</p>"
+    },
+    {
+      "id": 150973,
+      "postNumber": 4,
+      "createdAt": "2023-11-01T13:22:35.688Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you so much <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> !</p>"
+    },
+    {
+      "id": 150981,
+      "postNumber": 5,
+      "createdAt": "2023-11-01T13:30:51.740Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>Is it intended behavior that the contains_text operator does only compare with the first given text value in the array? This one gives only the items that containls “label1”, not “label2”</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [4048117859]) {\n    items_page(\n      query_params: {rules: [{column_id: \"dropdown\", compare_value: [\"label1\", \"label2\"], operator:contains_text}], operator: or}\n    ) {\n      cursor\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 151107,
+      "postNumber": 6,
+      "createdAt": "2023-11-02T06:11:58.250Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/D02KZ6XTFD4/p1698912703202349\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 151178,
+      "postNumber": 7,
+      "createdAt": "2023-11-02T11:36:36.481Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>That is intended behavior. For items_page, contains_text accepts one value only <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

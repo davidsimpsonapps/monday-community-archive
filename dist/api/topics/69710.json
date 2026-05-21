@@ -1,0 +1,118 @@
+{
+  "id": 69710,
+  "title": "Two-way syncs in custom apps",
+  "slug": "two-way-syncs-in-custom-apps",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    203,
+    208
+  ],
+  "createdAt": "2023-11-01T07:23:40.807Z",
+  "lastPostedAt": "2023-11-10T14:19:04.243Z",
+  "postsCount": 12,
+  "excerpt": "Monday.com is now promoting that its Jira integration supports two-way sync, which is a different kind of integration than having custom triggers/actions to achieve a similar result. This is described on a dedicated page&hellip;",
+  "solvedPostId": null,
+  "likeCount": 7,
+  "views": 410,
+  "posts": [
+    {
+      "id": 150914,
+      "postNumber": 1,
+      "createdAt": "2023-11-01T07:23:40.907Z",
+      "author": "victorandree (Victor Andrée)",
+      "cookedHtml": "<p><a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> is now promoting that its Jira integration supports two-way sync, which is a different kind of integration than having custom triggers/actions to achieve a similar result. This is described on a dedicated page: <a href=\"https://support.monday.com/hc/en-us/articles/9308935981458#configuring_two_way_sync\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/9308935981458#configuring_two_way_sync</a>. There’s a nice animation, as well:</p>\n<p></p><div class=\"large-image-placeholder\"><a href=\"https://support.monday.com/hc/article_attachments/9027156678546\" target=\"_blank\" rel=\"noopener nofollow ugc\"><span class=\"url\">https://support.monday.com/hc/article_attachments/9027156678546</span><span class=\"help\">(image larger than 4 MB)</span></a></div><p></p>\n<p>AFAIK, it’s not possible to create integrations like this for an average developer like myself.</p>\n<p>For cases when you want to sync a Monday board with an external system, it seems more robust to have a single integration that simply achieves this, over having a custom action (to update the external system) and a custom trigger (to receive updates from the external system).</p>\n<p>I’m wondering about the timeline for building such integrations as part of an app. My use case is to sync <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> with our own systems, using a custom app. Is there a plan for making this available to app developers, in general?</p>"
+    },
+    {
+      "id": 150966,
+      "postNumber": 2,
+      "createdAt": "2023-11-01T13:16:07.551Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/victorandree\">@victorandree</a>,</p>\n<p>Is the question about that specific custom field which shows a few different dropdown lists?</p>"
+    },
+    {
+      "id": 151019,
+      "postNumber": 3,
+      "createdAt": "2023-11-01T16:55:03.757Z",
+      "author": "victorandree (Victor Andrée)",
+      "cookedHtml": "<p>Well, no, I guess the question is how to build such an integration in an app of my own, in general. “Sync” for me implies that a <strong>single</strong> integration links items created in Monday and the external system (Jira).</p>\n<p>AFAIK, a custom integration to do the same would require a custom trigger to effectively poll for updates on Monday and react to events in the external system, with a custom action to sync them. Maybe that’s the way to do it?</p>\n<p>But sure, I also wonder how to make a dropdown with the specific options.</p>"
+    },
+    {
+      "id": 151029,
+      "postNumber": 4,
+      "createdAt": "2023-11-01T18:19:51.305Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You can create a custom trigger - which maps data from your service to a monday board, AND when the trigger subscribes, you create a webhook with the API to trigger on changes to the column you are syncing to.</p>\n<p>You’ll just need to cache a hash of the last change made <code>md5(itemid+columnid+value)</code> by inbound sync, so that when you get the webhook you can create a hash of the same data to check if its an actual change or a result of an inbound change you made.</p>\n<p>No requirement to poll the board for changes.</p>"
+    },
+    {
+      "id": 151106,
+      "postNumber": 5,
+      "createdAt": "2023-11-02T06:09:27.554Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/victorandree\">@victorandree</a>,</p>\n<p>I think a recipe with a custom action + a webhook could do the trick.</p>\n<p>Regarding the specific custom field with several dropdown columns, it can not be implemented by external developers as of today.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 151562,
+      "postNumber": 6,
+      "createdAt": "2023-11-04T06:38:45.742Z",
+      "author": "benhowes (Ben Howes 🐨)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p>No requirement to poll the board for changes.</p>\n</blockquote>\n</aside>\n<p>Nit: If a webhook fails, then occasional polling may be required to capture any missed updates. monday’s docs do indicate that webhooks are not retried too, so it should be kept in mind that they may not successfully reach you from time-to-time</p>"
+    },
+    {
+      "id": 151586,
+      "postNumber": 7,
+      "createdAt": "2023-11-04T15:10:11.409Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Thats a good reason to have your webhook handler be dumb simple and place the payload in a queue that can retry, has a dead letter queue, persistent storage, etc.</p>\n<p>This at least makes it possible to handle failures on your end, so the only risk is if monday fails to send it, or there is a severe outage where you cant queue. The enqueueing function should be as dumb simple as possible.</p>"
+    },
+    {
+      "id": 151624,
+      "postNumber": 8,
+      "createdAt": "2023-11-05T06:06:56.457Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 152410,
+      "postNumber": 9,
+      "createdAt": "2023-11-09T09:58:11.174Z",
+      "author": "victorandree (Victor Andrée)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> and <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>!</p>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> mentioned “custom action” while <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> mentioned “custom trigger”. I’m guessing the “custom trigger” is the critical part here – but I really see it primarily as a way to create a webhook upon subscription, right? I’m not even sure what the action would be with this solution.</p>"
+    },
+    {
+      "id": 152423,
+      "postNumber": 10,
+      "createdAt": "2023-11-09T11:58:26.360Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The trigger partly gets you the webhook to be created, but also lets you trigger a custom action.</p>\n<p>What happens is when your outside data source has data to push, you trigger your custom trigger and send it the fields you want that link up your backend with monday. such as the external identifier, and a custom direction field.</p>\n<p>When your webhook you created triggers, you send the item ID that changed and the direction to the trigger.</p>\n<p>The custom action then contains what you need to map the fields between the two services. This then gets sent BACK to your backend, along with the ID and direction.</p>\n<p>Then your backend acts on it based on the direction and the mappings provided. So there is a decoupling between your notification of the change in your external service, and the process that then does the actual syncing. The triggering side handles the events, and the action side passes the information you need to do the action (sync).</p>\n<p>This is oversimplified. You may also pass values from the events that trigger so they flow through to the action side for you to do something with.</p>\n<p>Basically a recipe handles telling your app there is something to do, and then also how to do it, and what to do. Then your backend does it.</p>"
+    },
+    {
+      "id": 152431,
+      "postNumber": 11,
+      "createdAt": "2023-11-09T12:23:30.151Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 152440,
+      "postNumber": 12,
+      "createdAt": "2023-11-09T12:52:55.562Z",
+      "author": "victorandree (Victor Andrée)",
+      "cookedHtml": "<p>Right, thanks. Makes sense. I was thinking I could directly update Monday, instead of triggering my custom trigger to trigger an action — but doing it through an action will probably work better from an authorization perspective.</p>\n<p>Appreciate the input from both of you <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 152442,
+      "postNumber": 13,
+      "createdAt": "2023-11-09T12:58:52.977Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yes because you don’t have to worry about storing tokens. Also, you can pass what columns to use from the action - which means nothing is hard coded. (something I would try to avoid for obvious reasons - now you can reuse this on another board for example with no code changes)</p>"
+    },
+    {
+      "id": 152634,
+      "postNumber": 14,
+      "createdAt": "2023-11-10T14:19:04.243Z",
+      "author": "victorandree (Victor Andrée)",
+      "cookedHtml": "<p>Thanks again. Do you see a way to implement this with dynamic mappings, or do you mean to select columns by having a sentence recipe input field in the action for every column I support?</p>\n<p>I tried to implement this with dynamic mappings, but I don’t see how I can map the Monday items to my external entity. I can pass the entity as an output from the trigger, and let the action map it to Monday items, but I don’t see how to do it the other way around. AFAIK, there isn’t a way to “run” an “<code>itemValues</code> to <code>entity</code>” mapping outside of the context of the <a href=\"https://developer.monday.com/apps/docs/dynamic-mapping#part-2-using-your-entity-in-outbound-mapping-mondaycom-to-your-app\" rel=\"noopener nofollow ugc\">supported built-in triggers</a>.</p>\n<p>I guess if the action always gets my external entity and how Monday mapped it to an item, I could figure out the reverse heuristically. Here’s what I mean:</p>\n<ul>\n<li>Let’s say my external entity is tickets, with summary and category fields.</li>\n<li>I create a dynamic mapping corresponding to this entity.</li>\n<li>My custom trigger has <code>ticket</code> as an output field.</li>\n<li>My custom action has <code>ticket</code> as a trigger output input field, and an <code>itemMapping</code> as a sentence recipe input field.</li>\n</ul>\n<p>In my recipe, I configure the action with <code>itemMapping</code> having <code>ticket</code> as a source entity.</p>\n<p>Now, I can pass <code>ticket</code>s from my trigger and in my action, I’ll see how Monday mapped that to a Monday item, so I can create/update Monday items. But I still don’t have a way to translate Monday items to tickets in the external system. Once the action has run once, I could look at how the Monday item values correspond to the dynamic mapping’s values.</p>"
+    }
+  ]
+}

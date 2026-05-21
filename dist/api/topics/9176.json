@@ -1,0 +1,63 @@
+{
+  "id": 9176,
+  "title": "Column change trigger and items_by_column_values",
+  "slug": "column-change-trigger-and-items-by-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2020-07-18T17:12:14.003Z",
+  "lastPostedAt": "2021-02-25T14:24:19.580Z",
+  "postsCount": 6,
+  "excerpt": "I have an app with a trigger “When column changes” and a custom action. The first thing I do in the custom action  is checking if the new column value already exists in the specified column, using the query items_by_colu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2562,
+  "posts": [
+    {
+      "id": 23011,
+      "postNumber": 1,
+      "createdAt": "2020-07-18T17:12:14.074Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I have an app with a trigger “When column changes” and a custom action. The first thing I do in the custom action  is checking if the new column value already exists in the specified column, using the query items_by_column_values.</p>\n<p>The weird thing is that sometimes it returns the itemId of the item that has been changed, but at other times it does not. Does anyone know if the trigger fires before or after the column value has been changed, currently it looks it is arbitrary (sometimes the new column value is found [like the trigger is fired after the column update] and sometimes it is not found [like the trigger is fired before the column update])</p>\n<p>In my code I use await to wait for the promise, so my code is not asynchronous. It is very well possible that monday itself is asynchronous and you can’t rely when the trigger is fired.</p>\n<p>Any thoughts?</p>"
+    },
+    {
+      "id": 26595,
+      "postNumber": 2,
+      "createdAt": "2020-08-25T12:17:06.485Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>This is puzzling indeed.</p>\n<p>When I use this trigger, I usually rely on the “previousColumnValue” and “columnValue” parameters which this trigger outputs.</p>\n<p>Needless to say these always return the expected value, in line with user behaviour in the UI, but I never checked whether they always match the value that a column_value query to the API would return at the same time.</p>\n<p>I do have a <em>somewhat</em> similar problem with what appears to be asyncronous behaviour on the Monday side: I have a feature which listens to changes in a dropdown style column. As you know, the dropdown type column can accept none, one or various “labels” as its value.</p>\n<p>When a label is added to the dropdown column for a given item, the feature adds an item in another board mirroring said given item (the board is specific to that label). when said label is removed from the dropdown, the feature looks for the item in said other board and deletes it. When I add and quickly remove a label, the second time the feature is called, it tells me it can’t find an item to delete. I have a semaphore shared by all methods in my API, so I know that the first call to the feature is finished creating the item by the time the second call tries to look for the item to delete. One explanation (other than “my code is wrong”) would be that the GraphQL API returns a response before actually finishing the creation of the new item (or at least before populating all columns of the item, when values are provided in the mutation).</p>\n<p>I am looking for information on threading in Monday (is there any throttling in place, what is syncronous vs asyncronous, etc.) if i find something relevant to your issue i’ll let you know.</p>\n<p>thanks</p>"
+    },
+    {
+      "id": 26617,
+      "postNumber": 3,
+      "createdAt": "2020-08-25T12:59:48.172Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a></p>\n<p>That would be great information to have. I hit another asynchronous curiosity lately.  When I add a number of webhooks in a loop, even with an await there are situations that a webhook is not created. I worked around this by inspecting the response and use a setTimeout, like this</p>\n<blockquote>\n<p>if (!response.data) setTimeout(createWebhook(token, boardId, webhookUrl, webhookType), 50);</p>\n</blockquote>\n<p>Not very nice, but it will do the job <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 26640,
+      "postNumber": 4,
+      "createdAt": "2020-08-25T17:33:37.898Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>I see.</p>\n<p><a class=\"mention\" href=\"/u/monday\">@monday</a> dev team: is there a way we could “await” completion of mutative API requests? i.e. have the response only sent <em>after</em> the mutation is actually complete in the database on the monday side (e.g. item created, column changed, etc.)?</p>"
+    },
+    {
+      "id": 26642,
+      "postNumber": 5,
+      "createdAt": "2020-08-25T17:52:37.175Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a></p>\n<p>Good question and let’s await <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> the answer. As I do understand monday is using several database (for read and write operations) and these are kept in sync internally. What I <strong>think</strong> we are seeing  is a completion of the write operation in the write database and when we are reading back immediately (under high database load) we get the “old” value.</p>\n<p>Does that make sense?</p>"
+    },
+    {
+      "id": 42306,
+      "postNumber": 6,
+      "createdAt": "2021-02-25T14:24:19.580Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

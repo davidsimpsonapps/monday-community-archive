@@ -1,0 +1,40 @@
+{
+  "id": 38125,
+  "title": "Using the API - is it possible create and item and add an update at the same time?",
+  "slug": "using-the-api-is-it-possible-create-and-item-and-add-an-update-at-the-same-time",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-06-21T16:52:00.684Z",
+  "lastPostedAt": "2022-06-23T15:23:18.662Z",
+  "postsCount": 3,
+  "excerpt": "I am using Python to create bulk entries in a board to track required trainings.  I would like to add information and a URL to the training as the first comment for the item.  Can I do this in the initial mutation?  Or d&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1187,
+  "posts": [
+    {
+      "id": 89251,
+      "postNumber": 1,
+      "createdAt": "2022-06-21T16:52:00.762Z",
+      "author": "BruceB (Bruce Baldwin)",
+      "cookedHtml": "<p>I am using Python to create bulk entries in a board to track required trainings.  I would like to add information and a URL to the training as the first comment for the item.  Can I do this in the initial mutation?  Or do I need to capture the item ID and add the comment in another loop?</p>\n<p>Thanks<br />\nBruce</p>\n<p>— Current script, no adding an update ----<br />\ntrainingTitle = ‘Do this activity’<br />\ntrainingDueDate = ‘2022-07-31’</p>\n<h1><a name=\"p-89251-teamsid-workflow-practice-team-1\" class=\"anchor\" href=\"#p-89251-teamsid-workflow-practice-team-1\"></a>teamsID = ### # Workflow Practice Team</h1>\n<p>teamsID = ### # Python Test Team</p>\n<p>‘’’<br />\nScript begins<br />\n‘’’</p>\n<p>updates_query = ‘{teams (ids:’ + str(teamsID) +‘) {users {id  }}}’<br />\ndata = {‘query’: updates_query}<br />\nresponse = requests.post(url=apiUrl, json=data, headers=headers) # make request<br />\nallData = response.json()</p>\n<h1><a name=\"p-89251-traverse-the-json-file-2\" class=\"anchor\" href=\"#p-89251-traverse-the-json-file-2\"></a>Traverse the JSON file</h1>\n<p>boardLevelData = allData[‘data’]<br />\nteamLevelData = boardLevelData[‘teams’]</p>\n<h1><a name=\"p-89251-loop-to-navigate-through-the-list-3\" class=\"anchor\" href=\"#p-89251-loop-to-navigate-through-the-list-3\"></a>Loop to navigate through the list</h1>\n<p>for allItems in teamLevelData:<br />\nsingleItem = allItems[‘users’]<br />\ncount = 0<br />\n# Loop for individual item detail<br />\nfor userDetail in singleItem:<br />\nuserID = userDetail[‘id’]<br />\n# Add training entry for each person<br />\nvars = {<br />\n‘myItemName’ : trainingTitle,<br />\n‘columnVals’ : json.dumps({<br />\n‘date4’ : {‘date’ : trainingDueDate},<br />\n‘status’ : {‘label’ : ‘New’},<br />\n‘person’: {‘personsAndTeams’ :[ {‘id’ : userID, ‘kind’ : ‘person’}]}<br />\n})}</p>\n<pre><code>    query1 = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:1672697065, item_name:$myItemName, column_values:$columnVals) { id } }'\n    data = {'query' : query1, 'variables' : vars}\n    r = requests.post(url=apiUrl, json=data, headers=headers) # make request\n    jsondata = r.json()\n    print(jsondata)\n</code></pre>"
+    },
+    {
+      "id": 89436,
+      "postNumber": 2,
+      "createdAt": "2022-06-23T08:39:18.406Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/bruceb\">@BruceB</a>!</p>\n<p>You will need to create the item, get the item ID and then use another call to create the update in this case <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 89490,
+      "postNumber": 3,
+      "createdAt": "2022-06-23T15:23:18.662Z",
+      "author": "BruceB (Bruce Baldwin)",
+      "cookedHtml": "<p>I figured that was the case.  I am going to try using a link column instead.</p>"
+    }
+  ]
+}

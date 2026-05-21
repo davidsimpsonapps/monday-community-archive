@@ -1,0 +1,32 @@
+{
+  "id": 74637,
+  "title": "Improved subitem id access needed",
+  "slug": "improved-subitem-id-access-needed",
+  "categoryId": 58,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-01-09T16:47:10.768Z",
+  "lastPostedAt": "2024-01-14T13:01:22.071Z",
+  "postsCount": 2,
+  "excerpt": "In the new API version there is a method using the ... on BoardRelationValue to return the linked item Ids on a board relation column. Extend that to SubtasksValue. \nCurrently the main way to get the subitem IDs of an it&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 127,
+  "posts": [
+    {
+      "id": 161087,
+      "postNumber": 1,
+      "createdAt": "2024-01-09T16:47:10.854Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>In the new API version there is a method using the <code>... on BoardRelationValue</code> to return the linked item Ids on a board relation column. Extend that to SubtasksValue.</p>\n<p>Currently the main way to get the subitem IDs of an item is</p>\n<pre><code class=\"lang-auto\">items {\n subitems {\n  id\n }\n}\n</code></pre>\n<p>The subitems subquery is returning items, in this case just the ids are returned. The problem is the subitems subquery is unbounded. It always acts as though 1000 subitems are being returned which skyrockets API complexity. If using <code>items_page</code> this increases it another order of magnitude.</p>\n<p>We need <code>... on SubtasksValue</code> to behave like <code>... on BoardRelationValue</code></p>\n<pre><code class=\"lang-auto\">items {\n column_values(ids: \"subitems\") {\n        ... on SubtasksValue {\n        linked_item_ids\n        display_value\n      }\n }\n}\n</code></pre>\n<p>Rather than the resolver fetching all of the subitems and then return their values (in this case only the ID) which is complex, this would return only the subitem IDs associated with the item. This would be much lower API complexity since the subitem IDs must be a value for the item already (otherwise how would it resolve the actual subitems for a subitem query?) and would skip the items resolver for all of those IDs.</p>\n<p>Then once we have the Ids we can process fetching them ourselves more efficiently - we may need to do more complicated queries on the subitems which are not efficient to nest, esp. with the unbounded size of subitems.</p>\n<p><em>Additional notes:</em></p>\n<p><em>I am aware I can get them from the value field of SubtasksValue - but that method is becoming potentially obsolete as the API moves to the fragments pattern. I’d like to be able to skip a parsing step as well. (plus save the API servers the requirement to build and serialize the value field when its requested)</em></p>\n<p><em>lhe linked_items on items has limitations: it requires knowing the board ID and the column ID. Even if you do know the subitems board ID, for the column_id argument on linked_items, the “subitems” column is not recognized. It appears subitems are stored in a separate structure.</em></p>"
+    },
+    {
+      "id": 161978,
+      "postNumber": 3,
+      "createdAt": "2024-01-14T13:01:22.071Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you for the request <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!</p>"
+    }
+  ]
+}

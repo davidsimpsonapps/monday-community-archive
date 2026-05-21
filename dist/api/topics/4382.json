@@ -1,0 +1,320 @@
+{
+  "id": 4382,
+  "title": "Create Multiple items at once",
+  "slug": "create-multiple-items-at-once",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    413
+  ],
+  "createdAt": "2020-02-03T15:12:01.983Z",
+  "lastPostedAt": "2025-06-02T08:37:35.364Z",
+  "postsCount": 42,
+  "excerpt": "Hello All, \nWe are using Monday for 2 months now and we like it very much. \nNow i am programming with the API and i want to create multiple items at once. \nHow does the mutation look if i want to create multiple items at&hellip;",
+  "solvedPostId": null,
+  "likeCount": 13,
+  "views": 9737,
+  "posts": [
+    {
+      "id": 11294,
+      "postNumber": 1,
+      "createdAt": "2020-02-03T15:12:02.093Z",
+      "author": "Tieme (Tieme)",
+      "cookedHtml": "<p>Hello All,</p>\n<p>We are using Monday for 2 months now and we like it very much.<br />\nNow i am programming with the API and i want to create multiple items at once.</p>\n<p>How does the mutation look if i want to create multiple items at once.<br />\nThis is my mutation now</p>\n<pre><code>mutation {\n create_item (\n  board_id:8465,\n  group_id:\"topics\",\n  item_name:\"ItemName\",\n  column_values:\"{\\\"status\\\":{\\\"label\\\":\\\"ToDo\\\"}}\"\n ) {\n  id\n }\n}\n</code></pre>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 11336,
+      "postNumber": 2,
+      "createdAt": "2020-02-04T12:50:46.223Z",
+      "author": "lauralev (Laura Levy)",
+      "cookedHtml": "<p>HI <a class=\"mention\" href=\"/u/tieme\">@Tieme</a>! Thanks for posting about this one - currently our API does not support the ability to create multiple items at once. I’d be happy to pass this request onto our team for consideration <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Cheers!</p>"
+    },
+    {
+      "id": 11483,
+      "postNumber": 3,
+      "createdAt": "2020-02-05T18:16:29.290Z",
+      "author": "Tieme (Tieme)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/lauralev\">@lauralev</a>,<br />\nThank you for the reply.<br />\nPlease pass this request on to the team, I think it is a very nice addition to the API.<br />\nI am curious what their reaction would be…<br />\nCheers!</p>"
+    },
+    {
+      "id": 11548,
+      "postNumber": 4,
+      "createdAt": "2020-02-06T18:26:10.656Z",
+      "author": "kfogarty (Kevin Fogarty)",
+      "cookedHtml": "<p>Not sure of your needed scenario; but you could you could build a windows client and use c# and GraphQL library to loop and dynamically create each item you need; similar to how I am creating this notification. Maybe this will help you??? <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Here is an example of creating a notification based on values passed to a procedure; build my query and pass it to a GraphQLClient, etc.</p>\n<p>static async Task RunMutableNotification(string user_id, string item_id, string item_name)<br />\n{<br />\nstring strText = ““API Completed Task Scan Notification; Pulse: (” + item_id + “) \" + item_name +<br />\n\" Status Updated to Completed and Moved to Completed Group!””;</p>\n<pre><code>        //Hardcoded the value we will be setting it to \"Completed\"\n        string query = \"mutation {create_notification (user_id: \" + user_id + \", \" +\n                   \"target_id: \" + item_id + \", \" + \"text: \" + strText + \", \" + \"target_type: \" + \"Project) { text } }\";\n\n        var request = new GraphQLRequest()\n        {\n            Query = query\n        };\n\n        var graphQLClient = new GraphQLClient(\"https://api.monday.com/v2/\");\n        graphQLClient.DefaultRequestHeaders.Add(\"Authorization\", \"Bearer YOUR BEARER CODE WOULD GO HERE\");\n        graphQLResponse = await graphQLClient.PostAsync(request);\n\n        graphQLClient.Dispose();\n\n    }</code></pre>"
+    },
+    {
+      "id": 11781,
+      "postNumber": 5,
+      "createdAt": "2020-02-10T06:02:19.147Z",
+      "author": "Tieme (Tieme)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kfogarty\">@kfogarty</a> Thanks fot the script,<br />\nI am programming in PHP and have created a class now for creating a Mutation Query.</p>\n<pre><code>class MondayMutationCreateItemsQuery\n{\n    private $Mutations;\n    private $BoardID;\n    private $GroupID;\n    private $ItemName;\n    private $ColumnValues;\n\n    public function __construct()\n    {\n        $this-&gt;Mutations = '';\n    }\n\n    public function setBoardID(int $BoardID)\n    {\n        $this-&gt;BoardID = $BoardID;\n    }\n\n    public function setGroupID(string $GroupID)\n    {\n        $this-&gt;GroupID = $GroupID;\n    }\n\n    public function setItemName(string $ItemName)\n    {\n        $this-&gt;ItemName = $ItemName;\n    }\n\n    public function setColumnValues(array $ColumnValues)\n    {\n        $this-&gt;ColumnValues = json_encode(json_encode($ColumnValues));\n    }\n\n    public function GetQuery()\n    {\n        $Check = $this-&gt;CheckValues();\n        if(!is_bool($Check))\n        {\n            return $Check;\n        }\n\n        $Mutation = 'mutation {';\n            $Mutation .= 'create_item (';\n            $Mutation .= ' board_id:'.$this-&gt;BoardID.',';\n            $Mutation .= ' group_id:\"'.$this-&gt;GroupID.'\",';\n            $Mutation .= ' item_name:\"'.$this-&gt;ItemName.'\" ';\n            $Mutation .= ' column_values:'.$this-&gt;ColumnValues;\n            $Mutation .= ') { id }';\n        $Mutation .= '}';\n\n        return  '{\"query\" : '. json_encode($Mutation) . ' }';\n    }\n\n    private function CheckValues(){\n\n        if($this-&gt;BoardID == ''){\n            return 'Error: Empty BoardID.';\n        }\n        if($this-&gt;GroupID == ''){\n            return 'Error: Empty GroupID.';\n        }\n        if($this-&gt;ItemName == ''){\n            return 'Error: Empty ItemName.';\n        }\n        if($this-&gt;ColumnValues == ''){\n            return 'Error: Empty ColumnValues.';\n        }\n        return TRUE;\n    }\n} \n</code></pre>\n<p>I works like this.</p>\n<pre><code>private function CreateMondayItem(array $EndedProductContracts)\n{\n    $Monday = $this-&gt;App-&gt;MondayMutationCreateItems();\n    $Monday-&gt;setBoardID($this-&gt;MondayBoard);\n    $Monday-&gt;setGroupID('topics');\n    foreach ($EndedProductContracts as $EndedProductContract)\n    {\n        $this-&gt;App-&gt;Log()-&gt;debug('Create Monday item ' . $EndedProductContract['Domain']);\n        $Monday-&gt;setItemName($EndedProductContract['Domain']);\n        $Monday-&gt;setColumnValues([\n            'status8' =&gt; ['label' =&gt; $this-&gt;LabelName ],\n            'status'  =&gt; ['label' =&gt; 'Nog verwerken' ],\n            'date4'   =&gt; ['date'  =&gt; $EndedProductContract['Date'] ],\n            'link'    =&gt; [ 'url'  =&gt; $EndedProductContract['Link']['url'], 'text' =&gt; $EndedProductContract['Link']['text']]\n        ]);\n        $Reponse = $this-&gt;App-&gt;MondayRequest( $Monday-&gt;GetQuery() );\n        $this-&gt;App-&gt;Log()-&gt;debug('Monday Item Created ', ['response' =&gt; $Reponse]);\n    }\n}</code></pre>"
+    },
+    {
+      "id": 11795,
+      "postNumber": 6,
+      "createdAt": "2020-02-10T11:57:40.000Z",
+      "author": "kfogarty (Kevin Fogarty)",
+      "cookedHtml": "<p>Tieme,</p>\n<p>Great; I am glad you are on your way. I just wanted to make sure that you were aware that using a looping mechanism would allow you to create as many mutations as you want…</p>\n<p>Take care<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=9\" title=\":blush:\" class=\"emoji only-emoji\" alt=\":blush:\" /></p>\n<p>Regards,</p>\n<p>Kevin</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/6/64d5760800826c549a4a9224429e5c9224d2622d.png\" alt=\"cde_registeredtrademark_0f838930-a72c-46ec-a9d0-e4cf666f1a04.png\" width=\"200\" height=\"100\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/f/f236f2b6d73f915abeee3e05650dce53a9b53ced.png\" alt=\"cde-facebook-logo_2250370c-7a60-48dd-9fee-739a1d0c993d.png\" width=\"50\" height=\"50\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/f/fea4ca4657e913b3083925c73178361cb2e29922.png\" alt=\"cde-twitter-logo_47bd0ad0-4413-4041-a63d-6b61439b48da.png\" width=\"50\" height=\"50\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/e/ec7101c1d5e5df86a35d975f6ab1810c6118427e.png\" alt=\"cde-linkedin-logo_ea926bab-4b15-4f14-b9e1-a2b360a15040.png\" width=\"50\" height=\"50\" /></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/0/0df126c8e05473994ffb28d6eb6f453a71d6c235.png\" alt=\"cde-youtube-logo_5ba8c41b-f5ed-4d8e-886c-ed3a50eefe11.png\" width=\"50\" height=\"50\" /></p>"
+    },
+    {
+      "id": 31400,
+      "postNumber": 7,
+      "createdAt": "2020-10-19T06:27:11.778Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p>Does anyone know if the feature request associated here was resolved?</p>\n<p>Yes, looping mechanisms work fine, but have two downfalls:</p>\n<ol>\n<li>Take more total time due to additional handshakes and transfers</li>\n<li>Result in additional API calls, impacting the amount of calls remaining in a license period.</li>\n</ol>"
+    },
+    {
+      "id": 31447,
+      "postNumber": 8,
+      "createdAt": "2020-10-19T16:48:36.874Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/morhriveion\">@morhriveion</a>  - not just yet. It’s something we’re hoping to tackle in the future however.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 65060,
+      "postNumber": 9,
+      "createdAt": "2021-10-01T06:14:40.717Z",
+      "author": "etaytch (Etay Tchechanovski)",
+      "cookedHtml": "<p>Is there any update on this one? <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=10\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" /></p>"
+    },
+    {
+      "id": 65061,
+      "postNumber": 10,
+      "createdAt": "2021-10-01T06:19:39.189Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/etaytch\">@etaytch</a></p>\n<p>Thank you for reaching out about this! Currently, not just yet, and I’m afraid I can’t confirm when this would be added to the platform. As of now, it seems like creating multiple items in the same mutation is not going to be an option in the next couple of months, though.</p>\n<p>I hope that helps, and thanks for keeping an eye out for this feature request!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 74747,
+      "postNumber": 11,
+      "createdAt": "2022-01-24T01:41:16.911Z",
+      "author": "MitchellC (Mitchell Coppins)",
+      "cookedHtml": "<p>Any update on this one guys? Is there an ETA or product roadmap we could see?</p>"
+    },
+    {
+      "id": 78031,
+      "postNumber": 12,
+      "createdAt": "2022-02-23T07:33:09.558Z",
+      "author": "AntonioNA (Antonio Nakic-Alfirevic)",
+      "cookedHtml": "<p>Monday currently supports 10rows per board, but importing thousands of rows through the API one at a time is completely impractical. Importing data from an Excel file is fairly fast, but there doesn’t seem to be a programmatic way to do that.</p>\n<p>Questions:</p>\n<ul>\n<li>is there a way to import an excel file programmatically via the API?</li>\n<li>is it not possible to include multiple create_item mutations in the same query (i.e. same http request)?</li>\n</ul>"
+    },
+    {
+      "id": 82486,
+      "postNumber": 13,
+      "createdAt": "2022-04-10T13:18:45.702Z",
+      "author": "NADEBUM (nadebum)",
+      "cookedHtml": "<p>I hope this feature gets added in the API.<br />\nWe are  running the API via Google Apps Scripts and currently using a loop to create the mutations but this is inefficient especially on large data because Google has certain quotas like execution limit and API fetches that we also need to consider.<br />\nReally hoping we’ll get an update on this.</p>"
+    },
+    {
+      "id": 83483,
+      "postNumber": 14,
+      "createdAt": "2022-04-20T11:39:13.280Z",
+      "author": "carlosdelgado (Carlos Delgado)",
+      "cookedHtml": "<p>Having this functionality would be really helpful for many reasons, but for the moment I guess we need to loop through the array of items we need to create.<br />\nThis is what I’m doing for creating subitems, and for me <strong>the order is very important</strong>, so I can’t send the requests in parallel. I have to block my code until the request comes back to send the new one, because I need a particular order.<br />\nIs there a way to define this other than creating a number column for item ordering?</p>"
+    },
+    {
+      "id": 83556,
+      "postNumber": 15,
+      "createdAt": "2022-04-21T05:27:39.040Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/nadebum\">@NADEBUM</a> and <a class=\"mention\" href=\"/u/carlosdelgado\">@carlosdelgado</a> !</p>\n<p>You can send multiple mutations in one request:</p>\n<pre><code class=\"lang-auto\">mutation{\n  createItem1: create_item(board_id: 1234567, item_name:\"This is a new Item 1\") {\n    id\n    name\n  }\n  createItem2: create_item(board_id: 1234567, item_name:\"This is a new Item 2\") {\n    id\n    name\n  }\n}\n</code></pre>\n<p>You would, obviously, get one response per call with the information from all the mutations sent.</p>\n<p>Carlos, I did not fully understand the order you are describing. Can you please elaborate (and maybe give me an example)?</p>"
+    },
+    {
+      "id": 84445,
+      "postNumber": 16,
+      "createdAt": "2022-04-29T01:08:02.100Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I love using this one, because i need to create items in several boards for the same event in an outside application. A single call just cuts down on the API activity in general. Establishing the connections is half the latency, and putting multiple operations in a single mutation eliminates much of that.</p>\n<p>I also combine column updates to many columns, items, and item moves in the same mutation. They have a high complexity sometimes but not really any more than many separate queries - but now the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> engine processes everything in a nearly simultaneous fashion (though it definitely appears at this time all the columns update in the order listed in the mutation and the operations happen in the order listed)</p>"
+    },
+    {
+      "id": 86498,
+      "postNumber": 17,
+      "createdAt": "2022-05-20T23:23:47.494Z",
+      "author": "NADEBUM (nadebum)",
+      "cookedHtml": "<p>Can we find any documentation for this?<br />\nIs createItem1, createItem2 a keyword or a variable?<br />\nI’d like to try this method.<br />\nThank you!</p>"
+    },
+    {
+      "id": 86585,
+      "postNumber": 18,
+      "createdAt": "2022-05-23T10:35:02.703Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/nadebum\">@NADEBUM</a> !</p>\n<p>You can check the documentation <a href=\"https://developer.monday.com/api-reference/docs/introduction-to-graphql#multiple-queries-in-one-request\">here</a>.</p>\n<p>createItem1 and createItem2 would be the names for each creation so that you can tell them apart in the response.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 86721,
+      "postNumber": 19,
+      "createdAt": "2022-05-24T09:46:07.713Z",
+      "author": "lyle (Lyle Jantzi III)",
+      "cookedHtml": "<p>Am I correct in the assumption that this will not work for the add_file mutation? When I try it, I get an “Unsupported query” error. I don’t know if it’s because I’m doing it wrong or if it’s really just not supported.</p>"
+    },
+    {
+      "id": 86813,
+      "postNumber": 20,
+      "createdAt": "2022-05-25T05:13:46.052Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/lyle\">@lyle</a>!</p>\n<p>That is correct. It will not work for that specific mutation.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 87637,
+      "postNumber": 21,
+      "createdAt": "2022-06-05T12:48:44.577Z",
+      "author": "NADEBUM (nadebum)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias.Monday:</div>\n<blockquote>\n<p>send multiple mutations in one request:</p>\n</blockquote>\n</aside>\n<p>Do you have an example of sending multiple mutations in one request with or using a variable?<br />\nI’m trying to implement it via JS but it seems I can only use variables with a single mutation.</p>"
+    },
+    {
+      "id": 87645,
+      "postNumber": 22,
+      "createdAt": "2022-06-05T22:34:03.946Z",
+      "author": "lyle (Lyle Jantzi III)",
+      "cookedHtml": "<p>Like this.</p>\n<p>Query:</p>\n<pre><code class=\"lang-auto\">mutation ($boardId: Int!, $itemName1: String!, $itemName2: String!) {\n  createItem1: create_item(board_id: $boardId, item_name: $itemName1) {\n    id\n    name\n  }\n  createItem2: create_item(board_id: $boardId, item_name: $itemName2) {\n    id\n    name\n  }\n}\n</code></pre>\n<p>variables:</p>\n<pre><code class=\"lang-auto\">{\n  \"boardId\": 22222,\n  \"itemName1\": \"This is a new Item 1\",\n  \"itemName2\": \"This is a new Item 2\"\n}\n</code></pre>\n<p>I hope this helps!</p>"
+    },
+    {
+      "id": 87647,
+      "postNumber": 23,
+      "createdAt": "2022-06-05T23:10:04.074Z",
+      "author": "NADEBUM (nadebum)",
+      "cookedHtml": "<p>Thank you very much!<br />\nThis is really helpful. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 95568,
+      "postNumber": 24,
+      "createdAt": "2022-08-21T17:19:03.679Z",
+      "author": "frartur (Artur)",
+      "cookedHtml": "<p>Hi is there any limit of mutations I can make at once? I need to update all items on a board, it means more than 400 rows.</p>"
+    },
+    {
+      "id": 95583,
+      "postNumber": 25,
+      "createdAt": "2022-08-22T03:44:52.298Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/frartur\">@frartur</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>We do not recommend running multiple mutations simultaneously in the same object (board or item) so in this case, the best way to do this would be to do it sequentially.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 95637,
+      "postNumber": 26,
+      "createdAt": "2022-08-22T12:36:35.880Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Is there a reason this isn’t recommended - beside the problems related to complexity limit and retrying a partial query? I have often done a single call to the API with both change multiple column values and move item to group together for one item to try to reduce the delay between events that the user sees (so they dont seen values change then another long delay before the item moves).</p>"
+    },
+    {
+      "id": 95698,
+      "postNumber": 27,
+      "createdAt": "2022-08-23T04:31:22.397Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>!</p>\n<p>Performing multiple mutations on the same object simultaneously (specially if the amount of mutations is a big one) may result sometimes in issues with one or more of those mutations.</p>"
+    },
+    {
+      "id": 120337,
+      "postNumber": 28,
+      "createdAt": "2023-03-20T05:52:54.201Z",
+      "author": "Avijit (Avijit )",
+      "cookedHtml": "<p>Hi Team,</p>\n<p>I went through the discussion above , but just wanted to check please if the request to create multiple items in a Single board in a single API call is beyond the scope of work still ?<br />\nWe would have liked this feature as we try to load multiple items to each board (and have quite a few Boards in which we load data to ). Having this will help reduce our execution time.</p>"
+    },
+    {
+      "id": 120340,
+      "postNumber": 29,
+      "createdAt": "2023-03-20T06:45:08.415Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/avijit\">@Avijit</a>,</p>\n<p>You can send multiple mutations in one HTTP request as explained <a href=\"https://developer.monday.com/api-reference/docs/introduction-to-graphql#multiple-queries-in-one-request\">here</a>. A possible call could be:</p>\n<pre><code class=\"lang-auto\">mutation{\n  createItem1: create_item(board_id: 1234567, item_name:\"This is a new Item 1\") {\n    id\n    name\n  }\n  createItem2: create_item(board_id: 1234567, item_name:\"This is a new Item 2\") {\n    id\n    name\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 120713,
+      "postNumber": 30,
+      "createdAt": "2023-03-22T09:17:07.331Z",
+      "author": "Avijit (Avijit )",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, one other question could we even have this to send to multiple boards altogether. As for each create_item we pass the board_id so if we generate the entire mutation query for say 100 entries across multiple boards and items could it be done in a single HTTP request?</p>\n<p>Is there any limit on the number of ‘create_item’ calls?</p>"
+    },
+    {
+      "id": 120714,
+      "postNumber": 31,
+      "createdAt": "2023-03-22T09:21:09.637Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C018J3C259C/p1679484038871409\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 120716,
+      "postNumber": 32,
+      "createdAt": "2023-03-22T09:24:07.328Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/avijit\">@Avijit</a>,</p>\n<p>Can you create different mutations for different boards in the same request?</p>\n<p><strong>Yes. You can.</strong></p>\n<p>Is there a limit for the number of mutations you can send together?</p>\n<p><strong>I will check if there is a specific limit regarding the amount of mutations and let you know</strong></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 120783,
+      "postNumber": 33,
+      "createdAt": "2023-03-22T13:18:21.734Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>There is no hard limit, but we do not recommend sending more than 10-20, as response time will be slow in that case.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 120981,
+      "postNumber": 34,
+      "createdAt": "2023-03-23T10:18:14.078Z",
+      "author": "Avijit (Avijit )",
+      "cookedHtml": "<p>Thanks Matias will limit to a batch of 10 as a convention then.</p>"
+    },
+    {
+      "id": 120993,
+      "postNumber": 35,
+      "createdAt": "2023-03-23T11:27:48.859Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Glad to help here!</p>"
+    },
+    {
+      "id": 126051,
+      "postNumber": 36,
+      "createdAt": "2023-05-01T04:45:25.097Z",
+      "author": "geeemaaan (G)",
+      "cookedHtml": "<p>How can we structure a request to create multiple items with column values from variables using a For loop?</p>\n<p>I can’t seem to figure this out.</p>"
+    },
+    {
+      "id": 126053,
+      "postNumber": 37,
+      "createdAt": "2023-05-01T06:02:01.638Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/geeemaaan\">@geeemaaan</a>,</p>\n<p>Here is an example:</p>\n<pre><code class=\"lang-auto\">app.post(\"/myendpoint\", function(req, res) {\n\n\t res.status(200).send(req.body)\t\n\n\t let itemNamesArray = [\"Item10\", \"Item11\", \"Item12\", \"Item13\"]\n\nfor (let i = 0; i &lt; itemNamesArray.length; i++) {\n\t\tlet query5 = `mutation { create_item (board_id:1234567890, item_name:${itemNamesArray[i]}, column_values:\\\"{\\\\\\\"text\\\\\\\":\\\\\\\"Some text\\\\\\\"}\\\") { id } }`;\n\t \n\t\tfetch (\"https://api.monday.com/v2\", {\n\t\t  method: 'post',\n\t\t  headers: {\n\t\t\t'Content-Type': 'application/json',\n\t\t\t'Authorization' : 'MYAPIKEYHERE'\n\t\t  },\n\t\t  body: JSON.stringify({\n\t\t\t'query' : query5\n\t\t  })\n\t\t}).then(res =&gt; res.json())\n\t\t.then(res =&gt; console.log(JSON.stringify(res, null, 2)));\n\t}\n})\n</code></pre>\n<p>Here I am passing the name of the items as a variable, but in the same way, you could pass somehting like the column values.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 126055,
+      "postNumber": 38,
+      "createdAt": "2023-05-01T06:42:48.233Z",
+      "author": "geeemaaan (G)",
+      "cookedHtml": "<p>But that solution is making 4 separate posts to the API…?</p>\n<p>I am trying to make this happen with one post…</p>\n<p>I was trying to figure out how to format it sending variables in a separate array, but am now having more luck structuring the entire thing without using [variables]</p>"
+    },
+    {
+      "id": 126073,
+      "postNumber": 39,
+      "createdAt": "2023-05-01T10:50:55.425Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Oh, my bad.</p>\n<p>You can use a request like this one:</p>\n<pre><code class=\"lang-auto\">mutation{\n  createItem1: create_item(board_id: 1234567, item_name:\"This is a new Item 1\") {\n    id\n    name\n  }\n  createItem2: create_item(board_id: 1234567, item_name:\"This is a new Item 2\") {\n    id\n    name\n  }\n}\n</code></pre>\n<p>And in each mutation, you can pass different variables.</p>\n<p>Is that what you needed?</p>"
+    },
+    {
+      "id": 136144,
+      "postNumber": 40,
+      "createdAt": "2023-07-24T03:21:49.166Z",
+      "author": "carlosdelgado (Carlos Delgado)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Apologies for not coming back to you <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>What I meant by the order is the order of the items in the table once they are created. So I need the items to be created in the same order as I send them:</p>\n<ul>\n<li>item 1</li>\n<li>item 2</li>\n<li>…</li>\n</ul>\n<p>From my experiments, if I send the items in the same mutation, the order is not maintained, so if I send these items in this order:</p>\n<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ul>\n<p>I can get a result in the table like this:</p>\n<ul>\n<li>Item 2</li>\n<li>Item 3</li>\n<li>Item 1</li>\n</ul>\n<p>So, If I send single mutations with one element each and wait until each mutation is finished before sending the next one, then the order is kept, but is painfully slow.</p>\n<p>Hope I had explained myself this time, please let me know if you need more info.</p>\n<p>Thanks,<br />\nCarlos</p>"
+    },
+    {
+      "id": 173830,
+      "postNumber": 41,
+      "createdAt": "2024-03-18T14:19:18.274Z",
+      "author": "Soroh (Soroh Donn)",
+      "cookedHtml": "<p>Regarding ordering items, you can add a “number” column and sort it by that column. Autopopulate the values to be 1, 2, 3 depending on the order you want it to be.</p>"
+    },
+    {
+      "id": 173932,
+      "postNumber": 42,
+      "createdAt": "2024-03-19T08:22:23.513Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/carlosdelgado\">@carlosdelgado</a>,</p>\n<p>What Soroh mentioned is a possible workaround.</p>\n<p>It would be either doing something like that, or just creating each item individually with a separate HTTP request.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 231035,
+      "postNumber": 43,
+      "createdAt": "2025-06-02T08:37:35.364Z",
+      "author": "evalumo (Louis-Philippe Tremblay)",
+      "cookedHtml": "<p>As of 2025, the order seems to be correct for a maximum of 20 create_item lines in the same mutation. More than 20 messes up the order.</p>"
+    }
+  ]
+}

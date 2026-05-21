@@ -1,0 +1,215 @@
+{
+  "id": 86661,
+  "title": "Checking user's subscription before any action?",
+  "slug": "checking-users-subscription-before-any-action",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2024-05-12T03:36:45.192Z",
+  "lastPostedAt": "2024-05-29T12:16:27.941Z",
+  "postsCount": 26,
+  "excerpt": "Hi, \nI am building a client side application for an app idea. It is not a server backed application. It leverages the monday’s Graphql api and does something nice things. I want to monetize it as seat based subscription &hellip;",
+  "solvedPostId": null,
+  "likeCount": 11,
+  "views": 517,
+  "posts": [
+    {
+      "id": 183398,
+      "postNumber": 1,
+      "createdAt": "2024-05-12T03:36:45.264Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I am building a client side application for an app idea. It is not a server backed application. It leverages the monday’s Graphql api and does something nice things. I want to monetize it as seat based subscription model not feature based.</p>\n<p>The question is, if the monetization type is seat based subscription do I need to check user plan upon team size before using the app? Or does monday do on behalf of me? If monday does not maintain subscription enforcement then I need a server to to store plan selections, right?</p>\n<p>What is the best practice here? cc: <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 183446,
+      "postNumber": 2,
+      "createdAt": "2024-05-12T09:25:28.460Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/apsimos\">@apsimos</a>,</p>\n<p>You need to check the account’s seats and plan on your end and you don’t need backend for it. You can use the SDK/<a href=\"https://developer.monday.com/apps/docs/api-reference#app-subscription\">API</a> for it <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 183450,
+      "postNumber": 3,
+      "createdAt": "2024-05-12T11:06:33.505Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>You need to check the account’s seats and plan on your end and you don’t need backend for it. You can use the SDK/<a href=\"https://developer.monday.com/apps/docs/api-reference#app-subscription\" rel=\"noopener nofollow ugc\">API </a> for it</p>\n</blockquote>\n</aside>\n<p>Thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>How can I get the seat number? I have checked the <code>account</code> query but there is no seat number.</p>"
+    },
+    {
+      "id": 183668,
+      "postNumber": 4,
+      "createdAt": "2024-05-13T17:46:47.906Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">{\n  account {\n    plan {\n      max_users\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 183678,
+      "postNumber": 5,
+      "createdAt": "2024-05-13T19:14:00.456Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>This gives the max users in that plan. But I need the max users in the team to force the plan selection.</p>"
+    },
+    {
+      "id": 183683,
+      "postNumber": 6,
+      "createdAt": "2024-05-13T19:44:17.428Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>That is the max users in the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> account plan, that the account has purchased, and is the number used when they purchase a seat base plan to your app in the marketplace.</p>"
+    },
+    {
+      "id": 183685,
+      "postNumber": 7,
+      "createdAt": "2024-05-13T20:02:00.037Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>I am little bit confused. Let’s say the plan’s max user capacity is 20. And then account’s team size is getting increased, say it is 21. As far as I understand the account needs to be subscribe to the next plan which starts with 21 seat. Am I wrong?  So in order to compare I think I need the current team size.</p>"
+    },
+    {
+      "id": 183692,
+      "postNumber": 8,
+      "createdAt": "2024-05-13T21:01:40.451Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>max_users is the number of <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> licenses that the account has purchased. If they have 20 and increase to 21, they must purchase another <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> license. They do that, and max_users now increases. But maybe they have purchased 25 users but only have 20 active - they still have a max_users of 25.</p>\n<p>When they go to the marketplace to purchase your app, they are presented the plan which encompasses their current max_users.</p>\n<p>You then compare their subscription plan against the account.plan.max_users and if the max_users is above the subscription plan you can choose to restrict access (or maybe a grace period for them to upgrade?) or display a prompt to upgrade their plan for your app.</p>\n<p>Monday bases the app subscription on the licenses purchased, not the currently in use seats.</p>"
+    },
+    {
+      "id": 183747,
+      "postNumber": 9,
+      "createdAt": "2024-05-14T09:45:36.655Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>Thank you for this long explanation. I could not able to find a documentation that stresses these things. This is why I am confused. Is there any documentation that I can dig deeper? cc: <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>"
+    },
+    {
+      "id": 183783,
+      "postNumber": 10,
+      "createdAt": "2024-05-14T10:41:25.781Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/apsimos\">@apsimos</a> You’ll need to add the <code>account:read</code> OAuth scope to your app to run that query.</p>\n<p>Also, get a bit more information…</p>\n<pre><code class=\"lang-auto\">{\n  account {\n      plan {\n          version\n          max_users\n      }\n  }\n}\n</code></pre>\n<p>Also get the <code>version</code> of the plan, because if you update the plan, currently existing accounts will remain on the old plan.</p>\n<p>And consider some weirdness in the <code>max_users</code> <a href=\"https://community.monday.com/t/please-explain-the-new-fields-in-the-install-webhook/39495/6\">when using webhooks</a>.</p>"
+    },
+    {
+      "id": 184065,
+      "postNumber": 11,
+      "createdAt": "2024-05-15T09:59:06.610Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/apsimos\">@apsimos</a>, you can find more about this <a href=\"https://developer.monday.com/api-reference/reference/app-subscription\">here</a> and <a href=\"https://developer.monday.com/apps/docs/monetization\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 185772,
+      "postNumber": 12,
+      "createdAt": "2024-05-25T08:58:00.846Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> and <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>"
+    },
+    {
+      "id": 185824,
+      "postNumber": 13,
+      "createdAt": "2024-05-26T08:20:25.888Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/apsimos\">@apsimos</a> !</p>"
+    },
+    {
+      "id": 185834,
+      "postNumber": 14,
+      "createdAt": "2024-05-26T10:28:45.813Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> With the <a href=\"https://developer.monday.com/apps/changelog/immediate-changes-to-seat-based-app-calculations\" rel=\"noopener nofollow ugc\">switch to subscriptions being sold on active users not max users</a> I see the potential for the <code>{account {plan{max_users}}}</code> (which is the account plan not app plan correct?) being higher than the app tiers max user count - how are we to check this now, so that we don’t cut off accounts that monday put on an appropriate plan?</p>\n<p>PS. I think switching to active users was the right choice, but it seems like communicating to us any changes needed, as well as ensuring we can retrieve the active user count from the API was missed.</p>"
+    },
+    {
+      "id": 186006,
+      "postNumber": 15,
+      "createdAt": "2024-05-28T05:15:32.962Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking with Anton Rubin here <a href=\"https://monday.slack.com/archives/D03M94CKK4L/p1716884114676629\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 186085,
+      "postNumber": 16,
+      "createdAt": "2024-05-28T11:54:05.981Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>,</p>\n<p>That is a good point and I have taken this with the monetization team.</p>\n<p>I will come back here as soon as I have an update!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 186086,
+      "postNumber": 17,
+      "createdAt": "2024-05-28T11:54:21.651Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking with Anton Rubin</p>"
+    },
+    {
+      "id": 186102,
+      "postNumber": 18,
+      "createdAt": "2024-05-28T12:34:37.146Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Its actually sort of blowing up in some slack threads with something that appears associated with the change in how they are calculated.</p>"
+    },
+    {
+      "id": 186114,
+      "postNumber": 19,
+      "createdAt": "2024-05-28T13:48:48.893Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Firstly, I’d like to apologize for the miscommunication (or rather lack of communication) here.</p>\n<p>Please do not use the <code>max_users</code> field on the account object! It will not give you an accurate count since we don’t consider guests or view-only users in app pricing. The field is also null for trial/free accounts, which makes it limited in its helpfulness…</p>\n<p>Instead, you need to query the users object via API and count the number of users that are not guests or view_only.</p>\n<pre><code class=\"lang-gql\">{\n  users (non_active:false, limit:100) {\n    id\n    name\n    is_verified\n    is_guest\n    is_view_only\n    is_pending\n  }\n}\n</code></pre>\n<p>I know this is a bit of work and so we’re investigating if we can expose this number via API. Will update here once we firm up our plans for it.</p>\n<p>FYI <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> <a class=\"mention\" href=\"/u/apsimos\">@apsimos</a></p>"
+    },
+    {
+      "id": 186116,
+      "postNumber": 20,
+      "createdAt": "2024-05-28T14:13:30.002Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>wouldn’t you also want to filter on is_verified = true or is_pending = false too?</p>"
+    },
+    {
+      "id": 186119,
+      "postNumber": 21,
+      "createdAt": "2024-05-28T14:32:01.615Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>,</p>\n<p>I agree with <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>. <code>is_verified</code> and <code>is_peding</code> should be filterable.</p>"
+    },
+    {
+      "id": 186141,
+      "postNumber": 22,
+      "createdAt": "2024-05-28T16:28:39.137Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Well I meant we’d need to filter them on our side, arguments for the API don’t exist for this. I was just calling out for everyone we’d probably need to exclude pending accounts that aren’t in use. But I don’t know that for a fact because I don’t know how they filter for the active user count used to determine the plan.</p>\n<p>I don’t expect any native API method for this until July at the earliest.</p>"
+    },
+    {
+      "id": 186150,
+      "postNumber": 23,
+      "createdAt": "2024-05-28T17:28:35.300Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Then we need to retrieve all users from the server which is not good.</p>"
+    },
+    {
+      "id": 186151,
+      "postNumber": 24,
+      "createdAt": "2024-05-28T17:30:00.395Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>That is what it appears to be at this time. The app would also have to have the users:read scope for the token in question too.</p>"
+    },
+    {
+      "id": 186185,
+      "postNumber": 26,
+      "createdAt": "2024-05-28T20:01:47.165Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>I think <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> is right. It makes sense. This solution is straightforward and seamless. Downloading all users for each load and doing calculation based on users count is anti-pattern and costy I think. Besides, it requires <strong>users:read</strong> scope which contains PII data.</p>"
+    },
+    {
+      "id": 186192,
+      "postNumber": 27,
+      "createdAt": "2024-05-28T21:11:27.491Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> and <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> I have another question. The <code>app_subscription</code> query is returning an array. How many records it returns and how can I decide which is the current one?</p>\n<pre><code class=\"lang-auto\">        query{\n          app_subscription{\n            days_left\n            is_trial\n            plan_id\n            renewal_date\n          }\n        }\n</code></pre>"
+    },
+    {
+      "id": 186273,
+      "postNumber": 28,
+      "createdAt": "2024-05-29T10:41:38.282Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone!</p>\n<p>Our team is working on a solution for this as we speak. I will of course keep you posted!</p>\n<p><a class=\"mention\" href=\"/u/apsimos\">@apsimos</a> app_subscription will return an array with one object only.</p>"
+    },
+    {
+      "id": 186301,
+      "postNumber": 29,
+      "createdAt": "2024-05-29T12:16:27.941Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Heads up, we will expose the number of active users on an account via the API next week.</p>\n<p>So you will not have to query the list of users on the account. Current plan is to expose it as a field on the Account object.</p>\n<p>I’ll share an update here when it’s deployed!</p>\n<p><em>Quick note about scopes</em> – before the change in how we count users, apps would use Account &gt; Plan &gt; Max Users to get the number of users. So this API update will not require additional scopes <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>\n<p><a class=\"mention\" href=\"/u/apsimos\">@apsimos</a> <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>"
+    }
+  ]
+}

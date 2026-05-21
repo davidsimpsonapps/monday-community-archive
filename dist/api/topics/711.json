@@ -1,0 +1,79 @@
+{
+  "id": 711,
+  "title": "V2 Mutations are poorly documented",
+  "slug": "v2-mutations-are-poorly-documented",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2019-07-11T20:49:27.210Z",
+  "lastPostedAt": "2019-10-02T18:07:35.385Z",
+  "postsCount": 9,
+  "excerpt": "Have Head Butted for a few hours how to change column values. \nthis is the most frequent change and the most annoying. \nI get all the Query stuff and creating items seems to behave as well. \nIs Anyone else using Insomnia &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 3124,
+  "posts": [
+    {
+      "id": 1975,
+      "postNumber": 1,
+      "createdAt": "2019-07-11T20:49:27.271Z",
+      "author": "nathank (Nathan Keogh)",
+      "cookedHtml": "<p>Have Head Butted for a few hours how to change column values.</p>\n<p>this is the most frequent change and the most annoying.</p>\n<p>I get all the Query stuff and creating items seems to behave as well.</p>\n<p>Is Anyone else using <a href=\"https://insomnia.rest/\" rel=\"noopener nofollow ugc\">Insomnia</a> to do their trial and Error.</p>\n<p>Can someone share working examples for</p>\n<p>mutation {<br />\nchange_column_value(</p>\n<p>it’s the only one I can’t make work. I just need to see valid examples without the JSON.Stringify abstraction.</p>"
+    },
+    {
+      "id": 1985,
+      "postNumber": 2,
+      "createdAt": "2019-07-12T13:05:15.051Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/nathank\">@nathank</a>! Try something like this:</p>\n<pre><code>mutation {\n change_column_value(item_id:110125607, column_id:\"status\",board_id:110123920,value:\"{\\\"label\\\" : \\\"Done\\\"}\") {\n   name\n   column_values{\n     id\n     value\n   }\n }\n} \n</code></pre>\n<p>Let me know if that helps!</p>"
+    },
+    {
+      "id": 1991,
+      "postNumber": 3,
+      "createdAt": "2019-07-12T18:50:44.017Z",
+      "author": "nathank (Nathan Keogh)",
+      "cookedHtml": "<p>Thanks for that. Simple fields like date and text are behaving</p>\n<p>it’s the quirks of the special columns now that are quite frustrating.</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value(item_id: 272273710, column_id: \"due_date4\", board_id: 272273672, value: \"{\\\"date\\\": \\\"2019-06-19\\\"}\") {\n    name\n    column_values {\n      id\n      value\n    }\n  }\n}\n</code></pre>\n<p>works fine but for email/link type fields I don’t seem to be able to get the strings happy.</p>\n<p>How can the Phone field be Unsupported in the API ?</p>\n<p>I like the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> product but if an API is this weak it’s almost impossible to round trip and Sync Data from foreign tools.</p>"
+    },
+    {
+      "id": 2288,
+      "postNumber": 4,
+      "createdAt": "2019-07-15T13:25:34.671Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>Here’s an example string for the email column:<br />\n\"{\"email\": \"me@me.com\", “\\text\": \"its my email\"}”</p>\n<p>the link field is very similar, only with url instead of email like so:<br />\n\"{\"url\": \"monday.com\", “\\text\": \"go to <a href=\"http://monday.com\">monday.com</a>\"}”</p>\n<p>we are working on the phone column, will be added soon</p>"
+    },
+    {
+      "id": 2351,
+      "postNumber": 5,
+      "createdAt": "2019-07-15T21:34:10.795Z",
+      "author": "nathank (Nathan Keogh)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/ayelet/48/477_2.png\" class=\"avatar\" /> Ayelet:</div>\n<blockquote>\n<p>“{“email”: “<a href=\"mailto:me@me.com\">me@me.com</a>”, “\\text”: “its my email”}”</p>\n</blockquote>\n</aside>\n<p>I miss the simplicity of XML, JSON made by and for hipsters working only with JavaScript. Lots of people actively dislike Javascript and JSON.</p>\n<p>The Syntax is a Nightmare why make it this hard to enclose a Value Pair.</p>\n<p>How long until V1 is turned off will happily abandon V2 if you will support V1 for at least a year.</p>\n<p>Anything that parses generates a 500 Server Error at Best you get a 400 error invalid value or it won’t even parse. Has anyone got a truly working complete line of text that can be cut n pasted into Insomnia Client and worked.</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value(item_id: 272273710, column_id: \"email\", board_id: 272273672, value: \"{email: \\\"fake@alias.com\\\", \\\"\\text:\\\": \\\"my email\\\"}\") {\n    name\n    column_values {\n      id\n      value\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 2354,
+      "postNumber": 6,
+      "createdAt": "2019-07-15T22:09:16.464Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Nathan! Thanks for your feedback.</p>\n<p>Looks like the JSON string you were sending in the value parameter was missing some escaped quotation marks and contained “text:” instead of “text”:</p>\n<p>Try this and let me know if it works instead:</p>\n<pre><code>mutation {\n  change_column_value(item_id: 162169283, column_id: \"email\", board_id: 162169280, \n    value: \"{\\\"email\\\": \\\"fake@alias.com\\\", \\\"text\\\": \\\"my email\\\"}\") {\n    name\n    column_values {\n      id\n      value\n    }\n  }\n}\n</code></pre>\n<p>I definitely hear you in terms of adding those escape characters and trying to keep your JSON valid. What are you using to make the requests in your application? Happy to help you find a library that will help turn the JSON into strings and vice versa.</p>"
+    },
+    {
+      "id": 2394,
+      "postNumber": 7,
+      "createdAt": "2019-07-16T07:00:32.519Z",
+      "author": "nathank (Nathan Keogh)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/60/223_2.png\" class=\"avatar\" /> dipro:</div>\n<blockquote>\n<p>mutation { change_column_value(item_id: 162169283, column_id: “email”, board_id: 162169280, value: “{\"email\": \"fake@alias.com\", \"text\": \"my email\"}”) { name column_values { id value } } }</p>\n</blockquote>\n</aside>\n<p>How Do I give you a Lollipop or Beer that’s the winning Syntax.</p>"
+    },
+    {
+      "id": 2424,
+      "postNumber": 8,
+      "createdAt": "2019-07-16T12:56:58.389Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Thanks Nathan! An emoji will do: <img src=\"https://emoji.discourse-cdn.com/apple/beers.png?v=9\" title=\":beers:\" class=\"emoji\" alt=\":beers:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/beers.png?v=9\" title=\":beers:\" class=\"emoji\" alt=\":beers:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/beer.png?v=9\" title=\":beer:\" class=\"emoji\" alt=\":beer:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/lollipop.png?v=9\" title=\":lollipop:\" class=\"emoji\" alt=\":lollipop:\" /></p>"
+    },
+    {
+      "id": 6673,
+      "postNumber": 9,
+      "createdAt": "2019-10-02T18:07:35.385Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

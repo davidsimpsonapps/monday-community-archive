@@ -1,0 +1,95 @@
+{
+  "id": 11605,
+  "title": "Expose \"Which label means assignments are done?\" for status columns",
+  "slug": "expose-which-label-means-assignments-are-done-for-status-columns",
+  "categoryId": 58,
+  "tagIds": [
+    276
+  ],
+  "createdAt": "2020-09-26T06:29:57.912Z",
+  "lastPostedAt": "2023-09-20T04:04:27.676Z",
+  "postsCount": 11,
+  "excerpt": "When querying columns, it’d be useful if the “Which label means assignments are done?” values were exposed, probably in the settings_str alongside the existing “labels” field which is exposed or as a boolean for each ind&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2324,
+  "posts": [
+    {
+      "id": 29624,
+      "postNumber": 1,
+      "createdAt": "2020-09-26T06:29:57.978Z",
+      "author": "MattG (Matthew Grover)",
+      "cookedHtml": "<p>When querying columns, it’d be useful if the “Which label means assignments are done?” values were exposed, probably in the <code>settings_str</code> alongside the existing “labels” field which is exposed or as a boolean for each individual label in the <code>settings_str</code>.<br />\nI’m looking at using the activity_log to track when items become “Done” for various different status columns so need a programmatic way of knowing when an item is considered “Done” for a particular status column,</p>\n<p>thanks,</p>\n<p>Matt</p>"
+    },
+    {
+      "id": 29654,
+      "postNumber": 2,
+      "createdAt": "2020-09-27T10:52:33.929Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/mattg\">@MattG</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>That’s a great idea and suggestion! I definitely agree this should be part of the API and I’ve passed the suggestion over to our product team so they can consider it when making future updates.</p>\n<p>I appreciate your help in making our API v2 better and better <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 29807,
+      "postNumber": 3,
+      "createdAt": "2020-09-29T06:00:15.988Z",
+      "author": "amitci (amit)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mattg\">@MattG</a><br />\nIf I understand you correctly you want to know which label in status column represent “done”.<br />\nUnfortunately there is no such thing as status column is very flexible and can be anything. It can represent location (west, east, north, south) or priority (low, medium, high) etc.<br />\nThat mean that many status column do not have label that means “done” and even for those who have, the label can be “done” or “resolve” or “finish” or anything else that the user want to treat as done.<br />\nI am afraid that to know what label means done you will have to ask the user.<br />\nIf I understand you wrong fill free to correct me.<br />\nAmit</p>"
+    },
+    {
+      "id": 29844,
+      "postNumber": 4,
+      "createdAt": "2020-09-29T11:52:16.329Z",
+      "author": "MattG (Matthew Grover)",
+      "cookedHtml": "<p>Hi Amit,</p>\n<p>I’m referring to the statuses set in this setting which I can access on a Status column under “Column Settings”</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/e/e822211a6b141eb6f74cfb6c06320eaad85e3191.png\" alt=\"Screenshot 2020-09-29 at 15.51.12\" width=\"344\" height=\"249\" /></p>\n<p>Hope this clears things up,</p>\n<p>thanks,</p>\n<p>Matt</p>"
+    },
+    {
+      "id": 29869,
+      "postNumber": 5,
+      "createdAt": "2020-09-29T17:38:13.219Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mattg\">@MattG</a>,</p>\n<p>Unfortunately as Alex mentioned above, right now there isn’t a functionality within the API natively to know when a status column is considered ‘done’ based on the settings. It’s something we’ve logged internally with our team and hope to support in the future. Currently status columns would return like this on the API right now:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/1470ad6e708ad2b793468e7fe7220f25395df820.png\" alt=\"image\" width=\"283\" height=\"134\" /></p>\n<p>One possible workaround for this would be to have a hidden column with an automation that will fill in a certain value when the status changes to done. This way you could filter the API query for that column to say ‘done’.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 30036,
+      "postNumber": 6,
+      "createdAt": "2020-10-01T05:36:20.631Z",
+      "author": "LaurentConroux (Laurent Conroux)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mattg\">@MattG</a> ,</p>\n<p>You might copy-paste a “done” emoji of your choosing in the statuses.<br />\nNot sure if you could filter for it directly in the request through.</p>\n<p>By the way, there are use cases where several statuses in the same list mean the item is done.<br />\nFor example, an Opportunity item which would be Won, Lost or No go would be considered done.</p>\n<p>Hope it helps.<br />\nLaurent</p>"
+    },
+    {
+      "id": 30131,
+      "postNumber": 7,
+      "createdAt": "2020-10-02T04:33:48.872Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mattg\">@MattG</a>,</p>\n<p>if I understood you correctly you can also just query for the Column Value.</p>\n<pre><code>query { \n  items_by_column_values(board_id: 743365378, column_id: \"status\", column_value: \"Done\"){   \n    name\n    id\n    created_at\n  }\n}\n</code></pre>\n<p>In this case of course, you need to know that “Done” is actually done.<br />\nBut you could change that value anytime.<br />\nEven make a really small app, that could look like this.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/b/bde7c9e5502a8ef5c83e2773d09fc5ab367bb612.png\" alt=\"image\" width=\"242\" height=\"169\" /></p>\n<p>Alternativly you also could query for labels or indexes.<br />\nThere is an awesome view <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> posted a while ago:</p>\n<p><a href=\"https://view.monday.com/471878000-13f8e67ced7f0463687b9694f8044fac\">https://view.monday.com/471878000-13f8e67ced7f0463687b9694f8044fac</a></p>\n<p>Maybe that helps.</p>\n<p>Greetings.</p>"
+    },
+    {
+      "id": 117898,
+      "postNumber": 8,
+      "createdAt": "2023-03-02T19:56:06.099Z",
+      "author": "MSIlydia (Lydia Taylor)",
+      "cookedHtml": "<p>I agree with MattG.</p>\n<p>And I can even get information when <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> sends a webhook (sent to <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a> as shown here:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/3/c363fbd9dfe08cf9515fd3a31fa40ad2ade0c6de.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/3/c363fbd9dfe08cf9515fd3a31fa40ad2ade0c6de_2_186x500.png\" alt=\"image\" width=\"186\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">351×943 54.1 KB</span>\n</div></a></div><p></p>\n<p>But I’d like to query this information deliberately, not just have it show up as information when I send a webhook.  Surely if the information exists as a attribute of the column, it could be queried??</p>\n<p>Thanks for the ask, MattG.</p>"
+    },
+    {
+      "id": 117919,
+      "postNumber": 9,
+      "createdAt": "2023-03-03T01:21:03.142Z",
+      "author": "MSIlydia (Lydia Taylor)",
+      "cookedHtml": "<p>I did a little learning and figured out how to query this information.</p>\n<p>A GraphQL query of the settings_str of the status column will generate, among other things, an array of the indices of “done” colours:</p>\n<p>query {<br />\nboards (ids: 999999999) {<br />\nowners {<br />\nid<br />\n}<br />\ncolumns (ids:status){<br />\nsettings_str<br />\n}<br />\n}<br />\n}</p>\n<p>Will generate a JSON string that, when parsed will show:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/e/1e51d800821e38ffdeb8f4bb5f4510a1d6ffa14b.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/1/e/1e51d800821e38ffdeb8f4bb5f4510a1d6ffa14b.png\" alt=\"image\" width=\"452\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">472×521 23.9 KB</span>\n</div></a></div><p></p>\n<p>This is in <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a>.</p>\n<p>In case this is helpful for anyone else trying to get the info <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 118069,
+      "postNumber": 10,
+      "createdAt": "2023-03-05T07:05:10.291Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/msilydia\">@MSIlydia</a>,</p>\n<p>Thank you for sharing that information with everyone!</p>"
+    },
+    {
+      "id": 144427,
+      "postNumber": 11,
+      "createdAt": "2023-09-20T04:04:27.676Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>This was released in version <code>2023-10</code>! <img src=\"https://emoji.discourse-cdn.com/apple/crystal_ball.png?v=12\" title=\":crystal_ball:\" class=\"emoji\" alt=\":crystal_ball:\" width=\"20\" height=\"20\" /></p>\n<p>You can now query the <code>is_done</code> param to return if a specific status value represents ‘Done’ or not. Check out the docs here for an example - <a href=\"https://developer.monday.com/api-reference/docs/status#reading-the-status-column\" class=\"inline-onebox\">Status</a></p>"
+    }
+  ]
+}

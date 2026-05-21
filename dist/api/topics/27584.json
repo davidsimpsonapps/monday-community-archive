@@ -1,0 +1,71 @@
+{
+  "id": 27584,
+  "title": "Create_item function with column_values not working",
+  "slug": "create-item-function-with-column-values-not-working",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    139,
+    351
+  ],
+  "createdAt": "2021-11-18T06:53:16.657Z",
+  "lastPostedAt": "2022-03-10T11:54:38.862Z",
+  "postsCount": 7,
+  "excerpt": "Hi, \nI want to create a new item with column values already applied to it, but there is no proper example all around the internet to get information from. \nI have this code: \nquery3 = &#39;mutation { create_item (board_id:19&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 2591,
+  "posts": [
+    {
+      "id": 69165,
+      "postNumber": 1,
+      "createdAt": "2021-11-18T06:53:16.741Z",
+      "author": "ChrisNemes (Chris Nemes)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I want to create a new item with column values already applied to it, but there is no proper example all around the internet to get information from.<br />\nI have this code:</p>\n<p><code>query3 = 'mutation { create_item (board_id:1917614834, group_id: topics, item_name: Teszt2, column_values: \"{\\\"status\\\":{\\\"label\\\":\\\"Medium\\\"}}}' data = {'query': query3} r = requests.post(url=apiUrl, json=data, headers=headers)  # make request print(r.json())</code></p>\n<p>But it says:<br />\n<code>{'errors': [{'message': 'Parse error on \":{\" (STRING) at [1, 111]', 'locations': [{'line': 1, 'column': 111}]}], 'account_id': 10454884}</code></p>\n<p>I don’t know how to write the query line after column_values.<br />\nCan you please help me with the correct code line for the query?<br />\nI always get a Parse error, no matter what type of column I want to update.</p>"
+    },
+    {
+      "id": 69170,
+      "postNumber": 2,
+      "createdAt": "2021-11-18T07:32:43.703Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/chrisnemes\">@ChrisNemes</a>,</p>\n<p><code>group_id</code> and <code>item_name</code> are supposed to be a strings<br />\nTry this:</p>\n<pre><code class=\"lang-auto\">mutation { create_item (board_id:1913125449, item_name: \"Teszt2\", group_id: \"topics\",create_labels_if_missing: true, column_values:\"{\\\"status\\\":{\\\"label\\\":\\\"Medium\\\"}}\") {\n  id\n}}\n</code></pre>"
+    },
+    {
+      "id": 69171,
+      "postNumber": 3,
+      "createdAt": "2021-11-18T07:45:16.476Z",
+      "author": "ChrisNemes (Chris Nemes)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/kolaai/48/7787_2.png\" class=\"avatar\" /> kolaai:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">mutation { create_item (board_id:1913125449, item_name: \"Teszt2\", group_id: \"topics\",create_labels_if_missing: true, column_values:\"{\\\"status\\\":{\\\"label\\\":\\\"Medium\\\"}}\") {\n  id\n}}\n</code></pre>\n</blockquote>\n</aside>\n<p>Tried your solution, and I got the same error:<br />\n<code>query3 = 'mutation { create_item (board_id:1913125449, item_name: \"Teszt2\", group_id: \"topics\",create_labels_if_missing: true, column_values:\"{\\\"status\\\":{\\\"label\\\":\\\"Medium\\\"}}\") { id}}'</code></p>\n<p>Result:<br />\n<code>{'errors': [{'message': 'Parse error on \":{\" (STRING) at [1, 138]', 'locations': [{'line': 1, 'column': 138}]}], 'account_id': 10454884}</code></p>\n<p>I’m using the API in python, if it counts.</p>"
+    },
+    {
+      "id": 69172,
+      "postNumber": 4,
+      "createdAt": "2021-11-18T07:49:21.345Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Sorry, I’m not conversant in Python but the solution I provided works. I’ve tested it in the playground.</p>"
+    },
+    {
+      "id": 69173,
+      "postNumber": 5,
+      "createdAt": "2021-11-18T07:51:18.658Z",
+      "author": "ChrisNemes (Chris Nemes)",
+      "cookedHtml": "<p>Thank you for your efforts! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 79510,
+      "postNumber": 6,
+      "createdAt": "2022-03-10T11:54:38.862Z",
+      "author": "ChrisNemes (Chris Nemes)",
+      "cookedHtml": "<p>Finally I managed to make one function that works:</p>\n<p><code>createItemWithData(board_id, vars, groupID)</code></p>\n<p>It uses 3 variables:</p>\n<ul>\n<li>the board_id comes from the board where the item will be created</li>\n<li>the vars stores all the variables/attributes/column values the item has</li>\n<li>groupID is used for grouping items in boards</li>\n</ul>\n<p>vars looks like this:</p>\n<pre><code class=\"lang-auto\">vars = {\n  'myItemName': \"MyItem\",\n  'columnVals': json.dumps({\n  'username': \"Chris\",\n  'task': \"That is my job\",\n  'starttime': {\"hour\": int(01), \"minute\": int(13)},\n  'endtime': {\"hour\": int(03), \"minute\": int(35)},\n  })\n}\n</code></pre>\n<p>The column ID-s are username, task, starttime and endtime.</p>\n<p>and the function:</p>\n<pre><code class=\"lang-auto\">def createItemWithDataJob(board_id, vars, groupID):\n    '''Creating items with column values'''\n\ntry:\n    query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:' + str(board_id) + ', group_id: ' + str(groupID) + ', item_name:$myItemName, column_values:$columnVals) { id } }'\n    data = {'query': query, 'variables': vars}\n    r = requests.post(url=apiUrl, json=data, headers=headers)  # make request\n    print(r.json())\nexcept Exception as e:\n    print(\"Something is wrong...\")\n    print(e)\n    exit()\n</code></pre>"
+    },
+    {
+      "id": 80107,
+      "postNumber": 7,
+      "createdAt": "2022-03-17T11:55:12.162Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": 3879,
+  "title": "Mutation create_item - how to format date column?",
+  "slug": "mutation-create-item-how-to-format-date-column",
+  "categoryId": 8,
+  "tagIds": [
+    13
+  ],
+  "createdAt": "2020-01-13T18:51:59.892Z",
+  "lastPostedAt": "2020-01-22T14:40:26.158Z",
+  "postsCount": 11,
+  "excerpt": "Hi, I am trying to create a new item and set the columns values from the beginning to avoid changing the values in a separate API call. \nmutation {\n  create_item(\n    item_name: &quot;Name&quot;,\n    board_id: ID,\n    group_id: &quot;G&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 8458,
+  "posts": [
+    {
+      "id": 10226,
+      "postNumber": 1,
+      "createdAt": "2020-01-13T18:52:00.020Z",
+      "author": "Ahmed (Ahmed)",
+      "cookedHtml": "<p>Hi, I am trying to create a new item and set the columns values from the beginning to avoid changing the values in a separate API call.</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(\n    item_name: \"Name\",\n    board_id: ID,\n    group_id: \"GROUP\",\n    \n      column_values: \"{\\\"date\\\": \\\"2019-01-20\\\" }\" )\n  {\n    id\n  }\n}\n</code></pre>\n<p>This gives me this error:</p>\n<pre><code class=\"lang-auto\">  \"error_code\": \"ColumnValueException\",\n  \"status_code\": 400,\n  \"error_message\": \"change_column_value invalid value\",\n  \"error_data\": {\n    \"column_value\": \"2019-01-20\",\n    \"column_type\": \"DateColumn\"\n</code></pre>\n<p>Any suggestions?</p>"
+    },
+    {
+      "id": 10247,
+      "postNumber": 2,
+      "createdAt": "2020-01-13T23:35:48.000Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Ahmed! The data for the date column should be in the format <code>{\"date\" : \"2019-01-20\", \"time\" : \"00:00:00\"}</code>. Try sending this instead:</p>\n<pre><code class=\"lang-auto\">\"{ \\\"date\\\" : { \\\"date\\\" : \\\"2019-01-20\\\" } }\n</code></pre>\n<p>The first “date” is the column ID of the date column, and the second “date” tells the column to assign the cell with the date value of Jan 20. Let me know if that does the trick.</p>"
+    },
+    {
+      "id": 10259,
+      "postNumber": 4,
+      "createdAt": "2020-01-14T06:17:01.235Z",
+      "author": "Ahmed (Ahmed)",
+      "cookedHtml": "<p>Thanks so much <a class=\"mention\" href=\"/u/dipro\">@dipro</a>.</p>\n<p>This works on GraphiQL but I am facing another issue when I moved the code to a Node JS project. Could you please help?</p>\n<p><strong>GrahiQL:</strong></p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(\n    item_name: \"TEST API 3\", \n    board_id: ID, \n    group_id: \"new_group\", \n    column_values: \"{\\\"people2\\\": null, \\\"text1\\\": \\\"Test Lead\\\", \\\"client4\\\": \\\"Test Client\\\", \\\"channel5\\\":\\\"Test channel\\\", \\\"status8\\\":null, \\\"text\\\": \\\"Test req by\\\", \\\"date\\\": { \\\"date\\\" : \\\"2019-01-20\\\" } }\")\n   {\n    id\n  }\n}\n</code></pre>\n<p><strong>Node JS:</strong></p>\n<pre><code class=\"lang-auto\">const body = {\n\t\t\tquery: `\n\t\t\tmutation ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {\n\t\t\t\tcreate_item (\n\t\t\t\t\tboard_id: $boardId,\n\t\t\t\t\tgroup_id: $groupId,\n\t\t\t\t\titem_name: $itemName,\n\t\t\t\t\tcolumn_values: $columnValues\n\t\t\t\t) {\n\t\t\t\t\tid\n\t\t\t\t}\n\t\t\t}\n\t\t\t`,\n\t\t\tvariables: {\n\t\t\t\tboardId: ID,\n\t\t\t\tgroupId: \"new_group\",\n\t\t\t\titemName: \"TEST - API New Request\",\n\t\t\t\tcolumnsValues: JSON.stringify({\n\t\t\t\t\tpeople2: null,\n\t\t\t\t\ttext1: \"Test Lead\",\n\t\t\t\t\tclient4: \"Test Client\",\n\t\t\t\t\tchannel5: \"Test channel\",\n\t\t\t\t\tstatus8: null,\n\t\t\t\t\ttext: \"Test req by\",\n\t\t\t\t\tdate: { date: \"2019-01-20\" }\n\t\t\t\t})\n\t\t\t}\n\t\t};\n\n\t\taxios\n\t\t\t.post(`https://api.monday.com/v2`, body, {\n\t\t\t\theaders: {\n\t\t\t\t\tAuthorization: \"AUTH\"\n\t\t\t\t}\n\t\t\t})\n\t\t\t.catch(err =&gt; {\n\t\t\t\tconsole.error(\"** error **\", err.data);\n\t\t\t})\n\t\t\t.then(res =&gt; {\n\t\t\t\tconsole.log(\"** success **\", res.data);\n\t\t\t});\n</code></pre>\n<p><strong>Output:</strong></p>\n<pre><code class=\"lang-auto\">** success ** {\n  errors: [\n    {\n      message: 'Variable columnValues of type JSON! was provided invalid value',\n      locations: [Array],\n      value: null,\n      problems: [Array]\n    }\n  ],\n  account_id: ID\n}\n</code></pre>"
+    },
+    {
+      "id": 10466,
+      "postNumber": 5,
+      "createdAt": "2020-01-16T12:20:16.920Z",
+      "author": "Ahmed (Ahmed)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>, have you got a chance to see my above issue? I am unable to understand what is wrong. Please help me.</p>"
+    },
+    {
+      "id": 10512,
+      "postNumber": 6,
+      "createdAt": "2020-01-17T16:47:56.240Z",
+      "author": "Alex.M (Alexander Macon)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/8c91f0/48.png\" class=\"avatar\" /> Ahmed:</div>\n<blockquote>\n<p>columnsValues: JSON.stringify({ people2: {null:null}, text1: “Test Lead”, client4: “Test Client”, channel5: “Test channel”, status8: {null:null}, text: “Test req by”, date: { date: “2019-01-20” } })</p>\n</blockquote>\n</aside>\n<p>Try this instead for your column_values<br />\nThe columns you are trying to make null are expecting a json object type but being given null. To make the field null you need to give a json object with a null key pair i.e. {null:null}</p>"
+    },
+    {
+      "id": 10513,
+      "postNumber": 7,
+      "createdAt": "2020-01-17T17:17:34.514Z",
+      "author": "Ahmed (Ahmed)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/c37758/48.png\" class=\"avatar\" /> Alex.M:</div>\n<blockquote>\n<p>JSON.stringify({ people2: {null:null}, text1: “Test Lead”, client4: “Test Client”, channel5: “Test channel”, status8: {null:null}, text: “Test req by”, date: { date: “2019-01-20” } })</p>\n</blockquote>\n</aside>\n<p>Thanks <a class=\"mention\" href=\"/u/alex.m\">@Alex.M</a>. Unfortunately it shows this error:</p>\n<pre><code class=\"lang-auto\">{\n\n* errors: [\n  * {\n    * message: \"Variable columnValues of type JSON! was provided invalid value\",\n\n    * locations: [\n      * {\n        * line: 2,\n\n        * column: 69}],\n\n    * value: null,\n\n    * problems: [\n      * {\n        * path: [ ],\n\n        * explanation: \"Expected value to not be null\"}]}],\n\n* account_id: 1580874\n\n}\n</code></pre>\n<p>For this query:</p>\n<pre><code class=\"lang-auto\">{\n\t\t\tquery: `\n\t\t\tmutation ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {\n\t\t\t\tcreate_item (\n\t\t\t\t\tboard_id: $boardId,\n\t\t\t\t\tgroup_id: $groupId,\n\t\t\t\t\titem_name: $itemName,\n\t\t\t\t\tcolumn_values: $columnValues\n\t\t\t\t) {\n\t\t\t\t\tid\n\t\t\t\t}\n\t\t\t}\n\t\t\t`,\n\t\t\tvariables: {\n\t\t\t\tboardId: 393850461,\n\t\t\t\tgroupId: \"new_group\",\n\t\t\t\titemName: \"TEST - API New Request\",\n\t\t\t\tcolumnsValues: JSON.stringify({ people2: { null: null }, text1: \"Test Lead\", client4: \"Test Client\", channel5: \"Test channel\", status8: { null: null }, text: \"Test req by\", date: { date: \"2019-01-20\" } })\n\t\t\t}\n\t\t};\n</code></pre>"
+    },
+    {
+      "id": 10516,
+      "postNumber": 8,
+      "createdAt": "2020-01-17T19:30:10.103Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Ahmed,</p>\n<p>Instead of sending <code>{null:null}</code> for the value of people2, just omit it. If you don’t include a column in the values you send it will be set as empty <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Let me know if that helps!</p>"
+    },
+    {
+      "id": 10578,
+      "postNumber": 9,
+      "createdAt": "2020-01-20T11:12:06.565Z",
+      "author": "Ahmed (Ahmed)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>, for the sake of trial, I only sent the values of a single text field, and also I received the same error.</p>\n<pre><code class=\"lang-auto\">\tquery: `\n\t\t\tmutation ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {\n\t\t\t\tcreate_item (\n\t\t\t\t\tboard_id: $boardId,\n\t\t\t\t\tgroup_id: $groupId,\n\t\t\t\t\titem_name: $itemName,\n\t\t\t\t\tcolumn_values: $columnValues\n\t\t\t\t) {\n\t\t\t\t\tid\n\t\t\t\t}\n\t\t\t}\n\t\t\t`,\n\t\t\tvariables: {\n\t\t\t\tboardId: ID,\n\t\t\t\tgroupId: \"new_group\",\n\t\t\t\titemName: \"TEST - API New Request\",\n\t\t\t\tcolumnsValues: JSON.stringify({ text1: \"Test Lead\" })\n\t\t\t}\n</code></pre>\n<p>Output</p>\n<pre><code class=\"lang-auto\">    {\n      message: 'Variable columnValues of type JSON! was provided invalid value',\n      locations: [Array],\n      value: null,\n      problems: [Array]\n    }\n  ],\n</code></pre>"
+    },
+    {
+      "id": 10639,
+      "postNumber": 10,
+      "createdAt": "2020-01-21T18:53:27.649Z",
+      "author": "Alex.M (Alexander Macon)",
+      "cookedHtml": "<p>Looks like you have a variable mismatch. In your create_item mutation you have the variable $columnValues but in the variables it is defined as column<strong>s</strong>Values.</p>"
+    },
+    {
+      "id": 10698,
+      "postNumber": 11,
+      "createdAt": "2020-01-22T14:40:26.158Z",
+      "author": "Ahmed (Ahmed)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alex.m\">@Alex.M</a> You are totally correct. Thank you so much.<br />\nI wish someone could fix the typo in this code snippet: <a href=\"https://community.monday.com/t/node-js-mutation-example-using-axios/716/5\" class=\"inline-onebox\">Node.js mutation example using Axios - #5 by jtran</a></p>"
+    },
+    {
+      "id": 42184,
+      "postNumber": 12,
+      "createdAt": "2021-02-25T12:42:03.511Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "id": 9498,
+  "title": "Having trouble using monday.setToken within the Apps SDK",
+  "slug": "having-trouble-using-monday-settoken-within-the-apps-sdk",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-07-28T07:45:54.586Z",
+  "lastPostedAt": "2020-10-05T15:55:01.260Z",
+  "postsCount": 18,
+  "excerpt": "Hi all \nI am starting to use the SDK to develop apps with dashboard features. I am just building some proof of concept simple apps at the moment, to test API queries. \nI am able to upload an app as a dashboard feature, q&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 3620,
+  "posts": [
+    {
+      "id": 23868,
+      "postNumber": 1,
+      "createdAt": "2020-07-28T07:45:54.752Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Hi all</p>\n<p>I am starting to use the SDK to develop apps with dashboard features. I am just building some proof of concept simple apps at the moment, to test API queries.</p>\n<p>I am able to upload an app as a dashboard feature, query data using the sdk and render it, which is great. I am taking advantage of seamless auth provided by the monday.api() method.</p>\n<p>I now would like to start developing more efficiently, so i am trying to pass a token with the queries, so that i can debug in my local environment (rather than having to build and upload every time). I have tried using monday.setToken(‘api_token_provided_in_the_admin_section_of_monday.com’)</p>\n<p>and i have also tried passing the same within the options parameter of the monday.api method.</p>\n<p>when running locally, the api returns the error saying i am not authenticated (as if i had passed an incorrect token or no token at all).</p>\n<p>I triple checked the token i am passing. I am using the same in a raw query using Postman and that returns the data i expect.</p>\n<p>Help would be most appreciated, let me know if you need more information on the issue.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 23873,
+      "postNumber": 2,
+      "createdAt": "2020-07-28T09:53:56.059Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a>.<br />\nCan you share further details and some pieces of code?</p>"
+    },
+    {
+      "id": 23890,
+      "postNumber": 3,
+      "createdAt": "2020-07-28T12:23:59.850Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a> – you also mentioned you want to develop your client-side apps more efficiently. I would recommend using <a href=\"https://ngrok.com/\">ngrok</a> for local development, because it streamlines the workflow. That way you don’t have to rely on a build-upload process each time, but can still use seamless authentication and see your results in <a href=\"http://monday.com\">monday.com</a>.</p>\n<p>Essentially, you run <code>ngrok http [port]</code> and the tool will generate a URL that you can put in the “view setup” testing section of your app feature.</p>\n<p>You can install it globally or run it from inside our starter code (it’s bundled as a dev dependency).</p>\n<p>Check out our quickstart video (around 2:40) to see it in action: <a href=\"https://monday.com/developers/apps/quickstart-view\">https://monday.com/developers/apps/quickstart-view</a></p>"
+    },
+    {
+      "id": 23911,
+      "postNumber": 4,
+      "createdAt": "2020-07-28T18:59:46.552Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Many thanks Dipro. I managed to create the tunnel and hook up the embedded app to my debugger (using webstorm right now). Breakpoints work, which is great.</p>\n<p>Thanks again!</p>"
+    },
+    {
+      "id": 23921,
+      "postNumber": 5,
+      "createdAt": "2020-07-28T20:16:24.269Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>thanks Rob. I’ll just go with dipro’s suggestion for now, but i am interested in resolving the issue about setToken:</p>\n<p>async getAllBoardNames():Promise&lt;MondayItem<span class=\"chcklst-box fa fa-square-o fa-fw\"></span>&gt;{<br />\nvar result = await this.monday.api(<br />\n<code>query{           boards{           id           name           }           }</code>,{token:this.tkn}<br />\n);</p>\n<pre><code>  return result.data.boards as Board[];\n</code></pre>\n<p>}</p>\n<p>it doesn’t work and result is just {errors:[“Not Authenticated”]}</p>"
+    },
+    {
+      "id": 24152,
+      "postNumber": 6,
+      "createdAt": "2020-07-30T17:41:54.309Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hey, I am facing the same problem.<br />\nI used my api key in <a href=\"https://monday.com/developers/v2/try-it-yourself\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com</a> and it’s working great.<br />\nBut plugging it into my ngrok development and viewing it live in widget setup preview and using<br />\nmonday.setToken(apikey)<br />\nor<br />\nmonday.api(query/mutation, {token: apikey})…<br />\nNeither work and I get the message: error: Not Authenticated</p>\n<p>Leaving out the token info doesn’t work either, but am I misunderstanding the documentation when it says “If not set, will use the credentials of the current user (client only)”. Should it work anyway?</p>"
+    },
+    {
+      "id": 29020,
+      "postNumber": 7,
+      "createdAt": "2020-09-21T04:35:23.752Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>As an update on this:</p>\n<p>When I write a simple standalone app using the mondaySdk, use setStoken to give it my personal API token (which has full access to all boards), API calls via the Sdk work as expected - I can get data fine.</p>\n<p>However, when I run an app from within a monday parent app, pass the API token via setToken, and query the api via the Sdk method, the response suggests that the API token I have given is « hidden » by whatever access token is present in the parent session: for instance, if the parent session has a viewer or a guest logged in, the Sdk call to the api will not return any data (even if the Sdk has received an all powerful access token via setToken).</p>\n<p>The use case for me right now, is that I am trying to find a way to get data into a board view app even when a guest or a viewer is logged in.</p>"
+    },
+    {
+      "id": 29754,
+      "postNumber": 8,
+      "createdAt": "2020-09-28T17:19:16.436Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 29760,
+      "postNumber": 9,
+      "createdAt": "2020-09-28T17:43:54.588Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a>,</p>\n<p>Is this issue only occurring when you try to do with a guest or viewer account? I say this because I believe <code>setToken</code>  can only be used server side, and all <code>monday.api</code> calls from the client side will use the logged in user’s token. This could be why this is occurring with guest/viewer accounts.</p>\n<p>If you would like to use a single token for all API requests, you’ll need to make the API calls from your backend (or make HTTP requests without the SDK).</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 29788,
+      "postNumber": 10,
+      "createdAt": "2020-09-28T21:24:10.000Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Yes this is exactly the issue.</p>\n<p>As a workaround I am trying to expose an end point on my own API which calls monday API v2 to get the required data for my app.</p>\n<p>It works fine when I call my API on localhost. But for some strange reason, when I deploy it to my remote server, that endpoint can’t be reached by the app. I can reach it fine using postman, but the JavaScript app can’t reach it. It’s all very confusing.</p>\n<p>If anyone has managed to make a board view or dashboard widget, which calls the API for data, without using the session’s token or the Monday.api Sdk method, please let me know !</p>\n<p>Thanks</p>\n<p>Jacques</p>"
+    },
+    {
+      "id": 29840,
+      "postNumber": 11,
+      "createdAt": "2020-09-29T11:12:42.010Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a>,</p>\n<p>Are you getting some kind of error? If so could you post it (or a screenshot of what’s going on)?</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 29868,
+      "postNumber": 12,
+      "createdAt": "2020-09-29T17:33:46.050Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>I was up until 3am trying to “catch” a verbose error message, but all i got was http request failure - unknown error…</p>\n<p>It’s such a weird one, it may be some sort of glitch or limitation of our hosting server.</p>\n<p>I am going to try apollo to send a graphql query directly to the v2 API.</p>"
+    },
+    {
+      "id": 29910,
+      "postNumber": 13,
+      "createdAt": "2020-09-30T01:26:34.470Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a></p>\n<p>Just so I am clear, you are trying to use the <code>setToken</code> method from a <a href=\"http://monday.com\">monday.com</a> view/widget application?</p>\n<p>Or are you trying to use setToken running on your own server? I.e an integration recipe?</p>\n<p>You don’t need to use <code>setToken</code> if you are using a view/widget feature as the SDK will automatically collect the sessionToken of the logged in user.</p>"
+    },
+    {
+      "id": 29913,
+      "postNumber": 14,
+      "createdAt": "2020-09-30T02:48:37.000Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Hi Mitchell.</p>\n<p>Thanks.</p>\n<p>Yes I am aware of seamless authentication which avoids using setToken. It is a great feature which I am using currently. The problem is that, when a guest/viewer is logged in, seamless authentication will pick up their session token and try to use it to access the Monday API, which will fail and produce an error.</p>\n<p>I was trying to use setToken to “override” seamless authentication and give the app a token which will allow it to use the API. But that doesn’t work. setToken is basically not made for a client-side context.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 29915,
+      "postNumber": 15,
+      "createdAt": "2020-09-30T03:06:57.640Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a>, I understand now.</p>\n<p>You are correct, setToken is not made for client-side. It is a server-side feature.</p>\n<p>As Daniel pointed out, you don’t really have any option here unless you make a request to your server.</p>\n<p>So basically, instead of using the SDK to make a call, you will need to make a call to your server application and use a stored API token to make the request, then return the result back to your view.</p>\n<p>It isn’t an idle solution but it will get around your viewer/guest access token issue (as long as it is authorized by another user). This could also cause some security issues with viewers and guests seeing data that they are not meant to.</p>"
+    },
+    {
+      "id": 29949,
+      "postNumber": 16,
+      "createdAt": "2020-09-30T12:54:08.532Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a>,</p>\n<p>Please see Mitchell’s post above regarding the API call. Let me know if you have any other questions!</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 30254,
+      "postNumber": 17,
+      "createdAt": "2020-10-04T05:32:21.618Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Thanks Mitchell. You summarised the issue quite well.</p>\n<p>I have used the following workaround: use mondaySdk as normal (to listen for context and settings changes) except that I don’t make API calls using monday.api, but using apollo.query, a common graphql library.</p>\n<p>Indeed it is not ideal, because I am having to give the app a full member’s token explicitly (the guest user token would not work).</p>\n<p>The mitigation is that we are very very selective with our guests and viewers and are comfortable that there will not be any misuse or misappropriation of the token.</p>\n<p>Having said that, it would be a lot better if there was a way for it to work natively, i.e. make board contents available as part of the apps context. That way it would only expose what each user is allowed to see, and tokens would be kept safe.</p>\n<p>Again <span class=\"mention\">@monDevs</span> I can’t stress this enough. The Monday UX/UI is so vibrant and beautiful, it is a waste to not share it with clients and other partners. But to make their experience complete, these users must have a way to see custom developed views and widgets.</p>\n<p>Thanks all</p>"
+    },
+    {
+      "id": 30378,
+      "postNumber": 18,
+      "createdAt": "2020-10-05T15:55:01.260Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jaacquees\">@jaacquees</a> We hear you loud and clear, and we appreciate the kind words on the UI/UX. I’ll be sure to pass on both pieces of feedback internally to the team and hopefully it’s something we can tackle in the near future.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 43619,
+      "postNumber": 19,
+      "createdAt": "2021-03-05T16:05:44.267Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

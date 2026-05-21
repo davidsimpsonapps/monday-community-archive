@@ -1,0 +1,159 @@
+{
+  "id": 68191,
+  "title": "Creating Items Unexpected token",
+  "slug": "creating-items-unexpected-token",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107
+  ],
+  "createdAt": "2023-10-11T15:09:31.978Z",
+  "lastPostedAt": "2023-10-17T04:03:46.144Z",
+  "postsCount": 20,
+  "excerpt": "I am having trouble creating items. I have read through the api documentation and have tried setting up my post request exactly shown in the docs.  I unfortunately cannot share my code one for one since some of the infor&hellip;",
+  "solvedPostId": null,
+  "likeCount": 18,
+  "views": 956,
+  "posts": [
+    {
+      "id": 147895,
+      "postNumber": 1,
+      "createdAt": "2023-10-11T15:09:32.249Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I am having trouble creating items. I have read through the api documentation and have tried setting up my post request exactly shown in the docs.  I unfortunately cannot share my code one for one since some of the information is sensitive. Though the problem seems to be coming from how the “column_values” are formatted.</p>\n<p><strong>Code</strong><br />\nThe purpose of the <em>update_payload</em> variable is to fix the <em>column values</em>. I created some code that parses data and correctly formats the forward slashes to how  create_items mutation <a href=\"https://developer.monday.com/api-reference/docs/items#create-an-item\" rel=\"noopener nofollow ugc\">example</a> looks like.</p>\n<pre><code class=\"lang-auto\"># python 3.10\nimport json\nimport requests\n\napiKey = 'xxx'\napiUrl = \"https://api.monday.com/v2\"\nheaders = {\"Authorization\" : apiKey,\n           \"Content-Type\" : 'application/json',\n           \"API-Version\" : '2023-10'}\n\ndef create_item(board_id, group_id, item_name, column_values):\n    payload = f\"\"\"\n    mutation {{\n        create_item (board_id: {board_id} group_id: {json.dumps(group_id)} item_name: {json.dumps(item_name)} column_values: {json.dumps(column_values)}) {{\n            id\n        }}\n    }}\n    \"\"\"\n    update_payload = payload.replace(\"\\\\\\\\\\\"\", \"\\\"\")\n    print(update_payload)\n    data = {'query' : update_payload}\n    r_boards = requests.post(url=apiUrl, headers=headers, data=json.dumps(data)) # make request\n\n    return r_boards\n</code></pre>\n<pre><code class=\"lang-auto\">\n# Iterate through each group\nfor idx, (g_name, g_id) in enumerate(gid_dict.items()):\n    if g_name == \"Group Title\":\n        continue\n    df_filter_project = df.loc[df['Project'] == g_name]\n    item_name_list = df_filter_project['Task'].tolist()\n    item_vals_df = df_filter_project.drop(['Project', 'Task'], axis=1)\n\n    # Iterate through each \n\n    # Iterate through each row and construct the string\n    formatted_strings = []\n    for _, row in item_vals_df.iterrows():\n        data_dict = row.to_dict()\n        \n        # Not ideal to have nested for loops (shouldn't be too slow since it's looking at columns and not records)\n        replaced_dict = {}\n        for key1 in data_dict.keys():\n            for key2 in cid_dict.keys():\n                if key1 == key2:\n                    replaced_dict[cid_dict[key2]] = data_dict[key1]\n\n        # Construct the string for each row\n        formatted_string = \"{\"\n        for col, value in replaced_dict.items():\n            formatted_string += \"\\\\\\\"{}\\\\\\\":{{\\\\\\\"text\\\\\\\":\\\\\\\"{}\\\\\\\"}},\".format(col, value)\n        formatted_string = formatted_string[:-2]  # Remove the trailing comma and space\n        formatted_string += \"}\"\n\n        print(create_item(created_board_id, g_id, item_name, formatted_string).json())\n        sys.exit()\n</code></pre>\n<p><strong>Print Outputs</strong><br />\nThose “field#” are the ids of the related columns</p>\n<pre><code class=\"lang-auto\">    mutation {\n        create_item (board_id: xxx group_id: \"xxx\" item_name: \"xxx\" column_values: \"{\\\"field1\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field2\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field3\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field4\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field5\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field6\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field7\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field8\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field9\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field10\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field11\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field12\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field13\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field14\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field15\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"fiel16\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"fiel17\\\":{\\\"text\\\":\\\"xxx\\\"},\\\"field18\\\":{\\\"text\\\":\\\"xxx\\\"}\") {\n            id\n        }\n    }\n\n{'error_message': '809: unexpected token at \\'{\"field1\":{\"text\":\"xxx\"},\"field2\":{\"text\":\"English, John\"},\"field3\":{\"text\":\"xxx\"},\"field4\":{\"text\":\"xxx\"},\"field5\":{\"text\":\"xxx\"},\"field6\":{\"text\":\"xxx\"},\"field7\":{\"text\":\"xxx\"},\"field8\":{\"text\":\"xxx\"},\"field9\":{\"text\":\"xxx\"},\"field10\":{\"text\":\"xxx\"},\"field11\":{\"text\":\"xxx\"},\"field12\":{\"text\":\"xxx\"},\"field13\":{\"text\":\"xxx\"},\"field14\":{\"text\":\"xxx\"},\"field15\":{\"text\":\"xxx\"},\"field16\":{\"text\":\"xxx\"},\"field17\":{\"text\":\"xxx\"},\"field18\":{\"text\":\"xxx\"}\\'', 'status_code': 500}\n</code></pre>"
+    },
+    {
+      "id": 147983,
+      "postNumber": 2,
+      "createdAt": "2023-10-12T04:19:43.537Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/binx96\">@Binx96</a> and welcome to th community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>For me to take a look into what might be failing, I need to check the type of column of each column and the data you are trying to pass. Each column type uses a specific syntax so depending on which column types we are talking about, different formats will be needed. With the information you sent, I can not tell which column types you have or what kind of data you are sending in each case.</p>\n<p>You can find examples on how to pass data for each specific column type in our Postman examples <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/collection/17637789-b18ebc66-bc27-49b5-a950-3dfa4bfb3a21\">here</a>.</p>\n<p>You can also find it in the documentation <a href=\"https://developer.monday.com/api-reference/docs/column-types-reference\">here</a>.</p>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 148214,
+      "postNumber": 3,
+      "createdAt": "2023-10-13T13:28:28.435Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>All columns are “text” type.</p>\n<p>Here is an some better data:</p>\n<pre><code class=\"lang-auto\">mutation {\n        create_item (board_id: 123456789 group_id: \"123456_r6456yhgt\" item_name: \"01 - Office Land Survey\" column_values: \"{\\\"phase\\\":{\\\"text\\\":\\\"3213 - 3213 Data Archiving\\\"},\\\"pm\\\":{\\\"text\\\":\\\"Doe, John\\\"},\\\"client\\\":{\\\"text\\\":\\\"U.S.A - Company\\\"},\\\"org\\\":{\\\"text\\\":\\\"0.01.45.123.00\\\"},\\\"status\\\":{\\\"text\\\":\\\"A\\\"},\\\"compensation\\\":{\\\"text\\\":\\\"0\\\"},\\\"first_hours\\\":{\\\"text\\\":\\\"1.0\\\"},\\\"first_second_labor\\\":{\\\"text\\\":\\\"256.123\\\"},\\\"text\\\":{\\\"text\\\":\\\"0\\\"},\\\"first_cost\\\":{\\\"text\\\":\\\"0\\\"},\\\"first_expenses\\\":{\\\"text\\\":\\\"0\\\"},\\\"first_second_cost\\\":{\\\"text\\\":\\\"253.854\\\"},\\\"second_hours\\\":{\\\"text\\\":\\\"0.0\\\"},\\\"second_first_labor\\\":{\\\"text\\\":\\\"0.0\\\"},\\\"second_consultants\\\":{\\\"text\\\":\\\"0\\\"},\\\"second_cost\\\":{\\\"text\\\":\\\"0\\\"},\\\"second_expenses\\\":{\\\"text\\\":\\\"0.0\\\"},\\\"second_first_cost\\\":{\\\"text\\\":\\\"0.0\\\"}\") {\n            id\n        }\n    }\n</code></pre>"
+    },
+    {
+      "id": 148235,
+      "postNumber": 4,
+      "createdAt": "2023-10-13T15:28:40.692Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The error is because you’re manipulating strings, passing through json.dumps() multiple times and its adding extra <code>\\</code> characters that are causing the graphql query parser to error.</p>\n<p>The problem I see is there is no reason to be building and manipulating strings. The column values is a JSON string of a regular object - build the object first, then turn it into a JSON string rather than trying to build the JSON from strings.</p>\n<p><strong>I am a javascript guy, so bear with me. I am also leaving out a lot that isn’t about creating the request body to send to the server</strong></p>\n<p>Build your columnValues as an object, I will leave that up to you as to how you do it (because I am not a python guy). If you’re using column values you retrieved with the API, the value property of a column_value is a JSON string. Use <code>JSON.parse()</code> or <code>json.loads()</code> to get an actual value object you can work with rather than strings that you need to manipulate. (Or use fragments in column_value v2 in the new API to bypass the JSON string all together.)</p>\n<p>This is an example of the structure you’re creating, which you’re doing through string manipulation, but instead just make this object. Keys are the column ID and their values is the value object for the type of column it is. In this case all are text.</p>\n<pre><code class=\"lang-auto\">const columnValuesObject = {\n   columnId: {text: \"string\"},\n   columnId2: {text: \"string2\"},\n   columnId3: {text: \"string3\"},\n}\n</code></pre>\n<p>Look into is GraphQL variables. <a href=\"https://graphql.org/learn/queries/#variables\" rel=\"noopener nofollow ugc\">https://graphql.org/learn/queries/#variables</a> so that you aren’t trying to do string manipulation on the query itself. Create a working query in the playground and copy it with the copy button and use it. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> Using variables lets the server substitute values after parsing the query.</p>\n<pre><code class=\"lang-auto\">const query = `mutation ($boardId: ID!, $itemName: String!, $groupId: String, $columnValues: JSON) {\n  create_item(\n    board_id: $boardId\n    group_id: $groupId\n    item_name: $itemName\n    column_values: $columnValues\n  ) {\n    id\n  }\n}`\n\n// yes the above query is correct, you can steal it.\n</code></pre>\n<p>In the playground you can create the variables for testing, its below the query section. In the playground - you type JSON in. In your code though, its just an object for the variables:</p>\n<pre><code class=\"lang-auto\">const variables = {\n     boardId: 1235423432,\n     itemName: \"item name is this\",\n     columnValues: JSON.stringify(columnValuesObject), //this is where we turn the columnValuesObject into a string.\n     groupId: \"groupid_string\"\n}\n\n// in your code you will have variables for the boardId, itemName, groupId \n// that are used in this object, I'm skipping writing that out here.\n</code></pre>\n<p>now to put it together:</p>\n<pre><code class=\"lang-auto\">const requestBody = JSON.stringify({\n    query,\n    variables,\n})\n\n// use your favorite tool to post the requestBody to the API server. \n// the exact method may vary since some clients can take an object\n// and will stringify it for you so you''d skip the stringify above.\n\n</code></pre>"
+    },
+    {
+      "id": 148294,
+      "postNumber": 5,
+      "createdAt": "2023-10-15T04:56:43.143Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the very detailed help!</p>"
+    },
+    {
+      "id": 148474,
+      "postNumber": 6,
+      "createdAt": "2023-10-16T18:20:23.399Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !! Still working out the kinks of converting/understanding JS to python. I was able to get it to work via the playground. I’ll update when I can get python to work with it.</p>"
+    },
+    {
+      "id": 148480,
+      "postNumber": 7,
+      "createdAt": "2023-10-16T18:45:12.623Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Good progress!</p>\n<p>I wish I could provide more assistance with the building of the object in python. here is some rough JS to do this with text columns.</p>\n<pre><code class=\"lang-auto\">const columnValues = //get the column  values with GraphQL, this will be the column_values array of the item.\nconst columnValueObject = {};\n\nfor (const column of columnValues) {\n   if (column.type !== \"text\") {\n        console.warn(`unsupported column ${column.id} of ${column.type} encountered`);\n        continue;\n   }\n   columnValueObject[column.id] = { text: column.text };\n// you may want to consider creating a function for this loop, that has switch statements by\n// column.type and the correct pattern for each type. If you may do this with more than just\n// text columns.\n}\n\nconst columnValueString = JSON.stringify(columnValueObject );\n</code></pre>\n<p>Obviously this only applies if its to the same column ID… you’d need to get fancier if you’re mixing things up and need to match one ID with another’s value. (maybe two boards).</p>"
+    },
+    {
+      "id": 148482,
+      "postNumber": 8,
+      "createdAt": "2023-10-16T19:02:05.870Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Thanks!</p>\n<p>I believe that I have the correct python object, but I am running into a json decoder error. It looks like it has something to do with how the json object is formatted, but I’m not seeing why just yet.</p>\n<p><strong>My object:</strong></p>\n<pre><code class=\"lang-auto\">{'Phase': 'phase_1', 'Client': 'Some Company 123', 'Org': '00.34.23.54', 'Consultants': 0}\n</code></pre>\n<p><strong>The function:</strong></p>\n<pre><code class=\"lang-auto\">def create_item(board_id, group_id, item_name, column_values):\n    query = \"\"\"\n    mutation ($boardId: ID!, $itemName: String!, $groupId: String, $columnValues: JSON) {\n        create_item(\n            board_id: $boardId\n            group_id: $groupId\n            item_name: $itemName\n            column_values: $columnValues\n        ) {\n            id\n        }\n        }\n    \"\"\"\n\n    variables = {\n        'boardId': board_id,\n        'groupID': group_id,\n        'itemName': item_name,\n        'columnValues': json.dumps(column_values, separators=(',', ':'))\n    }\n\n    request_body = json.dumps({query : variables})\n    data = {'query': request_body}\n    print(data)\n    r_boards = requests.post(url=apiUrl, headers=headers, data=data) # make request\n\n    return r_boards\n</code></pre>\n<p><strong>Data Output:</strong></p>\n<pre><code class=\"lang-auto\">{'query': '{\"\\\\n    mutation ($boardId: ID!, $itemName: String!, $groupId: String, $columnValues: JSON) {\\\\n        create_item(\\\\n            board_id: $boardId\\\\n            group_id: $groupId\\\\n            item_name: $itemName\\\\n            column_values: $columnValues\\\\n        ) {\\\\n            id\\\\n        }\\\\n        }\\\\n    \": {\"boardId\": \"123456\", \"groupID\": \"654321\", \"itemName\": \"Office\", \"columnValues\": \"{\\\\\"Phase\\\\\":\\\\\"phase_1\\\\\",\\\\\"Client\\\\\":\\\\\"Some Company 123\\\\\",\\\\\"Org\\\\\":\\\\\"00.34.23.54\\\\\",\\\\\"JTD Consultants\\\\\":0}\"}}'}\n</code></pre>\n<p><strong>The Error:</strong></p>\n<pre><code class=\"lang-auto\">Traceback (most recent call last):\n  File \"C:\\Users\\name\\Anaconda3\\envs\\monday\\lib\\site-packages\\requests\\models.py\", line 971, in json\n    return complexjson.loads(self.text, **kwargs)\n  File \"C:\\Users\\name\\Anaconda3\\envs\\monday\\lib\\json\\__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n  File \"C:\\Users\\name\\Anaconda3\\envs\\monday\\lib\\json\\decoder.py\", line 340, in decode\n    raise JSONDecodeError(\"Extra data\", s, end)\njson.decoder.JSONDecodeError: Extra data: line 1 column 5 (char 4)\n</code></pre>"
+    },
+    {
+      "id": 148484,
+      "postNumber": 9,
+      "createdAt": "2023-10-16T19:06:20.642Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I believe the issue is with this:</p>\n<pre><code class=\"lang-auto\">request_body = json.dumps({query : variables})\ndata = {'query': request_body}\n</code></pre>\n<p>try this:</p>\n<pre><code class=\"lang-auto\">data = {\n     'query': query, \n     'variables': variables\n}\n</code></pre>\n<p>I’m presuming requests.post must do a json.dumps(data) internally to send JSON.</p>"
+    },
+    {
+      "id": 148485,
+      "postNumber": 10,
+      "createdAt": "2023-10-16T19:14:21.924Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>It does not. I took it out to try and trouble shoot the problem. I already called it on my “request_body” variable, so I wasn’t sure if I needed to call it again.</p>\n<p>With you suggestion and adding <code>data.dumps()</code> back in, that worked! Thank you tons for you help!</p>\n<pre><code class=\"lang-auto\">def create_item(board_id, group_id, item_name, column_values):\n    query = \"\"\"\n    mutation ($boardId: ID!, $itemName: String!, $groupId: String, $columnValues: JSON) {\n        create_item(\n            board_id: $boardId\n            group_id: $groupId\n            item_name: $itemName\n            column_values: $columnValues\n        ) {\n            id\n        }\n        }\n    \"\"\"\n\n    variables = {\n        'boardId': board_id,\n        'groupID': group_id,\n        'itemName': item_name,\n        'columnValues': json.dumps(column_values, separators=(',', ':'))\n    }\n\n    data = {\n        'query': query,\n        'variables': variables\n    }\n\n    r_boards = requests.post(url=apiUrl, headers=headers, data=json.dumps(data)) # make request\n\n    return r_boards\n</code></pre>"
+    },
+    {
+      "id": 148486,
+      "postNumber": 11,
+      "createdAt": "2023-10-16T19:21:50.901Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>surprised it worked as you expected - i think your variable is <code>groupId</code> not <code>groupID</code></p>\n<p>since in the query the <code>$groupId: String</code> doesn’t have !, it makes $groupId optional. Since your variables don’t have groupId it just ignores that its missing in variables. It also ignores keys in variables that aren’t defined in the query.</p>"
+    },
+    {
+      "id": 148492,
+      "postNumber": 12,
+      "createdAt": "2023-10-16T20:00:31.479Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Yeah, I got too excited and thought it was working. Thanks for catching that syntax error. I was going nuts trying to figure out why one of my groups was getting all the items when it should have been creating 5 items for both groups.</p>\n<p>Another problem I am seeing is that the text fields (column values) are not filling in either. Hmmmmm…</p>"
+    },
+    {
+      "id": 148493,
+      "postNumber": 13,
+      "createdAt": "2023-10-16T20:06:15.643Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Looking at your results, your column_values object is incorrect.</p>\n<p>First the key needs to be the column ID (not the column title). Those appear to be column titles. Second the value of each key must be literally. <code>{'text': textstring}</code> in other words the value of each columnID key is an object with a text key, with the text value you want in the column. See the following JSON for what it should look like when done.</p>\n<p><code>\"{\\n columnId1: {text: \\\"test text\\\"},\\n columnId2: {text: \\\"more test\\\")\\n}\"</code></p>"
+    },
+    {
+      "id": 148498,
+      "postNumber": 14,
+      "createdAt": "2023-10-16T20:24:13.446Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Strange, I swore the playground allowed me to use the title of the column to insert a value. Must be mistaken then. Okay, I updated the object with the column id and ensured that the values are all strings. Not sure how to get it to that JSON format that you have illustrated. Tried <code>json.dumps()</code>.</p>\n<pre><code class=\"lang-auto\">{\"phase\": {\"text\": \"123\"}, \"client\": {\"text\": \"Some Company 123\"}, \"org\": {\"text\": \"00.45.45.76\"}, \"cost\": {\"text\": \"0.0\"}}\n</code></pre>"
+    },
+    {
+      "id": 148501,
+      "postNumber": 15,
+      "createdAt": "2023-10-16T20:42:18.615Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>if that is the output of the object through json.dumps() printed, then you’re good.</p>\n<p>The extra stuff you see in mine is whats there AFTER passing <code>data</code> through json.dumps() (a second pass) Since the string you have is in the columnValues variable - and that then gets put json.dumps as part of <code>data</code> it will pick up the extra \\ to escape quotes so the JSON is valid. (and new lines).</p>\n<p>Basically, take what you got and put it in the columnValue variable and you should be good.</p>"
+    },
+    {
+      "id": 148502,
+      "postNumber": 16,
+      "createdAt": "2023-10-16T20:58:22.902Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Yes that is the object after passing through the first json.dumps(). Ahh yes, I see the <code>\\</code> now after the second pass through json.dumps(). Thanks for clarifying that, I was getting confused why I needed to pass it twice through json.dumps(). Seemed a bit redundant.</p>\n<p>I now am getting a new error <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /> . It appears these are coming from the ‘phase’ column id. I understand the error. But I am not changing the column datatype, so not sure where this is coming from.</p>\n<pre><code class=\"lang-auto\">/docs/change-column-values', 'error_data': {'column_value': '{\"text\"=&gt;\"5000 - 5000 Project Management\"}', 'column_type': 'TextColumn'}}\n{'error_code': 'ColumnValueException', 'status_code': 200, 'error_message': 'invalid value, please check our API documentation for the correct data structure for this column. https://developer.monday.com/api-reference\n</code></pre>"
+    },
+    {
+      "id": 148503,
+      "postNumber": 17,
+      "createdAt": "2023-10-16T21:03:08.705Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>OH my. I am so sorry! This is embarrassing. I was copying from my code for “long_text” columns which use {text:string} on accident the whole time.</p>\n<p>it is as you had it before. Yes, stupid the two text columns have different formats. Here is hte object.</p>\n<p><code>{columnId: textstring, columnId2: textstring}</code></p>"
+    },
+    {
+      "id": 148505,
+      "postNumber": 18,
+      "createdAt": "2023-10-16T21:11:28.536Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Ah yeah! That is producing! Can you please explain the two text columns? I wasn’t aware that there are two different formats.</p>"
+    },
+    {
+      "id": 148507,
+      "postNumber": 19,
+      "createdAt": "2023-10-16T21:25:03.429Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>text column type supports a short bit of visible text in the column.</p>\n<p>long_text columns show a snippet and when clicked, drop down a text box to show the full longer length of text. Up to 2048 characters.</p>\n<p>funny fact is a regular text column has a potentially higher maximum size (or did pre-mondaydb at least) into the megabytes of text. I haven’t tested its limits lately. But there is no way to easily see all of it!</p>\n<p>You can create a long text column by creating a new column and choosing “more columns” and searching “long text”</p>\n<p>Honestly, when they were created long ago, monday should have just made the display type a setting on a text column. rather than separate column types!</p>"
+    },
+    {
+      "id": 148557,
+      "postNumber": 20,
+      "createdAt": "2023-10-17T04:03:46.144Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the help!!</p>"
+    }
+  ]
+}

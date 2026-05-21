@@ -1,0 +1,60 @@
+{
+  "id": 43056,
+  "title": "Creating a new item with PERSON column values populated",
+  "slug": "creating-a-new-item-with-person-column-values-populated",
+  "categoryId": 8,
+  "tagIds": [
+    155
+  ],
+  "createdAt": "2022-09-27T07:28:04.997Z",
+  "lastPostedAt": "2022-09-29T16:40:12.021Z",
+  "postsCount": 6,
+  "excerpt": "Hello every one, I need some help please. \nI use a simple board, an item is assigned to a group of person. This is the structure : \n{“name”:“Thing to do”,“column_values”:[{“id&quot;:“person”,“type”:“multiple-person”,“text”:&quot;u&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1349,
+  "posts": [
+    {
+      "id": 98739,
+      "postNumber": 1,
+      "createdAt": "2022-09-27T07:28:05.084Z",
+      "author": "Pharamousse (BUONO)",
+      "cookedHtml": "<p>Hello every one, I need some help please.<br />\nI use a simple board, an item is assigned to a group of person. This is the structure :</p>\n<p>{“name”:“Thing to do”,“column_values”:[{“<a href=\"mailto:id%22:%22person%22,%22type%22:%22multiple-person%22,%22text%22:%22user1@mydom.com\" rel=\"noopener nofollow ugc\">id\":“person”,“type”:“multiple-person”,“text”:\"user1@mydom.com</a>, <a href=\"mailto:user2@mydom.com\">user2@mydom.com</a>”},{“id”:“status”,“type”:“color”,“text”:“Done”},{“id”:“timeline”,“type”:“timerange”,“text”:“2022-09-19 - 2022-10-01”},{“id”:“texte8”,“type”:“long-text”,“text”:“Good job”}]}</p>\n<p>I managed to folow the QuickStart PHP Api Guide and populate the main Label, the status and the last “text8” label.<br />\nBut I can’t manage to populate the timeline column and most of all, the person column.<br />\nI think there is something about Person ID (I managed to find all the IDs).</p>\n<p>I tried this :</p>\n<pre><code class=\"lang-auto\">$headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n$query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:XXXXXXXXX, item_name:$myItemName, column_values:$columnVals) { id } }';\n\n$vars = ['myItemName' =&gt; 'Thing to do', \n  'columnVals' =&gt; json_encode([\n    'status' =&gt; ['label' =&gt; 'Done'], \n\t'person' =&gt; ['text' =&gt; 'user1@mydom.com'],\n    'date4' =&gt; ['date' =&gt; '2022-09-15'],\n\t'texte8' =&gt; ['text' =&gt; 'Good job']\n])];\n\n$data = @file_get_contents($apiUrl, false, stream_context_create([\n 'http' =&gt; [\n 'method' =&gt; 'POST',\n 'header' =&gt; $headers,\n 'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n ]\n]));\n$responseContent = json_decode($data, true);\n\necho json_encode($responseContent);\n</code></pre>\n<p>I guess that the ‘date4’ should be replaced by the right ID,<br />\nand i suspect a wrong structure for “person”.</p>\n<p>Anyone to help me with that simple code?<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=12\" title=\":pray:\" class=\"emoji only-emoji\" alt=\":pray:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 98836,
+      "postNumber": 2,
+      "createdAt": "2022-09-28T05:51:39.595Z",
+      "author": "Pharamousse (BUONO)",
+      "cookedHtml": "<p><img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /> no one to help me with populating my person/people column?<br />\nI tried so many things and failed. I’m out of idea…<br />\nany help would be very appreciated</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0ff8fc125879912076daa37e2c6612443e1825e2.jpeg\" title=\"2022-09-28_10-53-29\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0ff8fc125879912076daa37e2c6612443e1825e2_2_690x178.jpeg\" alt=\"2022-09-28_10-53-29\" width=\"690\" height=\"178\" /><div class=\"meta\">\n<span class=\"filename\">2022-09-28_10-53-29</span><span class=\"informations\">1007×261 53.2 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 98986,
+      "postNumber": 3,
+      "createdAt": "2022-09-29T03:19:35.410Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/pharamousse\">@Pharamousse</a>,</p>\n<p>Welcome to the community! <img src=\"https://emoji.discourse-cdn.com/apple/rocket.png?v=12\" title=\":rocket:\" class=\"emoji\" alt=\":rocket:\" width=\"20\" height=\"20\" /></p>\n<p>To <a href=\"https://developer.monday.com/api-reference/docs/people#updating-the-people-column\">update the People column</a>, you should send either a simple string or a JSON string with the IDs of the people you want to add, for example:</p>\n<p><code>\"4616627, 4616435, 4616912\"</code></p>\n<p>or</p>\n<p><code>\"{\\\"personsAndTeams\\\":[{\\\"id\\\":4616627,\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":4616666,\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":51166,\\\"kind\\\":\\\"team\\\"}]}\"</code></p>"
+    },
+    {
+      "id": 98996,
+      "postNumber": 4,
+      "createdAt": "2022-09-29T04:46:33.900Z",
+      "author": "Pharamousse (BUONO)",
+      "cookedHtml": "<p>Hi Alessandra,<br />\nthank you for your reply, I already tried that and unfortunatly something went wrong.<br />\nThis is what I get :</p>\n<pre><code class=\"lang-auto\">{\"error_code\":\"ColumnValueException\",\"status_code\":200,\"error_message\":\"Error GraphqlCustomExceptions::CorrectedValueException has occurred during simple column conversion\",\"error_data\":{\"column_value\":\"{\\\"personsAndTeams\\\":[{\\\"id\\\":34975497,\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":35050980,\\\"kind\\\":\\\"person\\\"}]}\",\"column_type\":\"multiple-person\"}} \n</code></pre>\n<p>Here is my PHP Code</p>\n<pre><code class=\"lang-auto\">\n$headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n$query = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:XXXXXXXX, item_name:$myItemName, column_values:$columnVals) { id } }';\n$myCol = \"{\\\"personsAndTeams\\\":[{\\\"id\\\":12345678,\\\"kind\\\":\\\"person\\\"},{\\\"id\\\":987654321,\\\"kind\\\":\\\"person\\\"}]}\";\n\n$vars = ['myItemName' =&gt; 'Thing to do', \n  'columnVals' =&gt; json_encode([\n    'status' =&gt; ['label' =&gt; 'Attente'], \n\t'person' =&gt; $myCol ,\n\t'date4' =&gt; ['date' =&gt; '2022-09-15'],\n\t'texte8' =&gt; ['text' =&gt; 'Well done']\n])];\n\n$data = @file_get_contents($apiUrl, false, stream_context_create([\n 'http' =&gt; [\n 'method' =&gt; 'POST',\n 'header' =&gt; $headers,\n 'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n ]\n]));\n</code></pre>\n<p>I feel like I’m close to something but it goes wrong whatever I try.</p>"
+    },
+    {
+      "id": 99062,
+      "postNumber": 5,
+      "createdAt": "2022-09-29T11:18:11.362Z",
+      "author": "Pharamousse (BUONO)",
+      "cookedHtml": "<p>EUREKA !!<br />\nI got it !! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> Thank you.</p>\n<pre><code class=\"lang-auto\">$myCol =\"xxxxxxxx,yyyyyyyyyy\";\n</code></pre>\n<p>It works very well,<br />\nTHANK YOU SO MUCH</p>"
+    },
+    {
+      "id": 99106,
+      "postNumber": 6,
+      "createdAt": "2022-09-29T16:40:12.021Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/pharamousse\">@Pharamousse</a>,</p>\n<p>I’m happy to hear you query is working now! what did you do to fix it?</p>"
+    }
+  ]
+}

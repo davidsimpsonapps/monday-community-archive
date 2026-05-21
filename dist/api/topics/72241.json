@@ -1,0 +1,96 @@
+{
+  "id": 72241,
+  "title": "I am trying figure out a date formula to calculate overdue payments",
+  "slug": "i-am-trying-figure-out-a-date-formula-to-calculate-overdue-payments",
+  "categoryId": 5,
+  "tagIds": [
+    108,
+    303
+  ],
+  "createdAt": "2023-12-04T23:42:13.627Z",
+  "lastPostedAt": "2023-12-12T11:04:08.156Z",
+  "postsCount": 11,
+  "excerpt": "I am trying to set up a column to calculate overdue payments. I have a payment amount column, then a couple of columns for the accounts that the payment would go to. From there I have an “outstanding” column that populat&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1501,
+  "posts": [
+    {
+      "id": 156214,
+      "postNumber": 1,
+      "createdAt": "2023-12-04T23:42:13.702Z",
+      "author": "Taylor13 (Taylor Foley)",
+      "cookedHtml": "<p>I am trying to set up a column to calculate overdue payments. I have a payment amount column, then a couple of columns for the accounts that the payment would go to. From there I have an “outstanding” column that populates with the payment amount minus any deposits made to one of the bank accounts. I am hoping I can have the overdue column populate with the payment amount if the payment due date has passed. I get easily confused with the monday versions of formulas. I was playing with IF({Date}&lt;TODAY(),{Outstanding},\" \") but had no luck. Thanks in advance for any help provided.</p>\n<p>See photo<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/5/55928801247d4f41d3f485b80ac261ecc3ff952a.jpeg\" title=\"Screenshot 2023-12-04 at 7.41.00 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/5/55928801247d4f41d3f485b80ac261ecc3ff952a_2_690x447.jpeg\" alt=\"Screenshot 2023-12-04 at 7.41.00 PM\" width=\"690\" height=\"447\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-12-04 at 7.41.00 PM</span><span class=\"informations\">1920×1246 198 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 156270,
+      "postNumber": 2,
+      "createdAt": "2023-12-05T07:56:15.004Z",
+      "author": "TimB (Tim Beldman)",
+      "cookedHtml": "<p>Hey Taylor,</p>\n<p>Seems like the TODAY() is not in the same format as your desired Date column.</p>\n<p>To get around this:<br />\nInsert a <strong>new formula</strong> column, name this column <strong>“Today”</strong></p>\n<pre><code class=\"lang-auto\">TODAY()\n</code></pre>\n<p>Now when you have your <strong>Today</strong> column simply add this to your <strong>Overdue</strong> formula column:</p>\n<pre><code class=\"lang-auto\">IF(FORMAT_DATE({Date}, \"YYYY-MM-DD\") &lt; FORMAT_DATE({Today}, \"YYYY-MM-DD\"), \"$\" &amp; TEXT({Outstanding}, \"$#,##0.00\"), \"$0.00\")\n</code></pre>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/7/978f998f5acfa797ce87c07fc2821e2e92145e00.png\" alt=\"image\" width=\"606\" height=\"312\" /></p>\n<p>Hope this helps!</p>\n<p>Tim</p>"
+    },
+    {
+      "id": 156294,
+      "postNumber": 3,
+      "createdAt": "2023-12-05T10:59:00.454Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Taylor,</p>\n<p>Just make sure your dates are formatted the same way.</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(TODAY(),\"YYYY-MM-DD\") returns 2023-12-05\n</code></pre>\n<p>So if you use this formula, it should work</p>\n<pre><code class=\"lang-auto\">IF(FORMAT_DATE(TODAY(),\"YYYY-MM-DD\")&lt;FORMAT_DATE(TODAY(),\"YYYY-MM-DD\"),{Outstanding},\"\")\n</code></pre>\n<p>Note that the hyphens are not necessary since you’re not displaying any data. “YYYYMMDD” would work as well.</p>\n<hr />\n<p><em>If you’re creating a number of formulas, you may want to look at the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>. It breaks free of the formula column and can update any column.</em></p>\n<p><em>It is a lot simpler to use.</em></p>\n<p><em>In this particular case, if you use TODAY() in the AFB app, it returns 2023-12-05 without the need to use a format function and the comparison is as simple as the one you intuitively tried.</em></p>\n<p><em>There are many other advantages.</em></p>"
+    },
+    {
+      "id": 156362,
+      "postNumber": 4,
+      "createdAt": "2023-12-05T17:23:34.510Z",
+      "author": "Taylor13 (Taylor Foley)",
+      "cookedHtml": "<p>That formula worked great. Thanks! It for some reason though is not adding up the sum of the overdue payments in the column summary. Any idea why this is? How can I fix? Is it because of the <strong>TEXT</strong>({Outstanding}?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/d/5da5245e4da47e71540b92c514835f52cbeed986.jpeg\" title=\"Screenshot 2023-12-05 at 1.18.20 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/d/5da5245e4da47e71540b92c514835f52cbeed986_2_690x404.jpeg\" alt=\"Screenshot 2023-12-05 at 1.18.20 PM\" width=\"690\" height=\"404\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-12-05 at 1.18.20 PM</span><span class=\"informations\">1920×1126 177 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 156544,
+      "postNumber": 5,
+      "createdAt": "2023-12-06T15:42:53.927Z",
+      "author": "Taylor13 (Taylor Foley)",
+      "cookedHtml": "<p>That formula worked great. Thanks! It for some reason though is not adding up the sum of the overdue payments in the column summary. Any idea why this is? How can I fix? Is it because of the <strong>TEXT</strong> ({Outstanding}?<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/d/adfba34e438bd063a6138e91d95274691a1514b5.jpeg\" title=\"5da5245e4da47e71540b92c514835f52cbeed986_2_1380x808\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/d/adfba34e438bd063a6138e91d95274691a1514b5_2_690x404.jpeg\" alt=\"5da5245e4da47e71540b92c514835f52cbeed986_2_1380x808\" width=\"690\" height=\"404\" /><div class=\"meta\"><span class=\"filename\">5da5245e4da47e71540b92c514835f52cbeed986_2_1380x808</span><span class=\"informations\">1380×808 223 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 156545,
+      "postNumber": 6,
+      "createdAt": "2023-12-06T15:43:54.425Z",
+      "author": "Taylor13 (Taylor Foley)",
+      "cookedHtml": "<p>Hey Tim, That formula worked great. Thanks! It for some reason though is not adding up the sum of the overdue payments in the column summary. Any idea why this is? How can I fix? Is it because of the <strong>TEXT</strong> ({Outstanding}?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/d/adfba34e438bd063a6138e91d95274691a1514b5.jpeg\" title=\"5da5245e4da47e71540b92c514835f52cbeed986_2_1380x808\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/d/adfba34e438bd063a6138e91d95274691a1514b5_2_690x404.jpeg\" alt=\"5da5245e4da47e71540b92c514835f52cbeed986_2_1380x808\" width=\"690\" height=\"404\" /><div class=\"meta\"><span class=\"filename\">5da5245e4da47e71540b92c514835f52cbeed986_2_1380x808</span><span class=\"informations\">1380×808 223 KB</span></div></a></div><p></p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 156550,
+      "postNumber": 7,
+      "createdAt": "2023-12-06T16:09:19.567Z",
+      "author": "TimB (Tim Beldman)",
+      "cookedHtml": "<p>Hey Taylor,</p>\n<p>Yes your right its because of the <strong>TEXT</strong> try this code instead:</p>\n<pre><code class=\"lang-auto\">IF(FORMAT_DATE({Date}, \"YYYY-MM-DD\") &lt; FORMAT_DATE({Today}, \"YYYY-MM-DD\"), {Outstanding}, 0)\n</code></pre>\n<p>Hope this helps,</p>\n<p>Tim</p>"
+    },
+    {
+      "id": 156562,
+      "postNumber": 8,
+      "createdAt": "2023-12-06T17:26:16.000Z",
+      "author": "Taylor13 (Taylor Foley)",
+      "cookedHtml": "<p>That worked. Thank you!</p>"
+    },
+    {
+      "id": 156575,
+      "postNumber": 9,
+      "createdAt": "2023-12-06T18:47:26.974Z",
+      "author": "Taylor13 (Taylor Foley)",
+      "cookedHtml": "<p>Hey Tim,<br />\nWould you happen to be able to also help me with this formula? I would like to calculate the number of years since a date. If I started in the industry 01/02/2012 I would like it to compare to today and figure how many years of experience I have.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/8/7803f591513fa64d1b3fcbe7ee48c9cc9ecddfcf.png\" title=\"Screenshot 2023-12-06 at 2.45.14 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/8/7803f591513fa64d1b3fcbe7ee48c9cc9ecddfcf_2_690x126.png\" alt=\"Screenshot 2023-12-06 at 2.45.14 PM\" width=\"690\" height=\"126\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-12-06 at 2.45.14 PM</span><span class=\"informations\">978×180 12.1 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 156895,
+      "postNumber": 10,
+      "createdAt": "2023-12-08T11:11:45.000Z",
+      "author": "TimB (Tim Beldman)",
+      "cookedHtml": "<p>Hey Taylor,</p>\n<p>Of course I used a different approach:</p>\n<p>I have a <strong>Date</strong> column <strong>{Start in Industry}</strong></p>\n<p>And i have created <strong>2</strong> <strong>Formula</strong> columns</p>\n<ol>\n<li>First one counts the <strong>amount of days</strong> untill now. I called it <strong>{Amount of days}</strong></li>\n</ol>\n<pre><code class=\"lang-auto\">IF(\n  YEAR({Start in Industry}) &gt; 0,\n  DAYS(TODAY(), {Start in Industry}, 1),\n  0\n)\n\n</code></pre>\n<ol>\n<li>Second Formula column I created I named {Years of Exp.}</li>\n</ol>\n<pre><code class=\"lang-auto\">IF(\n  YEAR({Start in Industry}) &gt; 0,\n  INT(DAYS(TODAY(), {Start in Industry}) / 365),\n  0\n)\n</code></pre>\n<p><strong>Screenshot:</strong></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/c/2c68a75f6ea500abf13d17e532ceb76ba3ee52f8.png\" alt=\"image\" width=\"442\" height=\"300\" /></p>\n<p>Let me know if you have any questions,</p>\n<p>Tim</p>"
+    },
+    {
+      "id": 157467,
+      "postNumber": 11,
+      "createdAt": "2023-12-12T11:04:08.156Z",
+      "author": "Taylor13 (Taylor Foley)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/timb/48/29662_2.png\" class=\"avatar\" /> Tim Beldman:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">IF(\n  YEAR({Start in Industry}) &gt; 0,\n  INT(DAYS(TODAY(), {Start in Industry}) / 365),\n  0\n)\n</code></pre>\n</blockquote>\n</aside>\n<p>Thank you very much!</p>"
+    }
+  ]
+}

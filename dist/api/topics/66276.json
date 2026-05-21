@@ -1,0 +1,82 @@
+{
+  "id": 66276,
+  "title": "Monday integration with AWS Lambda",
+  "slug": "monday-integration-with-aws-lambda",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    144
+  ],
+  "createdAt": "2023-09-19T03:11:29.430Z",
+  "lastPostedAt": "2023-09-21T11:25:48.661Z",
+  "postsCount": 8,
+  "excerpt": "Hello, My goal is connect Monday with lambda function. Lambda have to get some info via webhook and create new project in AWS. I’m trying to connect a board with lambda but getting failed(Failed to communicate with URL p&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 744,
+  "posts": [
+    {
+      "id": 144208,
+      "postNumber": 1,
+      "createdAt": "2023-09-19T03:11:29.512Z",
+      "author": "Artem (Artem)",
+      "cookedHtml": "<p>Hello, My goal is connect Monday with lambda function. Lambda have to get some info via webhook and create new project in AWS. I’m trying to connect a board with lambda but getting failed(Failed to communicate with URL provided.).<br />\nMy code for the lambda on python is:<br />\nimport json</p>\n<p>def lambda_handler(event, context):<br />\n# Print the entire ‘event’ object for debugging with double quotes<br />\nprint(“Received event:”, json.dumps(event, indent=2))</p>\n<pre><code># Extract the challenge value from the webhook event data\nchallenge = event['challenge']\n\n# Create a dictionary with the challenge message using the extracted challenge value\nresponse_message = {\n    \"challenge\": challenge\n}\n\n# Print the response message with double quotes\nprint(\"Response message:\", json.dumps(response_message, indent=2, ensure_ascii=False))\n\nreturn {\n    'statusCode': 200,\n    'body': json.dumps(response_message, ensure_ascii=False)\n}\n</code></pre>\n<p>test show me the result:<br />\n\"<br />\nTest Event Name<br />\nchallenge</p>\n<p>Response<br />\n{<br />\n“statusCode”: 200,<br />\n“body”: “{\"challenge\": \"3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P\"}”<br />\n}</p>\n<p>Function Logs<br />\nSTART RequestId: a5dd95bc-7a9a-4ba8-b2ea-57a48a1e2322 Version: $LATEST<br />\nReceived event: {<br />\n“challenge”: “3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P”<br />\n}<br />\nResponse message: {<br />\n“challenge”: “3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P”<br />\n}<br />\n\"<br />\nCould you please help me understand what is the issue with integration with <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>.<br />\nThank you in advance!</p>"
+    },
+    {
+      "id": 144231,
+      "postNumber": 2,
+      "createdAt": "2023-09-19T04:03:24.789Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Will this function send the same request headers in the response?</p>\n<p>Maybe it’s missing this header: <code>Content-Type:application/json</code></p>"
+    },
+    {
+      "id": 144234,
+      "postNumber": 3,
+      "createdAt": "2023-09-19T04:19:04.426Z",
+      "author": "Artem (Artem)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/dipro\">@dipro</a> , I’m pretty new in it, could you copy/paste my code and put your proposal in proper place? Thank you in advance!</p>"
+    },
+    {
+      "id": 144326,
+      "postNumber": 4,
+      "createdAt": "2023-09-19T14:51:50.259Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/artem\">@Artem</a></p>\n<pre><code class=\"lang-auto\">return {\n    'statusCode': 200,\n    'body': json.dumps(response_message, ensure_ascii=False)\n}\n</code></pre>\n<p>should be changed to:</p>\n<pre><code class=\"lang-auto\">return {\n    'statusCode': 200,\n    'body': json.dumps(response_message, ensure_ascii=False),\n    'headers': {\n         'Content-Type': 'application/json'\n    }\n}\n</code></pre>\n<p>From the documentation for lambda function URLs, here is the full structure of the responses. No fields are required, and returning void returns a 200 with no body. Obviously not what you want here, but could be of use in some situations.</p>\n<pre><code class=\"lang-auto\">{\n   \"statusCode\": 201,\n    \"headers\": {\n        \"Content-Type\": \"application/json\",\n        \"My-Custom-Header\": \"Custom Value\"\n    },\n    \"body\": \"{ \\\"message\\\": \\\"Hello, world!\\\" }\",\n    \"cookies\": [\n        \"Cookie_1=Value1; Expires=21 Oct 2021 07:48 GMT\",\n        \"Cookie_2=Value2; Max-Age=78000\"\n    ],\n    \"isBase64Encoded\": false\n}\n</code></pre>\n<blockquote>\n<p>Lambda infers the response format for you. If your function returns valid JSON and doesn’t return a <code>statusCode</code>, Lambda assumes the following:</p>\n<ul>\n<li><code>statusCode</code> is <code>200</code>.</li>\n<li><code>content-type</code> is <code>application/json</code>.</li>\n<li><code>body</code> is the function response.</li>\n<li><code>isBase64Encoded</code> is <code>false</code>.</li>\n</ul>\n</blockquote>\n<p>What this means is if you want to return a <code>200</code> as <code>application/json</code> then all you really need is:</p>\n<pre><code class=\"lang-auto\">return json.dumps(message_response) //try it without the json.dumps and see what happens.\n</code></pre>\n<p>Lambda will interpret it as:</p>\n<pre><code class=\"lang-auto\">return {\n    \"statusCode\": 200,\n    \"body\": {\n         \"challenge\" : \"3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P\"\n    },\n    'headers': {\n         'Content-Type': 'application/json'\n    }\n}\n</code></pre>"
+    },
+    {
+      "id": 144440,
+      "postNumber": 5,
+      "createdAt": "2023-09-20T05:56:00.999Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Nice response! Thanks for jumping in <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>"
+    },
+    {
+      "id": 144766,
+      "postNumber": 6,
+      "createdAt": "2023-09-21T03:48:03.577Z",
+      "author": "TomFri (Tom Fridman)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>"
+    },
+    {
+      "id": 144771,
+      "postNumber": 7,
+      "createdAt": "2023-09-21T04:11:49.615Z",
+      "author": "Artem (Artem)",
+      "cookedHtml": "<p>Thank you Cody. Lambda return as you told me. But when I got to the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> - webhooks - choose one - put Lambda URL (public accessible for the tests) - getting error \"Failed to communicate \"<br />\n<a>Uploading: Screenshot 2023-09-21 at 10.06.07.png…</a></p>\n<pre><code class=\"lang-auto\">\nResponse\n{\n  \"statusCode\": 200,\n  \"body\": \"{\\\"challenge\\\": \\\"3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P\\\"}\",\n  \"headers\": {\n    \"Content-Type\": \"application/json\"\n  }\n}\n\nFunction Logs\nSTART RequestId: e2d8eab1-fbbf-43ec-8a02-8f7cdc88a4ad Version: $LATEST\nReceived event: {\n\"challenge\": \"3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P\"\n}\nResponse message: {\n\"challenge\": \"3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P\"\n}\nEND\n</code></pre>\n<p>Lambda function:</p>\n<pre><code class=\"lang-auto\">iimport json\n\ndef lambda_handler(event, context):\n    # Print the entire 'event' object for debugging with double quotes\n    print(\"Received event:\", json.dumps(event, indent=2))\n\n    # Extract the challenge value from the webhook event data\n    challenge = event['challenge']\n\n    # Create a dictionary with the challenge message using the extracted challenge value\n    response_message = {\n        \"challenge\": challenge\n    }\n    \n    # Print the response message with double quotes\n    print(\"Response message:\", json.dumps(response_message, indent=2, ensure_ascii=False))\n    \n    return {\n    'statusCode': 200,\n    'body': json.dumps(response_message, ensure_ascii=False),\n    'headers': {\n         'Content-Type': 'application/json'\n    }\n}\n\n\n</code></pre>"
+    },
+    {
+      "id": 144874,
+      "postNumber": 8,
+      "createdAt": "2023-09-21T11:25:48.661Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I know what the issue is, but I’m not going to directly tell you the answer because its learning time!</p>\n<p>You’re testing your code with the “test” feature of the lambda console, correct? I suggest you check the cloudwatch logs when you test with the actual webhook. You may see the issue in your received event. Here is how to access them:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/1/31ef1609279075f2197430385480b223e3bc50f3.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/3/1/31ef1609279075f2197430385480b223e3bc50f3_2_594x500.png\" alt=\"image\" width=\"594\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1021×858 55.4 KB</span></div></a></div><p></p>\n<p>Look at the spoiler below for more once you check your logs!</p>\n<div class=\"spoiler\">\n<p>Another hint is that function URL events are API Gateway Http API / apigateway-http-api-proxy events. In the console test setup, there are optional templates, you may want to check those out to get an idea of how different source’s events are structured.</p>\n</div>\n<div class=\"spoiler\">\n<p>I’d highly suggest you check out this project if you’re going to be doing python lambda functions regularly. Particularly look at Event Source Data Classes. In this case you want APIGatewayProxyEventV2. But you’ll want to look into AWS SAM for dealing with the dependencies better.</p>\n</div>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://docs.powertools.aws.dev/lambda/python/latest/media/aws-logo-light.svg\" class=\"site-icon\" />\n\n      <a href=\"https://docs.powertools.aws.dev/lambda/python/latest/\" target=\"_blank\" rel=\"noopener nofollow ugc\">docs.powertools.aws.dev</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://docs.powertools.aws.dev/lambda/python/latest/\" target=\"_blank\" rel=\"noopener nofollow ugc\">Homepage - Powertools for AWS Lambda (Python)</a></h3>\n\n  <p>Powertools for AWS Lambda (Python)</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 145732,
+      "postNumber": 9,
+      "createdAt": "2023-09-27T05:12:12.603Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

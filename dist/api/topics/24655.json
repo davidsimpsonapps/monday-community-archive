@@ -1,0 +1,61 @@
+{
+  "id": 24655,
+  "title": "Location trouble in GraphQL",
+  "slug": "location-trouble-in-graphql",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-09-08T16:17:36.012Z",
+  "lastPostedAt": "2021-09-08T18:30:28.788Z",
+  "postsCount": 5,
+  "excerpt": "I’m trying to update a location via GraphQL - can’t get it to work in the playground - can anyone help me see what I’m missing? \nHere is what the documentation says to do: \nmutation { \nchange_multiple_column_values(item_&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 932,
+  "posts": [
+    {
+      "id": 63064,
+      "postNumber": 1,
+      "createdAt": "2021-09-08T16:17:36.107Z",
+      "author": "calebanderson (Caleb Anderson)",
+      "cookedHtml": "<p>I’m trying to update a location via GraphQL - can’t get it to work in the playground - can anyone help me see what I’m missing?</p>\n<p>Here is what the documentation says to do:<br />\nmutation {<br />\nchange_multiple_column_values(item_id:11111, board_id:22222, column_values: “{\"location3\" : {\"lat\":\"29.9772962\",\"lng\":\"31.1324955\",\"address\":\"Giza Pyramid Complex\"}}”) {<br />\nid<br />\n}<br />\n}</p>\n<p>I’m good until after column_values: that is a load of nonsense I don’t know what to keep and what to change. the slashes are just kind of everywhere and I can’t make sense of it. Here is what I’ve been trying to get to work to pass in a string:</p>\n<p>mutation {<br />\nchange_multiple_column_values(item_id:1653243041,board_id:1636890828, column_values: “{“location_1” : “42.564779 -87.97627779999999 13905 75th St, Bristol, WI 53104, USA”}\") {<br />\nid<br />\n}</p>\n<p>and to pass in JSON:<br />\nmutation {<br />\nchange_multiple_column_values(item_id: 1653243041, board_id: 1636890828, column_values: “{“location_1” : {“lat”:“42.564779”,“lng”:“87.97627779999999”,“address”:“13905 75th St, Bristol, WI 53104, USA”}}”) {<br />\nid<br />\n}<br />\n}</p>\n<p>All of it gives me a parse error or a 500 error. Thanks!</p>"
+    },
+    {
+      "id": 63077,
+      "postNumber": 2,
+      "createdAt": "2021-09-08T18:12:25.319Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/calebanderson\">@calebanderson</a>, replying here for others to see as well!</p>\n<p>GREAT question-- I think JSON value formatting can be a hard concept for a lot of our newer app developers who may have limited technical experience with this data type. Here is a great Stack Overflow thread to check out that explains a bit more about this concept: <a href=\"https://stackoverflow.com/questions/3020094/how-should-i-escape-strings-in-json\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">java - How should I escape strings in JSON? - Stack Overflow</a>.</p>\n<p>The reason why we include the slashes before quotation marks is because of JSON standardization. As such, whenever you send a JSON value (i.e. any <code>column_values</code> that you’re sending), you must escape the quotation marks that you include.</p>\n<p>So your column values argument should look like this:</p>\n<pre><code class=\"lang-auto\">column_values: \"{\\\"location_1\\\": {\\\"lat\\\": 42.564779, \\\"lng\\\": 87.97627779999999, \\\"address\\\": \\“13905 75th St, Bristol, WI 53104, USA\\”}}\"\n</code></pre>\n<p>Notice how I’m only escaping the quotation marks, and not the values that do not require quotation marks (i.e. any number values).</p>\n<p>I do also want to give you a heads up-- if you’re sending these values elsewhere (i.e. not in our Developer’s Playground), you must be sure to format your JSON accordingly. For instance if you’re trying to send values in Postman, you will need to <em>double escape</em> your inner quotation marks (this is where the triple backslashes come into play).</p>\n<p>I don’t believe this is what you’re trying to do, so single escapes should be fine. Let me know if I’m wrong though!</p>"
+    },
+    {
+      "id": 63078,
+      "postNumber": 3,
+      "createdAt": "2021-09-08T18:12:30.152Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 63081,
+      "postNumber": 4,
+      "createdAt": "2021-09-08T18:29:12.261Z",
+      "author": "calebanderson (Caleb Anderson)",
+      "cookedHtml": "<p>Thanks - working like a charm now! Also great reading in stock overflow there!</p>"
+    },
+    {
+      "id": 63082,
+      "postNumber": 5,
+      "createdAt": "2021-09-08T18:30:28.788Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>I’m so glad to hear!!</p>\n<p>Let us know if you have additional questions or concerns at this time.</p>"
+    },
+    {
+      "id": 63666,
+      "postNumber": 6,
+      "createdAt": "2021-09-15T18:31:27.903Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

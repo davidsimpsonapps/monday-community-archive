@@ -1,0 +1,67 @@
+{
+  "id": 15168,
+  "title": "Change_multiple_column_values doesn't work as expected",
+  "slug": "change-multiple-column-values-doesnt-work-as-expected",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2021-01-19T14:38:42.281Z",
+  "lastPostedAt": "2021-03-04T12:05:13.757Z",
+  "postsCount": 6,
+  "excerpt": "Hi, \nI’m trying to use change_multiple_column_values using Javascript: \nlet query5 =\n&#39;mutation ($boardId: Int!, $columnVals: JSON!, $itemId: Int!) { change_multiple_column_values (board_id: $boardId, item_id: $itemId, co&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2651,
+  "posts": [
+    {
+      "id": 38112,
+      "postNumber": 1,
+      "createdAt": "2021-01-19T14:38:42.374Z",
+      "author": "shaharsamira (Shahar Samira)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m trying to use change_multiple_column_values using Javascript:</p>\n<pre><code>let query5 =\n'mutation ($boardId: Int!, $columnVals: JSON!, $itemId: Int!) { change_multiple_column_values (board_id: $boardId, item_id: $itemId, column_values: $columnVals) { id } }';\nlet vars = {\n    boardId: boardId,\n    itemId: itemId,\n    columnVals: JSON.stringify(body),\n};\n      console.log(\n        JSON.stringify({\n          query: query5,\n          variables: JSON.stringify(vars),\n        })\n      );\n      fetch('https://api.monday.com/v2', {\n        method: 'post',\n        headers: {\n          'Content-Type': 'application/json',\n          Authorization: MONDAY_API_KEY,\n        },\n        body: JSON.stringify({\n          query: query5,\n          variables: JSON.stringify(vars),\n        }),\n      })\n        .then((res) =&gt; res.json())\n        .then((res) =&gt; {\n         });....\n</code></pre>\n<p>When I’m using the MONDAY_API_KEY from my developer user, it ends with success.</p>\n<p>But when I’m using the following token:<br />\nmonday.get(‘sessionToken’).then((res) =&gt; {<br />\nsetSessionId(res.data);<br />\n});<br />\nand send the sessionId instead of MONDAY_API_KEY, It ends up with an error message</p>\n<blockquote>\n<p>Access to fetch at ‘<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>’ from origin ‘<a href=\"https://a053439f76c9.ngrok.io\" rel=\"noopener nofollow ugc\">https://a053439f76c9.ngrok.io</a>’ has been blocked by CORS policy: No ‘Access-Control-Allow-Origin’ header is present on the requested resource.</p>\n</blockquote>\n<p>Any suggestion of how to perform such an update?<br />\nThe problem is that when I’m using the MONDAY_API_KEY, all the activities are being saved under my user.</p>"
+    },
+    {
+      "id": 38179,
+      "postNumber": 2,
+      "createdAt": "2021-01-20T10:42:37.052Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/shaharsamira\">@shaharsamira</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Thanks for reaching out to us with this request and allowing us to help!</p>\n<p>Just to make sure we’re on the same page here, you will not be able to avoid having API actions being associated with a user profile at this point in time. If you use your account’s API key, or even the short-lived tokens, the actions will still always be tied to a user profile within your account.</p>\n<p>Does that help shed more light on this? I’ve gone ahead and passed your experience as feedback to our product team, as we are considering future adjustments. To be transparent with you, I am not able to commit to an ETA or even a rough timeline just yet, though.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 38564,
+      "postNumber": 3,
+      "createdAt": "2021-01-24T15:29:37.310Z",
+      "author": "shaharsamira (Shahar Samira)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> ,<br />\nThanks for your answer.</p>\n<p>All the monday.api mutations work as expected except ‘change_column_value’.<br />\nWhen I’m trying to achieve this by using monday.api(`mutation { change_column_value…<br />\nwith a dynamic values and columns, It fails while trying to save, as the Graphql format is not as expected.</p>\n<p>For example, assume I have JavaScript object as follows:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9d8131268d0759a300da6121190b86ca5b9a3897.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9d8131268d0759a300da6121190b86ca5b9a3897_2_690x93.png\" alt=\"image\" width=\"690\" height=\"93\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">948×128 15.7 KB</span></div></a></div><p></p>\n<p>and the following code:<br />\nArray.forEach(arr =&gt; {<br />\nlet id = arr.id;<br />\nlet value = arr.value;  // Or JSON.stringify(arr.value)<br />\nawait monday.api(<br />\n<code>mutation { change_multiple_column_values(item_id:${itemId}, board_id:${boardId}, column_id:\\\"${id}\\\",      value:\"${value}\"){name}}</code><br />\n).then(res =&gt; {<br />\nconsole.log(res);<br />\n}).catch(err =&gt; {<br />\nconsole.log(err);<br />\n})<br />\n});</p>\n<p>The numeric value is being saved with a good format but the name type fails.</p>\n<p>Do you have any idea or resource to find the best solution?<br />\nWhat’s the best practice for updating several item’s columns?<br />\nI’m developing an app using React &amp; Node.js.</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 41783,
+      "postNumber": 4,
+      "createdAt": "2021-02-23T17:06:56.062Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/shaharsamira\">@shaharsamira</a>!</p>\n<p>Sorry for the delay in response-- we appreciate your patience.</p>\n<p>From your forEach(), it looks like you’re making individual API calls to update each column. Instead, perhaps it might be easier to use the multiple column values call to update these all at once.</p>\n<p>You can construct a new object from the original one that will contain the column Ids as keys and their relevant column values as values.</p>\n<p>Here is an example:<br />\n<code>let query5 = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:YOUR_BOARD_ID_HERE, item_name:$myItemName, column_values:$columnVals) { id } }';</code></p>\n<p><code>let vars = {</code> <code>  \"myItemName\" : \"Hello, world!\",</code> <code>  \"columnVals\" : JSON.stringify({</code> <code>    \"status\" : {\"label\" : \"Done\"},</code> <code>    \"date4\" : {\"date\" : \"1993-08-27\"}</code> <code>  })</code> <code>};</code></p>\n<p>Hope this helps!<br />\n-Helen</p>"
+    },
+    {
+      "id": 41786,
+      "postNumber": 5,
+      "createdAt": "2021-02-23T17:07:07.143Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 42068,
+      "postNumber": 6,
+      "createdAt": "2021-02-25T12:04:54.191Z",
+      "author": "shaharsamira (Shahar Samira)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p>It was very helpful, thanks.</p>"
+    },
+    {
+      "id": 43412,
+      "postNumber": 7,
+      "createdAt": "2021-03-04T12:05:13.757Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

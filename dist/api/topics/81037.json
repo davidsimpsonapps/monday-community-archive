@@ -1,0 +1,133 @@
+{
+  "id": 81037,
+  "title": "Running GraphQL API query, how can you return values selected from another board?",
+  "slug": "running-graphql-api-query-how-can-you-return-values-selected-from-another-board",
+  "categoryId": 8,
+  "tagIds": [
+    20,
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2024-03-13T22:35:22.221Z",
+  "lastPostedAt": "2024-03-26T22:20:12.943Z",
+  "postsCount": 13,
+  "excerpt": "Hello All! \nI have a query running against a Board, it pulls the items_page results. I just finished migrating the code from the 2023-07 version to the 2023-10 version. \nBut now I noticed that 2 of the fields used to ret&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 802,
+  "posts": [
+    {
+      "id": 173137,
+      "postNumber": 1,
+      "createdAt": "2024-03-13T22:35:22.327Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>Hello All!</p>\n<p>I have a query running against a Board, it pulls the items_page results. I just finished migrating the code from the 2023-07 version to the 2023-10 version.</p>\n<p>But now I noticed that 2 of the fields used to return values in the 2023-07 results, but now return a blank value for the 2023-10 results.</p>\n<p>I don’t know if I am using the proper terminology, but it seems as if these fields are setup to have the user choose from other Boards being Linked to this particular field.</p>\n<p>For example, the field “Referral Source”, if you click on it to choose a value:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/d/3/d391dc921338159cd6e48d1825adaf9781e23ed0.png\" alt=\"image\" width=\"281\" height=\"88\" /></p>\n<p>The user can select from multiple other boards, to then search in that board of choice for the value they want to appear in this cell as the Referral Source.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/0/e/0ecdc91d6850310a25fadfbce20b85f67dc20f12.png\" alt=\"image\" width=\"379\" height=\"234\" /></p>\n<p>So my question is, how do you query to bring along these selected values coming from the other boards?<br />\nI’m assuming they may be consider Linked Items? But the “linked_items” function does not 100% seem to align in its explanation, or I’m just hoping thats false since it looks like it may only work in an Items query and not a Boards query.</p>\n<p>Any help on this matter would be extremely appreciated!</p>"
+    },
+    {
+      "id": 173142,
+      "postNumber": 2,
+      "createdAt": "2024-03-13T23:00:34.845Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">column_values {\n  ... on BoardRelationValue {\n    display_value\n  }\n ... on MirrorValue {\n   display_value\n }\n}\n</code></pre>\n<p>Connect boards and mirror columns no longer directly return the text value, so you need to use graphql fragments which will only execute on column values of the type specified to return the “display_value” field.</p>\n<p>But if you look in the documentation column type reference you will see all the fields for the various column types. For board relation you can get quite fancy returning the actual connected items (and query them for more than names, but also their column values!)</p>"
+    },
+    {
+      "id": 173147,
+      "postNumber": 3,
+      "createdAt": "2024-03-13T23:45:42.030Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>So if the body of my query looked like this right now, how might I bring in what you were sharing there? (it may look a little off with extra quotations, that’s because it’s in PowerQuery)</p>\n<p>“{”“query”“: ““query { boards(ids: 1111111111111 ) { items_page (limit: 100) { cursor, items { name, updated_at, group { title }, columns: column_values { column { title }, text } } } } }””}”</p>"
+    },
+    {
+      "id": 173149,
+      "postNumber": 4,
+      "createdAt": "2024-03-13T23:50:40.111Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>just within the set of braces after “column_values” just insert that,</p>\n<p><code>“{”“query”“: ““query { boards(ids: 1111111111111 ) { items_page (limit: 100) { cursor, items { name, updated_at, group { title }, columns: column_values { column { title }, text, ... on BoardRelationValue {display_value}, ... on MirrorValue { display_value } } } } } }””}”</code></p>\n<p>Now that I know this is PowerQuery (and I assume Power BI?) I will step out of this. Thats one platform I simply choose not to work with or try to get into because its a mess with things like pagination.</p>"
+    },
+    {
+      "id": 173213,
+      "postNumber": 5,
+      "createdAt": "2024-03-14T08:32:33.278Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 173327,
+      "postNumber": 6,
+      "createdAt": "2024-03-14T17:35:32.298Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>I appreciate the help Cody! I’m going to try your query additions today.</p>\n<p>Yes I am doing this in Power BI. With a little help from people on this post, combined with YouTube channel of BI Elite (Parker), I pieced together a fully functioning dynamic pagination for the Monday query.</p>\n<p>M-code example has been replied into this thread: <a href=\"https://community.monday.com/t/using-power-bi-to-retrieve-boards-using-cursor-based-pagination/70535/56\">Using Power BI to retrieve boards using Cursor-based pagination - monday Apps &amp; Developers - monday Community Forum</a></p>\n<p>I’ll respond back with how your query above works out.</p>"
+    },
+    {
+      "id": 173332,
+      "postNumber": 7,
+      "createdAt": "2024-03-14T18:08:20.430Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> Unfortunately, no success. I did at least run without screaming at me about the added code, but still returned all null values.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/b/4/b4d9bf1161c5535b26ab0314e199174c2a951f5d.png\" alt=\"image\" width=\"282\" height=\"64\" /></p>"
+    },
+    {
+      "id": 173336,
+      "postNumber": 8,
+      "createdAt": "2024-03-14T18:41:28.514Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The values will be returned as display_value not text so you need to do text ?? display_value in mapping the column to your table. I believe. Not a power BI guy as stated! But I believe thats how you do it, where if text is null then use display_value.</p>"
+    },
+    {
+      "id": 173339,
+      "postNumber": 9,
+      "createdAt": "2024-03-14T19:05:02.805Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>Ah, it is a Power BI problem it seems. If I work down 1 record at a time through the return results, without trying to bulk expand in PowerQuery, I got to the records of that Referral Source. It does then produce 2 values, “text” and “display_value”.</p>\n<p>I don’t believe it will be as simple as trying to do an IF or CASE type of scenario, but I’ll look into it.</p>\n<p>It will have to be when doing the List expansion in PowerQuery.<br />\nThis part:</p>\n<p>Table.FromRecords(Table.TransformRows(#“RecordsToColumns”, each<br />\nList.Accumulate([Columns], [<br />\nid = [id],<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], <strong>(state, current) =&gt; Record.AddField(state, current[column][title], current[text])</strong> )<br />\n))</p>"
+    },
+    {
+      "id": 173340,
+      "postNumber": 10,
+      "createdAt": "2024-03-14T19:05:33.165Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>Thank you again for your help <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> this did help me with the Monday API portion <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 173343,
+      "postNumber": 11,
+      "createdAt": "2024-03-14T19:20:34.082Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a href=\"https://answers.microsoft.com/en-us/msoffice/forum/all/power-query-get-transform-null-coalescing-operator/e3e3bd21-ae31-49d2-befa-b552ba4fdd45\" class=\"onebox\" target=\"_blank\" rel=\"noopener\">https://answers.microsoft.com/en-us/msoffice/forum/all/power-query-get-transform-null-coalescing-operator/e3e3bd21-ae31-49d2-befa-b552ba4fdd45</a></p>\n<p>try  <code>current[text ?? display_value]</code> in the expansion</p>"
+    },
+    {
+      "id": 173529,
+      "postNumber": 12,
+      "createdAt": "2024-03-15T23:24:46.411Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>that unfortunately didn’t work. I’m trying to look around as to where I can fit the fix into PowerQuery.</p>\n<p>Since you know way more about Monday and this GraphQL, is there no way to do some sort of an IF or OR statement when selecting 2 columns, but also can a column be renamed within the query? Or to return null’s for a column name on records that wouldn’t have it?</p>\n<p>In this example, only 3 columns are actually returning a “display_value” from that BoardRelationValue, but then all other columns return just the “text” and no empty “display_value” column at all. This is what is forcing further issues downstream in PowerQuery then, due to the column not existing in the other 20 columns.</p>\n<p>I also tried using display_value instead of text. That doesn’t seem to work either.</p>\n<p>columns: column_values { column { title }, <strong>text</strong>, … on BoardRelationValue {display_value}<br />\ncolumns: column_values { column { title }, <strong>display_value</strong>, … on BoardRelationValue {display_value}</p>"
+    },
+    {
+      "id": 173580,
+      "postNumber": 13,
+      "createdAt": "2024-03-16T13:57:14.552Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Gets ugly.</p>\n<p>You have to use fragments for EVERY type of column on your board</p>\n<pre><code class=\"lang-auto\">... on TextValue {\n text \n}\n... on MirrorValue {\n text: display_value\n}\n</code></pre>\n<p>you have to specify all of the column types you’re getting from the board this way, and NOT have “text” outside of any fragments. (the {} form heirarchies).</p>\n<p>But if you had text outside a fragment it would try to return text every time including on mirror/boardrelation/dependency and you’d get a conflict.</p>\n<p>You can put other fields beside text outside the fragments though.</p>"
+    },
+    {
+      "id": 173642,
+      "postNumber": 14,
+      "createdAt": "2024-03-17T08:24:23.313Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 175251,
+      "postNumber": 15,
+      "createdAt": "2024-03-26T22:20:12.943Z",
+      "author": "JustAnotherMonday (Andrew Foulk)",
+      "cookedHtml": "<p>Thank you for your help again <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> .</p>\n<p>I wound up doing the extra steps needed in PowerQuery.</p>\n<p>After using these Bodies of the API Call to capture those BoardRelationValues:</p>\n<pre><code>firstPage = Text.ToBinary(\"{\"\"query\"\": \"\"query { boards(ids: \" &amp; BoardNbr_SalesPipeline &amp; \") { items_page (limit: 100) { cursor, items { id, name, updated_at, group { title }, column_values { column { title }, text, ... on BoardRelationValue { display_value }} } } } }\"\"}\"),\nnextPage = Text.ToBinary(\"{\"\"query\"\": \"\"query { next_items_page (limit: 100, cursor: \\\"\"\" &amp; continuationCursor &amp; \"\\\"\") { cursor, items { id, name, updated_at, group { title }, column_values { column { title }, text, ... on BoardRelationValue { display_value }} } } }\"\"}\"),\n</code></pre>\n<p>I then finish with some extra steps that expand the Columns, run a conditional column to bring forward when it finds a “display_value” and then group it all back up to proceed forward as it did before the expand those groupings into actual Columns in PowerQuery.</p>\n<p>let<br />\nSource = List.Numbers(1,1),<br />\n#“Converted to Table” = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),<br />\n#“First Page” = Table.TransformColumnTypes(Table.RenameColumns(#“Converted to Table”,{{“Column1”, “FirstPage”}}),{{“FirstPage”, Int64.Type}}),<br />\n#“Invoked Custom Function” = Table.AddColumn(#“First Page”, “SalesPipelineApiResults”, each GetSalesPipelineCursorPagination2([FirstPage], null, null)),<br />\n#“Expanded ListToRows” = Table.ExpandListColumn(#“Invoked Custom Function”, “SalesPipelineApiResults”),<br />\n#“Expanded RecordsToColumns” = Table.ExpandRecordColumn(#“Expanded ListToRows”, “SalesPipelineApiResults”, {“id”, “name”, “updated_at”, “group”, “column_values”}, {“ItemId”, “Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\n<strong>#“Expand Columns to Records” = Table.ExpandListColumn(#“Expanded RecordsToColumns”, “Columns”),<br />\n#“Expand Text Values” = Table.ExpandRecordColumn(#“Expand Columns to Records”, “Columns”, {“column”, “display_value”, “text”}, {“column”, “display_value”, “text.original”}),<br />\n#“Added Conditional Column” = Table.AddColumn(#“Expand Text Values”, “text”, each if [display_value] &lt;&gt; null then [display_value] else [text.original]),<br />\n#“Added Custom” = Table.AddColumn(#“Added Conditional Column”, “columns”, each Record.SelectFields([[column],[text]],{“column”,“text”})),<br />\n#“Removed Columns” = Table.SelectColumns(#“Added Custom”,{“ItemId”, “Title”, “UpdatedAt”, “Group”, “columns”}),<br />\n#“Grouped Rows” = Table.Group(#“Removed Columns”, {“ItemId”, “Title”, “UpdatedAt”, “Group”}, {{“Columns”, each _[columns] }}),</strong><br />\n#“Expanding RecordsAndList” = Table.FromRecords(Table.TransformRows(#“Grouped Rows”, each<br />\nList.Accumulate([Columns], [<br />\nItemId = [ItemId],<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[column][title], current[text]) )<br />\n)),<br />\n#“Changed column type” = Table.TransformColumnTypes(#“Expanding RecordsAndList”, {{“Title”, type text}, {“UpdateDate”, type datetime}, {“Group”, type text}, {“Subitems”, type text}, {“Email”, type text}, {“Phone”, Int64.Type}, {“Territory”, type text}, {“CES”, type text}, {“Address”, type text}, {“Funder”, type text}, {“Status”, type text}, {“Caregiver Type”, type text}, {“Intake Complete”, type text}, {“Date of Intake”, type date}, {“Caregiver Name”, type text}, {“Caregiver Phone”, Int64.Type}, {“Hourly Cost”, type text}, {“Hours per week”, Int64.Type}, {“Payrate”, type number}, {“Deal Size”, type text}, {“Deal Age”, type text}, {“Days to Close”, type text}, {“Reason Lost”, type text}, {“Referral Source”, type text}, {“Supports Coordinator”, type text}, {“Quarter”, type text}, {“Referral Date”, type text}, {“First Shift”, type text}, {“Month of First Shift”, type text}, {“Zip Code”, type text}, {“Link to Events”, type text}, {“Follow Up Date”, type text}}),<br />\n#“Replaced value” = Table.ReplaceValue(#“Changed column type”, “,”, “”, Replacer.ReplaceText, {“CES”}),<br />\n#“Trimmed text” = Table.TransformColumns(#“Replaced value”, {{“CES”, each Text.Trim(<em>), type text}}),<br />\n#“Renamed columns (REMOVE SOON)” = Table.RenameColumns(#“Trimmed text”, {{“Referral Date”, “Start Date”}}),<br />\n#“Replaced value 1” = Table.ReplaceValue(#“Renamed columns (REMOVE SOON)”, null, 0, Replacer.ReplaceValue, {“Hours per week”}),<br />\n#“Replaced value 2” = Table.ReplaceValue(#“Replaced value 1”, “,”, \" \", Replacer.ReplaceText, {“Referral Source”}),<br />\n#“Trimmed text 1” = Table.TransformColumns(#“Replaced value 2”, {{“Referral Source”, each Text.Trim(</em>), type text}}),<br />\n#“Split Column by Delimiter” = Table.SplitColumn(#“Trimmed text 1”, “Email”, Splitter.SplitTextByEachDelimiter({\" - “}, QuoteStyle.Csv, false), {“Email”, “Email.duplicateValue”}),<br />\n#“Trimmed Text” = Table.TransformColumns(#“Split Column by Delimiter”,{{“Email”, Text.Trim, type text}}),<br />\n#“Removed Other Columns” = Table.SelectColumns(#“Trimmed Text”,{“Title”, “UpdateDate”, “Group”, “Subitems”, “Email”, “Phone”, “CES”, “Territory”, “Address”, “Zip Code”, “Funder”, “Status”, “Caregiver Type”, “Intake Complete”, “Date of Intake”, “Caregiver Name”, “Payrate”, “Caregiver Phone”, “Hourly Cost”, “Hours per week”, “Deal Size”, “Deal Age”, “Days to Close”, “Reason Lost”, “Referral Source”, “Supports Coordinator”, “Quarter”, “Start Date”, “First Shift”, “Month of First Shift”}),<br />\n#“Transform columns” = Table.TransformColumnTypes(#“Removed Other Columns”, {{“Title”, type text}, {“UpdateDate”, type text}, {“Group”, type text}, {“Subitems”, type text}, {“Email”, type text}, {“Phone”, type text}, {“Territory”, type text}, {“CES”, type text}, {“Address”, type text}, {“Funder”, type text}, {“Status”, type text}, {“Caregiver Type”, type text}, {“Intake Complete”, type text}, {“Date of Intake”, type text}, {“Caregiver Name”, type text}, {“Payrate”, type text}, {“Caregiver Phone”, type text}, {“Hourly Cost”, type text}, {“Hours per week”, type text}, {“Deal Size”, type text}, {“Deal Age”, type text}, {“Days to Close”, type text}, {“Reason Lost”, type text}, {“Referral Source”, type text}, {“Supports Coordinator”, type text}, {“Quarter”, type text}, {“Start Date”, type text}, {“First Shift”, type text}, {“Month of First Shift”, type text}}),<br />\n#“Replace errors” = Table.ReplaceErrorValues(#“Transform columns”, {{“Title”, null}, {“UpdateDate”, null}, {“Group”, null}, {“Subitems”, null}, {“Email”, null}, {“Phone”, null}, {“Territory”, null}, {“CES”, null}, {“Address”, null}, {“Funder”, null}, {“Status”, null}, {“Caregiver Type”, null}, {“Intake Complete”, null}, {“Date of Intake”, null}, {“Caregiver Name”, null}, {“Payrate”, null}, {“Caregiver Phone”, null}, {“Hourly Cost”, null}, {“Hours per week”, null}, {“Deal Size”, null}, {“Deal Age”, null}, {“Days to Close”, null}, {“Reason Lost”, null}, {“Referral Source”, null}, {“Supports Coordinator”, null}, {“Quarter”, null}, {“Start Date”, null}, {“First Shift”, null}, {“Month of First Shift”, null}, {“Zip Code”, null}}),<br />\n#“Replaced Value 3” = Table.ReplaceValue(#“Replace errors”,null,”\",Replacer.ReplaceValue,{“Subitems”, “Phone”, “Date of Intake”, “Payrate”, “Caregiver Phone”, “Reason Lost”, “Referral Source”, “Supports Coordinator”})<br />\nin<br />\n#“Replaced Value 3”</p>"
+    },
+    {
+      "id": 175299,
+      "postNumber": 16,
+      "createdAt": "2024-03-27T07:27:00.908Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

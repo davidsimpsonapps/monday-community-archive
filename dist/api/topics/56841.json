@@ -1,0 +1,34 @@
+{
+  "id": 56841,
+  "title": "Complexity Exception Error When Querying Subitems",
+  "slug": "complexity-exception-error-when-querying-subitems",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2023-04-25T17:15:51.262Z",
+  "lastPostedAt": "2023-04-26T17:44:51.892Z",
+  "postsCount": 2,
+  "excerpt": "Hello, \nI have a board with 4 groups, ~170 items, and some number of sub items. I’m attempting to pull the data from the sub item columns.  I initially attempted the following query: \n\nquery{ \nboards(ids:2596083107){ \nit&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 335,
+  "posts": [
+    {
+      "id": 125392,
+      "postNumber": 1,
+      "createdAt": "2023-04-25T17:15:51.375Z",
+      "author": "regnidem (Mike)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I have a board with 4 groups, ~170 items, and some number of sub items. I’m attempting to pull the data from the sub item columns.  I initially attempted the following query:</p>\n<blockquote>\n<p>query{<br />\nboards(ids:2596083107){<br />\nitems{<br />\nid<br />\nsubitems{<br />\nid<br />\nparent_item {<br />\nid<br />\n}<br />\ncolumn_values{<br />\ntitle<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n</blockquote>\n<p>This returned  a complexity error: “Query has complexity of 24011020, which exceeds max complexity of 5000000”</p>\n<p>I attempted to get just the sub item data</p>\n<blockquote>\n<p>query{<br />\nboards(ids:2596083107){<br />\nsubitems{<br />\nid<br />\nparent_item<br />\ncolumn_values{<br />\ntitle<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}</p>\n</blockquote>\n<p>I was met with: “Field ‘subitems’ doesn’t exist on type ‘Board’”</p>\n<p>I went back to my original query and attempted to break it up into pieces based on group:</p>\n<blockquote>\n<p>query{<br />\nboards(ids:2596083107){<br />\ngroups(ids: “new_group”){<br />\nitems{<br />\nsubitems{<br />\nid<br />\nname<br />\ncolumn_values{<br />\ntext<br />\ntitle<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n</blockquote>\n<p>again, I got a complexity error.</p>\n<p>I am at a loss for what else to try.  These are not complex queries.  If this were SQL, they’d be returning a couple thousand rows, max.  How can I reduce complexity of already simple queries to accomplish my goal?</p>"
+    },
+    {
+      "id": 125642,
+      "postNumber": 2,
+      "createdAt": "2023-04-26T17:44:51.892Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/regnidem\">@regnidem</a>!</p>\n<p>The reason you see this complexity error is because your query is too nested. Nesting queries inside queries will increase the complexity of your query exponentially. Currently, the maximum number of nested queries allowed is 6.</p>\n<p>I recommend checking out our <a href=\"https://developer.monday.com/api-reference/docs/rate-limits\">rate limiting guide</a> for more on nested queries and how to calculate cost.</p>\n<p>This error “Field ‘subitems’ doesn’t exist on type ‘Board’” happened because subitems live on a different board from items. To get the subitem board ID, you can click on the subitem and look to your URL for the new value.</p>\n<p>I hope this helps!</p>"
+    }
+  ]
+}

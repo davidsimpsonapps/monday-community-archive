@@ -1,0 +1,202 @@
+{
+  "id": 25752,
+  "title": "Vacation request tracking",
+  "slug": "vacation-request-tracking",
+  "categoryId": 5,
+  "tagIds": [
+    6,
+    20,
+    108
+  ],
+  "createdAt": "2021-10-06T10:47:40.650Z",
+  "lastPostedAt": "2023-08-15T01:12:57.031Z",
+  "postsCount": 26,
+  "excerpt": "Hi Everyone! \nI’m Kira Kumin, a Senior Implementation Consultant at monday.com. I work with large monday.com accounts to find the best way to manage their workflows and help make their lives easier in any way possible :)&hellip;",
+  "solvedPostId": null,
+  "likeCount": 22,
+  "views": 12051,
+  "posts": [
+    {
+      "id": 65423,
+      "postNumber": 1,
+      "createdAt": "2021-10-06T10:47:40.753Z",
+      "author": "KiraK (Kira Kumin)",
+      "cookedHtml": "<p>Hi Everyone!</p>\n<p>I’m Kira Kumin, a Senior Implementation Consultant at <a href=\"http://monday.com\">monday.com</a>. I work with large <a href=\"http://monday.com\">monday.com</a> accounts to find the best way to manage their workflows and help make their lives easier in any way possible :).</p>\n<p><strong>TL;DR:</strong></p>\n<p>Automatically link new leave requests to see how many vacation days an employee has left, and then go through your approval process.</p>\n<p>When working with HR teams, one thing we always try to optimize is how you manage vacation requests. Many of my clients want to easily understand how many days left an employee has for vacation, and whether it can be approved or not.</p>\n<p>Finally, with the release of our new automation recipe (which I have included below), it is possible to automate this process and see everything from one board <img src=\"https://emoji.discourse-cdn.com/apple/partying_face.png?v=12\" title=\":partying_face:\" class=\"emoji\" alt=\":partying_face:\" width=\"20\" height=\"20\" />:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/f/f12aee3b91d8ae54e9aa8f6a1d4d3cae4c1474e2.png\" alt=\"\" width=\"314\" height=\"144\" /></p>\n<p>I have created a video to explain how this works which I am happy to share with you so you can recreate this time-saving use case: <a href=\"https://www.loom.com/share/0df79830383247c1865837f8f007068e\">See 2.5 min video here</a></p>\n<p><strong>How to implement:</strong></p>\n<p>After watching the video, here are the key steps to implement this process.</p>\n<p>For this workflow to work, you will be working with 2 boards, a Vacation request board, and an Employee directory board. These boards are linked bi-directionally so that the Employee request board is always reflecting the latest vacation days for each employee, based on the requests made in the Vacation requests board.</p>\n<p><strong>Creating your Vacation Request board</strong></p>\n<p>Create your vacation request board with all the relevant columns based on what data you want to show when asking employees to make a request.</p>\n<p><strong>Required columns:</strong></p>\n<ol>\n<li>Timeline column where your employees will request the period on which they will be on vacation.</li>\n<li>Status column for approval.</li>\n<li>People column, in this example, it is renamed as “Who”.</li>\n<li>Formula column to calculate the number of working days that your employee is requesting to take as vacation in the Timeline column. In this example it is called “Work Days Off”:</li>\n<li>Add the following formula to this column</li>\n</ol>\n<p>WORKDAYS({Vacation dates#End},{Vacation dates#Start})</p>\n<ol>\n<li>Add another Formula column to calculate the vacation days that have been approved. In this example it is called “Approved days off”:</li>\n<li>Add the following formula to this column</li>\n</ol>\n<p>IF({Approval}=“Approved”,{Work Days off},“0”)</p>\n<ol>\n<li>Add a Connected boards column and select your Employee Directory board (instructions on how to build this below).</li>\n<li>Make sure to check the box to create a two-way sync, which will also add a Connected boards column automatically to the Employee directory board and connect it back to the Vacation requests board.</li>\n</ol>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c26e9fb0872f71fedf7a66b71ae57d09d0fb8ea4.png\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c26e9fb0872f71fedf7a66b71ae57d09d0fb8ea4_2_260x260.png\" alt=\"\" width=\"260\" height=\"260\" /><div class=\"meta\">\n<span class=\"filename\"></span><span class=\"informations\">930×930 56.1 KB</span>\n</div></a></div><p></p>\n<ol>\n<li>Add a Mirror column and mirror the “Days left” column from your Employee directory board.</li>\n<li>Turn your board into a <a href=\"https://support.monday.com/hc/en-us/articles/360000358700-The-Forms\">form</a> and hide the relevant columns inside the form (depending on which questions you want your team to see when filling it out).</li>\n</ol>\n<p><strong>Creating your Employee Directory board</strong></p>\n<p>Create an employee directory board with all the relevant columns based on what data you want to show.</p>\n<p><strong>Required columns:</strong></p>\n<ol>\n<li>\n<p>Add a People column here in order to match the People column in your vacation request board.</p>\n</li>\n<li>\n<p>Add a Numbers column to reflect how many Vacation Days each employee has, in this example it is called “Vacation Days”.</p>\n</li>\n<li>\n<p>You should have a connected boards column already added to your board from when you created a two-way sync from your Vacation Request board</p>\n</li>\n<li>\n<p>Add a mirror column and mirror the “Approved Days” from your vacation request board.</p>\n</li>\n<li>\n<p>Add a formula column to calculate how many days left the employee has, in this example, it is called “Days Left”:</p>\n</li>\n<li>\n<p>MINUS({Vacation Days},{Approved Days off})</p>\n</li>\n</ol>\n<p><strong>Automatically connect every request to the relevant employee in the Employee Directory board:</strong></p>\n<p>And now for the magic part <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" />! From the automations center on your Vacation Requests board, add the following automations:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9c09713feb240c3985d42b590eee35bba6c7e565.png\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9c09713feb240c3985d42b590eee35bba6c7e565_2_510x154.png\" alt=\"\" width=\"510\" height=\"154\" /><div class=\"meta\">\n<span class=\"filename\"></span><span class=\"informations\">1712×520 21.9 KB</span>\n</div></a></div><p></p>\n<p>This means that each time a request is made, the employee who requests it will automatically be assigned in the People column on the Vacation Requests board.</p>\n<p>Then, it will connect the item in the Vacation Request board to the relevant item for that employee in the Employee Directory.</p>\n<p>If their vacation request is approved, the relevant work days will be deducted from their vacation Days Left, in the Employee Directory.</p>\n<p>Hope you guys find it helpful and let me know if you have any questions!</p>"
+    },
+    {
+      "id": 66154,
+      "postNumber": 4,
+      "createdAt": "2021-10-14T11:10:07.234Z",
+      "author": "weareborg (Kenneth Killeen)",
+      "cookedHtml": "<p>Trying to implement this but getting lots of formula errors!<br />\nEverything <em>looks</em> right…</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/cf6d66ddcdd82230b053e4ef86c3d5cdbeb38190.png\" title=\"Screenshot 2021-10-14 at 15.07.00\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/cf6d66ddcdd82230b053e4ef86c3d5cdbeb38190_2_474x500.png\" alt=\"Screenshot 2021-10-14 at 15.07.00\" width=\"474\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2021-10-14 at 15.07.00</span><span class=\"informations\">1136×1198 52.1 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/ffe194fb34904e78f635b82c7bd291f72a2533cb.png\" title=\"Screenshot 2021-10-14 at 15.08.07\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/ffe194fb34904e78f635b82c7bd291f72a2533cb_2_427x499.png\" alt=\"Screenshot 2021-10-14 at 15.08.07\" width=\"427\" height=\"499\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2021-10-14 at 15.08.07</span><span class=\"informations\">1006×1176 53.9 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e7487d3f923917c47d388cdf1e8a87649ddc04cc.png\" title=\"Screenshot 2021-10-14 at 15.08.13\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e7487d3f923917c47d388cdf1e8a87649ddc04cc_2_690x269.png\" alt=\"Screenshot 2021-10-14 at 15.08.13\" width=\"690\" height=\"269\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2021-10-14 at 15.08.13</span><span class=\"informations\">886×346 15.7 KB</span>\n</div></a></div><p></p>\n<p>Help! <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=10\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" /></p>"
+    },
+    {
+      "id": 66251,
+      "postNumber": 5,
+      "createdAt": "2021-10-15T07:45:16.620Z",
+      "author": "Michaela_Staffova (Michaela)",
+      "cookedHtml": "<p>Whoa <a class=\"mention\" href=\"/u/kirak\">@KiraK</a> , I love this! Very helpful and inspiring  <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=10\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>"
+    },
+    {
+      "id": 66254,
+      "postNumber": 6,
+      "createdAt": "2021-10-15T08:03:19.811Z",
+      "author": "weareborg (Kenneth Killeen)",
+      "cookedHtml": "<p>Fixed issue. It was the quotation marks, as usual! <img src=\"https://emoji.discourse-cdn.com/apple/roll_eyes.png?v=10\" title=\":roll_eyes:\" class=\"emoji\" alt=\":roll_eyes:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/grinning_face_with_smiling_eyes.png?v=10\" title=\":grinning_face_with_smiling_eyes:\" class=\"emoji\" alt=\":grinning_face_with_smiling_eyes:\" /></p>"
+    },
+    {
+      "id": 66274,
+      "postNumber": 7,
+      "createdAt": "2021-10-15T11:53:29.144Z",
+      "author": "Lynsey (Lynsey McIver)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/weareborg\">@weareborg</a> Hey, how did you fix this? I am getting the same issue. Thanks!</p>"
+    },
+    {
+      "id": 66378,
+      "postNumber": 8,
+      "createdAt": "2021-10-18T05:37:50.744Z",
+      "author": "KiraK (Kira Kumin)",
+      "cookedHtml": "<p>Hi, try adding in another bracket at the end <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> If you want to send a screenshot of your formula, I will be able to help.</p>"
+    },
+    {
+      "id": 66382,
+      "postNumber": 9,
+      "createdAt": "2021-10-18T07:05:56.974Z",
+      "author": "REG_Philip (Philip Gotzen)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/kirak\">@KiraK</a> ,</p>\n<p>I really liked your workflow and immediately tried to implement it. There is just one pitfall which lies in German data protection laws not your automation. An employees vacation requests should not be visible for other employees so we cannot invite them into the board but there is this announced feature for board permissions which ony shows you the items you are assigned for. This would solve the problem. It’s announced quite a long time now, do you know when this will be released?<br />\nBest,<br />\nPhilip</p>"
+    },
+    {
+      "id": 66383,
+      "postNumber": 10,
+      "createdAt": "2021-10-18T07:13:08.430Z",
+      "author": "weareborg (Kenneth Killeen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/lynsey\">@Lynsey</a>, It could be your quotation marks. If they are slanted they are incorrect. They need to be the vertical kind. When using rich text or plain text, the quotation marks can be translated incorrectly into a formula. Re-typing them in the formula after pasting it into the formula box should fix it. If it is the issue, its easy to miss. You can stare at it for 5 minutes swearing its 100% correct only to find… slanted quotation marks! <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=10\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" /><br />\nHope that helps!</p>"
+    },
+    {
+      "id": 66384,
+      "postNumber": 11,
+      "createdAt": "2021-10-18T07:56:12.987Z",
+      "author": "Lynsey (Lynsey McIver)",
+      "cookedHtml": "<p>Thanks for your help! I changed the quotation marks to single quotation marks and that did the trick! <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=10\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" /></p>"
+    },
+    {
+      "id": 66385,
+      "postNumber": 12,
+      "createdAt": "2021-10-18T08:00:18.920Z",
+      "author": "KiraK (Kira Kumin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/reg_philip\">@REG_Philip</a>, it is currently available in beta, however, it’s an enterprise feature <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 66754,
+      "postNumber": 13,
+      "createdAt": "2021-10-22T05:49:09.513Z",
+      "author": "Carling (Ben Jones)",
+      "cookedHtml": "<p>This works for me but there is a Bug - if you enter a new line at the bottom of a group the automation works - if you want to add a new line at the top - (so click new item (blue button at the top)) it does not work -does not find the connection automatically - you have to search manually .</p>\n<p>This works great for our work flows - I have used it to connect the shipping board to the credit status board - it automatically now shows if the customer is on credit hold etc</p>"
+    },
+    {
+      "id": 66772,
+      "postNumber": 14,
+      "createdAt": "2021-10-22T09:31:33.966Z",
+      "author": "REG_Philip (Philip Gotzen)",
+      "cookedHtml": "<p>Alright thanks for the information. We are an enterprise customer so I am looking forward for the launch. Another problem at the moment is the calculation of days because we cannot define holidays. Thus, these are counted as vacation days. I’ve already seen that this feature request was made so please look at this soon. It is so crucial to use the calendar for project planning and HR topics.</p>"
+    },
+    {
+      "id": 69933,
+      "postNumber": 15,
+      "createdAt": "2021-11-29T12:47:40.609Z",
+      "author": "todubble (Todd Isaac)",
+      "cookedHtml": "<p>Hi Kira -<br />\nYou mention at the end of your video that Olivia has a video on automation to move in and out of the OOO section.<br />\nCan you share that?<br />\nI searched for it but wasn’t able to find.<br />\nThanks</p>"
+    },
+    {
+      "id": 73469,
+      "postNumber": 17,
+      "createdAt": "2022-01-10T17:36:46.617Z",
+      "author": "hkth (Hannah Koenker)",
+      "cookedHtml": "<p>I have a Pro account and have mirrored my boards as described above, but cannot find an automation for connecting an item that matches a Person across the boards. The only ‘connect’ automation available to me is “create item in board and connect board”. Is the ‘match’ automation available at the Pro account level? What am I missing?</p>"
+    },
+    {
+      "id": 73473,
+      "postNumber": 18,
+      "createdAt": "2022-01-10T18:37:29.811Z",
+      "author": "hkth (Hannah Koenker)",
+      "cookedHtml": "<p>For some reason the automation was not searchable via ‘match’ or ‘connect’. I was able to go to the ‘Status’ section of all the automations, and it was near the bottom of that section. Just leaving this here in case others have a similar issue.</p>"
+    },
+    {
+      "id": 73475,
+      "postNumber": 19,
+      "createdAt": "2022-01-10T18:54:09.648Z",
+      "author": "hkth (Hannah Koenker)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kirak\">@KiraK</a>, I am able to mirror the employee’s manager from the Employee Directory. Do you have suggestions on how best to notify the person’s manager when a leave request is submitted? The mirrored Manager column doesn’t appear to be available within automations. Wondering if there is a workaround? thanks!</p>"
+    },
+    {
+      "id": 76332,
+      "postNumber": 20,
+      "createdAt": "2022-02-07T06:34:00.828Z",
+      "author": "danilaluppino (Danila Luppino)",
+      "cookedHtml": "<p>HI Kira, for some reason I cannot set the last automation (the one that connect.<br />\nCan you please help?</p>"
+    },
+    {
+      "id": 85188,
+      "postNumber": 21,
+      "createdAt": "2022-05-06T17:00:34.045Z",
+      "author": "Bankin (Nate Banker)",
+      "cookedHtml": "<p>I also cannot set up the “magic” automation. There is no option for “When Who changes” or “connect the item where Who matches Employee in Employee Directory”. I don’t have those options in my automations.</p>"
+    },
+    {
+      "id": 93009,
+      "postNumber": 22,
+      "createdAt": "2022-07-29T13:35:02.951Z",
+      "author": "BeaCruz (Beatriz Cruz)",
+      "cookedHtml": "<p>Hi, The conditional is “Columm Changes” and choose the columm that you want but I cannot find the action.</p>"
+    },
+    {
+      "id": 99671,
+      "postNumber": 23,
+      "createdAt": "2022-10-06T04:27:50.935Z",
+      "author": "elana (Elana Gewirtz)",
+      "cookedHtml": "<p>For those looking for these automations, see here: <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/ce9a26919bce98f8c771aef9d08dcff013ac3b2b.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/ce9a26919bce98f8c771aef9d08dcff013ac3b2b_2_690x444.png\" alt=\"image\" width=\"690\" height=\"444\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">810×522 39.8 KB</span>\n</div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/f0aa6d57ea3ededccb885484a1dadf5e262fbf70.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/f0aa6d57ea3ededccb885484a1dadf5e262fbf70_2_690x474.png\" alt=\"image\" width=\"690\" height=\"474\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">776×534 78.3 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 105954,
+      "postNumber": 24,
+      "createdAt": "2022-12-01T19:31:17.938Z",
+      "author": "Sash (Sash Margrie hunt)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kirak\">@KiraK</a> I am really struggling with the “Approved days off” for some reason which is throwing everything else off. I’ve redone the whole thing like 3-4 times now with no change in outcome. Is there something I’m doing wrong with this formula or something?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/f6de8fc7d4b41f97755dc66b06770520252a9c8c.png\" title=\"Screenshot 2022-12-01 at 17.30.41\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/f6de8fc7d4b41f97755dc66b06770520252a9c8c_2_690x327.png\" alt=\"Screenshot 2022-12-01 at 17.30.41\" width=\"690\" height=\"327\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2022-12-01 at 17.30.41</span><span class=\"informations\">1084×514 28.2 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/776d739847c52b508e03b6dd96d2c6b78adb0547.png\" title=\"Screenshot 2022-12-01 at 17.28.56\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/776d739847c52b508e03b6dd96d2c6b78adb0547_2_690x352.png\" alt=\"Screenshot 2022-12-01 at 17.28.56\" width=\"690\" height=\"352\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2022-12-01 at 17.28.56</span><span class=\"informations\">1232×630 22.3 KB</span>\n</div></a></div><br />\nn<p></p>"
+    },
+    {
+      "id": 105956,
+      "postNumber": 25,
+      "createdAt": "2022-12-01T19:53:05.492Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/sash\">@Sash</a>,</p>\n<p>The issue could be with your quotation marks. Try copying the one below:</p>\n<pre><code class=\"lang-auto\">IF({Approval}=\"Approved\", {Work days off}, \"0\")\n</code></pre>"
+    },
+    {
+      "id": 119901,
+      "postNumber": 26,
+      "createdAt": "2023-03-16T06:42:44.602Z",
+      "author": "Wijcky (Kurt Wijckmans)",
+      "cookedHtml": "<p>Hey everybody,<br />\nI’m trying to add this template to our account, but i’m unable to find this template.<br />\nHow can i add this template?</p>\n<p>I tried this, but it goes directly to my main page.</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/a/4/a47d9a1ed2f1901d8f2574e18681d1c834f97a3a.png\" class=\"site-icon\" width=\"16\" height=\"16\" />\n\n      <a href=\"https://monday.com/templates/vacation-tracker\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e16f0da497761e8e50220b697c09fe440daac2e7_2_690x361.png\" class=\"thumbnail\" width=\"690\" height=\"361\" /></div>\n\n<h3><a href=\"https://monday.com/templates/vacation-tracker\" target=\"_blank\" rel=\"noopener nofollow ugc\">Vacation Tracker Template | monday.com</a></h3>\n\n  <p>This template makes planning out your social content easy with ability to customize everything to fit your team’s unique needs.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>Have a nice day,</p>\n<p>Kurt</p>"
+    },
+    {
+      "id": 120491,
+      "postNumber": 27,
+      "createdAt": "2023-03-21T10:36:31.151Z",
+      "author": "elcloche (Alejandro Graffe)",
+      "cookedHtml": "<p>Great implementation! Love it!</p>\n<p>Although I have one question, has somebody figure out how to clean the count every year? And set the number again to XX available days?</p>"
+    },
+    {
+      "id": 120957,
+      "postNumber": 28,
+      "createdAt": "2023-03-23T06:08:31.934Z",
+      "author": "NunoRSA (Nuno Caldeira)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kirak\">@KiraK</a>, I believe the template is no longer available to add to our own <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>. When I try to add the template, it leads me to the homepage of my <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> without adding your template. Is there any chance to fix this? Thank you in advance.</p>"
+    },
+    {
+      "id": 139144,
+      "postNumber": 30,
+      "createdAt": "2023-08-15T01:12:57.031Z",
+      "author": "chris.hiebert (Chris Hiebert)",
+      "cookedHtml": "<p>So the second one doesn’t show up for me. Is this feature no longer available?</p>"
+    }
+  ]
+}

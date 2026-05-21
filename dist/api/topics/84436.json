@@ -1,0 +1,41 @@
+{
+  "id": 84436,
+  "title": "Pulling all items in View",
+  "slug": "pulling-all-items-in-view",
+  "categoryId": 8,
+  "tagIds": [
+    38,
+    94,
+    351
+  ],
+  "createdAt": "2024-04-18T11:35:02.932Z",
+  "lastPostedAt": "2024-04-18T13:29:25.101Z",
+  "postsCount": 2,
+  "excerpt": "I have a board with several views. \nI have one view that has filters to show the items that I want. \nI’m trying to figure out how to make the query so that it will return all the items in that view. \nThe following query &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 118,
+  "posts": [
+    {
+      "id": 179555,
+      "postNumber": 1,
+      "createdAt": "2024-04-18T11:35:03.026Z",
+      "author": "andyd273 (Andy Dillbeck)",
+      "cookedHtml": "<p>I have a board with several views.<br />\nI have one view that has filters to show the items that I want.<br />\nI’m trying to figure out how to make the query so that it will return all the items in that view.</p>\n<p>The following query will return the names of all the view, and it will return all the items on the board, though the people who set up the board aren’t programmers, and apparently don’t know how to name fields, and so I’m honestly not sure how to pull the exact fields that I want yet.</p>\n<pre><code class=\"lang-auto\">{ \n  query:  boards(ids: 111111111111) { \n    name \n    views {  \n      id \n      name\n    }\n    items_page { \n      items { \n        name  \n        column_values { \n          id \n          text \n        } \n      } \n    }\n  } \n}\n</code></pre>"
+    },
+    {
+      "id": 179590,
+      "postNumber": 2,
+      "createdAt": "2024-04-18T13:29:25.101Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>You have to also go and get the <code>id</code> &amp; <code>name</code> for each column and then match that up.</p>\n<p>Update the query to get columns too:</p>\n<pre><code class=\"lang-auto\">{ \n  query:  boards(ids: 111111111111) { \n    name \n    columns {\n      id\n      title\n    }\n    views {  \n      id \n      name\ntype\n    }\n    items_page { \n      items { \n        name  \n        column_values { \n          id \n          text \n        } \n      } \n    }\n  } \n}\n</code></pre>\n<p>then match the <code>id</code> in the <code>columns</code> with the <code>id</code> in <code>column_values</code>.</p>\n<p>It’s slightly annoying, but really the only way to get something human readable.</p>\n<hr />\n<p><strong>Aside 1:</strong> The <code>views</code> object is a little misleading as it does not contain all the views. It seems like an undocumented feature, so I can’t really explain whats going on there. I’ve also added <code>type</code> to the <code>views</code>  <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>\n<p><strong>Aside 2:</strong> You should probably just think of the column id as a randomly assigned string rather than something with meaning.</p>"
+    },
+    {
+      "id": 179964,
+      "postNumber": 3,
+      "createdAt": "2024-04-21T06:51:15.146Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "id": 57251,
+  "title": "Server-side access to Monday.com APIs to poll board data",
+  "slug": "server-side-access-to-monday-com-apis-to-poll-board-data",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-05-02T11:04:11.441Z",
+  "lastPostedAt": "2024-12-23T05:22:27.708Z",
+  "postsCount": 18,
+  "excerpt": "Question: \nIs it possible to have a standalone service (externally hosted app or serverless function) authenticate itself to obtain an API token (I am used to using client-credentials workflows for this in other contexts&hellip;",
+  "solvedPostId": null,
+  "likeCount": 12,
+  "views": 1043,
+  "posts": [
+    {
+      "id": 126205,
+      "postNumber": 1,
+      "createdAt": "2023-05-02T11:04:11.517Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p><strong>Question:</strong><br />\nIs it possible to have a standalone service (externally hosted app or serverless function) authenticate itself to obtain an API token (I am used to using client-credentials workflows for this in other contexts).</p>\n<p><strong>Context:</strong><br />\nI am developing an Azure hosted app service that will poll data from a specific set of company boards. This app is written in .Net 6. So far I have successfully completed a PoC but the token I am using is my own personal developer token. I am aware that I can also, with correct permissions, use an admin API token but this seems somewhat insecure to use as a long term solution (even while using the likes of key vault to store it).<br />\nI was hoping that it would be possible to register a new app and use the client id and secret to obtain a token for the app itself but I am unable to find any documentation to this effect (leading me to believe that maybe it is not possible). Is anyone able to confirm this for me please or perhaps steer me in the right direction for achieving my aim?</p>"
+    },
+    {
+      "id": 126234,
+      "postNumber": 2,
+      "createdAt": "2023-05-02T12:29:06.950Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/paulmarshall\">@paulmarshall</a></p>\n<p>Welcome to the community! Have you checked this one: <a href=\"https://developer.monday.com/apps/docs/oauth\" class=\"inline-onebox\">OAuth and Permissions</a></p>\n<p>OAuth 2.0 is a protocol that lets your app request authorization to read or modify data in a user’s monday account. Basically, at the end of the OAuth process, your app gets an access token that belongs to the user, and grants access to specified permission scopes.</p>"
+    },
+    {
+      "id": 126236,
+      "postNumber": 3,
+      "createdAt": "2023-05-02T12:33:10.048Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>I’ve been through this documentation. This workflow assumes a client app (ui based) that a user will log into and use directly (hence the OAuth 2.0 workflow). This means that the token is the “user’s token”. I am working on a server-side only service that will have no user-based login. As such the service itself will need access to a token without a user authenticating.</p>"
+    },
+    {
+      "id": 126243,
+      "postNumber": 4,
+      "createdAt": "2023-05-02T12:46:12.928Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I don’t think that will fly. How is the app / user of the app authenticated in monday?</p>"
+    },
+    {
+      "id": 126287,
+      "postNumber": 5,
+      "createdAt": "2023-05-02T16:35:39.778Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>I think you have misunderstood. Its not actually an app that I want to write. I am attempting to create an external 3rd party standalone service that will poll the Monday APIs for data. Have you come across the concept of a client credentials grant before? Essentially the service would have its own credentials (in a manner of speaking) and authenticate on behalf of itself. This is not a novel workflow, its something that operates on many third party APIs.</p>"
+    },
+    {
+      "id": 126375,
+      "postNumber": 6,
+      "createdAt": "2023-05-03T06:47:09.499Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/paulmarshall\">@paulmarshall</a>,</p>\n<p>I am not sure I follow. You mentioned there are apps that are doing this.</p>\n<p>What would be an example? Which app?</p>\n<p>Is creating an app in monday a possibility? I believe it would make things easier for you.</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 126378,
+      "postNumber": 7,
+      "createdAt": "2023-05-03T07:09:32.810Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>Hi Matias. The workflow I am describing is quite a basic one:</p>\n<p>I am creating a “server-side only” service which is just code running in azure. It calls the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> GraphQL API and queries some data. It then persists that data to a database (no user interaction required for this, its automatic). This service is running as a .NET “Azure Service App” (a completely different thing to a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> “app”).</p>\n<p>I am not talking about creating an “app”, as it would appear that, from the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> point of view, an “app” is something that has a UI that users can view, interact with etc. I don’t need a UI, or a front end or anything users click on or use.</p>\n<p>My problem is that to make the call to the Monday GraphQL API requires an API token. I am currently using my own “Developer Token” as acquired from the “Developer” portion of my <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> profile. This is not particularly secure as this token is long lived.</p>\n<p>I want to know if there is a way for the service itself to authenticate against the Monday APIs. This is a common practise within the industry. It does not require a user. I gave the example of a “client credential” workflow (though there are others).</p>\n<p>I mentioned that I had registered an app within Monday. I only did this to see if this was a possible route of obtaining a token that did not require an actual user.</p>"
+    },
+    {
+      "id": 126402,
+      "postNumber": 8,
+      "createdAt": "2023-05-03T10:14:35.483Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/paulmarshall\">@paulmarshall</a>,</p>\n<p>I understand.</p>\n<p>It is not possible to do this without a monday app.</p>\n<p>Having said that, you can create a monday app with NO FEATURES, NO UI AND NO BUTTONS AT ALL and use it to get an OAuth token.</p>\n<ol>\n<li>Create an app.</li>\n<li>Select the scopes in the OAuth tab</li>\n<li>Save your app</li>\n<li>Go to the versions tab and promote the version to live</li>\n<li>Go to the “Share” tab and share the link for someone to install the app</li>\n<li>The account installs the app</li>\n<li>Go to the OAuth tab in your app’s configuration screen and enter the “Redirect URLs” tab</li>\n<li>Copy the URL that says “Making OAuth Request”</li>\n</ol>\n<p>Whenever someone (who has the app installed) uses that URL, they will see a scopes authorization screen from monday and when they authorize the scopes, you will receive a token you can then exchange for the OAuth token as explained <a href=\"https://developer.monday.com/apps/docs/oauth\">here</a>.</p>\n<p>What do you think?</p>"
+    },
+    {
+      "id": 126414,
+      "postNumber": 9,
+      "createdAt": "2023-05-03T11:09:17.274Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>Thanks for the suggestion but I am afraid this won’t meet the required levels of either security or automation. I think we are going to need to proceed with the Developer API Token pathway based on what you have said and figure out a way to do this within the scope of our licensing. Thanks anyway</p>"
+    },
+    {
+      "id": 126420,
+      "postNumber": 10,
+      "createdAt": "2023-05-03T12:07:28.955Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 127073,
+      "postNumber": 12,
+      "createdAt": "2023-05-09T06:28:23.011Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> I am afraid you seem to have missed the point. This service is completely external to Monday. It doesn’t use a Monday trigger or a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> custom event. It runs as serverless code within Azure within a completely secure environment and will poll based on a cron expression.</p>\n<p>It should not require installation by anyone or require a user’s access token to work. Like I said, at the moment I am using a “developer token”. I could, based on the Monday documentation also use an “admin token” and it works just fine. No app required. The problem is that since this token is static, its is not really very secure (as confirmed by our infosec dept.). This is why I was hoping that Monday implemented something more secure for third party integration (I gave the example of a client credentials grant which is a common security standard for API integrations). Since it appears that this is not possible, I am going ahead with the admin token workflow and seeking to mitigate the security concerns through other means.</p>"
+    },
+    {
+      "id": 127104,
+      "postNumber": 14,
+      "createdAt": "2023-05-09T11:00:50.905Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 129064,
+      "postNumber": 15,
+      "createdAt": "2023-05-23T09:37:21.396Z",
+      "author": "paulmarshall (Paul Marshall)",
+      "cookedHtml": "<p>I would like to start by stating that I am not in an “it must work this way” type of thinking. I am simply asking questions about accepted industry standard ways of implementing security of 3rd party API integrations.</p>\n<p>Thank you for taking the time to outline this solution. It does look similar to what I am after, however, it relies upon Monday.coms implementation of WebHooks. I have done some work and a PoC with Monday’s Webhooks alrady and I discounted them as the webhooks themselves require preconfigured access to an endpoint or function within my secure environment but without themselves being authenticated. The only way I have been able to integrate a webhook with anything like a secure workflow is to use a function key. The problem with a function key is that it is itself a static value that makes it less secure.</p>\n<p>I am proceeding down the route of using a Service Account for now.</p>"
+    },
+    {
+      "id": 129233,
+      "postNumber": 16,
+      "createdAt": "2023-05-24T05:15:02.878Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 152390,
+      "postNumber": 17,
+      "createdAt": "2023-11-09T06:24:54.531Z",
+      "author": "DanielHai (Daniel Hai)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/paulmarshall\">@paulmarshall</a></p>\n<p>Thanks for reaching out! I wanted to update that we are aware of this gap and are working to improve the experience around server side application access.</p>\n<p>At this time, although it is not ideal, my best recommendation would be to create a service user that is only used for the API and use that account’s personal token to run the application.</p>\n<p>I hope that I can share more info regarding the solution and timeline soon.</p>\n<p>Happy Programming</p>"
+    },
+    {
+      "id": 180889,
+      "postNumber": 18,
+      "createdAt": "2024-04-25T09:46:56.492Z",
+      "author": "david.kershaw (David Kershaw)",
+      "cookedHtml": "<p>Any update here? This should not be considered an edge case scenario. This use case is called “Client Credentials” (<a href=\"https://oauth.net/2/grant-types/client-credentials/\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">OAuth 2.0 Client Credentials Grant Type</a>).</p>\n<p>Requiring a UI for OAuth does not support a backend integration flow because it would introduce unnecessary complexity and dependencies on user interaction, which are not applicable in backend environments. Instead, using OAuth’s client credentials flow ensures secure authentication for backend integrations without the need for a UI or user interaction.</p>"
+    },
+    {
+      "id": 181496,
+      "postNumber": 19,
+      "createdAt": "2024-04-30T11:27:11.085Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/david.kershaw\">@david.kershaw</a>,</p>\n<p>We do not have an update on this but we will reply here if that changes <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 214689,
+      "postNumber": 20,
+      "createdAt": "2024-12-19T07:54:53.668Z",
+      "author": "sairamaraju (Sai )",
+      "cookedHtml": "<p>HI Team, Do we have any latest update on OAuth Client Credentials support for Monday?</p>\n<p>We have a requirement where we need a service account for pulling all the data across  monday entities.</p>\n<p>–Sai.</p>"
+    },
+    {
+      "id": 214989,
+      "postNumber": 21,
+      "createdAt": "2024-12-22T09:06:06.844Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/sairamaraju\">@sairamaraju</a>,</p>\n<p>What do you need to do exactly?</p>"
+    },
+    {
+      "id": 215025,
+      "postNumber": 22,
+      "createdAt": "2024-12-22T16:29:53.786Z",
+      "author": "sairamaraju (Sai )",
+      "cookedHtml": "<p>we are looking for a Super user token  which can retrieve all entities of <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> across workspaces and boards/docs.</p>\n<p>Is this possible to create a super admin user API token which can pull everything?  We tried with admin account API token , but not able to get all the entities.</p>\n<p>Thanks,<br />\nSai.</p>"
+    },
+    {
+      "id": 215065,
+      "postNumber": 23,
+      "createdAt": "2024-12-23T05:22:27.708Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/sairamaraju\">@sairamaraju</a>,</p>\n<p>The only way for you to do that would be to create a user (or use an existing one) and give that user access to everything. And if new private workspaces/boards, etc. appear, that user should be invited to them as well. There is no way to create a “super user” that will always have access to all data in the account.</p>"
+    }
+  ]
+}

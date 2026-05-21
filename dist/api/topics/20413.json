@@ -1,0 +1,75 @@
+{
+  "id": 20413,
+  "title": "Finding column data using Column names and IDs",
+  "slug": "finding-column-data-using-column-names-and-ids",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-05-24T12:39:14.231Z",
+  "lastPostedAt": "2021-05-25T11:35:49.553Z",
+  "postsCount": 7,
+  "excerpt": "Hello, \nI’m trying to figure out how to properly query board data.  Specifically column values. \nIs there another way to specify what columns you want to limit your query to?  All I see currently is IDs…and those seem be&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 5685,
+  "posts": [
+    {
+      "id": 52413,
+      "postNumber": 1,
+      "createdAt": "2021-05-24T12:39:14.330Z",
+      "author": "BeauElliott (Beau)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’m trying to figure out how to properly query board data.  Specifically column values.</p>\n<p>Is there another way to specify what columns you want to limit your query to?  All I see currently is IDs…and those seem be very interesting in the return.  I’m getting weird responses back (i.e. Text7, number45, timeline_1, timeline, dup__of_resource_name, etc.).  These aren’t the same in each board I’m querying, even though the titles of the columns are very consistent.  So while my boards “look” the same, I can’t filter/query them consistently to get the data I need to the above.  If I could query by title (which seems that those could be made consistent) it would really help…</p>\n<p>Any ideas on how to modify this?  Is there a way to do this?  Am I missing something?</p>"
+    },
+    {
+      "id": 52421,
+      "postNumber": 2,
+      "createdAt": "2021-05-24T13:53:15.764Z",
+      "author": "BeauElliott (Beau)",
+      "cookedHtml": "<p>as an example, see below:</p>\n<p>“items”: [<br />\n{<br />\n“id”: “1311669384”,<br />\n“name”: “Bids and Proposals Support”,<br />\n“column_values”: [<br />\n{<br />\n“id”: “text5”,<br />\n“title”: “Task ID”<br />\n},<br />\n{<br />\n“id”: “status_14”,<br />\n“title”: “Task Assignment”<br />\n},<br />\n{<br />\n“id”: “numbers45”,<br />\n“title”: “Planned effort”<br />\n},<br />\n{<br />\n“id”: “dup__of_resource_name7”,<br />\n“title”: “Resource Name”<br />\n},<br />\n{<br />\n“id”: “status”,<br />\n“title”: “Status”<br />\n},<br />\n{<br />\n“id”: “text6”,<br />\n“title”: “Project Code”<br />\n}</p>\n<p>This is a snippet of the ID and title of a board. I have a board that has the same column titles, but the corresponding IDs are completely different.</p>\n<p>The problem I have is that I don’t need all the columns from my return.  I really just need like 4 columns.  But I have to return ALL columns which is a huge complexity cost and it’s causing my queries to timeout in my code (running this in the website query engine takes a minute to return all the columns).</p>"
+    },
+    {
+      "id": 52476,
+      "postNumber": 3,
+      "createdAt": "2021-05-24T17:28:33.780Z",
+      "author": "alan.every (Alan Every)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/beauelliott\">@BeauElliott</a></p>\n<p>I’d need to see an example of the query you are running to try and understand, however I currently do things such as parsing the data returned from the time tracking column with a query as:</p>\n<pre><code>query {\n  boards (ids: [99999999]) {\n    items {\n      column_values (ids: [time_tracking] ) {\n        id\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>This returns the column data similar to:</p>\n<pre><code>{\n  \"column_values\": [\n  {\n            \"id\": \"time_tracking\",\n            \"value\": \"REDACTED\"\n          }\n        ]\n      },\n      {\n        \"column_values\": [\n          {\n            \"id\": \"time_tracking\",\n            \"value\": \"REDACTED\"\n          }\n        ]\n      },\n</code></pre>\n<p>and so on.</p>\n<p>Is this the sort of thing you need?</p>"
+    },
+    {
+      "id": 52477,
+      "postNumber": 4,
+      "createdAt": "2021-05-24T17:42:30.894Z",
+      "author": "BeauElliott (Beau)",
+      "cookedHtml": "<p>I can do the above, but what I’m seeing is that the IDs in the boards are not consistent.  When a user updates/adds a column to a board, they can update the actual Title of the board.  But the ID is very different and seems to vary in naming (i.e. “Text7”, “number47”, Dup_resource_name7\", etc.).  However looking at the two boards (or more) on the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> website “look” to be identical.  So trying to write code to query and parse similar data on similar boards is next to difficult.</p>\n<p>since you can filter your query by ids in the column values, I was hoping there was a way to filter by title as well.  It seems as users we have more control on the title than we do the IDs internally.</p>"
+    },
+    {
+      "id": 52547,
+      "postNumber": 5,
+      "createdAt": "2021-05-25T10:43:41.724Z",
+      "author": "LaurentConroux (Laurent Conroux)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/beauelliott\">@BeauElliott</a>,</p>\n<p>You need to first query all columns (id, title, type) from each board.</p>\n<p>Then you match the Column titles you seek with their ids (for each board).</p>\n<p>Personally on this step I also check the column type and the title+type uniqueness.<br />\n<em>(Note that mirrored columns get the type lookup whatever their original type was)</em></p>\n<p>Then you can query column_values based on selected column ids.</p>\n<p>It would be nice to get it in one go with a new query, but it does not seem to exist (yet <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=9\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" />).</p>"
+    },
+    {
+      "id": 52561,
+      "postNumber": 6,
+      "createdAt": "2021-05-25T11:32:42.990Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 52562,
+      "postNumber": 7,
+      "createdAt": "2021-05-25T11:35:49.553Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/beauelliott\">@BeauElliott</a>!</p>\n<p>In addition to these wonderful community members’ suggestions, I would also like to ask some more questions about your process.</p>\n<p>It sounds like what you’re trying to do, is to query only certain column type data (i.e. status, text, etc) across all of your boards, right?</p>\n<p>If so, you are indeed correct that column IDs will differ across boards (they are board specific though, so it’s possible that two boards will have the same column ID).</p>\n<p>As such, I think you would not be able to get around querying all of the columns on a board. However, like <a class=\"mention\" href=\"/u/laurentconroux\">@LaurentConroux</a> suggested, instead of querying <code>column_values</code> right away you can always start by querying <code>columns</code> and their <code>id</code> to first search for these specific column types.</p>\n<p>After locating these column types, you can then go about querying their <code>column_values</code>!</p>"
+    },
+    {
+      "id": 56081,
+      "postNumber": 8,
+      "createdAt": "2021-06-23T11:47:22.668Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

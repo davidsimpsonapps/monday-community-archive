@@ -1,0 +1,180 @@
+{
+  "id": 69815,
+  "title": "API Changes - Help needed to update favourite query!",
+  "slug": "api-changes-help-needed-to-update-favourite-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-02T07:35:21.123Z",
+  "lastPostedAt": "2024-03-19T07:50:12.959Z",
+  "postsCount": 18,
+  "excerpt": "Hi - I am not an experienced query writer and just need my favourite query updated to use the new API. Can anyone update this one for me? Ta! \nlet \nKey = “”, \nBoard = “”, \nSource = Web.Contents( \n“https://api.monday.com/&hellip;",
+  "solvedPostId": null,
+  "likeCount": 11,
+  "views": 875,
+  "posts": [
+    {
+      "id": 151118,
+      "postNumber": 1,
+      "createdAt": "2023-11-02T07:35:21.208Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Hi - I am not an experienced query writer and just need my favourite query updated to use the new API. Can anyone update this one for me? Ta!</p>\n<p>let<br />\nKey = “”,<br />\nBoard = “”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) { items { id, name, updated_at, group { title }, columns: column_values { title, text } } } }””}”)<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, {“ID”, “Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\n#“Monday” = Table.FromRecords(Table.TransformRows(Data, each<br />\nList.Accumulate([Columns], [<br />\nID = [ID],<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[title], current[text]) )<br />\n))<br />\nin<br />\n#“Monday”</p>"
+    },
+    {
+      "id": 151187,
+      "postNumber": 2,
+      "createdAt": "2023-11-02T11:48:12.108Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/demmo\">@Demmo</a>,</p>\n<p>You can use a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page {\n      items {\n        id\n        name\n        updated_at\n        group {\n          title\n        }\n        column_values {\n          column {\n            title\n          }\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 151777,
+      "postNumber": 3,
+      "createdAt": "2023-11-06T11:06:52.070Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Hi Matias - I’m getting this message:<br />\n<strong>Expression.Error: The field ‘data’ of the record wasn’t found.</strong><br />\nIs there something in the second half of the query that I need to be modifying to match your changes?</p>"
+    },
+    {
+      "id": 151792,
+      "postNumber": 4,
+      "createdAt": "2023-11-06T12:00:06.081Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/demmo\">@Demmo</a>,</p>\n<p>You would need to check what you get as a response but it shouldn’t be different. The body of the response will start with:</p>\n<pre><code class=\"lang-auto\">{\n    \"data\": {\n        \"boards\": [\n            {\n                \"items_page\": {\n                    \"items\": [...\n</code></pre>\n<p>But check the body of the response you get and you will see why you are getting that error.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 151814,
+      "postNumber": 5,
+      "createdAt": "2023-11-06T13:26:19.456Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/e/7/e752542a04975af3224d12ef8977352443801862.png\" alt=\"API_Query_Issue\" width=\"458\" height=\"149\" /></p>\n<p>This is all the error message gives me. I should have said that I am querying from Power BI. The query you gave me works fine in the monday developer playground (thankyou!), so I am assuming there is something in the rest of my query that is not right… the JSON part…where it defines ‘Data’.</p>"
+    },
+    {
+      "id": 151954,
+      "postNumber": 6,
+      "createdAt": "2023-11-07T05:47:01.150Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I am not experienced with Power BI. Let’s hope someone in the community is and can help you with that.</p>\n<p>But in all cases, it looks like your script is trying to use the “data” field from the response and not finding it. Do you have the possibility to log the full response you get from monday (before your script tries to get the “data” field)? You might be able to check why it is not finding it in that way.</p>"
+    },
+    {
+      "id": 151988,
+      "postNumber": 7,
+      "createdAt": "2023-11-07T09:06:06.908Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Many thanks for your help Matias - I have managed to get the final bit of the jigsaw!</p>"
+    },
+    {
+      "id": 152011,
+      "postNumber": 8,
+      "createdAt": "2023-11-07T11:12:57.903Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I am glad that is the case <a class=\"mention\" href=\"/u/demmo\">@Demmo</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 152272,
+      "postNumber": 9,
+      "createdAt": "2023-11-08T13:40:36.867Z",
+      "author": "bsgilli (Beth G)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/demmo\">@Demmo</a> Hi Graeme! I’m encountering the same issue with updating my power query code. Can you share how you found the solution? Thanks!</p>"
+    },
+    {
+      "id": 152280,
+      "postNumber": 10,
+      "createdAt": "2023-11-08T13:56:10.533Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Hi Beth - try this… I hadn’t reflected the items_page change later in the code</p>\n<p>let<br />\nKey = “xxx”,<br />\nBoard = “xxx”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“API-Version”=“2023-10”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids:” &amp; Board &amp; “) { items_page (limit: 500) { items { id, name, updated_at, group { title }, column_values{ column { title } text } } } } }””}\")<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items_page][items], Record.FieldValues, {“ID”, “Title”, “UpdatedAt”, “Group”, “Columns_Values”}),<br />\n#“Expanded Columns_Values” = Table.ExpandListColumn(Data, “Columns_Values”),<br />\n#“Expanded Group” = Table.ExpandRecordColumn(#“Expanded Columns_Values”, “Group”, {“title”}, {“Group”}),<br />\n#“Expanded Columns_Values1” = Table.ExpandRecordColumn(#“Expanded Group”, “Columns_Values”, {“column”, “text”}, {“column”, “text”}),<br />\n#“Expanded column” = Table.ExpandRecordColumn(#“Expanded Columns_Values1”, “column”, {“title”}, {“title.1”}),<br />\n#“Filtered Rows” = Table.SelectRows(#“Expanded column”, each ([title.1] &lt;&gt; “Subitems”)),<br />\n#“Pivoted Column” = Table.Pivot(#“Filtered Rows”, List.Distinct(#“Filtered Rows”[title.1]), “title.1”, “text”)<br />\nin<br />\n#“Pivoted Column”</p>"
+    },
+    {
+      "id": 152386,
+      "postNumber": 11,
+      "createdAt": "2023-11-09T06:18:44.924Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 152655,
+      "postNumber": 12,
+      "createdAt": "2023-11-10T17:17:32.797Z",
+      "author": "bsgilli (Beth G)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/demmo\">@Demmo</a>! Turns out I had the added complication of needing to pull back mirror column data, too, but I’ve worked that out as well using the <a href=\"https://developer.monday.com/api-reference/docs/migrating-to-v-2023-10#case-3-applications-reading-the-connect-boards-dependency-or-mirror-column\" rel=\"noopener nofollow ugc\">migration guide</a>. Thanks for sharing your solution!</p>"
+    },
+    {
+      "id": 152740,
+      "postNumber": 13,
+      "createdAt": "2023-11-12T13:08:10.995Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 155545,
+      "postNumber": 14,
+      "createdAt": "2023-11-30T12:27:51.181Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>so <a class=\"mention\" href=\"/u/bsgilli\">@bsgilli</a> - I now need the same help with mirror columns…! I can get my data back in API playground with <em>display_value</em> etc - but struggling with the rest of the script to create table for Power BI consumption… do you have an example?</p>"
+    },
+    {
+      "id": 155582,
+      "postNumber": 15,
+      "createdAt": "2023-11-30T15:54:31.962Z",
+      "author": "bsgilli (Beth G)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/demmo\">@Demmo</a> - happy to share back! I think I still need to work on pagination, but I don’t have enough data right now for that to be an issue. Here’s the code:</p>\n<pre><code class=\"lang-auto\">let\n    \n    Key = \"XXXXXXXX\",\n    Board = Number.ToText(Excel.CurrentWorkbook(){[Name=\"SessionBoardID\"]}[Content]{0}[Column1]),\n    \n        Source = Web.Contents(\"https://api.monday.com/v2\",\n\n            [ Headers = [ #\"Method\"=\"POST\",\n\t\t\t  #\"Content-Type\"=\"application/json\",\n              #\"API-Version\"=\"2023-10\",\n\t\t\t  #\"Authorization\"=\"Bearer \" &amp; Key ],\n\n        Content=Text.ToBinary(\n            \"{\"\"query\"\": \"\"query { boards(ids: \" &amp; Board &amp; \") {items_page (limit: 500) {items {name, updated_at, group {title} column_values {column{title} text ...on MirrorValue {display_value} ...on BoardRelationValue {display_value}}}}}}\"\"}\")]),\n        \n        Data = Table.FromList(Json.Document(Source)[data][boards]{0}[items_page][items], Record.FieldValues, {\"Title\", \"UpdatedAt\", \"Group\", \"Columns_Values\"}),\n    #\"Expanded Group\" = Table.ExpandRecordColumn(Data, \"Group\", {\"title\"}, {\"Group\"}),\n    #\"Expanded Columns_Values\" = Table.ExpandListColumn(#\"Expanded Group\", \"Columns_Values\"),\n    #\"Expanded Columns_Values2\" = Table.ExpandRecordColumn(#\"Expanded Columns_Values\", \"Columns_Values\", {\"column\", \"text\", \"display_value\"}, {\"column\", \"text\", \"display_value\"}),\n    #\"Expanded column\" = Table.ExpandRecordColumn(#\"Expanded Columns_Values2\", \"column\", {\"title\"}, {\"title.1\"}),\n    #\"Added Custom Column\" = Table.AddColumn(#\"Expanded column\", \"Custom\", each Text.Combine({[text], [display_value]}), type text),\n    #\"Removed Columns\" = Table.RemoveColumns(#\"Added Custom Column\",{\"text\", \"display_value\"}),\n    #\"Pivoted Column\" = Table.Pivot(#\"Removed Columns\", List.Distinct(#\"Removed Columns\"[title.1]), \"title.1\", \"Custom\"),\n    #\"Renamed Columns\" = Table.RenameColumns(#\"Pivoted Column\",{{\"Title\", \"Name\"}})\nin\n    #\"Renamed Columns\"\n</code></pre>"
+    },
+    {
+      "id": 155735,
+      "postNumber": 16,
+      "createdAt": "2023-12-01T07:49:34.774Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>thanks <a class=\"mention\" href=\"/u/bsgilli\">@bsgilli</a> - except it only seems to work with a small record limit? (say 5) - which I can see is happening to <a href=\"https://community.monday.com/t/trouble-updating-to-v-2023-10-especially-with-display-value/69227\">others on the forum</a>…  I’m getting<br />\n“message”: “Unexpected token ‘u’, \"upstream r\"… is not valid JSON”,<br />\n“stack”: “SyntaxError: Unexpected token ‘u’, \"upstream r\"… is not valid JSON”</p>"
+    },
+    {
+      "id": 155941,
+      "postNumber": 17,
+      "createdAt": "2023-12-03T13:18:06.270Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 166996,
+      "postNumber": 18,
+      "createdAt": "2024-02-09T15:21:47.475Z",
+      "author": "dmarino13 (Kevin O'Toole)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/demmo\">@Demmo</a> ,</p>\n<p>I’m using this exact query and are having the same issue as you.  What is the exact query you are using in advanced editor now in PowerBI to replicate this old query?</p>\n<p>Thanks in advance!</p>"
+    },
+    {
+      "id": 167288,
+      "postNumber": 19,
+      "createdAt": "2024-02-12T06:45:50.531Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dmarino13\">@dmarino13</a>  - so, the issue was only temporary for me. This is my go to basic query now:</p>\n<pre><code class=\"lang-auto\">let\n  Key = \"XXXXX\",\n  Board = \"XXXXX\",\n  Source = Web.Contents(\"https://api.monday.com/v2\",\n[ Headers = [ #\"Method\"=\"POST\",\n  #\"Content-Type\"=\"application/json\",\n  #\"API-Version\"=\"2023-10\",\n  #\"Authorization\"=\"Bearer \" &amp; Key ],\nContent=Text.ToBinary(\"{\"\"query\"\": \"\"query { boards(ids: \" &amp; Board &amp; \") {items_page (limit: 500) {items {id, name, updated_at, group {title} column_values {column{title} text ...on MirrorValue {display_value} ...on BoardRelationValue {display_value}}}}}}\"\"}\")]),\n  Data = Table.FromList(Json.Document(Source)[data][boards]{0}[items_page][items], Record.FieldValues, {\"ID\", \"Title\", \"UpdatedAt\", \"Group\", \"Columns_Values\"}),\n  #\"Expanded Group\" = Table.ExpandRecordColumn(Data, \"Group\", {\"title\"}, {\"Group\"}),\n  #\"Expanded Columns_Values\" = Table.ExpandListColumn(#\"Expanded Group\", \"Columns_Values\"),\n  #\"Expanded Columns_Values2\" = Table.ExpandRecordColumn(#\"Expanded Columns_Values\", \"Columns_Values\", {\"column\", \"text\", \"display_value\"}, {\"column\", \"text\", \"display_value\"}),\n  #\"Expanded column\" = Table.ExpandRecordColumn(#\"Expanded Columns_Values2\", \"column\", {\"title\"}, {\"title.1\"}),\n  #\"Added Custom Column\" = Table.AddColumn(#\"Expanded column\", \"Custom\", each Text.Combine({[text], [display_value]}), type text),\n  #\"Removed Columns\" = Table.RemoveColumns(#\"Added Custom Column\", {\"text\", \"display_value\"}),\n  #\"Pivoted Column\" = Table.Pivot(#\"Removed Columns\", List.Distinct(#\"Removed Columns\"[title.1]), \"title.1\", \"Custom\"),\n  #\"Renamed Columns\" = Table.RenameColumns(#\"Pivoted Column\", {{\"Title\", \"Title\"}}),\n  #\"Transform columns\" = Table.TransformColumnTypes(#\"Renamed Columns\", {{\"ID\", type text}, {\"Title\", type text}, {\"UpdatedAt\", type text}, {\"Group\", type text}}),\n  #\"Replace errors\" = Table.ReplaceErrorValues(#\"Transform columns\", {{\"ID\", null}, {\"Title\", null}, {\"UpdatedAt\", null}, {\"Group\", null}})\nin\n  #\"Replace errors\"\n</code></pre>"
+    },
+    {
+      "id": 167854,
+      "postNumber": 20,
+      "createdAt": "2024-02-14T13:50:13.289Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 173832,
+      "postNumber": 21,
+      "createdAt": "2024-03-18T14:37:26.920Z",
+      "author": "goncalocsqueiros (Gonçalo Queirós)",
+      "cookedHtml": "<p>Hi there. I’m getting the same error.</p>\n<p>I’ve been using this API for several months and never had a problem… can you help me please?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 173924,
+      "postNumber": 22,
+      "createdAt": "2024-03-19T07:50:12.959Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/goncalocsqueiros\">@goncalocsqueiros</a> - I can only refer you to my previous post above with the usual code I use for a basic retrieval.  I haven’t had any performance issue for ages - but my boards are rarely above 300 items.</p>"
+    },
+    {
+      "id": 173937,
+      "postNumber": 23,
+      "createdAt": "2024-03-19T08:26:39.427Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

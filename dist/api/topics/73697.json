@@ -1,0 +1,47 @@
+{
+  "id": 73697,
+  "title": "Creating a new item only adds the items name but not the fields",
+  "slug": "creating-a-new-item-only-adds-the-items-name-but-not-the-fields",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-12-27T14:12:56.083Z",
+  "lastPostedAt": "2023-12-28T13:11:23.048Z",
+  "postsCount": 4,
+  "excerpt": "so im using the monday api in my code and im trying to add new items to a board, well the item gets added but the other fields are empty \nconst mondaySdk = require(&quot;monday-sdk-js&quot;);\nconst mondayApiKey = require(&quot;./apiKey&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 273,
+  "posts": [
+    {
+      "id": 159357,
+      "postNumber": 1,
+      "createdAt": "2023-12-27T14:12:56.154Z",
+      "author": "llcoolname (Lior Aviv)",
+      "cookedHtml": "<p>so im using the monday api in my code and im trying to add new items to a board, well the item gets added but the other fields are empty</p>\n<pre><code class=\"lang-auto\">const mondaySdk = require(\"monday-sdk-js\");\nconst mondayApiKey = require(\"./apiKeys\");\nconst monday = mondaySdk();\nmonday.setToken(mondayApiKey);\n\n const userData = {\n    Email: \"lol@lol.com\",\n    level: {label: \"Pro\"},\n  \n  };\n\n  \n  const encodedUserData = JSON.stringify(userData).replace(/\"/g, \"\\\\\\\"\");\n\n  \n  const mutation = `\n  mutation {\n    create_item (\n      board_id: 12345,\n      item_name: \"New Item\",\n      column_values: \"${encodedUserData}\") {\n      id\n    }\n  }\n`;\n  \n  monday\n      .api(mutation)\n      .then((response) =&gt; res.send({response, encodedUserData}))\n      .catch((error) =&gt; {\n        console.error(error); \n        res.send(error);\n      });\n</code></pre>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/9/09ca168cc8f943341b7fa336459e5f607cf5b45d.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/9/09ca168cc8f943341b7fa336459e5f607cf5b45d_2_690x88.png\" alt=\"image\" width=\"690\" height=\"88\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1559×201 10.5 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 159374,
+      "postNumber": 2,
+      "createdAt": "2023-12-27T16:13:55.213Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>First thing, is you’re using the column <code>title</code> as the keys in your userData. You need to use the underlying column IDs. See <a href=\"https://support.monday.com/hc/en-us/articles/360000225709-Board-item-column-and-automation-or-integration-ID-s\">https://support.monday.com/hc/en-us/articles/360000225709-Board-item-column-and-automation-or-integration-ID-s</a> on how to find them in the UI. The API returns them as the <code>id</code> field from querying columns - but I suspect you don’t need to do that.</p>\n<p>Lastly, I would highly recommend investigating using GraphQL variables. You pass your serialized userData (without the replace part) as a “variable” in the request. Using the variables negates the need to deal with all of the escaping properly, which can become a nightmare. Just <code>JSON.stringify()</code> your userData and use that string in the variables object. The GraphQL server just reads the value from the variables when processing rather than trying to substitute the string in as you’re doing, and avoids all the string manipulation stuff entirely.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n\n      <a href=\"https://graphql.org/learn/queries/#variables\" target=\"_blank\" rel=\"noopener\">graphql.org</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://graphql.org/learn/queries/#variables\" target=\"_blank\" rel=\"noopener\">Queries and Mutations | GraphQL</a></h3>\n\n  <p>A query language for your API — GraphQL provides a complete description of the data in your API, gives clients the power to ask for exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables powerful developer...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>here is an example:</p>\n<pre><code class=\"lang-auto\">\nconst mondaySdk = require(\"monday-sdk-js\");\nconst mondayApiKey = require(\"./apiKeys\");\nconst monday = mondaySdk();\nmonday.setApiVersion(\"2023-10\");\nmonday.setToken(mondayApiKey);\n\nconst userData = {\n [emailColumnId]: \"lol@lol.com\",\n [levelColumnId]: {label: \"Pro\"}\n}\n\nconst variables = {\n   boardId: \"12335\",\n   itemName: \"New Item\",\n   columnValues: JSON.stringify(userData)\n},\n\nconst mutation = `\n  mutation ($boardId: ID!, $itemName: String!, $columnValues: JSON!) {\n    create_item (\n      board_id: $boardId,\n      item_name: $itemName,\n      column_values: $columnValues) {\n      id\n    }\n  }\n`;\n\n  monday\n      .api(mutation, { variables }) // note the addition of { variables }\n      .then((response) =&gt; res.send({response, encodedUserData}))\n      .catch((error) =&gt; {\n        console.error(error); \n        res.send(error);\n      });\n</code></pre>\n<p>The query above uses <code>ID</code> for the <code>$boardId</code> type - which is an API 2023-10 and later change. I’m doing this because 2023-07 will be discontinued January 15th, and 2024-10 will be default (2023-10 will be deprecated but still work). Currently 2023-07 is default during the transition to 2023-10 which has considerable breaking changes.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/api-versioning#using-the-sdk\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/api-versioning#using-the-sdk\" target=\"_blank\" rel=\"noopener\">API Versioning</a></h3>\n\n  <p>This guide walks through the release schedule, how to make a request to a specific version, and various examples to further explain versioning.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 159408,
+      "postNumber": 3,
+      "createdAt": "2023-12-28T06:14:31.047Z",
+      "author": "llcoolname (Lior Aviv)",
+      "cookedHtml": "<p>thnak you very much! it works! <img src=\"https://emoji.discourse-cdn.com/apple/partying_face.png?v=12\" title=\":partying_face:\" class=\"emoji\" alt=\":partying_face:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 159455,
+      "postNumber": 4,
+      "createdAt": "2023-12-28T13:11:23.048Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> as usual!</p>"
+    }
+  ]
+}

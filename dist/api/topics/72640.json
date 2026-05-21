@@ -1,0 +1,49 @@
+{
+  "id": 72640,
+  "title": "Parse error on \"$\" (VAR_SIGN) when using query variables for pagination",
+  "slug": "parse-error-on-var-sign-when-using-query-variables-for-pagination",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    94,
+    139,
+    351
+  ],
+  "createdAt": "2023-12-08T15:47:00.676Z",
+  "lastPostedAt": "2023-12-10T11:27:09.459Z",
+  "postsCount": 4,
+  "excerpt": "Hi there! \nI’m struggling with a parse error in a query that is very similar to other queries that work properly and I can’t understand what’s wrong. I’m using Python. \nHere’s an exemple of working code: \ndef check_monda&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 384,
+  "posts": [
+    {
+      "id": 156969,
+      "postNumber": 1,
+      "createdAt": "2023-12-08T15:47:00.852Z",
+      "author": "laora (Laura)",
+      "cookedHtml": "<p>Hi there!</p>\n<p>I’m struggling with a parse error in a query that is very similar to other queries that work properly and I can’t understand what’s wrong. I’m using Python.</p>\n<p>Here’s an exemple of working code:</p>\n<pre><code class=\"lang-auto\">def check_monday_card(service: str, account_id: str, region: str, start_time_monday: str) -&gt; Optional[str]:\n    check_card_query = 'query($ids: ID!){boards (ids: [$ids]){ items_page (limit:50){ cursor items { id name column_values { id text value }}}}}'\n    check_card_details = {'ids': board_id }\n    query_data = {'query': check_card_query, 'variables': check_card_details}\n    check_request = requests.post(url=MONDAY_API_URL, json=query_data, headers=headers)\n    \n    check_response = check_request.json()\n    page_cursor = check_response['data']['boards'][0]['items_page']['cursor']\n    items = check_response['data']['boards'][0]['items_page']['items']\n    for item in items:\n        item_id = item['id']\n        item_name = item['name']\n        item_account = item['column_values'][0]['text']\n        item_region = item['column_values'][1]['text']\n        item_start_date = item['column_values'][3]['value']\n        if (item_name, item_account, item_region, item_start_date) == (service, account_id, region, start_time_monday):\n            yield (item['id'])\n\n    if page_cursor:\n        check_monday_card_next_page(page_cursor)\n</code></pre>\n<p>In this case I’m declaring “$id: ID!” and then setting up the value with “query_data”. However, in this other function the same concept does not work:</p>\n<pre><code class=\"lang-auto\">def check_monday_card_next_page(page_cursor: str) -&gt; Optional[str]:\n    next_page_card_query = 'query { next_items_page (limit:50, $cursor: String!){ cursor items { id name column_values { id text value }}}}'\n    next_page_card_details = {'cursor': page_cursor }\n    query_data = {'query': next_page_card_query, 'variables': next_page_card_details}\n    print(query_data)\n    check_request = requests.post(url=MONDAY_API_URL, json=query_data, headers=headers)\n    print(check_request.json())\n</code></pre>\n<p>Besides correctly printing the query, it’s returning “{‘errors’: [{‘message’: ‘Parse error on “$” (VAR_SIGN) at [1, 36]’”. I’m struggling to see the difference between the parse of variables in these two cases. Does anybody have a clue?</p>\n<p>Thanks! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 156970,
+      "postNumber": 2,
+      "createdAt": "2023-12-08T15:49:35.210Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You failed to define cursor correctly at the start, then put the definition where it would be used.</p>\n<p><code>query($cursor: String!) { next_items_page (limit:50, cursor: $cursor){ cursor items { id name column_values { id text value }}}}'</code></p>"
+    },
+    {
+      "id": 156972,
+      "postNumber": 3,
+      "createdAt": "2023-12-08T15:56:54.820Z",
+      "author": "laora (Laura)",
+      "cookedHtml": "<p>Thank you!!! <img src=\"https://emoji.discourse-cdn.com/apple/star2.png?v=12\" title=\":star2:\" class=\"emoji\" alt=\":star2:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 157114,
+      "postNumber": 4,
+      "createdAt": "2023-12-10T11:27:09.459Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you for the help <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!</p>"
+    }
+  ]
+}

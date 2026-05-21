@@ -1,0 +1,37 @@
+{
+  "id": 105841,
+  "title": "Issue with updating a table block in monday API",
+  "slug": "issue-with-updating-a-table-block-in-monday-api",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351,
+    362
+  ],
+  "createdAt": "2024-12-19T17:54:40.115Z",
+  "lastPostedAt": "2024-12-22T07:36:23.478Z",
+  "postsCount": 2,
+  "excerpt": "Hello, \nI’m trying to create a 3x3 table in a monday.com workdoc and then update its cells with mentions and text using the GraphQL API. However, I’m encountering an error when trying to update the table cells. \nHere’s w&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 5,
+  "posts": [
+    {
+      "id": 214780,
+      "postNumber": 1,
+      "createdAt": "2024-12-19T17:54:40.218Z",
+      "author": "sungjunHan (juny)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’m trying to create a 3x3 table in a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> workdoc and then update its cells with mentions and text using the GraphQL API. However, I’m encountering an error when trying to update the table cells.</p>\n<p>Here’s what I’ve done so far:</p>\n<ol>\n<li>I successfully created a table block using this mutation:</li>\n</ol>\n<pre><code class=\"lang-graphql\">mutation {\n  create_doc_block(\n    type: table, \n    doc_id: MY_DOC_ID, \n    content: \"{\\\"column_count\\\":3,\\\"row_count\\\":3}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<ol>\n<li>Then, I tried to update a cell in the table using this mutation:</li>\n</ol>\n<pre><code class=\"lang-graphql\">mutation {\n  update_doc_block(\n    block_id: \"MY_BLOCK_ID\",\n    content: \"{\\\"cells\\\":[[{\\\"content\\\":{\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"@User Name\\\",\\\"attributes\\\":{\\\"mention\\\":{\\\"type\\\":\\\"person\\\",\\\"id\\\":\\\"USER_ID\\\"}}},{\\\"insert\\\":\\\" This is some text.\\\"}]}}]]}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>However, when I run this mutation, I get the following error:</p>\n<p>{<br />\n“errors”: [<br />\n{<br />\n“message”: “bad request”,<br />\n“locations”: [<br />\n{<br />\n“line”: 1,<br />\n“column”: 10<br />\n}<br />\n],<br />\n“path”: [<br />\n“update_doc_block”<br />\n],<br />\n“extensions”: {<br />\n“code”: “DocMutationException”,<br />\n“status_code”: 400,<br />\n“error_data”: [<br />\n{<br />\n“error_type”: “Block type not supported”<br />\n}<br />\n]<br />\n}<br />\n}<br />\n],<br />\n“status_code”: 400,<br />\n“error_data”: [<br />\n{<br />\n“error_type”: “Block type not supported”<br />\n}<br />\n],<br />\n“error_code”: “DocMutationException”,<br />\n“error_message”: “bad request”,<br />\n“account_id”: 1234<br />\n}</p>\n<p>I’ve double-checked that I’m using the correct block ID and that my app has the necessary <code>docs:write</code> permission. I’m also using the latest API version.</p>\n<p>Can anyone help me understand why I’m getting this “Block type not supported” error when trying to update the table cells, and how I can resolve it?</p>\n<p>Thank you in advance for your help!</p>"
+    },
+    {
+      "id": 214975,
+      "postNumber": 2,
+      "createdAt": "2024-12-22T07:36:23.478Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/sungjunhan\">@sungjunHan</a> and welcome to the community!</p>\n<p>What happens if you use something like this:</p>\n<pre><code class=\"lang-auto\">mutation{\n  create_doc_block(parent_block_id: \"7sadsa1e-egfdg0-4fsd8-8b6d-e5sadbbfsd74fb5\", doc_id: 1234567, type: normal_text, content: \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"This is some text\\\"}]}\"){\n    id\n  }\n}\n</code></pre>"
+    }
+  ]
+}

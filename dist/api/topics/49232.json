@@ -1,0 +1,79 @@
+{
+  "id": 49232,
+  "title": "Creating new item with populated values for column of type \"multiple-person\"",
+  "slug": "creating-new-item-with-populated-values-for-column-of-type-multiple-person",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2023-01-16T07:01:03.619Z",
+  "lastPostedAt": "2023-01-18T06:00:15.852Z",
+  "postsCount": 7,
+  "excerpt": "Hi all, \nI have a board with the following columns: \n  \nThe dev assignee and Reporter columns are of type “multiple-person” and with id of “person”. \nI am having a person’s id, which I’m trying to insert in the following&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1135,
+  "posts": [
+    {
+      "id": 110689,
+      "postNumber": 1,
+      "createdAt": "2023-01-16T07:01:03.696Z",
+      "author": "danieln (daniel)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I have a board with the following columns:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/872bd1d69b028a9a83c8313b1c2332da86fb09be.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/872bd1d69b028a9a83c8313b1c2332da86fb09be_2_690x66.png\" alt=\"image\" width=\"690\" height=\"66\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1001×97 12.3 KB</span>\n</div></a></div><br />\nThe dev assignee and Reporter columns are of type “multiple-person” and with id of “person”.<p></p>\n<p>I am having a person’s id, which I’m trying to insert in the followingway:</p>\n<pre><code class=\"lang-auto\">mutation {\n    create_item(\n      board_id: 3782143770,\n      item_name: \"New ItemZzzZ\",\n      column_values: \"{\\\"multiple-person\\\":{\\\"person\\\":[{\\\"id\\\":\\\"36904156\\\"}]}}\") {\n      id\n      name\n  }\n}\n</code></pre>\n<p>I get a new item being created with correct title, but the assigned person is the first person in the alphabetic order, no matter what person id i put inside.</p>\n<p>So, yeah, I’m quite struggling with inserting a person into the multiple-person column, and I couldn’t find anything in the web which was actually working for my case.</p>\n<p>Any ideas?</p>\n<p>Regards! :_)</p>"
+    },
+    {
+      "id": 110725,
+      "postNumber": 2,
+      "createdAt": "2023-01-16T10:40:49.519Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/danieln\">@danieln</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>We have columns of type “person” and of type “people”. The “person” column type is deprecated so you should use “people”.</p>\n<p>If this is a “people” column, which is the most likely scenario, you can create the item with the populated column value like this:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 1234567890, item_name: \"My item\", column_values: \"{\\\"people1\\\": \\\"matias@example.com\\\"}\") {\n    id\n  }\n}\n</code></pre>\n<p>or like this:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 1234567890, item_name: \"My item\", column_values: \"{\\\"people1\\\": {\\\"personsAndTeams\\\":[{\\\"id\\\":12340000,\\\"kind\\\":\\\"person\\\"}]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>Let us know how that goes!</p>"
+    },
+    {
+      "id": 110746,
+      "postNumber": 3,
+      "createdAt": "2023-01-16T12:36:33.159Z",
+      "author": "danieln (daniel)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 1234567890, item_name: \"My item\", column_values: \"{\\\"people1\\\": \\\"matias@example.com\\\"}\") {\n    id\n  }\n}\n</code></pre>\n</blockquote>\n</aside>\n<p>Hi Matias. Thanks for your help!</p>\n<p>I am attempting to enter the user using the person’s id, in the following way (based on your response):</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 3712123731, item_name: \"My iteM froM api\", column_values: \"{\\\"people\\\": \\\"36914456\\\"}\") {\n    id\n  }\n}\n</code></pre>\n<p>yet it doesn’t add the person to the newly created item. was the mutation correct?<br />\n(considering the column id which i’m attempting to add a value to is “person”)</p>\n<p>tried also the second option in the following way:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 3782143770, item_name: \"My item\", column_values: \"{\\\"people\\\": {\\\"personsAndTeams\\\":[{\\\"id\\\":36904156,\\\"kind\\\":\\\"person\\\"}]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>regards!</p>"
+    },
+    {
+      "id": 111013,
+      "postNumber": 4,
+      "createdAt": "2023-01-17T18:09:08.137Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/danieln\">@danieln</a>,</p>\n<p>When sending the column_values array, e.g:</p>\n<pre><code class=\"lang-auto\">column_values: \"{\\\"people\\\": {\\\"personsAndTeams\\\":[{\\\"id\\\":36904156,\\\"kind\\\":\\\"person\\\"}]}}\"\n</code></pre>\n<p>you’ll want to change the first reference to “people”, since your column ID is person, to instead send:</p>\n<pre><code class=\"lang-auto\">column_values: \"{\\\"person\\\": {\\\"personsAndTeams\\\":[{\\\"id\\\":36904156,\\\"kind\\\":\\\"person\\\"}]}}\"\n</code></pre>\n<p>Let me know if this works for you!</p>"
+    },
+    {
+      "id": 111067,
+      "postNumber": 5,
+      "createdAt": "2023-01-18T05:14:39.229Z",
+      "author": "danieln (daniel)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/alessandra/48/13676_2.png\" class=\"avatar\" /> Alessandra:</div>\n<blockquote>\n<p><code>column_values: \"{\\\"person\\\": {\\\"personsAndTeams\\\":[{\\\"id\\\":36904156,\\\"kind\\\":\\\"person\\\"}]}}\"</code></p>\n</blockquote>\n</aside>\n<p>Hi :_)</p>\n<p>I have tried the following:</p>\n<pre><code class=\"lang-auto\">mutation {\n    create_item(\n      board_id: XXXXXXXXX,\n      item_name: \"testing\",\n      column_values: \"{\\\"person2\\\":{\\\"personsAndTeams\\\":[{\\\"id\\\":\\\"36904156,\\\"kind\\\":\\\"person\\\"}]}}\") {\n      id\n      name\n  }\n}\n</code></pre>\n<p>but I get the answer:</p>\n<blockquote>\n<p>{<br />\n“error_message”: “439: unexpected token at ‘{\"id\":\"36904156,\"kind\":\"person\"}]}}’”,<br />\n“status_code”: 500<br />\n}</p>\n</blockquote>\n<p>Thanks for helping.</p>"
+    },
+    {
+      "id": 111073,
+      "postNumber": 6,
+      "createdAt": "2023-01-18T05:57:01.019Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/danieln\">@danieln</a>,</p>\n<p>Your query was missing a backslash and a quote after the user ID. Here it is fixed (I tested it here and it is working):</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: XXXXXXXXX, item_name: \"testing\", column_values: \"{\\\"person2\\\":{\\\"personsAndTeams\\\":[{\\\"id\\\":\\\"36904156\\\",\\\"kind\\\":\\\"person\\\"}]}}\") {\n    id\n    name\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 111074,
+      "postNumber": 7,
+      "createdAt": "2023-01-18T06:00:15.852Z",
+      "author": "danieln (daniel)",
+      "cookedHtml": "<p>Working! Thank you, thank you, thank you! I went insane already.</p>"
+    },
+    {
+      "id": 111576,
+      "postNumber": 8,
+      "createdAt": "2023-01-20T15:12:39.342Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_topic_from_sla</p>"
+    },
+    {
+      "id": 111587,
+      "postNumber": 9,
+      "createdAt": "2023-01-20T15:59:07.724Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

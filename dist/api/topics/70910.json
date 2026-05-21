@@ -1,0 +1,62 @@
+{
+  "id": 70910,
+  "title": "Can a user revoke an access token?",
+  "slug": "can-a-user-revoke-an-access-token",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    419
+  ],
+  "createdAt": "2023-11-16T12:24:02.454Z",
+  "lastPostedAt": "2023-11-17T14:14:15.029Z",
+  "postsCount": 5,
+  "excerpt": "Hi there. \nI am starting to develop an app using oauth2 and am managing to access the api using a bearer token. \nI’m wondering where the user should go to revoke the apps access token, as I can’t seem to find it with the&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 846,
+  "posts": [
+    {
+      "id": 153453,
+      "postNumber": 1,
+      "createdAt": "2023-11-16T12:24:02.529Z",
+      "author": "MrMeltdown (Matthew Melton)",
+      "cookedHtml": "<p>Hi there.<br />\nI am starting to develop an app using oauth2 and am managing to access the api using a bearer token.<br />\nI’m wondering where the user should go to revoke the apps access token, as I can’t seem to find it with the experiments I am doing. I understood from another thread that the token is valid for 30days? But can’t seem to find where a user could revoke the token should the app be not needed anymore? Or heaven forbid become compromised somehow.</p>\n<p>Note at this stage as I am developing the app is not “installed” as such, it does not appear under the installed apps tab in monday.</p>\n<p>Thanks in advance for your help.</p>\n<p>M</p>"
+    },
+    {
+      "id": 153496,
+      "postNumber": 2,
+      "createdAt": "2023-11-16T15:04:14.426Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>As far as I know the tokens do not expire, as there is no refresh capability for the OAuth2. Though if you use a individual users API token (not through the OAuth process, manually entered) then they can regenerate that at will - but again does not expire.</p>\n<p>As far as revoking the tokens, it happens when the app is uninstalled, without any user steps. There is no ability to revoke them manually that I am aware of, though this would be a good thing to add.</p>\n<p>That said, if a users account is deactivated, their tokens do stop working. So while thats ugly, it might suffice in an emergency.</p>"
+    },
+    {
+      "id": 153632,
+      "postNumber": 3,
+      "createdAt": "2023-11-17T08:02:15.453Z",
+      "author": "MrMeltdown (Matthew Melton)",
+      "cookedHtml": "<p>Thanks for your reply.<br />\nI’ll investigate further. I think you are correct that the individual tokens may not be revokable within the users monday interface.<br />\nI think the solution is have the user uninstall the app.</p>\n<p>Since my app is in development it is currently in private and doesn’t show up at all in the installed app pages, maybe because of this. I’ll try installing it under a non-development account and see what happens. I think because of this the token may have a very short lifespan certainly not 30 days, more like 30 seconds… , and things may become permanent<br />\nwhen the app is shared.</p>\n<p>I’ll report back here when if I find something else out.</p>\n<p>Thanks again.</p>"
+    },
+    {
+      "id": 153637,
+      "postNumber": 4,
+      "createdAt": "2023-11-17T08:59:10.745Z",
+      "author": "MrMeltdown (Matthew Melton)",
+      "cookedHtml": "<p><a href=\"https://developer.monday.com/apps/docs/oauth\" rel=\"noopener nofollow ugc\">OAuth and Permissions (monday.com)</a></p>\n<p>This states the auth tokens last for ten minutes, but the bearer token should last indefinitely…</p>"
+    },
+    {
+      "id": 153662,
+      "postNumber": 5,
+      "createdAt": "2023-11-17T14:14:15.029Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yeah the “auth token” which they call a code, is for 10 minutes. That code can’t be used for API access.</p>\n<p>Also don’t forget that if this is an integration app, every request sent to your backend includes a JWT that has a shortLivedToken (assuming you’re using HTTPS). This lasts 5 minutes, but can be used for API access.</p>\n<p>Additionally, if your app uses custom triggers with custom actions, you can trigger that for changes to boards coming from your back end. Then you never need to store an OAuth token. Using custom triggers for changes from your backend is preferred over just making calls to boards, since it lets the users keep column mappings accurate.</p>\n<p>Within the UI features you can make API calls without getting a token as well.</p>\n<p>The only times you really need OAuth is if you’re going to offload work from a UI app to your backend, and it needs a token to do it. Or you have a batch of changes that will take longer than 5 minutes from one trigger.</p>"
+    },
+    {
+      "id": 153761,
+      "postNumber": 6,
+      "createdAt": "2023-11-19T08:43:52.357Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

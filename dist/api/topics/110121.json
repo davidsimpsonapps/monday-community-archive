@@ -1,0 +1,35 @@
+{
+  "id": 110121,
+  "title": "Querying Tasks in PowerQuery - Only Getting Project Data",
+  "slug": "querying-tasks-in-powerquery-only-getting-project-data",
+  "categoryId": 58,
+  "tagIds": [
+    5,
+    17,
+    94,
+    187
+  ],
+  "createdAt": "2025-02-20T16:26:38.651Z",
+  "lastPostedAt": "2025-02-23T05:48:41.761Z",
+  "postsCount": 2,
+  "excerpt": "I am using the code below to pull items into PowerQuery but I’m only getting project data, not tasks.  What needs to be changed to adjust to pull to includes tasks? \nlet \nGetAllTasks = (board as number) =&gt; \nlet \nKey = “K&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 7,
+  "posts": [
+    {
+      "id": 221875,
+      "postNumber": 1,
+      "createdAt": "2025-02-20T16:26:38.736Z",
+      "author": "jlee_mke (Judy Dubrosky)",
+      "cookedHtml": "<p>I am using the code below to pull items into PowerQuery but I’m only getting project data, not tasks.  What needs to be changed to adjust to pull to includes tasks?</p>\n<p>let<br />\nGetAllTasks = (board as number) =&gt;<br />\nlet<br />\nKey = “KEY”,<br />\nBoard = Number.ToText(board),</p>\n<pre><code>    // Function to fetch one page of data\n    FetchPage = (cursor as nullable text) =&gt;\n    let\n        Query = if cursor = null then\n            // Query to fetch first page of tasks (items) with pagination (100 items at a time)\n            \"{\"\"query\"\":\"\"query { boards(ids: [\" &amp; Board &amp; \"]) { items_page (limit: 100) { cursor items { id, name, updated_at, group { title }, column_values { column { title }, text } } } } }\"\"}\"\n        else\n            // Query for subsequent pages with the cursor for pagination\n            \"{\"\"query\"\":\"\"query { next_items_page(limit: 100, cursor: \\\"\"\" &amp; cursor &amp; \"\\\"\") { cursor items { id, name, updated_at, group { title }, column_values { column { title }, text } } } }\"\"}\",\n        \n        WebResponse = Web.Contents(\n            \"https://api.monday.com/v2\",\n            [\n                Headers = [\n                    #\"Method\" = \"POST\",\n                    #\"Content-Type\" = \"application/json\",\n                    #\"Authorization\" = \"Bearer \" &amp; Key,\n                    #\"API-Version\" = \"2025-01\"\n                ],\n                Content = Text.ToBinary(Query)\n            ]\n        ),\n        JsonResponse = Json.Document(WebResponse),\n        // Handle different response structure\n        Data = if cursor = null then JsonResponse[data][boards]{0}[items_page] else JsonResponse[data][next_items_page],\n        Items = try Data[items] otherwise null,\n        NextCursor = try Data[cursor] otherwise null,\n        Result = [Items = Items, Cursor = NextCursor]\n    in\n        Result,\n\n    // Recursive function to fetch all pages\n    FetchAllPages = (cursor as nullable text, accumulated as list) =&gt;\n    let\n        Page = FetchPage(cursor),\n        Items = Page[Items],\n        NextCursor = Page[Cursor],\n        NewAccumulated = if Items &lt;&gt; null then List.Combine({accumulated, Items}) else accumulated,\n        Result = if NextCursor &lt;&gt; null then @FetchAllPages(NextCursor, NewAccumulated) else NewAccumulated\n    in\n        Result,\n\n    // Start fetching from the first page\n    AllTasks = FetchAllPages(null, {}),\n\n    // Convert list of tasks (items) into a table\n    TaskTable = Table.FromRecords(AllTasks)\nin\n    TaskTable\n</code></pre>\n<p>in<br />\nGetAllTasks</p>"
+    },
+    {
+      "id": 222107,
+      "postNumber": 2,
+      "createdAt": "2025-02-23T05:48:41.761Z",
+      "author": "jlee_mke (Judy Dubrosky)",
+      "cookedHtml": "<p>I see my issue now.  As a new Monday user, I did not realize my board ID was a portfolio.</p>"
+    }
+  ]
+}

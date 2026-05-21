@@ -1,0 +1,60 @@
+{
+  "id": 47026,
+  "title": "Formula - Search how many times a certain word is found in a single cell",
+  "slug": "formula-search-how-many-times-a-certain-word-is-found-in-a-single-cell",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-12-07T14:26:55.066Z",
+  "lastPostedAt": "2024-01-05T11:12:22.152Z",
+  "postsCount": 6,
+  "excerpt": "Hey everyone. Does anyone know how to (using the Formula column) Search for a specific word in a single cell and get the number of times this word is present?",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1525,
+  "posts": [
+    {
+      "id": 106576,
+      "postNumber": 1,
+      "createdAt": "2022-12-07T14:26:55.142Z",
+      "author": "Tomas (Tomas Iglesias)",
+      "cookedHtml": "<p>Hey everyone. Does anyone know how to (using the Formula column) Search for a specific word in a single cell and get the number of times this word is present?</p>"
+    },
+    {
+      "id": 106732,
+      "postNumber": 2,
+      "createdAt": "2022-12-08T14:50:29.944Z",
+      "author": "UMW (Gilles Cavin)",
+      "cookedHtml": "<p>I haven’t tested at length but here is how I would do it.</p>\n<p>Let’s say you want to check how many times a character appears in a text: you would do it by comparing the length of the text with the length of the same text after you remove the character.</p>\n<p>This would translate into this for letter A:<br />\nLEN({Text})-LEN(SUBSTITUTE({Text},“A”,“”))</p>\n<p>Now for a word, you would do the same divided by the length of the word:<br />\n(LEN({Text})-LEN(SUBSTITUTE({Text},“Word”,“”)))/LEN(“Word”)</p>\n<p>Bear in mind that SUBSTITUTE is case-sensitive. So in the first formula we get the number of occurrences of A not a. If you want to count the number of occurrences of both, you’d need to replace {Text} by UPPER({Text}), i.e. to convert first the text to uppercase.</p>\n<p>We are not done though because after testing, I found this issue:</p>\n<p>Let’s say the text is “my boss is my friend” and you’re looking for the number of occurrences of “my”<br />\nTotal Length: 20</p>\n<p>You would think that the length after removing the 2 “my” is 16, but that’s not the case because Monday removes leading and trailing spaces. So the resulting text is not \" boss is  friend\" but “boss is  friend”. Monday removed the first space. Length is 15, not 16.</p>\n<p>The workaround is to add a character before and after the text, like a quote, so that there is never a leading or trailing space. So we need to replace {Text} by CONCATENATE(“'”,{Text},“'”).</p>\n<p>This is the case-sensitive version:<br />\n(LEN(CONCATENATE(“'”,{Text},“'”))-LEN(SUBSTITUTE(CONCATENATE(“'”,{Text},“'”),“Word”,“”)))/LEN(“Word”)</p>\n<p>This is the case-insensitive version (need to make sure you convert the searched word to uppercase):<br />\n(LEN(CONCATENATE(“'”,{Text},“'”))-LEN(SUBSTITUTE(UPPER(CONCATENATE(“'”,{Text},“'”)),“WORD”,“”)))/LEN(“WORD”)</p>"
+    },
+    {
+      "id": 106740,
+      "postNumber": 3,
+      "createdAt": "2022-12-08T15:21:27.487Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/tomas\">@Tomas</a> - you can use the following formula to count the occurrence of a word in a text column:</p>\n<p>(LEN({String})-LEN(SUBSTITUTE({String},{Look For},“”)))/LEN({Look For})</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5786d98605a9058ba6cba68e444e56a208c96fe8.png\" alt=\"image\" width=\"483\" height=\"143\" /></p>\n<p>Hope this helps!<br />\nMark</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/2/2051432843e19c0174dcfdf2232daa2e509e0632.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://www.greenllamas.com\" target=\"_blank\" rel=\"noopener\">Green Llamas</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://www.greenllamas.com\" target=\"_blank\" rel=\"noopener\">monday.com + Green Llamas</a></h3>\n\n  <p>Green Llamas is here to help you make all your People and Projects Green.  Let us get your herds under control using the monday.com platform.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 106887,
+      "postNumber": 4,
+      "createdAt": "2022-12-09T13:05:56.925Z",
+      "author": "Tomas (Tomas Iglesias)",
+      "cookedHtml": "<p>Thank you!!! Exactly what I needed! In fact, I’ve also got some help from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> and I was provided a very similar solution:</p>\n<p>DIVIDE(MINUS(LEN({String}), LEN(SUBSTITUTE({String},“monday”,“”))),LEN(“monday”))</p>"
+    },
+    {
+      "id": 106888,
+      "postNumber": 5,
+      "createdAt": "2022-12-09T13:07:17.957Z",
+      "author": "Tomas (Tomas Iglesias)",
+      "cookedHtml": "<p>Thank you Gilles!!</p>\n<p>I’ve went with the other solution on this post as is simpler and fixed my problem! But thank you again!</p>"
+    },
+    {
+      "id": 160405,
+      "postNumber": 6,
+      "createdAt": "2024-01-05T11:12:22.152Z",
+      "author": "nealb (Neal Bailey)",
+      "cookedHtml": "<p>thanks for that, helped me allot today</p>"
+    }
+  ]
+}

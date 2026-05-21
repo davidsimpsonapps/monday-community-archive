@@ -1,0 +1,177 @@
+{
+  "id": 1890,
+  "title": "How to validate a Monday.com Webhook in PHP",
+  "slug": "how-to-validate-a-monday-com-webhook-in-php",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2019-08-26T23:32:51.422Z",
+  "lastPostedAt": "2021-02-25T12:23:14.653Z",
+  "postsCount": 23,
+  "excerpt": "Is there any one here that can display a PHP script example to validate a monday.com webhook and make it work. \nI am stuck at sending the response back to the http post request to validate the webhook url.",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 11169,
+  "posts": [
+    {
+      "id": 4976,
+      "postNumber": 1,
+      "createdAt": "2019-08-26T23:32:51.512Z",
+      "author": "renow (Frank R.)",
+      "cookedHtml": "<p>Is there any one here that can display a PHP script example to validate a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> webhook and make it work.</p>\n<p>I am stuck at sending the response back to the http post request to validate the webhook url.</p>"
+    },
+    {
+      "id": 6239,
+      "postNumber": 2,
+      "createdAt": "2019-09-20T17:36:50.866Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Frank!</p>\n<p>Dipro here – what have you got so far? I don’t have a PHP example for this, but would a Node.js example help you understand the logic?</p>\n<p>Cheers,<br />\nDipro</p>"
+    },
+    {
+      "id": 10206,
+      "postNumber": 3,
+      "createdAt": "2020-01-13T10:24:25.455Z",
+      "author": "primetheus (Jared Murrell)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> That would certainly help me…</p>"
+    },
+    {
+      "id": 12624,
+      "postNumber": 4,
+      "createdAt": "2020-02-22T14:45:00.359Z",
+      "author": "renow (Frank R.)",
+      "cookedHtml": "<p>Yes I would like to see the Node.js example</p>"
+    },
+    {
+      "id": 13308,
+      "postNumber": 5,
+      "createdAt": "2020-03-04T23:57:05.267Z",
+      "author": "robzinn (Rob Zinn)",
+      "cookedHtml": "<p>Seriously… The documentation of this feature is horrible. The guide even has major grammatical mistakes which is just lazy.  I guess this feature is not that important to the dev team? It’s up to us to figure out how to integrate? rude!</p>\n<p>Too bad because <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> Webhooks would basically eliminate the barriers many developers face in beating their  workflows into the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> box.</p>\n<p>I have no idea about Node.js but below is how far I’ve gotten with PHP… still working on how to actually validate the “challenge” JSON.</p>\n<p><strong>context:</strong></p>\n<ul>\n<li>I have a file called <strong>webhooks_processor.php</strong> on our company website.</li>\n<li>that file logs POST requests to an error file called “webhook.log” that is also on our server so I can see what the heck <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> webhooks are sending.</li>\n<li>not to overstate the obvious (because it was not to me at first) but at the Board &gt; Integrations &gt; webhooks &gt; “When a column changes, send a webhook” &gt; WebhookURL Prompt, I am entering the url of my <strong>webhooks_processor.php</strong> file.</li>\n</ul>\n<p><strong>code:</strong></p>\n<p>So far, all I can get is boolean return of “TRUE” out of this. However, I have no idea if I am a accurately directing the validation response because its not mentioned in the webhook documentation! Now I’m sending it to: <code>https://api.monday.com/v2/</code> but I don’t know. This is not really an API feature.</p>\n<pre><code>&lt;?php\n\n// set a timestamp for tracking events in the log file\n$now = date(\"Y.m.d @ G:i\");\n\n//capture the monday.com webhook challenge as a php object\n$challenge_received = json_decode($GLOBALS['HTTP_RAW_POST_DATA'])-&gt;challenge;\n\n// write the challenge to a log file for debugging\nerror_log(\"$now: JSON challenge: $challenge_received\\n\", 3, \"webhook.log\");\n\n// prepare JSON response\n$challenge_response = json_encode($challenge_received);\n\n// initiate cURL\n$ch = curl_init(\"https://api.monday.com/v2/\");\ncurl_setopt($ch, CURLOPT_POST, 1);\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $challenge_response);\ncurl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));\n\n// execute the request\n$result = curl_exec($ch);\n\n// execute the request\n$result = curl_exec($ch);\n\n// inspect result\nif ($result === FALSE) {\n    error_log(\"$now: the result object returned FALSE\\n\", 3, \"webhook.log\");\n} else {\n    error_log(\"$now: response to challenge validation attempt: $result\\n\", 3, \"webhook.log\");\n}\n?&gt;\n</code></pre>\n<p>I hope this helps and we can move this forward somehow.</p>"
+    },
+    {
+      "id": 13358,
+      "postNumber": 6,
+      "createdAt": "2020-03-05T14:48:59.429Z",
+      "author": "darren (Darren Wiebe)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/robzinn\">@robzinn</a>, here’s my PHP code to authorize it.</p>\n<pre><code>if ($request-&gt;has('challenge')) {\n     return response()-&gt;json(['challenge' =&gt; $request-&gt;input('challenge')]);\n} \n</code></pre>\n<p>This example is part of a Laravel app but you should be returning the json_encoded challenge as a reply to the POST.</p>"
+    },
+    {
+      "id": 13486,
+      "postNumber": 7,
+      "createdAt": "2020-03-07T00:53:08.841Z",
+      "author": "robzinn (Rob Zinn)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/darren\">@darren</a>. I have no idea what Laravel is but could you share or direct me to more of the code from your example? I can capture the challenge and send it back but to where!? sending it to</p>\n<pre><code>$ch = curl_init(\"https://api.monday.com/v2/\");\n</code></pre>\n<p>was just a hunch based on the API documentation and must be wrong.</p>\n<p>I’ve tried sending it to</p>\n<pre><code>$_SERVER['REMOTE_ADDR']\n</code></pre>\n<p>Which is the only header I could find coming in from the webhook that might be a remote address, but it was an IP address, not a URL.</p>\n<p>Perhaps I am missing something… can you just call “respond” to a POST somehow  in PHP and send back a response without knowing the actual address?</p>"
+    },
+    {
+      "id": 13490,
+      "postNumber": 8,
+      "createdAt": "2020-03-07T09:26:08.663Z",
+      "author": "robzinn (Rob Zinn)",
+      "cookedHtml": "<p>Update: Now seeing this error in the JS console:</p>\n<p><em>Access to XMLHttpRequest at ‘<a href=\"https://api-gw.monday.com/automations/automations\" rel=\"noopener nofollow ugc\">https://api-gw.monday.com/automations/automations</a>’ from origin ‘<a href=\"https://mymnodayspace.monday.com\" rel=\"noopener nofollow ugc\">https://mymnodayspace.monday.com</a>’ has been blocked by CORS policy: No ‘Access-Control-Allow-Origin’ header is present on the requested resource.</em></p>\n<p>I think this means <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> servers are not setup for CORS correctly as both requests are on the same domain.</p>"
+    },
+    {
+      "id": 13491,
+      "postNumber": 9,
+      "createdAt": "2020-03-07T10:05:20.000Z",
+      "author": "renow (Frank R.)",
+      "cookedHtml": "<p>I finally figured it out. The documentation could have been better explained<br />\nbecause it’s quite simple if you explained it better. Below is the simple code I figured out</p>\n<p>after trying to send back to a url. It is a simple echo to send back the challenge.</p>\n&lt;?php\n\n//grab the challenge sent by Monday.com\n\n\n$challenge = file_get_contents('php://input');\n\n\n//echo back the challenge\n\n\necho $challenge;\n\n?&gt;"
+    },
+    {
+      "id": 13492,
+      "postNumber": 10,
+      "createdAt": "2020-03-07T10:26:46.242Z",
+      "author": "robzinn (Rob Zinn)",
+      "cookedHtml": "<p>OMG seriously! Thank you so much <a class=\"mention\" href=\"/u/renow\">@renow</a>! If only I had the last 3 days back! <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=9\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" /></p>\n<p>Great, I will keep working and post any additional insights.</p>"
+    },
+    {
+      "id": 13573,
+      "postNumber": 11,
+      "createdAt": "2020-03-09T10:22:35.857Z",
+      "author": "mru (Mike)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/renow\">@renow</a> thank you for posting this! Is there anything else that needs to be included? I tried:</p>\n<pre><code>&lt;?php\n$challenge = file_get_contents('php://input'); \necho $challenge; \n?&gt;\n</code></pre>\n<p>but I get a failed to communicate with URL error. Does it need to be encoded?</p>"
+    },
+    {
+      "id": 13633,
+      "postNumber": 12,
+      "createdAt": "2020-03-09T19:07:26.405Z",
+      "author": "darren (Darren Wiebe)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mru\">@mru</a> if Monday sends 1234 as the challenge then you need to return this:</p>\n<p>{“challenge”:“1234”}</p>"
+    },
+    {
+      "id": 13678,
+      "postNumber": 13,
+      "createdAt": "2020-03-10T09:43:59.852Z",
+      "author": "mru (Mike)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/darren\">@darren</a> thank you for the response. I understand that I need to return the challenge but for some reason it keeps getting denied when I try to link the integration. I have it formatted exactly how you have it and I’ve verified that I am getting a challenge.</p>"
+    },
+    {
+      "id": 13694,
+      "postNumber": 14,
+      "createdAt": "2020-03-10T11:50:38.508Z",
+      "author": "renow (Frank R.)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mru\">@mru</a> are you using a secure url?  It has to be a “<a href=\"https://example.com\" rel=\"noopener nofollow ugc\">https://example.com</a>”  url.</p>"
+    },
+    {
+      "id": 13699,
+      "postNumber": 15,
+      "createdAt": "2020-03-10T12:55:48.358Z",
+      "author": "darren (Darren Wiebe)",
+      "cookedHtml": "<p>If <a class=\"mention\" href=\"/u/mru\">@mru</a> is seeing the webhook hitting his system then I’d guess he must be using a secure url.  <a class=\"mention\" href=\"/u/mru\">@mru</a> are you returning it with Content-Type set to application/json?  I don’t know if it’s mandatory but that’s how I’m returning it.</p>"
+    },
+    {
+      "id": 13704,
+      "postNumber": 16,
+      "createdAt": "2020-03-10T13:49:58.347Z",
+      "author": "mru (Mike)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/renow\">@renow</a> yes the server is https. <a class=\"mention\" href=\"/u/darren\">@darren</a> I’ve tried with and without. It should be this shouldn’t it? Sorry PHP isn’t my strong suit.<br />\n<code>header('content-type: application/json');</code><br />\nI’ve been logging the request to verify the format and it is: {“challenge”:“1234”}. I know with GraphQL we have to escape special characters but I’m assuming it isn’t the case here.</p>"
+    },
+    {
+      "id": 13961,
+      "postNumber": 17,
+      "createdAt": "2020-03-12T13:40:58.241Z",
+      "author": "hilaryMatusiak (Hilary Matusiak)",
+      "cookedHtml": "<p>Does anyone have suggestion for node.js I’ve tried everything: exports.handler = event =&gt; {<br />\nconsole.log( {“challenge”: JSON.parse(event.body).challenge});<br />\nconst response = {<br />\nstatusCode: 200,<br />\nbody: JSON.parse(event.body)</p>\n<p>};<br />\nconsole.log(response);<br />\nreturn response;<br />\n};</p>"
+    },
+    {
+      "id": 13971,
+      "postNumber": 18,
+      "createdAt": "2020-03-12T14:54:33.761Z",
+      "author": "hilaryMatusiak (Hilary Matusiak)",
+      "cookedHtml": "<p>Finally got it to work. Below is my index.js file using node.js</p>\n<pre><code class=\"lang-javascript\">exports.handler = async event =&gt; {\n  console.log( {\"challenge\": JSON.parse(event.body).challenge});\n  const response = {\n    statusCode: 200,\n    body: event.body\n    \n  };\n  console.log(response);\n  return response;\n};</code></pre>"
+    },
+    {
+      "id": 15798,
+      "postNumber": 19,
+      "createdAt": "2020-04-13T11:43:45.043Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Spoke to <a class=\"mention\" href=\"/u/mru\">@mru</a> about this issue – looks like rebuilding the challenge as a new JSON object was his solution:</p>\n<pre><code class=\"lang-auto\">&lt;?php\n\n$data = json_decode(file_get_contents('php://input'), true);\n\n$message = [\n\n\"challenge\" =&gt; $data[\"challenge\"]\n\n];\n\nfile_put_contents(\"response1.log\", print_r(json_encode($data), true));\n\nheader('content-type: application/json');\n\necho json_encode($message);\n\n?&gt;\n</code></pre>"
+    },
+    {
+      "id": 22817,
+      "postNumber": 21,
+      "createdAt": "2020-07-16T11:28:44.742Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>Can you explain more,it would be helpful</p>"
+    },
+    {
+      "id": 22836,
+      "postNumber": 22,
+      "createdAt": "2020-07-16T13:49:45.408Z",
+      "author": "hilaryMatusiak (Hilary Matusiak)",
+      "cookedHtml": "<p>So it really depends what you’d like to do from there. But to access the data passed in the webhook    declare a variable like this :<code> const data = JSON.parse(event.body).event</code> This will give you the data being passed in the trigger. To call back to Monday do something like this<br />\n//create and fill request for Monday call<br />\nconst body = {<br />\nquery: <code>    query ($itemId:[Int], $boardId:[Int]){       boards(ids: $boardId) {           items(ids:$itemId){           name           column_values(){               id               title               text             }           }         }     }            </code>,<br />\nvariables: {<br />\nboardId: data.boardId,<br />\nitemId: data.pulseId<br />\n}<br />\n}<br />\nconst responseItem = await axios<br />\n.post(<code>https://api.monday.com/v2</code>, body, {<br />\nheaders: {<br />\nAuthorization:<br />\n‘AUTHORIZATION CODE GOES HERE’<br />\n}<br />\n})<br />\n.catch(err =&gt; {<br />\nconsole.log(err)<br />\n})<br />\n.then(res =&gt; {<br />\nconsole.log(‘response’, res.data.data.boards[0])<br />\nreturn res.data.data.boards[0].items[0]<br />\n})<br />\nWe are using axios to structure the POST call. I hope this helps.</p>"
+    },
+    {
+      "id": 22902,
+      "postNumber": 23,
+      "createdAt": "2020-07-17T01:37:38.840Z",
+      "author": "krishna (kristen)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/hilarymatusiak\">@hilaryMatusiak</a> It helps and makes everything a lot clear. <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=9\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" /></p>"
+    },
+    {
+      "id": 42138,
+      "postNumber": 24,
+      "createdAt": "2021-02-25T12:23:14.653Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

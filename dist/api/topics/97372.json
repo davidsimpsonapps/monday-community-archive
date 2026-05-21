@@ -1,0 +1,32 @@
+{
+  "id": 97372,
+  "title": "Formula to provide new date that avoids weekends",
+  "slug": "formula-to-provide-new-date-that-avoids-weekends",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-09-10T05:22:02.689Z",
+  "lastPostedAt": "2024-10-03T15:47:09.864Z",
+  "postsCount": 2,
+  "excerpt": "Hi all, \nI’ve seen some discussion similar to mine below, but they seem to always refer to dates based on ADDING days rather than SUBTRACTING them. Anyway… \nI have a Date column (“TX Date”) that will always be several mo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 35,
+  "posts": [
+    {
+      "id": 200665,
+      "postNumber": 1,
+      "createdAt": "2024-09-10T05:22:02.750Z",
+      "author": "Pat_H (Patrick Harper)",
+      "cookedHtml": "<p>Hi all,<br />\nI’ve seen some discussion similar to mine below, but they seem to always refer to dates based on ADDING days rather than SUBTRACTING them. Anyway…</p>\n<p>I have a Date column (“<strong>TX Date</strong>”) that will always be several months in the future when it’s filled in.<br />\nA number column (“<strong>Lead Time</strong>”) says how many days before that date we need to start work.<br />\nI then have a formula column (“<strong>Brief Due</strong>”) that provides a new date based on <strong>TX Date</strong> minus the number of days in <strong>Lead Time</strong>.</p>\n<p>My formula works but can sometimes provide a date that lands on a weekend. In these instances, I would like it to move forward to the next working day.</p>\n<p>This can be done manually by adjusting the <strong>Lead Time</strong> value but it would be neater if the formula managed this itself.</p>\n<p>This is my existing formula:<br />\nIF({Lead Time (days)}&lt;1,“Update Lead Time column”,FORMAT_DATE((SUBTRACT_DAYS({TX Date},{Lead Time (days)})), “ddd, MMM D”))</p>\n<p>Any suggestions very welcome - thanks</p>"
+    },
+    {
+      "id": 204325,
+      "postNumber": 2,
+      "createdAt": "2024-10-03T15:47:09.864Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/pat_h\">@Pat_H</a>,</p>\n<p>You used to have the option to use the WORKDAY function, but it doesn’t seem to work anymore.<br />\nIf you don’t want the date to fall on a week-end, you could use:</p>\n<pre><code class=\"lang-auto\">IF(WEEKDAY(SUBTRACT_DAYS({TX Date},{Lead Time}))=7,SUBTRACT_DAYS({TX Date},{Lead Time}+1),IF(WEEKDAY(SUBTRACT_DAYS({TX Date},{Lead Time}))=1,SUBTRACT_DAYS({TX Date},{Lead Time}+2),SUBTRACT_DAYS({TX Date},{Lead Time})))\n</code></pre>\n<p>It checks if the week day of the calculated date is a Saturday (7) or Sunday (1). If a Saturday, it subtract another day, if a Sunday 2 more days.</p>\n<p>Now that only sort of works, because it doesn’t tell you if you passed over a week-end while going backward. If the date falls on a Friday, it means you counted the week-end as 2 working days.</p>\n<p>The real solution is to use the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, a 3rd-party app that reinvents formulas in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>.</p>\n<ul>\n<li>First, it doesn’t use the formula column, but rather casts its results to regular column. In this case, you would create a date column instead of your formula column.</li>\n<li>Then AFB allows you to define your work week and enter company holidays in the app settings.</li>\n<li>Once this is done, you simply use the ADDWORKINGDAYS function like this:</li>\n</ul>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/1/d19afdfd0e00f4c2eca8828ce36eeca33eeeb912.jpeg\" alt=\"2024-10-03_13-43-10\" width=\"577\" height=\"92\" /></p>"
+    }
+  ]
+}

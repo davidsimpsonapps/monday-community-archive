@@ -1,0 +1,46 @@
+{
+  "id": 74470,
+  "title": "Counting hours if the column is not empty",
+  "slug": "counting-hours-if-the-column-is-not-empty",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-01-08T12:14:00.481Z",
+  "lastPostedAt": "2024-01-11T11:59:33.887Z",
+  "postsCount": 4,
+  "excerpt": "Hello, trying to count the number of hours from two hours columns, but i like to have a “0” (or a blank) if the colmns are not completed. \nIF({Heure debut} = &quot;&quot;, 0,\n(LEFT(HOURS_DIFF({Heure fin}, {Heure debut}), 2) +\n   R&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 444,
+  "posts": [
+    {
+      "id": 160791,
+      "postNumber": 1,
+      "createdAt": "2024-01-08T12:14:00.566Z",
+      "author": "Joachim (Dessus)",
+      "cookedHtml": "<p>Hello, trying to count the number of hours from two hours columns, but i like to have a “0” (or a blank) if the colmns are not completed.</p>\n<pre><code class=\"lang-auto\">IF({Heure debut} = \"\", 0,\n(LEFT(HOURS_DIFF({Heure fin}, {Heure debut}), 2) +\n   RIGHT(HOURS_DIFF({Heure fin}, {Heure debut}), 2) / 60)\n   )\n</code></pre>\n<p>But it doesn’t work with columns without any hours. see printscreen below<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/8/98daf7dce826084f7970f95fdc8b92aa8a09259f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/9/8/98daf7dce826084f7970f95fdc8b92aa8a09259f_2_690x314.png\" alt=\"image\" width=\"690\" height=\"314\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1274×581 50.5 KB</span></div></a></div><p></p>\n<p>I have tryed :<br />\nIF({Heure debut} = 0, 0,…<br />\nIF({Heure debut} = \" \", 0,…</p>\n<p>Any idea how to solve this?<br />\nThanks</p>"
+    },
+    {
+      "id": 161125,
+      "postNumber": 2,
+      "createdAt": "2024-01-09T19:24:55.233Z",
+      "author": "CharlotteK (Charlotte Kirkham)",
+      "cookedHtml": "<p>Hey there!</p>\n<p>After playing around with it in my own board, it looks like the reason this is happening is because the formula is trying to divide the 0, which will always return an error. The blank cell is considered equal to 0 so that’s why it is trying to divide the 0 in those empty cells.</p>\n<p>Does this help clarify why you might be running into this?</p>"
+    },
+    {
+      "id": 161185,
+      "postNumber": 3,
+      "createdAt": "2024-01-10T00:16:45.277Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Joachim,</p>\n<p>The problem is that HOURS_DIFF({Heure fin}, {Heure debut}) returns an empty string when there is no data in one of the columns.</p>\n<p>Then when you try to extract either the 2 characters on the left or on the right of this empty string… the formula column throws an error.</p>\n<p>You’ll need to use if statements to cater for this scenario.</p>\n<p>Try:</p>\n<pre><code class=\"lang-auto\">IF(HOURS_DIFF({Heure fin}, {Heure debut})=\"\",0,LEFT(HOURS_DIFF({Heure fin}, {Heure debut}),2)) + IF(HOURS_DIFF({Heure fin}, {Heure debut})=\"\",0,RIGHT(HOURS_DIFF({Heure fin}, {Heure debut}),2))/60\n</code></pre>\n<hr />\n<p><em>Looking for a simpler way to write complex formulas? Check out the <a href=\"https://mdboosters.com/\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>. It’s a convenient third-party app that simplifies formula writing. With it, you can spread your formulas across several lines, utilize variables, and access dozens of functions not found in the standard formula column.</em></p>"
+    },
+    {
+      "id": 161569,
+      "postNumber": 4,
+      "createdAt": "2024-01-11T11:59:33.887Z",
+      "author": "Joachim (Dessus)",
+      "cookedHtml": "<p>Thanks a lot to both of you. You made my day!</p>"
+    }
+  ]
+}

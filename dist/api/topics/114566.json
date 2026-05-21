@@ -1,0 +1,49 @@
+{
+  "id": 114566,
+  "title": "Mapps deployment fail",
+  "slug": "mapps-deployment-fail",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    208,
+    351,
+    355
+  ],
+  "createdAt": "2025-05-14T13:12:11.611Z",
+  "lastPostedAt": "2025-05-25T11:59:54.176Z",
+  "postsCount": 4,
+  "excerpt": "My mapps deployment fails as soon as I import the client from the aws-sdk dependency I have in my integration. \nIt throws a heap out of memory error. \nSee attached images \n  \n \n \n \nAnybody know how to fix this please?",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 26,
+  "posts": [
+    {
+      "id": 229430,
+      "postNumber": 1,
+      "createdAt": "2025-05-14T13:12:11.694Z",
+      "author": "tufvessonr (rhys tufvesson)",
+      "cookedHtml": "<p>My mapps deployment fails as soon as I import the client from the aws-sdk dependency I have in my integration.</p>\n<p>It throws a heap out of memory error.<br />\nSee attached images</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/2/c239d84b0007a88c2edf9419f63d3e5bbe82e43a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/2/c239d84b0007a88c2edf9419f63d3e5bbe82e43a.png\" alt=\"image\" width=\"400\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">476×594 21.1 KB</span></div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/0/c04e3526befaffcf796adbe92db9d8af3af15c2b.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/0/c04e3526befaffcf796adbe92db9d8af3af15c2b.png\" alt=\"image\" width=\"690\" height=\"269\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">696×272 14.9 KB</span></div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/6/5651c663d758869d8281bf9ac1a850cfc2593be3.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/5/6/5651c663d758869d8281bf9ac1a850cfc2593be3.png\" alt=\"image\" width=\"690\" height=\"190\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1061×293 24 KB</span></div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/7/a76e2d22ef851f363ab188433eb26481018f239e.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/7/a76e2d22ef851f363ab188433eb26481018f239e_2_690x384.png\" alt=\"image\" width=\"690\" height=\"384\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1143×637 141 KB</span></div></a></div><p></p>\n<p>Anybody know how to fix this please?</p>"
+    },
+    {
+      "id": 229560,
+      "postNumber": 2,
+      "createdAt": "2025-05-15T07:36:19.986Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>I don’t know what you’re trying to do, but it seems unusual to be connecting to an AWS-hosted document DB from monday-code running on GCP.</p>\n<p>Looking at the code though you can’t be using <code>process.env</code> on monday-code. Only locally.</p>\n<p>In this code snippet –</p>\n<pre><code class=\"lang-auto\">import AWS from 'aws-sdk';\n\nAWS.config.update({\n\tregion: 'eu-west-2', // your region\n\taccessKeyId: process.env.AWS_ACCESS_KEY_ID, \n\tsecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,\n});\n\nexport default new AWS.DynamoDB.DocumentClient();\n</code></pre>\n<p>– rather than using <code>process.env</code> to get your variables/secrets, you should using monday-specific code such as:</p>\n<pre><code class=\"lang-auto\">import AWS from 'aws-sdk';\nimport { EnvironmentVariablesManager } from '@mondaycom/apps-sdk';\nimport { SecretsManager } from '@mondaycom/apps-sdk';\n\nconst region = 'eu-west-2';\n\n// get the access key from the environment variable &amp; failback to `process.env` locally\nconst environment = new EnvironmentVariablesManager();\nconst accessKeyId = environment.get('AWS_ACCESS_KEY_ID') ?? process.env.AWS_ACCESS_KEY_ID;\n\n// get the secret from the secret store &amp; failback to `process.env `locally\nconst secretsManager = new SecretsManager();\nconst secretAccessKey = secretsManager.get('AWS_SECRET_ACCESS_KEY') ?? process.env.AWS_SECRET_ACCESS_KEY;\n\nAWS.config.update({ region, accessKeyId, secretAccessKey });\n\nexport default new AWS.DynamoDB.DocumentClient();\n</code></pre>\n<p>This will allow you to configure the environment variables and secrets within the developer center for the app.</p>\n<p>I have no idea if this will fix the deploy problems though.</p>"
+    },
+    {
+      "id": 230094,
+      "postNumber": 3,
+      "createdAt": "2025-05-21T12:42:41.595Z",
+      "author": "tufvessonr (rhys tufvesson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a><br />\nThanks for the response, but that’s not the issue.<br />\nI’ve been using process.env in my integration prior to the error for months.<br />\nThe same goes for environment variables and secrets from the developer center.</p>\n<p>But just to verify I used your suggestion utilizing <span class=\"mention\">@mondaycom</span>/apps-sdk.<br />\nIt still spits out the same error.</p>\n<p>However using cross-env and increasing the allowed heap size removed the error:</p>\n<pre><code class=\"lang-auto\">  \"scripts\": {\n    \"start\": \"cross-env NODE_OPTIONS=--max-old-space-size=4096 ts-node ./src/app.ts\",\n  },\n</code></pre>\n<p>Now it throws the following error:</p>\n<pre><code class=\"lang-auto\">In order for the deployment to be successful, the container should be up and listen on port 8302.\n</code></pre>"
+    },
+    {
+      "id": 230427,
+      "postNumber": 4,
+      "createdAt": "2025-05-25T11:59:54.176Z",
+      "author": "tufvessonr (rhys tufvesson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nI posted this question 2 weeks ago.</p>\n<p>Can you please help explain what is needed to get it working properly?</p>\n<p>Setting my port to the internal 59999 Monday.Code uses, removes the error and allows the deploy.<br />\nBut the deploy doesn’t actually work.</p>\n<p>This can be seen by attempting to access one of it’s unprotected endpoints after a deploy.<br />\nWhich in browser doesn’t display what it should when visited.</p>"
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "id": 75409,
+  "title": "Creating Relevant Subitem Timelines driven by the Parent Item",
+  "slug": "creating-relevant-subitem-timelines-driven-by-the-parent-item",
+  "categoryId": 6,
+  "tagIds": [
+    104,
+    123,
+    187
+  ],
+  "createdAt": "2024-01-17T15:03:17.323Z",
+  "lastPostedAt": "2024-06-17T11:32:38.785Z",
+  "postsCount": 20,
+  "excerpt": "We are seeking to create a Project Gantt Chart w/ (2) Levels:  Deliverables &amp; Tasks. \nTasks live under deliverables.  Deliverables are dependent on other deliverables.  Tasks are dependent on other tasks. \nWe have used t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 9,
+  "views": 2043,
+  "posts": [
+    {
+      "id": 162651,
+      "postNumber": 1,
+      "createdAt": "2024-01-17T15:03:17.416Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>We are seeking to create a Project Gantt Chart w/ (2) Levels:  Deliverables &amp; Tasks.</p>\n<p>Tasks live under deliverables.  Deliverables are dependent on other deliverables.  Tasks are dependent on other tasks.</p>\n<p>We have used the mirror Timeline to show the Task Timeline in the Deliverable Item already.  The duration of the Deliverable is determined by the duration of the Tasks underneath it.</p>\n<p>The first task of a Deliverable should not be allowed to start until the Parent Deliverable’s Dependents have been completed / their timeline has passed.</p>\n<p>An example:</p>\n<p>D1 (d1-d5 from Tasks)<br />\nT1.1 (d1-d2)<br />\nT1.2 (d3-d5) Dependent on T1.1</p>\n<p>D2 (d6-d10 from Tasks) Dependent on D1<br />\nT2.1 (d6-d7)<br />\nT2.2 (d8-d10) Dependent on T2.1</p>\n<p>This has not worked.  T2.1 tries to start on (d1)  The minimum start date of the tasks is not controlled by the minimum start date of the parent and the mirror columns don’t recognize themselves as drivable.</p>\n<p>Suggestions?</p>"
+    },
+    {
+      "id": 162668,
+      "postNumber": 2,
+      "createdAt": "2024-01-17T16:46:42.491Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> this one is right up your alley I think. Seems to be as simple as the earliest subitem must pull its start date from the parents start date, and the parents end date is set by the last subitem end date. Any thoughts?</p>"
+    },
+    {
+      "id": 162693,
+      "postNumber": 3,
+      "createdAt": "2024-01-17T18:29:38.971Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>not as easy as you might think. The challenge is knowing what the <em>first</em> subitem is and what the <em>last</em>. Closest I can think of is SchedulerPro from WorkPerfect. Support items and subitems, but not sure if subitems can be made dependent on parent item.</p>"
+    },
+    {
+      "id": 162695,
+      "postNumber": 4,
+      "createdAt": "2024-01-17T18:44:45.866Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>I can identify what the “first” is by identifying any subitem without a predecessor.</p>\n<p>The last is whichever has the last / max end date.  I’ve written the logic before for other software, its figuring out how to make Monday behave.</p>\n<p>I have written some conditionals into Monday to define these things via their formulas but then I can’t access the “Finish” date of the Deliverable predecessor, only the text of the name of the dependent, not an actual object.</p>\n<p>If SchedulerPro allows this kind of definition I am in because I have a thousand deliverables from several teams and I don’t want to manually link them.</p>\n<p>Didn’t realize this limitations when we did project setup earlier this week.</p>"
+    },
+    {
+      "id": 162706,
+      "postNumber": 5,
+      "createdAt": "2024-01-17T19:35:53.891Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>Reading the SPRO Help it says it does not work for subitems or across boards.</p>\n<p>Any other ideas?</p>"
+    },
+    {
+      "id": 162709,
+      "postNumber": 6,
+      "createdAt": "2024-01-17T19:46:08.561Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Are your dependencies for deliverables across boards as well?</p>"
+    },
+    {
+      "id": 162711,
+      "postNumber": 7,
+      "createdAt": "2024-01-17T20:11:04.901Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>One board for everything (except that subitems are a different “hidden” board)</p>"
+    },
+    {
+      "id": 162712,
+      "postNumber": 8,
+      "createdAt": "2024-01-17T20:19:38.280Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yeah the dependency issue is because dependencies only work within the same board. So it is the same root cause. The only clean solution involves automations that will respond to a change in the timelines of items, and update the deliverable end date based on the last task, and the first task based on the deliverable start date. You’re definitely getting into custom programming work here. Unfortunately dependencies also seem to restrict themselves. The problem with automations is if you’re changing fast things can get out of sync.</p>\n<p>However you can possibly manually work around it by making your tasks dependent on tasks of other deliverables - but this is brittle if you change task orders or add/remove tasks.</p>\n<p>Then you’d just need to set your deliverable dependency to no action, and then roll-up the subitem timelines to the parent (<a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> does Rollup Subitems handle that part?).</p>\n<p>Since the deliverable timeline is driven by the task timelines, which is the real dependency - the deliverable dependency would be “for show” to just appear on the gantt chart.</p>\n<p>Then if you edit tasks on other deliverables they will impact downstream tasks regardless of the deliverable.</p>"
+    },
+    {
+      "id": 162716,
+      "postNumber": 9,
+      "createdAt": "2024-01-17T20:52:01.161Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>Thanks, I’ve found a way to use RollUp Subitems to get myself 90% of the way there.</p>\n<p>I can now make sure the parent sometimes inherits the child timelines.</p>\n<p>Now I just need a tool / automation to make sure a Child does not start BEFORE the start of its parent and it will work (as well as Monday will allow)</p>"
+    },
+    {
+      "id": 162722,
+      "postNumber": 10,
+      "createdAt": "2024-01-17T21:07:31.000Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>This is where making the first child dependent on the last child of the item the parent depends on comes in. You can cross parents with dependencies of subitems.</p>\n<p>So when the last child of the preceding parent changes, it affects the first child of the item. Then those changes roll up to their parents.</p>"
+    },
+    {
+      "id": 162724,
+      "postNumber": 11,
+      "createdAt": "2024-01-17T21:28:50.843Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>Yeah, could do that, but 1)  I shouldn’t have to.  This is basic project management and 2) that is thousands of items and Mondays dependent search field has a horrible habit of glitching out making that a nightmare and 3) that is adding extra dependency lines into the gantt creating confusion.</p>\n<p>If I have to do this all manually I will spend 10 hrs doing that, but what I’m seeing is that Monday is just not designed to handle basic tasks <img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=12\" title=\":confused:\" class=\"emoji\" alt=\":confused:\" width=\"20\" height=\"20\" /></p>\n<p>I can generate the initial schedule by turning on the RollUp Subitems automation, to adjust the parent timeline.</p>\n<p>Then I can turn that off and use the SubItem Automation to adjust subitem start dates based on adjusted parent timeline and turn on flexible dependencies which moves it out…</p>\n<p>But then I can’t do anything going forward as the system is locked and nothing will drive the child items.</p>\n<p>I need to control the start date of children to simply not start before the parent.  Parent moves out, children move out.  Parent moves back, children move back.  Children stretch longer, parent stretches longer.</p>"
+    },
+    {
+      "id": 162729,
+      "postNumber": 12,
+      "createdAt": "2024-01-17T21:54:32.116Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>Because its fun…</p>\n<p>You can manage this in a grossly convoluted manner for pushing things later but not pulling them back.</p>\n<p>ON: Parent from Child<br />\nDependency: None<br />\nOff:  Adjust child by parent</p>\n<p>Adjust the Children</p>\n<p>OFF: Parent from child<br />\nON: Adjust Child by Parent<br />\nDependency Flexible</p>\n<p>This allows the driving item to shift and adjust its own parent.  Then you control the order of Monday operations and drive the dependents out and then adjust the dependents children</p>"
+    },
+    {
+      "id": 162817,
+      "postNumber": 13,
+      "createdAt": "2024-01-18T09:13:20.155Z",
+      "author": "Fantasy-Media-Team (Fantasy Media Team)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/nickgiglio\">@NickGiglio</a>,</p>\n<p>Daniel from Subitem Automations here. Just to make sure I follow - You basically want to set up the original due dates on creation and from that point on to have them move together whenever you make a change in the item (deliverables) is that correct?</p>\n<p>If that’s the case you can set up your deliverables by hand, make sure that if the parent item change, you make the same changes in the subitems using this → <br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/5/f5db9e2891f29b240f20b29179d155b704931ed0.png\" title=\"Screenshot 2024-01-18 at 13.09.39\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/5/f5db9e2891f29b240f20b29179d155b704931ed0_2_690x160.png\" alt=\"Screenshot 2024-01-18 at 13.09.39\" width=\"690\" height=\"160\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-01-18 at 13.09.39</span><span class=\"informations\">1990×464 25.7 KB</span></div></a></div><p></p>\n<p>and rollup the changes to the parent item using this → <br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/a/fa2b0095afe06475ce7a6af39774d1b950590146.png\" title=\"Screenshot 2024-01-18 at 13.10.58\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/a/fa2b0095afe06475ce7a6af39774d1b950590146_2_690x155.png\" alt=\"Screenshot 2024-01-18 at 13.10.58\" width=\"690\" height=\"155\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-01-18 at 13.10.58</span><span class=\"informations\">2320×522 32.1 KB</span></div></a></div><p></p>\n<p>The only manual work you need to do is to define the initial setup on creation, which can be a bummer. If I’m thinking how to automate this process, if the subitem always have the same name you can use this to define the default values → <br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/8/0819bde29a5551b6fad3b52a7718de1753e3a318.png\" title=\"Screenshot 2024-01-18 at 13.12.42\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/8/0819bde29a5551b6fad3b52a7718de1753e3a318_2_690x113.png\" alt=\"Screenshot 2024-01-18 at 13.12.42\" width=\"690\" height=\"113\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-01-18 at 13.12.42</span><span class=\"informations\">2118×348 36.7 KB</span></div></a></div><p></p>\n<p>We’re also working on a new version now so we might incorporate some more advanced dependency stuff. How would you imagine the perfect solution?</p>"
+    },
+    {
+      "id": 162856,
+      "postNumber": 14,
+      "createdAt": "2024-01-18T12:27:34.697Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>Simply put, a task has subtasks underneath it and the task is dependent on other tasks which drive the tasks start date.</p>\n<p>A subtask may not begin before the beginning of its parent task.  A parent should end when its last subtask ends</p>\n<p>The issue above is that it creates a loop as it isnt confined to pushing the start down and the end up…</p>\n<p>We tried something similar yesterday, if you increase the duration of a subtask because it took too long, the parent increases per automation (2).  Then automation (1) occurs extending the duration of the subtasks, which kicks off (2) again.</p>\n<p>Here is the flow of how this should typically work.  Would work the same way if a subtask shortened in duration.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/2/327dff17723663100bc280282bf152cbe90e853c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/3/2/327dff17723663100bc280282bf152cbe90e853c.png\" alt=\"image\" width=\"690\" height=\"263\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">868×331 5.91 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/f/ff74afab4fb2006c7969cfc51d36601d9e7121f8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/f/f/ff74afab4fb2006c7969cfc51d36601d9e7121f8.png\" alt=\"image\" width=\"690\" height=\"263\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">868×331 5.51 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/a/ca714cc37f36e5b5e8d24e008a20e25b2200a8a2.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/a/ca714cc37f36e5b5e8d24e008a20e25b2200a8a2_2_690x263.png\" alt=\"image\" width=\"690\" height=\"263\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">868×331 13.2 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/6/96eb546d3a552e6f7386e8d344e7f4fde5db4cf1.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/9/6/96eb546d3a552e6f7386e8d344e7f4fde5db4cf1_2_690x263.png\" alt=\"image\" width=\"690\" height=\"263\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">868×331 34.9 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/d/0dd319788811c15b3cae310ae4086441568d3bc1.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/0/d/0dd319788811c15b3cae310ae4086441568d3bc1.png\" alt=\"image\" width=\"690\" height=\"263\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">868×331 5.57 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/c/dc4134e20641a81ac614f06fe5cd1a85dc8c9232.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/c/dc4134e20641a81ac614f06fe5cd1a85dc8c9232_2_690x263.png\" alt=\"image\" width=\"690\" height=\"263\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">868×331 32.2 KB</span></div></a></div><p></p>\n<p>If a task has subtasks, the duration of the task should always be driven by its subtasks (that’s the purpose of subtasks in scheduling).  A child, by definition should not be allowed to start before the parent is capable of starting.  If the parent has dependencies, those dictate the start of the children as well.  When the children are completed, the parent is completed as well.</p>\n<p>Does this workflow make sense?</p>"
+    },
+    {
+      "id": 162857,
+      "postNumber": 15,
+      "createdAt": "2024-01-18T12:48:15.376Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<p>This is how all other systems manage this and is, as noted, basic project management definitions.</p>\n<p>The purpose of a sub-task is that you break down a task into more manageable chunks however the subtasks should encompass all work for a task.  They aren’t a checklist of things to do, they are the body of work.</p>\n<p>From an order of operations perspective, parent duration is always over-ridden by the sum of child durations.</p>\n<p>Children can be dependent on other children and their start is driven by the end of their dependents &amp; start of their parent (whichever is last.  The parent should have dependents controlling its start date already).</p>\n<p>The Parent should have its duration controlled by its children once it has children.</p>\n<p>You must split and separately calculate the start date, end date, and durations…  Calculate start date, hold duration, calculate end date…</p>"
+    },
+    {
+      "id": 162863,
+      "postNumber": 16,
+      "createdAt": "2024-01-18T13:07:02.594Z",
+      "author": "Fantasy-Media-Team (Fantasy Media Team)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/nickgiglio\">@NickGiglio</a> we’re now working on a new version and we’ll add the ability to make sure a subitem doesn’t start before its parent item or connect item date.</p>\n<p>Will probably be out next week.</p>"
+    },
+    {
+      "id": 162864,
+      "postNumber": 17,
+      "createdAt": "2024-01-18T13:09:42.384Z",
+      "author": "NickGiglio (Nick Giglio)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/f/73ab20/48.png\" class=\"avatar\" /> Fantasy Media Team:</div>\n<blockquote>\n<p>version and we’ll add the ability to make sure a subitem doesn’t start before its parent item or connect item</p>\n</blockquote>\n</aside>\n<p>Great, what about in the converse such that a parent ends when its children are completed?</p>"
+    },
+    {
+      "id": 163214,
+      "postNumber": 18,
+      "createdAt": "2024-01-21T06:21:23.840Z",
+      "author": "Fantasy-Media-Team (Fantasy Media Team)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/nickgiglio\">@NickGiglio</a> -</p>\n<p>Would be great if you could shoot me an email to <a href=\"mailto:daniel@fantasymedia.io\">daniel@fantasymedia.io</a>, would make the conversation much faster <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>When you say parent ends - That would be a date column? Timeline column? If I understand correctly you want the date of the item to be determined based on last date of its subitems. Is that correct?</p>"
+    },
+    {
+      "id": 185968,
+      "postNumber": 19,
+      "createdAt": "2024-05-27T19:02:03.928Z",
+      "author": "Uday_Jain (Uday)",
+      "cookedHtml": "<p>We’re also interested in this specific solution. Did you come out with a solution?</p>"
+    },
+    {
+      "id": 189129,
+      "postNumber": 20,
+      "createdAt": "2024-06-17T11:32:38.785Z",
+      "author": "Fantasy-Media-Team (Fantasy Media Team)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/uday_jain\">@Uday_Jain</a><br />\nWe worked closely with Nick to introduce this solution for project management.<br />\nWe developed an app called <a href=\"https://monday.com/marketplace/10000287\" rel=\"noopener nofollow ugc\">subitem automations</a> that provides robust automation capabilities to subitems.<br />\nHere’s an example of how it can be applied in this case, based on your use case.</p>\n<p>Ensuring subitems (children) don’t start before / after the parent item → <br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/d/fd0b7511b9cd1dd94d6143f71b94081da7cbd15c.png\" title=\"Screenshot 2024-06-17 at 17.30.33\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/d/fd0b7511b9cd1dd94d6143f71b94081da7cbd15c_2_690x113.png\" alt=\"Screenshot 2024-06-17 at 17.30.33\" width=\"690\" height=\"113\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-17 at 17.30.33</span><span class=\"informations\">1988×328 29.1 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/d/cd1af0de5b1c71b93b2bb7baa41f5cb388081dc6.png\" title=\"Screenshot 2024-06-17 at 17.32.18\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/d/cd1af0de5b1c71b93b2bb7baa41f5cb388081dc6_2_690x138.png\" alt=\"Screenshot 2024-06-17 at 17.32.18\" width=\"690\" height=\"138\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-17 at 17.32.18</span><span class=\"informations\">2198×440 31.8 KB</span></div></a></div><p></p>\n<p>Ensuring the item starts / ends based on its subitems (children)  → <br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/a/dad3124896e933670078c0b795082ede36001aad.png\" title=\"Screenshot 2024-06-17 at 17.28.45\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/a/dad3124896e933670078c0b795082ede36001aad_2_690x122.png\" alt=\"Screenshot 2024-06-17 at 17.28.45\" width=\"690\" height=\"122\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-17 at 17.28.45</span><span class=\"informations\">2278×404 30.3 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/2/c29de0510dfffc5d85f1d1ec6c87333bfc7c075e.png\" title=\"Screenshot 2024-06-17 at 17.31.19\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/2/c29de0510dfffc5d85f1d1ec6c87333bfc7c075e_2_690x123.png\" alt=\"Screenshot 2024-06-17 at 17.31.19\" width=\"690\" height=\"123\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-17 at 17.31.19</span><span class=\"informations\">2154×386 30 KB</span></div></a></div><p></p>\n<p>Rolling up the children’s timeline to the parent item → <br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/0/a0e8c2da8e4be3e9fbd7bef3c2956e1b98f8eed3.png\" title=\"Screenshot 2024-06-17 at 17.29.32\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/0/a0e8c2da8e4be3e9fbd7bef3c2956e1b98f8eed3_2_690x119.png\" alt=\"Screenshot 2024-06-17 at 17.29.32\" width=\"690\" height=\"119\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-17 at 17.29.32</span><span class=\"informations\">2062×358 29.9 KB</span></div></a></div><p></p>\n<p>Hope this helps!</p>"
+    }
+  ]
+}

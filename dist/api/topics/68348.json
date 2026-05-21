@@ -1,0 +1,62 @@
+{
+  "id": 68348,
+  "title": "Error in items_page_by_column_values",
+  "slug": "error-in-items-page-by-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    292,
+    351
+  ],
+  "createdAt": "2023-10-13T12:19:43.152Z",
+  "lastPostedAt": "2023-10-15T04:57:33.598Z",
+  "postsCount": 6,
+  "excerpt": "I wanted to perform a search using the Items page by column values query using the “2023-10” API version. I want to get the sub-item details—that has an Item-ID column type—by using the value in that field. \nUsing items_&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 506,
+  "posts": [
+    {
+      "id": 148197,
+      "postNumber": 1,
+      "createdAt": "2023-10-13T12:19:43.227Z",
+      "author": "binaya (Binaya)",
+      "cookedHtml": "<p>I wanted to perform a search using the Items page by column values query using the “2023-10” API version. I want to get the sub-item details—that has an Item-ID column type—by using the value in that field.</p>\n<p>Using items_page_by_column_values with column_id and column_values gave me an error: Error Code: <strong>UnsupportedItemsByColumnValueQuery</strong></p>\n<p>Error Message: <strong>Column of type pulse-id is not yet supported for this query</strong></p>\n<p>Error Data: <strong>{“column_id”:“item_id”,“column_type”:“pulse-id”}</strong></p>\n<p>Looking at the docs I found that searching for items_page_by_column_values, item-ID column is not supported. Are there any ways that I can get the column details by performing a search with the “item-Id” column type?</p>\n<p>Given is a screenshot of the column where I want to find the details of the sub-item.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/2/f2c601b564fb5a652055f48bce6f50044410cdeb.png\" title=\"Screen Shot 2023-10-13 at 1.58.49 AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/2/f2c601b564fb5a652055f48bce6f50044410cdeb_2_690x97.png\" alt=\"Screen Shot 2023-10-13 at 1.58.49 AM\" width=\"690\" height=\"97\" /><div class=\"meta\"><span class=\"filename\">Screen Shot 2023-10-13 at 1.58.49 AM</span><span class=\"informations\">3268×462 63.5 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 148258,
+      "postNumber": 2,
+      "createdAt": "2023-10-13T22:36:29.863Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Can you elaborate on why you need to search the item ID column? What does it gain vs. just querying items for the item IDs?</p>\n<p>You have to have the IDs so why not just do:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: [123123, 542543, 1234425, 5245234]) {\n    id\n    column_values {\n      id\n      type\n      text\n      value\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 148259,
+      "postNumber": 3,
+      "createdAt": "2023-10-13T23:13:51.783Z",
+      "author": "binaya (Binaya)",
+      "cookedHtml": "<p>Suppose we have another board (say, Board-B) that has a number column where we can use the value from the Item ID column (say, Board-A—as in the above screenshot). In this number column of Board-B, we change the value of the number column to be one of the Item-ID from the above screenshot (say, 181928717) to get the details of all the columns of a particular sub-item of Board-A and copy certain column values in Board-B from Board-A.</p>\n<p>Hopefully this makes sense <img src=\"https://emoji.discourse-cdn.com/apple/sweat_smile.png?v=12\" title=\":sweat_smile:\" class=\"emoji\" alt=\":sweat_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 148260,
+      "postNumber": 4,
+      "createdAt": "2023-10-13T23:21:52.059Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>No it doesn’t make sense.</p>\n<p>You should just use the value from board B in the query I showed (as one of the IDs). No reason to search board A for the item ID using items_page_by_column_value.</p>\n<p>The item ID column is just a view on the board to see the item’s ID - its not a different ID that you need to search that column for. Just get the item using the ID that you’re putting in board B.</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: [#####]) {\n    id\n    column_values {\n      id\n      type\n      text\n      value\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 148264,
+      "postNumber": 5,
+      "createdAt": "2023-10-14T00:44:51.351Z",
+      "author": "binaya (Binaya)",
+      "cookedHtml": "<p>Wow, Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>. This was straight-forward.</p>"
+    },
+    {
+      "id": 148295,
+      "postNumber": 6,
+      "createdAt": "2023-10-15T04:57:33.598Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !!</p>"
+    }
+  ]
+}

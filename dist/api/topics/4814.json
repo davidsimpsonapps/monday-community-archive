@@ -1,0 +1,103 @@
+{
+  "id": 4814,
+  "title": "Create a pulse with column values",
+  "slug": "create-a-pulse-with-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    13
+  ],
+  "createdAt": "2020-02-16T13:41:03.537Z",
+  "lastPostedAt": "2020-04-29T07:53:56.519Z",
+  "postsCount": 12,
+  "excerpt": "Hi, I’m trying to create a pulse via Node.JS with axios. I started with the example that is on this forum and edited it for my needs but I can’t get my code to add the column values for the pulse. What am I doing wrong? \n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 5839,
+  "posts": [
+    {
+      "id": 12229,
+      "postNumber": 1,
+      "createdAt": "2020-02-16T13:41:03.699Z",
+      "author": "GameMaster2030 (Kevin Lam)",
+      "cookedHtml": "<p>Hi, I’m trying to create a pulse via Node.JS with axios. I started with the example that is on this forum and edited it for my needs but I can’t get my code to add the column values for the pulse. What am I doing wrong?</p>\n<pre><code class=\"lang-js\">// Packages\nconst axios = require(\"axios\"),\n    fs = require(\"fs\");\n\n// Files\nconst config = require(\"../config.json\")\n\n// Code\nconst body = {\n    title: \"Test bug\",\n    culprit: \"util/testers/monday.js\"\n}\nconst current = new Date()\nlet month = current.getMonth() + 1\nif (month &lt; 10) {\n    month = `0${current.getMonth() + 1}`\n}\n\nconst axiosBody = {\n    query: `\n                    mutation ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON) {\n                    create_item (\n                        board_id: $boardId,\n                        group_id: $groupId,\n                        item_name: $itemName,\n                        column_values: $columnValues\n                    ) {\n                        id\n                    }\n                    }\n                `,\n    variables: {\n        boardId: BOARDID,\n        groupId: \"topics\",\n        itemName: `${body.title} from ${body.culprit}`,\n        columnsValues: JSON.stringify({ status9: { index: 6 }, status: { index: 6 }, due_date: { date: `${current.getFullYear()}-${month}-${current.getDate()}` } })\n    }\n}\n\naxios.post(`https://api.monday.com/v2`, axiosBody, {\n    headers: {\n        Authorization: config.prod.monday.apitoken\n    }\n})\n    .catch(err =&gt; {\n        console.error(err.data)\n        //fs.writeFileSync(\"./mondayerror.txt\", JSON.stringify(err.data))\n    })\n    .then(res =&gt; {\n        console.log(res.data)\n        fs.writeFileSync(\"./mondayerror.txt\", JSON.stringify(res.data, null, 4))\n    })\n</code></pre>"
+    },
+    {
+      "id": 12408,
+      "postNumber": 2,
+      "createdAt": "2020-02-19T10:10:12.628Z",
+      "author": "GameMaster2030 (Kevin Lam)",
+      "cookedHtml": "<p>Bump. Could anyone help?</p>"
+    },
+    {
+      "id": 12514,
+      "postNumber": 3,
+      "createdAt": "2020-02-20T16:21:22.059Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/gamemaster2030\">@GameMaster2030</a> – what’s going wrong? Are you getting an error code, or is the item being created with no column values?</p>"
+    },
+    {
+      "id": 12521,
+      "postNumber": 4,
+      "createdAt": "2020-02-20T17:32:03.000Z",
+      "author": "GameMaster2030 (Kevin Lam)",
+      "cookedHtml": "<p>Hi,<br />\nIt’s being created with no column values.</p>"
+    },
+    {
+      "id": 12522,
+      "postNumber": 5,
+      "createdAt": "2020-02-20T18:05:06.514Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Can you print the body of your request so we can dig into exactly what’s being passed?</p>\n<p>The programming pattern looks right, but I’m sure there’s something subtle that we’re missing <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 12571,
+      "postNumber": 6,
+      "createdAt": "2020-02-21T10:56:06.295Z",
+      "author": "GameMaster2030 (Kevin Lam)",
+      "cookedHtml": "<p>This is the full response:</p>\n<pre><code class=\"lang-auto\">{ status: 200,\n  statusText: 'OK',\n  headers:\n   { date: 'Fri, 21 Feb 2020 12:54:28 GMT',\n     'content-type': 'application/json; charset=utf-8',\n     'transfer-encoding': 'chunked',\n     connection: 'close',\n     'set-cookie':\n      [ '__cfduid=db4245be87854a2183c78cb8b92d83c5a1582289667; expires=Sun, 22-Mar-20 12:54:27 GMT; path=/; domain=.monday.com; HttpOnly; SameSite=Lax; Secure' ],\n     status: '200 OK',\n     vary: 'Origin',\n     etag: 'W/\"70921335031fd06971ad937f0c6141bb\"',\n     'cache-control': 'max-age=0, private, must-revalidate',\n     'x-request-id': '806c7705-72f7-4607-8d8b-ef9d5e08196a',\n     'x-runtime': '0.151127',\n     'x-xss-protection': '1; mode=block',\n     'content-security-policy': 'frame-ancestors https://bigbrain.me *.bigbrain.me *.dapulse.com *.dapulse.dev *.realize.io *.mondaystaging.com *.itsmonday.com *.monday.sh *.monday.com https://realize.io https://dapulse.com https://mondaystaging.com https://itsmonday.com https://monday.com https://monday.sh; script-src \\'self\\' \\'unsafe-inline\\' \\'unsafe-eval\\' http://localhost:8080 https://cdn.simpo.io/builder/builder.js *.lvh.me:* https://realize.io https://dapulse.com https://mondaystaging.com https://api-gw.mondaystaging.com https://itsmonday.com https://monday.com https://monday.sh https://api-gw.monday.com https://assets.zendesk.com https://*.intercom.io https://js.intercomcdn.com https://cdn.actionbar.io https://www.dropbox.com https://apis.google.com https://www.google.com bat.bing.com https://ct.capterra.com https://www.getapp.com https://widgets.outbrain.com https://cdn.taboola.com https://www.gstatic.com https://ssl.google-analytics.com https://apis.google.com/js/api.js https://code.highcharts.com https://maps.googleapis.com https://cdn.simpo.io/actionbar.js https://ajax.googleapis.com https://*.zopim.com ipinfo.io https://cdn.broadcast.am/assets/track_app.js code.jquery.com https://api.embed.ly/1/oembed https://api.embed.ly/1/extract https://bam.nr-data.net https://includestest.ccdc02.com/cardinalcruise/v1 https://gateway.bluesnap.com https://ws.bluesnap.com https://sandbox.bluesnap.com https://songbird.cardinalcommerce.com https://songbirdstag.cardinalcommerce.com https://js-agent.newrelic.com https://connect.facebook.net https://cdn.actionbar.io/actionbar.js https://googleads.g.doubleclick.net rum-static.pingdom.net/pa-574eda16abe53d4f2483c888.js https://fullstory.com https://www.fullstory.com https://cdn.monday.com https://cdn2.monday.com https://cdn1.monday.com https://cdn2.monday.com https://cdn.mondaystaging.com https://cdn2.mondaystaging.com https://assets.itsmonday.com https://cdnjs.cloudflare.com *.cloudfront.net https://*.pusher.com https://secure.quantserve.com/quant.js https://rules.quantcount.com https://ahrefs.com/toolbar/script.js d2c7xlmseob604.cloudfront.net/tracker.min.js https://s3.amazonaws.com https://www.googleadservices.com https://www.googletagmanager.com https://api.microsofttranslator.com sax.peakonspot.com/pops/wgprtb.php https://cdncache-a.akamaihd.net https://www.google-analytics.com https://quantcast.mgr.consensu.org/qcu.js https://translate.googleapis.com secure.shoppytoolmac.com/servicejs/components https://1049434604.rsc.cdn77.org/ij1.min.js tpc.googlesyndication.com/sodar/1s9mPOHO.js https://data1.nedmaf.com https://cdn.walkme.com https://data1.eurosty.com https://s.dcbap.com qdatasales.com/scripts/Pt8cY8Qvgbs5.js https://includestest.ccdc02.com *.map2.ssl.hwcdn.net cdn.mxpnl.com www2.redgit.pw/ex/scr https://m59.prod2016.com https://static.zdassets.com https://clou.im/cache.php s.mapitquick.net https://gist.github.com srdrvp.com/com ww1.ridiwo.space/oj/ij1 static.cmptch.com/v/lib/s.js https://data1.myloap.com/assets/js/jquery.js https://pwm-image.trendmicro.com https://e2b8u3v8.map2.ssl.hwcdn.net https://secure.myshopcouponmac.com https://urlvalidation.com https://data1.carazouco.com/assets/js/jquery.js https://analyticspage.tools https://eluxer.net https://loadsource.org https://ydpi.pw/addons https://accounts.google.com https://docs.google.com https://app.box.com https://webhooks.monday.com https://cdn7.mondaystaging.com https://cdn7.monday.com https://cdn.itsmonday.com https://cdn.monday.sh https://d2c7xlmseob604.cloudfront.net/tracker.min.js https://js.live.net https://snippet.growsumo.com/growsumo.min.js; worker-src \\'self\\' \\'unsafe-inline\\' blob:',\n     'cf-cache-status': 'DYNAMIC',\n     'expect-ct': 'max-age=604800, report-uri=\"https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct\"',\n     server: 'cloudflare',\n     'cf-ray': '5688de77da3272f3-AMS' },\n  config:\n   { url: 'https://api.monday.com/v2',\n     method: 'post',\n     data: '{\"query\":\"\\\\n                    mutation ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON) {\\\\n                    create_item (\\\\n                        board_id: $boardId,\\\\n                        group_id: $groupId,\\\\n                        item_name: $itemName,\\\\n                        column_values: $columnValues\\\\n                    ) {\\\\n                        id\\\\n                    }\\\\n                    }\\\\n                \",\"variables\":{\"boardId\":380644130,\"groupId\":\"topics\",\"itemName\":\"Test bug from util/testers/monday.js\",\"columnsValues\":\"{\\\\\"status9\\\\\":{\\\\\"index\\\\\":6},\\\\\"status\\\\\":{\\\\\"index\\\\\":6},\\\\\"due_date\\\\\":{\\\\\"date\\\\\":\\\\\"2020-02-21\\\\\"}}\"}}',\n     headers:\n      { Accept: 'application/json, text/plain, */*',\n        'Content-Type': 'application/json;charset=utf-8',\n        Authorization: 'REMOVED',\n        'User-Agent': 'axios/0.19.1',\n        'Content-Length': 677 },\n     transformRequest: [ [Function: transformRequest] ],\n     transformResponse: [ [Function: transformResponse] ],\n     timeout: 0,\n     adapter: [Function: httpAdapter],\n     xsrfCookieName: 'XSRF-TOKEN',\n     xsrfHeaderName: 'X-XSRF-TOKEN',\n     maxContentLength: -1,\n     validateStatus: [Function: validateStatus] },\n  request:\n   ClientRequest {\n     domain: null,\n     _events:\n      { socket: [Function],\n        abort: [Function],\n        aborted: [Function],\n        error: [Function],\n        timeout: [Function],\n        prefinish: [Function: requestOnPrefinish] },\n     _eventsCount: 6,\n     _maxListeners: undefined,\n     output: [],\n     outputEncodings: [],\n     outputCallbacks: [],\n     outputSize: 0,\n     writable: true,\n     _last: true,\n     upgrading: false,\n     chunkedEncoding: false,\n     shouldKeepAlive: false,\n     useChunkedEncodingByDefault: true,\n     sendDate: false,\n     _removedConnection: false,\n     _removedContLen: false,\n     _removedTE: false,\n     _contentLength: null,\n     _hasBody: true,\n     _trailer: '',\n     finished: true,\n     _headerSent: true,\n     socket:\n      TLSSocket {\n        _tlsOptions: [Object],\n        _secureEstablished: true,\n        _securePending: false,\n        _newSessionPending: false,\n        _controlReleased: true,\n        _SNICallback: null,\n        servername: null,\n        npnProtocol: false,\n        alpnProtocol: false,\n        authorized: true,\n        authorizationError: null,\n        encrypted: true,\n        _events: [Object],\n        _eventsCount: 9,\n        connecting: false,\n        _hadError: false,\n        _handle: null,\n        _parent: null,\n        _host: 'api.monday.com',\n        _readableState: [Object],\n        readable: false,\n        domain: null,\n        _maxListeners: undefined,\n        _writableState: [Object],\n        writable: false,\n        allowHalfOpen: false,\n        _bytesDispatched: 1064,\n        _sockname: null,\n        _pendingData: null,\n        _pendingEncoding: '',\n        server: undefined,\n        _server: null,\n        ssl: null,\n        _requestCert: true,\n        _rejectUnauthorized: true,\n        parser: null,\n        _httpMessage: [Circular],\n        read: [Function],\n        _consuming: true,\n        _idleNext: null,\n        _idlePrev: null,\n        _idleTimeout: -1,\n        [Symbol(asyncId)]: 7,\n        [Symbol(bytesRead)]: 4446 },\n     connection:\n      TLSSocket {\n        _tlsOptions: [Object],\n        _secureEstablished: true,\n        _securePending: false,\n        _newSessionPending: false,\n        _controlReleased: true,\n        _SNICallback: null,\n        servername: null,\n        npnProtocol: false,\n        alpnProtocol: false,\n        authorized: true,\n        authorizationError: null,\n        encrypted: true,\n        _events: [Object],\n        _eventsCount: 9,\n        connecting: false,\n        _hadError: false,\n        _handle: null,\n        _parent: null,\n        _host: 'api.monday.com',\n        _readableState: [Object],\n        readable: false,\n        domain: null,\n        _maxListeners: undefined,\n        _writableState: [Object],\n        writable: false,\n        allowHalfOpen: false,\n        _bytesDispatched: 1064,\n        _sockname: null,\n        _pendingData: null,\n        _pendingEncoding: '',\n        server: undefined,\n        _server: null,\n        ssl: null,\n        _requestCert: true,\n        _rejectUnauthorized: true,\n        parser: null,\n        _httpMessage: [Circular],\n        read: [Function],\n        _consuming: true,\n        _idleNext: null,\n        _idlePrev: null,\n        _idleTimeout: -1,\n        [Symbol(asyncId)]: 7,\n        [Symbol(bytesRead)]: 4446 },\n     _header: 'POST /v2 HTTP/1.1\\r\\nAccept: application/json, text/plain, */*\\r\\nContent-Type: application/json;charset=utf-8\\r\\nAuthorization: **REMOVED**\\r\\nUser-Agent: axios/0.19.1\\r\\nContent-Length: 677\\r\\nHost: api.monday.com\\r\\nConnection: close\\r\\n\\r\\n',\n     _onPendingData: [Function: noopPendingOutput],\n     agent:\n      Agent {\n        domain: null,\n        _events: [Object],\n        _eventsCount: 1,\n        _maxListeners: undefined,\n        defaultPort: 443,\n        protocol: 'https:',\n        options: [Object],\n        requests: {},\n        sockets: [Object],\n        freeSockets: {},\n        keepAliveMsecs: 1000,\n        keepAlive: false,\n        maxSockets: Infinity,\n        maxFreeSockets: 256,\n        maxCachedSessions: 100,\n        _sessionCache: [Object] },\n     socketPath: undefined,\n     timeout: undefined,\n     method: 'POST',\n     path: '/v2',\n     _ended: true,\n     res:\n      IncomingMessage {\n        _readableState: [Object],\n        readable: false,\n        domain: null,\n        _events: [Object],\n        _eventsCount: 3,\n        _maxListeners: undefined,\n        socket: [Object],\n        connection: [Object],\n        httpVersionMajor: 1,\n        httpVersionMinor: 1,\n        httpVersion: '1.1',\n        complete: true,\n        headers: [Object],\n        rawHeaders: [Array],\n        trailers: {},\n        rawTrailers: [],\n        upgrade: false,\n        url: '',\n        method: null,\n        statusCode: 200,\n        statusMessage: 'OK',\n        client: [Object],\n        _consuming: true,\n        _dumped: false,\n        req: [Circular],\n        responseUrl: 'https://api.monday.com/v2',\n        redirects: [],\n        read: [Function] },\n     aborted: undefined,\n     timeoutCb: null,\n     upgradeOrConnect: false,\n     parser: null,\n     maxHeadersCount: null,\n     _redirectable:\n      Writable {\n        _writableState: [Object],\n        writable: true,\n        domain: null,\n        _events: [Object],\n        _eventsCount: 2,\n        _maxListeners: undefined,\n        _options: [Object],\n        _redirectCount: 0,\n        _redirects: [],\n        _requestBodyLength: 677,\n        _requestBodyBuffers: [],\n        _onNativeResponse: [Function],\n        _currentRequest: [Circular],\n        _currentUrl: 'https://api.monday.com/v2' },\n     [Symbol(outHeadersKey)]:\n      { accept: [Array],\n        'content-type': [Array],\n        authorization: [Array],\n        'user-agent': [Array],\n        'content-length': [Array],\n        host: [Array] } },\n  data: { data: { create_item: [Object] }, account_id: 5176844 } }\n</code></pre>"
+    },
+    {
+      "id": 12827,
+      "postNumber": 7,
+      "createdAt": "2020-02-26T14:34:44.927Z",
+      "author": "GameMaster2030 (Kevin Lam)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> Can you help me?</p>"
+    },
+    {
+      "id": 13154,
+      "postNumber": 8,
+      "createdAt": "2020-03-03T09:36:09.158Z",
+      "author": "GameMaster2030 (Kevin Lam)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a><br />\nHi, could you help me with my problem?</p>"
+    },
+    {
+      "id": 13905,
+      "postNumber": 9,
+      "createdAt": "2020-03-11T19:21:06.843Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/gamemaster2030\">@GameMaster2030</a> – sorry for the late response here.</p>\n<p>Can you shoot us a ticket at <a href=\"mailto:support@monday.com\">support@monday.com</a>? Please ask for me and reference this post in your email.</p>\n<p>I’ll be able to troubleshoot better over email.</p>"
+    },
+    {
+      "id": 16950,
+      "postNumber": 10,
+      "createdAt": "2020-04-29T07:26:14.605Z",
+      "author": "_kai_dev (Shinnosuke Kai)",
+      "cookedHtml": "<p>I have a same issue…</p>"
+    },
+    {
+      "id": 16952,
+      "postNumber": 11,
+      "createdAt": "2020-04-29T07:53:56.519Z",
+      "author": "_kai_dev (Shinnosuke Kai)",
+      "cookedHtml": "<p>Sorry. It succeeded.<br />\nReference: <a href=\"https://community.monday.com/t/node-js-mutation-example-using-axios/716/2\" class=\"inline-onebox\">Node.js mutation example using Axios - #2 by danielco</a><br />\nThere is a typo <code>columnsValues: JSON.stringify</code> → <code>columnValues: JSON.stringify</code></p>"
+    },
+    {
+      "id": 42194,
+      "postNumber": 12,
+      "createdAt": "2021-02-25T12:56:09.247Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

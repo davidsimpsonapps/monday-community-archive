@@ -1,0 +1,40 @@
+{
+  "id": 77094,
+  "title": "Issue with Receiving Status Code 200 on Error Responses",
+  "slug": "issue-with-receiving-status-code-200-on-error-responses",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-02-05T14:42:43.808Z",
+  "lastPostedAt": "2024-02-05T15:16:32.883Z",
+  "postsCount": 2,
+  "excerpt": "I see an issue with the API where I receive a status code of 200 for requests that actually fail, instead of the expected 400 status error code. Even if the request is not being processed as intended due to an error, the&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2976,
+  "posts": [
+    {
+      "id": 165941,
+      "postNumber": 1,
+      "createdAt": "2024-02-05T14:42:43.894Z",
+      "author": "AvivKetter (Aviv Ketter)",
+      "cookedHtml": "<p>I see an issue with the API where I receive a status code of 200 for requests that actually fail, instead of the expected 400 status error code. Even if the request is not being processed as intended due to an error, the response still indicates successful execution with a status code of 200. However, the response body contains error messages indicating that something went wrong.</p>\n<p>This behavior is problematic for my application. I use error handling mechanisms, which rely on the HTTP status code to determine the outcome of a request. When a request fails, I expect to receive an appropriate error code (e.g. 400) that accurately reflects the failure, allowing my system to respond accordingly.</p>\n<p>It’s important to mention that at the moment, I see this happen only with status 400. If there are server issues (500) or rate limit issues (429), I do get the right status code. But not for 400; instead, I see 200 and error messages.</p>\n<p>Could you please assist in resolving this? I am looking for guidance on how to ensure that error responses correctly reflect the failure through appropriate HTTP status codes.</p>\n<p>Best regards,<br />\nAviv.</p>"
+    },
+    {
+      "id": 165949,
+      "postNumber": 2,
+      "createdAt": "2024-02-05T15:16:32.883Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>This behavior of returning a 200 is specification compliant for GraphQL. If the error is a server issue, or rate limit (more than 5000 requests per minute - not the API Complexity Limit), those are upstream from the GraphQL resolvers and will return HTTP status codes.</p>\n<p>GraphQL returns its errors as values in the response body with a 200 status code. This is not a bug, it is per the GraphQL specification. That said monday’s error responses within that body do not follow the specification, but they are documented: <a href=\"https://developer.monday.com/api-reference/docs/errors\" class=\"inline-onebox\">Error codes</a></p>\n<p>GraphQL specification only provides for an errors object in the response, the error_code and error_messages that monday ALSO may use are not spec complaint.</p>\n<p>You need to check your response for the presence of a <code>data</code> object, if there is no data object then there is an error. As far as I know monday never returns a data object when there is an error (though this is not a GraphQL requirement). Monday also returns an <code>extensions</code> object which you should log, as it contains deprecation notices if your call contains a deprecated component.</p>\n<p>IF <a href=\"http://monday.com\">monday.com</a> did not use the error_code and error_message fields and instead adhered to the GraphQL spec of only returning errors in an errors object, you would be able to automate this using graphql-request for javascript (for example) which is a standards compliant client. It would throw exceptions for the errors. In the meantime you can wrap the monday client in your own code, check for data and if not present, parse out the rest of the errors and throw an except on error with information from the error. (Or get fancy and handle the different errors as different exception types).</p>"
+    },
+    {
+      "id": 166087,
+      "postNumber": 3,
+      "createdAt": "2024-02-06T06:39:35.621Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

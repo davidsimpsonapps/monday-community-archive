@@ -1,0 +1,65 @@
+{
+  "id": 14459,
+  "title": "Salesforce \"No query string was present\"",
+  "slug": "salesforce-no-query-string-was-present",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-12-28T17:29:56.249Z",
+  "lastPostedAt": "2021-01-08T21:08:49.832Z",
+  "postsCount": 7,
+  "excerpt": "Header structure works correctly, used it for a \nString query = ‘{ “query” : “{boards(ids:887415581){items(limit:20){id name}}  }”}’; \nThis call works in both Postman and SFDC apex. But when I make the call for mutation &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2409,
+  "posts": [
+    {
+      "id": 36522,
+      "postNumber": 1,
+      "createdAt": "2020-12-28T17:29:56.320Z",
+      "author": "donaldmitchell (Donald Mitchell)",
+      "cookedHtml": "<p>Header structure works correctly, used it for a<br />\nString query = ‘{ “query” : “{boards(ids:887415581){items(limit:20){id name}}  }”}’;</p>\n<p>This call works in both Postman and SFDC apex. But when I make the call for mutation with the following string I apply JSON serialize :<br />\n<strong>String colValue = ‘{\"numbers_16\":\" 42\",\"numbers\":\"5\"}’;</strong><br />\n**        String str = JSON.serialize(colValue);**</p>\n<p>Now I added to the query for the call:<br />\nString query = ‘{“query”:\"mutation{change_multiple_column_values (board_id: 887415581, item_id: 887415649, column_values:’ + <strong>str</strong> +’ ){id}}\"}';<br />\nString don  = JSON.serialize(query);</p>\n<p>system.debug(LoggingLevel.FINEST , don);</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/88baaf0b0d301bdfcb2aa9c81995fdd8e2093bc2.png\" title=\"Screen Shot 2020-12-28 at 12.57.04 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/88baaf0b0d301bdfcb2aa9c81995fdd8e2093bc2_2_690x273.png\" alt=\"Screen Shot 2020-12-28 at 12.57.04 PM\" width=\"690\" height=\"273\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2020-12-28 at 12.57.04 PM</span><span class=\"informations\">3352×1330 671 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 36539,
+      "postNumber": 2,
+      "createdAt": "2020-12-29T05:59:12.530Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/donaldmitchell\">@donaldmitchell</a>,</p>\n<p>there is a small section in the docs which is easily overseen, but I post it in here for you:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/38d491f4f68be9e5713cee164fca690c03a39f6c.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/38d491f4f68be9e5713cee164fca690c03a39f6c_2_690x278.png\" alt=\"image\" width=\"690\" height=\"278\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1469×592 37.2 KB</span>\n</div></a></div><p></p>\n<p>Maybe that already helps.<br />\nAlso here is the link for the <a href=\"https://monday.com/developers/v2#introduction-section-how-to-get-started\">docs</a> so you don’t have to look for it.</p>\n<p>Greetings</p>"
+    },
+    {
+      "id": 36720,
+      "postNumber": 3,
+      "createdAt": "2021-01-04T07:40:25.333Z",
+      "author": "LaurentConroux (Laurent Conroux)",
+      "cookedHtml": "<p>Yes, I agree it is easier to use variables rather than trying to insert the data in the query string.</p>\n<p>I found early on that it could be tricky to insert the right number of quotes at the right places.</p>\n<p>Hope it helps,<br />\nLaurent</p>"
+    },
+    {
+      "id": 36807,
+      "postNumber": 4,
+      "createdAt": "2021-01-04T19:21:09.354Z",
+      "author": "donaldmitchell (Donald Mitchell)",
+      "cookedHtml": "<p>I have added the variables that was suggested. I have a couple of results:</p>\n<ol>\n<li>When I use Monday’s try-it-yourself with the following query:<br />\nmutation change_multiple_column_values($number16: JSON!){<br />\nchange_multiple_column_values(<br />\nboard_id: 887415581,<br />\nitem_id: 887415649,<br />\ncolumn_values:<br />\n$number16) {id}<br />\n}</li>\n</ol>\n<p>Query variables:<br />\n{<br />\n“number16”: “{“numbers_16”: 5}”,<br />\n“numbers”:  “{“numbers”: 5}”<br />\n}</p>\n<p>This works in the try-it-yourself but I can’t seem to create more than one column;</p>\n<p>My example: (not working)<br />\nmutation change_multiple_column_values($number16: JSON!, $numbers: JSON!){<br />\nchange_multiple_column_values(<br />\nboard_id: 887415581,<br />\nitem_id: 887415649,<br />\ncolumn_values:<br />\n$number16, $numbers) {id}<br />\n}</p>\n<p>Query variables:<br />\n{<br />\n“number16”: “{“numbers_16”: 5}”,<br />\n“numbers”:  “{“numbers”: 5}”<br />\n}</p>\n<p>In Salesforce code:</p>\n<p>Here is the code string that I am passing:<br />\nString query3 = ‘mutation change_multiple_column_values($number16: JSON!){change_multiple_column_values(board_id: 887415581, item_id: 887415649, column_values: $number16) {id}},variables:\"{“number16”:\"{“numbers_16”: 5}\"}’;<br />\nString don = JSON.serialize(query3);<br />\nsystem.debug(LoggingLevel.FINEST , don);<br />\nrequest.setBody (don);</p>\n<p>Debug log output:<br />\n“mutation change_multiple_column_values($number16: JSON!){change_multiple_column_values(board_id: 887415581, item_id: 887415649, column_values: $number16) {id}},variables:{“number16”:”{“numbers_16”: 5}\"}\"<br />\nresponse|“System.HttpResponse[Status=OK, StatusCode=200]”|0xe83c720<br />\nDEBUG| response X {“errors”:[{“message”:“No query string was present”}],“account_id”:5749982}</p>\n<p>On this one, I serialized the variables and then passed them to the full query string that was also serialized<br />\n“mutation change_multiple_column_values($number16: JSON!){change_multiple_column_values(board_id: 887415581, item_id: 887415649, column_values: $number16) {id}},variables:”\"\\\"{\\“numbers_16\\”:\\“42\\”\"\"</p>\n<p>Same response that I got above.</p>"
+    },
+    {
+      "id": 37157,
+      "postNumber": 5,
+      "createdAt": "2021-01-07T23:05:16.931Z",
+      "author": "donaldmitchell (Donald Mitchell)",
+      "cookedHtml": "<p><strong>I got the following working in Postman graphQL :</strong></p>\n<p>mutation change_multiple__column_values($AccelAll: JSON!) {<br />\nchange_multiple_column_values(board_id: 887415581, item_id: 887415649 column_values: $AccelAll ) {<br />\nid<br />\n}<br />\n}</p>\n<p><strong>Variables: (in this case I cover two columns with new values.</strong><br />\n{<br />\n“AccelAll”: “{“numbers_16”: \" 42” , “numbers”: “5”}\"<br />\n}</p>"
+    },
+    {
+      "id": 37241,
+      "postNumber": 6,
+      "createdAt": "2021-01-08T21:08:49.832Z",
+      "author": "donaldmitchell (Donald Mitchell)",
+      "cookedHtml": "<p>Okay, here is a good working SFDC structure for mutations that work for me I thought I would share:</p>\n<pre><code>       HttpRequest request = new HttpRequest();\n       request.setEndpoint('https://api.monday.com/v2/');\n       request.setMethod('POST');\n       request.setHeader('Authorization', token);\n       request.setHeader('Content-Type', 'application/json');\n      String query = '{\\\"query\\\":\\\"mutation {create_item (board_id: 887415581, item_name: \\\\\\\"SFDC \n     Fourth of July \\\\\\\"){id}}\\\",\\\"variables\\\":{}}';\n</code></pre>\n<p>request.setBody (query);</p>\n<p>Wrap this in a method and should be work.</p>\n<p>One observation, when you run apex mutation call and  also have an active <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> to SFDC integration running.  It may generate duplication notification for Account or other sObjects.  You can find this Data Management &gt; Duplicate Management &gt; Duplicate Rules.</p>\n<p>Currently working with <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> for resolution.</p>\n<p>Thanks,<br />\nDon</p>"
+    },
+    {
+      "id": 44212,
+      "postNumber": 7,
+      "createdAt": "2021-03-10T13:29:17.406Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

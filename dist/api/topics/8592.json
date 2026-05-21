@@ -1,0 +1,65 @@
+{
+  "id": 8592,
+  "title": "How to get progress columns values",
+  "slug": "how-to-get-progress-columns-values",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-07-05T10:00:01.078Z",
+  "lastPostedAt": "2021-02-25T14:32:58.164Z",
+  "postsCount": 7,
+  "excerpt": "Hi, I;m failing to get progress columns value. \nHere is what I did. \nRequest Query: \n\nquery { \nboards(ids:[5xxxxxxxxx], limit:1) { \nitems { \nname \ngroup { \nid \n} \n  column_values {\n    id\n    value\n    text\n  }\n}\n\n} \n} \nR&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2631,
+  "posts": [
+    {
+      "id": 21550,
+      "postNumber": 1,
+      "createdAt": "2020-07-05T10:00:01.139Z",
+      "author": "Nir-Jetpack (Nir @ Jetpack Team)",
+      "cookedHtml": "<p>Hi, I;m failing to get progress columns value.<br />\nHere is what I did.</p>\n<pre><code>Request Query: \n</code></pre>\n<p>query {<br />\nboards(ids:[5xxxxxxxxx], limit:1) {<br />\nitems {<br />\nname<br />\ngroup {<br />\nid<br />\n}</p>\n<pre><code>  column_values {\n    id\n    value\n    text\n  }\n}\n</code></pre>\n<p>}<br />\n}</p>\n<p>Response Data:<br />\n…<br />\n{<br />\n“id”: “progress”,<br />\n“value”: null,<br />\n“text”: “”<br />\n}</p>\n<p>…</p>"
+    },
+    {
+      "id": 21555,
+      "postNumber": 2,
+      "createdAt": "2020-07-05T19:33:56.831Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nir-jetpack\">@Nir-Jetpack</a>,</p>\n<p>Welcome to the developer community!</p>\n<p>Unfortunately, there are a few column types that aren’t able to be retrieved using the API at this stage. This is because the value of this column is calculated on the client-side.</p>\n<p>Your best option at this stage would be to query all of the status columns and calculate the progress in your application.</p>"
+    },
+    {
+      "id": 22099,
+      "postNumber": 3,
+      "createdAt": "2020-07-09T09:17:28.424Z",
+      "author": "Nir-Jetpack (Nir @ Jetpack Team)",
+      "cookedHtml": "<p>Ok thanks. Is this the same for number of votes? In votes column…</p>"
+    },
+    {
+      "id": 22114,
+      "postNumber": 4,
+      "createdAt": "2020-07-09T12:30:01.484Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there Nir,</p>\n<p>That’s a great question!</p>\n<p>Based on what I could come up with after querying one of my boards with a Vote column, it seems like you should be able to get the Vote values from items, even including the users who have cast the vote. Here’s what I’m seeing on my end:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d247ca2d486f199d16c2a9225b1fb340667feeec.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/d247ca2d486f199d16c2a9225b1fb340667feeec_2_690x81.png\" alt=\"image\" width=\"690\" height=\"81\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">2090×248 58.3 KB</span>\n</div></a></div><p></p>\n<p>I’m sure you are already making more complex queries than I am, but here’s what I’ve used to get the result above:</p>\n<pre><code class=\"lang-auto\">\n    {\n      boards(ids: 640319898)\n      {name\n      id\n        items{\n          name\n          column_values{\n            value\n            text\n            type\n          }\n        }\n      }\n    } \n</code></pre>\n<p>In that case, you can also see which of the users within your account have voted for a particular item. For example, [9603417] stands for my user ID. Does that make sense?</p>\n<p>There was also a similar question asked <a href=\"https://community.monday.com/t/viewing-who-has-voted-through-api/8324\">here</a>. I recommend checking the community topics, in general, to find out if your questions have been answered already. Then, you can get the solutions you need faster <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 22146,
+      "postNumber": 5,
+      "createdAt": "2020-07-09T15:57:21.540Z",
+      "author": "Nir-Jetpack (Nir @ Jetpack Team)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/alexsavchuk/48/3454_2.png\" class=\"avatar\" /> AlexSavchuk:</div>\n<blockquote>\n<p>9603417</p>\n</blockquote>\n</aside>\n<p>Got it! Thanks Alex!</p>"
+    },
+    {
+      "id": 22512,
+      "postNumber": 6,
+      "createdAt": "2020-07-13T23:17:58.591Z",
+      "author": "Scott-monday.com (Scott Underwood)",
+      "cookedHtml": "<p>Just to expand on what <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> noted about certain column types being calculated client-side - you can find a list of those column types here - <a href=\"https://monday.com/developers/v2#column-values-section-auto-calculated-column\">https://monday.com/developers/v2#column-values-section-auto-calculated-column</a></p>\n<p>As of the time of posting this, those current column types are:</p>\n<ul>\n<li>Progress tracking column</li>\n<li>Auto number column</li>\n<li>Item ID column</li>\n<li>Last updated column</li>\n<li>Creation log column</li>\n<li>Formula column</li>\n</ul>"
+    },
+    {
+      "id": 42442,
+      "postNumber": 7,
+      "createdAt": "2021-02-25T14:32:58.164Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

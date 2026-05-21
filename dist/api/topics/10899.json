@@ -1,0 +1,60 @@
+{
+  "id": 10899,
+  "title": "Empty request while trying to change status",
+  "slug": "empty-request-while-trying-to-change-status",
+  "categoryId": 8,
+  "tagIds": [
+    186
+  ],
+  "createdAt": "2020-09-04T09:39:08.495Z",
+  "lastPostedAt": "2021-02-25T14:38:37.168Z",
+  "postsCount": 5,
+  "excerpt": "While running this don’t get any errors, just empty request \n    value_json&lt;-toJSON(&quot;{&#39;index&#39;:3}&quot;)\n\n    request_form&lt;-paste(\n&#39;mutation {change_column_value (\n        board_id: 347384734,\n        item_id: 34239483,\n      &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2314,
+  "posts": [
+    {
+      "id": 27715,
+      "postNumber": 1,
+      "createdAt": "2020-09-04T09:39:08.567Z",
+      "author": "Valeriia (Valeriia)",
+      "cookedHtml": "<p>While running this don’t get any errors, just empty request</p>\n<pre><code>    value_json&lt;-toJSON(\"{'index':3}\")\n\n    request_form&lt;-paste(\n'mutation {change_column_value (\n        board_id: 347384734,\n        item_id: 34239483,\n        column_id: \"status\",\n        value:',value_json,' ) {\n                    id\n              }\n\n        }',sep = '')\n</code></pre>\n<p>Wrote random ids</p>\n<p>Here’s function to process my request, maybe something wrong with it.</p>\n<pre><code> GQL &lt;- function(query,\n                  ...,\n                  .token = NULL,\n                  .variables = NULL,\n                  .operationName = NULL,\n                  .url = url){\n    pbody &lt;- list(query = query, variables = .variables, operationName = .operationName)\n    if(is.null(.token)){\n      res &lt;- POST(.url, body = pbody, encode=\"json\", ...)\n    } else {\n      auth_header &lt;- paste(.token)\n      res &lt;- POST(.url, body = pbody, encode=\"json\", add_headers(Authorization=auth_header), ...)\n    }\n    res &lt;- content(res, as = \"parsed\", encoding = \"UTF-8\")\n    if(!is.null(res$errors)){\n      warning(toJSON(res$errors))\n    }\n    res$data\n  }\n</code></pre>\n<p>But it worked while quering and creating notifications</p>"
+    },
+    {
+      "id": 27752,
+      "postNumber": 2,
+      "createdAt": "2020-09-04T17:51:43.221Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 27753,
+      "postNumber": 3,
+      "createdAt": "2020-09-04T18:16:02.052Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/valeriia\">@Valeriia</a> - welcome!</p>\n<p>Let me check in with the team on this one - I’ll post again as soon as I have more information on this.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 28189,
+      "postNumber": 4,
+      "createdAt": "2020-09-10T12:06:14.105Z",
+      "author": "pepperaddict (Pepper Addict)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/valeriia\">@Valeriia</a> !</p>\n<p>I’m not too familiar with the language that you’re using. I may be too late and way off, but I thought I’d throw it in here anyway just in case it’s helpful.</p>\n<p>I wonder if this is the same problem that <a class=\"mention\" href=\"/u/supernova\">@supernova</a> faced in <a href=\"https://community.monday.com/t/cant-change-column-value-s/10895\" class=\"inline-onebox\">Can't change column value(s)</a></p>\n<p>I see</p>\n<pre><code class=\"lang-auto\">    value_json&lt;-toJSON(\"{'index':3}\")\n\n    request_form&lt;-paste(\n'mutation {change_column_value (\n        board_id: 347384734,\n        item_id: 34239483,\n        column_id: \"status\",\n        value:',value_json,' ) {\n                    id\n              }\n\n        }',sep = '')\n</code></pre>\n<p>And that made me wonder if you’re plugging your value straight into the query. In the above post mentioned, we discovered that there’s a problem with that query and variables is required for <strong>change_column_value</strong>.</p>\n<p>Hope that helps</p>"
+    },
+    {
+      "id": 28249,
+      "postNumber": 5,
+      "createdAt": "2020-09-11T03:14:12.032Z",
+      "author": "supernova (supernova)",
+      "cookedHtml": "<p>I can attest to this. Good catch <img src=\"https://emoji.discourse-cdn.com/apple/hot_pepper.png?v=9\" title=\":hot_pepper:\" class=\"emoji\" alt=\":hot_pepper:\" /></p>\n<p>Hi <a class=\"mention\" href=\"/u/valeriia\">@Valeriia</a>, you might wanna try using variables as suggested by <a class=\"mention\" href=\"/u/pepperaddict\">@pepperaddict</a>. I found that setting the value directly in query didn’t work for me  &amp; <strong>that</strong> was what caused the problem for my case.</p>\n<p>Also as an FYI, a query that runs successfully in the GraphQL editor isn’t always a good indicator that the same formatted query will perform as well in code. Hopefully by now you’ve gotten past this issue though as I see it’s been a week since you posted…if not, then I really hope you get this resolved ASAP.</p>\n<p>Rooting for your speedy success <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=9\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>"
+    },
+    {
+      "id": 42496,
+      "postNumber": 6,
+      "createdAt": "2021-02-25T14:38:37.168Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

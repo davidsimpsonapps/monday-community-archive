@@ -1,0 +1,72 @@
+{
+  "id": 50390,
+  "title": " Cannot able make post request to update value on the board",
+  "slug": "cannot-able-make-post-request-to-update-value-on-the-board",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2023-01-30T20:08:44.639Z",
+  "lastPostedAt": "2023-02-08T14:19:29.000Z",
+  "postsCount": 8,
+  "excerpt": "I was trying to make an post API call to update value on the Monday board but it is throwing an error in Node.js \nvar action = “mutation{change_column_value (board_id:3258333017, item_id:785444200, column_id:“text”, valu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 811,
+  "posts": [
+    {
+      "id": 113039,
+      "postNumber": 1,
+      "createdAt": "2023-01-30T20:08:44.709Z",
+      "author": "Dheeraj (Kotte)",
+      "cookedHtml": "<p>I was trying to make an post API call to update value on the Monday board but it is throwing an error in Node.js</p>\n<p>var action = “mutation{change_column_value (board_id:3258333017, item_id:785444200, column_id:“text”, value:“board1”){ id }}”;</p>\n<p>fetch (“<a href=\"https://api.monday.com/v2%E2%80%9D\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2”</a>, {<br />\nmethod: ‘post’,<br />\nheaders: {<br />\n‘Content-Type’: ‘application/json’,<br />\n‘Authorization’ : ‘’<br />\n},<br />\nbody: JSON.stringify({<br />\n‘query’ : action<br />\n})<br />\n})<br />\n.then(res =&gt; res.json())<br />\n.then(res =&gt; console.log(JSON.stringify(res, null, 2)));</p>\n<p>When I try to do this it is throwing an error:<br />\n{<br />\n“error_message”: “809: unexpected token at ‘board1’”,<br />\n“status_code”: 500<br />\n}</p>\n<p>can anyone help me with this?</p>"
+    },
+    {
+      "id": 113092,
+      "postNumber": 2,
+      "createdAt": "2023-01-31T06:16:00.787Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dheeraj\">@Dheeraj</a>,</p>\n<p>You need to use change_simple_column_value instead of change_column_value for this one <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 113254,
+      "postNumber": 3,
+      "createdAt": "2023-01-31T23:10:12.408Z",
+      "author": "Dheeraj (Kotte)",
+      "cookedHtml": "<p>mutation{change_simple_column_value (board_id:98333017, item_id:9851336900, column_id:\"color\", value:“{\"label\":\"Good\"}”){ id }}</p>\n<p>How should I give the value in this case (bold part) ?. This works fine in graphQL console but not working in nodeJS.</p>\n<p>It is throwing me this error:-</p>\n<p>mutation{change_simple_column_value (board_id:3858426017, item_id:3858426300, column_id:“color”, value:“{“label”:“Ok”}”){ id }}</p>\n<p>{<br />\nerrors: [<br />\n{<br />\nmessage: ‘Parse error on “:” (STRING) at [1, 110]’,<br />\nlocations: [Array]<br />\n}<br />\n],<br />\naccount_id: 8165721<br />\n}</p>"
+    },
+    {
+      "id": 113260,
+      "postNumber": 4,
+      "createdAt": "2023-01-31T23:36:53.548Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dheeraj\">@Dheeraj</a></p>\n<p>As you are using <code>change_simple_column_value</code> you don’t need to specific the “Label”, you only need to pass the string as the variable.</p>\n<p>I.e:</p>\n<pre><code class=\"lang-auto\">mutation { change_simple_column_value (board_id:3858426017, item_id:3858426300, column_id:“color”, value:“Ok”) {  id }}\n</code></pre>\n<p>You can view the column reference here - <a href=\"https://developer.monday.com/api-reference/docs/status\" class=\"inline-onebox\">Status</a></p>\n<p>You can also include the <code>create_labels_if_missing: true</code> if you need to create new labels values if they don’t exist, otherwise an error will be thrown if the label has not already been created.</p>\n<p>If you would like to provide a JSON value, I believe the issue is that it isn’t correctly escaped, it should be:</p>\n<pre><code class=\"lang-auto\">mutation { change_column_value (board_id:3858426017, item_id:3858426300, column_id:“color”, “{\\“label\\”:\\“Ok\\”}”) {  id }}\n</code></pre>\n<p>Take note of the different mutations being <code>change_column_value</code> for JSON and <code>change_simple_column_value</code> text string</p>"
+    },
+    {
+      "id": 113264,
+      "postNumber": 5,
+      "createdAt": "2023-01-31T23:46:08.866Z",
+      "author": "Dheeraj (Kotte)",
+      "cookedHtml": "<p>Working thank you so much.</p>"
+    },
+    {
+      "id": 113292,
+      "postNumber": 6,
+      "createdAt": "2023-02-01T06:43:03.534Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dheeraj\">@Dheeraj</a>,</p>\n<p>I am glad this is working now!</p>\n<p>Thank you <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> for the help here <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 113781,
+      "postNumber": 7,
+      "createdAt": "2023-02-03T21:04:19.870Z",
+      "author": "Dheeraj (Kotte)",
+      "cookedHtml": "<p>Hi</p>\n<p>I’m trying to update multiple columns on the board using</p>\n<p>let addNewURLDataQuery =<code> mutation {change_multiple_column_values (board_id: 435872999 item_id: ${item_id}, column_values: \"{\"color\": \"Ok\", \"text9\": \"b\"}\") { id } }</code></p>\n<p>color, text9 are column id’s</p>\n<p>But it is throwing parse error<br />\n{<br />\nerrors: [<br />\n{<br />\nmessage: ‘Parse error on \": \" (STRING) at [1, 107]’,<br />\nlocations: [Array]<br />\n}<br />\n],<br />\naccount_id: 4569729<br />\n}</p>\n<p>How should I format column_values in this case?</p>"
+    },
+    {
+      "id": 114546,
+      "postNumber": 9,
+      "createdAt": "2023-02-08T14:19:29.000Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Try escaping the inner quotes in your <code>column_values</code> argument. The inner quotes must be preceded with a <code>\\</code> to differentiate them from the outer ones. Without them, the string will not be parsed correctly.</p>\n<p>Try this as the argument instead:</p>\n<pre><code class=\"lang-auto\">column_values: \"{\\\"color\\\": \\\"Ok\\\", \\\"text9\\\": \\\"b\\\"}\") \n</code></pre>"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": 24885,
+  "title": "Consuming External API - Data to Board (Printavo -> Monday)",
+  "slug": "consuming-external-api-data-to-board-printavo-monday",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    22,
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2021-09-15T14:07:31.481Z",
+  "lastPostedAt": "2021-09-16T04:39:49.800Z",
+  "postsCount": 5,
+  "excerpt": "Goal: Consume external API (Printavo) and convert order details to board view in monday \nProgress: I can retrieve our order information from Printavo using Node with below \nimport dotenv from &quot;dotenv&quot;;\ndotenv.config();\ni&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2164,
+  "posts": [
+    {
+      "id": 63639,
+      "postNumber": 1,
+      "createdAt": "2021-09-15T14:07:31.556Z",
+      "author": "MikedotJS (Michael Wilson)",
+      "cookedHtml": "<p>Goal: Consume external API (Printavo) and convert order details to board view in monday</p>\n<p>Progress: I can retrieve our order information from Printavo using Node with below</p>\n<pre><code class=\"lang-auto\">import dotenv from \"dotenv\";\ndotenv.config();\nimport express from \"express\";\nimport fetch from \"node-fetch\";\nconst app = express();\nconst port = 3000;\nconst secret = process.env.USE_SECRET;\nconst email = process.env.USE_EMAIL;\n\napp.get(\"/orders\", async (req, res) =&gt; {\n  console.log(`/orders endpoint called ${secret}`);\n  const url = `https://www.printavo.com/api/v1/orders?email=${email}token=${secret}`;\n  const options = {\n    method: \"GET\",\n  };\n  const response = await fetch(url, options)\n    .then((res) =&gt; res.json())\n    .catch((e) =&gt; {\n      console.error({\n        message: \"oh noes\",\n        error: e,\n      });\n    });\n  console.log(\"Response: \", response);\n  res.json(response);\n});\n\napp.listen(port, () =&gt; {\n  console.log(`Example app listening at http://localhost:${port}`);\n});\n</code></pre>\n<p>My plan was to convert that response (orders) to an array of objects and create a new item in a board view. My question is - would it be possible to update an order status in Monday to send that data back to Printavo without something like Zapier?</p>"
+    },
+    {
+      "id": 63640,
+      "postNumber": 2,
+      "createdAt": "2021-09-15T14:13:20.787Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mikedotjs\">@MikedotJS</a><br />\nYes, it is possible. You can use the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API for that.<br />\nFor example, this is the <a href=\"https://api.developer.monday.com/docs/items-queries#items-mutations\" rel=\"noopener nofollow ugc\">link</a> to the documentation on how to create an Item<br />\nAdditionally, <a href=\"https://api.developer.monday.com/docs/status#code-example\" rel=\"noopener nofollow ugc\">this</a> is how to how change a status column.</p>"
+    },
+    {
+      "id": 63654,
+      "postNumber": 3,
+      "createdAt": "2021-09-15T16:07:20.097Z",
+      "author": "MikedotJS (Michael Wilson)",
+      "cookedHtml": "<p>Thanks for the reply <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> ,</p>\n<p>Do you think this would be better achieved as an Integration Recipe? The following Zap works relatively well but I would like to fully understand how I can build more robust integrations on top of monday</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/bc5e85d9157a7b820290d48b0a055079e35b5232.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/bc5e85d9157a7b820290d48b0a055079e35b5232_2_690x295.png\" alt=\"image\" width=\"690\" height=\"295\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1905×815 28.5 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 63656,
+      "postNumber": 4,
+      "createdAt": "2021-09-15T16:22:51.054Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>It is possible. To get the updates from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> to Printavo (Monday → Printavo), you can use webhooks for that. You can read about that <a href=\"https://support.monday.com/hc/en-us/articles/360003540679-Webhook-Integration-\" rel=\"noopener nofollow ugc\">here</a>.</p>"
+    },
+    {
+      "id": 63688,
+      "postNumber": 5,
+      "createdAt": "2021-09-16T04:39:49.800Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mikedotjs\">@MikedotJS</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>I’m so glad to hear you are having some success building on top of <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>! That’s amazing.</p>\n<p>I do think that you are trying to achieve would make most sense as an Integration recipe. The reason I wouldn’t suggest building a Board View is that you’d need to develop the visualization too. Additionally, the board view would only perform the data sync for you while the Board View is open.</p>\n<p>The Integration recipe could sync your data in real-time instead, and you could use both Webhooks and a custom trigger from our apps framework as well.</p>\n<p>I hope this helps clarify! You can find more info on our apps framework and custom triggers below:</p>\n<ul>\n<li><a href=\"https://apps.developer.monday.com/docs/custom-trigger\" rel=\"noopener nofollow ugc\">Custom Triggers<br />\n</a></li>\n</ul>\n<p>I hope this helps clarify a bit further! Have a great journey building something awesome with us <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p><a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> thanks for stepping in here and providing some helpful insight as well, I appreciate it!</p>\n<p>-Alex</p>"
+    }
+  ]
+}

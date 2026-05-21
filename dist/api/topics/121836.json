@@ -1,0 +1,48 @@
+{
+  "id": 121836,
+  "title": "What is wrong with my formula?",
+  "slug": "what-is-wrong-with-my-formula",
+  "categoryId": 5,
+  "tagIds": [
+    108,
+    303,
+    312
+  ],
+  "createdAt": "2025-11-21T03:21:19.782Z",
+  "lastPostedAt": "2025-11-24T12:27:23.504Z",
+  "postsCount": 4,
+  "excerpt": "I’ve been working on this formula to calculate a date based on a status column. I’ve been spinning my wheels for the better part of this afternoon since it’s a huge part of our use case that I want to transfer out of exc&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 17,
+  "posts": [
+    {
+      "id": 242074,
+      "postNumber": 1,
+      "createdAt": "2025-11-21T03:21:19.861Z",
+      "author": "SamG1 (Sam Grubbs)",
+      "cookedHtml": "<p>I’ve been working on this formula to calculate a date based on a status column. I’ve been spinning my wheels for the better part of this afternoon since it’s a huge part of our use case that I want to transfer out of excel.</p>\n<p>FORMAT_DATE</p>\n<p>(</p>\n<p>SWITCH(</p>\n<pre><code>{Status},\n\n\"OFA\",\n\nIF(\n\n  TODAY() &gt; ADD_DAYS({Submitted}, 21), ADD_DAYS(TODAY(), {Eq. Lead Time (Early)}),\n\n  ADD_DAYS({Submitted}, 7\\*(3+{Eq. Lead Time (Early)})) \n\n),\n\n\"Release  Requested\", \n\nIF( \n\n  TODAY() &gt; ADD_DAYS({Release Requested Date}, 14),\n\n  ADD_DAYS(TODAY(), 7\\*{Eq. Lead Time (Early)}),\n\n  ADD_DAYS({Release Requested Date}, 7\\*(2+{Eq. Lead Time (Early)}))\n\n)\n</code></pre>\n<p>)</p>\n<p>)</p>\n<p>What am I missing here? I have tried a similar thing in a different column which works just fine:</p>\n<p>FORMAT_DATE(</p>\n<p>SWITCH(</p>\n<pre><code>{Status}, \n\n\"OFA\", \n\nADD_DAYS({Submitted},21), \n\n\"Release Requested\", \n\nADD_DAYS({Release Requested Date},14)\n</code></pre>\n<p>)</p>\n<p>)</p>\n<p>Please save my sanity!</p>"
+    },
+    {
+      "id": 242099,
+      "postNumber": 2,
+      "createdAt": "2025-11-21T09:57:23.768Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/samg1\">@SamG1</a></p>\n<p>The first issue I see is the “\\” in the formula:<br />\nADD_DAYS({Submitted}, 7\\*(3+{Eq. Lead Time (Early)}))</p>\n<p>Is that actually in your formula text?</p>\n<p>Also the “(” after FORMAT_DATE must be directly following, without a space or carriage return. Like “FORMAT_DATE(”</p>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a></p>"
+    },
+    {
+      "id": 242199,
+      "postNumber": 3,
+      "createdAt": "2025-11-24T05:52:03.703Z",
+      "author": "SamG1 (Sam Grubbs)",
+      "cookedHtml": "<p>Hey Jim,</p>\n<p>No the “/” was not in the equation, but moving the “(“ to right after the FORMAT_DATE solved my issue, thanks so much!</p>"
+    },
+    {
+      "id": 242242,
+      "postNumber": 4,
+      "createdAt": "2025-11-24T12:27:23.504Z",
+      "author": "Ryan_54 (Ryan)",
+      "cookedHtml": "<p>Your formula issue comes down to Airtable choking on mismatched parentheses the SWITCH logic is fine, but one IF block isn’t actually closed, and you also had an extra <strong>)</strong> in the OFA branch. The wrong part is: ADD_DAYS({Submitted}, 7*(3+{Eq. Lead Time (Early)})) that’s too many closing brackets and the correct version is: ADD_DAYS({Submitted}, 7 * (3 + {Eq. Lead Time (Early)})) plus the full IF needs to close properly like : IF( TODAY() &gt; ADD_DAYS({Submitted}, 21), ADD_DAYS(TODAY(),{Eq. Lead Time (Early)}), ADD_DAYS({Submitted}, 7 * (3 + {Eq. Lead Time (Early)})) ). Fixing those parentheses cleans everything up and Airtable will accept the formula without errors</p>"
+    }
+  ]
+}

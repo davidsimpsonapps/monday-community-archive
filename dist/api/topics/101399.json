@@ -1,0 +1,159 @@
+{
+  "id": 101399,
+  "title": "Help new errors api: \"extensions\": { \"code\": \"GRAPHQL_VALIDATION_FAILED\"",
+  "slug": "help-new-errors-api-extensions-code-graphql-validation-failed",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-10-24T16:10:56.337Z",
+  "lastPostedAt": "2024-10-29T20:53:35.526Z",
+  "postsCount": 19,
+  "excerpt": "I all of a sudden started having issues with code that has been stable and working every day for over a year. So I tested a simple query through postman and the api playground. I now get \n“errors”: [ \n{ \n“message”: “Cann&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 79,
+  "posts": [
+    {
+      "id": 207077,
+      "postNumber": 1,
+      "createdAt": "2024-10-24T16:10:56.414Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>I all of a sudden started having issues with code that has been stable and working every day for over a year. So I tested a simple query through postman and the api playground. I now get</p>\n<p>“errors”: [<br />\n{<br />\n“message”: “Cannot query field \"items\" on type \"Board\".”,<br />\n“locations”: [<br />\n{<br />\n“line”: 6,<br />\n“column”: 5<br />\n}<br />\n],<br />\n“extensions”: {<br />\n“code”: “GRAPHQL_VALIDATION_FAILED”<br />\n}<br />\n}<br />\n],<br />\n“account_id”: xxx<br />\n}</p>\n<p>for a query as simple as:</p>\n<p>{<br />\nboards(ids: 4017433669) {<br />\nid<br />\nname<br />\nitems (limit: 10) {<br />\nid<br />\nname<br />\ncolumn_values {<br />\nid<br />\nvalue<br />\ntext<br />\n}<br />\nsubitems {<br />\nid<br />\nname<br />\ncolumn_values {<br />\nid<br />\nvalue<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>My real code returns a similar error</p>\n<p>(<em>Can’t get |data| of {account_id:xxx, errors:{{message:“Invalid GraphQL request”, |extensions|:{details:“failed to get the request body: error reading a body from connection: Invalid gzip header”, code:“INVALID_GRAPHQL_REQUEST”}}}}.-1728</em>)</p>"
+    },
+    {
+      "id": 207078,
+      "postNumber": 2,
+      "createdAt": "2024-10-24T16:28:03.914Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You’re not using <a href=\"https://developer.monday.com/api-reference/reference/items-page\">items_page</a> which is now how you get items without item IDs from a board. The requirement to use items_page though started October 2023 - so its unlikely the query you provided has been working for over a year.</p>\n<p>Another thing is currently in 2024-10 the data object is not returned on errors. It should be in 2025-01. To be spec compliant the data object must be returned even if its an empty object or a null. You’re using a spec compliant GraphQL client which is throwing error on that aspect.</p>"
+    },
+    {
+      "id": 207082,
+      "postNumber": 3,
+      "createdAt": "2024-10-24T16:44:26.178Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>Ok so the test I tried running was a default from api playground and the first one I found in Postman. My issue with the actual code that’s been working gives this error:</p>\n<p>Can’t get |data| of {account_id:xxxx, errors:{{message:“Invalid GraphQL request”, |extensions|:{details:“failed to get the request body: error reading a body from connection: Invalid gzip header”, code:“INVALID_GRAPHQL_REQUEST”}}}}. -1728</p>"
+    },
+    {
+      "id": 207090,
+      "postNumber": 5,
+      "createdAt": "2024-10-24T19:01:36.375Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>What library (and language) are you using to make the request itself?</p>\n<p>The error message you posted seems entirely unrelated to the query you posted (are they even related?)</p>\n<p>It appears to be an issue with the library making the call sending an invalid gzip header? Or not interpreting what is received correctly.</p>"
+    },
+    {
+      "id": 207145,
+      "postNumber": 7,
+      "createdAt": "2024-10-25T10:33:54.423Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There is an extra } at the end. Then after that, the <code>owner</code> field is deprecated and has been replaced with <code>owners</code> and <code>creator</code>.</p>\n<p>Just putting stuff into the playground instead of using Postman will help you solve a lot of this - as the playground knows the GraphQL schema and it will actually tell you the issues. I’d say do that first.</p>"
+    },
+    {
+      "id": 207147,
+      "postNumber": 8,
+      "createdAt": "2024-10-25T10:48:18.190Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Agree with <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> - always use the playground to validate that your GraphQL actually works before introducing more problems.</p>"
+    },
+    {
+      "id": 207182,
+      "postNumber": 9,
+      "createdAt": "2024-10-25T15:08:38.268Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> I was in panic and kept having to convert my code from c to graphql and missed the obvious error in the extra bracket. Thank you for pointing that out. The main issue was in my code that I hadn’t updated since April, all of sudden stopped working and it was the owner field for sure causing the issue which I didn’t even need. I deleted it from the query but crazy it still works in postman and api playgound but stopped working directly in my post to the api.</p>\n<p>Here was my query in literally every function I built:<br />\nquery  {<br />\nboards {<br />\nid<br />\nname<br />\nboard_folder_id<br />\nboard_kind<br />\nupdated_at<br />\ncommunication<br />\nowner {<br />\nid<br />\nname<br />\n}<br />\n}<br />\n}</p>\n<p>Now the new one is simple and works<br />\nquery  {<br />\nboards {<br />\nid<br />\nname<br />\n}<br />\n}</p>\n<p>Do you have any idea why would work in playground and in postman but not directly to the api?</p>"
+    },
+    {
+      "id": 207186,
+      "postNumber": 10,
+      "createdAt": "2024-10-25T15:31:14.365Z",
+      "author": "aholtzhauer (Andrew)",
+      "cookedHtml": "<p>I’m getting an internal server error from some of my requests as well actually.  I have an internal item view set up that works just fine with an item with like 5 updates, but with 40 it errors out with a “internal server error” and then spits back a GraphQL validation error.  However, I’ve also got a second app I developed that runs regularly using pagination and is also dying currently, but does not include “owner”.</p>\n<pre><code class=\"lang-auto\">const fetchItemsWithPagination = async (groupIds, retryCount=0) =&gt; {\n    try{\n        let cursor = null;\n        let allItems = [];\n        const limit = 100;\n        const updateLimit = 20;\n\n        // Convert the board ID to a string to match the ID! type expected by the API\n        const boardId = MONDAY_BOARD_ID.toString();\n\n        // Ensure groupIds is not null and is an array of strings\n        if (!groupIds || groupIds.length === 0) {\n            throw new Error('No valid group IDs provided.');\n        }\n\n        do {\n            // Determine which query to use based on whether we have a cursor\n            const query = cursor ? `\n                query {\n                    next_items_page(\n                        limit: ${limit}, \n                        cursor: \"${cursor}\"\n                    ) {\n                        cursor\n                        items {\n                            id\n                            name\n                            group {\n                                id\n                                title\n                            }\n                            column_values(ids: [\"color9\", \"text6\", \"date50\", \"date\", \"date05\"]) {\n                                id\n                                text\n                                value\n                            }\n                            updates(limit: ${updateLimit}) {\n                                id\n                                text_body\n                                created_at\n                                creator {\n                                    name\n                                }\n                                replies {\n                                    id\n                                    text_body\n                                    created_at\n                                    creator {\n                                        name\n                                    }\n                                }\n                            }\n                        }\n                    }\n                }\n            ` : `\n                query {\n                    boards (ids: ${boardId}){\n                        items_page(\n                            limit: ${limit}, \n                            query_params: {\n                                rules: [{\n                                    column_id: \"group\",\n                                    compare_value: ${JSON.stringify(groupIds)},\n                                    operator: any_of\n                                }]\n                            }\n                        ) {\n                            cursor\n                            items {\n                                id\n                                name\n                                group {\n                                    id\n                                    title\n                                }\n                                column_values(ids: [\"color9\", \"text6\", \"date50\", \"date\", \"date05\"]) {\n                                    id\n                                    text\n                                    value\n                                }\n                                updates(limit: ${updateLimit}) {\n                                    id\n                                    text_body\n                                    created_at\n                                    creator {\n                                        name\n                                    }\n                                    replies {\n                                        id\n                                        text_body\n                                        created_at\n                                        creator {\n                                            name\n                                        }\n                                    }\n                                }\n                            }\n                        }\n                    }\n                }\n            `;\n\n            // Log the query to the console\n            //console.log(\"GraphQL Query:\", query);\n\n            const response = await axios.post('https://api.monday.com/v2', {\n                query: query\n            }, {\n                headers: {\n                    Authorization: MONDAY_API_KEY\n                }\n            });\n\n            const result = response.data;\n            const items = cursor ? result.data.next_items_page.items : result.data.boards[0].items_page.items;\n            const newCursor = cursor ? result.data.next_items_page.cursor : result.data.boards[0].items_page.cursor;\n            allItems = [...allItems, ...items];\n            cursor = newCursor;\n\n        } while (cursor);\n\n        return allItems;\n    }\n    catch (error) {\n        if (error.response &amp;&amp; error.response.status === 504 &amp;&amp; retryCount &lt; 6) {\n            const delay = Math.min(60000, Math.pow(2, retryCount) * 1000); // exponential backoff, max 1 minute\n            console.warn(`504 error. Retrying after ${delay / 1000} seconds...`);\n            await new Promise(resolve =&gt; setTimeout(resolve, delay));\n            return fetchItemsWithPagination(groupIds, retryCount + 1); // retry the request\n        } else {\n            console.error('Error fetching items with pagination:', error);\n            sendErrorEmail(`Error fetching items with pagination: ${error}`);\n            return null;\n        }\n    }\n};\n</code></pre>\n<p>It is interesting that this just started becoming an issue yesterday afternoon…</p>"
+    },
+    {
+      "id": 207188,
+      "postNumber": 11,
+      "createdAt": "2024-10-25T15:55:44.197Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>If your issue is another “deprication” issue then I’m gonna snap. Chasing deprication unnecessarily on something going from owner to owners is kind of rediculous. Why not add owners and leave owner or return both with either instead of eliminating something and having it roll out phased so much it’s hard to tell. Don’t get me wrong…I love Monday and their team and community is great! Just why not think about ways to keep deprication from being absolute unless necessary.</p>"
+    },
+    {
+      "id": 207194,
+      "postNumber": 12,
+      "createdAt": "2024-10-25T16:11:31.477Z",
+      "author": "aholtzhauer (Andrew)",
+      "cookedHtml": "<p>I think the issue may be related to the updates in some way - at least for me.  If I run an API call like this…:</p>\n<pre><code class=\"lang-auto\">query {\n    boards (ids:[boardIdHere] ){\n        items_page(\n            limit: 100, \n            query_params: {\n                rules: [{\n                    column_id: \"group\",\n                    compare_value: [\"new_group2855\"],\n                    operator: any_of\n                }]\n            }\n        ) {\n            cursor\n            items {\n                id\n                name\n                group {\n                    id\n                    title\n                }\n                column_values(ids: [\"color9\", \"text6\", \"date50\", \"date\", \"date05\"]) {\n                    id\n                    text\n                    value\n                }\n                updates(limit: 20) {\n                    id\n                    text_body\n                    created_at\n                    creator {\n                        name\n                    }\n                    replies {\n                        id\n                        text_body\n                        created_at\n                        creator {\n                            name\n                        }\n                    }\n                }\n            }\n        }\n    }\n}\n</code></pre>\n<p>Everything works great.  If I bump that update limit up to something like 40, it dies.  Even requesting 1 item with a limit of 40 updates kills it.</p>"
+    },
+    {
+      "id": 207196,
+      "postNumber": 13,
+      "createdAt": "2024-10-25T16:20:30.381Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dean_m\">@dean_m</a>,</p>\n<p>I suggest opening a <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">support ticket</a> so our team can take a closer look at your queries to determine what is going on. Make sure to include as much information as possible to help get a resolution faster!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 207198,
+      "postNumber": 14,
+      "createdAt": "2024-10-25T16:33:33.395Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>If you’re having inconsistent behaviors I would recommend checking the api-version header you’re sending. If you don’t send the header it will use whatever is the current stable - but if you do send a header, it will use the specific version assuming its still in the maintenance release list. It is likely you’re specifying a version in one place, but not in another.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/api-versioning\" target=\"_blank\" rel=\"noopener\">monday.com Platform API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/4/0/4005563d911b52634489bff44a7c345ce1686d22.png\" class=\"thumbnail\" width=\"358\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/api-versioning\" target=\"_blank\" rel=\"noopener\">API Versioning</a></h3>\n\n  <p>Learn about different versions of the monday.com platform, when they are released, and how to access them</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 207208,
+      "postNumber": 15,
+      "createdAt": "2024-10-25T17:16:21.072Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>Wow…thats insane. You’re correct. I thought it defaulted to the stable release. No idea what version it was sending but your tip solved every error I had. The conspiracist in me thinks something just changed in the API this week and that it is now defaulting to another but holy moly…thanks. <a class=\"mention\" href=\"/u/aholtzhauer\">@aholtzhauer</a> read his comment and give it a try!</p>"
+    },
+    {
+      "id": 207209,
+      "postNumber": 16,
+      "createdAt": "2024-10-25T17:19:21.578Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>just fyi my change in code was to use 2024-07 and works fine in 2024-04. Whatever version it was using reported Invalid gzip header being sent back.</p>"
+    },
+    {
+      "id": 207210,
+      "postNumber": 17,
+      "createdAt": "2024-10-25T17:39:54.162Z",
+      "author": "aholtzhauer (Andrew)",
+      "cookedHtml": "<p>Just to clarify… did you already have the API version specified in your request?  Based on the link provided by Cody, the maintenance version is now 2024-07 and the current version is 2024-10.</p>\n<p>My API calls never specify an API version, which means they’re always calling for the current version.  I guess I technically could add in the parameter to use the maintenance 2024-07 version, but eventually that will be sunset and 2024-10 will become the maintenance version, in which case any un-fixed issues will arise again I believe.</p>\n<p><a class=\"mention\" href=\"/u/dean_m\">@dean_m</a> So if you have now specified “2024-07” as your version and the issue became fixed, I would suspect that the issue will come back in a few months when the current version becomes the maintenance version and the other older versions become deprecated.</p>\n<p>From the link Cody sent:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/b/4be1d7360036c6a9c3c048738917006b37994176.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/b/4be1d7360036c6a9c3c048738917006b37994176_2_690x345.png\" alt=\"image\" width=\"690\" height=\"345\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">815×408 47.7 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 207212,
+      "postNumber": 18,
+      "createdAt": "2024-10-25T18:12:19.092Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>2024-10 is the issue. I tested with that and got the errors. Error says it has issues with gzip header being incomplete or corrupted when it returns to result or but possibly because it returns internal server error and there is no info. <a class=\"mention\" href=\"/u/aholtzhauer\">@aholtzhauer</a> no I was not previously specifying.</p>"
+    },
+    {
+      "id": 207217,
+      "postNumber": 19,
+      "createdAt": "2024-10-25T18:51:43.408Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>2024-10 went live this month. It focused on tightening up error handling and being more strict on the schema and parsing.</p>\n<p>Its a bit of a pain, but ultimately it will make things more stable and reliable by catching things in earlier stages of the API where its easier to return meaningful errors.</p>\n<p>That said its possible you found some gaps in coverage - specifically with fields that were long deprecated and may not have been included in validation. I’d still open a case at the link provided by rachel.</p>"
+    },
+    {
+      "id": 207716,
+      "postNumber": 20,
+      "createdAt": "2024-10-29T10:33:01.491Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>So I have identified several ways to break the 2024-10 code and did not break the 2024-7 code and one very bizarre way of fixing…</p>\n<p>This will error in 2024-10 as I had in mine:</p>\n<pre><code class=\"lang-auto\">var settings = {\n  \"url\": \"https://api.monday.com/v2\",\n  \"method\": \"POST\",\n  \"timeout\": 0,\n  \"headers\": {\n    \"Content-Encoding\": \"gzip\",\n    \"API-Version\": \"2024-10\",\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": \"xxx\"\n  },\n \"data\": JSON.stringify({\n    \"query\": \"query { boards (limit:1000) { id name board_folder_id board_kind}}\"\n  }),\n};\n\n$.ajax(settings).done(function (response) {\n  console.log(response);\n});\n</code></pre>\n<p>It errors:<br />\n<code>\"message\": \"Invalid GraphQL request\",       \"extensions\": {         \"details\": \"failed to get the request body: error reading a body from connection: Invalid gzip header\",         \"code\": \"INVALID_GRAPHQL_REQUEST\"</code></p>\n<p>however if I change API Version to 2024-7 with this:</p>\n<pre><code class=\"lang-auto\">\"API-Version\": \"2024-7\"\n</code></pre>\n<p>No error. So here’s the issue, header should have been:</p>\n<pre><code class=\"lang-auto\">\"Content-Transfer-Encoding\": \"gzip\" instead of `\"Content-Encoding\": \"gzip\"\n</code></pre>\n<p>But for a strange twist if I change the url to this:</p>\n<pre><code class=\"lang-auto\">\"url\": \"https://api.monday.com/v2/\"\n</code></pre>\n<p>and put the Content-Encoding back:</p>\n<pre><code class=\"lang-auto\">\"Content-Encoding\": \"gzip\"\n</code></pre>\n<p>It now works! Not sure why they wouldn’t allow Content-Encoding over http as it is more efficient as far as I know in longer responses. Anyone have any feedback on why it’s not allowed or why adding a / to the end of the url allows it?</p>"
+    },
+    {
+      "id": 207769,
+      "postNumber": 21,
+      "createdAt": "2024-10-29T20:53:35.526Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/danielhai\">@DanielHai</a> mentioning you in on this one, just for your awareness.</p>"
+    },
+    {
+      "id": 208408,
+      "postNumber": 22,
+      "createdAt": "2024-11-04T05:54:31.322Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": 123649,
+  "title": "Need formula help please",
+  "slug": "need-formula-help-please",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2026-02-11T05:27:51.288Z",
+  "lastPostedAt": "2026-02-12T13:25:27.120Z",
+  "postsCount": 6,
+  "excerpt": "Hi, I’ve created a formula where the total billed column is calculated via the monthly billed and the start and end dates. However, I would like the total billed to be the same as the monthly billed if the end date is le&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 24,
+  "posts": [
+    {
+      "id": 245768,
+      "postNumber": 1,
+      "createdAt": "2026-02-11T05:27:51.385Z",
+      "author": "Mysticat (Misty Baker)",
+      "cookedHtml": "<p>Hi, I’ve created a formula where the total billed column is calculated via the monthly billed and the start and end dates. However, I would like the total billed to be the same as the monthly billed if the end date is left blank. I cannot seem to get the AI prompt to work no matter how I reword it. Any suggestions?</p>\n<p>This is my current formula:</p>\n<p>IF({End Date} = “”, {Monthly Billed}, TEXT(ROUNDUP((YEAR({End Date}) - YEAR({Start Date})) * 12 + MONTH({End Date}) - MONTH({Start Date}) + IF(DAY({End Date}) &gt; DAY({Start Date}), 1, 0), 0) * {Monthly Billed}, “$#,#<span class=\"hashtag-raw\">#0</span>.00”))</p>\n<p>And a screenshot of the current board where the formula is used:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/9/a9b8f1eb14a1dcb27433d4207955cc421851240d.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/9/a9b8f1eb14a1dcb27433d4207955cc421851240d_2_390x500.png\" alt=\"image\" width=\"390\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">478×612 30.2 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 245792,
+      "postNumber": 2,
+      "createdAt": "2026-02-11T05:52:02.060Z",
+      "author": "YOGESHP (Yogesh Pokale)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/mysticat/48/20158_2.png\" class=\"avatar\" /> Mysticat:</div>\n<blockquote>\n<p>Hi, I’ve created a formula where the total billed column is calculated via the monthly billed and the start and end dates. However, I would like the total billed to be the same as the monthly billed if the end date is left blank. I cannot seem to get the AI prompt to work no matter how I reword it. Any suggestions?</p>\n<p>This is my current formula:</p>\n<p>IF({End Date} = “”, {Monthly Billed}, TEXT(ROUNDUP((YEAR({End Date}) - YEAR({Start Date})) * 12 + MONTH({End Date}) - MONTH({Start Date}) + IF(DAY({End Date}) &gt; DAY({Start Date}), 1, 0), 0) * {Monthly Billed}, “$#,#<span class=\"hashtag-raw\">#0</span>.00”))</p>\n<p>And a screenshot of the current board where the formula is used:</p>\n</blockquote>\n</aside>\n<p>Hi <a class=\"mention\" href=\"/u/mysticat\">@Mysticat</a>,</p>\n<p>The issue is that <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> throws an “invalid parameter” error when YEAR(), MONTH(), or DAY() are used on blank Date fields. You need to handle blank dates inside the date functions themselves.</p>\n<p><strong>This version works:</strong></p>\n<p>IF( OR({End Date} = “”, {Start Date} = “”), {Monthly Billed}, ROUNDUP( ( (YEAR(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) - YEAR(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date})) ) * 12 + (MONTH(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) - MONTH(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date})) ) + IF( DAY(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) &gt; DAY(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date})), 1, 0 ) ) * {Monthly Billed}, 0 ) )</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/4/34530f542d7accd27a4d7187d5a7054b689ecd73.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/3/4/34530f542d7accd27a4d7187d5a7054b689ecd73.png\" alt=\"image\" width=\"674\" height=\"241\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">674×241 12.2 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 245821,
+      "postNumber": 3,
+      "createdAt": "2026-02-11T11:17:19.296Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/mysticat\">@Mysticat</a><br />\nYou’re super close</p>\n<p>Right now your IF check is looking for an empty string, but Date columns in monday don’t behave like text. The safest approach is to explicitly check for “blank” using the date value itself.</p>\n<p>Try wrapping your current formula with a blank End Date check like this:</p>\n<p><code>IF(ISBLANK({End Date}), {Monthly Billed}, &lt;your existing calculation&gt;)</code></p>\n<p>So your structure becomes:<br />\nIf End Date is blank then just return Monthly Billed<br />\nOtherwise run the month difference math</p>\n<p>This is the same pattern monday recommends for formulas that need to handle empty fields.</p>\n<p>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=15\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" /> <a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\" class=\"inline-onebox\">Calendly</a></p>"
+    },
+    {
+      "id": 245935,
+      "postNumber": 4,
+      "createdAt": "2026-02-12T12:43:08.686Z",
+      "author": "Mysticat (Misty Baker)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/y/ee7513/48.png\" class=\"avatar\" /> YOGESHP:</div>\n<blockquote>\n<p>IF( OR({End Date} = “”, {Start Date} = “”), {Monthly Billed}, ROUNDUP( ( (YEAR(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) - YEAR(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date})) ) * 12 + (MONTH(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) - MONTH(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date})) ) + IF( DAY(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) &gt; DAY(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date})), 1, 0 ) ) * {Monthly Billed}, 0 ) )</p>\n</blockquote>\n</aside>\n<p>At first I plugged it in and clicked “set formula”, and it would not work. Then I asked the AI to analyze the formula. I then clicked “Insert” with what it gave me, and it worked! Is there any difference?</p>\n<p>IF(OR({End Date} = “”, {Start Date} = “”), {Monthly Billed}, ROUNDUP(((YEAR(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) - YEAR(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date}))) * 12 + (MONTH(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) - MONTH(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date}))) + IF(DAY(IF({End Date} = “”, DATE(2000, 1, 1), {End Date})) &gt; DAY(IF({Start Date} = “”, DATE(2000, 1, 1), {Start Date})), 1, 0)) * {Monthly Billed}, 0))</p>"
+    },
+    {
+      "id": 245936,
+      "postNumber": 5,
+      "createdAt": "2026-02-12T12:45:42.200Z",
+      "author": "alea-cxmonday (Alea)",
+      "cookedHtml": "<p>Hi Misty! My name is Alea, and I am on the Customer Experience team at <a href=\"http://monday.com\">monday.com</a>. It looks like you ran into a classic case of hidden formatting issues.</p>\n<p>The logic in both versions of your formula is actually the same. The reason the second one worked likely comes down to formatting. In your first version, you used “curly” or “smart” quotes (“ ”). The <a href=\"http://monday.com\">monday.com</a> formula builder reads those as illegal characters, which caused the error. The working version used straight quotes (\" \"), which the system recognizes properly.</p>\n<p>When you clicked ‘Insert’ from the AI assistant, it automatically cleaned up the syntax behind the scenes. <img src=\"https://emoji.discourse-cdn.com/apple/raising_hands.png?v=15\" title=\":raising_hands:\" class=\"emoji\" alt=\":raising_hands:\" width=\"20\" height=\"20\" /> That includes converting smart quotes to straight quotes, making sure parentheses match, and fixing spacing. So even though the logic didn’t change, the formatting did.</p>\n<p>It’s a subtle difference, but one that can definitely trip things up. Please let us know if you have any additional questions on this - we’re more than happy to help! <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=15\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 245942,
+      "postNumber": 6,
+      "createdAt": "2026-02-12T13:25:27.120Z",
+      "author": "YOGESHP (Yogesh Pokale)",
+      "cookedHtml": "<p>Guessing there might few extra spaces when I pasted it. Glad it worked!!</p>"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": 83175,
+  "title": "Combining conditions and returning a future date",
+  "slug": "combining-conditions-and-returning-a-future-date",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    104,
+    108,
+    351
+  ],
+  "createdAt": "2024-04-05T14:43:10.504Z",
+  "lastPostedAt": "2024-04-08T09:27:49.797Z",
+  "postsCount": 3,
+  "excerpt": "Newbie to monday.com, here.  Can someone help me figure out an automation or formula to make this work? \nBaseline info: \nRows: \nHire Date \n90 day eval \n6 month bonus \n12 month bonus \nColumns: \nDate \nTime Frame (Dropdowns&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 307,
+  "posts": [
+    {
+      "id": 177153,
+      "postNumber": 1,
+      "createdAt": "2024-04-05T14:43:10.612Z",
+      "author": "Salty (Amber Suby)",
+      "cookedHtml": "<p>Newbie to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>, here.  Can someone help me figure out an automation or formula to make this work?</p>\n<p>Baseline info:</p>\n<p>Rows:<br />\nHire Date<br />\n90 day eval<br />\n6 month bonus<br />\n12 month bonus</p>\n<p>Columns:<br />\nDate<br />\nTime Frame (Dropdowns include 90 days, 6 months, 1 year, n/a)<br />\nDependent on  (Hire Date)<br />\nFormula</p>\n<p>I would like the formula to return, in the 90 day eval row, the date that is 90 days from the date in the Hire Date row.  I created the Time Frame dropdowns so I could exclude this formula from applying to anything other than the date value I need.  I will need to also create (and combine) formulas for the 6 month and 12 month lines.</p>\n<p>So, if the dropdown value in Time Frame is “90 days”, AND Dependent On is the “hire date” row, THEN populate the Date with a date 90 days from the date reflected in the Date field on the New Hire row.</p>\n<p>Maybe I need to specify something more clearly in the Dependent On row, so it knows to look at the date?  I’m absolutely confused.</p>\n<p>Here are a few formulas I have tried with no luck:</p>\n<p>IF(AND({Date})&gt;0,{Time Frame#Labels},“90 days”),(ADD_DAYS({Date},90))</p>\n<p>IF({Time Frame#Labels},“90 days”),(ADD_DAYS({Date},90),“”)</p>\n<p>IF({Date}),AND({Time Frame#Labels},“90 days”),(ADD_DAYS({Date},90),“”)</p>\n<p>Hopefully there’s a Monday genius out there who can help me figure this one out.  Thanks much!</p>"
+    },
+    {
+      "id": 177298,
+      "postNumber": 2,
+      "createdAt": "2024-04-07T19:49:28.513Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Amber,</p>\n<p>Natively a formula column can only reference columns from its own row. You can’t tell it to look for a value in another row.</p>\n<p>But it can be done with a 3rd-party app called <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>.</p>\n<p>This app doesn’t use the formula column and can write formula results to any kind of column. Plus it can read and update any row in the board, even from other boards.</p>\n<p>In this case, here is the formula you would use:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/1/0/1030438ea801278d39fe111f5692d8ad640ce2e6.jpeg\" alt=\"2024-04-07_17-43-38\" width=\"582\" height=\"70\" /></p>\n<p>It reads: Date of item <span class=\"hashtag-raw\">#2</span> is equal to the date of item <span class=\"hashtag-raw\">#1</span> plus 90 days.</p>\n<p>You simply create the formula, then add an automation like this one:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/c/b/cb8a6559c0b628d094483fca5e9f18342d30647d.jpeg\" alt=\"2024-04-07_17-45-54\" width=\"655\" height=\"306\" /><br />\n <br />\n <br />\n <br />\nHere is the result:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/2/9/293a1f39edb3d0de58f66c189d1380f42b246ed5.gif\" alt=\"row2date\" width=\"600\" height=\"414\" class=\"animated\" /><br />\n <br />\n <br />\n <br />\n----------------------------------------------------------------------- </p>\n<p>Now, this assumes <em>Hire Date</em> is always row <span class=\"hashtag-raw\">#1</span> and <em>90 day eval</em> always row <span class=\"hashtag-raw\">#2</span>.<br />\nWhat if the rows get shuffled?<br />\n<strong>You could create a formula that doesn’t take for granted the position of each row.</strong></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/5/75eac53a2590136c55f6c214f79d8c68a58540a7.jpeg\" title=\"2024-04-07_17-28-27\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/5/75eac53a2590136c55f6c214f79d8c68a58540a7_2_690x82.jpeg\" alt=\"2024-04-07_17-28-27\" width=\"690\" height=\"82\" /><div class=\"meta\"><span class=\"filename\">2024-04-07_17-28-27</span><span class=\"informations\">1115×133 63.5 KB</span></div></a></div><p></p>\n<ul>\n<li>1: Looks for the row number of the “Hire Date” item in {GroupItems.Name} which is the list of the names of the items and stores it under [SourceRow]. Here its position is 1.</li>\n<li>2: Does the same for the “90 day eval” row and stored it under [TargetRow]. Here its position is 2.</li>\n<li>3: Same as the previous formula: adds 90 days to the date in row <span class=\"hashtag-raw\">#1</span> and writes it to the date column in row <span class=\"hashtag-raw\">#2</span>, except this time, 1 and 2 have been calculated and could be anything depending on the order of your rows.</li>\n</ul>\n<p>If you need any help with the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, feel free to write me in private or use the in-app ticket system.</p>"
+    },
+    {
+      "id": 177366,
+      "postNumber": 3,
+      "createdAt": "2024-04-08T09:27:49.797Z",
+      "author": "Salty (Amber Suby)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gcavin\">@GCavin</a> , thank you so much!  This is fantastic information!</p>"
+    }
+  ]
+}

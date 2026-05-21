@@ -1,0 +1,72 @@
+{
+  "id": 2789,
+  "title": "Node.js Change multiple column values",
+  "slug": "node-js-change-multiple-column-values",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2019-10-24T11:23:31.362Z",
+  "lastPostedAt": "2021-02-25T12:23:03.011Z",
+  "postsCount": 8,
+  "excerpt": "I am using Zapier to create a new Monday pulse everytime a specific action happens in my CRM. The problem is that zapier only allows access to the pulse title so all my data is dumped in the title. I have created a node.&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 6030,
+  "posts": [
+    {
+      "id": 7533,
+      "postNumber": 1,
+      "createdAt": "2019-10-24T11:23:31.544Z",
+      "author": "rtalbert (Ryan)",
+      "cookedHtml": "<p>I am using Zapier to create a new Monday pulse everytime a specific action happens in my CRM. The problem is that zapier only allows access to the pulse title so all my data is dumped in the title. I have created a node.js script that parses out the desired information and then mutates multiple column values you move that data into the appropriate column. I can’t for the life of me get it to work and the documentation is not helping. Any help would be appreciated.</p>\n<p>Here is my index.js file:<br />\nconst express = require(‘express’)<br />\nconst path = require(‘path’)<br />\nconst bodyParser = require(‘body-parser’)<br />\nconst PORT = process.env.PORT || 5000</p>\n<pre><code>const updateMultipleColumnValues = require(\"./updateMultipleColumnValue\").updateMultipleColumnValue;\n\n\n\n\nconst app = express();\n  app.use( bodyParser.json());\n  app.use(bodyParser.urlencoded({extended: true}));\n  app.set('views', path.join(__dirname, 'views'));\n  app.set('view engine', 'ejs');\n  \n  app.post('/', (req, res) =&gt; {\n    console.log(req.body)\n    const { boardId, pulseId } = req.body.event\n   \n      let parsedRecord = extractData(req.body.event.pulseName)\n      console.log(parsedRecord);\n\n      let newData = {\n        \"text0\": parsedRecord.DURATION\n      } \n\n      let stringData = JSON.stringify(newData);\n\n      console.log(boardId);\n      console.log(pulseId);\n      console.log(stringData);\n      updateMultipleColumnValues(boardId, pulseId, stringData);\n    res.json(parsedRecord)\n  });\n\n  app.listen(PORT, () =&gt; console.log(`Listening on ${ PORT }`));\n\n\n\nfunction extractData(str) {\n  let fields = ['DATE', 'TIME', 'DURATION', 'TYPE'];\n\n  return str.split(/\\s*\\|\\s*/).reduce((res, entry) =&gt; {\n    let dat = entry.split(/\\s*:\\s*/);\n    return fields.indexOf(dat[0]) &gt; -1 ? Object.assign(res, { [dat[0]]: dat[1] }) : res;\n  }, {});\n}\n</code></pre>\n<p>and here is my update column script<br />\nconst executeMondayQuery = require(“./executeMondayQuery”).executeMondayQuery;</p>\n<pre><code>const updateMultipleColumnValue = async (boardId, itemId, newData) =&gt; {\n  const updateColumnValueBody = {\n      query: `mutation {\n      change_multiple_column_values(\n      board_id: ${boardId},\n      item_id: ${itemId},\n      column_values: ${newData}\n      ) { id }\n    }`\n  };\n\n  await executeMondayQuery(updateColumnValueBody);\n};\n\nexports.updateMultipleColumnValue = updateMultipleColumnValue;\n</code></pre>"
+    },
+    {
+      "id": 7552,
+      "postNumber": 2,
+      "createdAt": "2019-10-25T05:10:34.900Z",
+      "author": "gianluigi (Gianluigi)",
+      "cookedHtml": "<aside class=\"quote no-group quote-modified\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/r/dc4da7/48.png\" class=\"avatar\" /> rtalbert:</div>\n<blockquote>\n<p>query: <code>mutation { change_multiple_column_values( board_id: ${boardId}, item_id: ${itemId}, column_values: ${newData} ) { id } }</code></p>\n</blockquote>\n</aside>\n<p>Hello, I won 't get into the details of your code, but I can give you a general suggestion: Try dumping the content of the query you generated and try it on: <a href=\"https://monday.com/developers/v2/try-it-yourself\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.com</a>.</p>\n<p>Do you receive a specific error from the api endpoint ?</p>\n<p>Hope it helps,<br />\nGianluigi</p>"
+    },
+    {
+      "id": 7561,
+      "postNumber": 3,
+      "createdAt": "2019-10-25T11:28:36.701Z",
+      "author": "rtalbert (Ryan)",
+      "cookedHtml": "<p>This is the error I am receiving. But in the docs it says if you’re using javascript to stringify the output, why is it not working?<br />\n{<br />\n“errors”: [<br />\n{<br />\n“message”: “Parse error on “date4” (STRING) at [5, 23]”,<br />\n“locations”: [<br />\n{<br />\n“line”: 5,<br />\n“column”: 23<br />\n}<br />\n]<br />\n}<br />\n],<br />\n“account_id”: 2115812<br />\n}</p>"
+    },
+    {
+      "id": 7616,
+      "postNumber": 4,
+      "createdAt": "2019-10-28T23:22:41.934Z",
+      "author": "gianluigi (Gianluigi)",
+      "cookedHtml": "<p>If you could inspect your column data as serialized by JSON.stringify(), it would help understand your issue. Can you share it with us ?</p>"
+    },
+    {
+      "id": 8470,
+      "postNumber": 5,
+      "createdAt": "2019-11-20T00:34:08.684Z",
+      "author": "Tod (Tod Gentille)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/r/dc4da7/48.png\" class=\"avatar\" /> rtalbert:</div>\n<blockquote>\n<p>stringData</p>\n</blockquote>\n</aside>\n<p>I had a similar problem trying to just write a single value with <code>change_column_value</code>. I eventually got it to work by passing in a GraphQL variable and used  JSON.stringify on the <code>variables </code> parameter and that seems to make the API happy.  In the example below I’m suggesting you treat your newData the way I’m treating the variable <code>value</code>.</p>\n<pre><code class=\"lang-JavasScript\">const body = {\n  query: `\n    mutation ($textValue: JSON!){\n      change_column_value(\n        board_id: ${boardId},\n        item_id: ${itemId},\n        column_id: ${colId},\n        value:$textValue\n      ){\n        id\n      }\n    }\n    `,\n  variables: {\n    textValue: JSON.stringify(value),\n  },\n}\n</code></pre>"
+    },
+    {
+      "id": 9310,
+      "postNumber": 6,
+      "createdAt": "2019-12-13T15:06:40.394Z",
+      "author": "Zalayeta (Mathieu)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tod\">@Tod</a> Thank you!<br />\nI had the same problem trying to update a single column date value.<br />\nSomehow these two implementations don’t work:</p>\n<pre><code class=\"lang-auto\">json: true,\nbody: { query:\n  `mutation {change_column_value(\n      board_id: 394002736,\n      item_id: ${result.body.data.create_item.id},\n      column_id: \"date\",\n      value: JSON.stringify({\"date\": \"2019-06-03\"})\n) { id }}`\n</code></pre>\n<pre><code class=\"lang-auto\">body: JSON.stringify({ query:\n  `mutation {change_column_value(\n      board_id: 394002736,\n      item_id: ${result.body.data.create_item.id},\n      column_id: \"date\",\n      value: JSON.stringify({\"date\": \"2019-06-03\"})\n) { id }})`\n</code></pre>"
+    },
+    {
+      "id": 9784,
+      "postNumber": 7,
+      "createdAt": "2019-12-30T18:22:52.328Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/zalayeta\">@Zalayeta</a> – did your query work when you tried it in our GraphQL explorer? Here’s the link: <a href=\"https://monday.com/developers/v2/try-it-yourself\" class=\"inline-onebox\">monday.com</a></p>"
+    },
+    {
+      "id": 42085,
+      "postNumber": 8,
+      "createdAt": "2021-02-25T12:23:03.011Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

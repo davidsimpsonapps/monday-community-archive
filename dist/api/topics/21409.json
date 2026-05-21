@@ -1,0 +1,49 @@
+{
+  "id": 21409,
+  "title": "Error in updating columns of sub-items",
+  "slug": "error-in-updating-columns-of-sub-items",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2021-06-17T12:08:44.984Z",
+  "lastPostedAt": "2021-06-17T15:03:53.053Z",
+  "postsCount": 3,
+  "excerpt": "Good afternoon, I’m having a problem with a subitem update, my idea is to update the status column of the subitems, I’m doing a query after creating the subitems. \nMy query to get the ids of the subitems: \n &#39;query($itemI&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1372,
+  "posts": [
+    {
+      "id": 55050,
+      "postNumber": 1,
+      "createdAt": "2021-06-17T12:08:45.126Z",
+      "author": "franklin.oliveira (Franklin da silva oliveira)",
+      "cookedHtml": "<p>Good afternoon, I’m having a problem with a subitem update, my idea is to update the status column of the subitems, I’m doing a query after creating the subitems.<br />\nMy query to get the ids of the subitems:</p>\n<pre><code> 'query($itemId: [Int]){\n  Items (ids: $itemId) {\n    Column_values ​​{\n      Id\n      Text\n      Value\n    }\n  }\n}'\n</code></pre>\n<p>The answer:<br />\n‘{<br />\nLinkedPulseIds: [<br />\n{ linkedPulseId: 1400012779 },<br />\n{ linkedPulseId: 1400012848 },<br />\n{ linkedPulseId: 1400012918 },<br />\n{ linkedPulseId: 1400012997 },<br />\n{ linkedPulseId: 1400013068 },<br />\n{ linkedPulseId: 1400013123 },<br />\n{ linkedPulseId: 1400013255 },<br />\n{ linkedPulseId: 1400013310 },<br />\n{ linkedPulseId: 1400013366 },<br />\n{ linkedPulseId: 1400013404 },<br />\n{ linkedPulseId: 1400013480 }<br />\n]<br />\n}’<br />\nRight after that I try to mutate with the ids:<br />\n‘mutation($value: JSON!, $idColumn: String!) {change_column_value( board_id:1249559661<br />\nColumn_id: $idColumn item_id: $idSubitem value: $value) {id}}’</p>\n<p>The answer :<br />\n‘{<br />\nError_code: ‘ResourceNotFoundException’,<br />\nStatus_code: 404,<br />\nError_message: ‘Item not found in board’,<br />\nError_data: { item_id: 1400013480, board_id: 1249559661, error_reason: null }<br />\n}’<br />\nCan you help me?<br />\nThanks!</p>"
+    },
+    {
+      "id": 55088,
+      "postNumber": 2,
+      "createdAt": "2021-06-17T15:03:53.053Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/franklin.oliveira\">@franklin.oliveira</a><br />\nYou are trying to update subitem under the original board, but subitems are actually created under different board with different board id<br />\nYou can query this board id from the settings of the subitem column of the original board</p>\n<pre><code class=\"lang-auto\">query{\n  boards(ids: 1249559661){\n    columns{\n      id\n      settings_str\n    }    \n  }\n}\n</code></pre>\n<p>The result will be something like this:</p>\n<pre><code class=\"lang-auto\">{\n            \"id\": \"subitems\",\n            \"settings_str\": \"{\\\"allowMultipleItems\\\":true,\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"boardIds\\\":[1249559701]}\"\n          }\n</code></pre>\n<p>Where 1249559701 - is the id of your subitems board</p>"
+    },
+    {
+      "id": 55100,
+      "postNumber": 3,
+      "createdAt": "2021-06-17T16:21:43.883Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 56440,
+      "postNumber": 4,
+      "createdAt": "2021-06-28T13:18:03.618Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

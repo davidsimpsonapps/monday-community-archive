@@ -1,0 +1,32 @@
+{
+  "id": 69912,
+  "title": "Formulas: Allow error handling though lazy evaluation in formulas",
+  "slug": "formulas-allow-error-handling-though-lazy-evaluation-in-formulas",
+  "categoryId": 7,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-11-02T21:15:12.059Z",
+  "lastPostedAt": "2023-11-20T17:06:29.367Z",
+  "postsCount": 2,
+  "excerpt": "Hey guys, \nTrying to implement an AVERAGE IF function and ran into an error I think is related to Formulas not using lazy evaluation. If I can hack my way around this - please let me know, otherwise want to submit this a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 846,
+  "posts": [
+    {
+      "id": 151328,
+      "postNumber": 1,
+      "createdAt": "2023-11-02T21:15:12.139Z",
+      "author": "jmalm (Jonas Malm)",
+      "cookedHtml": "<p>Hey guys,</p>\n<p>Trying to implement an AVERAGE IF function and ran into an error I think is related to Formulas not using lazy evaluation. If I can hack my way around this - please let me know, otherwise want to submit this as a feature request.</p>\n<p>Request: In formulas like IF and SWITCH all the functions should not be evaluated (use lazy evaluation) and work like any normal programming language (or Excel even).</p>\n<p>To reproduce my problem try:</p>\n<blockquote>\n<p>IF({number_col} = 0, “Avoid error”, 1 / {number_col})<br />\nSWITCH({number_col}, 0, “Avoid error”, 1 / {number_col})<br />\nThese both throw errors even though the divide by zero case was handled for rows where the number_col is zero.</p>\n</blockquote>\n<p>My use-case if creating an AVERAGE IF of columns that may or may not contain values. Works for columns with at least one value but throws an error that I caught already. My psuedo code is basically</p>\n<blockquote>\n<p>IF COUNT = 0 → “Catch”<br />\nELSE SUM / COUNT</p>\n</blockquote>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 153952,
+      "postNumber": 2,
+      "createdAt": "2023-11-20T17:06:29.367Z",
+      "author": "jmalm (Jonas Malm)",
+      "cookedHtml": "<p>Found a solution <a href=\"https://community.monday.com/t/formulas-doesnt-equal-is-number-is-blank-null-nested-ifs/9960/2\">here</a>.</p>\n<p>You basically need to do</p>\n<blockquote>\n<p>IF COUNT = 0 → “Catch”<br />\nELSE → SUM / IF(COUNT = 0, 1, COUNT)</p>\n</blockquote>\n<p>Still think this is dumb, but a workaround at least <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

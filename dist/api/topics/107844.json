@@ -1,0 +1,62 @@
+{
+  "id": 107844,
+  "title": "Syntax error updating API version",
+  "slug": "syntax-error-updating-api-version",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    350,
+    351
+  ],
+  "createdAt": "2025-01-17T18:22:48.562Z",
+  "lastPostedAt": "2025-01-22T11:30:02.111Z",
+  "postsCount": 5,
+  "excerpt": "Hey Monday dev community, \nAfter updating the API version I’m struggling with what seems like a formatting error. I can’t seem to understand what is wrong with the format though. \nHere is the error I’m getting: \n{\n  &quot;err&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 36,
+  "posts": [
+    {
+      "id": 217899,
+      "postNumber": 1,
+      "createdAt": "2025-01-17T18:22:48.637Z",
+      "author": "tmanney (Theresa)",
+      "cookedHtml": "<p>Hey Monday dev community,<br />\nAfter updating the API version I’m struggling with what seems like a formatting error. I can’t seem to understand what is wrong with the format though.</p>\n<p>Here is the error I’m getting:</p>\n<pre><code class=\"lang-AxiosError\">{\n  \"errors\": [\n    {\n      \"message\": \"Invalid GraphQL request\",\n      \"extensions\": {\n        \"details\": \"failed to deserialize the request body into JSON: invalid type: string \\\"{\\\\\\\"columnValue\\\\\\\":\\\\\\\"29.9772962 31.1324955 4420 148th Ave NE bldg 127, Redmond, WA 98052\\\\\\\",\\\\\\\"columnId\\\\\\\":\\\\\\\"location_1\\\\\\\",\\\\\\\"itemName\\\\\\\":7279384567,\\\\\\\"myBoardId\\\\\\\":4499094121}\\\", expected a map or null at line 1 column 425\",\n        \"code\": \"INVALID_GRAPHQL_REQUEST\"\n      }\n    }\n  ],\n  \"account_id\": 11622012\n}\n</code></pre>\n<p>Here’s the step in the code that’s failing:</p>\n<pre><code class=\"lang-js\">import { axios } from \"@pipedream/platform\"\nexport default defineComponent({\n  props: {\n    monday: {\n      type: \"app\",\n      app: \"monday\",\n    }\n  },\n  async run({steps, $}) {\n\n    const bookingID = steps.trigger.event.body.event.pulseId;\n\n    const userItems = await axios($, { \n      url: `https://api.monday.com/v2`,\n      method: `POST`,\n      headers: {\n        'Content-Type': 'application/json',\n        'Authorization' : `${this.monday.$auth.api_key}`,\n        'API-Version' : '2024-10',\n      },\n      data: {\n        \"query\": `query {items(ids: [${bookingID}]){name column_values {id value text}}}`  \n      } \n    }); \n    \n    const projectName = userItems.data.items[0].column_values.find(x =&gt; x.id == 'status89').text;\n\n    const locationKey = { \n      \"test B127\": \"test addres 1\", \n      \"test B124\": \"test address 2\", \n      \"test B25\": \"test address 3\", \n    }\n    \n    if (projectName === null) {\n      console.log('no project name');\n      return;\n    }\n    const addressToAdd = `22.2772962 31.1324955 ${locationKey[projectName]}` ?? \"22.2772962 31.1324955 Update\";\n    \n    console.log({addressToAdd});\n\n    const data = await axios($, {\n      url: `https://api.monday.com/v2`,\n      method: `POST`,\n      headers: {\n        'Content-Type': 'application/json',\n        'Authorization' : `${this.monday.$auth.api_key}`,\n        'API-Version' : '2024-10'\n      },\n      data: {\n        \"query\" : \"mutation ($myBoardId:ID!, $itemName:ID!, $columnId: String!, $columnValue: String!) { change_simple_column_value(board_id:$myBoardId,item_id:$itemName, column_id: $columnId , value: $columnValue) { id column_values{id text value}} }\",\n        \"variables\" : JSON.stringify({ \n          \"columnValue\": addressToAdd,\n          \"columnId\": \"location_1\",\n          \"itemName\": steps.trigger.event.body.event.pulseId,\n          \"myBoardId\": 4499094121,\n        })\n      }\n    })\n  },\n})\n</code></pre>"
+    },
+    {
+      "id": 217902,
+      "postNumber": 2,
+      "createdAt": "2025-01-17T18:27:12.687Z",
+      "author": "tmanney (Theresa)",
+      "cookedHtml": "<p>I also changed the data section to only have one JSON.stringify. If someone could point me to where the documentation is for how to properly format variables, I’d greatly appreciate it.</p>\n<pre><code class=\"lang-js\">data: JSON.stringify({\n        query : \"mutation ($myBoardId:ID!, $itemName:ID!, $columnId: String!, $columnValue: String!) { change_simple_column_value(board_id:$myBoardId,item_id:$itemName, column_id: $columnId , value: $columnValue) { id column_values{id text value}} }\",\n        variables : JSON.stringify({\n          columnValue: addressToAdd,\n          columnId: \"location_1\",\n          itemName: steps.trigger.event.body.event.pulseId,\n          myBoardId: 4499094121,\n        })\n      })\n</code></pre>"
+    },
+    {
+      "id": 217905,
+      "postNumber": 3,
+      "createdAt": "2025-01-17T19:29:14.947Z",
+      "author": "tmanney (Theresa)",
+      "cookedHtml": "<p>I was able to get this mutation to work by removing variables:</p>\n<pre><code class=\"lang-js\">      data: { \n        query: `mutation {change_simple_column_value (board_id: 4499094121, item_id: ${steps.trigger.event.body.event.pulseId}, column_id: \\\"location_1\\\", value: \\\"${addressToAdd}\\\") {id column_values {id text value}}}`    \n      } \n</code></pre>\n<p>If someone can explain how to better format variables, I’d still like to better understand. Is it less standard to use <code>variables</code> with query?</p>"
+    },
+    {
+      "id": 218239,
+      "postNumber": 4,
+      "createdAt": "2025-01-21T10:35:37.493Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/tmanney\">@tmanney</a>,</p>\n<p>There is no issue with using variables. I just tested this successfully using this:</p>\n<pre><code class=\"lang-auto\">const myHeaders = new Headers();\nmyHeaders.append(\"API-Version\", \"2025-01\");\nmyHeaders.append(\"Content-Type\", \"application/json\");\nmyHeaders.append(\"Authorization\", \"APITOKEN\");\n\nconst graphql = JSON.stringify({\n  query: \"mutation ($myBoardId:ID!, $itemName:ID!, $columnId: String!, $columnValue: String!) { change_simple_column_value(board_id:$myBoardId,item_id:$itemName, column_id: $columnId , value: $columnValue) { id column_values{id text value}} }\",\n  variables: {\"columnValue\":\"29.9772962 31.1324955 Giza Pyramid Complex\",\"columnId\":\"location_mkmd8dnr\",\"itemName\":111111111,\"myBoardId\":1212121212}\n})\nconst requestOptions = {\n  method: \"POST\",\n  headers: myHeaders,\n  body: graphql,\n  redirect: \"follow\"\n};\n\nfetch(\"https://api.monday.com/v2\", requestOptions)\n  .then((response) =&gt; response.text())\n  .then((result) =&gt; console.log(result))\n  .catch((error) =&gt; console.error(error));\n</code></pre>\n<p>The cURL for it would be:</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2' \\\n--header 'API-Version: 2025-01' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: APITOKEN' \\\n--data '{\"query\":\"mutation ($myBoardId:ID!, $itemName:ID!, $columnId: String!, $columnValue: String!) { change_simple_column_value(board_id:$myBoardId,item_id:$itemName, column_id: $columnId , value: $columnValue) { id column_values{id text value}} }\",\"variables\":{\"columnValue\":\"29.9772962 31.1324955 Giza Pyramid Complex\",\"columnId\":\"location_mkmd8dnr\",\"itemName\":11111111,\"myBoardId\":12121212}}'\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 218334,
+      "postNumber": 5,
+      "createdAt": "2025-01-22T11:30:02.111Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>+1 for <strong>always use variables</strong></p>"
+    },
+    {
+      "id": 218568,
+      "postNumber": 6,
+      "createdAt": "2025-01-23T09:03:47.552Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

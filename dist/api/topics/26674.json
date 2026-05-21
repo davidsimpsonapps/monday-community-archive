@@ -1,0 +1,83 @@
+{
+  "id": 26674,
+  "title": "C# Create_Item with Column_Values leads to (500) Internal Server Error",
+  "slug": "c-create-item-with-column-values-leads-to-500-internal-server-error",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2021-10-28T18:13:39.752Z",
+  "lastPostedAt": "2022-08-19T11:42:36.399Z",
+  "postsCount": 9,
+  "excerpt": "Hello, \nI have scoured posts about the subject yet cannot find a suitable answer. \nI am trying to create items using the API in C# with already populated columns. \nI can, using the following query, make items with no inf&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 4172,
+  "posts": [
+    {
+      "id": 67275,
+      "postNumber": 1,
+      "createdAt": "2021-10-28T18:13:39.827Z",
+      "author": "Will (William Gagnon)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I have scoured posts about the subject yet cannot find a suitable answer.</p>\n<p>I am trying to create items using the API in <strong>C#</strong> with already populated columns.</p>\n<p>I can, using the following query, make items with no information other than the title :<br />\n<code>\"{\\\"query\\\":\\\"mutation{ create_item(board_id: XXXXXXXXXX, group_id: XXXXX, item_name: XXXX){ id} }\\\"}\"</code></p>\n<p>However, adding <strong>column_values</strong> returns the <strong>Internal Server Error</strong>, even if it is empty.</p>\n<p>I have tried the following methods, just to show a few (None of them have worked of course) :</p>\n<ul>\n<li><code>\"{\\\"query\\\":\\\"mutation{ create_item(board_id: XXXXXXXXXX, group_id: XXXXX, item_name: XXXX, column_values: \\\"{}\\\"){ id} }\\\"}\"</code></li>\n<li><code>\"{\\\"query\\\":\\\"mutation{ create_item(board_id: XXXXXXXXXX, group_id: XXXXX, item_name: XXXX, column_values: \\\"{\\\"text\\\":\\\"151\\\",\\\"numbers\\\":\\\"1\\\"}\\\"){ id} }\\\"}\"</code></li>\n<li><code>{\\\"query\\\":\\\"mutation{ create_item(board_id: XXXXXXXXXX, group_id: XXXXX, item_name: XXXX, column_values: \"{\\\"status\\\": {\\\"label\\\":\\\"Sign-Up\\\"}}\"){ id} }\\\"}</code></li>\n</ul>\n<p>Sorry if the formatting is hard to read.</p>\n<p>I also tried with variables. All attempts so far have failed.</p>\n<p>Thank you in advance.</p>"
+    },
+    {
+      "id": 67281,
+      "postNumber": 2,
+      "createdAt": "2021-10-28T20:04:09.631Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/will\">@Will</a><br />\nWelcome to the community. From your list of 3 the first 2 are incorrect because you are escaping the initial string. The third one looks correct to me but are you sure:</p>\n<ul>\n<li>status is the columnId (not the column name</li>\n<li>“Sign-Up” is an existing label for that status column</li>\n</ul>\n<p>Anyhow the correct syntax is found at <a href=\"https://developer.monday.com/api-reference/docs/status\" class=\"inline-onebox\">Status</a> and should read:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id:11111, board_id:22222, column_values: \"{\\\"status15\\\" : {\\\"label\\\" : \\\"Done\\\"}}\") {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 67327,
+      "postNumber": 3,
+      "createdAt": "2021-10-29T07:14:54.908Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/will\">@Will</a></p>\n<p>Hmm, that does look a bit odd!</p>\n<p>I would suggest taking a look here:</p>\n<p><a href=\"https://community.monday.com/t/c-create-item-example/2944\">C# Create Item in example</a><br />\n<a href=\"https://community.monday.com/t/simple-c-for-adding-an-item-to-a-board/9870/5\">Simple C# for adding an item to a board</a><br />\n<a href=\"https://community.monday.com/t/how-to-connect-curl-to-c-apiv2/3022/6\">Connecting C# to monday.com</a></p>\n<p>Perhaps this StackOverflow thread can be helpful:</p>\n<p><a href=\"https://stackoverflow.com/questions/55787381/how-to-stringify-normalize-json-in-c-sharp-like-json-stringify-would\" rel=\"noopener nofollow ugc\">StackOverflow - JSON.stringify equivalent in C#</a></p>\n<p>I would recommend avoiding escaping manually, where possible. This can be error-prone and an unsustainable solution in the long-run. Using functions that do that work for you can save you a ton of time <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I hope this helps! Thank you so much for your input too, <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>! You’re always really helpful.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 67352,
+      "postNumber": 4,
+      "createdAt": "2021-10-29T12:11:56.181Z",
+      "author": "Will (William Gagnon)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>After checking, status is the columnId and I changed “Sign-Up” to “Done”, which is an existing label.</p>\n<p>However, it did not work. Creating an item following the format still returns <strong>Internal Server Error</strong>.</p>\n<p>Trying to update an item using this query also does not work, returning the same <strong>Internal Server Error</strong> error :</p>\n<pre><code class=\"lang-auto\">\"{\\\"query\\\":\\\"mutation{ change_multiple_column_values(item_id:XXXX, board_id:XXXX, create_labels_if_missing: true, column_values: \\\"{\\\"status\\\" : {\\\"label\\\" : \\\"Done\\\"}}\\\"){ id} }\\\"}\"\n</code></pre>\n<p>As for the first part, the function to call the API requires a string, which is why my first two options have quotes. I merely forgot to copy them for the third one. Is that what you meant by “<em>escaping the initial string</em>”? Sorry for the confusion.</p>\n<p>And thank you <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>\n<p>I had checked those three links, but the StackOverflow one was promising… sadly it didn’t help.</p>\n<p>I’m assuming I did something wrong, but I’m not sure what. I based myself on the <strong>API Quickstart Guide</strong> in <strong>Javascript</strong>, substituting stringify with its equivalent, but it returns the same <strong>Internal Server Error</strong> error.</p>\n<p>To add some more information, I used this to make the function calling the API :<br />\n<a href=\"https://community.monday.com/t/basic-c-api-v2-example/3419?\">https://community.monday.com/t/basic-c-api-v2-example/3419?</a></p>\n<p>When using this query :</p>\n<pre><code class=\"lang-auto\">\"{\\\"query\\\": \\\"{boards(limit:1){id name}}\\\"}\"\n</code></pre>\n<p>Or this mutation :</p>\n<pre><code class=\"lang-auto\">\"{\\\"query\\\":\\\"mutation{ create_item(board_id: XXXX, group_id: XXXX, item_name: XXXX){ id} }\\\"}\"\n</code></pre>\n<p>It works just fine</p>\n<p>Thank you all for the help <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 67365,
+      "postNumber": 5,
+      "createdAt": "2021-10-29T16:04:24.457Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Will!</p>\n<p>Escaping quotes basically means structuring your strings such that strings-inside-strings can be parsed accurately. It means putting a backslash <code>\\</code> escape character in front of inner quotes, to identify that those particular character should be parsed as a literal \" and not the beginning or end of a string.</p>\n<p>You’re doing that fine when making the queries that don’t use column values:<br />\n<code>\"{\\\"query\\\": \\\"{boards(limit:1){id name}}\\\"}\"</code>.</p>\n<p>However, when you use the column values argument, there are strings inside strings, which are themselves inside a string. We need to escape these twice.</p>\n<p>Like this:</p>\n<pre><code class=\"lang-auto\">\"{\\\"query\\\":\\\"mutation{ change_multiple_column_values(item_id:XXXX, board_id:XXXX, create_labels_if_missing: true, column_values: \\\\\\\"{\\\\\\\\\\\"status\\\\\\\\\\\" : {\\\\\\\\\\\"label\\\\\\\\\\\" : \\\\\\\\\\\"Done\\\\\\\\\\\"}}\\\\\\\"){ id} }\\\"}\"\n</code></pre>\n<p>With this example, the full string is surrounded by the <code>\"</code> character, the first level inner string is surrounded by <code>\\\"</code>, the second level is surrounded by <code>\\\\\\\"</code> and the third level is surrounded by <code>\\\\\\\\\\\"</code>.</p>\n<p>If you use a JSON library in your code, you should be able to rely on a serializer to properly escape the inner quotes instead of having to worry about counting sets of five backslashes <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Let me know if the above explanation makes sense, and if the code works for you!</p>\n<p>Cheers, Dipro <img src=\"https://emoji.discourse-cdn.com/apple/crystal_ball.png?v=10\" title=\":crystal_ball:\" class=\"emoji\" alt=\":crystal_ball:\" /></p>"
+    },
+    {
+      "id": 86454,
+      "postNumber": 6,
+      "createdAt": "2022-05-20T14:21:28.024Z",
+      "author": "bobpotter (Bob)",
+      "cookedHtml": "<p>Take a look here. This worked for me:</p><aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/b/85e7bf/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/creating-an-item-with-column-values-in-c/36592\">Creating an Item with Column Values in C#</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    I’m using C# <a href=\"http://ASP.NET\" rel=\"noopener nofollow ugc\">ASP.NET</a> with the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API. I’ve been able to do queries and also I’m able to create an item. However, I’m having trouble creating an item with field values. I’ve seen various posts on the same issue but I can’t seem to get it right. Any help or ideas would be appreciated. \nI’ll share the code I’m using. First, I created a new class: \n\npublic class MondayAPIClass\n    {\n        private const string MondayApiKey = \"yourkey\";\n\n        private const string MondayApiUrl = \"https://a…\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 94422,
+      "postNumber": 7,
+      "createdAt": "2022-08-11T06:02:09.470Z",
+      "author": "candyOrate (Leah Candy Orate)",
+      "cookedHtml": "<p>hi! I tried this one, but still I got internal server error.</p>"
+    },
+    {
+      "id": 94576,
+      "postNumber": 8,
+      "createdAt": "2022-08-12T11:41:51.756Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/candyorate\">@candyOrate</a> – can you open a new topic in the community about this? Please include a code snippet of the HTTP request you’re making, and the error response.</p>"
+    },
+    {
+      "id": 95465,
+      "postNumber": 9,
+      "createdAt": "2022-08-19T11:42:36.399Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

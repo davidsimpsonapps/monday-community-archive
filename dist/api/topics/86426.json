@@ -1,0 +1,88 @@
+{
+  "id": 86426,
+  "title": "Webhooks integration is sending duplicate requests",
+  "slug": "webhooks-integration-is-sending-duplicate-requests",
+  "categoryId": 80,
+  "tagIds": [
+    5
+  ],
+  "createdAt": "2024-05-09T16:49:18.566Z",
+  "lastPostedAt": "2026-03-05T20:19:09.865Z",
+  "postsCount": 10,
+  "excerpt": "Hello, \nI have several boards each with a webhook integration set up to send a request whenever a specific status column is changed. Depending on the status chosen, this could do anything from change a specific column, c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 478,
+  "posts": [
+    {
+      "id": 183085,
+      "postNumber": 1,
+      "createdAt": "2024-05-09T16:49:18.658Z",
+      "author": "AaronAyAaronson (Aaron)",
+      "cookedHtml": "<p>Hello,<br />\nI have several boards each with a webhook integration set up to send a request whenever a specific status column is changed. Depending on the status chosen, this could do anything from change a specific column, create a board, or add a pulse.</p>\n<p>Until a couple days ago, these integrations worked successfully, sending one request and then showing Success in the Run History.</p>\n<p>As of a couple days ago, the webhook request is still sent but the Run History says “In Progress”. Problem is, it never changes to “Success”, and instead keeps sending multiple requests to the webhook! This results in an unending stream of requests to the webhook until I turn off the integration.</p>\n<p>Is monday expecting a specific response from the webhook or else it resends the request? What could be causing this to happen, especially since it’s been working for years without issue? We’re using the current API and the code for the webhook has not been changed for a few months.</p>"
+    },
+    {
+      "id": 183086,
+      "postNumber": 2,
+      "createdAt": "2024-05-09T17:15:25.986Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/aaronayaaronson\">@AaronAyAaronson</a> - we had something similar happen with a client account a few months ago, specifically with webhook integrations.  This occurred when we used the new “Transfer Ownership” option on the individual integrations.  We had to get <a href=\"http://monday.com\">monday.com</a> support to fix it in the backend.</p>\n<p>Just wondering if you completed the same process recently?</p>\n<p>Mark</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/8/5/851ea728d1a8a1f94b9bfcf8337a473b57913d19.png\" class=\"site-icon\" width=\"192\" height=\"192\" />\n\n      <a href=\"https://www.greenllamas.com\" target=\"_blank\" rel=\"noopener\">Green Llamas</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://www.greenllamas.com\" target=\"_blank\" rel=\"noopener\">monday.com + Green Llamas</a></h3>\n\n  <p>Green Llamas is here to help you make all your People and Projects Green.  Let us get your herds under control using the monday.com platform.</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 183105,
+      "postNumber": 3,
+      "createdAt": "2024-05-09T18:52:39.648Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>And another experience is when you archive a board that contains a webhook integration and then restore it. This will lead to duplicated webhooks. Monday support is aware of it but not sure if and when it will be fixed.</p>"
+    },
+    {
+      "id": 183193,
+      "postNumber": 4,
+      "createdAt": "2024-05-10T10:40:52.847Z",
+      "author": "AaronAyAaronson (Aaron)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mark.anley\">@mark.anley</a> No, we haven’t transferred any ownership.</p>\n<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> None of the boards with the issue have been archived and restored.</p>\n<p>This issue is happening on both old and new boards and with different webhook links.</p>\n<p>One board was created in 2020 and acts as a long term project tracker, so ownership has not changed and automations are rarely changed (and last were updated long before this issue). The newer boards are created as needed to track individual projects and from a different board template.</p>\n<p>To clarify, the automation itself is not duplicating in the automations list. Rather, when the automation is triggered, it keeps sending a request to the webhook link until the automation is turned off.</p>"
+    },
+    {
+      "id": 183200,
+      "postNumber": 5,
+      "createdAt": "2024-05-10T10:56:44.059Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Are those webhooks belonging to an app? If so, the app should delete the webhook upon duplication.</p>"
+    },
+    {
+      "id": 183272,
+      "postNumber": 6,
+      "createdAt": "2024-05-10T16:01:13.820Z",
+      "author": "AaronAyAaronson (Aaron)",
+      "cookedHtml": "<p>No, they’re triggered by a board automation:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/c/9c79884f81c948c8848a1f3ae4c9f76a94beff51.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/9/c/9c79884f81c948c8848a1f3ae4c9f76a94beff51_2_690x106.png\" alt=\"image\" width=\"690\" height=\"106\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1234×190 16.6 KB</span></div></a></div><p></p>\n<p>The webhook link is to a Netlify Function, which ingests the request data and goes from there. Best I can tell, the issue is on monday’s end and not Netlify’s (unless monday is expecting a specific response back from the Netlify function…which is not how it used to work)?</p>\n<p>Netlify receives the initial webhook request from monday, does its business, keeps receiving new duplicate requests over and over in perpetuity, and then happily carries out those requests. The Run history is stuck on “In progress” until I turn off the automation and then monday stops sending requests:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/7/d76d6b24ac1bd058b06b745c1544b56ddd90808b.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/7/d76d6b24ac1bd058b06b745c1544b56ddd90808b_2_690x145.png\" alt=\"image\" width=\"690\" height=\"145\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">891×188 10 KB</span></div></a></div><p></p>\n<p>Up until a couple days ago it would send one webhook request and give a “Success” status.</p>"
+    },
+    {
+      "id": 186637,
+      "postNumber": 7,
+      "createdAt": "2024-05-31T07:36:13.460Z",
+      "author": "henrycelvin (Henry Pieterson)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/13edae/48.png\" class=\"avatar\" /> Aaron:</div>\n<blockquote>\n<p>Hello,<br />\nI have several boards each with a webhook integration set up to send a request whenever a specific status column is changed. Depending on the status chosen, this could do anything from change a specific column, create a board, or add a pulse.</p>\n<p>Until a couple days ago, these integrations worked successfully, sending one request and then showing Success in the Run History.</p>\n<p>As of a couple days ago, the webhook request is still sent but the Run History says “In Progress”. Problem is, it never changes to “Success”, and instead keeps sending multiple requests to the webhook! This results in an unending stream of requests to the webhook until I turn off the integration.</p>\n<p>Is monday expecting a specific response from the webhook or else it resends the request? What could be causing this to happen, especially since it’s been working for years without issue? We’re using the current API and the code for the webhook has not been changed for a few months.</p>\n</blockquote>\n</aside>\n<p>Hello,</p>\n<p>I have several boards each with a webhook integration set up to send a request whenever a specific status column is changed. Depending on the status chosen, this could do anything from change a specific column, create a board, or add a pulse.</p>\n<p>Until a couple days ago, these integrations worked successfully, sending one request and then showing Success in the Run History.</p>\n<p>As of a couple days ago, the webhook request is still sent but the Run History says “In Progress”. Problem is, it never changes to “Success”, and instead keeps sending multiple requests to the webhook! This results in an unending stream of requests to the webhook until I turn off the integration.</p>\n<p>Is monday expecting a specific response from the webhook or else it resends the request? What could be causing this to happen, especially since it’s been working for years without issue? We’re using the current <a href=\"https://easyaiz.com/zapier-api-key/\" rel=\"noopener nofollow ugc\">API</a> and the code for the webhook has not been changed for a few months.</p>"
+    },
+    {
+      "id": 189233,
+      "postNumber": 8,
+      "createdAt": "2024-06-18T06:38:11.794Z",
+      "author": "Usernamegame (Jake N)",
+      "cookedHtml": "<p>Aaron, I am having this same issue. When I create a board from a template, all of the web hooks are no longer connected in the newly created board.  Have you been able to resolve this issue or get an answer from monday?</p>"
+    },
+    {
+      "id": 197683,
+      "postNumber": 10,
+      "createdAt": "2024-08-16T18:12:44.404Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>Hey Aaron,</p>\n<p>I’ve encountered the same issue before, and it typically happens when my endpoint doesn’t properly respond to the HTTP request.</p>\n<blockquote>\n<p>TLDR: Reply to webhook events with status code 200 to avoid retries.</p>\n</blockquote>\n<p>To authorize a new webhook endpoint, we have to reply to the initial HTTP request with the same event body we received. Even after authorization, endpoints should continue to respond to subsequent HTTP requests with a status code 200. This lets Monday know that the message was received successfully. If Monday doesn’t get a response, it will keep resending the request in an attempt to retry.</p>\n<p>I hope this helps you find a solution to your problem, good luck!</p>"
+    },
+    {
+      "id": 246790,
+      "postNumber": 11,
+      "createdAt": "2026-03-05T20:19:09.865Z",
+      "author": "WasayNoori (Wasay Noori)",
+      "cookedHtml": "<p>I am not sure this is the solution.  I tried in power automate and got the error shown. I believe once we go beyond challenge, the status is automatically sent back, at least in power automate, and connection is closed. However, I still had the same duplicate triggers. turning it off and back on solved the issue for now.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/1/a1739f4e6b5a6e3bef16e609c96836b7f0a4ff7c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/a/1/a1739f4e6b5a6e3bef16e609c96836b7f0a4ff7c.png\" alt=\"image\" width=\"640\" height=\"110\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">640×110 3.83 KB</span></div></a></div><p></p>"
+    }
+  ]
+}

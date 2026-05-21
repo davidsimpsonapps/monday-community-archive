@@ -1,0 +1,95 @@
+{
+  "id": 51306,
+  "title": "Fetching columns for Sub-items",
+  "slug": "fetching-columns-for-sub-items",
+  "categoryId": 8,
+  "tagIds": [
+    187
+  ],
+  "createdAt": "2023-02-10T03:49:59.601Z",
+  "lastPostedAt": "2023-02-14T13:10:12.018Z",
+  "postsCount": 9,
+  "excerpt": "Hi there, \nI see that it is possible to have different columns for an item and sub-item as shown in this screenshot \n  \nBut when I query columns in a board, I am only getting columns at the item level. How do I get colum&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1317,
+  "posts": [
+    {
+      "id": 114857,
+      "postNumber": 1,
+      "createdAt": "2023-02-10T03:49:59.696Z",
+      "author": "kranthi_thoughtflow (Kranthi Kiran)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>I see that it is possible to have different columns for an item and sub-item as shown in this screenshot<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9c52286b756d7d5b11a267a5760531d94ae0c4cf.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/9/9c52286b756d7d5b11a267a5760531d94ae0c4cf_2_690x182.png\" alt=\"image\" width=\"690\" height=\"182\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1228×324 24.1 KB</span>\n</div></a></div><p></p>\n<p>But when I query columns in a board, I am only getting columns at the item level. How do I get columns corresponding to the sub-items?</p>"
+    },
+    {
+      "id": 114859,
+      "postNumber": 2,
+      "createdAt": "2023-02-10T04:12:45.107Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kranthi_thoughtflow\">@kranthi_thoughtflow</a></p>\n<p>This is because the <code>subitems</code> exist on a different board.</p>\n<p>You need to make a query to retrieve the <code>subitem</code> column:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: boardid) {\n    columns {\n      id\n      title\n      settings_str\n    }\n  }\n}\n</code></pre>\n<blockquote>\n<p>Note: that if you know the column id for the subitem column, you can enter this directly, it is generally just <code>subitems</code> but it can change, i.e. in my example the column id is<code>subitems9</code>. But I believe the title will always be “Subitems” which you can filter through in the results.</p>\n</blockquote>\n<p>The <code>settings_str</code> will contain a value similar to this:</p>\n<pre><code class=\"lang-auto\">{\n            \"id\": \"subitems9\",\n            \"title\": \"Subitems\",\n            \"settings_str\": \"{\\\"allowMultipleItems\\\":true,\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"boardIds\\\":[subitem_board_id]}\"\n},\n</code></pre>\n<p>You and then make a query using the <code>subitem_board_id</code> and query the columns to get the data you are looking for</p>"
+    },
+    {
+      "id": 114860,
+      "postNumber": 3,
+      "createdAt": "2023-02-10T04:20:58.544Z",
+      "author": "kranthi_thoughtflow (Kranthi Kiran)",
+      "cookedHtml": "<p>Thanks for the prompt response <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> .<br />\nI am able to query the sub-item columns with this approach.</p>"
+    },
+    {
+      "id": 114951,
+      "postNumber": 4,
+      "createdAt": "2023-02-10T15:00:20.792Z",
+      "author": "kranthi_thoughtflow (Kranthi Kiran)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> ,</p>\n<p>I was able to access the subitem columns from the query editor, but when I try this from my app, I get the error<br />\n[{“message”:“Permission Denied! Your token doesn’t grant access to workspaces:read”}]</p>\n<p>Even though my query does not request anything at the workspace level.</p>"
+    },
+    {
+      "id": 115014,
+      "postNumber": 5,
+      "createdAt": "2023-02-11T17:28:58.971Z",
+      "author": "kranthi_thoughtflow (Kranthi Kiran)",
+      "cookedHtml": "<p>Also, does the monday.listen API work for changes on subitems?<br />\nI am not getting a callback when some subitem is changed.</p>"
+    },
+    {
+      "id": 115226,
+      "postNumber": 6,
+      "createdAt": "2023-02-13T19:07:48.672Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kranthi_thoughtflow\">@kranthi_thoughtflow</a>,</p>\n<p>Could you please share the queries you’re using in your application?</p>"
+    },
+    {
+      "id": 115227,
+      "postNumber": 7,
+      "createdAt": "2023-02-13T19:10:04.844Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>asking in slack:<br />\n<a href=\"https://monday.slack.com/archives/C018J3C259C/p1676322577009259\" class=\"onebox\" target=\"_blank\" rel=\"noopener\">https://monday.slack.com/archives/C018J3C259C/p1676322577009259</a></p>"
+    },
+    {
+      "id": 115343,
+      "postNumber": 8,
+      "createdAt": "2023-02-14T02:05:31.021Z",
+      "author": "kranthi_thoughtflow (Kranthi Kiran)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alessandra\">@alessandra</a><br />\nThis is the query</p>\n<pre><code class=\"lang-auto\">export const MONDAY_ITEMS_WITH_SUBITEMS_QUERY = `query fetchItemsWithSubItems($itemIds:[Int],$subItemBoardIds:[Int]){\n    boards(ids:$subItemBoardIds) {\n      name\n      workspace {\n        id\n      }\n      columns{\n        id\n        title\n        settings_str\n        type\n      }\n    }\n    items(ids:$itemIds){\n      id\n      name\n      name\n        column_values{\n            id\n            value\n            additional_info\n            type\n        }\n        subitems{\n            id\n            name\n            column_values{\n                id\n                value\n                additional_info\n                type\n            }\n        }\n    }\n  }`\n</code></pre>\n<p>I am running this query after fetching all the items on the main board. The first input is the itemIds, and the second input is the boardIds corresponding to the subitems.<br />\nThe first part of the query is to get the subitem columns, and the second part is to  get the subitems from items.</p>\n<p>This query started working well after I gave the <strong>workspace:read</strong> permission<br />\nI hope this is useful.</p>"
+    },
+    {
+      "id": 115344,
+      "postNumber": 9,
+      "createdAt": "2023-02-14T02:19:32.809Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/kranthi_thoughtflow\">@kranthi_thoughtflow</a></p>\n<p>The reason you recieved the Permission error was due to you querying the workspace ID.</p>\n<pre><code class=\"lang-auto\">export const MONDAY_ITEMS_WITH_SUBITEMS_QUERY = `query fetchItemsWithSubItems($itemIds:[Int],$subItemBoardIds:[Int]){\n    boards(ids:$subItemBoardIds) {\n      name\n      columns{\n        id\n        title\n        settings_str\n        type\n      }\n    }\n    items(ids:$itemIds){\n      id\n      name\n      name\n        column_values{\n            id\n            value\n            additional_info\n            type\n        }\n        subitems{\n            id\n            name\n            column_values{\n                id\n                value\n                additional_info\n                type\n            }\n        }\n    }\n  }`\n</code></pre>\n<p>Remove the <code>workspace { id }</code> from your query and you will be all good!</p>"
+    },
+    {
+      "id": 115434,
+      "postNumber": 10,
+      "createdAt": "2023-02-14T13:10:12.018Z",
+      "author": "kranthi_thoughtflow (Kranthi Kiran)",
+      "cookedHtml": "<p>Oh. I missed that. Thanks a lot <a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a>  <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 115715,
+      "postNumber": 11,
+      "createdAt": "2023-02-15T19:16:07.270Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

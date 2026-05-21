@@ -1,0 +1,82 @@
+{
+  "id": 70889,
+  "title": "Creating a new conversation message via API and vb.net",
+  "slug": "creating-a-new-conversation-message-via-api-and-vb-net",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-16T08:33:23.916Z",
+  "lastPostedAt": "2023-11-20T06:07:33.559Z",
+  "postsCount": 7,
+  "excerpt": "I’m trying to add an update to an item that I have just created using the API in the same format, but I receive a “(500) internal server error” message. \nThe code I’m using is as follows: \n    Dim query As String = &quot;muta&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 848,
+  "posts": [
+    {
+      "id": 153422,
+      "postNumber": 1,
+      "createdAt": "2023-11-16T08:33:23.992Z",
+      "author": "mwood (Mark Wood)",
+      "cookedHtml": "<p>I’m trying to add an update to an item that I have just created using the API in the same format, but I receive a “(500) internal server error” message.</p>\n<p>The code I’m using is as follows:</p>\n<pre><code>    Dim query As String = \"mutation {create_update (item_id: 1320133610, body: \"\"This update will be added To the item\"\") { id }}\"\n\n    Dim request As WebRequest = WebRequest.Create(apiUrl)\n    request.Method = \"POST\"\n    request.Headers.Add(\"Authorization\", apiKey)\n    request.ContentType = \"application/json\"\n\n    Dim requestBody As String = \"{\"\"query\"\": \"\"\" &amp; query &amp; \"\"\"}\"\n    Dim byteArray As Byte() = Encoding.UTF8.GetBytes(requestBody)\n    request.ContentLength = byteArray.Length\n\n    Using dataStream As Stream = request.GetRequestStream()\n        dataStream.Write(byteArray, 0, byteArray.Length)\n    End Using\n\n    Try\n        Dim response As WebResponse = request.GetResponse()\n        Using dataStreamResponse As Stream = response.GetResponseStream()\n            Using reader As New StreamReader(dataStreamResponse)\n                Dim responseFromServer As String = reader.ReadToEnd()\n                MsgBox(\"Job Response: \" &amp; responseFromServer)\n            End Using\n        End Using\n        response.Close()\n    Catch ex As WebException\n        MsgBox(ex.Message)\n    End Try\n</code></pre>"
+    },
+    {
+      "id": 153463,
+      "postNumber": 2,
+      "createdAt": "2023-11-16T12:46:14.374Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mwood\">@mwood</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I do not have experience with this language, so I am not sure if there is an issue on how you are constructing the query, but here is your example in cURL syntax so that you can use it as a base example:</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/' \\\n--header 'API-Version: 2023-10' \\\n--header 'Authorization: MYAPIKEY' \\\n--header 'Content-Type: application/json' \\\n--data '{\"query\":\"mutation {\\n  create_update(\\n    item_id: 1320133610\\n    body: \\\"This update will be added To the item\\\"\\n  ) {\\n    id\\n  }\\n}\",\"variables\":{}}'\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 153491,
+      "postNumber": 3,
+      "createdAt": "2023-11-16T14:48:06.619Z",
+      "author": "mwood (Mark Wood)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/m/439d5e/48.png\" class=\"avatar\" /> Mark Wood:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">    Dim query As String = \"mutation {create_update (item_id: 1320133610, body: \"\"This update will be added To the item\"\") { id }}\"\n\n    Dim request As WebRequest = WebRequest.Create(apiUrl)\n    request.Method = \"POST\"\n    request.Headers.Add(\"Authorization\", apiKey)\n    request.ContentType = \"application/json\"\n\n    Dim requestBody As String = \"{\"\"query\"\": \"\"\" &amp; query &amp; \"\"\"}\"\n    Dim byteArray As Byte() = Encoding.UTF8.GetBytes(requestBody)\n    request.ContentLength = byteArray.Length\n\n    Using dataStream As Stream = request.GetRequestStream()\n        dataStream.Write(byteArray, 0, byteArray.Length)\n    End Using\n\n    Try\n        Dim response As WebResponse = request.GetResponse()\n        Using dataStreamResponse As Stream = response.GetResponseStream()\n            Using reader As New StreamReader(dataStreamResponse)\n                Dim responseFromServer As String = reader.ReadToEnd()\n                MsgBox(\"Job Response: \" &amp; responseFromServer)\n            End Using\n        End Using\n        response.Close()\n    Catch ex As WebException\n        MsgBox(ex.Message)\n    End Try\n</code></pre>\n</blockquote>\n</aside>\n<p>Hi, thanks for this.</p>\n<p>I have found my issue, but I’m unsure of the solution.  My original code works if the body does not contain any spaces.</p>\n<p>I also have an issue when creating and item if the item name contains spaces or special characters.</p>\n<p>If I surround the text with quotes (“my name”), I get the Internal Server error.</p>\n<p>It looks like the issue is down to the way the text is being parsed.</p>"
+    },
+    {
+      "id": 153504,
+      "postNumber": 4,
+      "createdAt": "2023-11-16T15:29:49.236Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>I’ve never used <a href=\"http://vb.net\" rel=\"noopener nofollow ugc\">vb.net</a>, but it seems like there’s an issue with the string concatenation. Have you tried the String.format method?</p>\n<blockquote>\n<p>…<br />\nDim queryString As String = String.format(“mutation {create_update (item_id: {0}, body: “”{1}”“) { id }}”, itemId, bodyString)<br />\n…<br />\nDim requestBody As String = String.format(“{”“query”“: “”{0}”“}”, queryString)<br />\n…</p>\n</blockquote>"
+    },
+    {
+      "id": 153628,
+      "postNumber": 5,
+      "createdAt": "2023-11-17T07:17:25.408Z",
+      "author": "mwood (Mark Wood)",
+      "cookedHtml": "<p>Hi Calum,</p>\n<p>Thanks for your suggestion. I’ve Tried this and I get the Internal Server Error for all tests.  I think I need to investigate some time into getting <a href=\"http://vb.net\" rel=\"noopener nofollow ugc\">vb.net</a> to run a curl command.</p>"
+    },
+    {
+      "id": 153658,
+      "postNumber": 6,
+      "createdAt": "2023-11-17T13:47:15.861Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>Thanks for your reply Mark,<br />\nExploring curl sounds like a good idea.</p>\n<p>I’m sure you’ve done this one, but just-in-case you haven’t I’ll also suggest to manually verify the query string is correct and working from the API playground, Hoppscotch, or Postman.<br />\nEssentially just print the value for query to a log or to the console and then copy/paste to the playground and see if it works.<br />\nIf your query string is correct and working, then maybe the methods your using for the request/response are interfering.<br />\nIn that case, I suggest checking the docs on the methods for some more details of what’s happening under-the-hood.<br />\nHave you tried using the <a href=\"https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/http/httpclient?redirectedfrom=MSDN\" rel=\"noopener nofollow ugc\">HttpClient class</a>? It looks like this is what most <a href=\"http://vb.net\" rel=\"noopener nofollow ugc\">vb.net</a> devs suggest for POSTing to an API.</p>\n<p>Good luck Mark!</p>"
+    },
+    {
+      "id": 153763,
+      "postNumber": 7,
+      "createdAt": "2023-11-19T08:46:36.708Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 153838,
+      "postNumber": 8,
+      "createdAt": "2023-11-20T06:07:33.559Z",
+      "author": "mwood (Mark Wood)",
+      "cookedHtml": "<p>Hi, thanks for the help.  The answer turned out to be quite simple.</p>\n<p>In my original code, the query string needed changing slightly:</p>\n<p>From:<br />\nDim query As String = “mutation {create_update (item_id: 1320133610, body: ““This update will be added To the item””) { id }}”</p>\n<p>To:<br />\nDim query As String = “mutation {create_update (item_id: 1320133610, body: \\“This update will be added to the item\\”) { id }}”</p>"
+    },
+    {
+      "id": 153921,
+      "postNumber": 9,
+      "createdAt": "2023-11-20T14:25:37.175Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

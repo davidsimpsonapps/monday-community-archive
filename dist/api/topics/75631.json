@@ -1,0 +1,50 @@
+{
+  "id": 75631,
+  "title": "Forms: Setting up proper formula for \"When non-mandatory fields are empty, exclude from average calculation\"",
+  "slug": "forms-setting-up-proper-formula-for-when-non-mandatory-fields-are-empty-exclude-from-average-calculation",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    108,
+    300,
+    361,
+    462
+  ],
+  "createdAt": "2024-01-19T07:39:54.418Z",
+  "lastPostedAt": "2024-01-29T06:43:59.062Z",
+  "postsCount": 4,
+  "excerpt": "Hello everyone, \nI rather enjoy being on the answering side of these forums, but today I come with another request for input from this great community. \nBackground to my question: \nI am setting up a questionnaire, using &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 580,
+  "posts": [
+    {
+      "id": 163057,
+      "postNumber": 1,
+      "createdAt": "2024-01-19T07:39:54.543Z",
+      "author": "TFaust (Timo Faust)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>I rather enjoy being on the answering side of these forums, but today I come with another request for input from this great community.</p>\n<p><strong>Background to my question:</strong><br />\nI am setting up a questionnaire, using Monday forms, to help me evaluate the soft skills of project managers after a project has been completed, and it needs to be filled out anonymously by the project teams (client / our company).</p>\n<p>The questionnaire will have different parts, one of which will be “Communication skills”, which will be divided into 5 questions, which can be rated from 1 to 5. All fields are optional.<br />\nLater on I want to weight the answers, but that is not relevant for my question as I have workarounds in mind.</p>\n<p>Here is a screenshot of the incoming answers to my questionnaire (still early prototype):</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/7/c76fb007c042e241bf67b4f8645a207f0c42ccdf.jpeg\" title=\"Forms Results for Monday Forums\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/7/c76fb007c042e241bf67b4f8645a207f0c42ccdf_2_690x371.jpeg\" alt=\"Forms Results for Monday Forums\" width=\"690\" height=\"371\" /><div class=\"meta\"><span class=\"filename\">Forms Results for Monday Forums</span><span class=\"informations\">1636×881 188 KB</span></div></a></div><p></p>\n<p><em>Marked in green</em> are the incoming responses.<br />\n<em>Marked in purple</em> are the averages of the answers. Note that “active listening” was not answered by one of the participants, resulting in a zero star rating.<br />\nCleverly, Monday recognises that there was no answer and excludes it from the averages, correctly resulting in an average of 4.0 stars instead of 2.667 which would be the result of a typical Monday “averages” formula.<br />\n<em>Marked in blue</em> is my overall score for all communication skills. If I want to have an overall average for “communication skills”, I use the formula</p>\n<p><em>(SUM({verbal communication},{email communication},{active listening},{empathy},{status reports}))</em></p>\n<p>Unfortunately, this <strong>does not take into account the zero star rating</strong>, and it messes up my overall analysis.<br />\nThe correct result would be 20.3/25 stars, while the formula downgrades it to 19/25 stars.</p>\n<p><strong>My question now is:</strong></p>\n<p><strong>How can I set up a formula that uses the values excluding “zero star ratings”, like the Monday column summary does?</strong></p>\n<p>Thanks in advance, I hope I have made my request clear as English is not my first language and sometimes I cannot express my thoughts as eloquently as I would like.</p>\n<p>Have a great day!<br />\nTimo</p>\n<p><strong>EDIT:</strong> For those interested: My approach for weighted results would look like this:</p>\n<p><em>CHOOSE({verbal communication}+1,0,1,2,3,4,5) +<br />\nCHOOSE({email communication}+1,0,1,2,3,4,5) +<br />\nCHOOSE({active listening}+1,0,0.5,1,1.5,2,2.5) +<br />\nCHOOSE({empathy}+1,0,0.5,1,1.5,2,2.5) +<br />\nCHOOSE({status reports}+1,0,1,2,3,4,5)</em></p>\n<p>Sadly, again, I have no idea how to exclude the result “0” from what I am planning to do, setting it to “n/a” just gives me a total of n/a, so I clearly need a way to ignore values of zero.</p>"
+    },
+    {
+      "id": 163069,
+      "postNumber": 2,
+      "createdAt": "2024-01-19T10:30:15.989Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Timo,</p>\n<p>Try:</p>\n<pre><code class=\"lang-auto\">AVERAGE(IF({verbal communication}=0,\"\",{verbal communication}),IF({email communication}=0,\"\",{email communication}),IF({active listening}=0,\"\",{active listening}),IF({empathy}=0,\"\",{empathy}),IF({status reports}=0,\"\",{status reports}))\n</code></pre>\n<p> <br />\n </p>\n<hr />\n<p><strong>Curious to know how that same formula would look in the</strong> <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, the 3rd-party app that makes it so easy to write formulas?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/f/4fe7236fd9c11f67f8c9c1527159e12b7559b652.jpeg\" title=\"2024-01-19_16-40-08\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/f/4fe7236fd9c11f67f8c9c1527159e12b7559b652_2_690x98.jpeg\" alt=\"2024-01-19_16-40-08\" width=\"690\" height=\"98\" /><div class=\"meta\"><span class=\"filename\">2024-01-19_16-40-08</span><span class=\"informations\">808×115 42.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 163314,
+      "postNumber": 3,
+      "createdAt": "2024-01-22T05:51:02.360Z",
+      "author": "TFaust (Timo Faust)",
+      "cookedHtml": "<p>Hi Gilles,</p>\n<p>thank you very much for your reply, as it has been super helpful. I was basically one step away from the solution myself and you saved me some serious headache, and more importantly, time <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Now on to implementing the weighting system…</p>\n<p>I wish you a great week! Thanks a lot!</p>\n<p>Timo</p>"
+    },
+    {
+      "id": 164601,
+      "postNumber": 4,
+      "createdAt": "2024-01-29T06:43:59.062Z",
+      "author": "TFaust (Timo Faust)",
+      "cookedHtml": "<p>In order to share some knowledge, here are some of the formulas I used to set up my evaluation sheets, may it help somebody else in the future <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>\n<p>(SUM(<br />\nIF({Freundlichkeit und Empathie}=0,“”,(CHOOSE({Freundlichkeit und Empathie}+1,0,0.5,1,1.5,2,2.5))),<br />\nIF({Verlässlichkeit und Integrität}=0,“”,(CHOOSE({Verlässlichkeit und Integrität}+1,0,1,2,3,4,5))),<br />\nIF({Zeitmanagement}=0,“”,(CHOOSE({Zeitmanagement}+1,0,1,2,3,4,5))),<br />\nIF({Zielorientierung und Ergebnisorientierung}=0,“”,(CHOOSE({Zielorientierung und Ergebnisorientierung}+1,0,1,2,3,4,5))),<br />\nIF({Analytisch und objektiv}=0,“”,(CHOOSE({Analytisch und objektiv}+1,0,1,2,3,4,5))))<br />\n/(4.5-(<br />\n(IF({Freundlichkeit und Empathie}=0,0.5,0))+<br />\n(IF({Verlässlichkeit und Integrität}=0,1,0))+<br />\n(IF({Zeitmanagement}=0,1,0))+<br />\n(IF({Zielorientierung und Ergebnisorientierung}=0,1,0))+<br />\n(IF({Analytisch und objektiv}=0,1,0))<br />\n)))/5*100</p>\n<p><strong>This formula adds up all the answers from the “professionalism” block, weighs them and then gives me the result as a percentage.</strong></p>\n<p>((3*{“Kommunikation”})+<br />\n(2*{“Professionalität”})+<br />\n(2*{“Führungsqualitäten”})+<br />\n(3*{“Planung und Organisation”}))/10</p>\n<p><strong>This formula then sums up the results of the 4 evaluation blocks and weighs them for a total result.</strong></p>\n<p>In the end I set up a mirror board, as we will use evaluations from customers and evaluations from superiors across a few projects so we can use that data also in performance reviews.</p>\n<p>Is this all elegant? No. Does it work? Yes. Good enough for me <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>\n<p>You all have a nice week!</p>"
+    }
+  ]
+}

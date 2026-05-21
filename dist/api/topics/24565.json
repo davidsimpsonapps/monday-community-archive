@@ -1,0 +1,74 @@
+{
+  "id": 24565,
+  "title": "Adding a dropdown label in formula",
+  "slug": "adding-a-dropdown-label-in-formula",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2021-09-07T06:04:15.754Z",
+  "lastPostedAt": "2021-09-16T00:10:36.466Z",
+  "postsCount": 8,
+  "excerpt": "Hi Team, \nI would like to add and IF statement indicated by dropdown. For Example: \nDropdown Value would be: A, B, and C \nEach Dropdown value will be tag to a pricing column. \nI want to create some formula so where the v&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 6035,
+  "posts": [
+    {
+      "id": 62862,
+      "postNumber": 1,
+      "createdAt": "2021-09-07T06:04:15.827Z",
+      "author": "michael3 (michael)",
+      "cookedHtml": "<p>Hi Team,</p>\n<p>I would like to add and IF statement indicated by dropdown. For Example:<br />\nDropdown Value would be: A, B, and C<br />\nEach Dropdown value will be tag to a pricing column.</p>\n<p>I want to create some formula so where the value selected it will sum up the pricing values.</p>\n<p>Sample of my Formula:<br />\nIF(AND({Deliverables#Labels} = “IG” ,{Deliverables#Labels}= “FB”), SUM({IG Rates},{FB Rates}),0)</p>\n<p>The formula unable to work if I selected IG and FB in the dropdown.</p>\n<p>Thanks,<br />\nMichael</p>"
+    },
+    {
+      "id": 62873,
+      "postNumber": 2,
+      "createdAt": "2021-09-07T09:52:30.619Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/michael3\">@michael3</a>,</p>\n<p>Replace the section {Deliverables#Labels} = “IG” with: SEARCH(“IG”,Deliverables#Labels}&amp;“IG”) &lt;= LEN({Deliverables#Labels})</p>\n<p>So your complete formula would be:</p>\n<pre><code class=\"lang-auto\">IF(AND(SEARCH(\"IG\",{Deliverables#Labels}&amp;\"IG\") &lt;= LEN({Deliverables#Labels}), SEARCH(\"FB\",{Deliverables#Labels}&amp;\"FB\") &lt;= LEN({Deliverables#Labels})),SUM({IG Rates},{FB Rates}),0)\n</code></pre>\n<p>Jim</p>"
+    },
+    {
+      "id": 62976,
+      "postNumber": 3,
+      "createdAt": "2021-09-07T22:53:47.713Z",
+      "author": "michael3 (michael)",
+      "cookedHtml": "<p>Hi Jim,</p>\n<p>Its working, Are you able to share some logic behind the formula? I am still need it to select more than 2 items and a single item.</p>\n<p>Thanks,<br />\nMichael</p>"
+    },
+    {
+      "id": 62978,
+      "postNumber": 4,
+      "createdAt": "2021-09-07T23:24:05.878Z",
+      "author": "andhikatj (Andhika)",
+      "cookedHtml": "<p>Amazing - thanks <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>. it helps. curious on the logic too</p>"
+    },
+    {
+      "id": 63004,
+      "postNumber": 5,
+      "createdAt": "2021-09-08T08:37:07.661Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/michael3\">@michael3</a>, <a class=\"mention\" href=\"/u/andhikatj\">@andhikatj</a>,</p>\n<p>I will leave the IF function to another time. Here’s the logic for checking for specific dropdown values:</p>\n<p>When you reference a dropdown column to return the labels, e.g.: {Deliverables#Labels}, it returns all of the labels selected delimited by comma &amp; space in the order that they were selected. So, if “A”, “B” and “C” are all valid labels and for a given column value “C” and “A” were selected, {Deliverables#Labels} would return “C, A”. We can then use the SEARCH() function to see if it contains a particular value, like this: SEACRH(“A”, {Deliverables#Labels}). If found, the SEARCH() function returns the starting position where the value was found. In some systems a similar function will return zero if the value is not found. However, monday is returning an error in this case. So, to prevent the error we can make sure that it is always found by appending the value that we are searching for, e.g.: SEACRH(“A”, {Deliverables#Labels}&amp;“A”). But, in this case we need to check if the find location was in the column value or the portion that we appended. If it was found in the column value the find location will be less than or equal to the length of the entire value. So,  SEACRH(“A”, {Deliverables#Labels}&amp;“A”) &lt;= LEN( “A”, {Deliverables#Labels}) will return TRUE if “A” was in the column value and FALSE if it was in the appended section.</p>\n<p>Now, if we want to check for more that 1 value concurrently, we can just string together similar searches inside an AND() function.  AND(SEACRH(“A”, {Deliverables#Labels}&amp;“A”),  SEACRH(“B”, {Deliverables#Labels}&amp;“B”),  SEACRH(“C”, {Deliverables#Labels}&amp;“C”)) will return TRUE if and ONLY if  “A”, “B” and “C” are all found in the column value. If we wanted to check if ANY of these is found we can use OR() instead of AND(). OR(SEACRH(“A”, {Deliverables#Labels}&amp;“A”),  SEACRH(“B”, {Deliverables#Labels}&amp;“B”),  SEACRH(“C”, {Deliverables#Labels}&amp;“C”)) will return TRUE if ANY of the values are found.</p>\n<p><strong>!!! One important caveat that must be considered: !!!</strong><br />\nThis will not work if some valid values are contained in other valid values. Specifically, if “A” and “CAT” are both valid values, when searching for “A” and “CAT” was selected, “A” would be found. To deal with this situation, one solution is to make sure that this can never happen by adding “start/end of value” characters to each value. So instead of “A” and “CAT” we could use “.A.” and “.CAT.”</p>\n<p>Jim</p>"
+    },
+    {
+      "id": 63095,
+      "postNumber": 6,
+      "createdAt": "2021-09-08T23:12:38.228Z",
+      "author": "andhikatj (Andhika)",
+      "cookedHtml": "<p>Very helpful. Really appreciate it Jim!</p>"
+    },
+    {
+      "id": 63101,
+      "postNumber": 7,
+      "createdAt": "2021-09-09T00:09:42.814Z",
+      "author": "michael3 (michael)",
+      "cookedHtml": "<p>Thanks so much for the explanation, Jim. Its really useful.</p>"
+    },
+    {
+      "id": 63682,
+      "postNumber": 8,
+      "createdAt": "2021-09-16T00:10:36.466Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

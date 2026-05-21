@@ -1,0 +1,39 @@
+{
+  "id": 75570,
+  "title": "Subtracting Workdays",
+  "slug": "subtracting-workdays",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-01-18T18:54:17.901Z",
+  "lastPostedAt": "2024-01-19T14:26:55.288Z",
+  "postsCount": 3,
+  "excerpt": "Hello everyone! \nI’m trying to create a formula for my work board. \nI need to include the due date, that must be 1 day before the publishing date (ignoring weekends). So I needed help with a formula to subtract 1 workday&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 545,
+  "posts": [
+    {
+      "id": 162935,
+      "postNumber": 1,
+      "createdAt": "2024-01-18T18:54:17.991Z",
+      "author": "pedrogabriel_sg (Pedro Gabriel)",
+      "cookedHtml": "<p>Hello everyone!<br />\nI’m trying to create a formula for my work board.<br />\nI need to include the due date, that must be 1 day before the publishing date (ignoring weekends). So I needed help with a formula to subtract 1 workday.</p>\n<p>The current formula I use is<br />\nFORMAT_DATE(SUBTRACT_DAYS({Publishing Date},1),“MMM DD”)<br />\nBut it doesn’t work if the Publishing Date is on Mondays.</p>\n<p>Any ideas?<br />\nThank you</p>"
+    },
+    {
+      "id": 162962,
+      "postNumber": 2,
+      "createdAt": "2024-01-18T19:38:32.100Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Pedro,</p>\n<p>You need to check first what day of the week your publishing date is. You do this with</p>\n<pre><code class=\"lang-auto\">WEEKDAY({Publishing Date},1)\n</code></pre>\n<p>This returns 1 for Monday, 2 for Tuesday, etc.</p>\n<p>So, if it is a monday, you remove 3 days, if not 1 day:</p>\n<pre><code class=\"lang-auto\">IF(WEEKDAY({Publishing Date},1)=1,ADD_DAYS({Publishing Date},-3),ADD_DAYS({Publishing Date},-1))\n</code></pre>\n<p>To keep the same formatting you used in your formula:</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(IF(WEEKDAY({Publishing Date},1)=1,ADD_DAYS({Publishing Date},-3),ADD_DAYS({Publishing Date},-1)), \"MMM-DD\")\n</code></pre>\n<hr />\n<p><strong>Looking for a simpler way to write complex formulas?</strong> Check out the Advanced Formula Booster at <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">https://mdboosters.com</a>. It’s a convenient third-party app that simplifies formula writing. With it, you can spread your formulas across several lines, utilize variables, and access dozens of functions not found in the standard formula column.</p>"
+    },
+    {
+      "id": 163122,
+      "postNumber": 3,
+      "createdAt": "2024-01-19T14:26:55.288Z",
+      "author": "pedrogabriel_sg (Pedro Gabriel)",
+      "cookedHtml": "<p>Thanks! It worked just fine!<br />\nI just added one more line of code to make it work for Sundays too.</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(IF(WEEKDAY({Previsão de Publicação},1)=1,ADD_DAYS({Previsão de Publicação},-3), IF(WEEKDAY({Previsão de Publicação},1)=7,ADD_DAYS({Previsão de Publicação},-2),ADD_DAYS({Previsão de Publicação},-1))), \"MMM DD\")\n</code></pre>"
+    }
+  ]
+}

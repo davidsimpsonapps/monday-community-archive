@@ -1,0 +1,47 @@
+{
+  "id": 69042,
+  "title": "How to make formula column display two values based on ID number column?",
+  "slug": "how-to-make-formula-column-display-two-values-based-on-id-number-column",
+  "categoryId": 5,
+  "tagIds": [
+    13,
+    108
+  ],
+  "createdAt": "2023-10-23T18:06:47.443Z",
+  "lastPostedAt": "2023-10-26T16:41:53.584Z",
+  "postsCount": 4,
+  "excerpt": "Hello all! \nI’m using a ID number column that displays anywhere from 1-4 ID numbers. I would like to create a formula column that ties each ID number to a name. I have figured out how to display a singular name if the ID&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1074,
+  "posts": [
+    {
+      "id": 149551,
+      "postNumber": 1,
+      "createdAt": "2023-10-23T18:06:47.534Z",
+      "author": "lexflippen (Lex Flippen)",
+      "cookedHtml": "<p>Hello all!</p>\n<p>I’m using a ID number column that displays anywhere from 1-4 ID numbers. I would like to create a formula column that ties each ID number to a name. I have figured out how to display a singular name if the ID number column only contains 1 ID number.</p>\n<p>For example:<br />\nThe ID number column is displaying 102224233, so the formula column will display Lex Flippen.</p>\n<p>IF({Deal Owner ID}=“102224233”,“Lex Flippen”)</p>\n<p>However, my issue is that I cannot figure out how to have a formula column display more than 1 name if the ID number column has multiple IDs in it. Does anyone know how to obtain this?</p>\n<p>For example:<br />\nThe ID number column is displaying two values: 102224233;206136841, so I’d like the formula column to display two names.</p>\n<p>Any help would be much appreciated!</p>"
+    },
+    {
+      "id": 149622,
+      "postNumber": 2,
+      "createdAt": "2023-10-24T05:25:23.234Z",
+      "author": "GiannisKoukounas (Giannis Koukounas)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/lexflippen\">@lexflippen</a> !</p>\n<p>To my knowledge, you would have to alter the formula to take into account all the ids and the combinations and order they can appear in, starting from the biggest combinations and moving towards the smaller ones.</p>\n<p>This in not optimal in any case, and feasible to do only if you have a small number of ids.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/9/8944181e8f6975471fb68593778e16110894c447.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/9/8944181e8f6975471fb68593778e16110894c447.png\" alt=\"image\" width=\"690\" height=\"216\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">764×240 11.5 KB</span></div></a></div><p></p>\n<p>Would be glad to hear if anyone else has any ideas!</p>\n<p>Best,<br />\nGiannis, Implementation Consultant at <a href=\"http://thespelas.com\" rel=\"noopener nofollow ugc\">thespelas.com</a></p>"
+    },
+    {
+      "id": 150187,
+      "postNumber": 3,
+      "createdAt": "2023-10-26T13:24:27.252Z",
+      "author": "lexflippen (Lex Flippen)",
+      "cookedHtml": "<p>Unfortunately, I do have a large pool of IDs since the number ID column is utilizing a field from our HubSpot CRM integration that pulls in user IDs. I appreciate the input, Giannis!</p>\n<p>This is definitely helpful if I have smaller data sets in the future.</p>\n<p>I’m surprised this isn’t a more common issue!</p>"
+    },
+    {
+      "id": 150204,
+      "postNumber": 4,
+      "createdAt": "2023-10-26T16:41:53.584Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Lex,</p>\n<p>I think the issue here is partly that you might be expecting <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> to work like Excel. <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> is its own ecosystem and has its own ways of managing people and connections and assignments.</p>\n<p>It isn’t built as a sort of layer in a code/id based system. You’re looking for an array based LOOKUP function, when <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> is coming from a perspective of trying to avoid these technical configurations and be super user-friendly.</p>\n<p>I’m not saying it’s your fault, however altering your perspective on this can help to better understand <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> and reap its benefits instead of butting up against its limitations.</p>\n<hr />\n<p>Broad comment aside, I do have some practical help for you:</p>\n<ol>\n<li>You can create a pretty long formula and there’s not necessarily any reason not to do so. Keep it in a text editor and format it in a way that it easy to maintain. Let’s look at how you could structure that effectively. The easiest way I can see is to use a nested SUBSTITUTE() function. You need to add a new “SUBSTITUTE(” line for each record you add and remember exclude the comma from the last line. However, this seems to be a viable way to manage a reasonably large database of names. You could even get ChatGPT to populate and verify this for you relatively easily.</li>\n</ol>\n<pre><code class=\"lang-auto\">SUBSTITUTE(\nSUBSTITUTE(\nSUBSTITUTE(\n    {IDs},\n    \"102224233\",\"Kevin\"),\n    \"097392910\",\"John\"),\n    \"206136841\",\"Paul\")\n</code></pre>\n<ol>\n<li>Do you keep a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> database of these people? I’d probably recommend it. A Make integration (for example) could help you to keep items in your database connected to people items based on an ID reference. This would essentially do exactly what you describe and it would be easier to do things like create charts and dashboards. Make is harder to learn though—you could <em>try</em> with Zapier although it’s probably complex enough that I’d recommend Make, which is cheaper anyway. If you’re struggling with Make, there are many consultants and developers on the forum who could help (myself included!).</li>\n<li>You could also use Make/Zapier or whatever integration you’re using to pull in the names as well as an option. That would save you this extra step and keep the data synced potentially.</li>\n<li>Consider a totally radical approach. Is it possible to structure this process in a different way? What is the purpose of these names in the board?</li>\n</ol>\n<p>Hope that helps!</p>\n<hr />\n<p>Update:</p>\n<p>I went ahead and tested the formula with 30 names. It works great! (Although for some reason ChatGPT really likes the name Charlie! <img src=\"https://emoji.discourse-cdn.com/apple/man_shrugging.png?v=12\" title=\":man_shrugging:\" class=\"emoji\" alt=\":man_shrugging:\" width=\"20\" height=\"20\" /> )</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/e/2e01994a93f2d9fb3cc87f67e957a3199921f442.png\" title=\"Screenshot 2023-10-26 at 15.53.29\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/e/2e01994a93f2d9fb3cc87f67e957a3199921f442_2_690x367.png\" alt=\"Screenshot 2023-10-26 at 15.53.29\" width=\"690\" height=\"367\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2023-10-26 at 15.53.29</span><span class=\"informations\">2410×1284 342 KB</span></div></a></div><p></p>"
+    }
+  ]
+}

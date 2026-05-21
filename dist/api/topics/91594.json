@@ -1,0 +1,86 @@
+{
+  "id": 91594,
+  "title": "Sending an empty array to clear a file column?",
+  "slug": "sending-an-empty-array-to-clear-a-file-column",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    41,
+    94,
+    107,
+    208,
+    351
+  ],
+  "createdAt": "2024-06-27T08:05:16.173Z",
+  "lastPostedAt": "2024-06-30T08:48:53.658Z",
+  "postsCount": 8,
+  "excerpt": "Similar to Bug fix: Sending an empty array to clear a dropdown column from @rachelatmonday, I thought I’d try to manipuate some file columns. \nUsing the following mutation: \nmutation (\n    $board_id: ID!\n    $item_id: ID&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 127,
+  "posts": [
+    {
+      "id": 191197,
+      "postNumber": 1,
+      "createdAt": "2024-06-27T08:05:16.268Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Similar to <a href=\"https://community.monday.com/t/bug-fix-sending-an-empty-array-to-clear-a-dropdown-column/52633\" class=\"inline-onebox\">Bug fix: Sending an empty array to clear a dropdown column</a> from <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a>, I thought I’d try to manipuate some file columns.</p>\n<p>Using the following mutation:</p>\n<pre><code class=\"lang-auto\">mutation (\n    $board_id: ID!\n    $item_id: ID!\n    $column_values: JSON!\n) {\n  change_multiple_column_values(\n    board_id: $board_id\n    item_id: $item_id\n    column_values: $column_values\n  ){\n    id\n  }\n}\n</code></pre>\n<p>With the following variables:</p>\n<pre><code class=\"lang-auto\">{\n  \"board_id\": 1540573903,\n  \"item_id\": 1540573945,\n  \"column_values\": \"{\\\"files__1\\\":[],\\\"files_1__1\\\":[]}\"\n}\n</code></pre>\n<p>This returns a success &amp; empties the files columns in the UI, but if you reload the page, the files return.</p>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/raising_hand_woman.png?v=12\" title=\":raising_hand_woman:\" class=\"emoji\" alt=\":raising_hand_woman:\" width=\"20\" height=\"20\" /> <strong>Whats happening?</strong></p>\n<hr />\n<p>Here’s a Loom demo:<br />\n</p>"
+    },
+    {
+      "id": 191204,
+      "postNumber": 2,
+      "createdAt": "2024-06-27T09:16:44.112Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Ok, there’s documentation on clearing columns of type file:</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/reference/files-1#clear-the-files-column\" target=\"_blank\" rel=\"noopener\">monday.com Platform API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/reference/files-1#clear-the-files-column\" target=\"_blank\" rel=\"noopener\">Files (assets)</a></h3>\n\n  <p>Learn how to read, update, and clear the files column on monday boards using the platform API</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>hat tip: <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>\n<p>Still seems a bit odd that an empty array will change the files in the UI, even momentarily.</p>"
+    },
+    {
+      "id": 191208,
+      "postNumber": 3,
+      "createdAt": "2024-06-27T09:29:32.209Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> would you do a test in the “cleared but not cleared” state and drag a file into the column and see what happens?</p>"
+    },
+    {
+      "id": 191236,
+      "postNumber": 4,
+      "createdAt": "2024-06-27T10:23:15.144Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 191246,
+      "postNumber": 5,
+      "createdAt": "2024-06-27T10:48:13.098Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> If you drop a file into the column, it uploads and displays that file only in the column.</p>\n<p>On page refresh, all the other files are there too.</p>"
+    },
+    {
+      "id": 191247,
+      "postNumber": 6,
+      "createdAt": "2024-06-27T10:50:38.903Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Alright. I was wondering if since the UI had an empty array, if adding the file added just that file to the array and saved that array in some fashion causing the “hidden” files to vanish. That would be really bad - and a bug.</p>"
+    },
+    {
+      "id": 191261,
+      "postNumber": 7,
+      "createdAt": "2024-06-27T12:06:35.429Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> This is certainly a bug, even if it is less serious than you considered it could be.</p>\n<p>The API is returning an update successful on  columns, whereas it’s not actually successful.</p>"
+    },
+    {
+      "id": 191500,
+      "postNumber": 8,
+      "createdAt": "2024-06-30T04:54:01.430Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I don’t disagree, the current behavior is a bug.</p>\n<p>File columns are definitely strange! Glad we were able to solve for the correct way to clear the column. Surprised just a “null” doesn’t clear it like every other column though… I thought all column types were supposed to now be clearable with a null.</p>"
+    },
+    {
+      "id": 191567,
+      "postNumber": 9,
+      "createdAt": "2024-06-30T08:48:53.658Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> !</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> explaining the possible bug you mention with as much information as possible so our team can take a look?</p>"
+    }
+  ]
+}

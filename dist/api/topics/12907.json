@@ -1,0 +1,107 @@
+{
+  "id": 12907,
+  "title": "Adding Files to an item from Google Drive using GAS",
+  "slug": "adding-files-to-an-item-from-google-drive-using-gas",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-11-05T18:54:26.385Z",
+  "lastPostedAt": "2020-11-12T19:59:17.566Z",
+  "postsCount": 12,
+  "excerpt": "Hi, \nI have a Google Sheet with file names and Monday pulseIDs. I am trying to write a script to cycle through the files and add them in Monday to the specific pulse. I have use the API many times from Google sheets and &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 4079,
+  "posts": [
+    {
+      "id": 32927,
+      "postNumber": 1,
+      "createdAt": "2020-11-05T18:54:26.454Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I have a Google Sheet with file names and Monday pulseIDs. I am trying to write a script to cycle through the files and add them in Monday to the specific pulse. I have use the API many times from Google sheets and it works great. I have not been successful with files though.</p>\n<p>I have been trying to use my understanding of the typical structure, then reading posts on Monday community about uploading files and looking at other sources how to do similar things with GAS. I have not had luck yet.</p>\n<p>Here is what I have so far, it just returns an unsupported query erro:<br />\nfunction testFile(){<br />\nvar fileName = “Copy of Workspace files metadata (backup) - backup.pdf”;</p>\n<p>var url = “<a href=\"https://api.monday.com/v2/file\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file</a>”;<br />\nvar file = DriveApp.getFilesByName(fileName).next();<br />\nvar boundary = “xxxxxxxxxx”;<br />\nvar data = “”;<br />\ndata += “–” + boundary + “\\r\\n”;<br />\ndata += “Content-Disposition: form-data; name=\"file\"; filename=\"” + file.getName() + “\"\\r\\n”;<br />\ndata += “Content-Type:” + file.getMimeType() + “\\r\\n\\r\\n”;<br />\nvar nfile = Utilities.newBlob(data).getBytes()<br />\n.concat(file.getBlob().getBytes())<br />\n.concat(Utilities.newBlob(“\\r\\n–” + boundary + “–”).getBytes());<br />\nvar query = ‘mutation($file:File!,$item:Int!){add_file_to_column(file:$file,item_id:$item,column_id:“files”){id}}’<br />\nvar variables = {<br />\n“file”: nfile,<br />\n“item”: 839038968<br />\n}</p>\n<p>var options = {<br />\n“method” : “post”,<br />\n“headers” : {<br />\n“Authorization” : mondayAPIkey,<br />\n},<br />\n“contentType” : “multipart/form-data; boundary=” + boundary,<br />\n“payload” :  JSON.stringify({<br />\n“query” : query,<br />\n“variables” : variables,<br />\n}),<br />\n“muteHttpExceptions”: true,<br />\n};<br />\nvar res = UrlFetchApp.fetch(url, options).getContentText();</p>\n<p>Logger.log(res);<br />\n}</p>"
+    },
+    {
+      "id": 32933,
+      "postNumber": 2,
+      "createdAt": "2020-11-05T20:40:48.703Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 32934,
+      "postNumber": 3,
+      "createdAt": "2020-11-05T20:43:53.728Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/chrisbuna\">@ChrisBuna</a> - could you let us know where you’re trying to execute this script? Also - could you let us know the timestamp for the last time you tried to run it?</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 33001,
+      "postNumber": 4,
+      "createdAt": "2020-11-06T14:30:29.951Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p>Hi Daniel,<br />\nTrying to run it from Google Sheets from the scripting tool.<br />\nI ran it a few times last night. But I just ran it again to give you a time stamp: 20-11-06 12:29:44:473 AST] Fri Nov 06 12:29:44 GMT-04:00 2020</p>"
+    },
+    {
+      "id": 33155,
+      "postNumber": 5,
+      "createdAt": "2020-11-09T19:25:51.218Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/chrisbuna\">@ChrisBuna</a> - I think I see it on the logs. It looks like the variable being sent over to the API isn’t an actual file, but rather the URL to the file on Google Drive.</p>\n<p>In order to upload files through the API, you’ll need to send the actual file as a multi-part upload.</p>\n<p>Let me know if this helps!</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 33164,
+      "postNumber": 6,
+      "createdAt": "2020-11-09T22:09:55.923Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p>That’s the piece I can’t figure out. How do I get it from Google Drive as a multi-part upload?</p>\n<p>That’s what I am trying to figure it out but I can’t get it to work. I am doing my best to interpret other examples doing this to other tools but haven’t figured it out yet. Any suggestions or direction would be greatly appreciated.</p>"
+    },
+    {
+      "id": 33349,
+      "postNumber": 7,
+      "createdAt": "2020-11-11T13:38:39.349Z",
+      "author": "MelissaH (Melissa Hallbauer)",
+      "cookedHtml": "<p>It might be useful to break this into a two-part question.</p>\n<ol>\n<li>Accessing the file and retrieving the data from inside of it</li>\n<li>Uploading the file to <a href=\"http://Monday.com\">Monday.com</a>\n</li>\n</ol>\n<p>For <span class=\"hashtag\">#1</span>, if you haven’t already, the best test I can think of would be creating a Google Doc with “hello world” and developing a routine that prints the text content to the console. It ain’t much, but it’s a start. For <span class=\"hashtag\">#2</span>, try programmatically creating a text file with a test sentence and getting that to upload. This might give you a bit more insight than trying the whole process at one time.</p>\n<p>Disclaimer: my typical development strategy is “bash rocks together until I make fire” and is much more haphazard than people with actual programming training. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> your mileage may vary.</p>"
+    },
+    {
+      "id": 33356,
+      "postNumber": 8,
+      "createdAt": "2020-11-11T14:35:09.966Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p>Thanks Melissa, I appreciate your response but I don’t know how to execute either of the two options…</p>"
+    },
+    {
+      "id": 33361,
+      "postNumber": 9,
+      "createdAt": "2020-11-11T15:29:54.186Z",
+      "author": "MelissaH (Melissa Hallbauer)",
+      "cookedHtml": "<p>Chris:</p>\n<p>The StackOverflow <a href=\"https://stackoverflow.com/questions/35865273/how-to-update-google-drive-text-file-via-google-script\">here</a> should help you getting started with creating files for testing purposes. You will probably wind up using File.getBlob() in the final product - documentation <a href=\"https://developers.google.com/apps-script/reference/drive/file#getBlob()\">here</a></p>\n<p>I assume you have the <a href=\"https://monday.com/developers/v2#mutations-section-files\">API documentation on files</a> bookmarked already, but dipro’s post <a href=\"https://community.monday.com/t/you-can-now-access-and-upload-files-using-our-api/5997\">here</a> has far better detailing than the official documentation (AND EXAMPLES).</p>\n<p>Historically I’ve had much better luck using Postman to set up my API queries and then copy/pasting them into GAS and adjusting the formatting somewhat to get around the Google idiosyncrasies…</p>\n<p>Another line of inquiry for part <span class=\"hashtag\">#2</span> in the suggested structure above would be creating a “hello world.txt” file on your desktop and attempting to upload to Monday via Postman… in my experience, the API documentation is not particularly helpful, so you want to be certain your query is structured correctly before you start throwing in new potential for error with porting over files.</p>\n<p>This is about as much research as I’m able to do without diving into it for myself, and that won’t happen anytime soon since we’re gearing up for EOY inventory. Best wishes and I hope this helped.</p>"
+    },
+    {
+      "id": 33418,
+      "postNumber": 10,
+      "createdAt": "2020-11-11T22:33:11.264Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p>Thanks for your response</p>"
+    },
+    {
+      "id": 33493,
+      "postNumber": 11,
+      "createdAt": "2020-11-12T12:37:06.794Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dsilva\">@dsilva</a> are you able to provide exactly what the request needs to look like for Monday to accept? What does the file data need to look like? Based on what I am seeing online in other forums for how to do it from Google to Box or Google to Slack I am on the right track but Monday isn’t accepting it. What would be the boundary? what else am I missing?</p>"
+    },
+    {
+      "id": 33548,
+      "postNumber": 12,
+      "createdAt": "2020-11-12T19:59:17.566Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/chrisbuna\">@ChrisBuna</a> I don’t quite have an example of how the data looks like for monday to request, however we do have a code example of uploading a file the hard way (i.e: uploading from memory instead of an arbitrary reference like a file path). It might point you in the right direction here.</p>\n<aside class=\"onebox githubgist\">\n  <header class=\"source\">\n\n      <a href=\"https://gist.github.com/yuhgto/edb5d96e088599c2a6ea44860df9117b\" target=\"_blank\" rel=\"noopener nofollow ugc\">gist.github.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <h4><a href=\"https://gist.github.com/yuhgto/edb5d96e088599c2a6ea44860df9117b\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://gist.github.com/yuhgto/edb5d96e088599c2a6ea44860df9117b</a></h4>\n\n  <h5>sample.md</h5>\n  <pre><code class=\"Markdown\">\n# Uploading a file to monday.com, the hard way\n\nIn this example script, I construct a multipart request to upload a file via the monday.com API. The `content` variable stores my file in memory, so you can use a similar pattern if implementing file uploads in a storage-free environment (eg MuleSoft or AWS lambda).\n\nDependencies: `node-fetch` or some other npm library to make an HTTP request\n\n``` javascript\nvar fs = require('fs');\nvar fetch = require('node-fetch'); // requires node-fetch as dependency</code></pre>\n    This file has been truncated. <a href=\"https://gist.github.com/yuhgto/edb5d96e088599c2a6ea44860df9117b\" target=\"_blank\" rel=\"noopener nofollow ugc\">show original</a>\n\n<p>\n</p>\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>-Daniel</p>"
+    },
+    {
+      "id": 44271,
+      "postNumber": 13,
+      "createdAt": "2021-03-10T14:28:27.749Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

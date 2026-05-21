@@ -1,0 +1,72 @@
+{
+  "id": 41877,
+  "title": "Items by column values - UserUnauthroizedException",
+  "slug": "items-by-column-values-userunauthroizedexception",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2022-09-01T04:38:54.766Z",
+  "lastPostedAt": "2022-09-04T10:02:04.251Z",
+  "postsCount": 8,
+  "excerpt": "Hello, \nI came across something odd that I hope there is a fix for. \nI am trying to retrieve items using Items_by_column_values. \nApparently, in order to use this method the board permission must be “View all items on th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 744,
+  "posts": [
+    {
+      "id": 96616,
+      "postNumber": 1,
+      "createdAt": "2022-09-01T04:38:54.837Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I came across something odd that I hope there is a fix for.<br />\nI am trying to retrieve items using Items_by_column_values.</p>\n<p>Apparently, in order to use this method the board permission must be “View all items on the board” (or be a board owner)<br />\nThat means that if I’m trying to query the items by using Items_by_column_values, and the board permission is on “View only items that are assigned to users or created by them in any “People” column”, I’m receiving back error code: UserUnauthroizedException.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/05f8ad8ddde104f2b5de810d4a54c07a38049859.jpeg\" title=\"w\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/05f8ad8ddde104f2b5de810d4a54c07a38049859_2_690x152.jpeg\" alt=\"w\" width=\"690\" height=\"152\" /><div class=\"meta\">\n<span class=\"filename\">w</span><span class=\"informations\">738×163 7.72 KB</span>\n</div></a></div><p></p>\n<p>Every other methods that I’ve checked (retrieve items by board, mutations etc.) are working great.<br />\nonly the Items_by_column_values and items_by_multiple_column_values giving back an error.</p>\n<p>Any ideas?<br />\nThanks!</p>"
+    },
+    {
+      "id": 96679,
+      "postNumber": 2,
+      "createdAt": "2022-09-01T12:22:56.068Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Roy,</p>\n<p>In my opinion it is a great thing that the app adheres to the permission settings. If I don’t want other people to see my items I also don’t want them to show up in any type of search (including the API). It is important to understand under which user credentials the app is running. That depends on how you use the tokens. If you use shortLivedTokens in your app the token will grant permission based on the credentials of the user that added your app to the board. If this is either the board owner (or an admin?) you should be fine as those users can always view any item.</p>"
+    },
+    {
+      "id": 96699,
+      "postNumber": 3,
+      "createdAt": "2022-09-01T14:02:35.725Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/basdebruin/48/688_2.png\" class=\"avatar\" /> basdebruin:</div>\n<blockquote>\n<p>adheres</p>\n</blockquote>\n</aside>\n<p>Hey basdebruin, thank you for your answer.</p>\n<p>Sorry, but I don’t quite understand.<br />\nFirst of all, I am getting the error even directly from the playground, not using any token or an app.<br />\nAnd about the permission - I agree that you do not need to see items that are hidden for you. So, when I query items by this way for example:</p>\n<pre><code class=\"lang-auto\">{\nboards(ids: x) {\n   items(limit: y) {\n     id\n    }\n}\n</code></pre>\n<p>I am recieving back only items that the user is assigned or created by him exactly by the permission settings. as expected.<br />\nWhen I’m trying to query by this way:</p>\n<pre><code class=\"lang-auto\">{\nitems_by_multiple_column_values(board_id: x, column_id: \"y\", , column_values: [\"z\"]) {\n  id\n  }\n}\n</code></pre>\n<p>Why am I recieving back an error 403 instead of the items filtered by the user assigned/created - like the normal query?</p>\n<p>I hope I explained myself good enough.<br />\nThanks again!</p>"
+    },
+    {
+      "id": 96710,
+      "postNumber": 4,
+      "createdAt": "2022-09-01T16:00:09.737Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Don’t know exactly why you get a 403 on items_by_column_value. Keep in mind that when adding an item the items is available for items_by_column_value somewaht later (up to 3 mnutes as I read in another thread).</p>\n<p>On permissions and tokens. The playgroud runs under the credentials of the logged in user (as I remember). So, if you don’t have access to those items through the UI the playground will also not have access. The credentials used by an app is depending on how the app is designed.</p>"
+    },
+    {
+      "id": 96832,
+      "postNumber": 5,
+      "createdAt": "2022-09-03T10:01:33.292Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hey basdebruin,</p>\n<p>Yes I’ve heard about the 3 mintues hold until you see the changes with the “items_by_column_value”.<br />\nUnfortunately it is not the case because I’m getting an Immediate error.<br />\nIs it possible that it is an monday bug or something? I also heard that the “items_by_column_value” is one of the latest methods added to the API.</p>\n<p>How can I know why I am exactly getting error 403?</p>\n<p>Thanks,<br />\nRoy</p>"
+    },
+    {
+      "id": 96838,
+      "postNumber": 6,
+      "createdAt": "2022-09-03T13:14:48.174Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi Roy,</p>\n<p>What do you mean by an immediate error? I think the question is: “how long ago is the item you are searching for added to the board?”. That is where the delay is. When an item is added to the board it can take a while before items_by_column_value can find it.</p>"
+    },
+    {
+      "id": 96846,
+      "postNumber": 7,
+      "createdAt": "2022-09-04T03:27:11.710Z",
+      "author": "Roy (Roy)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I mean by immediate error that I’m not getting empty array or missing items - only 403 error.<br />\nEven if I am waiting more than 3 minutes.</p>\n<p>How can I check if my case is a bug by monday?</p>"
+    },
+    {
+      "id": 96856,
+      "postNumber": 8,
+      "createdAt": "2022-09-04T10:02:04.251Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/roy\">@Roy</a>!</p>\n<p>If the board has item level permission, only the board owner (which has access to the whole board) can use this query.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

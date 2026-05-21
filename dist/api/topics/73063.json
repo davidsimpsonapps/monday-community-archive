@@ -1,0 +1,124 @@
+{
+  "id": 73063,
+  "title": "New `themeConfig` property in the context of view apps",
+  "slug": "new-themeconfig-property-in-the-context-of-view-apps",
+  "categoryId": 70,
+  "tagIds": [
+    152,
+    245
+  ],
+  "createdAt": "2023-12-14T13:52:14.880Z",
+  "lastPostedAt": "2024-06-23T11:01:26.476Z",
+  "postsCount": 12,
+  "excerpt": "You may have noticed something new in the context of all view-based app features (or you can check it out here)… \nWe recently added the themeConfig property to provide insight into the current custom theme applied within&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 551,
+  "posts": [
+    {
+      "id": 157950,
+      "postNumber": 1,
+      "createdAt": "2023-12-14T13:52:14.963Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>You may have noticed something new in the context of all view-based app features (or you can check it out <a href=\"https://developer.monday.com/apps/docs/mondayget#sample-context-objects-for-each-feature-type\" target=\"_blank\" rel=\"noopener\">here</a>)…</p>\n<p>We recently added the <code>themeConfig</code> property to provide insight into the current custom theme applied within the <a href=\"http://monday.com\">monday.com</a> platform. This information enables you to align your app’s color scheme with that of the platform’s custom theme.</p>\n<p>Using the <a href=\"https://style.monday.com/?path=/docs/components-themeprovider-alpha--docs\" target=\"_blank\" rel=\"noopener\">ThemeProvider</a> in our Vibe design system, you can maintain visual coherence with the platform and provide an overall better user experience!</p>\n<pre><code class=\"lang-json\">{\n  \"themeConfig\": { // defines the color scheme and styling configuration for the app, may be \"undefined\" if the default theme is used\n    \"name\": \"crm-product-theme\", \n    \"colors\": {\n      \"light\": {\n        \"primary-color\": \"#007f9b\",\n        \"primary-hover-color\": \"#006278\",\n        \"primary-selected-color\": \"#bee3e8\",\n        \"primary-selected-hover-color\": \"#d4ebef\",\n        \"brand-colors\": {\n          \"brand-color\": \"#007f9b\",\n          \"brand-hover-color\": \"#006278\",\n          \"text-color-on-brand\": \"#ffffff\"\n        }\n      },\n      \"dark\": {\n        \"primary-color\": \"#007f9b\",\n        \"primary-hover-color\": \"#006278\",\n        \"primary-selected-color\": \"#004858\",\n        \"primary-selected-hover-color\": \"#003844\",\n        \"brand-colors\": {\n          \"brand-color\": \"#007f9b\",\n          \"brand-hover-color\": \"#006278\",\n          \"text-color-on-brand\": \"#ffffff\"\n        }\n      },\n      \"black\": {\n        \"primary-color\": \"#007f9b\",\n        \"primary-hover-color\": \"#006278\",\n        \"primary-selected-color\": \"#004858\",\n        \"primary-selected-hover-color\": \"#003844\",\n        \"brand-colors\": {\n          \"brand-color\": \"#007f9b\",\n          \"brand-hover-color\": \"#006278\",\n          \"text-color-on-brand\": \"#ffffff\"\n        }\n      }\n    }\n  },\n  \"boardId\": 4213911112, // unique board ID \n  \"boardIds\": [4213911112], // list of connected boards\n  \"boardViewId\": 122234064, // unique board view ID\n  \"viewMode\": \"fullScreen\", // or \"split\" or \"widget\"\n  \"instanceId\": 122234064, // unique instance ID for the feature on the board\n  \"instanceType\": \"board_view\", // app feature type\n  \"workspaceId\": 2581779,\n  \"theme\": \"light\", // or \"dark\" or \"black\"\n  \"account\": { \"id\": \"1233\" },\n  \"user\": {\n    \"id\": \"28659824\",\n    \"isAdmin\": false, // or true\n    \"isGuest\": false, // or true\n    \"isViewOnly\": false, // or true\n    \"countryCode\": \"IL\",\n    \"currentLanguage\": \"en\",\n    \"timeFormat\": \"12H\", // or \"24H\" \n    \"timeZoneOffset\": 2 // timezone offset based on GMT\n  },\n  \"region\": \"use1\", // availability zone ID\n  \"app\": { \"id\": 10089476, \"clientId\": \"78643ruyagduyg743tyr812uygd74\" },\n  \"appVersion\": {\n    \"id\": 10124592,\n    \"name\": \"context printer\",\n    \"status\": \"draft\",\n    \"type\": \"major\",\n    \"versionData\": { \"major\": 1, \"minor\": 0, \"patch\": 0, \"type\": \"major\" }\n  },\n  \"appFeature\": {\n    \"type\": \"AppFeatureBoardView\",\n    \"name\": \"context printer - v1.0.0\"\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 158131,
+      "postNumber": 2,
+      "createdAt": "2023-12-15T14:23:30.131Z",
+      "author": "danlester (Dan Lester)",
+      "cookedHtml": "<p>Thanks for this! If I see context of <code>{ themeConfig: undefined, theme: \"dark\", ...}</code> I presume that just means there’s no custom theme applied at the moment.</p>\n<p>I’m not too sure how to use <code>ThemeProvider</code> in that scenario though, in order to get Vibe to play with the dark theme. Do you know what props you’d expect to pass to <code>ThemeProvider</code> with such a context in order to get Vibe components to adapt to the current system theme?</p>"
+    },
+    {
+      "id": 158565,
+      "postNumber": 3,
+      "createdAt": "2023-12-19T03:56:37.194Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/danlester\">@danlester</a>,</p>\n<p>Undefined = default theme! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>And working on adding this to the docs, but in the mean time, I hope this code sample is helpful!</p>\n<pre><code class=\"lang-import\">import mondaySdk from \"monday-sdk-js\";\n\nconst monday = mondaySdk();\n\nexport const useGetContext = () =&gt; {\n  const [context, setContext] = useState({});\n\n\n  useEffect(() =&gt; {\n    monday.listen(\"context\", (res) =&gt; {\n      setContext((previousContext) =&gt;\n        isMatch(previousContext, res.data) ? previousContext : res.data\n      );\n    });\n  }, []);\n\n\n  return context;\n};\n\nconst AppWrapper = () =&gt; {\n  const context = useGetContext();\n\n  return (\n    &lt;Flex\n      id=\"main\"\n      className={cx(context.theme + \"-app-theme\", \"main\")}\n    &gt;\n      &lt;ThemeProvider theme={context.themeConfig}&gt;\n        {/* Your app components go here */}\n        &lt;App /&gt;\n      &lt;/ThemeProvider&gt;\n    &lt;/Flex&gt;\n  );\n};\n\n</code></pre>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 158572,
+      "postNumber": 4,
+      "createdAt": "2023-12-19T07:42:21.385Z",
+      "author": "danlester (Dan Lester)",
+      "cookedHtml": "<p>Thanks for this - very helpful.</p>\n<p>I’d ended up with something similar from playing around and some inspection of the source code:</p>\n<pre><code class=\"lang-auto\">&lt;ThemeProvider theme={context?.theme} themeClassSpecifier={`${context?.theme || \"default\"}-app-theme`}&gt;\n</code></pre>\n<p>This does seem to do the trick, but wonder if I’ve misunderstood what <code>themeClassSpecifier</code> really does?</p>"
+    },
+    {
+      "id": 188942,
+      "postNumber": 6,
+      "createdAt": "2024-06-15T06:41:19.839Z",
+      "author": "zezo (Zezo Papassoff)",
+      "cookedHtml": "<p>Here is another question, related to the <code>ThemeProvider</code>:</p>\n<p>I am developing a board header app, and using the <code>ThemeProvider</code> at the root level of my app. The app is getting the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> theme object from the <code>context</code> correctly. So in theory, I could use the theme to style my components coherently with the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> theme.</p>\n<p>However, I could not find information how to use the theme to directly style my components. I assumed that it would be something along the lines of: Use a <code>&lt;ThemeProvider /&gt;</code> at the root level of my app, and then add <code>useTheme()</code> or similar  hook to my components to access the <code>theme</code> properties and use them to style my components. Unfortunately I could not find a <code>useTheme()</code> or similar hook in <code>monday-ui-react-core</code>.</p>\n<p>Would you please give me a hint how to use the <code>ThemeProvider</code> to apply the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> theme’s  style to my app components?</p>"
+    },
+    {
+      "id": 189009,
+      "postNumber": 7,
+      "createdAt": "2024-06-16T09:33:38.496Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C02S6F817JQ/p1718541208300439\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 189013,
+      "postNumber": 8,
+      "createdAt": "2024-06-16T10:48:41.353Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/zezo\">@zezo</a>,</p>\n<p>I checked with the team in charge of the Vibe design system and they recommended you implement something like <a href=\"https://style.monday.com/?path=/story/theming-themeprovider-alpha--monday-sdk-integration\">this</a> <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Please let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 189047,
+      "postNumber": 9,
+      "createdAt": "2024-06-17T01:00:38.754Z",
+      "author": "zezo (Zezo Papassoff)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Thank you for checking about my inquiry with the Vibe team!</p>\n<p>Actually, this is exactly what I am doing currently: I am getting the ThemeProvider from the monday context and I can read its properties just fine after getting it.</p>\n<p>My question is more about the next step: How to actually use the properties of the ThemeProvider to apply monday styles to my components?</p>\n<p>Cheers,</p>\n<p>Zezo</p>"
+    },
+    {
+      "id": 189065,
+      "postNumber": 10,
+      "createdAt": "2024-06-17T06:39:16.129Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C02S6F817JQ/p1718617145358659?thread_ts=1718541208.300439&amp;cid=C02S6F817JQ\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 189081,
+      "postNumber": 11,
+      "createdAt": "2024-06-17T07:50:35.656Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/zezo\">@zezo</a> if you are referring to your own custom components the Vibe team suggested you use <a href=\"https://style.monday.com/?path=/docs/foundations-colors--docs\">color tokens</a> from the “Foundations” section and they will adapt themselves.</p>\n<p>For example, if you use <code>primary-color</code> it will dynamically change according to the product/system theme.</p>"
+    },
+    {
+      "id": 189113,
+      "postNumber": 12,
+      "createdAt": "2024-06-17T10:23:26.087Z",
+      "author": "zezo (Zezo Papassoff)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> , thanks for your quick reply.</p>\n<p>Yes, I was referring to my own custom components, and I was wondering if there is a more comprehensive example, like a demo app, showcasing the integration of the Vibe design system, including the theming, in a custom app for monday?</p>"
+    },
+    {
+      "id": 189292,
+      "postNumber": 13,
+      "createdAt": "2024-06-18T09:38:15.395Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C02S6F817JQ/p1718617145358659?thread_ts=1718541208.300439&amp;cid=C02S6F817JQ\">Slack</a></p>"
+    },
+    {
+      "id": 189489,
+      "postNumber": 14,
+      "createdAt": "2024-06-19T10:05:52.896Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/zezo\">@zezo</a>,</p>\n<p>The team mentioned that even though that is not the purpose of the Vibe system, it is possible to do that with the tokens as explained before. We don’t have an example but it should be straight forward, every token is a CSS Custom Property that can be used anywhere in your custom components’ CSS, for example:</p>\n<pre><code class=\"lang-auto\">.custom-component {\n  color: var(--primary-color);\n  box-shadow: var(--box-shadow-xs);\n  padding: var(--spacing-medium);\n}\n</code></pre>\n<p>You can see all the tokens we use under the “Foundations” section in Vibe Storybook.</p>"
+    },
+    {
+      "id": 189731,
+      "postNumber": 15,
+      "createdAt": "2024-06-20T13:23:20.710Z",
+      "author": "zezo (Zezo Papassoff)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Thank you for the infos and for checking out my inquiry with the Vibe team. You got me up to speed on the theming topic <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=12\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 190037,
+      "postNumber": 16,
+      "createdAt": "2024-06-23T11:01:26.476Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/zezo\">@zezo</a> !!</p>"
+    }
+  ]
+}

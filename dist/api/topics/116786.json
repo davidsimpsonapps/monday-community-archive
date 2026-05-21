@@ -1,0 +1,48 @@
+{
+  "id": 116786,
+  "title": "Retrieving Column values using PHP seeing NULL in place of value",
+  "slug": "retrieving-column-values-using-php-seeing-null-in-place-of-value",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2025-06-28T01:52:23.472Z",
+  "lastPostedAt": "2025-06-28T20:15:13.189Z",
+  "postsCount": 4,
+  "excerpt": "I using Heredoc in PHP to retrieve column values for a dashboard.  In one status column is years.  While that value is in the data from the API Playground, it’s showing as null in my json_encoded response. \nWhat am I mis&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 22,
+  "posts": [
+    {
+      "id": 233111,
+      "postNumber": 1,
+      "createdAt": "2025-06-28T01:52:23.555Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>I using Heredoc in PHP to retrieve column values for a dashboard.  In one status column is years.  While that value is in the data from the API Playground, it’s showing as null in my json_encoded response.</p>\n<p>What am I missing?</p>\n<p>My getItems() method:</p>\n<pre><code class=\"lang-auto\">public function getItem(int $itemId) {\n  $query = &lt;&lt;&lt;'GQL'\n      query GetItem($itemIdVar: [ID!]!) {\n        items(ids: $itemIdVar) {\n          id  \n          name\n          group {\n            id  \n            title\n          }   \n          column_values {\n            id  \n            value\n            text\n            type\n          }   \n          board { \n            id        \n          }   \n        }   \n      }   \n  GQL;\n      \n      $variables = [\n          'itemIdVar' =&gt; [(string)$itemId],\n      ];\n\n      $result = $this-&gt;executeQuery($query, $variables);\n\n      if (!is_array($result) || isset($result['error'])) {\n          error_log(\n              'Failed to fetch Monday.com item (item='\n              . $itemId . '). Result: '\n              . json_encode($result)\n          );\n          return false;\n      }\n\n      if (\n          isset($result['data']['items'])\n          &amp;&amp; is_array($result['data']['items'])\n          &amp;&amp; count($result['data']['items']) &gt; 0\n      ) {\n          return $result['data']['items'][0];\n      }\n\n      error_log(\n          'Monday.com item not found (item='\n          . $itemId . '). Full result: '\n          . json_encode($result)\n      );\n      return false;\n  }\n\n</code></pre>\n<p>My json_encoded response is:</p>\n<pre><code class=\"lang-auto\">{\n  \"id\":\"color_mkqhmzhq\",\n  \"value\":\"{\n    \\\"index\\\":5,\n    \\\"changed_at\\\":\\\"2025-06-25T21:18:36.650Z\\\"\n  }\",\n  **\"text\":null,**\n  \"type\":\"status\"\n}\n</code></pre>\n<p>What I get in API Playground is:</p>\n<pre><code class=\"lang-auto\">{\n  \"id\": \"color_mkqhmzhq\",\n  \"value\": \"{\n    \\\"index\\\":3,\n    \\\"post_id\\\":null,\n    \\\"changed_at\\\":\\\"2025-06-27T15:11:28.390Z\\\"\n  }\",   \n  **\"text\": \"2024\",**    // missing in PHP response\n  \"type\": \"status\"\n}\n</code></pre>\n<p>UPDATE:  This is also from the same json_encoded response, also a status column:</p>\n<pre><code class=\"lang-auto\">{\n  \"id\":\"color_mkqg102a\",\n  \"value\":\"{\n    \\\"index\\\":2\n  }\",\n  \"text\":\"Not Scheduled\",  // notice the value of the label\n  \"type\":\"status\"\n }\n</code></pre>\n<p>Here is a copy of my executeQuery() with error logs to see what’s failing where.</p>\n<pre><code class=\"lang-auto\">private function executeQuery(string $query, array $variables) {\n          $headers = [\n              \"Content-Type: application/json\",\n              \"Authorization: \" . $this-&gt;api_key // Use the private property\n          ];\n\n          $headerString = implode(\"\\r\\n\", $headers) . \"\\r\\n\";\n          $payload = json_encode(['query' =&gt; $query, 'variables' =&gt; $variables]);\n\n          $context = stream_context_create([\n              'http' =&gt; [\n                  'method' =&gt; 'POST',\n                  'header' =&gt; $headerString,\n                  'content' =&gt; $payload,\n                  'ignore_errors' =&gt; true\n              ]\n          ]);\n          $response = @file_get_contents($this-&gt;api_url, false, $context); \n\n          if ($response === false) {\n              error_log('(1) Monday.com API Request Failed: No response or network error.');\n              return false;\n          }\n\n          $http_response_header_str = implode(\"\\r\\n\", $http_response_header);\n          preg_match('/HTTP\\/[\\d\\.]+\\s*(\\d+)/', $http_response_header_str, $matches);\n          $http_code = isset($matches[1]) ? (int)$matches[1] : 0;\n          $decodedResponse = json_decode($response, true);\n\n          if ($decodedResponse === null &amp;&amp; json_last_error() !== JSON_ERROR_NONE) {\n              error_log('(2) Monday.com API: JSON decoding error: ' . json_last_error_msg() . ' (Raw response: ' . $response . ')');\n              return false;\n          }\n\n          if (isset($decodedResponse['errors'])) {\n              error_log('Monday.com API Error (HTTP ' . $http_code . '): ' . json_encode($decodedResponse['errors']));\n              return ['error' =&gt; 'Monday.com API Error', 'http_code' =&gt; $http_code, 'details' =&gt; $decodedResponse];\n          }\n\n          error_log('DEBUG: executeQuery - Decoded Monday.com Response (before return): ' . json_encode($decodedResponse));\n          return $decodedResponse;\n      }\n</code></pre>"
+    },
+    {
+      "id": 233112,
+      "postNumber": 2,
+      "createdAt": "2025-06-28T02:08:24.510Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Try this for your variables:</p>\n<pre><code class=\"lang-auto\">  $variables = {\n    \"variables\"=&gt; {\n          \"itemIdVar\" =&gt; [ (string)$itemId ]\n      }\n  };\n</code></pre>\n<p>*edit fixed from original input on phone</p>"
+    },
+    {
+      "id": 233113,
+      "postNumber": 3,
+      "createdAt": "2025-06-28T02:51:49.383Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dvdsmpsn/48/24829_2.png\" class=\"avatar\" /> David @ David Simpson Apps:</div>\n<blockquote>\n<p>$variables = {<br />\n“variables” =&gt; {<br />\n‘itemIdVar’ =&gt; [(string)$itemId],<br />\n}<br />\n};</p>\n</blockquote>\n</aside>\n<p>That throws an JSON Parse error:<br />\n → Login Error: JSON Parse Error. Raw response text:</p>"
+    },
+    {
+      "id": 233132,
+      "postNumber": 4,
+      "createdAt": "2025-06-28T20:15:13.189Z",
+      "author": "mark.stout (Mark Stout)",
+      "cookedHtml": "<p>Solved.  Was looking at the wrong item data.</p>"
+    }
+  ]
+}

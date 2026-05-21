@@ -1,0 +1,68 @@
+{
+  "id": 13750,
+  "title": "Editing files in an app",
+  "slug": "editing-files-in-an-app",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-11-29T08:27:29.973Z",
+  "lastPostedAt": "2020-12-05T15:19:04.032Z",
+  "postsCount": 7,
+  "excerpt": "I’m working on an app which incorporates an existing simple text editor and has hooks available for load and save operations. \nI’m not sure how best to implement the storage for this  (together with some kind of director&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2147,
+  "posts": [
+    {
+      "id": 34822,
+      "postNumber": 1,
+      "createdAt": "2020-11-29T08:27:30.034Z",
+      "author": "CMcConnell (Colin McConnell)",
+      "cookedHtml": "<p>I’m working on an app which incorporates an existing simple text editor and has hooks available for load and save operations.</p>\n<p>I’m not sure how best to implement the storage for this  (together with some kind of directory listing UI to let users retrieve previously saved files).  I was thinking of using the storage api, but I see reports of it being buggy at the moment?  Would it be feasible to simply use a ‘long text’ column on a board instead?</p>\n<p>My minimum requirement is for individual users to be able to store and retrieve their own work.  An added bonus would be to offer some form of sharing (subject to permissions) between users, so that they could collaborate on files.</p>\n<p>And a final, extra bonus would then be integration with Google Drive, etc., but that would be the cherry on top. <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=12\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" width=\"20\" height=\"20\" /></p>\n<p>Any thoughts?</p>"
+    },
+    {
+      "id": 35090,
+      "postNumber": 2,
+      "createdAt": "2020-12-02T20:36:44.263Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/cmcconnell\">@CMcConnell</a>!</p>\n<p>I think the best thing to use for something like this would be our storage API, you can find more documentation on it <a href=\"https://monday.com/developers/apps/sdk#storage-api-mondaystorage\" rel=\"noopener nofollow ugc\">here.</a> For reference, this is what our whiteboard app uses as well.</p>\n<p>Hope this helps!<br />\n-Daniel</p>"
+    },
+    {
+      "id": 35104,
+      "postNumber": 3,
+      "createdAt": "2020-12-03T05:39:24.840Z",
+      "author": "CMcConnell (Colin McConnell)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a>,</p>\n<p>If I understand correctly, though, that would preclude any collaboration on documents between users, the storage being private to each running instance of the app (even for the same user).  Have I got that right?</p>\n<p>The more I think about it, the more important the collaborative element seems to be. This is what I am working on - <a href=\"https://devpost.com/software/monday-notebooks\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Monday Notebooks | Devpost</a></p>\n<p>The ability to work on stuff privately would be a useful option in itself, and might also present the easiest starting point for an implementation, but ultimately…</p>\n<p>I’d like to either duplicate the functionality of what you could call the ‘reference implementation’ - <a href=\"https://starboard.gg/\" rel=\"noopener nofollow ugc\">https://starboard.gg/</a> - where people can view each other’s work and clone their own copies to work on separately, or (perhaps even better) have truly shared documents with read/write access for a group of users.</p>\n<p>I’ve been thinking about using a board with a files column as the repository for a set of documents with shared access for a group of users. The source and destination for ‘file’ upload and download (using the api) would be the users’ buffers in which they are editing, rather than actual external files.  Would that be a viable approach?</p>\n<p>Cheers,<br />\nColin.</p>"
+    },
+    {
+      "id": 35107,
+      "postNumber": 4,
+      "createdAt": "2020-12-03T07:10:33.402Z",
+      "author": "CMcConnell (Colin McConnell)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/c/ee7513/48.png\" class=\"avatar\" /> CMcConnell:</div>\n<blockquote>\n<p>Have I got that right?</p>\n</blockquote>\n</aside>\n<p>Apologies.  Looking more closely, I suspect I misunderstood the docs. Storage may well offer all the features I need.</p>\n<p>I’ve seen example code for the storage API in the ‘Online Docs’ example app.  I don’t think the whiteboard app source is available, is it?</p>"
+    },
+    {
+      "id": 35128,
+      "postNumber": 5,
+      "createdAt": "2020-12-03T13:09:06.040Z",
+      "author": "CMcConnell (Colin McConnell)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a> (and anyone else that can help <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=9\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" />)</p>\n<p>I’ve been trying to get the storage API going and hit a weird problem.</p>\n<p>Firstly, I’ve noticed that getItem(key) returns success, even if nothing has been written to the key yet.  The data value is null, which I guess is what you have to check to test for this case. I presume that is the intended behaviour, it just caught be my surprise. <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=9\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>\n<p>But the actual problem I am seeing is this -</p>\n<p>I’ve confirmed that I can read and write a simple test string to/from a key, but when I try the larger string that represents the document I am saving, things go wrong.  setItem() returns success, but getItem() gives the same outcome as when it’s a new key - success plus null value.</p>\n<p>Can there be something about the content of the data that would cause it to fail in this way? My document contains code, a mix of CSS, HTML, javascript and other things. I tried a quick test, putting a code snippet in my simple test string example, and that still works, but I suppose there could be some very particular content that is causing the issue. <img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=9\" title=\":confused:\" class=\"emoji\" alt=\":confused:\" /></p>\n<p>Here are some screenshots.</p>\n<p>The working version with a simple test string-<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/6/6cb690620076a10628079044edc555871f863d48.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/6/6cb690620076a10628079044edc555871f863d48_2_610x499.png\" alt=\"image\" width=\"610\" height=\"499\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1092×895 53.9 KB</span></div></a></div><p></p>\n<p>The failure with the real string-<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/bc24847bf6d2438af33cfdda17d5c47faba61a2f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/bc24847bf6d2438af33cfdda17d5c47faba61a2f_2_435x500.png\" alt=\"image\" width=\"435\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1125×1291 61.9 KB</span></div></a></div><br />\n[…]<br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5446877b35e120d1b0cb1a082876c1f818e7ea31.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/5446877b35e120d1b0cb1a082876c1f818e7ea31_2_432x499.png\" alt=\"image\" width=\"432\" height=\"499\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1051×1216 39.6 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 35298,
+      "postNumber": 6,
+      "createdAt": "2020-12-05T15:19:04.032Z",
+      "author": "CMcConnell (Colin McConnell)",
+      "cookedHtml": "<p>Evidently the problem is being caused by the multiline nature of the text.  I can get the storage API to work if I replace all the carrioge return and linefeed characters in my text.</p>"
+    },
+    {
+      "id": 43595,
+      "postNumber": 7,
+      "createdAt": "2021-03-05T15:48:31.413Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

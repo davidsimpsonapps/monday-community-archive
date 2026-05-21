@@ -1,0 +1,56 @@
+{
+  "id": 26753,
+  "title": "Get column Data to a HTML label",
+  "slug": "get-column-data-to-a-html-label",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    22,
+    94,
+    351
+  ],
+  "createdAt": "2021-10-31T16:24:09.441Z",
+  "lastPostedAt": "2021-11-08T07:48:23.225Z",
+  "postsCount": 5,
+  "excerpt": "Hey, \ni made my app working in the way that i can recieve the name of each column.. but now i struggle to get the columns e.g the description or the notes i´ve added. \nHow could i get the column data as a single variable&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1375,
+  "posts": [
+    {
+      "id": 67426,
+      "postNumber": 1,
+      "createdAt": "2021-10-31T16:24:09.534Z",
+      "author": "SilverSlider (Maximilian)",
+      "cookedHtml": "<p>Hey,</p>\n<p>i made my app working in the way that i can recieve the name of each column.. but now i struggle to get the columns e.g the description or the notes i´ve added.</p>\n<p>How could i get the column data as a single variable so i´m able to fill these in the HTML ?</p>\n<hr />\n<h2><a name=\"p-67426-my-php-code-1\" class=\"anchor\" href=\"#p-67426-my-php-code-1\"></a>MY  PHP  CODE</h2>\n<p>?&gt;</p>\n<pre><code class=\"lang-auto\">&lt;?php\n\n    header(\"Access-Control-Allow-Origin: *\");\n    header(\"Access-Control-Allow-Headers: *\");\n\n    $token = 'XXXXXXXXX';\n    $apiUrl = 'https://api.monday.com/v2';\n    $headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n    $boardID = 'XXXXXXX';\n    $groupID = 'test_project';\n    $getCollumn = \"langer_text\";\n\n   $query = 'query { boards (ids: '.$boardID.') { id groups (ids: \"'.$groupID.'\") { id title items { id name } }}}';\n  \n\n  \n    $data = @file_get_contents($apiUrl, false, stream_context_create([\n    'http' =&gt; [\n    'method' =&gt; 'POST',\n    'header' =&gt; $headers,\n    'content' =&gt; json_encode(['query' =&gt; $query]),\n    ]\n    ]));\n    $responseContent = json_decode($data, true);\n    echo json_encode($responseContent[\"data\"][\"boards\"][0][\"groups\"][0][\"items\"]);\n\n\n\n?&gt;\n</code></pre>\n<hr />\n<h2><a name=\"p-67426-my-js-html-code-2\" class=\"anchor\" href=\"#p-67426-my-js-html-code-2\"></a>MY JS ( HTML ) CODE</h2>\n<pre><code class=\"lang-auto\">const ProjectBox = {\n    props: ['name'],\n    template: /*html*/`\n    &lt;div class=\"card\" style=\"height: 150px;\"&gt;\n        &lt;div class=\"card-body\"&gt;\n            &lt;h5 class=\"card-title\"&gt;{{name}}&lt;/h5&gt; \n            &lt;label for=\"Input2\" class=\"form-label pt-3\"&gt;&lt;/label&gt;\n            &lt;br /&gt;\n            &lt;a href=\"XXXXXXXX\" target=\"_blank\" class=\"btn btn-primary\"&gt;XXXXX&lt;/a&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n    `\n}\n\nconst wp_projects = {\n    components: {\n        'project-box': ProjectBox\n    },\n    template: /*html*/`\n        &lt;div class=\"d-flex flex-column flex-lg-row flex-wrap bd-highlight mb-3\"&gt;\n            &lt;div class=\"px-2 mt-2\" v-for=\"boardItem in boardItems\"&gt;\n            \n\n                &lt;project-box :key=\"boardItem.id\" :name=\"boardItem.name\"&gt;\n                \n                &lt;/project-box&gt;\n            &lt;/div&gt;\n        &lt;/div&gt;\n        `\n    ,\n    data: function(){\n        return {\n            boardItems: ''\n        }\n    },\n    mounted: function() {\n        fetch('domain of our PHP script ', {\n                method: 'GET',\n                mode: 'cors',\n                credentials: 'omit'\n            })\n                .then(r =&gt; r.json())\n                .then(data =&gt; {\n                    console.log(data);\n                    this.boardItems = [...data];\n            });\n    }\n}\n\nif(document.getElementById('wp-projects') !== null){\n    console.log('start wp-projects');\n    Vue.createApp(wp_projects).mount('#wp-projects');\n}```</code></pre>"
+    },
+    {
+      "id": 67428,
+      "postNumber": 2,
+      "createdAt": "2021-10-31T20:46:32.049Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/silverslider\">@SilverSlider</a><br />\nWelcome to the community. If you mean the column description field, like:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/2/290e667c8f30629dd5ba6cc7516c5f5b73c6858a.png\" alt=\"image\" width=\"291\" height=\"140\" /><br />\nI’m afraid this one is not (yet) supported by the API. This one is from the API documentation:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9dd7b7eedd8a3e4b58a07dc42d261da9b34ed1df.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/9/9dd7b7eedd8a3e4b58a07dc42d261da9b34ed1df.png\" alt=\"image\" width=\"690\" height=\"388\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">834×470 28.8 KB</span>\n</div></a></div><br />\nand as you can see the description is not part of the fields.<p></p>\n<p>I recommend to submit a feature request for it.</p>"
+    },
+    {
+      "id": 67433,
+      "postNumber": 3,
+      "createdAt": "2021-11-01T06:55:07.601Z",
+      "author": "SilverSlider (Maximilian)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> thanks for your quick answer ! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>my question was not about the desc. of the wohle board ( sorry for this missunderstanding ) i was struggeling about to get alle the information of all columns in a board.</p>\n<p>I solved it a minute ago -<br />\ni got the values of the board in a array and solved now how to get the information out of it in the correct way by their type and position in the array.</p>\n<p>` &lt;project-box :key=“boardItem.id” :name=“boardItem.name”<br />\n:text=“boardItem.column_values[0].text”<br />\n:text1=“boardItem.column_values[1].text”<br />\n:text2=“boardItem.column_values[2].text”</p>\n<pre><code>            &gt;\n</code></pre>\n<p>`<br />\nnow everything is displayed as it should.</p>\n<p>Thanks <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=10\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" /> anyway</p>"
+    },
+    {
+      "id": 67444,
+      "postNumber": 4,
+      "createdAt": "2021-11-01T07:48:00.317Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/silverslider\">@SilverSlider</a>,</p>\n<p>i’m glad you were able to tackle this one! Thanks so much for sharing your solution within the community, too!</p>\n<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> I appreciate your help, as usual!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 68107,
+      "postNumber": 5,
+      "createdAt": "2021-11-08T07:48:23.225Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

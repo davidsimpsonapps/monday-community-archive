@@ -1,0 +1,194 @@
+{
+  "id": 696,
+  "title": "Mutation for each column value of a given item/pulse",
+  "slug": "mutation-for-each-column-value-of-a-given-item-pulse",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    105
+  ],
+  "createdAt": "2019-07-10T16:46:32.286Z",
+  "lastPostedAt": "2021-02-25T12:23:05.416Z",
+  "postsCount": 25,
+  "excerpt": "Moderator edit: we now have quickstart guides that walk new users through this. Here are links to our guides in Python, PHP and Javascript. \n\nI’d like figure out how to set up a mutation call to post an entire pulse and&hellip;",
+  "solvedPostId": null,
+  "likeCount": 9,
+  "views": 16159,
+  "posts": [
+    {
+      "id": 1909,
+      "postNumber": 1,
+      "createdAt": "2019-07-10T16:46:32.378Z",
+      "author": "kevinmarchese (Kevin marchese)",
+      "cookedHtml": "<blockquote>\n<p><strong>Moderator edit:</strong> we now have quickstart guides that walk new users through this. Here are links to our guides in <a href=\"https://support.monday.com/hc/en-us/articles/360013483119-API-Quickstart-Tutorial-Python?abcb=72607\" rel=\"noopener nofollow ugc\">Python</a>, <a href=\"https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP?abcb=71508\" rel=\"noopener nofollow ugc\">PHP</a> and <a href=\"https://support.monday.com/hc/en-us/articles/360013465599\" rel=\"noopener nofollow ugc\">Javascript</a>.</p>\n</blockquote>\n<p>I’d like figure out how to set up a mutation call to post an entire pulse and its column values. In the documentation it says the argument should take “column_valuesJSON” however I’m wondering how to configure this correctly. Would it be in the following configuration, or do you have to create the item, then a PUT call for each column_value? Thank you for feedback here.</p>\n<pre><code>mutation {\n\ncreate_item (board_id: 20178755, group_id: \"today\", item_name: \"new item\", column_values: {???} ) {\n\nid\n\n}\n\n}\n</code></pre>\n<p>I will post to this once I find the correct way of doing this, but if anyone has a good example, please share, it will save me tons of time.</p>\n<p>I would think you have to create the item/pulse first.</p>"
+    },
+    {
+      "id": 1920,
+      "postNumber": 3,
+      "createdAt": "2019-07-10T19:16:43.935Z",
+      "author": "kevinmarchese (Kevin marchese)",
+      "cookedHtml": "<p>3 hours later…Works!</p>\n<pre><code>mutation {\n  change_column_value(item_id: HERE, column_id: \"text\", board_id: HERE, value: \"\\\"ready 3\\\"\" ){\n    id\n  }\n}</code></pre>"
+    },
+    {
+      "id": 1931,
+      "postNumber": 4,
+      "createdAt": "2019-07-11T05:59:50.519Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>Hey,<br />\nyou can also use the create_item mutation to set the column values in one action instead of creating it and then using change_column_values (which also works).<br />\nTry the create_item mutation with the column values you want to set in the column_values parameter just like you did with change_column_values, like so:</p>\n<pre><code>mutation {\n    create_item (board_id: 20178755, group_id: \"today\", item_name: \"new item\", column_values: \"{\\\"text\\\": \\\"ready 3\\\"}\" ) {\n        id\n    }\n}\n</code></pre>\n<p>This way you can also set multiple columns in one API call, lets say you also want to set a status column:</p>\n<pre><code>mutation {\n    create_item (board_id: 20178755, group_id: \"today\", item_name: \"new item\", column_values: \"{\\\"text\\\": \\\"ready 3\\\", \\\"status_column_id\\\": {\\\"id\\\": 2}}\" ) {\n        id\n    }\n}\n</code></pre>\n<p>Let us know if it works for you <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 1936,
+      "postNumber": 5,
+      "createdAt": "2019-07-11T10:37:33.977Z",
+      "author": "kevinmarchese (Kevin marchese)",
+      "cookedHtml": "<p>Thank you so much for the examples here!!! that is great to see. I will try this sometime today and let you know how it goes.</p>\n<p>I guess in whatever language someone uses, in my case  node.js  I would just JSON.stringify whatever input needs to go with the axios request?</p>\n<p>so quick question here if you don’t’ mind, what sound more correct? do you have to set a variable to stringify or simply add JSON.stringify (“input”) to the arguments.</p>\n<pre><code>let answer = JSON.stringify({\n  \"text\": \"Sample text\"\n});\n</code></pre>\n<p>or would you simply add to the arguments</p>\n<pre><code>mutation {\n    create_item (board_id: 20178755, group_id: \"today\", item_name: \"new item\", column_values: JSON.stringify(\"input\") ) {\n        id\n    }\n}\n\nmutation {\n    create_item (board_id: 20178755, group_id: \"today\", item_name: \"new item\", column_values: answer ) {\n        id\n    }\n}\n</code></pre>\n<p>or I’m I way off base with each? Thank you for helping a nood out. I’m very green to graphql</p>"
+    },
+    {
+      "id": 1943,
+      "postNumber": 6,
+      "createdAt": "2019-07-11T11:43:36.509Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Kevin!</p>\n<p>Great question. The actual content in your query is evaluated on the GraphQL server, so you can’t include JS functions like <code> JSON.stringify()</code>  within the parameters of your query. There are a couple of ways you can get around this:</p>\n<ol>\n<li>\n<p>The GraphQL way: send the column data as a GraphQL variable: <a href=\"https://graphql.org/learn/queries/#variables\">https://graphql.org/learn/queries/#variables</a></p>\n</li>\n<li>\n<p>Assign a variable in your program with the stringified value (<code>let foo = \"bar\"</code>), and then use a template string to refer to that variable inside your query. Check out this link for more information on template strings: <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals\" class=\"inline-onebox\">Template literals (Template strings) - JavaScript | MDN</a></p>\n</li>\n</ol>\n<p>What do you think?</p>"
+    },
+    {
+      "id": 1963,
+      "postNumber": 7,
+      "createdAt": "2019-07-11T12:40:37.262Z",
+      "author": "kevinmarchese (Kevin marchese)",
+      "cookedHtml": "<p>Dipro,</p>\n<p><strong>Thank you so much! <img src=\"https://emoji.discourse-cdn.com/apple/clap.png?v=9\" title=\":clap:\" class=\"emoji\" alt=\":clap:\" /> This will allow me to be on the correct path and focus my efforts to get to my goal. I very much appreciate the hand holding here lol. You all are very much above and beyond as I know this isn’t your deal to help in these kind of cases. So very thankful. I feel though that if I want to do it, then it’s likely that others would as well and so this documentation with hopefully help someone on my level out as well. specific examples that I post here are for me and others who may benefit from such specific examples.</strong></p>\n<p><strong>So if I figure something specific out I will def post a specific example to it, not only for my reference but to also allow others to pick up quicker than I.</strong></p>"
+    },
+    {
+      "id": 1986,
+      "postNumber": 8,
+      "createdAt": "2019-07-12T13:13:17.551Z",
+      "author": "kevinmarchese (Kevin marchese)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> would you please let me know if I’m just being stupid here…or if this is fundamentally wrong. I know it must look like a 1st graders drawling that you put on the fridge <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=9\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" />  but i’m really trying to figure why I’m getting parsing errors here in the many ways I’ve tried to get this to work, am i on the right track here and just need further understand? I’m cool with that but if this is way off base let me know, pls. thank you well in advance!</p>\n<pre><code>  var boardid = 20178755 ;\n  var groupid = \"today\" ;\n  var itemname = \"new item\" ;\n  \n  var id = JSON.stringify(boardid); \n  var group = JSON.stringify(groupid); \n  var item = JSON.stringify(itemname); \n  \n  console.log(id)\n  \n  axios({\n  url: 'https://api.monday.com/v2',headers: {\n       Authorization: 'Bearer ' + process.env.mondayToken\n     },\n  method: 'post',\n  data: {\n      query: `\n         mutation \n            create_item ( $board_id: ${id} , $group_id: ${group} , $item_name: ${item} ) { \n               id\n            \n        }`\n  }\n  }).then((result) =&gt; {\n     console.log(result.data);\n        \n  \n  })\n    .catch(function (error) {\n    console.log(error) \n});\n})\n}</code></pre>"
+    },
+    {
+      "id": 2485,
+      "postNumber": 9,
+      "createdAt": "2019-07-16T22:49:58.300Z",
+      "author": "kevinmarchese (Kevin marchese)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a> I have a couple more things I’m wanting to try to get this to work since posting the above code however if you wouldn’t mind taking a look and just letting me know if it kinda the right track? or just plain wrong in every sense of the word haha.</p>\n<p>So you have to in some way stringify the inputs. so could it just be</p>\n<pre><code> var a =   {\"board_id\" : \"20178755\",\n      \"group_id\" : \"today\",\n       \"item_name\" : \"input\"\n    }\n\nvar b = JSON.stringify(a);\n</code></pre>\n<p><code>then create_item ( $board_id: ${board_id} , $group_id: ${group_id} , $item_name: ${item_name} )</code></p>\n<p>is the above closer to what is needed? ever grateful for input <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=9\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" /></p>"
+    },
+    {
+      "id": 2531,
+      "postNumber": 10,
+      "createdAt": "2019-07-17T10:59:20.137Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/kevinmarchese\">@kevinmarchese</a>,<br />\nno need to JSON.stringify the values that are not JSON type, you can simply add the quatation marks when the value is a string.<br />\nGoing with the code you sent, this should work (group_id and item_name are strings while board_id is an int):</p>\n<pre><code class=\"lang-auto\">data: {\n      query: `\n         mutation \n            create_item ( board_id: ${id} , group_id: \"${group}\" , item_name: \"${item}\" ) { \n               id\n            \n        }`\n  }\n</code></pre>\n<p>another approach I can suggest the use of graphql variables.<br />\ntry this:</p>\n<pre><code class=\"lang-auto\">  var boardid = 20178755 ;\n  var groupid = \"today\" ;\n  var itemname = \"new item\" ;\n  \n  console.log(id)\n  \n  axios({\n  url: 'https://api.monday.com/v2',headers: {\n       Authorization: 'Bearer ' + process.env.mondayToken\n     },\n  method: 'post',\n  data: {\n      query: `\n         mutation ($board: Int!, $group: String!, $name: String!) {\n            create_item ( board_id: $board , group_id: $group , item_name: $name ) { \n               id\n           }\n        }`,\n      variables: {\n          \"board\": boardid,\n          \"group\": groupid,\n          \"name\": itemname,\n      }\n  }\n  }).then((result) =&gt; {\n     console.log(result.data);\n        \n  \n  })\n    .catch(function (error) {\n    console.log(error) \n});\n})\n}\n</code></pre>"
+    },
+    {
+      "id": 2569,
+      "postNumber": 11,
+      "createdAt": "2019-07-17T21:31:20.199Z",
+      "author": "kevinmarchese (Kevin marchese)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ayelet\">@Ayelet</a> Thank you, thank you, thank you <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=9\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" /> you guys are on fire today!! I can’t thank you enough for this and the time it has saved me! I thank you from the bottom of my heart. You guys are seriously awesome. Thank you once again for this which I consider a gift. From this I can know if the structure is right and apply this else where so thankful for that. <img src=\"https://emoji.discourse-cdn.com/apple/pray.png?v=9\" title=\":pray:\" class=\"emoji\" alt=\":pray:\" /></p>"
+    },
+    {
+      "id": 6211,
+      "postNumber": 12,
+      "createdAt": "2019-09-20T10:52:29.276Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>Hello Monday Team,<br />\nI need to change status of column for variable pulses and use unique Monday pulse id : item_id to find the line. The code below works fine when I use fixed number as item_id  in query, but i receive error when i try to make the item_id variable.</p>\n&lt;?php\n\n$tempUrl = 'https://api.monday.com/v2/';\t<br />\t\n$ch = curl_init();<br />$token = 'xxxxxxxxxxx ;<br />$item_id = \"324602024\" ;  \n<br />$query = ' <br />\nmutation ($item_id: Int!  )  { <br />\n change_column_value (board_id: 310254178,  item_id: $item_id,   column_id: \"status9\", value: \"{\\\"index\\\": 1}\") { id } } <br />\n' <br />\n; <br />\n\n\t\n$headers = ['Content-Type: application/json', 'User-Agent: [whatpresents] GraphQL Client', 'Authorization: ' . $token];<br />\n$data = @file_get_contents($tempUrl, false, stream_context_create([\n    'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        $content = json_encode(['query' =&gt; $query ,   'variables' =&gt; [\t\t\t\t\t'item_id' =&gt; $item_id ]     <br /> \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t]), ] \n])); <br />\n$tempContents = json_decode($data, true);"
+    },
+    {
+      "id": 6212,
+      "postNumber": 13,
+      "createdAt": "2019-09-20T10:55:39.373Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>i receive error {“message”:“Variable item_id of type Int! was provided invalid value”,“locations”:[{“line”:2,“column”:11}],“value”:“324602024”,</p>\n<p>i try to understand what I do wrong, and very appreciate if you could have a look<br />\nThanks !</p>"
+    },
+    {
+      "id": 6248,
+      "postNumber": 14,
+      "createdAt": "2019-09-21T09:48:13.604Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>to re-phrase my question: if we use example from  documentation: <br /> mutation { <br />change_column_value (board_id: 20178755, item_id: 200819371, column_id: “status”, value: “{“index”: 1}”) <br /> {id}  } <br /><br />\nhow to make \" item_id \" variable ?</p>"
+    },
+    {
+      "id": 6293,
+      "postNumber": 15,
+      "createdAt": "2019-09-23T01:51:50.518Z",
+      "author": "jnet06 (Joan)",
+      "cookedHtml": "<p>Hello guys,<br />\nI am facing a similar issue when trying to create a new item with some column_values values.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/a/afa766b3313a9b4f5dbaa10aea6e9724158f9bcd.png\" alt=\"image\" width=\"502\" height=\"391\" /><br />\nThe item gets created but the column_values are completely ignored.<br />\nCan anyone point in the right direction?<br />\nThanks</p>"
+    },
+    {
+      "id": 6354,
+      "postNumber": 16,
+      "createdAt": "2019-09-24T08:05:33.040Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>Hi Monday Team , could you please advise something ?</p>"
+    },
+    {
+      "id": 6361,
+      "postNumber": 17,
+      "createdAt": "2019-09-24T09:05:05.078Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/alextop\">@alextop</a>,<br />\nthis is how you add variables to the change_column_value mutation:</p>\n<pre><code>query: `mutation ($item_id: Int!){\n         change_column_value(item_id:$item_id, column_id: \"status9\", board_id: 310254178, value: \" \n         {\\\"index\\\": 1}\"){\n            id\n         }\n        }`,\nvariables: {\n  \"item_id\": 123456\n}</code></pre>"
+    },
+    {
+      "id": 6362,
+      "postNumber": 18,
+      "createdAt": "2019-09-24T09:07:19.673Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/jnet06\">@jnet06</a>,<br />\nI think this is a different issue. You need to use the column id and not the column title.<br />\nPlease run this query to get the column id:</p>\n<pre><code>query{\n  boards(ids: 999999){\n    columns{\n      settings_str\n    }\n  }\n}</code></pre>"
+    },
+    {
+      "id": 6376,
+      "postNumber": 19,
+      "createdAt": "2019-09-24T14:23:53.897Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>thank you Ayelet, I will try it later today,</p>"
+    },
+    {
+      "id": 6416,
+      "postNumber": 20,
+      "createdAt": "2019-09-25T05:43:41.232Z",
+      "author": "jnet06 (Joan)",
+      "cookedHtml": "<p>That was the problem, thanks so much Ayelet! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 6421,
+      "postNumber": 21,
+      "createdAt": "2019-09-25T08:35:52.834Z",
+      "author": "alextop (alexander Topikha)",
+      "cookedHtml": "<p>Hello Ayelet, thanks a lot !!!<br />\nEventually the issue is fixed with your help,<br />\nmany thanks again !</p>"
+    },
+    {
+      "id": 6449,
+      "postNumber": 22,
+      "createdAt": "2019-09-26T02:42:49.359Z",
+      "author": "jnet06 (Joan)",
+      "cookedHtml": "<p>Hi again Monday team<br />\nI am facing a different issue now,  is that I don’t know how to set up a value for a MultiplePersonColumn type. I have tried all the combinations without luck and I don’t find this in the documentation.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e143dcd0df55bf2cf1340b88784b5f4a3d8f6b7e.png\" title=\"Screenshot 2019-09-26 at 13.40.08.png\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e143dcd0df55bf2cf1340b88784b5f4a3d8f6b7e_2_502x500.png\" alt=\"08\" width=\"502\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2019-09-26 at 13.40.08.png</span><span class=\"informations\">616×613 41.8 KB</span>\n</div></a></div><br />\nAppreciate any help on this. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /><p></p>"
+    },
+    {
+      "id": 6670,
+      "postNumber": 23,
+      "createdAt": "2019-10-02T18:06:07.464Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jnet06\">@jnet06</a>!</p>\n<p>Try <a href=\"https://monday.com/developers/v2#column-values-section-people\">this link</a> <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> It will give you the format for the multiple person column!</p>\n<p>Cheers,<br />\nDipro</p>"
+    },
+    {
+      "id": 6757,
+      "postNumber": 24,
+      "createdAt": "2019-10-03T19:00:18.128Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>This topic was automatically closed after 24 hours. New replies are no longer allowed.</p>"
+    },
+    {
+      "id": 20263,
+      "postNumber": 25,
+      "createdAt": "2020-06-16T13:11:40.537Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 42111,
+      "postNumber": 26,
+      "createdAt": "2021-02-25T12:23:05.416Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

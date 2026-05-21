@@ -1,0 +1,46 @@
+{
+  "id": 45401,
+  "title": "Formula to check days between today's date and purchase date. If <90, then check the status and update a different status column. If >90, then go through series of ranges and return a value based on what range it fits in",
+  "slug": "formula-to-check-days-between-todays-date-and-purchase-date-if-90-then-check-the-status-and-update-a-different-status-column-if-90-then-go-through-series-of-ranges-and-return-a-value-based-on-what-range-it-fits-in",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-11-08T18:04:43.603Z",
+  "lastPostedAt": "2022-11-11T16:23:37.365Z",
+  "postsCount": 4,
+  "excerpt": "Hi, I am trying to figure out how to do the following and I am new to Monday. This would sure make me look great! \nBasically we report against how much revenue we recognize based on how many days a project has been open.&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1598,
+  "posts": [
+    {
+      "id": 103405,
+      "postNumber": 1,
+      "createdAt": "2022-11-08T18:04:43.693Z",
+      "author": "jesse (Jesse Olive)",
+      "cookedHtml": "<p>Hi, I am trying to figure out how to do the following and I am new to Monday. This would sure make me look great!</p>\n<p>Basically we report against how much revenue we recognize based on how many days a project has been open. If the project has been open less than 90 days, then the stage the project is in dictates how much revenue we have recognized. See below:</p>\n<p><strong>Status</strong></p>\n<p>Questionnaire - 30% complete<br />\nDesign - 60% complete<br />\nDevelopment - 80% complete<br />\nSandbox - 90% complete<br />\nComplete - 100% complete</p>\n<p>If the project has been open for more than 90 days, the number of days the project has been open then dictates the amount of revenue we have recognized. See below:</p>\n<p><strong>Purchase Date</strong></p>\n<p>0-90 days - Use % above<br />\n90 - 120 days - Automatically 75% complete<br />\n120-180 days - Automatically 90% complete</p>\n<blockquote>\n<p>180 days - Automatically 100% complete</p>\n</blockquote>\n<p>We use a project purchased date column for reference.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/2/21c9f83cd8adb6b4c81e8c91fed8edcaa16d1aad.png\" alt=\"Screenshot 2022-11-08 at 2.00.46 PM\" width=\"143\" height=\"356\" /></p>\n<p>Then we have a status column which reflects the first group of statuses above.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/4/47cf6e19032a056d41a87f3256f06d6031442d70.png\" alt=\"Screenshot 2022-11-08 at 2.00.39 PM\" width=\"336\" height=\"254\" /></p>\n<p>I want to update a different column’s status, based on how much revenue we have recognized with the above logic.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/1/15cd12c2fb0ca46af3bb4269508b093ea087ba00.png\" alt=\"Screenshot 2022-11-08 at 2.00.33 PM\" width=\"348\" height=\"261\" /></p>\n<p>I am thinking The first thing I need to do is count the days. I have learned to do that using:<br />\nROUND(DAYS({Purchase Date},TODAY()),0)</p>\n<p>I would imagine I would then check to see using an IF statement whether or not the returned value is less than 90 and then and ANDIF statement to see what range the number of days past the purchase date falls in by multiple and if statements, but I really just don’t know.</p>\n<p>Please help!!!</p>"
+    },
+    {
+      "id": 103494,
+      "postNumber": 4,
+      "createdAt": "2022-11-09T13:24:04.060Z",
+      "author": "jesse (Jesse Olive)",
+      "cookedHtml": "<p>Hi Nachiel! Thank you for this. Thing is Date 2, Date 1 I don’t think will work. I would need something that compares the date with today’s date. Does that make sense? So would that formula work if either Date 1 or Date 2 was changed to TODAY?</p>"
+    },
+    {
+      "id": 103502,
+      "postNumber": 5,
+      "createdAt": "2022-11-09T14:12:42.926Z",
+      "author": "jesse (Jesse Olive)",
+      "cookedHtml": "<aside class=\"quote no-group quote-post-not-found\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/nachliel/48/13441_2.png\" class=\"avatar\" /> Nachliel from Easyapps:</div>\n<blockquote>\n<p>IF(DAYS({Date 2},{Date 1})&lt;90,<br />\nSWITCH({Status},\"Questionnaire \",30,“Design”,60,“Development”,80,“Sandbox”,90,“Complete”,100),(IF(DAYS({Date 2},{Date 1})&lt;120,75,(IF(DAYS({Date 2},{Date 1})&lt;180,90,100)))))</p>\n</blockquote>\n</aside>\n<p>I am guessing I am doing this wrong:</p>\n<p>IF(DAYS(TODAY(),{Purchase Date})&lt;90,<br />\nSWITCH({Recognition},\"Questionnaire \",30,“Design”,60,“Development”,80,“Sandbox”,90,“Complete”,100),(IF(DAYS(TODAY(),{Purchase Date})&lt;120,75,(IF(DAYS(TODAY(),{Purchase Date})&lt;180,90,100)))))</p>"
+    },
+    {
+      "id": 103768,
+      "postNumber": 6,
+      "createdAt": "2022-11-11T16:23:37.365Z",
+      "author": "jesse (Jesse Olive)",
+      "cookedHtml": "<p>IF(AND(ROUND(DAYS(TODAY(), {Purchase Date}),0)&gt;=0, ROUND(DAYS(TODAY(), {Purchase Date}),0)&lt;=90, {Project Status}=“Questionnaire”), “Questionnaire - 30% complete”,</p>\n<p>IF(AND(ROUND(DAYS(TODAY(), {Purchase Date}),0)&gt;=0, ROUND(DAYS(TODAY(), {Purchase Date}),0)&lt;=90, {Project Status}=“Design”), “Design - 60% complete”,</p>\n<p>IF(AND(ROUND(DAYS(TODAY(), {Purchase Date}),0)&gt;=0, ROUND(DAYS(TODAY(), {Purchase Date}),0)&lt;=90, {Project Status}=“Development”), “Development - 80% complete”,</p>\n<p>IF(AND(ROUND(DAYS(TODAY(), {Purchase Date}),0)&gt;=0, ROUND(DAYS(TODAY(), {Purchase Date}),0)&lt;=90, {Project Status}=“Sandbox”), “Sandbox - 90% complete”, IF(AND(ROUND(DAYS(TODAY(), {Purchase Date}),0)&gt;=0, ROUND(DAYS(TODAY(), {Purchase Date}),0)&lt;=90, {Project Status}=“Completed”), “Complete - 100% complete”, IF(AND(ROUND(DAYS(TODAY(), {Purchase Date}),0)&gt;90, ROUND(DAYS(TODAY(), {Purchase Date}),0)&lt;=120), “75% Recognition complete”,</p>\n<p>IF(AND(ROUND(DAYS(TODAY(), {Purchase Date}),0)&gt;120, ROUND(DAYS(TODAY(), {Purchase Date}),0)&lt;=180), “90% Recognition complete”,</p>\n<p>IF(ROUND(DAYS(TODAY(), {Purchase Date}),0)&gt;180, “Recognition 100% complete”, “”))))))))</p>"
+    }
+  ]
+}

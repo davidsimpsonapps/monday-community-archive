@@ -1,0 +1,90 @@
+{
+  "id": 33750,
+  "title": "Problem adding files with ColdFusion via API",
+  "slug": "problem-adding-files-with-coldfusion-via-api",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    351
+  ],
+  "createdAt": "2022-03-27T22:38:28.945Z",
+  "lastPostedAt": "2022-03-28T13:27:21.089Z",
+  "postsCount": 10,
+  "excerpt": "Hey all. I’ve been playing with the Monday API and have made a lot of progress towards getting it ready to be available in our system and a couple of other tools we use, however, I’ve hit a bit of a snag when it comes to&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2289,
+  "posts": [
+    {
+      "id": 81083,
+      "postNumber": 1,
+      "createdAt": "2022-03-27T22:38:29.021Z",
+      "author": "jWilde (Jordan Wilde)",
+      "cookedHtml": "<p>Hey all. I’ve been playing with the Monday API and have made a lot of progress towards getting it ready to be available in our system and a couple of other tools we use, however, I’ve hit a bit of a snag when it comes to adding files. I’ve been able to do everything else from adding items, updates, columns, boards and reading what I’ve needed, but adding files is what has finally broken me.  I’m basing my code off of  <a href=\"https://gist.github.com/yuhgto/edb5d96e088599c2a6ea44860df9117b\" rel=\"noopener nofollow ugc\">Uploading a file to monday.com, the hard way</a>. The author is using NodeJS so I’ve tried to convert it as best I can.<br />\nMy code below:</p>\n<pre><code class=\"lang-auto\">&lt;cfset dataQuery = 'mutation($file:File!){add_file_to_column(file:$file,item_id:123456789,column_ID:\"files\"){id}}'&gt;\n&lt;cfset boundary = \"xxxxxxxxxx\"&gt;\n&lt;cfset upfile = \"image1.png\"&gt;\n&lt;cfset base64Sample = SAMPLE_BASE64_STRING&gt;\n&lt;cfset data = \"\"&gt;\n\n&lt;!--- Construct Query ---&gt;\n&lt;cfset data &amp;= \"--\" &amp; boundary &amp; \"\"&gt;\n&lt;cfset data &amp;= 'Content-Disposition: form-data; name=\"query\";'&gt;\n&lt;cfset data &amp;= \"\\r\\nContent-Type:application/json\"&gt;\n&lt;cfset data &amp;= \"\\r\\n\\r\\n\" &amp; dataQuery &amp; \"\"&gt;\n\n&lt;!--- Construct File ---&gt;\n&lt;cfset data &amp;= \"--\" &amp; boundary &amp; \"\\r\\n\"&gt;\n&lt;cfset data &amp;= 'Content-Disposition: form-data; name=\"variables[file]\"; filename=\"' &amp; upfile &amp; '\";\\r\\n'&gt;\n&lt;cfset data &amp;= \"Content-Type:application/octet-stream;\\r\\n\\r\\n\"&gt;\n&lt;cfset data &amp;= ToString(ToBinary(base64Sample))&gt;\n&lt;cfset data &amp;= \"\\r\\n--\" &amp; boundary &amp; \"--\\r\\n\"&gt;\n\n\n&lt;cfhttp method=\"post\" url=\"https://api.monday.com/v2\" result=\"result\"&gt;\n\t&lt;cfhttpparam type=\"Header\" name=\"Content-Type\" value=\"multipart/form-data; boundary=#boundary#\"&gt;\n\t&lt;cfhttpparam type=\"Header\" name=\"Authorization\"  value=\"API_KEY\"&gt;\n\t&lt;cfhttpparam type=\"body\" value=\"#CharsetEncode(ToBinary(ToBase64(data)), \"utf-8\")#\"&gt;\n&lt;/cfhttp&gt;\n\n&lt;cfset returnStruct = DeserializeJSON(result.filecontent)&gt;\n\n&lt;cfdump var=\"#returnStruct#\"&gt;\n</code></pre>\n<p>The formatting has gotten shifted a little bit as I tried to get it working but no matter what I do, it always gives me the same error message: “No query string was present”.</p>\n<p>I’m hoping someone here who has more knowledge about doing multi-part boundaries and the Monday API can help.</p>\n<p>Thanks to <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for their help! I was able to get a working bit of code!</p>\n<pre><code class=\"lang-auto\">&lt;cfset dataQuery = \"mutation ($file:File!) {add_file_to_column (item_id: 123456789, column_id: files, file: $file){id}}\"&gt;\n&lt;cfset boundary = \"xxxxxxxxxx\"&gt;\n&lt;cfset upfile = \"image1.png\"&gt;\n&lt;cfset base64Sample = \"SAMPLE_BASE64_IMAGE\"&gt;\n&lt;cfset data = \"\"&gt;\n&lt;cfset cflf = \"#chr(13)##chr(10)#\"&gt;\n\n&lt;!--- Construct Query ---&gt;\n&lt;cfset data &amp;= \"--\" &amp; boundary &amp; \"#cflf#\"&gt;\n&lt;cfset data &amp;= 'Content-Disposition: form-data; name=\"query\"#cflf##cflf#'&gt;\n&lt;cfset data &amp;= dataQuery &amp; '#cflf#'&gt;\n&lt;cfset data &amp;= \"--\" &amp; boundary &amp; \"#cflf#\"&gt;\n\n&lt;!--- Construct File ---&gt;\n&lt;cfset data &amp;= \"Content-Disposition: form-data; name=\"\"variables[file]\"\"; filename=\"\"#upfile#\"\";#cflf#\"&gt;\n&lt;cfset data &amp;= \"Content-Type:application/octet-stream;#cflf##cflf#\"&gt;\n&lt;cfset data &amp;= ToString(ToBinary(base64Sample))&gt;\n&lt;cfset data &amp;= \"#cflf#\" &amp;\"--\" &amp; boundary &amp; \"--\"&gt;\n\n&lt;cfdump var=\"#data#\"&gt;\n&lt;cfhttp method=\"post\" url=\"https://api.monday.com/v2/file\" result=\"result\"&gt;\n\t&lt;cfhttpparam type=\"Header\" name=\"Content-Type\" value=\"multipart/form-data; boundary=#boundary#\"&gt;\n\t&lt;cfhttpparam type=\"Header\" name=\"Authorization\"  value=\"API_KEY_HERE\"&gt;\n\t&lt;cfhttpparam type=\"body\" value=\"#data#\"&gt;\n&lt;/cfhttp&gt;\n\n&lt;cfset returnStruct = DeserializeJSON(result.filecontent)&gt;\n\n&lt;cfdump var=\"#returnStruct#\"&gt;\n</code></pre>"
+    },
+    {
+      "id": 81105,
+      "postNumber": 2,
+      "createdAt": "2022-03-28T05:07:57.604Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jwilde\">@jWilde</a></p>\n<p>Welcome to the community! I have an example in php (from a WordPress site) and hopefully you can recode that to get it working.</p>\n<pre><code class=\"lang-auto\">//$upload is an array with the file's type (type) and content (value)\n\t\n    //Generate a boundary, needed for the Header (Content-Type) and the Body (to split in multiple parts)\n\t$boundary = wp_generate_password(24);\n\t$eol = \"\\r\\n\";\n\n\t$header = array(\n\t\t'User-Agent' =&gt; MONDAY_TEAM . ' GraphQL Client',\n\t\t'Authorization' =&gt; get_field('mondaykey', 'user_' . get_current_user_id()),\n\t\t'Content-Type' =&gt; 'multipart/form-data; boundary=' . $boundary\n\t);\n\n\t//We need to build the body from scratch because it is multipart with boundaries\n\t//Take care of the extra empty lines (twice $eol) before the actual query and file, otherwise an error 500 is returned\n\n\t$body = '--' . $boundary . $eol;\n\t$body .= 'Content-Disposition: form-data; name=\"query\"' . $eol . $eol;\n\t$body .= 'mutation ($file: File!) {add_file_to_column (item_id: ' . $item_id . ', column_id: file, file: $file) {id}}' . $eol;\n\t$body .= '--' . $boundary . $eol;\n\t$body .= 'Content-Disposition: form-data; name=\"variables[file]\"; filename=\"' . $upload['name'] . '\"' . $eol;\n\t$body .= 'Content-Type: ' . $upload['type'] . $eol . $eol;\n\t$body .= file_get_contents($upload['value']);\n\t$body .= $eol . '--' . $boundary . '--';\n\n\t$response = wp_remote_post( MONDAY_URL . 'file/', ['headers' =&gt; $header, 'body' =&gt; $body] );\n</code></pre>"
+    },
+    {
+      "id": 81145,
+      "postNumber": 3,
+      "createdAt": "2022-03-28T11:26:31.159Z",
+      "author": "jWilde (Jordan Wilde)",
+      "cookedHtml": "<p>By reformatting it from your code and another bit of sample code I now have this:</p>\n<pre><code class=\"lang-auto\">&lt;!--- Construct Query ---&gt;\n&lt;cfset data &amp;= \"--\" &amp; boundary &amp; \"#chr(13)##chr(10)#\"&gt;\n&lt;cfset data &amp;= 'Content-Disposition: form-data; name=\"query\"#chr(13)##chr(10)##chr(13)##chr(10)#'&gt;\n&lt;cfset data &amp;= dataQuery &amp; '#chr(13)##chr(10)#'&gt;\n&lt;cfset data &amp;= \"--\" &amp; boundary &amp; \"#chr(13)##chr(10)#\"&gt;\n\n&lt;!--- Construct File ---&gt;\n\n&lt;cfset data &amp;= \"--\" &amp; boundary &amp; \"#chr(13)##chr(10)#\"&gt;\n&lt;cfset data &amp;= 'Content-Disposition: form-data; name=\"variables[file]\"; filename=\"' &amp; upfile &amp; '\";#chr(13)##chr(10)#'&gt;\n&lt;cfset data &amp;= \"Content-Type:application/octet-stream;#chr(13)##chr(10)##chr(13)##chr(10)#\"&gt;\n&lt;cfset data &amp;= ToString(ToBinary(base64Sample))&gt;\n&lt;cfset data &amp;= \"#chr(13)##chr(10)#--\" &amp; boundary &amp; \"--#chr(13)##chr(10)#\"&gt;\n\n&lt;cfdump var=\"#data#\"&gt;\n&lt;cfhttp method=\"post\" url=\"https://api.monday.com/v2\" result=\"result\"&gt;\n\t&lt;cfhttpparam type=\"Header\" name=\"Content-Type\" value=\"multipart/form-data; boundary=#boundary#\"&gt;\n\t&lt;cfhttpparam type=\"Header\" name=\"Authorization\"  value=\"#mondayLogin.Token#\"&gt;\n\t&lt;cfhttpparam type=\"body\" value=\"#data#\"&gt;\n&lt;/cfhttp&gt;\n\n&lt;cfset returnStruct = DeserializeJSON(result.filecontent)&gt;\n\n&lt;cfdump var=\"#returnStruct#\"&gt;\n</code></pre>\n<p>I’m no longer getting my first error, now I’m getting two new errors:</p>\n<ul>\n<li>Field ‘add_file_to_column’ is missing required arguments: column_id</li>\n<li>Field ‘add_file_to_column’ doesn’t accept argument ‘column_ID’</li>\n</ul>"
+    },
+    {
+      "id": 81148,
+      "postNumber": 4,
+      "createdAt": "2022-03-28T11:49:04.807Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>That is because your dataQuery  specifies column_ID where it should be column_id</p>"
+    },
+    {
+      "id": 81149,
+      "postNumber": 5,
+      "createdAt": "2022-03-28T11:54:01.214Z",
+      "author": "jWilde (Jordan Wilde)",
+      "cookedHtml": "<p>HA! It’s days like this that kill me ha! Ok. I’m making progress. I’ve updated that and now I’m getting a 500: Server error…</p>"
+    },
+    {
+      "id": 81159,
+      "postNumber": 6,
+      "createdAt": "2022-03-28T12:40:30.810Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Oops, those are somewhat harder to solve I guess. Could it be that you need to escape the \" surrounding files, like “files”</p>\n<p>Worth giving it a try but I don’t know ColdFusion</p>"
+    },
+    {
+      "id": 81165,
+      "postNumber": 7,
+      "createdAt": "2022-03-28T13:20:04.931Z",
+      "author": "jWilde (Jordan Wilde)",
+      "cookedHtml": "<p>I’m looking at the compiled payload and I’m seeing the below. Could the ‘\"’ be my issue?</p>\n<pre><code class=\"lang-auto\">Content-Disposition: form-data; name=&amp;quot;query&amp;quot;\n\nmutation ($file:File!) {add_file_to_column (item_id: 2473690812, column_id: files, file: $file){id}}\n--xxxxxxxxxx\nContent-Disposition: form-data; name=&amp;quot;variables[file]&amp;quot;; filename=&amp;quot;image1.png&amp;quot;;\nContent-Type:application/octet-stream;\n\n</code></pre>"
+    },
+    {
+      "id": 81166,
+      "postNumber": 8,
+      "createdAt": "2022-03-28T13:24:59.054Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I think so, I would say the “compiled payload” should look like:</p>\n<pre><code class=\"lang-auto\">{add_file_to_column (item_id: 2473690812, column_id: \"files\", file: $file){id}}\n</code></pre>\n<p>As the API require a string for the colum_id</p>"
+    },
+    {
+      "id": 81167,
+      "postNumber": 9,
+      "createdAt": "2022-03-28T13:27:21.089Z",
+      "author": "jWilde (Jordan Wilde)",
+      "cookedHtml": "<p>Holy smokes! That was it! When ColdFusion compiled the body it replaced the quotes. By escaping them like you eluded to in an earlier comment worked! I got a couple of files to upload! Thank you for helping me walk through some of these issues!</p>"
+    },
+    {
+      "id": 81865,
+      "postNumber": 10,
+      "createdAt": "2022-04-04T13:27:27.405Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

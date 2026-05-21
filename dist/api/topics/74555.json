@@ -1,0 +1,53 @@
+{
+  "id": 74555,
+  "title": "Connect_boards not found 404",
+  "slug": "connect-boards-not-found-404",
+  "categoryId": 6,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2024-01-09T02:24:18.457Z",
+  "lastPostedAt": "2024-01-09T19:15:59.044Z",
+  "postsCount": 5,
+  "excerpt": "Doing some dev work for a non-profit. I’m trying to update a connected column via the API. Would be great to find it first to id it, so i can get updates into it. But getting the below. Am i missing something obvious? \nq&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 486,
+  "posts": [
+    {
+      "id": 160951,
+      "postNumber": 1,
+      "createdAt": "2024-01-09T02:24:18.534Z",
+      "author": "Stephenstack (Stephen Stack)",
+      "cookedHtml": "<p>Doing some dev work for a non-profit. I’m trying to update a connected column via the API. Would be great to find it first to id it, so i can get updates into it. But getting the below. Am i missing something obvious?</p>\n<p>query {<br />\nboards (ids: THEBOARDID) {<br />\nitems_page (query_params: {rules: [{column_id: “connect_boards”, compare_value: [“Ire”], operator:contains_text}]}) {<br />\nitems {<br />\nid<br />\nname<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>{<br />\n“error_code”: “ResourceNotFoundException”,<br />\n“status_code”: 404,<br />\n“error_message”: “Column not found”,<br />\n“error_data”: {<br />\n“resource_type”: “column”,<br />\n“column_id”: “connect_boards”,<br />\n“board_id”: 1348190667,<br />\n“error_reason”: “store.monday.automation.error.missing_column”<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 160967,
+      "postNumber": 2,
+      "createdAt": "2024-01-09T05:48:50.008Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>The error message says it all: “column connect_boards not found on this board”. Are you sure you are using the correct columnId?</p>"
+    },
+    {
+      "id": 160974,
+      "postNumber": 3,
+      "createdAt": "2024-01-09T07:11:01.795Z",
+      "author": "Stephenstack (Stephen Stack)",
+      "cookedHtml": "<p>I was afraid that would be the reply. I guess, the next questions is how to I find the Column name. All the docs seem to point at is a column called ‘connect_boards’, and i dont seem to be able to find a way to dump all column names for a given table ( this would help).</p>\n<p>Any pointers?</p>"
+    },
+    {
+      "id": 160977,
+      "postNumber": 4,
+      "createdAt": "2024-01-09T07:22:04.485Z",
+      "author": "Stephenstack (Stephen Stack)",
+      "cookedHtml": "<p>OK, i found it. It was connect_boards3.<br />\nI found it by using the query from the link below., and adding the ‘column’ to the items.</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/connect#reading-the-connect-boards-column\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/connect#reading-the-connect-boards-column\" target=\"_blank\" rel=\"noopener nofollow ugc\">Connect boards</a></h3>\n\n  <p>The connect boards column links an item on the board with an item(s) on a different board(s).Our API fully supports the connect boards column, so you can read, update, and clear it via the API. You can also filter your items_page query results by the...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>Graphql is ok, but this implementation is a bit odd… Anyway, we move forward <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 161124,
+      "postNumber": 5,
+      "createdAt": "2024-01-09T19:15:59.044Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Users can create multiple connect board columns (of board_relation type) in a board, each has a unique ID. If a column is created by API it could have an arbitrary ID like <code>connected_contacts</code>. Typically the expectation with the API is that the column was selected in a recipe, webhook, or the UI - so you’ve obtained the ID programmatically and don’t actually need to know it.</p>\n<p>Here is a query to find all columns of a type on a board. Note that the types for columns are the only strings you do not put in quotes in the API - because they are enums not strings.</p>\n<pre><code class=\"lang-auto\">{\n    boards(ids: \"123123\"){\n        columns(types: [board_relation]) {\n            type\n            id\n            title\n        }\n    }\n}\n</code></pre>"
+    }
+  ]
+}

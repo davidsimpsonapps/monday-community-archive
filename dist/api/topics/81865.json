@@ -1,0 +1,47 @@
+{
+  "id": 81865,
+  "title": "Monday to Google Sheets Board Download - Query no longer working",
+  "slug": "monday-to-google-sheets-board-download-query-no-longer-working",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-03-22T12:05:55.159Z",
+  "lastPostedAt": "2024-03-25T09:04:28.667Z",
+  "postsCount": 4,
+  "excerpt": "Hey All, \nThe script I was using to send a board’s data into a Google Sheet has stopped working suddenly. I presume this is because of the API changes. \nI am not a developer and wondered if anyone can assist me in trying&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 208,
+  "posts": [
+    {
+      "id": 174625,
+      "postNumber": 1,
+      "createdAt": "2024-03-22T12:05:55.231Z",
+      "author": "jholdstock (Jonathan Holdstock)",
+      "cookedHtml": "<p>Hey All,</p>\n<p>The script I was using to send a board’s data into a Google Sheet has stopped working suddenly. I presume this is because of the API changes.<br />\nI am not a developer and wondered if anyone can assist me in trying to repair the code so that the query works again.</p>\n<p>The below code in bold is where the error is occurring, stating the following <em>“TypeError: Cannot read properties of undefined (reading ‘boards’) downloadMondayBoard”</em></p>\n<p>// Add column headers if not added yet<br />\nif (headers.length &lt;= 2) {<br />\n<strong>data.data.boards[0].items_page_by_column_values[0].column_values.forEach(function(column) {</strong><br />\nheaders.push(column.title);<br />\n});<br />\nsheet.appendRow(headers);<br />\n}</p>"
+    },
+    {
+      "id": 174809,
+      "postNumber": 2,
+      "createdAt": "2024-03-24T10:32:01.145Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/jholdstock\">@jholdstock</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>It looks like this part of the script is just reading a response you get.</p>\n<p>What is the exact query you are using and what response do you get from it?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 174889,
+      "postNumber": 3,
+      "createdAt": "2024-03-25T06:29:31.348Z",
+      "author": "jholdstock (Jonathan Holdstock)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, thanks for the reply!</p>\n<p>So below is the full script, with the API etc removed. Let me know if you need anything else. I am not a developer so my knowledge is sadly quite limited here.</p>\n<p>function downloadMondayBoard() {<br />\nvar apiKey = “xxxxx”;<br />\nvar boardId = “xxxxxxx”;</p>\n<p>var url = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”;</p>\n<p>var options = {<br />\nmethod: “POST”,<br />\nheaders: {<br />\n“Authorization”: apiKey,<br />\n“Content-Type”: “application/json”<br />\n},<br />\npayload: JSON.stringify({<br />\nquery: \"query { boards(ids: \" + boardId + “) { name, items { id, name, column_values { title, text } } } }”<br />\n})<br />\n};</p>\n<p>var response = UrlFetchApp.fetch(url, options);<br />\nvar data = JSON.parse(response.getContentText());</p>\n<p>var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();</p>\n<p>// Clear existing data<br />\nsheet.clearContents();</p>\n<p>// Write headers<br />\nvar headers = [“Item ID”, “Item Name”];<br />\ndata.data.boards[0].items[0].column_values.forEach(function(column) {<br />\nheaders.push(column.title);<br />\n});<br />\nsheet.appendRow(headers);</p>\n<p>// Write item data<br />\ndata.data.boards[0].items.forEach(function(item) {<br />\nvar rowData = [item.id, item.name];<br />\nitem.column_values.forEach(function(column) {<br />\nrowData.push(column.text);<br />\n});<br />\nsheet.appendRow(rowData);<br />\n});<br />\n}</p>"
+    },
+    {
+      "id": 174903,
+      "postNumber": 4,
+      "createdAt": "2024-03-25T09:04:28.667Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/jholdstock\">@jholdstock</a>,</p>\n<p>You are using a <a href=\"https://developer.monday.com/api-reference/docs/api-versioning\">deprecated query</a> <code>boards -&gt; items</code></p>\n<p>Instead you need to use <code>boards -&gt; items -&gt; items_page</code> as explained <a href=\"https://developer.monday.com/api-reference/reference/items-page\">here</a>.</p>\n<p>I hope that helps <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

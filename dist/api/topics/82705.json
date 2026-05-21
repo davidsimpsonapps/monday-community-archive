@@ -1,0 +1,61 @@
+{
+  "id": 82705,
+  "title": "Python async await - Internal Server Error",
+  "slug": "python-async-await-internal-server-error",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-01T17:35:50.385Z",
+  "lastPostedAt": "2024-04-17T14:59:39.184Z",
+  "postsCount": 5,
+  "excerpt": "I was suggested to look into the python async await functionality to help speed up a tool I am building that makes thousands of api requests. I understand I will likely run into some limits that monday.com sets, but my e&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 681,
+  "posts": [
+    {
+      "id": 176185,
+      "postNumber": 1,
+      "createdAt": "2024-04-01T17:35:50.480Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I was suggested to look into the python async await functionality to help speed up a tool I am building that makes thousands of api requests. I understand I will likely run into some limits that <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> sets, but my example below is only making 41 small post requests, so I shouldn’t be hitting any limitations.</p>\n<p>Below I have three functions. Not explicitly shown in the main function, I have a list of tuples that contain (board id, column name, column type, defualt values) - <code>col_func_vars</code>. The default values are used when making status columns. Because I am still new to using async/await I have two different methods. One actually uses parallelism and the other, sequential. Running the code using the sequential method, everything works and it takes ~23 seconds. Running the code with parallelism, most of the columns are created and it takes ~10 seconds, but then I run into a server error:</p>\n<p><code>aiohttp.client_exceptions.ClientResponseError: 500, message='Internal Server Error', url=URL('https://api.monday.com/v2')</code></p>\n<p><strong>Post Request Async</strong></p>\n<pre><code class=\"lang-auto\">async def post_request(data, url=apiUrl, headers=headers, timeout=timeout):\n    try:\n        async with aiohttp.ClientSession() as session:\n            async with session.post(url=url, headers=headers, data=json.dumps(data), timeout=timeout) as response:\n                response.raise_for_status()\n                return await response.json(), response.status\n    except requests.exceptions.HTTPError as errh: \n        print(\"HTTP Error:\", errh)\n        return None\n    except requests.exceptions.ReadTimeout as errrt: \n        print(\"Timeout Error:\", errrt)\n        return None\n    except requests.exceptions.ConnectionError as conerr: \n        print(\"Connection Error:\", conerr)\n        return None\n    except requests.exceptions.RequestException as errex: \n        print(\"Error Request:\", errex)\n        return None\n</code></pre>\n<p><strong>Create Column Data</strong></p>\n<pre><code class=\"lang-auto\">def create_col_payload(board_id, col_name, column_type, default_values=None):\n    if default_values:\n        vals_dict = {}\n        for cnt, vals in enumerate(default_values):\n            # label index rules:\n            # 5 == status default (empty)\n            # 0-19, 101-110, 151-160\n            if cnt == 5:\n                cnt += 1\n            if cnt &gt; 19:\n                hold_val = 81 # 101 - 20\n                cnt += hold_val\n            if cnt &gt; 110:\n                hold_val = 40 # 151 - 111\n                cnt += hold_val\n            if cnt &gt; 160:\n                print('TOO MANY LABELS')\n                sys.exit()\n            \n            vals_dict[cnt] = vals\n        status_values = {\"labels\": vals_dict}\n    else:\n        status_values = ''\n\n    query = \"\"\"\n    mutation ($boardId: ID!, $titleName: String!, $columnType: ColumnType!, $defaultValues: JSON) {\n        create_column(\n            board_id: $boardId\n            title: $titleName\n            column_type: $columnType\n            defaults: $defaultValues\n        ) {\n            id\n            title\n        }\n    }\n    \"\"\"\n\n    variables = {\n    'boardId': board_id,\n    'titleName': col_name,\n    'columnType': column_type,\n    'defaultValues': json.dumps(status_values, separators=(',', ':'))\n    }\n\n    data = {\n    'query': query,\n    'variables': variables\n    }\n    \n    return data\n</code></pre>\n<p><strong>Main</strong></p>\n<pre><code class=\"lang-auto\">async def create_main():\n    ...\n\n    ### Parallelism\n    tasks = [asyncio.create_task(post_request(create_col_payload(*vars))) for vars in col_func_vars]\n        await asyncio.gather(*tasks)\n\n\n    ### Sequence\n    for vars in col_func_vars:\n            await asyncio.create_task(post_request(create_col_payload(*vars)))\n</code></pre>\n<p><strong>Run Code</strong></p>\n<pre><code class=\"lang-auto\">if __name__ == \"__main__\":\n    asyncio.run(create_main())\n</code></pre>\n<p><strong>EDITS</strong><br />\nAfter further investigation, I found one of the columns that was returning the server error (there are 9 total columns that return the error). I used both the api playground as well as specifically singled out that column in my list of tuples…works with both. So the only other reasonable explanation would be a limitation I am hitting.</p>\n<p><strong>EDITS 2</strong><br />\nAfter reading through some additional <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> posts about passing multiple request at the same time, I found that batching works. I used <code>asyncio.Semaphore(x)</code> where x = int. This method took ~16 seconds. I’d still like to understand why/what this limitation is that I am hitting.</p>\n<pre><code class=\"lang-auto\">sem = asyncio.Semaphore(5)\nasync def post_request(data, url=apiUrl, headers=headers, timeout=timeout):\n    try:\n        async with sem:\n            async with aiohttp.ClientSession() as session:\n    ...\n</code></pre>"
+    },
+    {
+      "id": 177263,
+      "postNumber": 2,
+      "createdAt": "2024-04-07T09:03:22.033Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/binx96\">@Binx96</a>,</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> so our team can take a look into this? Please add as much detail about your case as possible. Add the error messages you are getting, and if you can, a timestamp (date, hour, minute) with the exact queries/mutations you are using (including IDs and values).</p>\n<p>Looking forward to hearing from you via the form!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 177434,
+      "postNumber": 3,
+      "createdAt": "2024-04-08T13:14:13.195Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>. I am already in contact with the support team regarding similar limitation issues. Hopefully we can get them resolved soon.</p>"
+    },
+    {
+      "id": 177737,
+      "postNumber": 4,
+      "createdAt": "2024-04-10T08:26:35.915Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/binx96\">@Binx96</a>, we will do our best!</p>"
+    },
+    {
+      "id": 179307,
+      "postNumber": 5,
+      "createdAt": "2024-04-17T14:59:39.184Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>After a week working with the support team it seems that the root cause is due to “race conditions”. For others, async/await processes requests concurrently. Sometimes if more than 1 processes run time is too close to another process, the process can produce incorrect results.</p>\n<p>An example could be, we want to create two items. We POST the data to Monday’s database. The first request goes through and updates the database. But the second update also went through and updated the database as well. Now we have two different versions of the database. The item creations are happening too fast for the database to update and refresh.</p>\n<p>The easiest solution would be to add some “sleep” behaviors. Unfortunately, depending the data size, this can drastically increase your processing time.</p>"
+    },
+    {
+      "id": 179403,
+      "postNumber": 6,
+      "createdAt": "2024-04-18T04:13:08.981Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

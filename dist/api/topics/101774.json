@@ -1,0 +1,58 @@
+{
+  "id": 101774,
+  "title": "How to Handle Complexity Budget Exhaustion When Creating Multiple Tickets Consecutively Using Monday API?",
+  "slug": "how-to-handle-complexity-budget-exhaustion-when-creating-multiple-tickets-consecutively-using-monday-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351,
+    362
+  ],
+  "createdAt": "2024-10-28T18:54:55.286Z",
+  "lastPostedAt": "2024-11-01T22:02:55.351Z",
+  "postsCount": 4,
+  "excerpt": "I’m facing an issue where I’m trying to create multiple tickets in Monday.com via the GraphQL API. I can successfully create 3 to 4 tickets, but after that, I receive a “Complexity budget exhausted” error (e.g., query co&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 33,
+  "posts": [
+    {
+      "id": 207646,
+      "postNumber": 1,
+      "createdAt": "2024-10-28T18:54:55.392Z",
+      "author": "niraj83 (Niraj Pathak)",
+      "cookedHtml": "<p>I’m facing an issue where I’m trying to create multiple tickets in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> via the GraphQL API. I can successfully create 3 to 4 tickets, but after that, I receive a “Complexity budget exhausted” error (e.g., query cost 300001, budget remaining 219803 out of 1000000, reset in 9 seconds). I’ve implemented retry mechanisms with delays, but it seems like the complexity budget is still getting exhausted quickly.</p>\n<p>Does Monday support creating multiple tickets consecutively? Is there an efficient way to batch or optimize ticket creation to avoid hitting the complexity limits? Are there any best practices to handle large-scale ticket creation or strategies to optimize API queries?</p>"
+    },
+    {
+      "id": 207985,
+      "postNumber": 2,
+      "createdAt": "2024-10-31T10:10:54.694Z",
+      "author": "OmerK (Omer Koort)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/niraj83\">@niraj83</a> , hope you’ve been well<br />\nEvery ticket has its own complexity, and currently our API limits actions due to their complexity, so when you reach the limit - you have to retry according to the retry mechanism</p>"
+    },
+    {
+      "id": 208098,
+      "postNumber": 3,
+      "createdAt": "2024-11-01T12:22:38.239Z",
+      "author": "HeidiCrockett (Heidi Crockett)",
+      "cookedHtml": "<p>Great question Niraj! There are some best practices for avoiding the complexity limit and I will share these below:</p>\n<ol>\n<li>\n<p><strong><strong>Use Nested Queries:</strong></strong> Nested queries allow you to retrieve related data in a single request, reducing the overall complexity of your operations.</p>\n</li>\n<li>\n<p><strong><strong>Add Limits to Your Queries:</strong></strong> By limiting the amount of data returned in each query, you can reduce the complexity of your operations. This can be done by implementing pagination, using limits in your queries, and only returning required information.</p>\n</li>\n<li>\n<p><strong><strong>Avoid Making Too Many Items at the Same Time:</strong></strong> Each <code>create_item</code> mutation uses 10,000 complexity points. Therefore, you should avoid creating more than 10 to 20 items in real time to prevent hitting the complexity limit. If you need to create a large number of items, you should queue your mutations.</p>\n</li>\n<li>\n<p><strong><strong>Avoid Making API Calls Concurrently:</strong></strong> Making all mutations one after the other instead of simultaneously can help prevent data corruption on the board and reduce complexity.</p>\n</li>\n<li>\n<p><strong><strong>Use a Queuing Mechanism for Mutations and Queries:</strong></strong> If your app has bulk mutations or queries, using a queuing mechanism can help maintain a good user experience and keep the API healthy. Some queuing service providers include <a href=\"https://docs.bullmq.io/\">BullMQ</a> and <a href=\"https://aws.amazon.com/sqs/\">Amazon SQS</a>.</p>\n</li>\n</ol>\n<p>I do also recommend checking the complexity of your query so you can better understand the max number of tickets you are able to create at once:</p>\n<pre><code class=\"lang-auto\">mutation {\n  complexity {\n    query\n    before\n    after\n  }\n  create_item(board_id:1234567890, item_name:\"test item\") {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 208137,
+      "postNumber": 4,
+      "createdAt": "2024-11-01T22:02:55.351Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>My experience is that creating an item is 30001 complexity - basically any item mutation is 30000+something small.</p>"
+    },
+    {
+      "id": 208561,
+      "postNumber": 5,
+      "createdAt": "2024-11-04T12:47:23.014Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

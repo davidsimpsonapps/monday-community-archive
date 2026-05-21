@@ -1,0 +1,75 @@
+{
+  "id": 49810,
+  "title": "Custom board view app stop displaying data after some time",
+  "slug": "custom-board-view-app-stop-displaying-data-after-some-time",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94
+  ],
+  "createdAt": "2023-01-23T13:27:44.500Z",
+  "lastPostedAt": "2023-01-30T05:27:11.338Z",
+  "postsCount": 8,
+  "excerpt": "I have developed a custom dashboard view. This view helps to track time of tasks for our organization. I’ve developed the UI using angular and published it to google cloud run. \nWhen installing the app and adding the boa&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1166,
+  "posts": [
+    {
+      "id": 111817,
+      "postNumber": 1,
+      "createdAt": "2023-01-23T13:27:44.571Z",
+      "author": "morfinismo (Francisco Morfin)",
+      "cookedHtml": "<p>I have developed a custom dashboard view. This view helps to track time of tasks for our organization. I’ve developed the UI using angular and published it to google cloud run.</p>\n<p>When installing the app and adding the board view, it works as expected and it is great. The issue is that after some time (more or less, one hour), if I refresh the page or if I change the board view and then want to come to the custom board view again, it won’t display any data.</p>\n<p>The only way to make it work again is to remove the board view and add it again, but that is a bad experience. Any help would be greatly appreciate it.</p>"
+    },
+    {
+      "id": 111997,
+      "postNumber": 2,
+      "createdAt": "2023-01-24T14:14:33.502Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/morfinismo\">@morfinismo</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I would have to know more about how your app works, but from what you described, it could be related to whatever you are using as a trigger to load the data in your board view.</p>\n<p>When and how are you loading the data? What triggers it?</p>"
+    },
+    {
+      "id": 112006,
+      "postNumber": 3,
+      "createdAt": "2023-01-24T14:50:34.027Z",
+      "author": "morfinismo (Francisco Morfin)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> Thank you for your help. That is a great question and I appreciate it.</p>\n<p>I am using the Monday SDK <a href=\"https://developer.monday.com/apps/docs/introduction-to-the-sdk\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Software development kit (SDK)</a>. As far as I understand, the SDK will automatically detect the user, board and other items loaded.</p>\n<p>When I start the app, I am using the “get” method (<a href=\"https://developer.monday.com/apps/docs/mondayget\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">monday.get</a>) to get the board items.</p>\n<p>This is how it looks:</p>\n<pre><code class=\"lang-auto\">    return new Promise&lt;MondayItem[]&gt;((resolve, reject)=&gt;{\n      this._monday.get(\"itemIds\").then(res =&gt; {\n        const boardItems = res.data;\n        console.log(\"boardItems\", boardItems);\n        const promises = [];\n        while(boardItems.length &gt; 0){\n          const query = `query { items (ids: [${boardItems.splice(0, 25).join(\",\")}]) { id name column_values { id text } }}`;\n          const prom = this._monday.api(query);\n          promises.push(prom);\n        }\n        Promise.all(promises).then(values=&gt;{\n          const allValues = values.map(value=&gt;(value as any).data.items) as MondayItem[][];\n          const allItems = allValues.reduce((acc, val)=&gt;acc.concat(val), []);\n          resolve(allItems);\n        }).catch(error=&gt;{\n          console.error(`Failed to get board items: ${error}`);\n          reject(error);\n        });\n      }).catch(error=&gt;{\n        console.error(`Failed to get board items: ${error}`);\n        reject(error);\n      });\n    });\n</code></pre>\n<p>Pretty much, that is the big thing. When that works, the app works. The problem is that it will only return board items when the dashboard view is added. If I refresh the dashboard view after some time, it won’t load data.  The main problems here is that it won’t return any “board items”.</p>\n<p>Now that I think about it, maybe I am calling the “get” items too quickly. Maybe I should add a setTimeout and wait 1 or 2 seconds. What are  your thoughts?</p>"
+    },
+    {
+      "id": 112139,
+      "postNumber": 4,
+      "createdAt": "2023-01-25T08:17:01.613Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/morfinismo\">@morfinismo</a>,</p>\n<p>Mmmm that sounds strange. Are you calling this on componentDidMount?</p>\n<p>I am not sure how the timeout would help in this case. Why do you think that might solve the issue?</p>\n<p>Looking forward to hearing from you.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 112383,
+      "postNumber": 5,
+      "createdAt": "2023-01-26T12:18:58.464Z",
+      "author": "morfinismo (Francisco Morfin)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>So I added a timeout of 2 seconds, which I believe it should’ve been more than enough, but yet, still no data is fetched.</p>\n<p>I am calling the function after the app has loaded, so I have no idea what the problem is. I don’t see any errors on the console so I have no idea what the issue is. At this point I believe this might be a bug with the SDK. Do you know if there is anyone from developer support I can talk to?</p>"
+    },
+    {
+      "id": 112613,
+      "postNumber": 6,
+      "createdAt": "2023-01-27T18:40:35.568Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/morfinismo\">@morfinismo</a>,</p>\n<p>You could call the <a href=\"https://developer.monday.com/apps/docs/mondaylisten\">monday.listen</a> method to get context information of where your app is running before getting the items.</p>\n<p>Check out our welcome apps for an example of this method being used:</p><aside class=\"onebox githubblob\">\n  <header class=\"source\">\n\n      <a href=\"https://github.com/mondaycom/welcome-apps/blob/master/apps/quickstart-react/src/App.js\" target=\"_blank\" rel=\"noopener\">github.com</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <h4><a href=\"https://github.com/mondaycom/welcome-apps/blob/master/apps/quickstart-react/src/App.js\" target=\"_blank\" rel=\"noopener\">mondaycom/welcome-apps/blob/master/apps/quickstart-react/src/App.js</a></h4>\n\n\n      <pre><code class=\"lang-js\">import React from \"react\";\nimport { useState, useEffect } from \"react\";\nimport \"./App.css\";\nimport mondaySdk from \"monday-sdk-js\";\nimport \"monday-ui-react-core/dist/main.css\";\n//Explore more Monday React Components here: https://style.monday.com/\nimport AttentionBox from \"monday-ui-react-core/dist/AttentionBox.js\";\n\n// Usage of mondaySDK example, for more information visit here: https://developer.monday.com/apps/docs/introduction-to-the-sdk/\nconst monday = mondaySdk();\n\nconst App = () =&gt; {\n  const [context, setContext] = useState();\n\n  useEffect(() =&gt; {\n    // Notice this method notifies the monday platform that user gains a first value in an app.\n    // Read more about it here: https://developer.monday.com/apps/docs/mondayexecute#value-created-for-user/\n    monday.execute(\"valueCreatedForUser\");\n\n    // TODO: set up event listeners, Here`s an example, read more here: https://developer.monday.com/apps/docs/mondaylisten/\n</code></pre>\n\n\n\n  This file has been truncated. <a href=\"https://github.com/mondaycom/welcome-apps/blob/master/apps/quickstart-react/src/App.js\" target=\"_blank\" rel=\"noopener\">show original</a>\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 112736,
+      "postNumber": 7,
+      "createdAt": "2023-01-29T14:03:11.124Z",
+      "author": "morfinismo (Francisco Morfin)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alessandra\">@alessandra</a> Hey, thanks for your help! I tried everything you mentioned but made no difference.</p>\n<p>At the end, the solution was not to use a URL for the build. I have no idea why, but when I changed from URL to UPLOAD files, then the issue disappeared. If I return to URL, the issue persists. Perhaps it’s an issue with Google Cloud Run. Although, I don’t see why it would be an issue, but let’s blame Google. Better than blaming Monday.</p>\n<p>If anyone happens to run with this issue, DO NOT USE a custom URL for your build. Instead, zip all your files and then use the “Upload” option and upload them.</p>"
+    },
+    {
+      "id": 112869,
+      "postNumber": 8,
+      "createdAt": "2023-01-30T05:27:11.338Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/morfinismo\">@morfinismo</a>,</p>\n<p>Thank you for that information!</p>\n<p>It might be related to Google Cloud but we are not sure. If you by any chance happen to test this in the future from an endpoint of yours (using ngrok, or similar), please let us know if it works with the custom URL.</p>\n<p>And let us know if you need anything else!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

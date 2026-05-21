@@ -1,0 +1,341 @@
+{
+  "id": 69594,
+  "title": "Slow API response with MirrorValue",
+  "slug": "slow-api-response-with-mirrorvalue",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-10-31T00:25:47.633Z",
+  "lastPostedAt": "2024-01-23T07:49:50.377Z",
+  "postsCount": 42,
+  "excerpt": "Hi, as a developer of Monday.com integrations, we are experiencing significant performance issues in using the 2023-10 API with specific regards to Mirror item display values. \nBelow is an example of a typical query we m&hellip;",
+  "solvedPostId": null,
+  "likeCount": 29,
+  "views": 1707,
+  "posts": [
+    {
+      "id": 150657,
+      "postNumber": 1,
+      "createdAt": "2023-10-31T00:25:47.716Z",
+      "author": "aarong (Aaron)",
+      "cookedHtml": "<p>Hi, as a developer of <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> integrations, we are experiencing significant performance issues in using the 2023-10 API with specific regards to Mirror item display values.</p>\n<p>Below is an example of a typical query we might run within our integrations, which is followed by the next_items_page query to fetch the remaining items.</p>\n<p>query getItems($columnIds: [String!]) {<br />\nboards(ids: []) {<br />\nitems_page(limit: 100) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values(ids: $columnIds) {<br />\nid<br />\ntype<br />\ntext<br />\nvalue<br />\n… on MirrorValue {<br />\ndisplay_value<br />\n}<br />\n}<br />\ngroup {<br />\nid<br />\ntitle<br />\ncolor<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>The info below shows the response times we are getting from the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> 2023-10 API based on the number of mirror columns present in the query.</p>\n<p>15 native columns, 0 mirror columns - 5 seconds<br />\n15 native columns, 1 mirror column - 15 seconds<br />\n15 native columns, 2 mirror columns - 25 seconds<br />\n15 native columns, 3 mirror column - 30 seconds<br />\n15 native columns, 4 mirror columns - 42 seconds<br />\n15 native columns, 5 mirror columns - 48 seconds</p>\n<p>These response times are quite unacceptable by our customer base.</p>\n<p>When comparing the previous response times from the 2023-07 API we could run the following query with 15 native columns, 5 mirror columns present and receive the full result in 7 seconds.</p>\n<p>query getItems($columnIds: [String!]) {<br />\nboards(ids: []) {<br />\nitems(limit: 100) {<br />\nid<br />\nname<br />\ncolumn_values(ids: $columnIds) {<br />\nid<br />\ntype<br />\ntext<br />\nvalue<br />\n}<br />\ngroup {<br />\nid<br />\ntitle<br />\ncolor<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>We are urgently seeking some clarification or indication as to how we can improve our API response times with queries of this nature that involve mirror items, as with the current approach, if we were to try and collect 500 items, we could be sitting waiting for minutes to get data back (assuming the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API doesnt timeout)</p>"
+    },
+    {
+      "id": 150675,
+      "postNumber": 2,
+      "createdAt": "2023-10-31T01:31:38.384Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>How many items are involved in these tests? I’m assuming more than just one.</p>"
+    },
+    {
+      "id": 150684,
+      "postNumber": 3,
+      "createdAt": "2023-10-31T02:32:48.325Z",
+      "author": "aarong (Aaron)",
+      "cookedHtml": "<p>We are running tests with boards containing between 500 to 7000 items, limiting each request to 100 items, and getting similar response times across this range.</p>"
+    },
+    {
+      "id": 150705,
+      "postNumber": 4,
+      "createdAt": "2023-10-31T06:37:13.075Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1698741417886699\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 150752,
+      "postNumber": 5,
+      "createdAt": "2023-10-31T12:18:20.029Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Thanks. Just wanted to know so everyone had a sense of the scale of it - particularly the R&amp;D team.</p>"
+    },
+    {
+      "id": 150760,
+      "postNumber": 6,
+      "createdAt": "2023-10-31T13:01:33.817Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>Our team is investigating this. I will let you know as soon as I have an update <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 150937,
+      "postNumber": 7,
+      "createdAt": "2023-11-01T10:38:53.832Z",
+      "author": "TuomasTammi (Tuomas Tammi)",
+      "cookedHtml": "<p>We’re experiencing the same or a very similar issue. The following query, for a board with 20 mirror columns and only 60 items</p>\n<pre><code class=\"lang-auto\">query getBoardTasks ($board_id: ID!) {\n  boards (ids: [$board_id]) {\n    id\n    items_count\n    items_page  {\n      items {\n        id\n        column_values {\n          id\n          type\n          column {\n            title\n          }\n          __typename\n          ... on MirrorValue {\n            id\n            display_value\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>returns an error</p>\n<pre><code class=\"lang-auto\">{\n    \"error_message\": \"Internal server error\",\n    \"status_code\": 500\n}\n</code></pre>\n<p>If I comment out the <code>display_value</code> property then the request succeeds. The response speed is not so much of an issue for us, but errors block our customer from accessing their data. <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> I can share more details if needed.</p>"
+    },
+    {
+      "id": 150971,
+      "postNumber": 8,
+      "createdAt": "2023-11-01T13:21:46.044Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/tuomastammi\">@TuomasTammi</a>,</p>\n<p>I will check if it is related and let you know!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 150972,
+      "postNumber": 9,
+      "createdAt": "2023-11-01T13:21:52.278Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p><a href=\"https://monday.slack.com/archives/C018J3C259C/p1698741417886699\" class=\"onebox\" target=\"_blank\" rel=\"noopener\">https://monday.slack.com/archives/C018J3C259C/p1698741417886699</a></p>"
+    },
+    {
+      "id": 150990,
+      "postNumber": 10,
+      "createdAt": "2023-11-01T13:55:07.581Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/tuomastammi\">@TuomasTammi</a>,</p>\n<p>It looks like this is probably related. Our team is working on this.</p>\n<p>I will let you know when I have an update <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 151786,
+      "postNumber": 11,
+      "createdAt": "2023-11-06T11:41:28.681Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone!</p>\n<p>A change was deployed and it looks like there is a significant improvement.</p>\n<p>Would you be able to test this again and tell me how it goes for you?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 151799,
+      "postNumber": 12,
+      "createdAt": "2023-11-06T12:36:38.895Z",
+      "author": "TuomasTammi (Tuomas Tammi)",
+      "cookedHtml": "<p>Unfortunately we’re not seeing any change. The same request (above) still fails with the same error.</p>"
+    },
+    {
+      "id": 151907,
+      "postNumber": 13,
+      "createdAt": "2023-11-06T22:39:13.511Z",
+      "author": "aarong (Aaron)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, also confirming on our end we are seeing no improvement.  Have tested all previous queries and are seeing the same response times as before.  Can you please confirm if changes were applied to the 2023-10 API and whether this is available in USA and AUS regions?</p>"
+    },
+    {
+      "id": 151960,
+      "postNumber": 14,
+      "createdAt": "2023-11-07T06:01:40.735Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone! I will check this again with the team and update you!</p>"
+    },
+    {
+      "id": 152548,
+      "postNumber": 15,
+      "createdAt": "2023-11-09T22:58:22.345Z",
+      "author": "nev (Neville Stehbens)",
+      "cookedHtml": "<p>I’m getting daily calls from customers complaining of the slow loading speed of our apps due to the query speed.</p>\n<p>Did you get an update from your team <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ?</p>\n<p>I just need to know if I should be waiting for an improvement or if I need to re-think the entire structure of my customers accounts to remove mirror columns.</p>"
+    },
+    {
+      "id": 152624,
+      "postNumber": 16,
+      "createdAt": "2023-11-10T12:25:20.032Z",
+      "author": "DylanSolms (Dylan)",
+      "cookedHtml": "<p>I am somewhat relieved to have discovered this thread. I thought I was doing something wrong. I have resorted to querying only one item at a time as to avoid a timeout error. I then use the cursor object to paginate through all items. It takes forever though. I imagine that calling display_value is some recursive procedure that traverses from one source to another until it finds the original. It would be great if display_value could be fixed. I just assumed it to be complex and time was the price to pay for it.</p>\n<p>Just to confirm, the 2023-07 API does not seem to suffer from the slowness. Furthermore, it seems as if one can get text from Mirrored fields by just calling text. This would give a null value in the new API. The new API (2023-10) seems overly complex. I also don’t know why the new API requires one to go the extra mile in extracting the values for a Mirrored Field.</p>"
+    },
+    {
+      "id": 152632,
+      "postNumber": 17,
+      "createdAt": "2023-11-10T13:38:30.451Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><strong>I do not have inside knowledge of the <a href=\"http://monday.com\">monday.com</a> GraphQL resolver, I’m only speaking based on observation and reports publicly. All assertions here are my own speculation though presented as absolutes so I don’t have to say appears 50 times.</strong></p>\n<p>It appears the problem is <em>death by a thousand fetches</em> in the resolver. The current resolver is iterating items, and then the items columns, and fetching for each column. Thats the only way that explains the growth by mirror count * item count.</p>\n<p>I suspect a tenacious programmer could devise a better resolver that iterates many items and columns, and builds a large list to fetch, and then caches the results because it is not uncommon for a board of many items to link to the same small set of items (such as orders to customers, clients to sales reps, or employers to states).</p>\n<p>An ambitious one could probably figure out how to asynchronously do this in some fashion.</p>\n<p>Knowing what you can get from the API about mirror columns, everything is there to implement a more efficient proxy resolver locally. This seems like, if monday can’t promise a solution in a reasonable timeframe, a potential albeit costly and painful workaround.</p>"
+    },
+    {
+      "id": 152744,
+      "postNumber": 18,
+      "createdAt": "2023-11-12T13:16:35.947Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone! Our team is working on this.</p>\n<p>I will let you know when I have an update <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 154643,
+      "postNumber": 19,
+      "createdAt": "2023-11-24T09:13:52.234Z",
+      "author": "TuomasTammi (Tuomas Tammi)",
+      "cookedHtml": "<p>Can you give an ETA for the fix?</p>\n<p>We’ve had to disable mirror columns for many users. They are, quite understandably, asking us when they will be able to see their mirror column data again.</p>"
+    },
+    {
+      "id": 154747,
+      "postNumber": 21,
+      "createdAt": "2023-11-26T13:03:13.621Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1701010957677259?thread_ts=1698741417.886699&amp;cid=C018J3C259C\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 154756,
+      "postNumber": 22,
+      "createdAt": "2023-11-26T13:39:56.573Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>Our team has informed me that a fix was deployed today and it should improve this.</p>\n<p>Can you pelase check how it does now and let me know?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 154791,
+      "postNumber": 23,
+      "createdAt": "2023-11-26T22:27:17.915Z",
+      "author": "nev (Neville Stehbens)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>! and your team <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>\n<p>So much better, running 10+ mirror columns and getting 8-10 second response times now.</p>\n<p>My customers have also noticed a big difference with the loading times in our apps already.</p>"
+    },
+    {
+      "id": 154796,
+      "postNumber": 24,
+      "createdAt": "2023-11-26T23:40:14.392Z",
+      "author": "aarong (Aaron)",
+      "cookedHtml": "<p>Yes, also thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> - all is looking much better on my end too.  Have tested queries with a range of 1-10 mirror columns, batches of 100, all appear to be resolving in an average of 5 seconds now <img src=\"https://emoji.discourse-cdn.com/apple/+1.png?v=12\" title=\":+1:\" class=\"emoji\" alt=\":+1:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 154819,
+      "postNumber": 25,
+      "createdAt": "2023-11-27T04:44:58.074Z",
+      "author": "TuomasTammi (Tuomas Tammi)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> I’ve tested again and unfortunately there is no change. The queries still fail with HTTP 500 errors. The query is the same that I posted earlier in this thread. I can share the board id(s) with your team if that helps.</p>"
+    },
+    {
+      "id": 154826,
+      "postNumber": 26,
+      "createdAt": "2023-11-27T06:33:19.395Z",
+      "author": "hannes.vanoverscheld (Hannes Vanoverschelde)",
+      "cookedHtml": "<p>Hi all, for me the initial call works great (fast for 5 items with 27 mirrored columns) but whenever I want to go to next page through next_items_page with new cursor value, the API gives 500 response. Does not matter if only 1 item is taken, every time the 500 response shows.</p>\n<p>Query next_item_page:<br />\nquery{<br />\nnext_items_page(<br />\ncursor: “MSwzODY4Mjc4NDMwLEpnbGR6aGk2MWc5ZUQ1ZnlNdFRUeiwyMCwyLHw3NDY2MzI3NzU”<br />\n) {<br />\ncursor<br />\nitems {<br />\nid<br />\ncolumn_values {<br />\n… on MirrorValue {<br />\ncolumn {<br />\nid<br />\ntitle<br />\ntype<br />\n}<br />\ndisplay_value<br />\ntext<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 154881,
+      "postNumber": 27,
+      "createdAt": "2023-11-27T12:46:40.489Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>For those who still have issues, please send an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> with as much information as possible and we will take a look from there <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 155982,
+      "postNumber": 28,
+      "createdAt": "2023-12-03T21:01:45.301Z",
+      "author": "aarong (Aaron)",
+      "cookedHtml": "<p>Just providing another status update on this.  It appears that the API has reverted now back to the slower loading times?  Has something been rolled back?</p>"
+    },
+    {
+      "id": 156061,
+      "postNumber": 29,
+      "createdAt": "2023-12-04T07:39:23.900Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/aarong\">@aarong</a></p>\n<p>Yes. Our team is working on a fix to speed up the response time again.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 157235,
+      "postNumber": 30,
+      "createdAt": "2023-12-11T11:04:11.716Z",
+      "author": "hannes.vanoverscheld (Hannes Vanoverschelde)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> , any update available? It’s been some weeks now and the reporting needs of my team get more urgent every day…</p>"
+    },
+    {
+      "id": 157257,
+      "postNumber": 31,
+      "createdAt": "2023-12-11T12:45:00.260Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/hannes.vanoverscheld\">@hannes.vanoverscheld</a>,</p>\n<p>No updates yet. I will speak with the team and bring back any news as soon as I get them.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 157274,
+      "postNumber": 32,
+      "createdAt": "2023-12-11T13:17:37.787Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/hannes.vanoverscheld\">@hannes.vanoverscheld</a>,</p>\n<p>I heard back from the team and this should be resolved now.</p>\n<p>Let me know if you have any questions or issues!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 157444,
+      "postNumber": 33,
+      "createdAt": "2023-12-12T08:49:33.114Z",
+      "author": "hannes.vanoverscheld (Hannes Vanoverschelde)",
+      "cookedHtml": "<p>Hi Matias, yes I can confirm! Works like a charm, thank you so much to the team!!</p>"
+    },
+    {
+      "id": 157471,
+      "postNumber": 34,
+      "createdAt": "2023-12-12T11:23:00.321Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/hannes.vanoverscheld\">@hannes.vanoverscheld</a> !!</p>"
+    },
+    {
+      "id": 157953,
+      "postNumber": 35,
+      "createdAt": "2023-12-14T14:01:10.683Z",
+      "author": "TuomasTammi (Tuomas Tammi)",
+      "cookedHtml": "<p>We’re still having the same issue of slow responses. For boards that have a lot of (10+) mirror columns we can only get a few items (5-10) per page before the requests time out. It looks like the more mirror columns there are, the less items we can get.</p>"
+    },
+    {
+      "id": 158429,
+      "postNumber": 36,
+      "createdAt": "2023-12-18T12:44:55.913Z",
+      "author": "joseph.monday (Joseph Laux)",
+      "cookedHtml": "<p>Hi Tuomas,</p>\n<p>Our team will keep looking at this to see if there are more changes required on our end. We will keep you updated about this. Thanks!</p>\n<p>Best,<br />\nJoseph</p>"
+    },
+    {
+      "id": 158452,
+      "postNumber": 37,
+      "createdAt": "2023-12-18T14:54:39.744Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>With just over three weeks left, and holidays in the middle, do you think 2023-10 is stable enough for actual production and not just labeled “stable”, and for 2023-07 to be discontinued rendering the ability to get many mirrors unreliable?</p>"
+    },
+    {
+      "id": 159316,
+      "postNumber": 38,
+      "createdAt": "2023-12-27T11:12:05.612Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking status with Joseph</p>"
+    },
+    {
+      "id": 159844,
+      "postNumber": 39,
+      "createdAt": "2024-01-02T13:43:31.990Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>The 2023-10 version is stable for production.</p>\n<p>Our team is working on a new deployment that will reduce the response time for queries that include the values of mirror columns. In the meantime, to avoid timeouts, using a low limit per page does the trick <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 161907,
+      "postNumber": 40,
+      "createdAt": "2024-01-13T14:06:37.974Z",
+      "author": "haasaah (Marcelo)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/hannes.vanoverscheld\">@hannes.vanoverscheld</a></p>\n<p>If you can help me, I’m not able to read the fields in the mirror column through my queries. I’ve tried several approaches, but none of the mirror columns show up. I was only able to bring the items from the linked frame through the use of “BoardRelationValue”, but the data from the mirror columns did not.</p>\n<p>In the query I need to have in only one table (use in PowerBI) the name of the element, the data of the linked column and the data of the mirror columns. Can anyone help me ?</p>\n<p>I’m definitely missing something.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/7/6722a11dc4d873ee42eeb5fc4916e0981a8cf4ab.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/6/7/6722a11dc4d873ee42eeb5fc4916e0981a8cf4ab_2_690x83.png\" alt=\"image\" width=\"690\" height=\"83\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1539×187 39.7 KB</span></div></a></div><p></p>\n<p>Tks</p>"
+    },
+    {
+      "id": 161955,
+      "postNumber": 41,
+      "createdAt": "2024-01-14T11:32:18.771Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/haasaah\">@haasaah</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I do not have experience using PowerBI, but API-wise, you can use a query like this one to get the values of the mirror columns:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items_page(limit: 10) {\n      items {\n        name\n        column_values {\n          ... on MirrorValue {\n            display_value\n            id\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 162428,
+      "postNumber": 42,
+      "createdAt": "2024-01-16T18:41:33.943Z",
+      "author": "haasaah (Marcelo)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Thanks for the feedback.<br />\nRegardless of PowerBI, or any other interpreter, using exactly this code, a timeout error occurs in the query. I did two tests using Insomia, where it is faster to validate, on the same BOARD as the screenshot above.</p>\n<ol>\n<li>in the first test, I tried a simple reading of the BOARD elements.</li>\n</ol>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/9/d91512484be7e501e4cc7b09e3992009035c998a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/9/d91512484be7e501e4cc7b09e3992009035c998a_2_690x321.png\" alt=\"image\" width=\"690\" height=\"321\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1167×544 32.7 KB</span></div></a></div><p></p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123444234) {\n    items_page(limit: 10) {\n      items {\n        name\n        column_values {\n          id\n\t\t\t\t\ttype\n\t\t\t\t\ttext\n\t\t\t\t\tvalue\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<ol>\n<li>With the “MirrorValue” method, the query takes time, and then just returns timeout, not bringing the elements.</li>\n</ol>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/5/a54ef59b21d135b01b64cdc6ff57558912dd23a2.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/5/a54ef59b21d135b01b64cdc6ff57558912dd23a2_2_690x321.png\" alt=\"image\" width=\"690\" height=\"321\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1138×531 33.7 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/b/ab7ae786a36411a8e9f5340cc007ea8012700436.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/b/ab7ae786a36411a8e9f5340cc007ea8012700436_2_690x317.png\" alt=\"image\" width=\"690\" height=\"317\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1164×536 21.6 KB</span></div></a></div><p></p>\n<p>I don’t know how to proceed, I even did several other tests using “DependencyValue” and “BoardRelationValue”, all without success.</p>\n<p>Anyone, any ideas?</p>"
+    },
+    {
+      "id": 162629,
+      "postNumber": 43,
+      "createdAt": "2024-01-17T13:36:29.926Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/haasaah\">@haasaah</a>,</p>\n<p>Our team is working on something that will make these queries run faster.</p>\n<p>In the meantime, to avoid timeouts, you can use a lower limit for your items_page. That should prevent the timeouts.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 163131,
+      "postNumber": 44,
+      "createdAt": "2024-01-19T15:57:22.418Z",
+      "author": "haasaah (Marcelo)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ,  how are you ?</p>\n<p>Thank you for the return.</p>\n<p>Only in two ways did the reading work:</p>\n<ul>\n<li>With 1 item - ~2 seconds</li>\n<li>With 2 items - ~33 seconds (<strong>+1550% !!!</strong>)</li>\n<li>With +3 - TIMEOUT.</li>\n</ul>\n<p>** prints below.</p>\n<p>Considering that I have several tables with 5 to 6k rows, it is impossible to work.</p>\n<p>Even trying to perform queries in a loop, it becomes extremely slow and unproductive.</p>\n<p>Using API 2023-10 or 2024-01 the problem is the same. We didn’t have this problem before the API change, and I understand the modernization / improvement in queries, but this slowness is a big inconvenience.</p>\n<p><strong>Please, is there no expected solution?</strong> I still haven’t been able to migrate my queries that need to use MirrorValue, and I have several frames with this model.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/d/ed38c6b51ec669a4c541fee15011991f4917c7a3.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/d/ed38c6b51ec669a4c541fee15011991f4917c7a3_2_690x345.png\" alt=\"image\" width=\"690\" height=\"345\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1073×537 35.4 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/c/2c71db6b372412f6c820a574b3ad3d6633ad21ba.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/c/2c71db6b372412f6c820a574b3ad3d6633ad21ba_2_690x377.png\" alt=\"image\" width=\"690\" height=\"377\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1073×587 39.2 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 163250,
+      "postNumber": 45,
+      "createdAt": "2024-01-21T13:34:48.292Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/haasaah\">@haasaah</a>,</p>\n<p>Would you be able to please submit <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">this form</a> so that our team can take a look? Please add the IDs in the information you send, and if you can, please also test this again and let us know about the timestamp (date, hour, minute, ID of the user who is sending the request).</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 163407,
+      "postNumber": 46,
+      "createdAt": "2024-01-22T12:40:46.682Z",
+      "author": "haasaah (Marcelo)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> ,</p>\n<p>Ok, thanks - I’ll open a ticket.</p>\n<p>Regards.</p>"
+    },
+    {
+      "id": 163592,
+      "postNumber": 47,
+      "createdAt": "2024-01-23T07:49:50.377Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/haasaah\">@haasaah</a> !</p>"
+    }
+  ]
+}

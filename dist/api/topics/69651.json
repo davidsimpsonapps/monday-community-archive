@@ -1,0 +1,55 @@
+{
+  "id": 69651,
+  "title": "Webhook api-key",
+  "slug": "webhook-api-key",
+  "categoryId": 8,
+  "tagIds": [
+    18,
+    208,
+    351
+  ],
+  "createdAt": "2023-10-31T13:42:18.436Z",
+  "lastPostedAt": "2023-10-31T14:28:27.436Z",
+  "postsCount": 4,
+  "excerpt": "Hello, \nI am integrating my monday app to an api gateway on aws. But all external requests will need security applied to access the api gateway and therefore send the dedicated api key in the headers. How can do to set t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 650,
+  "posts": [
+    {
+      "id": 150782,
+      "postNumber": 1,
+      "createdAt": "2023-10-31T13:42:18.515Z",
+      "author": "raki (Raki Diallo)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I am integrating my monday app to an api gateway on aws. But all external requests will need security applied to access the api gateway and therefore send the dedicated api key in the headers. How can do to set the actual api key from the aws api gateway on the requests send by my monday webhook ?</p>"
+    },
+    {
+      "id": 150791,
+      "postNumber": 2,
+      "createdAt": "2023-10-31T14:08:13.004Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You cannot. The webhooks you create from the integration on a board, do not contain any authentication, nor is there an ability to add one.</p>\n<p>If you want to authenticate, you need to use the full apps framework, and create an integration feature. Within that you can create recipes that send payloads you define - and include a JWT signed by your apps signing secret you can verify in your lambda.</p>\n<p>If you go that route you can create a lambda authorizer for API Gateway, which will verify the jwt, and can reject it before the requests reaches your actual lambda function.</p>\n<p>With the apps framework, when you get a jwt, it includes a short lived API token (5 minutes) to make API requests. You can use this to create additional webhooks through the API (like the ones created in integrations). However these ones will include a JWT to authenticate them, since now there is something with a secret attached to it.</p>\n<p>You MAY be able to work around this by creating an app with the framework and get your way through the OAuth process to create an OAuth token which you can then use with the API to create webhooks that have authentication headers. But this is beyond easy discussion here.</p>"
+    },
+    {
+      "id": 150800,
+      "postNumber": 3,
+      "createdAt": "2023-10-31T14:23:19.935Z",
+      "author": "raki (Raki Diallo)",
+      "cookedHtml": "<p>Actually the webhook is a feature of an app. I guess I’ll go with  the lambda authorizer for API Gateway with the signing secret</p>\n<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>"
+    },
+    {
+      "id": 150803,
+      "postNumber": 4,
+      "createdAt": "2023-10-31T14:28:27.436Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You can of course just put the authorization in the main lambda if you’re only doing one lambda but that seems… unlikely. Using the authorizer also means that the only thing you’re accessing is the authorization header - the body of the event isn’t even accessible. This  reduces the ability of someone to manipulate code and access your secrets in some fashion since the lambda that does the actual processing of the payload can have entirely different permissions (no access to the secret from secret manager for example).</p>\n<p>Also <a href=\"https://docs.powertools.aws.dev/lambda/typescript/latest/\" class=\"inline-onebox\">Homepage - Powertools for AWS Lambda (TypeScript)</a> will make your life much easier in lambda world. Includes a parameters feature that makes getting secrets much easier. As well as a pretty decent logger.</p>"
+    },
+    {
+      "id": 150910,
+      "postNumber": 5,
+      "createdAt": "2023-11-01T06:51:37.764Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

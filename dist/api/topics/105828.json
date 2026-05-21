@@ -1,0 +1,38 @@
+{
+  "id": 105828,
+  "title": "Bug in Status column label changes by mutation query if pass value as num",
+  "slug": "bug-in-status-column-label-changes-by-mutation-query-if-pass-value-as-num",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    286,
+    304,
+    351
+  ],
+  "createdAt": "2024-12-19T14:58:23.764Z",
+  "lastPostedAt": "2024-12-22T07:29:43.064Z",
+  "postsCount": 2,
+  "excerpt": "Hey Team, \nI would like to highlight a monday.com API query/mutation bugs/errors on STATUS or dropdown column changes via mutation query when i add value as “15” num it take as index but this “15” value already present a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 12,
+  "posts": [
+    {
+      "id": 214758,
+      "postNumber": 1,
+      "createdAt": "2024-12-19T14:58:23.864Z",
+      "author": "Aniket_Katre3 (Aniket)",
+      "cookedHtml": "<p>Hey Team,</p>\n<p>I would like to highlight a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API query/mutation <strong>bugs/errors</strong> on STATUS or dropdown column changes via mutation query when i add value as “15” num it take as index but this “15” value already present as label in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> board columns.</p>\n<p>My Boards Status column labels includes only in number format like as following SC. <strong>(In-Store Period)</strong> status column and having column id: <em>color__1</em><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/e/ceccd3f4a5d4f6f2478b6ae527850f9d0dc78b33.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/e/ceccd3f4a5d4f6f2478b6ae527850f9d0dc78b33.png\" alt=\"image\" width=\"238\" height=\"282\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">318×376 7.82 KB</span></div></a></div><p></p>\n<p>Now, I am trying to make mutation for <strong>change_simple_column_value</strong> and passing value as already present label from board column<br />\nand <em>for safer side as well</em> pass  <strong>create_labels_if_missing</strong>: <strong>true</strong> if label miss it should add automatically.</p>\n<pre><code class=\"lang-auto\">`mutation {\n      change_simple_column_value(item_id: ${itemID}, board_id: ${boardID}, \n        column_id: \"color__1\", value: \"20\", create_labels_if_missing: true) {\n          id\n    }  \n}\n`\n</code></pre>\n<p>Error or bugs:       Below is the response I received <strong>even label is present in status column</strong></p>\n<pre><code class=\"lang-auto\">{ error_code: ‘ColumnValueException’,\nstatus_code: 400,\nerror_message: ‘change_column_value invalid value’,\nerror_data:\n{ column_value: ‘{“index”=&gt;{:label_index=&gt;16}}’,\ncolumn_type: ‘StatusColumn’ } }\n</code></pre>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/a/9a5c75a9d4155e4cef4d713166b5c81f8bda71c8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/9/a/9a5c75a9d4155e4cef4d713166b5c81f8bda71c8.png\" alt=\"image\" width=\"346\" height=\"375\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">474×512 8.16 KB</span></div></a></div><p></p>\n<p>I have also cross check for subitem status/dropdown column I received same if on status/dropdown column i keep number as label even if it present I received an error.</p>\n<p>Please check this bugs<br />\n(Also check on community same bugs i found please check <a href=\"https://community.monday.com/t/error-changing-status-column-based-on-label/1106\">FYR-blogs</a>)</p>\n<p>Thanks<br />\nAniket</p>"
+    },
+    {
+      "id": 214974,
+      "postNumber": 2,
+      "createdAt": "2024-12-22T07:29:43.064Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/aniket_katre3\">@Aniket_Katre3</a>,</p>\n<p>As explained in our <a href=\"https://developer.monday.com/api-reference/reference/status#update-the-status-column\">documentation</a>, using the change_simple_column_value mutation, you can pass either the index or the label value of the status you want to update in the value argument. But, if the label is a number, you need to send the index instead. Otherwise, the label will be treated as an index value, and the mutation will fail.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

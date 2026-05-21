@@ -1,0 +1,60 @@
+{
+  "id": 51511,
+  "title": "Problem passing JSON value to columnValues, monday.api()",
+  "slug": "problem-passing-json-value-to-columnvalues-monday-api",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-02-13T20:42:56.990Z",
+  "lastPostedAt": "2023-02-14T13:11:00.661Z",
+  "postsCount": 5,
+  "excerpt": "Hello, \nI’m having a problem trying to pass JSON value to columnValues field when creating an item using monday.api() method. \nAttempt #1: \nmonday.api(`\n    mutation {\n        create_item (\n            board_id: 0000000,&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 722,
+  "posts": [
+    {
+      "id": 115261,
+      "postNumber": 1,
+      "createdAt": "2023-02-13T20:42:57.087Z",
+      "author": "pen123 (Pen)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’m having a problem trying to pass JSON value to columnValues field when creating an item using monday.api() method.</p>\n<p><strong>Attempt <span class=\"hashtag\">#1:</span></strong></p>\n<pre><code class=\"lang-auto\">monday.api(`\n    mutation {\n        create_item (\n            board_id: 0000000, \n            group_id: \"topics\",\n            item_name: \"Hello\",\n            columnValues: \"${JSON.stringify({people3: {personsAndTeams: [{id: 1111111, kind: 'person'}]}})}\"\n        ) { \n            id \n        }\n    }     \n`);\n</code></pre>\n<p>Here is the error response I got:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Parse error on \\\":{\\\" (STRING) at [7, 36]\",\n      \"locations\": [\n        {\n          \"line\": 7,\n          \"column\": 36\n        }\n      ]\n    }\n  ],\n  \"account_id\": 2222222\n}\n</code></pre>\n<p>Since the attempt <span class=\"hashtag\">#1</span> doesn’t work for me, I’ve tried the solution that I found in this community, but it still doesn’t work for me.<br />\n<strong>Attempt <span class=\"hashtag\">#2:</span></strong></p>\n<pre><code class=\"lang-auto\">    const body = {\n        query: `\n            mutation($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {\n                create_item (\n                    board_id: $boardId, \n                    group_id: $groupId,\n                    item_name: $itemName,\n                    columnValues: $columnValues\n                ) { \n                    id \n                }\n            }     \n        `,\n        variables: {\n            boardId: 00000000,\n            groupId: 'topics',\n            itemName: data.item,\n            columnValues: JSON.stringify({people3: {personsAndTeams: [{id: 111111111, kind: 'person'}]}})\n        }\n    }\n    monday.api(JSON.stringify(body));\n</code></pre>\n<p>Here is the error response that I got:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Parse error on \\\"query\\\" (STRING) at [1, 2]\",\n      \"locations\": [\n        {\n          \"line\": 1,\n          \"column\": 2\n        }\n      ]\n    }\n  ],\n  \"account_id\": 2222222\n}\n</code></pre>\n<p>Any help is appreciated.<br />\nThank you.</p>"
+    },
+    {
+      "id": 115319,
+      "postNumber": 2,
+      "createdAt": "2023-02-13T22:47:17.972Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/pen123\">@pen123</a> ,<br />\nWelcome to the community <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>For your first attempt, your <code>columnValues</code> is a string within a string.<br />\nAlso, it is <code>column_values</code> not <code>columnValues</code><br />\nSo instead of</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/p/22d042/48.png\" class=\"avatar\" /> pen123:</div>\n<blockquote>\n<p><code>columnValues: \"${JSON.stringify({people3: {personsAndTeams: [{id: 1111111, kind: 'person'}]}})}\"</code></p>\n</blockquote>\n</aside>\n<p>Try this:</p>\n<pre><code class=\"lang-auto\">column_values: ${JSON.stringify({people3: {personsAndTeams: [{id: 1111111, kind: 'person'}]}})}\n</code></pre>"
+    },
+    {
+      "id": 115421,
+      "postNumber": 3,
+      "createdAt": "2023-02-14T12:00:15.497Z",
+      "author": "pen123 (Pen)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> I have tried it but it still doesn’t work. This is the error I’ve got:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Parse error on \\\"people3\\\" (STRING) at [7, 28]\",\n      \"locations\": [\n        {\n          \"line\": 7,\n          \"column\": 28\n        }\n      ]\n    }\n  ],\n  \"account_id\": 1111111\n}\n</code></pre>\n<p>Any idea why?</p>"
+    },
+    {
+      "id": 115428,
+      "postNumber": 4,
+      "createdAt": "2023-02-14T12:31:14.531Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>I have updated my answer</p>"
+    },
+    {
+      "id": 115435,
+      "postNumber": 5,
+      "createdAt": "2023-02-14T13:11:00.661Z",
+      "author": "pen123 (Pen)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> I really appreciate your fast response. I’ve followed your suggestion but it’s so stubborn.<br />\nSo with:</p>\n<pre><code class=\"lang-auto\">column_values: ${JSON.stringify({people3: {personsAndTeams: [{id: 1111111, kind: 'person'}]}})}\n</code></pre>\n<p>I got this error:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Parse error on \\\"people3\\\" (STRING) at [7, 33]\",\n      \"locations\": [\n        {\n          \"line\": 7,\n          \"column\": 33\n        }\n      ]\n    }\n  ],\n  \"account_id\": 111111\n}\n</code></pre>\n<p>I attempted with double quotes:</p>\n<pre><code class=\"lang-auto\">column_values: \"${JSON.stringify({people3: {personsAndTeams: [{id: 1111111, kind: 'person'}]}})}\"\n</code></pre>\n<p>I got a different error:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Parse error on \\\":{\\\" (STRING) at [7, 41]\",\n      \"locations\": [\n        {\n          \"line\": 7,\n          \"column\": 41\n        }\n      ]\n    }\n  ],\n  \"account_id\": 111111\n}\n</code></pre>\n<p><strong>Solution:</strong> anyway, I’ve found the solution by using <strong>second parameter “options”</strong> and this is the right way to do it:</p>\n<pre><code class=\"lang-auto\">monday.api(`\n    mutation($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {\n        create_item (\n            board_id: $boardId,\n            group_id: $groupId,\n            item_name: $itemName,\n            column_values: $columnValues\n        ) {\n            id \n        }\n    }\n`, {\n    variables: {\n        boardId: 0000000,\n        groupId: 'topics',\n        itemName: 'new item',\n        columnValues: JSON.stringify({people3: {personsAndTeams: [{id: 1111111, kind: 'person'}]}})\n    }\n});\n</code></pre>"
+    },
+    {
+      "id": 115716,
+      "postNumber": 6,
+      "createdAt": "2023-02-15T19:16:42.322Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

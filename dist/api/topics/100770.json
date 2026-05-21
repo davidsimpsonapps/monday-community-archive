@@ -1,0 +1,68 @@
+{
+  "id": 100770,
+  "title": "Create_doc_block stress test failure",
+  "slug": "create-doc-block-stress-test-failure",
+  "categoryId": 58,
+  "tagIds": [
+    294,
+    455
+  ],
+  "createdAt": "2024-10-17T12:09:32.200Z",
+  "lastPostedAt": "2024-10-23T06:44:29.795Z",
+  "postsCount": 6,
+  "excerpt": "If I try to add 3000 blocks onto a workdoc using the SDK-wrapped API, before I get to 300 blocks I get a 500 (Internal Server Error). It varies as to when this fails but it always fails. This means I can’t rely on monday&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 11,
+  "posts": [
+    {
+      "id": 206024,
+      "postNumber": 1,
+      "createdAt": "2024-10-17T12:09:32.272Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>If I try to add 3000 blocks onto a workdoc using the SDK-wrapped API, before I get to 300 blocks I get a <code>500 (Internal Server Error)</code>. It varies as to when this fails but it always fails. This means I can’t rely on <code>monday.api</code> by means of the SDK because I can’t predict or catch this error (as I think it runs the API call in a separate thread or something). Can you improve the reliability or show me how to catch this sort of error.</p>\n<p>I’m guessing the only way to make this reliably work is to call the API from a backend service, which I can then catch and retry 500 response?</p>"
+    },
+    {
+      "id": 206489,
+      "postNumber": 2,
+      "createdAt": "2024-10-21T06:13:24.076Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>I’ve had another thought on this. Having looked at the docs on authentication methods (<a href=\"https://developer.monday.com/apps/docs/choosing-auth\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Choosing an authentication method</a>), I’m thinking this may be caused by a <code>shortLivedToken</code> expiring? If you did initiate a set of API calls via the SDK from the user interacting with the client (Seamless authentication in a view app using the monday SDK) that took longer than 5 minutes, would you expect a 500? If this is the case, a more specific error message would be helpful.</p>"
+    },
+    {
+      "id": 206606,
+      "postNumber": 3,
+      "createdAt": "2024-10-21T18:39:30.366Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>You might also want to check if there’s a maximum number of blocks that’s allowed in a work doc.  Idk if there is though.</p>"
+    },
+    {
+      "id": 206627,
+      "postNumber": 4,
+      "createdAt": "2024-10-22T05:23:55.672Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>There’s no documented limit on the number of blocks as far as I can see. I wanted to see what happened when I fired in 3000 blocks and it failed randomly between 200 and 300 blocks. My theory is that this is because I was using Seamless Authentication with a <code>shortLivedToken</code> that expired. It also may be that I am somehow overloading an internal Monday system.</p>\n<p>For this reason I have put this experiment on hold whilst I re-write my code-base to use OAuth and do the mutation calls in the backend. Once that is working, it will be interesting to see if all 3000 blocks get successfully created.</p>"
+    },
+    {
+      "id": 206637,
+      "postNumber": 5,
+      "createdAt": "2024-10-22T06:57:07.821Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>You could try it with a personal access token if you wanted an answer in the short term <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 206871,
+      "postNumber": 6,
+      "createdAt": "2024-10-23T06:44:29.795Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>So I did this (used a personal access token on my local machine) and I got the same behaviour. This blows away the theory that it is an expiring token and must be that it is somehow possible to overload the API with too many block-creation events. It created 108 blocks before throwing back a 500.</p>\n<p>This leaves me 3-4 avenues of exploration now:</p>\n<ul>\n<li>Put some sort of sleep for every 100 blocks (back-off). This may work but is brittle.</li>\n<li>I still want to catch these 500 errors in the client but even though I wrap the monday.api call with a try-catch it still brings down the entire view. I’m not a javascript expert (Python is more my thing) so it maybe something I’m doing wrong here.</li>\n<li>At the moment I’m filling a workdoc by creating blocks in a reverse order because each new block appears at the top of the document. Rather than doing this I could capture the block ID of the previous block and then use <code>afterBlockId</code> to place the next block. This alternative approach may avoid whatever is causing the API to “overload”.</li>\n<li>Doing this all in the backend. This way I can easily catch 500 errors and then do a wait and retry. However, I’ve stumbled with getting the authentication to work properly.</li>\n</ul>"
+    },
+    {
+      "id": 208335,
+      "postNumber": 7,
+      "createdAt": "2024-11-03T12:35:54.545Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

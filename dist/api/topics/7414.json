@@ -1,0 +1,51 @@
+{
+  "id": 7414,
+  "title": "Getting items in c#",
+  "slug": "getting-items-in-c",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-05-21T14:45:59.981Z",
+  "lastPostedAt": "2021-02-25T14:33:00.368Z",
+  "postsCount": 5,
+  "excerpt": "Hi, I am trying to fetch item column values from a board and am falling short. The following query works when I run it in your try-it-yourself page, \n{\n  boards(ids: MYBoardID) {\n    name\n    items {\n      id\n      name\n&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2283,
+  "posts": [
+    {
+      "id": 18419,
+      "postNumber": 1,
+      "createdAt": "2020-05-21T14:46:00.074Z",
+      "author": "Mickabooh (Kevin)",
+      "cookedHtml": "<p>Hi, I am trying to fetch item column values from a board and am falling short. The following query works when I run it in your <a href=\"https://monday.com/developers/v2/try-it-yourself\" rel=\"noopener nofollow ugc\">try-it-yourself</a> page,</p>\n<pre><code>{\n  boards(ids: MYBoardID) {\n    name\n    items {\n      id\n      name\n      column_values(ids: [\"text\"]) {\n        title\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>However, from c# the following fails with a Bad Request exception from the HttpClient request,<br />\nquery = “{ \"query\": \" { boards(ids: MYBoardID) { name items { id name column_values(ids: [\"text\"]) { title value } } } } \" }”;<br />\n(edit, the escape back slashes for the quotation marks aren’t showing in the post, but the following image is a snip of the actual code)<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5ca2e9eb40b5787b1bb0258135a81fa615e41462.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5ca2e9eb40b5787b1bb0258135a81fa615e41462.png\" alt=\"image\" width=\"690\" height=\"33\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1208×58 5.03 KB</span>\n</div></a></div><p></p>\n<p>Essentially the 2 queries are the same with the exception of the added “query”: prefix and the closing brace suffix in the c#.</p>\n<p>Can anyone tell me what may be the problem?<br />\nThanks for looking<br />\nKevin</p>"
+    },
+    {
+      "id": 18422,
+      "postNumber": 2,
+      "createdAt": "2020-05-21T15:15:51.511Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mickabooh\">@Mickabooh</a>!</p>\n<p>Not a C# expert, but happy to put our heads together to figure this out.</p>\n<p>I noticed that you’ve got a single backslash before the quotes around “text”. However, since this is an inner string inside an inner string, you might need to double-escape them. Something like this:</p>\n<pre><code class=\"lang-auto\">query = “{ \\“query\\”: \\\" { boards(ids: MYBoardID) { name items { id name column_values(ids: [\\\\\\“text\\\\\\”]) { title value } } } } \\\" }”\n</code></pre>\n<p>Alternatively, you might want to use <a href=\"https://graphql.org/learn/queries/#variables\">GraphQL variables</a> to pass your string arguments. Essentially, you add a reference for the column IDs to your query, and then pass the actual data in another object called “variables”. This approach minimizes the amount of escaping you need to do.</p>\n<p>Here’s a generalization of that flow using pseudocode (I hope this makes sense, you’d need to adjust this to C#):</p>\n<pre><code class=\"lang-auto\"># store your query as a string\ndeclare string my_query = \"query ($columnIDs:[String!]) { boards(ids: 12345) { name items { id name column_values(ids: $columnIDs) { title value } } } }\" \n\n# store your variables as an object/hash table/dictionary\ndeclare string[] my_column_ids = [\"text\"]\ndeclare object my_variables = {\"columnIDs\" : my_column_ids} # the list is inside this object\n\n# construct request payload using JSON serializer to turn data structures into valid JSON\ndeclare string payload = JSON.serialize( {\"query\" : my_query, \"variables\" : my_variables} )\n</code></pre>\n<p>Hope that helps!</p>"
+    },
+    {
+      "id": 18424,
+      "postNumber": 3,
+      "createdAt": "2020-05-21T15:21:04.945Z",
+      "author": "Mickabooh (Kevin)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" /> dipro:</div>\n<blockquote>\n<p>you might need to double-escape them.</p>\n</blockquote>\n</aside>\n<p>That was it. Thank you very much.</p>\n<p>I’ll definitely look into the the GraphQL variables… all of the escaping just escapes me.<br />\nKevin</p>"
+    },
+    {
+      "id": 18437,
+      "postNumber": 4,
+      "createdAt": "2020-05-21T18:05:08.967Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Using variables and a sturdy JSON serializer will let you escape the world of escape characters. Try it out <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 42461,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T14:33:00.368Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

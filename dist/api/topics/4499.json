@@ -1,0 +1,47 @@
+{
+  "id": 4499,
+  "title": "Unable to set Column_Values for certain ColumnIDs",
+  "slug": "unable-to-set-column-values-for-certain-columnids",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94
+  ],
+  "createdAt": "2020-02-05T22:46:14.445Z",
+  "lastPostedAt": "2021-02-25T14:32:56.609Z",
+  "postsCount": 4,
+  "excerpt": "I’m trying to create a new item in a board , and am passing a JSON object containing the column_values for several columns. I’m having luck with certain text columns. But others, The API returns the following error \n{\n  &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2708,
+  "posts": [
+    {
+      "id": 11498,
+      "postNumber": 1,
+      "createdAt": "2020-02-05T22:46:14.555Z",
+      "author": "j.cevallos (Javier Cevallos)",
+      "cookedHtml": "<p>I’m trying to create a new item in a board , and am passing a JSON object containing the column_values for several columns. I’m having luck with certain text columns. But others, The API returns the following error</p>\n<pre><code>{\n  \"error_code\": \"InvalidColumnIdException\",\n  \"status_code\": 400,\n  \"error_message\": \"This column ID doesn't exist for the board\",\n  \"error_data\": {\n    \"column_id\": \"email\"\n  }\n</code></pre>\n<p>I am getting the error even though the column ID does indeed exist in the board.</p>\n<pre><code>{\n    \"id\": \"email\",\n    \"text\": \"email@email.com\",\n    \"title\": \"Email\",\n    \"value\": \"{\\\"email\\\":\\\"email@email.com\\\",\\\"text\\\":\\\"email@email.com\\\",\\\"changed_at\\\":\\\"2020-01-24T04:36:25.922Z\\\"}\"\n},\n</code></pre>\n<p>Any Insight?</p>\n<p>These are the variables that I am passing to the mutation. I can get this to work for the simple text field or a group of two text fields , but get the above error when passing the email column id.</p>\n<p><code>    {\"name\" : \"NewCo Insomnia\", \"group\" : \"groupID\", \"JSON\": \"{\\\"text7\\\": \\\"ready 7\\\" , \\\"email\\\" : \\\"email@email.com\\\"} \"}</code></p>\n<p>Also, Is there a way to edit the ID values , or set them when the column is created ?</p>\n<p>Thanks,<br />\nJavier</p>"
+    },
+    {
+      "id": 11507,
+      "postNumber": 2,
+      "createdAt": "2020-02-06T03:05:02.861Z",
+      "author": "j.cevallos (Javier Cevallos)",
+      "cookedHtml": "<p>I found a way around this , although I’m still not sure what the original issue was. Maybe a syntax.</p>\n<p>For anyone else running into issues . I am doing this in Powershell Core .</p>\n<p>The gist of if was changing the way that the JSON object is built and handed to the API request .</p>\n<pre><code>$column_values=@{\n   ##owner Column\n   person = @{personsAndTeams = @(@{id = $lead; kind = \"person\"})};\n   ##world clock\n   world_clock = @{timezone= \"US/Pacific-New\"};\n   ##phone\n   phone = @{phone=$phone; countryShortName=$country}\n   ##address\n   text = \"$address\";\n   date = @{date = \"2019-01-20\"};\n}\n</code></pre>\n<p>The first thing is to build a hash table containing the key / value pairs made from the <strong>column_id</strong> and <strong>desired value</strong> for your create_item mutation .</p>\n<p>For column types that require complex json definitions, define the value in a power shell hash table.<br />\nei . the <strong>phone column</strong> above shows a nested object , the <strong>person column</strong> above shows a nested object with an array containing another object.</p>\n<p>We can then convert the hash table to JSON notation and compress the spacing to match the API requirements.</p>\n<pre><code>$hashJSON = $column_values | ConvertTo-Json -Compress -Depth 50 | % { [System.Text.RegularExpressions.Regex]::Unescape($_) }\n</code></pre>\n<p>and use the replace function to add the \\ used to cancel out the \"</p>\n<p><code>$hashObject = $hashJSON.Replace('\"','\\\"')</code></p>\n<p>Finally , We can make the API call to create the new item</p>\n<pre><code>$itemTable = \"\"\n$newBoardItem = @{}\n$newBoardItem = @{\n\n##Create Item in board\n  query = \"mutation(`$JSON:JSON!, `$name:String!) {create_item(item_name: `$name, board_id: $boardID, group_id: $groupID, column_values: `$JSON ) {id}}\"  \n  variables = \"{`\"name`\" : `\"NewCo PowerShell`\", `\"JSON`\" : `\"$hashObject`\"}\"\n}\n$itemTable = Invoke-RestMethod -Uri $Url -Method Get -Headers $headers -Body $newBoardItem`</code></pre>"
+    },
+    {
+      "id": 21500,
+      "postNumber": 3,
+      "createdAt": "2020-07-03T11:04:45.682Z",
+      "author": "stevemcmanus (Steven McManus)",
+      "cookedHtml": "<p>Hey There J.Cevallos.<br />\nI have a question.  Do you find it better to include untranslated HASH code?  I translate it first and then massage it,   I find that the GraphQL has a slightly modified JSON format.</p>\n<p>There is a alternate format which you can do to prevent Powershell formatting.     Enclose in single Quotes,   only Double Quotes will translate the $.  I have a new problem and I am including some of my code.</p>"
+    },
+    {
+      "id": 42423,
+      "postNumber": 4,
+      "createdAt": "2021-02-25T14:32:56.609Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

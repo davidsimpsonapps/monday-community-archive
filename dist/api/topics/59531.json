@@ -1,0 +1,56 @@
+{
+  "id": 59531,
+  "title": "'change_simple_column_value' mutation on a status column",
+  "slug": "change-simple-column-value-mutation-on-a-status-column",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2023-06-06T09:16:02.665Z",
+  "lastPostedAt": "2023-06-08T07:15:24.892Z",
+  "postsCount": 5,
+  "excerpt": "Hello, \nI’ve been struggling to change the value of some columns of an item. \nI am using Python to request the API. \nThese are the 2 columns I want to change: \n{&#39;id&#39;: &#39;status_1&#39;, &#39;title&#39;: &#39;Etape&#39;, &#39;value&#39;: &#39;{&quot;index&quot;:5,&quot;i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 920,
+  "posts": [
+    {
+      "id": 130466,
+      "postNumber": 1,
+      "createdAt": "2023-06-06T09:16:02.769Z",
+      "author": "twan (Dev Ops)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’ve been struggling to change the value of some columns of an item.<br />\nI am using Python to request the API.</p>\n<p>These are the 2 columns I want to change:<br />\n<code>{'id': 'status_1', 'title': 'Etape', 'value': '{\"index\":5,\"invalid\":false,\"changed_at\":\"2023-06-06T08:07:50.170Z\"}'}</code><br />\n<code>{'id': 'multi_select', 'title': 'Types', 'value': '{\"ids\":[2,1,4],\"changed_at\":\"2023-06-06T07:28:20.062Z\"}'}</code></p>\n<p>I couldn’t find in the API documentation the needed format for these types of column. For simple text, it’s pretty easy. For these types of column, I encounter some difficulties.<br />\nThis is my code:</p>\n<pre><code class=\"lang-auto\">query = '''\n    mutation {\n        change_simple_column_value(\n            board_id: %s,\n            item_id: %s,\n            column_id: \"%s\",\n            value: \"%s\"\n        ) {\n            id\n        }\n    }\n    ''' % (0123456789, 987654321, 'status_1', '{\"label\": \"Some label\"}')\n    response = requests.post(url=MONDAY_URL, json={'query': query}, headers=monday_headers)\n</code></pre>\n<p>Note that I also tried putting <code>{\"id\": \"1\"}</code> into the value to change the status from the id and not from the label.</p>\n<p>For the ‘multi_select’ column, I used the same code but with <code>'{\"ids\":%s}' % json.dumps([1])</code> for the value.</p>\n<p>None of these work. I get the following errors:</p>\n<ul>\n<li>For ‘status_1’ column:<br />\n<code>'errors': [{'message': 'Parse error on \": \" (STRING) at [7, 28]'</code>\n</li>\n<li>For ‘multi_select’ column:<br />\n<code>'errors': [{'message': 'Parse error on \":[1]}\" (STRING) at [7, 26]'</code>\n</li>\n</ul>\n<p>I know the problem is the value, but I couldn’t find what I am doing wrong.</p>\n<p>I’d be grateful for your help.<br />\nAntoine</p>"
+    },
+    {
+      "id": 130632,
+      "postNumber": 2,
+      "createdAt": "2023-06-07T05:48:40.153Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/twan\">@twan</a>,</p>\n<p>I have created an example for you. I will share the mutation itself and I will share how Postman exports it to Python:</p>\n<p>The mutation:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(\n    item_id: 1234567890\n    board_id: 1122334455\n    column_values: \"{\\\"status\\\" : {\\\"label\\\" : \\\"Done\\\"}, \\\"dropdown\\\": \\\"My label\\\" }\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Python http.client:</p>\n<pre><code class=\"lang-auto\">import http.client\n\nimport json\n\nconn = http.client.HTTPSConnection(\"api.monday.com\")\n\npayload = \"{\\\"query\\\":\\\"mutation {change_multiple_column_values( item_id: 1234567890, board_id: 1122334455 column_values: \\\\\\\"{\\\\\\\\\\\\\\\"status\\\\\\\\\\\\\\\" : {\\\\\\\\\\\\\\\"label\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"Done\\\\\\\\\\\\\\\"}, \\\\\\\\\\\\\\\"dropdown\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"My label\\\\\\\\\\\\\\\" }\\\\\\\") { id}}\\\",\\\"variables\\\":{}}\"\n\nheaders = {\n\n'Authorization': 'APITOKENHERE',\n\n'Content-Type': 'application/json',\n\n}\n\nconn.request(\"POST\", \"/v2\", payload, headers)\n\nres = conn.getresponse()\n\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))\n</code></pre>\n<p>Python - Requests:</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\nurl = \"https://api.monday.com/v2\"\n\npayload=\"{\\\"query\\\":\\\"mutation {change_multiple_column_values( item_id: 1234567890, board_id: 1122334455 column_values: \\\\\\\"{\\\\\\\\\\\\\\\"status\\\\\\\\\\\\\\\" : {\\\\\\\\\\\\\\\"label\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"Done\\\\\\\\\\\\\\\"}, \\\\\\\\\\\\\\\"dropdown\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"My label\\\\\\\\\\\\\\\" }\\\\\\\") { id}}\\\",\\\"variables\\\":{}}\"\nheaders = {\n  'Authorization': 'APITOKENHERE',\n  'Content-Type': 'application/json',\n}\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\n\nprint(response.text)\n</code></pre>\n<p>Let me know if this helped!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 130638,
+      "postNumber": 3,
+      "createdAt": "2023-06-07T07:26:21.092Z",
+      "author": "twan (Dev Ops)",
+      "cookedHtml": "<p>Hello Matias,</p>\n<p>Thank you for your help.<br />\nI tried your code but with change_simple_column mutation.</p>\n<p>Here is the query once printed:</p>\n<pre><code class=\"lang-auto\">    mutation {\n        change_column_value(\n            board_id: 0000000000,\n            item_id: 000000000,\n            column_id: \"status_1\",\n            value: {\\\\\\\"label\\\\\\\" : \\\\\\\"Done\\\\\\\"}\n        ) {\n            id\n        }\n    }\n</code></pre>\n<p>I’ve put the same thing as you in the ‘value’ field of the mutation:</p>\n<pre><code class=\"lang-auto\">value: {\\\\\\\\\\\\\\\"label\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"Done\\\\\\\\\\\\\\\"}\n</code></pre>\n<p>Unfortunately I still encounter a parsing error:</p>\n<pre><code class=\"lang-auto\">'message': 'Parse error on \"\\\\\\\\\" (error) at [7, 21]'\n</code></pre>\n<p>I’ve tried many other things, adding slight differences, in vain…</p>\n<p>Thank you in advance for your help,<br />\nAntoine</p>"
+    },
+    {
+      "id": 130657,
+      "postNumber": 4,
+      "createdAt": "2023-06-07T09:54:18.963Z",
+      "author": "twan (Dev Ops)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>I found one of my mistake. I were using ‘change_<strong>simple</strong>_column_value’ instead of ‘change_column_value’. This makes a huge difference since the first one can only deal with simple data types (such as texts and numbers).</p>\n<p>Moreover, I found the needed format for the ‘value’ field of the query.<br />\nThe value requires the object to be between double quotes. For the keys and values (here “label” and “Done”), the string must contain the backslash and the quotes. So you need to escape the backslash.<br />\nHere is an example of value taken by the query:</p>\n<pre><code class=\"lang-auto\">\"{\\\"label\\\" : \\\"Done\\\"}\"\n</code></pre>\n<p>This also works with the index:</p>\n<pre><code class=\"lang-auto\">\"{\\\"index\\\" : 2}\"\n</code></pre>\n<p>You can get those in Python with:</p>\n<pre><code class=\"lang-auto\">\"%s\" % '{\\\\\"label\"\\\\\" : \\\\\"Done\\\\\"}'\n</code></pre>\n<p>or</p>\n<pre><code class=\"lang-auto\">\"\\\"{\\\\\\\"label\\\\\\\" : \\\\\\\"Done\\\\\\\"}\\\"\"\n</code></pre>\n<p>You can also use <code>json.dumps()</code> on a dictionary to get a json string. Use it two times in a row to escape the entire string, thus getting the right format. Here is an example:</p>\n<pre><code class=\"lang-auto\">json.dumps(json.dumps({\"label\": \"Done\"}))\n</code></pre>\n<p>This is helpful when using ‘change_multiple_column_values’ mutation.</p>\n<p>I hope this will help the amateurs like me who encounter the same difficulties <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>To conclude, the title of my question shows the main issue: you can’t use ‘change_simple_column_value’ on a status column.<br />\nThe rest is just a matter of formatting with Python.</p>\n<p>Antoine</p>"
+    },
+    {
+      "id": 130747,
+      "postNumber": 5,
+      "createdAt": "2023-06-08T07:15:24.892Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/twan\">@twan</a>,</p>\n<p>Thank you for sharing your solution here!</p>\n<p>I am sure it will help others <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

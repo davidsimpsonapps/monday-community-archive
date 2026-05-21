@@ -1,0 +1,89 @@
+{
+  "id": 75288,
+  "title": "View Monthly forecast",
+  "slug": "view-monthly-forecast",
+  "categoryId": 5,
+  "tagIds": [
+    108,
+    313
+  ],
+  "createdAt": "2024-01-16T15:39:22.423Z",
+  "lastPostedAt": "2025-06-27T12:41:31.045Z",
+  "postsCount": 10,
+  "excerpt": "Hi all, \nWondering if anyone knows of a way I can view /+ edit a monthly forecast of revenue based on a deal with X duration. For example, if deal value is 1200, deal duration is 12 months, the monthly amount is 100 per &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 988,
+  "posts": [
+    {
+      "id": 162385,
+      "postNumber": 1,
+      "createdAt": "2024-01-16T15:39:22.496Z",
+      "author": "shaunafitzgoo (Shauna)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>Wondering if anyone knows of a way I can view /+ edit a monthly forecast of revenue based on a deal with X duration. For example, if deal value is 1200, deal duration is 12 months, the monthly amount is 100 per month, but I’d like to see what month it starts so ideally if I had a column for each month, the 100 would add to each column depending on some kind of timeline. If 12 months but start date is Feb 12th, then 100 is added to the column for Feb.</p>\n<p>Please let me know if this is possible.</p>"
+    },
+    {
+      "id": 162402,
+      "postNumber": 2,
+      "createdAt": "2024-01-16T16:22:04.818Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi Shauna,</p>\n<p>If I understand correctly you have a {StartDate}, {DealAmount} and {DurationInMonths} column.<br />\nLet’s say you create {January}, {February},…{December} formula columns.</p>\n<p>You’d want to set up different formulas for each column. Let’s see what it would be for February 2024. Here is the logic I would apply. I’d see if the same day in February than the day of the start date is between the start date and end date of the deal. In other words, if the deal starts Jan 12 I want to know if Feb 12 is within the deal date ranges. If the deal starts Jan 12 and lasts 6 months, the answer is yes. If the deal starts March 20 and lasts 6 months, the answer is no. If the answer is yes, I want the formula column to display {DealAmount}/{DurationInMonths}. If the answer is no, I want to display nothing.</p>\n<p>To calculate the date to check, use</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(DATE(2024,2,DAY({StartDate})),\"YYYY-MM-DD\")\n</code></pre>\n<p>Note the 2024,2 in the middle, it stands for February 2024.<br />\nWe need to compare this date with {StartDate} (&gt;=) and with the end of the deal which is calculated using the EDATE function which allows you to add months to a date, like this: FORMAT_DATE(EDATE({StartDate}, {DurationInMonths},“YYYY-MM-DD”))</p>\n<p>So the formula to determine if the date is within the deal or not is:</p>\n<pre><code class=\"lang-auto\">IF(AND(\nFORMAT_DATE(DATE(2024,2,DAY({StartDate})),\"YYYY-MM-DD\")&gt;={StartDate},\nFORMAT_DATE(DATE(2024,2,DAY({StartDate})),\"YYYY-MM-DD\")\n&lt;FORMAT_DATE(EDATE({StartDate},{DurationInMonths},\"YYYY-MM-DD\"))\n),\"WITHIN DEAL\",\"NOT WITHIN DEAL\")\n</code></pre>\n<p>With the final values, we get:</p>\n<pre><code class=\"lang-auto\">IF(AND(\nFORMAT_DATE(DATE(2024,2,DAY({StartDate})),\"YYYY-MM-DD\")&gt;={StartDate},\nFORMAT_DATE(DATE(2024,2,DAY({StartDate})),\"YYYY-MM-DD\")\n&lt;FORMAT_DATE(EDATE({StartDate},{DurationInMonths},\"YYYY-MM-DD\"))\n),{DealAmount}/{DurationInMonths},\"\")\n</code></pre>\n<p>You’ll need to adjust the reference to the month twice in the formula for each new formula column.</p>\n<hr />\n<hr />\n<p><strong>Want to get rid of the formula column?</strong> and write formulas that support multiple lines, variables and can update various columns at once? Take a look at the Advanced Formula Booster at <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">https://mdboosters.com</a>*</p>"
+    },
+    {
+      "id": 162417,
+      "postNumber": 3,
+      "createdAt": "2024-01-16T17:25:09.989Z",
+      "author": "shaunafitzgoo (Shauna)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a> this is exactly what I was looking for!</p>"
+    },
+    {
+      "id": 163421,
+      "postNumber": 4,
+      "createdAt": "2024-01-22T13:46:32.899Z",
+      "author": "shaunafitzgoo (Shauna)",
+      "cookedHtml": "<p>HI <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a></p>\n<p>I am working on this but noticed that if a deal is 6 months long and starts in Jan, then July or any month after is still being populated with a value even though it shouldn’t have anything past June. Should I add something else for this?</p>"
+    },
+    {
+      "id": 164530,
+      "postNumber": 5,
+      "createdAt": "2024-01-28T15:14:38.798Z",
+      "author": "shaunafitzgoo (Shauna)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a> just checking if you maybe know from the above formula suggested why it wouldn’t stop after the x duration?</p>"
+    },
+    {
+      "id": 164531,
+      "postNumber": 6,
+      "createdAt": "2024-01-28T15:31:46.563Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Please post your formula and indicate the exact values that are not giving you the expected result.</p>"
+    },
+    {
+      "id": 164532,
+      "postNumber": 7,
+      "createdAt": "2024-01-28T15:38:12.309Z",
+      "author": "shaunafitzgoo (Shauna)",
+      "cookedHtml": "<p>The formula for February 2024 I’m using is:</p>\n<pre><code class=\"lang-auto\">IF(AND(\nFORMAT_DATE(DATE(2024,2,DAY({Start Date})),\"YYYY-MM-DD\")&gt;={Start Date},\nFORMAT_DATE(DATE(2024,2,DAY({Start Date})),\"YYYY-MM-DD\")\n&lt;FORMAT_DATE(EDATE({Start Date},{Duration},\"YYYY-MM-DD\"))\n),({Total Sales Value}-{20% of Value}),\"0\")\n</code></pre>\n<p>If start date is Jan 2024 and the duration is 2 months, I expect the formula for March, April and onwards would be 0, but the value I get for months after the end date is still the monthly value.</p>"
+    },
+    {
+      "id": 164548,
+      "postNumber": 8,
+      "createdAt": "2024-01-28T18:05:42.626Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>There is a misplaced parenthesis.</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(EDATE({Start Date},{Duration},\"YYYY-MM-DD\"))\n</code></pre>\n<p>Is incorrect. It should be:</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(EDATE({Start Date},{Duration}),\"YYYY-MM-DD\")\n</code></pre>"
+    },
+    {
+      "id": 164590,
+      "postNumber": 9,
+      "createdAt": "2024-01-29T05:34:04.656Z",
+      "author": "shaunafitzgoo (Shauna)",
+      "cookedHtml": "<p>Thanks for your help <a class=\"mention\" href=\"/u/gcavin\">@GCavin</a></p>"
+    },
+    {
+      "id": 233076,
+      "postNumber": 10,
+      "createdAt": "2025-06-27T12:41:31.045Z",
+      "author": "naethb (Brad Naeth)",
+      "cookedHtml": "<p>Hello Gilles. Great Post. I am trying to use EDATE, but for some reason it’s not recognizing that function. Has this been removed?</p>"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "id": 16803,
+  "title": "Announcement: Uploading files to monday.com has just become easier :)",
+  "slug": "announcement-uploading-files-to-monday-com-has-just-become-easier",
+  "categoryId": 70,
+  "tagIds": [],
+  "createdAt": "2021-02-25T11:15:46.776Z",
+  "lastPostedAt": "2022-04-15T05:48:53.248Z",
+  "postsCount": 8,
+  "excerpt": "New feature alert! :tophat: \nI’m excited to announce that uploading files to monday.com has just become a bit simpler using our API, and even easier when using our SDK. \nNow, when making direct calls to our API, you can &hellip;",
+  "solvedPostId": null,
+  "likeCount": 10,
+  "views": 12084,
+  "posts": [
+    {
+      "id": 42049,
+      "postNumber": 1,
+      "createdAt": "2021-02-25T11:15:46.860Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>New feature alert! <img src=\"https://emoji.discourse-cdn.com/apple/tophat.png?v=12\" title=\":tophat:\" class=\"emoji\" alt=\":tophat:\" width=\"20\" height=\"20\" /></p>\n<p>I’m excited to announce that uploading files to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> has just become a bit simpler using our API, and even easier when using our SDK.</p>\n<p>Now, when making direct calls to our API, you can upload files in a more GraphQL-like way. With your query you can now include query variables alongside files! This is compared to before when you’d need to use inline variables in the query.</p>\n<p>Now, the following request to our API is possible:</p>\n<pre><code class=\"lang-auto\">const query = \n\n    mutation add_file($update_id:Int!, $file: File!) {\n\n    add_file_to_update(update_id: $update_id, file: $file) {\n\n    id\n\n    }\n\n    }\n\n    ;\n\n    const variables = {\n\n    update_id: yourUpdateId,\n\n    file: yourFile\n\n    };\n</code></pre>\n<p>Here’s an example in Postman as well if you’d like to try this out:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/8b0166a208be4b06e2ee99e83eb2f414d44761c2.png\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/8b0166a208be4b06e2ee99e83eb2f414d44761c2_2_624x400.png\" alt=\"\" width=\"624\" height=\"400\" /><div class=\"meta\">\n<span class=\"filename\"></span><span class=\"informations\">1394×894 64.2 KB</span>\n</div></a></div><p></p>\n<ul>\n<li>Send the request as form-data;</li>\n<li>Send a POST request to the special File endpoint:</li>\n</ul>\n<p><a href=\"https://api.monday.com/v2/file\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file</a></p>\n<ul>\n<li>Use the File type for the file;</li>\n<li>You can use Text inputs for other Keys, and Auto for content-type;</li>\n<li>In “variables”, you can include your Update ID, or Item + File column IDs. To add the File as a variable, you will need to add another Key to map the variable to another key. In the Map key, you declare the name of the variable, for example, “image”, and then set it as the variable.file.</li>\n</ul>\n<p>And you should get a result as follows:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5f4c579278038b773c4d8e81ae18492bfacff0fe.png\" alt=\"\" width=\"608\" height=\"222\" /></p>\n<p>Always make sure to send your File upload requests with variables to the <a href=\"https://api.monday\" rel=\"noopener nofollow ugc\">https://api.monday</a>,com/v2/file Endpoint.</p>\n<p>Here’s a cURL example as well:</p>\n<pre><code>curl --location --request POST 'https://api.monday.com/v2/file' \\\n\n--header 'Authorization: yourSuperSecretApiKey' \\\n\n--header 'Cookie: __cfduid=d0359804269ad2a2a33bc1bbbe9d6f18d1612880009' \\\n\n--form 'query=\"mutation add_file($file: File!, $update_id: Int!) {add_file_to_update(update_id: $update_id, file: $file) {id}}\"' \\\n\n--form 'variables=\"{\\\"update_id\\\":920768626}\"' \\\n\n--form 'map=\"{\\\"image\\\":\\\"variables.file\\\"}\"' \\\n\n--form 'image=@\"/Users/alexsavchuk/Downloads/300px-All_Right_Then,_Keep_Your_Secrets.jpg\"'\n</code></pre>\n<p>What about the SDK, you might ask? This has now become easier too <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Developers using our SDK to make requests from View apps that are using seamless auth will now also enjoy seamless file uploads! <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> will now translate any query into a multipart request IF it detects the request contains files. This means that if you’re adding files as variables, it will just work with zero extra code on your side <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>If you are making a direct call from the server-side using the monday.api method, the translation will not work. Instead, we recommend constructing your own HTTP request using a library of your choice.</p>"
+    },
+    {
+      "id": 67532,
+      "postNumber": 2,
+      "createdAt": "2021-11-01T18:06:21.727Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p>Is it only possible to upload a single file at a time or can you upload an array of files?</p>"
+    },
+    {
+      "id": 67622,
+      "postNumber": 3,
+      "createdAt": "2021-11-02T11:25:20.791Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Oh, that’s a good one <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>To be transparent with you, it is not possible to upload multiple files in the same API call. You will indeed need to use multiple mutations to upload each file separately, I’m afraid. Using a for-loop can help in those cases, as you iterate through an array of files.</p>\n<p>I hope this helps clarify!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 67652,
+      "postNumber": 4,
+      "createdAt": "2021-11-02T16:31:57.706Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> - It would be nice to have that functionality but I figured as much. Thank you Alex!</p>"
+    },
+    {
+      "id": 74155,
+      "postNumber": 5,
+      "createdAt": "2022-01-17T20:22:32.238Z",
+      "author": "Lindjacob (Jacob)",
+      "cookedHtml": "<p>I am trying to use the URL of a file in one column, to transfer it to another column.<br />\nWhat would be the best way to do that?</p>\n<p>It seems like I don’t understand how to get the file from the URL and properly attach it to the upfile variable.</p>"
+    },
+    {
+      "id": 74156,
+      "postNumber": 6,
+      "createdAt": "2022-01-17T20:26:15.102Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/lindjacob\">@Lindjacob</a> ,<br />\nCurrently, that is not possible. That is what <a href=\"https://community.monday.com/t/ability-to-move-files/23416\">this</a> feature request is about so, you can upvote it to move it up the priority ladder. The only way currently is to download the file and then reupload it.</p>"
+    },
+    {
+      "id": 82980,
+      "postNumber": 7,
+      "createdAt": "2022-04-13T13:00:32.450Z",
+      "author": "javier.nome (Javier)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/alexsavchuk/48/3454_2.png\" class=\"avatar\" /> AlexSavchuk:</div>\n<blockquote>\n<p>Developers using our SDK to make requests from View apps that are using seamless auth will now also enjoy seamless file uploads! <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com </a> will now translate any query into a multipart request IF it detects the request contains files. This means that if you’re adding files as variables, it will just work with zero extra code on your side <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n</blockquote>\n</aside>\n<p>I’m struggling to make this work. I’m trying to upload a file to Monday column using the sdk.</p>\n<p>My code looks like this:</p>\n<pre><code class=\"lang-auto\">const response = await monday.api(`mutation add_file($file_content: File!) {\n      add_file_to_column (item_id: ${itemId}, column_id: \"${columnId}\", file: $file_content) {\n          id\n      }\n    }`, { variables: { file_content: fileBuffer }});\n</code></pre>\n<p>When I execute that from my app, I receive a 500 internal server error. I assume this is because the call is sent to the “/v2” endpoint with “content-type: application/json” (as opposed to the “v2/file” endpoint with the multipart content type).</p>\n<p>I don’t see any example of this functionality using the SDK. Is there any particular thing I should do on the SDK call to make this call work?</p>"
+    },
+    {
+      "id": 83196,
+      "postNumber": 8,
+      "createdAt": "2022-04-15T05:48:53.248Z",
+      "author": "beben (benoit)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/j/9e8a1a/48.png\" class=\"avatar\" /> javier.nome:</div>\n<blockquote>\n<p>trying to upload a fil</p>\n</blockquote>\n</aside>\n<p>Hi!<br />\nI have the exact same issue, one workaround is to totally dropped the monday sdk when you want to upload a file and do it by hand using <code>axios</code> or <code>fetch</code> (like this <a href=\"https://community.monday.com/t/released-file-upload-via-mondays-sdk-client-side/10099/3\" class=\"inline-onebox\">[Released] File upload via Monday's SDK client side - #3 by pepperaddict</a>)</p>"
+    }
+  ]
+}

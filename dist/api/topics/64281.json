@@ -1,0 +1,110 @@
+{
+  "id": 64281,
+  "title": "How to query team on board with API?",
+  "slug": "how-to-query-team-on-board-with-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-08-23T09:51:37.966Z",
+  "lastPostedAt": "2024-08-28T06:40:49.059Z",
+  "postsCount": 13,
+  "excerpt": "Hello, \nWe want to retrieve the list of teams subscribed to a board with the type “subscriber” or “owner” as for the user. We can see that it’s possible to add a team to a board with th add-teams-to-a-board mutation. How&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 527,
+  "posts": [
+    {
+      "id": 140403,
+      "postNumber": 1,
+      "createdAt": "2023-08-23T09:51:38.044Z",
+      "author": "CedricMourizard (Cédric Mourizard)",
+      "cookedHtml": "<p>Hello,</p>\n<p>We want to retrieve the list of teams subscribed to a board with the type “subscriber” or “owner” as for the user. We can see that it’s possible to add a team to a board with th add-teams-to-a-board mutation. However we can’t retrieve the teams of board on the query boards fields <a href=\"https://developer.monday.com/api-reference/docs/boards#fields\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Boards</a> dispate of the api playgraound auto-complete suggests a “team_owners” parameter which return nothing.</p>\n<p>Does it possible or that is a current limit of the api ?</p>"
+    },
+    {
+      "id": 140417,
+      "postNumber": 2,
+      "createdAt": "2023-08-23T11:15:31.419Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/cedricmourizard\">@CedricMourizard</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can query for the teams and users that are subscribed to a board with a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    owners {\n      name\n      id\n      teams {\n        name\n        users {\n          id\n          name\n        }\n      }\n    }\n    subscribers {\n      name\n      id\n      teams {\n        name\n        users {\n          id\n          name\n        }\n        id\n      }\n    }\n  }\n}\n</code></pre>\n<p>Is that what you needed?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 140421,
+      "postNumber": 3,
+      "createdAt": "2023-08-23T11:39:26.812Z",
+      "author": "CedricMourizard (Cédric Mourizard)",
+      "cookedHtml": "<p>Hello Mathias</p>\n<p>Thanks for your try ! However this request gives the teams of the owners and the subscribers of the board but not the teams directly added on the board.</p>"
+    },
+    {
+      "id": 140570,
+      "postNumber": 4,
+      "createdAt": "2023-08-24T05:09:13.323Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/cedricmourizard\">@CedricMourizard</a> what do you mean when you say directly added?</p>\n<p>If  you add a team as subscriber to a board like this:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/1/111f4db82dd6b3e1edf49037f3d991fc13074485.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/1/111f4db82dd6b3e1edf49037f3d991fc13074485_2_646x500.png\" alt=\"image\" width=\"646\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">910×704 36 KB</span></div></a></div><p></p>\n<p>And then use this query on that board:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    subscribers {\n      name\n      id\n      teams {\n        name\n        users {\n          id\n          name\n        }\n        id\n      }\n    }\n  }\n}\n</code></pre>\n<p>You will get the information about the team added to the board.</p>\n<p>If instead of that, what you want is to check the teams that are assigned to a people column in a board, you can query for the information inside the<a href=\"https://developer.monday.com/api-reference/docs/people\"> people column</a> for the items and see the response.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 140591,
+      "postNumber": 5,
+      "createdAt": "2023-08-24T06:52:01.727Z",
+      "author": "CedricMourizard (Cédric Mourizard)",
+      "cookedHtml": "<p>Hello Matias again,</p>\n<p>By your way, we retrieve all the teams of the subscribers not the team added on the board. If mathias is not on “Team Two” but he is on “Team One”, the result of the query will return 3 subscribers :</p>\n<ul>\n<li>mathias with at least “Team One” in his list of teams</li>\n<li>the 2 members of Team Two with at least “Team Two” in their list of teams but maybe aussi their other teams</li>\n</ul>\n<p>We don’t have an API query to retrieve the exact config of board members as the screenshoot you mentionned :</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"id\": \"1234567\",\n        \"subscribers\": [\n          {\n            \"name\": \"Matias\",\n            \"id\": 1099999\n          }\n        ],\n        \"owners\": [\n          {\n            \"name\": \"Matias\",\n            \"id\": 1099999\n          }\n        ],\n        \"team_subscribers\": [\n          {\n            \"name\": \"Team Two\",\n            \"id\": 108888\n          }\n        ],\n        \"team_owners\": []\n      }\n    ]\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 140611,
+      "postNumber": 6,
+      "createdAt": "2023-08-24T10:05:25.522Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/cedricmourizard\">@CedricMourizard</a>,</p>\n<p>What do you mean when you say “not the team added on the board”?</p>\n<p>What do you consider a “team added to the board”? How is the team “added”?</p>\n<p>You can see the screen I showed by clicking on the button that says “invite” at the top right corner of the board.</p>"
+    },
+    {
+      "id": 140616,
+      "postNumber": 7,
+      "createdAt": "2023-08-24T10:29:19.515Z",
+      "author": "CedricMourizard (Cédric Mourizard)",
+      "cookedHtml": "<p>Hello Again,</p>\n<p>The team added to the board is in your example “Team Two”</p>"
+    },
+    {
+      "id": 140912,
+      "postNumber": 8,
+      "createdAt": "2023-08-27T04:57:55.482Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/cedricmourizard\">@CedricMourizard</a>,</p>\n<p>The team you see in my screenshot (or as you call it an “added team”) is subscribed to the board. When I add the team via UI, I am subscribing the team. It is the same thing. I think you are just calling it differently.</p>\n<p>And this query will get you that team:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    subscribers {\n      name\n      id\n      teams {\n        name\n        users {\n          id\n          name\n        }\n        id\n      }\n    }\n  }\n}\n</code></pre>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 153917,
+      "postNumber": 9,
+      "createdAt": "2023-11-20T14:10:25.906Z",
+      "author": "EricM (Eric)",
+      "cookedHtml": "<p>Hi,<br />\nI believe my problem/question is the same as <a class=\"mention\" href=\"/u/cedricmourizard\">@CedricMourizard</a> so that’s why I am replying here, and I do not think the query that you suggested will retrieve exactly the teams subscribed to the board.</p>\n<p>For example, I have two teams (1stTeam and 2ndTeam).<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/b/4b6906a68f90229636d3086379f86148dc4eb379.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/b/4b6906a68f90229636d3086379f86148dc4eb379_2_690x360.png\" alt=\"image\" width=\"690\" height=\"360\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1425×745 36.8 KB</span></div></a></div><p></p>\n<p>In board members, I have added <em>one of the users</em> of 2ndTeam and the 1stTeam as members.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/2/520618d8858ba1dd2a88b0c98c17235b21ec246d.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/2/520618d8858ba1dd2a88b0c98c17235b21ec246d_2_690x331.png\" alt=\"image\" width=\"690\" height=\"331\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">945×454 25.4 KB</span></div></a></div><p></p>\n<p>If I use the query that you specified, I cannot actually distinguish if only a member of X team is part of the board, or the team itself is a member of the board.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/e/feab57c6a7b9f052c9a473cf31df2ca8b39f5dd7.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/e/feab57c6a7b9f052c9a473cf31df2ca8b39f5dd7_2_477x500.png\" alt=\"image\" width=\"477\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">745×780 18.7 KB</span></div></a></div><p></p>\n<p>This query does not return “teams that are a member of X board” but actually “teams that the subscribers of X board are a part of”.</p>\n<p>For example, “2ndTeam” is not a member of this board despite it being part of the response.</p>\n<p>A query that directly returns teams that are part of a board and are owners in that board is:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/b/7/b780822ec0c9365cc758042933bcbf6145601730.png\" alt=\"image\" width=\"302\" height=\"172\" /><br />\nBut this also is problematic since you cannot retrieve teams that are members in a board, but not owners.</p>"
+    },
+    {
+      "id": 198868,
+      "postNumber": 10,
+      "createdAt": "2024-08-26T10:49:14.479Z",
+      "author": "nivar (levin)",
+      "cookedHtml": "<p>I have the same question which has still not been answered.</p>\n<p>I would like to be able to read all the teams assigned to a board (via the API)<br />\nThis means that they are displayed in a similar way to subscriber and owner.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/e/d/ed8aad6eb93628cdaa31c2f78d7536db4fc480a3.png\" alt=\"image\" width=\"219\" height=\"171\" /><br />\nDone like so:<br />\n<code>query {   boards (ids: 123456789) {      subscribers { id }      owners { id }      items_count      board_kind     workspace {       id       name       kind       description     }   } }</code></p>\n<p>Of course, it would be best if the users who are assigned via a team do not appear in the subscriber or owner list. Only the explicitly authorised persons should be listed there. This would show the real status of the permissions.</p>"
+    },
+    {
+      "id": 198878,
+      "postNumber": 11,
+      "createdAt": "2024-08-26T11:17:35.420Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/nivar\">@nivar</a>,</p>\n<p>What about using something like this?</p>\n<p>(the users inside the team would still also be there as “subscribers” if you query for that)</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    team_subscribers {\n      name\n      id\n      users {\n        name\n        id\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 198925,
+      "postNumber": 12,
+      "createdAt": "2024-08-26T14:57:28.741Z",
+      "author": "nivar (levin)",
+      "cookedHtml": "<p>Thank you for your answer. This query is exactly what I was looking for, thank you very much.<br />\n<strong>Info</strong>: this query is only available since version 2024-07.</p>"
+    },
+    {
+      "id": 199128,
+      "postNumber": 13,
+      "createdAt": "2024-08-28T06:40:49.059Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I am happy this worked for you <a class=\"mention\" href=\"/u/nivar\">@nivar</a>!</p>"
+    }
+  ]
+}

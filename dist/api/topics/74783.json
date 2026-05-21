@@ -1,0 +1,49 @@
+{
+  "id": 74783,
+  "title": "New API: Seeking Suggestions on Enhancing My Super Simple API Query for Power BI",
+  "slug": "new-api-seeking-suggestions-on-enhancing-my-super-simple-api-query-for-power-bi",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    267,
+    351,
+    460
+  ],
+  "createdAt": "2024-01-10T17:35:18.563Z",
+  "lastPostedAt": "2024-02-11T14:04:28.672Z",
+  "postsCount": 3,
+  "excerpt": "I have rewritten my old API query to prepare it for the new API version. \nWhile my new query is functioning correctly, it currently only returns the columns from my boards. How can I modify it to ensure that it also retu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 241,
+  "posts": [
+    {
+      "id": 161382,
+      "postNumber": 1,
+      "createdAt": "2024-01-10T17:35:18.653Z",
+      "author": "SMac (Sean Mac)",
+      "cookedHtml": "<p>I have rewritten my old API query to prepare it for the new API version.</p>\n<p>While my new query is functioning correctly, it currently only returns the columns from my boards. How can I modify it to ensure that it also returns group names such as Q1, Q2, Q3, etc. (example attached)? Thank you for your assistance.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/0/10e78c0feb4e4fb7ad5c5e90c25b37754bc1c608.jpeg\" title=\"Board example\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/0/10e78c0feb4e4fb7ad5c5e90c25b37754bc1c608_2_690x358.jpeg\" alt=\"Board example\" width=\"690\" height=\"358\" /><div class=\"meta\"><span class=\"filename\">Board example</span><span class=\"informations\">2306×1199 162 KB</span></div></a></div><p></p>\n<p><strong>My API code that needs tweaking to include groups:</strong></p>\n<p>let<br />\nMondayQuery1 = “{”“query”“: “”{boards(ids: “,<br />\nMondayQuery2 = “<em>MY BOARD ID</em>”,<br />\nMondayQuery3 = “) {items_page(limit: 100) {cursor items {id name column_values {text column {title}}}}}}””}”,<br />\nMondayFullQuery = MondayQuery1 &amp; MondayQuery2 &amp; MondayQuery3,<br />\nSource = Web.Contents(“<a href=\"https://api.monday.com/\" rel=\"noopener nofollow ugc\">https://api.monday.com/</a>”,<br />\n[<br />\nRelativePath=“v2”,<br />\nHeaders=<br />\n[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“<em>MY API TOKEN</em>”,<br />\n#“API-Version”=“2023-10”<br />\n],<br />\nContent=Text.ToBinary(MondayFullQuery)<br />\n]<br />\n),<br />\n#“JSON” = Json.Document(Source, 65001),<br />\ndata = JSON[data],<br />\nboards = data[boards],<br />\n#“Converted to Table” = Table.FromList(boards, Splitter.SplitByNothing(), null, null, ExtraValues.Error)<br />\nin<br />\n#“Converted to Table”</p>"
+    },
+    {
+      "id": 161549,
+      "postNumber": 2,
+      "createdAt": "2024-01-11T11:24:43.544Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/smac\">@SMac</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can use a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    groups {\n      title\n      id\n    }\n    items_page(limit: 100) {\n      cursor\n      items {\n        id\n        name\n        column_values {\n          text\n          column {\n            title\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 167185,
+      "postNumber": 3,
+      "createdAt": "2024-02-11T14:04:28.672Z",
+      "author": "jplack (JP)",
+      "cookedHtml": "<p>Hello Sean Mac, i’m stuck with the same issue, have you been able to find a solution for the groups ?</p>"
+    },
+    {
+      "id": 167851,
+      "postNumber": 4,
+      "createdAt": "2024-02-14T13:49:07.926Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

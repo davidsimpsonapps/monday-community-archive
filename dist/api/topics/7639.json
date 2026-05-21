@@ -1,0 +1,82 @@
+{
+  "id": 7639,
+  "title": "Where to run the (node.js) webservices",
+  "slug": "where-to-run-the-node-js-webservices",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2020-06-01T14:59:21.686Z",
+  "lastPostedAt": "2020-06-04T13:23:00.900Z",
+  "postsCount": 9,
+  "excerpt": "Hi all, I managed to get my first Automation working, including OAuth authorization. To keep track of tokens I need a database (probably MongoDB). My question is where will the service and the database run? Will monday.c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2114,
+  "posts": [
+    {
+      "id": 18998,
+      "postNumber": 1,
+      "createdAt": "2020-06-01T14:59:21.750Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi all, I managed to get my first Automation working, including OAuth authorization. To keep track of tokens I need a database (probably MongoDB). My question is where will the service and the database run? Will <a href=\"http://monday.com\">monday.com</a> host these in the future of do we need to have a VPS somewhere in the cloud to run Node.js and MongoDB?</p>"
+    },
+    {
+      "id": 19172,
+      "postNumber": 2,
+      "createdAt": "2020-06-03T15:24:05.621Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a><br />\nIt’s a very good question.<br />\nWe are planning in our long term roadmap to add more and more capabilities, which will make Apps developer life easier (low-code approach), which also includes the ability to host your code (in more of the serverless approach).<br />\nBut most probably it will happen not very soon, so for now you will need to host your service/mongo on VPS or in some cloud (AWS/Azure/GCP/etc.)</p>"
+    },
+    {
+      "id": 19174,
+      "postNumber": 3,
+      "createdAt": "2020-06-03T16:18:06.643Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/vladmonday\">@VladMonday</a></p>\n<p>Many thanks. At this moment my integration is running on a VPS (public IP) with React/node and a Letsencrypt SSL. Currently adding MongoDB to the mix. Do I make a correct assumption that I need to store the token for each accountid / userid / boardid combination? After some testing it looks like the some scope and userid gets a different OAuth token on a different board. Is that correct?</p>"
+    },
+    {
+      "id": 19213,
+      "postNumber": 4,
+      "createdAt": "2020-06-04T10:04:37.276Z",
+      "author": "moshik (Moshik Eilon)",
+      "cookedHtml": "<p>Hi!<br />\nEach OAuth token is coupled to a specific <a href=\"http://monday.com\">monday.com</a> user and account.<br />\nOur tokens are not coupled to any specific boards, in a way that if you’ve asked for the boards:read scope, then the token you’ll get will have access to all of the boards that the user is permitted to see.</p>\n<p>Each time you direct a user to perform an OAuth authorization process, you’ll always get a new token, regardless of the parameters that you send.<br />\nNote that you can skip the OAuth process if you already know that you have a token stored for the user in your database. You can do it by using the accountId and userId parameters that are stored in the JWT of the authorization request, and deciding whether to send the user to the OAuth process, or immediately redirect them to the backToUrl (which will send them straight to configure the new automation).</p>"
+    },
+    {
+      "id": 19215,
+      "postNumber": 5,
+      "createdAt": "2020-06-04T10:48:00.664Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/moshik\">@moshik</a></p>\n<p>Thank you for your clear answer. In my opinion there is a potential issue with the fact that the received token is valid for all boards the user has access to. If I have Integration-1 that need read access the user authorizes this read access. If another integration (Integration-2) needs write access the user may authorize that request (for write) without understanding that he is now also authorizing write access to the board that uses Integration-1.</p>\n<p>Has this been discussed in the development team and do you think it is the correct design?</p>"
+    },
+    {
+      "id": 19219,
+      "postNumber": 6,
+      "createdAt": "2020-06-04T11:18:40.817Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/moshik\">@moshik</a>, <a class=\"mention\" href=\"/u/vladmonday\">@VladMonday</a>, <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>Sorry for the wide distribution <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />. I am considering to make the boardId part of the database where I store tokens. So, something like accountId / userId / boardId / token. The reason for this is that you might have different scopes for different Integrations added to different boards. I do this by adding the boardId to the state in a way it can be easily retrieved when receiving the state back in the callback.</p>\n<p>Just want to know your thoughts on this. Do you consider this to be a good practice?</p>"
+    },
+    {
+      "id": 19225,
+      "postNumber": 7,
+      "createdAt": "2020-06-04T13:02:28.076Z",
+      "author": "moshik (Moshik Eilon)",
+      "cookedHtml": "<p>Hi, We did discuss internally having board level tokens in the future. I agree that right now it can cause issues for users that don’t one a certain app to have access to all of their boards.<br />\nWe definitely plan to expand our API scopes system in the future.</p>\n<p>Regarding your question, it makes sense to have it this way if your app has multiple integration features, with each requesting different scopes.<br />\nIt gives me another idea for the future - maybe we can also send more ids in the authorization JWT - such as identifiers for apps and recipes to let developers further customize their requested scopes per use case.<br />\nIf we’ll show the app and recipe ids in the developers section then you’ll be able to reference them in your code and request different scopes according to this information.</p>\n<p>What do you think?</p>"
+    },
+    {
+      "id": 19231,
+      "postNumber": 8,
+      "createdAt": "2020-06-04T13:23:00.900Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I think this would be a very good functionality for future versions. Maybe you can also consider to send additional ids in the response to the post to authRequest. To maintain the relationship between the code used in the authRequest and the ids I currently kind of mis-use the state and set it to accountId–userId–boardId to be split later in the callback function.</p>\n<p>More in general I would say that the developer always start the OAuth cycle, even when the token is already known (I delete it from the database if known). With this - in case you need to extend / limit the scope - you can instruct your users to de-install and install the integration from the board.</p>\n<p>Hop I am not confusing my friends <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 42239,
+      "postNumber": 9,
+      "createdAt": "2021-02-25T14:17:31.316Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

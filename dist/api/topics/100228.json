@@ -1,0 +1,72 @@
+{
+  "id": 100228,
+  "title": "How to use the API to create a table in a WorkDoc?",
+  "slug": "how-to-use-the-api-to-create-a-table-in-a-workdoc",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    247,
+    351
+  ],
+  "createdAt": "2024-10-09T17:01:20.089Z",
+  "lastPostedAt": "2024-10-18T05:21:33.038Z",
+  "postsCount": 7,
+  "excerpt": "Hello. If I go to Document blocks it mentions you can insert a table by specifying column_count and row_count attributes. I have used this to successfully create a table. However, it does not tell you how to add data (or&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 47,
+  "posts": [
+    {
+      "id": 205110,
+      "postNumber": 1,
+      "createdAt": "2024-10-09T17:01:20.174Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>Hello. If I go to <a href=\"https://developer.monday.com/api-reference/reference/blocks#update-document-block\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Document blocks</a> it mentions you can insert a table by specifying <code>column_count</code> and <code>row_count</code> attributes. I have used this to successfully create a table. However, it does not tell you how to add data (or blocks) to that table. I tried adding a <code>cells</code> attribute as suggested by reading a table block but this didn’t work. Can you help please?</p>"
+    },
+    {
+      "id": 205202,
+      "postNumber": 2,
+      "createdAt": "2024-10-10T10:00:08.781Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/danielball\">@danielball</a>,</p>\n<p>You can create a table with a mutation like this one:</p>\n<p><code>mutation{ create_doc_block(doc_id: 926730, type: table, content: \"{\\\"column_count\\\":2,\\\"row_count\\\":2 }\"){ content id } }</code></p>\n<p>Now the response value will contain an array with all the cell IDs</p>\n<p>You can then use a mutation like this one to add data to a cell:</p>\n<p><code>mutation{ create_doc_block(parent_block_id: \"71ca3f1f-e6c0-42g8-8b6d-e5e0bbe74fb5\", doc_id: 926730,type: normal_text, content: \"{\\\"alignment\\\":\\\"left\\\",\\\"direction\\\":\\\"ltr\\\",\\\"deltaFormat\\\":[{\\\"insert\\\":\\\"New data in the cell\\\"}]}\"){ id } }</code></p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 205698,
+      "postNumber": 3,
+      "createdAt": "2024-10-15T04:23:34.627Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>,</p>\n<p>Thank you for your help with this. Your method works but I have come across a problem. If I try to create a table with more than 5 rows or 5 columns I get the following error messages:</p>\n<pre><code class=\"lang-auto\">There was an error in response from monday.com graphql API:  [{\"message\":\"bad request\",\"locations\":[{\"line\":1,\"column\":63}],\"path\":[\"create_doc_block\"],\"extensions\":{\"code\":\"DocMutationException\",\"status_code\":400,\"error_data\":[{\"error_type\":\"Invalid property value\",\"error_msg\":\"column_count column count must be less than 5\"}]}}]\n</code></pre>\n<pre><code class=\"lang-auto\">There was an error in response from monday.com graphql API:  [{\"message\":\"bad request\",\"locations\":[{\"line\":1,\"column\":63}],\"path\":[\"create_doc_block\"],\"extensions\":{\"code\":\"DocMutationException\",\"status_code\":400,\"error_data\":[{\"error_type\":\"Invalid property value\",\"error_msg\":\"column_count column count must be less than 5\"},{\"error_type\":\"Invalid property value\",\"error_msg\":\"row_count row count must be less than 5\"}]}}]\n</code></pre>\n<p>Is there a workaround to the restrictions of 5 rows and 5 column limits? You can create bigger tables manually in WorkDocs but I want to create them programmatically. Can you use <code>update_doc_block</code> to increate the number of rows and columns?</p>"
+    },
+    {
+      "id": 205733,
+      "postNumber": 4,
+      "createdAt": "2024-10-15T08:55:53.712Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/danielball\">@danielball</a>,</p>\n<p>As of today that is the limit and there is no workaround for it.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 206091,
+      "postNumber": 5,
+      "createdAt": "2024-10-18T03:58:16.060Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>. Not having the ability to create tables bigger than 5x5 is a road block to delivering an app idea I’m working on. Is it on the road-map to lift this restriction? Can I ask why this restriction is in place? Is there anything I can do to make lifting this restriction a priority?</p>\n<p>Whilst I’m asking for things, it would be really good to have the ability to add multi-block cell contents in a single API call as it runs quite slowly having to call the API to populate each cell.</p>"
+    },
+    {
+      "id": 206092,
+      "postNumber": 6,
+      "createdAt": "2024-10-18T04:43:46.953Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Just a thought. Can you add a 5x5, then add more rows and columns?</p>"
+    },
+    {
+      "id": 206094,
+      "postNumber": 7,
+      "createdAt": "2024-10-18T05:21:33.038Z",
+      "author": "danielball (Daniel Ball)",
+      "cookedHtml": "<p>Thought of that. I’m pretty sure I tried calling <code>update-document-block</code> with a higher  <code>column_count</code> and <code>row_count</code> value. I can’t remember what the response was, but I think it was along the lines of “you can’t change those values on an existing table block”, which contradicts the API-reference if it’s true. If I get chance I will try and do a controlled experiment and post the exact response. From what I can tell, you are basically stuck with a 5x5 table if you create it using the API.</p>"
+    }
+  ]
+}

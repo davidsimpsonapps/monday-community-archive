@@ -1,0 +1,32 @@
+{
+  "id": 106519,
+  "title": "File Uploads Failing",
+  "slug": "file-uploads-failing",
+  "categoryId": 8,
+  "tagIds": [
+    165
+  ],
+  "createdAt": "2025-01-03T17:29:01.589Z",
+  "lastPostedAt": "2025-01-06T08:35:54.811Z",
+  "postsCount": 2,
+  "excerpt": "Hi All, \nHaving a nightmare here, I’ve tried in python, node.js and curl and I cannot upload a file via the API. \nHere is a basic curl request I’m using: curl --location ‘https://api.monday.com/v2/file’  \n–header ‘Author&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 7,
+  "posts": [
+    {
+      "id": 215798,
+      "postNumber": 1,
+      "createdAt": "2025-01-03T17:29:01.664Z",
+      "author": "nocodecreative.io (Wayne Simpson)",
+      "cookedHtml": "<p>Hi All,</p>\n<p>Having a nightmare here, I’ve tried in python, node.js and curl and I cannot upload a file via the API.</p>\n<p>Here is a basic curl request I’m using: curl --location ‘<a href=\"https://api.monday.com/v2/file\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/file</a>’ <br />\n–header ‘Authorization: Bearer REDACTED’ <br />\n–form ‘variables[file]=@/path/to/your/file.jpg’ <br />\n–form ‘query=mutation($file: File!) { add_file_to_column(item_id: 8123268638, column_id: “text”, file: $file) { id } }’</p>\n<p>according to the docs this should work, but all I get is:</p>\n<p>{<br />\n“status_code”: 500,<br />\n“error_message”: “Internal server error”,<br />\n“error_code”: “INTERNAL_SERVER_ERROR”,<br />\n“errors”: [<br />\n{<br />\n“message”: “Internal server error”,<br />\n“extensions”: {<br />\n“status_code”: 500,<br />\n“error_code”: “INTERNAL_SERVER_ERROR”<br />\n}<br />\n}<br />\n]<br />\n}</p>\n<p>no matter what implementation I use, is there an issue with the API?</p>"
+    },
+    {
+      "id": 216002,
+      "postNumber": 2,
+      "createdAt": "2025-01-06T08:35:54.811Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nocodecreative.io\">@nocodecreative.io</a> and welcome to the community!</p>\n<p>I have created a Python example for you here (the asset is in the same folder as the Python file)(take into account you need the ID of a files column for this):</p>\n<pre><code class=\"lang-auto\">import requests\n\n# Set file name\nupfile = 'free-images.jpg'\n\n# Set query\nquery = \"\"\"\nmutation ($file: File!) {\n    add_file_to_column(file: $file, item_id: YOURITEMIDHERE, column_id: \"YOURFILESCOLUMNIDHERE\") {\n        id\n    }\n}\n\"\"\"\n\n# Set URL and boundary\nurl = \"https://api.monday.com/v2/file\"\nboundary = \"xxxxxxxxxx\"\n\ntry:\n    # Read the file content\n    with open(upfile, 'rb') as file:\n        file_content = file.read()\n\n    # Construct multipart/form-data payload\n    data = [\n        ('query', (None, query, 'application/json')),\n        ('variables[file]', (upfile, file_content, 'application/octet-stream')),\n    ]\n\n    # Set headers\n    headers = {\n        \"Authorization\": \"YOURAPITOKENHERE\",\n    }\n\n    # Make the POST request\n    response = requests.post(url, files=data, headers=headers)\n\n    # Log the response\n    print(response.json())\n\nexcept FileNotFoundError:\n    print(f\"Error: The file {upfile} was not found.\")\nexcept requests.RequestException as e:\n    print(f\"Error: {e}\")\n</code></pre>\n<p>Here is a JS example:</p>\n<pre><code class=\"lang-auto\">import fs from 'fs';\nimport fetch from 'node-fetch';\n\n// set filename\nvar upfile = 'myImagesName.jpg';\n\n// set query\nvar query = 'mutation ($file: File!) { add_file_to_column (file: $file, item_id: YOURITEMIDHERE, column_id: \"YOURFILESCOLUMNIDHERE\") { id } }';\n\n// set URL and boundary\nvar url = \"https://api.monday.com/v2/file\";\nvar boundary = \"xxxxxxxxxx\";\nvar data = \"\";\n\nfs.readFile(upfile, function(err, content){\n\n    // simple catch error\n    if(err){\n        console.error(err);\n        process.exit(1); // Exit with error code if file read fails\n    }\n\n    // construct query part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n    data += \"Content-Type:application/json\\r\\n\\r\\n\";\n    data += \"\\r\\n\" + query + \"\\r\\n\";\n\n    // construct file part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"variables[file]\\\"; filename=\\\"\" + upfile + \"\\\"\\r\\n\";\n    data += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\n    var payload = Buffer.concat([\n            Buffer.from(data, \"utf8\"),\n            Buffer.from(content, 'binary'),\n            Buffer.from(\"\\r\\n--\" + boundary + \"--\\r\\n\", \"utf8\"),\n    ]);\n\n    // construct request options\n    var options = {\n        method: 'post',\n        headers: {\n          \"Content-Type\": \"multipart/form-data; boundary=\" + boundary,\n          \"Authorization\" : \"YOURAPITOKENHERE\",\n        },\n        body: payload,\n    };\n\n    // make request\n    fetch(url, options)\n      .then(res =&gt; res.json())\n      .then(json =&gt; {\n        console.log(json);\n        process.exit(0); // Exit normally after logging the response\n      })\n      .catch(err =&gt; {\n        console.error(err);\n        process.exit(1); // Exit with error code if fetch fails\n      });\n});\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

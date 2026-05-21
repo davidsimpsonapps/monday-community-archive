@@ -1,0 +1,49 @@
+{
+  "id": 72263,
+  "title": "Unique id for a custom action event?",
+  "slug": "unique-id-for-a-custom-action-event",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    207,
+    270,
+    351
+  ],
+  "createdAt": "2023-12-05T08:47:34.920Z",
+  "lastPostedAt": "2023-12-08T14:59:36.625Z",
+  "postsCount": 4,
+  "excerpt": "Hey there, \nwhile developing custom actions I’m currently facing the following issue: \nIt seems for me that there is no way when my application receives the event to distinguish whether: \n\nThe event is a retry by monday &hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 307,
+  "posts": [
+    {
+      "id": 156272,
+      "postNumber": 1,
+      "createdAt": "2023-12-05T08:47:35.022Z",
+      "author": "anton1 (Anton)",
+      "cookedHtml": "<p>Hey there,</p>\n<p>while developing custom actions I’m currently facing the following issue:</p>\n<p>It seems for me that there is no way when my application receives the event to distinguish whether:</p>\n<ul>\n<li>The event is a retry by monday servers because the first try took too long or had an invalid status code as response.\n<blockquote>\n<p>From the <a href=\"https://developer.monday.com/apps/docs/custom-actions#mechanisms-behind-custom-actions\" rel=\"noopener nofollow ugc\">docs</a>:<br />\n“If your server responds with any other status, or doesn’t respond within a minute, the monday platform will retry calling your endpoint <strong>every minute for 30 minutes</strong> .”</p>\n</blockquote>\n</li>\n<li>The user triggered another event without changing any data (e.g. by pressing a button twice)</li>\n</ul>\n<p>Why is that important?</p>\n<p>Lets say i have a custom action that increments a product quantity in a foreign system but takes 2 minutes to complete. Each press of a button should increment the quantity by one.</p>\n<p>Now its impossible for me, to distinguish: Did the user click the button again or was it just a retry by monday? Yes, I could prevent retries by just sending a status 200 on the first received request. But then I would sacrifice all <a href=\"https://developer.monday.com/apps/docs/error-handling\" rel=\"noopener nofollow ugc\">error handling capabilities</a> monday offers.</p>\n<p>It seems like there is already such an identifier for that, but its not included in the event payload.<br />\nThe <code>Run ID</code> seems to be just the thing I need:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/3/a32c07c30939675541d0798c54f009dd53acf7e8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/3/a32c07c30939675541d0798c54f009dd53acf7e8_2_350x500.png\" alt=\"image\" width=\"350\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">500×713 33.3 KB</span></div></a></div><p></p>\n<p>Any help on these questions would be highly appreciated! <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=12\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 156300,
+      "postNumber": 2,
+      "createdAt": "2023-12-05T11:37:17.435Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/gregra\">@gregra</a> including you on this thread since it aligns with the conversations you and I have had - same issue.</p>\n<p><a class=\"mention\" href=\"/u/anton1\">@anton1</a> for your issue, what I’ve proposed to Greg previously is monday should implement proper 202 response handing.</p>\n<p>A response of 202 would include an ID and URL to poll after a time specified (ideally developer controlled). This would let developers queue long running tasks as you described, return a 202 and instructions to query a URL with an ID to get the final results. In the meantime retries stop. Final results would include any success messages, or failure messages, etc. in line with the existing error handling capabilities.</p>\n<p>It would also include the run ID in the original request in some fashion - which could be used as the ID for the callback for results.</p>\n<p>This lets us queue long running jobs, not have needless retries consuming capacity in our systems (both app developer and monday), and still proved a user experience where end users are informed of failures in their workflows</p>\n<p>Another use case is when there is a large number of events for an account, which exhausts API complexity. Today we have to pause execution and wait (if it doesn’t exceed the 60 second timeout), queue (with the same results as you describe, losing the error handling abilities), or reject and allow a retry. All of which have downsides today.</p>\n<p>Being able to queue these events allows us to process them as complexity becomes available - including with queue shaping to optimize apparent application performance. Not all app events need immediate UI results, some can process as able, while others should happen ASAP.</p>"
+    },
+    {
+      "id": 156316,
+      "postNumber": 3,
+      "createdAt": "2023-12-05T13:23:06.099Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>!</p>\n<p><a class=\"mention\" href=\"/u/anton1\">@anton1</a> as Cody mentioned, I’ve moved your post to the monday Apps &amp; Developers community queue for more visibility <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 156950,
+      "postNumber": 4,
+      "createdAt": "2023-12-08T14:59:36.625Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>4 posts were split to a new topic: <a href=\"/t/include-info-about-trigger-in-the-custom-action-payload/72632\">Include info about trigger in the custom action payload</a></p>"
+    }
+  ]
+}

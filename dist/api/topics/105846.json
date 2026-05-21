@@ -1,0 +1,61 @@
+{
+  "id": 105846,
+  "title": "If + Divide and Percentage - One Of The Parameters is Invalid",
+  "slug": "if-divide-and-percentage-one-of-the-parameters-is-invalid",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    108
+  ],
+  "createdAt": "2024-12-19T18:35:42.264Z",
+  "lastPostedAt": "2024-12-25T12:46:29.691Z",
+  "postsCount": 6,
+  "excerpt": "Simple division percentage equation, but only if {Rebate Amount}&gt;0. I am getting the proper calculations for other rows but the rows where {Rebate Amount}=0 I get invalid parameter. \nI have tried: \nIF({Deal Type}=“Standa&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 33,
+  "posts": [
+    {
+      "id": 214802,
+      "postNumber": 1,
+      "createdAt": "2024-12-19T18:35:42.345Z",
+      "author": "ieller (Ian Eller)",
+      "cookedHtml": "<p>Simple division percentage equation, but only if {Rebate Amount}&gt;0. I am getting the proper calculations for other rows but the rows where {Rebate Amount}=0 I get invalid parameter.</p>\n<p>I have tried:</p>\n<p>IF({Deal Type}=“Standard”,0,{Reb Rec’d}/{Rebate Amount}*100)</p>\n<p>IF({Rebate Amount}&gt;0,{Reb Rec’d}/{Rebate Amount}*100,0)</p>\n<p>IF({Rebate Amount}&lt;&gt;0,{Reb Rec’d}/{Rebate Amount}*100,0)</p>\n<p>I have also done all the above using the divide function instead of just {Reb Rec’d}/{Rebate Amount}</p>\n<p>I feel it must be something with roll ups, dividing by zero, or a text vs. number issue?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/5/752e3ae72cde61332f07f8a62a1e2070b71102ed.png\" title=\"Screenshot 2024-12-18 163055\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/5/752e3ae72cde61332f07f8a62a1e2070b71102ed_2_690x391.png\" alt=\"Screenshot 2024-12-18 163055\" width=\"690\" height=\"391\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-12-18 163055</span><span class=\"informations\">1190×675 72 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 214891,
+      "postNumber": 2,
+      "createdAt": "2024-12-20T11:53:08.899Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ieller\">@ieller</a></p>\n<p>Try:</p>\n<pre><code class=\"lang-auto\">IF(SUM({Rebate Amount}) &lt;&gt; 0, DIVIDE({Reb Rec'd}, {Rebate Amount}) * 100, 0)\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a><br />\n<strong><a href=\"https://themondayman.com/custom/\">Get Custom Apps, Integrations &amp; Automations for monday</a></strong></p>"
+    },
+    {
+      "id": 215028,
+      "postNumber": 3,
+      "createdAt": "2024-12-22T16:30:21.439Z",
+      "author": "ieller (Ian Eller)",
+      "cookedHtml": "<p>Thanks, Jim. Looks like I am still receiving the same error.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/b/8bf3fb059bf45784e2896c9f797a449a7c1997b8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/b/8bf3fb059bf45784e2896c9f797a449a7c1997b8_2_690x323.png\" alt=\"image\" width=\"690\" height=\"323\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1116×524 49 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 215053,
+      "postNumber": 4,
+      "createdAt": "2024-12-23T00:25:21.801Z",
+      "author": "GCavin (Gilles Cavin - Reinventing Formulas in monday.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ieller\">@ieller</a>,</p>\n<pre><code>IF(SUM({Rebate Amount}) &lt;&gt; 0, DIVIDE({Reb Rec'd}, {Rebate Amount}) * 100, 0)\n</code></pre>\n<p>doesn’t work, because monday evaluates calculates the DIVIDE function before checking if {Rebate Amount} is 0 which therefore generates the error because you can’t divide by 0. That’s called the “Lazy approach” (for more on this, see <a href=\"https://blog.mdboosters.com/en/a-simple-way-to-handle-empty-columns-and-avoid-errors-in-your-formulas-in-monday-com\" rel=\"noopener nofollow ugc\"> A Simple Way to Handle Empty Columns and Avoid Errors in your Formulas</a>)</p>\n<p>Instead try:</p>\n<pre><code>{Reb Rec’d}/IF({Rebate Amount}&lt;&gt;0,{Rebate Amount},1000000000)*100\n</code></pre>\n<p>If {Rebate Amount}=0, it will divide by 10000000000 (could be any really high number) which will give you 0 without generating an error.</p>\n<p> </p>\n<hr />\n<p><strong>Want to take your formulas to the next level?</strong> Try the <a href=\"https://mdboosters.com\" rel=\"noopener nofollow ugc\">Advanced Formula Booster</a>, the app that reinvents formulas in monday.</p>\n<ul>\n<li>Create formulas without using the Formula column (and avoid its limitations)</li>\n<li>Build formulas involving data from the previous item, the next item, the sub-items, the parent item, even items in the same group or the same board.</li>\n<li>In one formula, update multiple columns from multiple items.</li>\n</ul>\n<p>Check our blog for <a href=\"https://blog.mdboosters.com\" rel=\"noopener nofollow ugc\">real use cases</a>.</p>"
+    },
+    {
+      "id": 215108,
+      "postNumber": 5,
+      "createdAt": "2024-12-23T12:26:36.277Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>Good job Gilles.</p>"
+    },
+    {
+      "id": 215250,
+      "postNumber": 6,
+      "createdAt": "2024-12-25T12:46:29.691Z",
+      "author": "ieller (Ian Eller)",
+      "cookedHtml": "<p>Thank you! This seemed to work for the most part. Only a couple values are still returning an error. I think I have it from here. Appreciate it!</p>"
+    }
+  ]
+}

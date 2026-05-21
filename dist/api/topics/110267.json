@@ -1,0 +1,48 @@
+{
+  "id": 110267,
+  "title": "Translating an =IFS excel formula into into Monday.com column",
+  "slug": "translating-an-ifs-excel-formula-into-into-monday-com-column",
+  "categoryId": 5,
+  "tagIds": [
+    108,
+    132,
+    351
+  ],
+  "createdAt": "2025-02-23T08:22:01.827Z",
+  "lastPostedAt": "2025-04-23T06:23:00.323Z",
+  "postsCount": 4,
+  "excerpt": "Hello all, \nI am trying to translate an excel =IFS formula I have working on an excel doc into Monday folmulas. \nMy formula looks at available data from six columns to pull up a result in a seventh. At any point in time &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 22,
+  "posts": [
+    {
+      "id": 222131,
+      "postNumber": 1,
+      "createdAt": "2025-02-23T08:22:01.916Z",
+      "author": "AleV (Alessandra)",
+      "cookedHtml": "<p>Hello all,</p>\n<p>I am trying to <strong>translate an excel =IFS formula</strong> I have working on an excel doc into Monday folmulas.</p>\n<p>My formula looks at available data from six columns to pull up a result in a seventh. At any point in time some of the columns could be blank and the formula would need to pull the information from the available data from other columns instead. The final goal of the formula is a division.</p>\n<p><strong>My columns in excel:</strong><br />\nColumn E6: holds the final formula<br />\nColumn G6: $ final price<br />\nColumn H6: $ price (as provided by external source)<br />\nColumn I6: $ number column (estimated internal price)<br />\nColumn J6: $ number column (as column G * column O)<br />\nColumn O6: (%) multiplier for column J (as 1.2 = 20%)<br />\nColumn AJ6: $ (%) multiplier for additional costs (as 1.2 = 20%)</p>\n<p><strong>the four formula options that need to work:</strong><br />\nFormula 1 =G6/(J6 * AJ6)<br />\nFormula 2 =G6/(H6 * AJ6)<br />\nFormula 3 =G6/(I6 * AJ6)<br />\nFormula 4 =G6/(I6)</p>\n<p><strong>in excel my formula reads as follows:</strong><br />\n<code>=IFS(J6&gt;0,(G6/(IF(AJ6=0,J6,J6*AJ6))),H6&gt;0,(G6/(H6*AJ6)),G6&gt;0,(G6/(I6*AJ6)),AJ6&lt;1,6/I6),TRUE,\"\")</code></p>\n<p>I only needed this in excel to eliminate the <span class=\"hashtag-raw\">#DIV</span>/0 error → IF(AJ6=0,J6,J6*AJ6)</p>\n<hr />\n<p>Monday does not have an =IFS formula so I assume I will need to use IF, AND, OR formulas to get the same calculations. I used the AI formula builder to help alog the way and it spit out this:</p>\n<p><strong>current monday formula</strong><br />\n<code>IF({J6} &gt; 0, {G6} / IF({AJ6} = 0, {J6}, {J6} * {AJ6}), {H6} &gt; 0, {G6} / ({H6} * {AJ6}), {G6} &gt; 0, {G6} / ({I6} * {AJ6}), {AJ6} &lt; 1, {MSRP} / {I6}, TRUE, \"\")</code></p>\n<p>So far only this part of my excel formula (in bold) is working. I can’t figure out the rest:</p>\n<p><code>=IFS(J6&gt;0,(G6/(IF(AJ6=0,J6,J6*AJ6))),H6&gt;0,(G6/(H6*AJ6)),</code> G6&gt;0,(G6/(I6*AJ6)),AJ6&lt;1,(G6/I6),TRUE,“”)</p>\n<p>Anyone out there have success with something similar or ideas how to adjust the Monday formula?</p>\n<p>Thanks! -A</p>"
+    },
+    {
+      "id": 227396,
+      "postNumber": 2,
+      "createdAt": "2025-04-20T04:08:54.427Z",
+      "author": "brahosatad1974 (Brooke)",
+      "cookedHtml": "<p>You can nest IF statements in the formula column using this format: IF(condition, result, IF(condition, result, default)). I had to play around a bit to get the syntax right.</p>"
+    },
+    {
+      "id": 227536,
+      "postNumber": 3,
+      "createdAt": "2025-04-22T11:11:54.432Z",
+      "author": "JamieRobles (JamieRobles)",
+      "cookedHtml": "<p>oh, i had to deal with this too when moving our excel spreadsheet to web app format in mondaycom. i used a long chain of if functions instead of ifs because monday doesn’t support ifs yet</p>"
+    },
+    {
+      "id": 227595,
+      "postNumber": 4,
+      "createdAt": "2025-04-23T06:23:00.323Z",
+      "author": "JamieRobles (JamieRobles)",
+      "cookedHtml": "<blockquote>\n<p>oh, i had to deal with this too when moving our <a href=\"https://sheetcast.com/turbotools/turbo-trace/show-formulas-in-excel\" rel=\"noopener nofollow ugc\">excel spreadsheet to web app</a> format in mondaycom. i used a long chain of if functions instead of ifs because monday doesn’t support ifs yet</p>\n</blockquote>\n<p>And yeah…just nest the IFs step-by-step, checking the condition and value for each, like =IF(A=1,“Low”,IF(A=2,“Medium”,IF(A=3,“High”,“”))) and so on. It’s a bit clunky but works fine.</p>"
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "id": 71631,
+  "title": "Does subscription renewal failed webhook mean the subscription is cancelled?",
+  "slug": "does-subscription-renewal-failed-webhook-mean-the-subscription-is-cancelled",
+  "categoryId": 8,
+  "tagIds": [
+    249,
+    351
+  ],
+  "createdAt": "2023-11-28T04:42:33.274Z",
+  "lastPostedAt": "2024-04-19T05:28:15.007Z",
+  "postsCount": 24,
+  "excerpt": "The Monetization webhooks differentiate between app_subscription_renewal_attempt_failed and app_subscription_renewal_failed. Does the app_subscription_renewal_failed webhook mean that the subscription is cancelled altoge&hellip;",
+  "solvedPostId": null,
+  "likeCount": 18,
+  "views": 817,
+  "posts": [
+    {
+      "id": 155026,
+      "postNumber": 1,
+      "createdAt": "2023-11-28T04:42:33.348Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>The Monetization webhooks differentiate between app_subscription_renewal_attempt_failed and app_subscription_renewal_failed. Does the app_subscription_renewal_failed webhook mean that the subscription is cancelled altogether? Or will there be other attempts to charge the customer for renewal?</p>"
+    },
+    {
+      "id": 155059,
+      "postNumber": 2,
+      "createdAt": "2023-11-28T08:50:46.521Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C0610D7EBHU/p1701168634231809\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 155181,
+      "postNumber": 4,
+      "createdAt": "2023-11-28T21:20:36.684Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/samicaracand\">@samicaracand</a>,</p>\n<p>Here’s what I can confirm:</p>\n<p>The <code>app_subscription_renewal_attempt_failed</code> webhook means that the first renewal attempt failed. The <code>app_subscription_renewal_failed</code> means that the last renewal attempt failed. Any payment attempts in between the two would not trigger a webhook.</p>\n<p>Still waiting for some clarification from the team as the webhooks have been updated recently. I will update this thread and the docs when I have more info.</p>\n<p>Thanks for bringing this up!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 155225,
+      "postNumber": 5,
+      "createdAt": "2023-11-29T01:01:32.803Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Thanks, Rachel!<br />\nThe crux of the matter is whether there will be any further attempts to charge for renewal after the app_subscription_renewal_failed event. If no further attempts, then we need to downgrade the account on our app.</p>"
+    },
+    {
+      "id": 155254,
+      "postNumber": 6,
+      "createdAt": "2023-11-29T06:24:38.134Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/samicaracand\">@samicaracand</a>,</p>\n<p>I can confirm that after the app_subscription_renewal_failed event event, there are no further attempts.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 155272,
+      "postNumber": 7,
+      "createdAt": "2023-11-29T08:32:06.644Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/60/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>I can confirm that after the app_subscription_renewal_failed event event, there are no further attempts.</p>\n</blockquote>\n</aside>\n<p>I’m not sure about this.<br />\nI see a new attempt after 30 days.<br />\nIf the renewal does not succeed after 45 days, the subscription is automatically cancelled and a <code>app_subscription_cancelled</code> webhook is sent.</p>"
+    },
+    {
+      "id": 155314,
+      "postNumber": 8,
+      "createdAt": "2023-11-29T12:09:58.815Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/rob\">@rob</a> I will check that again with the team. They mentioned there is no other attempt, but I will share what you said with them and let you know what they say.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 155919,
+      "postNumber": 9,
+      "createdAt": "2023-12-03T07:29:54.355Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/rob\">@rob</a>,</p>\n<p>I heard back from the team.</p>\n<p>After the <code>app_subscription_renewal_failed</code> webhook, we retry the payment 10 times (every 4 days).</p>\n<p>On the 1st failed attempt we send the <code>app_subscription_renewal_attempt_failed</code> event.</p>\n<p>On the 2-9 we don’t send any events.</p>\n<p>On the 10th (and final) <strong>failed</strong> attempt we send the <code>app_subscription_renewal_failed</code> attempt.</p>"
+    },
+    {
+      "id": 155920,
+      "postNumber": 10,
+      "createdAt": "2023-12-03T08:08:17.027Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Thanks, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nThis begs more clarification <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>My understanding of your explanation:</p>\n<ul>\n<li>First failure to renew: app_subscription_renewal_failed</li>\n<li>Second failure to renew: app_subscription_renewal_attempt_failed (you referred to this as the ‘1st failed attempt’, although it seems to be the second one.)</li>\n<li>Failures <span class=\"hashtag-raw\">#3</span> to 10 (what you refer to as 2-9): no events</li>\n<li>Failure <span class=\"hashtag-raw\">#11</span> (“10th” in your message): app_subscription_renewal_failed</li>\n</ul>\n<p>To be honest it’s a bit confusing. From an app developer perspective, the most important event I need to capture is when to deactivate the customer’s subscription altogether. I can’t easily use app_subscription_renewal_failed because this seems to occur twice, unless we keep counting and we assume that you won’t change that in the future, for example, by sending this event only if the last attempt fails. This is not an ideal situation.</p>\n<p>Perhaps the final failed attempt should trigger an unambiguous event, say app_subscription_cancelled. This leaves no room for guessing that we should deactivate the user’s subscription.</p>\n<p>I suspect we probably have a number of accounts that failed renewing a long time ago but that we are still serving as paying customers because of this confusion.</p>"
+    },
+    {
+      "id": 155926,
+      "postNumber": 11,
+      "createdAt": "2023-12-03T09:23:16.676Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>I agree with you <a class=\"mention\" href=\"/u/samicaracand\">@samicaracand</a>.<br />\nThe situation is far from ideal.</p>\n<p>This is why, at least for the integrations, I always check for a possible mismatch between the plan we have stored in our database and the <em>subscription</em> object sent in the payload.</p>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> In addition there are still two <em>gray zones</em>.</p>\n<ol>\n<li></li>\n</ol>\n<p>After the last attempt (40 days), there are 5 additional days in which the attempts are not performed and the subscription is still valid.<br />\nOnly after 45 days, we get the plan cancellation notification and the subscription is reverted to the default (free/trial) plan.</p>\n<ol>\n<li></li>\n</ol>\n<p>If the user uninstall the app, no more notifications are sent. You could remain with one single attempt failed and no other notifications.<br />\nOnly after 45 days, you can be sure the subscription is cancelled (with no notifications from monday).</p>"
+    },
+    {
+      "id": 155931,
+      "postNumber": 12,
+      "createdAt": "2023-12-03T10:42:06.326Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>A flow diagram in documentation of all the scenarios would be an excellent step to clear up any confusion.</p>"
+    },
+    {
+      "id": 158443,
+      "postNumber": 13,
+      "createdAt": "2023-12-18T13:53:03.647Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> Any feedback from you?</p>"
+    },
+    {
+      "id": 159842,
+      "postNumber": 14,
+      "createdAt": "2024-01-02T13:41:18.570Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Asking for someone to take this here <a href=\"https://monday.monday.com/boards/2459966816/pulses/5771020445\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 160149,
+      "postNumber": 15,
+      "createdAt": "2024-01-04T08:51:13.640Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Asked someone to take it here <a href=\"https://monday.monday.com/boards/4565007762/pulses/5779287033/posts/2642367606\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 161128,
+      "postNumber": 16,
+      "createdAt": "2024-01-09T19:29:06.402Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a>, <a class=\"mention\" href=\"/u/rob\">@rob</a>, <a class=\"mention\" href=\"/u/samicaracand\">@samicaracand</a> (and anyone else reading this) -</p>\n<p>Apologies for the delayed response. We’ve been trying to coordinate with a few different teams to clarify everything, and it has taken longer than normal with the holidays.</p>\n<p>We’re working on adding things to the documentation to make it clearer, but in the meantime, we’ve created this timeline that <em>hopefully</em> will help clear things up!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/3/a34f9306e51b1b8515f74b667809c050b66bf4e1.png\" title=\"Screen Shot 2024-01-09 at 3.26.38 PM\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/3/a34f9306e51b1b8515f74b667809c050b66bf4e1_2_690x337.png\" alt=\"Screen Shot 2024-01-09 at 3.26.38 PM\" width=\"690\" height=\"337\" /><div class=\"meta\"><span class=\"filename\">Screen Shot 2024-01-09 at 3.26.38 PM</span><span class=\"informations\">1764×862 96 KB</span></div></a></div><p></p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 163438,
+      "postNumber": 17,
+      "createdAt": "2024-01-22T15:04:54.808Z",
+      "author": "PluginGenie (Oliver Albrecht)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a>, this is really helpful.</p>\n<p>Do you know what might cause a renewal failure and what messaging <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> sends to customers for this?</p>\n<p>Is it just that a customer’s credit card is expired or are there other reasons as well? Does <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> let customers know via email to alert them of this issue?</p>\n<p>Thanks!</p>\n<p>Oliver</p>"
+    },
+    {
+      "id": 163590,
+      "postNumber": 18,
+      "createdAt": "2024-01-23T07:48:02.580Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here: <a href=\"https://monday.slack.com/archives/C0610D7EBHU/p1706003265085079\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 163650,
+      "postNumber": 19,
+      "createdAt": "2024-01-23T12:51:21.429Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/plugingenie\">@PluginGenie</a>,</p>\n<p>There are multiple possible reasons for this.</p>\n<ul>\n<li>Not enough funds on CC</li>\n<li>Bank rejected the operation</li>\n<li>The CC expired</li>\n<li>The CC is disabled (e.g. stolen)</li>\n<li>Our payment provider marked transaction as fraud</li>\n</ul>\n<p>I created a request based on your feedback to start sending an email to the users when this happens <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 163653,
+      "postNumber": 20,
+      "createdAt": "2024-01-23T12:54:21.404Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/5913322014\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 163658,
+      "postNumber": 21,
+      "createdAt": "2024-01-23T13:12:10.647Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/rachelatmonday/48/14631_2.png\" class=\"avatar\" /> Rachel:</div>\n<blockquote>\n<p>We’re working on adding things to the documentation to make it clearer, but in the meantime, we’ve created this timeline that <em>hopefully</em> will help clear things up!</p>\n</blockquote>\n</aside>\n<p>Hi Rachel.<br />\nThat timeline is not really correct.<br />\nHere’s an example of recent webhook events I’ve received from a customer.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/9/c95766f2168aed5b524d1fdff2976aeb42d46972.png\" title=\"Screenshot 2024-01-23 at 16.09.33\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/9/c95766f2168aed5b524d1fdff2976aeb42d46972_2_602x500.png\" alt=\"Screenshot 2024-01-23 at 16.09.33\" width=\"602\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-01-23 at 16.09.33</span><span class=\"informations\">1050×872 72.4 KB</span></div></a></div><p></p>\n<p>There are no <code>app_subscription_renewal_attempt_failure</code> (note <strong>failure</strong>) or <code>app_subscription_renewal_failed</code> (note missing <strong>attempt</strong>) events.<br />\nOnly <code>app_subscription_renewal_attempt_failed</code> events (basically a mix from the events above).<br />\nA first <code>app_subscription_renewal_attempt_failed</code> sent at renewal, a second one sent after 30 days and a third one sent after 5 days.</p>"
+    },
+    {
+      "id": 163811,
+      "postNumber": 22,
+      "createdAt": "2024-01-23T23:20:47.692Z",
+      "author": "PluginGenie (Oliver Albrecht)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> Thanks for the great explanation and for creating a request to send an email to users when that happens!</p>"
+    },
+    {
+      "id": 163824,
+      "postNumber": 23,
+      "createdAt": "2024-01-24T00:34:53.267Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a> I think I am more confused than I was when I started the thread…<br />\nSubscriptions are what drives monetization and we need to discuss it from a business flow perspective then translate it into when the webhooks should (and shouldn’t) fire (and hopefully some more descriptive webhook event names.)</p>\n<p>Perhaps a Zoom discussion with app developers and your team to discuss this?</p>"
+    },
+    {
+      "id": 164123,
+      "postNumber": 24,
+      "createdAt": "2024-01-25T13:22:22.026Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>We are discussing next steps to make all of this more clear to everyone. I will update you as soon as we have news!</p>\n<p><a class=\"mention\" href=\"/u/rob\">@rob</a> can you please share the account ID of the account of that screenshot and your app ID?</p>\n<p>Please mention me when you do! You can send it via <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> if you prefer to.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 164125,
+      "postNumber": 25,
+      "createdAt": "2024-01-25T13:37:58.173Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p><a class=\"mention\" href=\"/u/rob\">@rob</a> can you please share the account ID of the account of that screenshot and your app ID?</p>\n</blockquote>\n</aside>\n<p>Account ID: <code>3734160</code><br />\nApp ID: <code>8031</code></p>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>"
+    },
+    {
+      "id": 164137,
+      "postNumber": 26,
+      "createdAt": "2024-01-25T14:11:27.250Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/rob\">@rob</a> !</p>\n<p>I will come back to you all when I have an update!</p>"
+    },
+    {
+      "id": 164138,
+      "postNumber": 27,
+      "createdAt": "2024-01-25T14:11:45.113Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Conversation about this: <a href=\"https://monday.slack.com/archives/C0610D7EBHU/p1706199058920109?thread_ts=1701168634.231809&amp;cid=C0610D7EBHU\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 164267,
+      "postNumber": 28,
+      "createdAt": "2024-01-26T09:32:20.782Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Sorry to jump onto this thread, but what does it mean when you get a <code>app_subscription_renewal_attempt_failed</code> and the value of <code>account_max_users</code> is <code>null</code>?</p>\n<p>I thought that <code>null</code> was free monday.com accounts (up to 2), who we also charge nothing to, so why would they even have a <code>app_subscription_renewal_attempt_failed</code> triggered?</p>"
+    },
+    {
+      "id": 179382,
+      "postNumber": 29,
+      "createdAt": "2024-04-18T01:45:45.673Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> Does <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> send the user any notification if their renewal payment fails? Do you have a sample you can share?</p>\n<p>Any update since your post of 25 Jan?</p>"
+    },
+    {
+      "id": 179407,
+      "postNumber": 30,
+      "createdAt": "2024-04-18T04:20:21.622Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/D03M94CKK4L/p1713424810728759\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 179491,
+      "postNumber": 31,
+      "createdAt": "2024-04-18T08:40:47.533Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here now <a href=\"https://monday.slack.com/archives/C04NAQWQSQM/p1713440432964689\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 179503,
+      "postNumber": 32,
+      "createdAt": "2024-04-18T09:06:02.902Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/samicaracand\">@samicaracand</a>,</p>\n<p>I checked with the team and they said that we are not sending said notifications.</p>\n<p>I believe since January, our documentation has been updated (if I am not mistaken)</p>"
+    },
+    {
+      "id": 179698,
+      "postNumber": 33,
+      "createdAt": "2024-04-19T05:28:15.007Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>OK so this is an important piece of information: we need to take care of sending notifications related to failed renewal payments.</p>"
+    },
+    {
+      "id": 179971,
+      "postNumber": 34,
+      "createdAt": "2024-04-21T07:02:59.107Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

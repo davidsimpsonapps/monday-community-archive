@@ -1,0 +1,50 @@
+{
+  "id": 60976,
+  "title": "I am not able to update subitems via API",
+  "slug": "i-am-not-able-to-update-subitems-via-api",
+  "categoryId": 98,
+  "tagIds": [
+    5,
+    13,
+    94,
+    155,
+    187
+  ],
+  "createdAt": "2023-07-03T10:35:18.480Z",
+  "lastPostedAt": "2023-07-04T06:46:46.636Z",
+  "postsCount": 4,
+  "excerpt": "In short, I have items with subitems. At the moment subitems have only two fields, the name and a text field called “Description”. \nI’m trying to update its values through PHP API with this code: \n$query = &#39;mutation ($bo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1552,
+  "posts": [
+    {
+      "id": 133586,
+      "postNumber": 1,
+      "createdAt": "2023-07-03T10:35:18.561Z",
+      "author": "pablo.lopez.sf (Pablo López)",
+      "cookedHtml": "<p>In short, I have items with <strong>subitems</strong>. At the moment subitems have only two fields, the name and a text field called “Description”.</p>\n<p>I’m trying to update its values through PHP API with this code:</p>\n<pre><code class=\"lang-auto\">$query = 'mutation ($boardId: Int!, $itemId: Int!, $columnValues: JSON!) { \n    change_multiple_column_values (\n        board_id: $boardId,\n        item_id: $itemId,\n        column_values: $columnValues\n    ) { \n        id\n    }\n}';\n\n$columns = [\n    \"name\" =&gt; \"some text here\",\n    \"description\" =&gt; \"some text here\"\n];\n\n$variables = [\n    'boardId' =&gt; 0123456789, //subitems have their own board Id https://community.monday.com/t/updating-subitems-via-api/16626\n    'itemId' =&gt; (int) 123456,\n    'columnValues' =&gt; json_encode($columns)\n];\n\n$data = [\n    'query' =&gt; $query,\n    'variables' =&gt; $variables\n];\n\n$client = new Client();\n\n$options = [\n    'headers' =&gt; [\n        'Content-Type' =&gt; 'application/json',\n        'Authorization' =&gt; XXXXX\n    ],\n    'json' =&gt; $data\n];\n</code></pre>\n<p>And I get this errors:</p>\n<pre><code class=\"lang-auto\"> Array (\n    [error_code] =&gt; InvalidColumnIdException\n    [status_code] =&gt; 200\n    [error_message] =&gt; This column ID doesn't exist for the board\n    [error_data] =&gt; Array (\n        [column_id] =&gt; description\n        [board_id] =&gt;\n        [error_reason] =&gt; store.monday.automation.error.missing_column\n    )\n)\n</code></pre>\n<p>In a near future, we want to have more custom fields, how can I update name + custom fields via API?</p>"
+    },
+    {
+      "id": 133595,
+      "postNumber": 2,
+      "createdAt": "2023-07-03T12:14:17.969Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/pablo.lopez.sf\">@pablo.lopez.sf</a> ,</p>\n<p>a few things to confirm:</p>\n<ol>\n<li>\n<p>The board Id you are using is the sub-item board id?</p>\n</li>\n<li>\n<p>The item Id you are using is the sub item in question you want to update, correct?</p>\n</li>\n<li>\n<p>It seems to me, the column id (not title) is not “description” based on the response error. Have you checked the columns ID? It is likely “text” or something like that. If you are not sure how, you need to have developer mode turned on in your monday.labs. And then go to the column in question on the board (after it refreshes) and click the column menu to get the id.</p>\n</li>\n</ol>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/c/4/c45da3daf3921902576f3a8a8db51349a88cc75a.png\" alt=\"image\" width=\"410\" height=\"369\" /></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/4/a47bc258b7993d2d8cf4eda3ebf4e07bd92f4e45.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/a/4/a47bc258b7993d2d8cf4eda3ebf4e07bd92f4e45.png\" alt=\"image\" width=\"690\" height=\"158\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">701×161 1.97 KB</span></div></a></div><p></p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/5/9/5923c7723c95306457e63a3bcc1f96bbc4de1265.png\" alt=\"image\" width=\"308\" height=\"108\" /></p>\n<p>If all of these are correct then there might be something wrong with the code itself. But based on the error, my money is on the column ID being incorrect.</p>"
+    },
+    {
+      "id": 133680,
+      "postNumber": 3,
+      "createdAt": "2023-07-04T03:47:32.238Z",
+      "author": "pablo.lopez.sf (Pablo López)",
+      "cookedHtml": "<p>Thanks Chris, now I can see the ID and with this it works!</p>"
+    },
+    {
+      "id": 133692,
+      "postNumber": 4,
+      "createdAt": "2023-07-04T06:46:46.636Z",
+      "author": "ChrisBuna (Chris Buna - Simplified Workflows)",
+      "cookedHtml": "<p>Glad it worked! It you ever need support just let me know!</p>"
+    }
+  ]
+}

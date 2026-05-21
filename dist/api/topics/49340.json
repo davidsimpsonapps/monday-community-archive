@@ -1,0 +1,40 @@
+{
+  "id": 49340,
+  "title": "Power BI API - Want to query subitem (all column not only subitem name) in PowerBi",
+  "slug": "power-bi-api-want-to-query-subitem-all-column-not-only-subitem-name-in-powerbi",
+  "categoryId": 6,
+  "tagIds": [
+    94,
+    187
+  ],
+  "createdAt": "2023-01-17T08:54:48.185Z",
+  "lastPostedAt": "2024-03-01T12:09:18.554Z",
+  "postsCount": 3,
+  "excerpt": "I watched this youtube and he show the query to get data from Monday.com to Powerbi \nPowerBI/Monday.com M Query at 308233441ac17b72e817280753eb3bc6d6b18ddb · DataMuallem/PowerBI · GitHub \n  \nIt works fine but the subitem&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2126,
+  "posts": [
+    {
+      "id": 110888,
+      "postNumber": 1,
+      "createdAt": "2023-01-17T08:54:48.272Z",
+      "author": "suriyapong (suriyapong)",
+      "cookedHtml": "<p>I watched this youtube and he show the query to get data from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> to Powerbi<br />\n<a href=\"https://github.com/DataMuallem/PowerBI/blob/308233441ac17b72e817280753eb3bc6d6b18ddb/Monday.com%20M%20Query\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">PowerBI/Monday.com M Query at 308233441ac17b72e817280753eb3bc6d6b18ddb · DataMuallem/PowerBI · GitHub</a></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/ebfe750c8954545e31ef354ab45f3465bc7dd6a6.png\" title=\"Screenshot 2566-01-17 at 17.35.00\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/ebfe750c8954545e31ef354ab45f3465bc7dd6a6_2_690x279.png\" alt=\"Screenshot 2566-01-17 at 17.35.00\" width=\"690\" height=\"279\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2566-01-17 at 17.35.00</span><span class=\"informations\">2338×946 251 KB</span>\n</div></a></div><p></p>\n<p>It works fine but the subitem value is come with <strong>subitemname1,subitemname2</strong> in subitem column. but I need 1 subitem row with others subitem’s column.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/f/f8a6879a22b3dac10c65c4fa0d7b9dc55d87b91e.png\" alt=\"Screenshot 2023-01-17 173757\" width=\"441\" height=\"268\" /></p>\n<p>What I need is 1 parent table with parent ID and 1 table for all subitems<br />\n(with parent ID)<br />\nor another alternative way.</p>\n<p>I don’t have any query knowledge so please suggest with more detail.</p>\n<p>Thank you in advance.<br />\nMax</p>"
+    },
+    {
+      "id": 125574,
+      "postNumber": 2,
+      "createdAt": "2023-04-26T10:14:39.924Z",
+      "author": "leorocha (leo motta rocha)",
+      "cookedHtml": "<p>Hi, I don’t know if you still need help, but try using this query!</p>\n<pre><code class=\"lang-auto\">(board as text) =&gt; \n\nlet\n\t    Key = &lt;you token&gt;\n\n\n    Source = Web.Contents(\"https://api.monday.com/\",\n    [\n        RelativePath = \"v2\",\n        Headers=[\n            #\"Method\"=\"POST\",\n            #\"Content-Type\"=\"application/json\",\n            #\"Authorization\"= Key\n            ],\n            Content=Text.ToBinary(\"{\"\"query\"\": \"\"{ boards(ids: \"&amp; board &amp;\") { items (limit: 25, page: 1){  id subitems{name column_values{ title text }} } } }\"\"}\")\n            ]\n    ),\n    #\"JSON\" = Json.Document(Source,65001),\n    data = JSON[data],\n    boards = data[boards],\n    boards1 = boards{0},\n    items = boards1[items],\n    #\"Converted to Table\" = Table.FromList(items, Splitter.SplitByNothing(), null, null, ExtraValues.Error)\nin\n    #\"Converted to Table\"\n</code></pre>"
+    },
+    {
+      "id": 170886,
+      "postNumber": 3,
+      "createdAt": "2024-03-01T12:09:18.554Z",
+      "author": "rikwanders (rik)",
+      "cookedHtml": "<p>Thanks LeoRocha not working:(</p>"
+    }
+  ]
+}

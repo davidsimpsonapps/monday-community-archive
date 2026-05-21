@@ -1,0 +1,62 @@
+{
+  "id": 63274,
+  "title": "Date Column Update Failing Using change_simple_column_value in asp.net / C#",
+  "slug": "date-column-update-failing-using-change-simple-column-value-in-asp-net-c",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2023-08-08T14:37:58.050Z",
+  "lastPostedAt": "2023-08-16T06:29:58.104Z",
+  "postsCount": 6,
+  "excerpt": "Hi.  I’d appreciate any advice on the error response I am receiving from GraphQL.  I am trying to update a date column using the mutation “change_simple_column_value”.   Here is the error I am getting: \n{{  &quot;error_code&quot;:&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 523,
+  "posts": [
+    {
+      "id": 138283,
+      "postNumber": 1,
+      "createdAt": "2023-08-08T14:37:58.136Z",
+      "author": "ianestu (Ian Stuart)",
+      "cookedHtml": "<p>Hi.  I’d appreciate any advice on the error response I am receiving from GraphQL.  I am trying to update a date column using the mutation “change_simple_column_value”.   Here is the error I am getting:</p>\n<pre><code class=\"lang-auto\">{{  \"error_code\": \"ColumnValueException\",  \"status_code\": 200,  \"error_message\": \"invalid value, please check our API documentation for the correct data structure for this column. https://developer.monday.com/api-reference/docs/change-column-values\",  \"error_data\": {    \"column_value\": \"{\\\"date\\\"=&gt;\\\"\\\\\\\"2019-06-03\\\", \\\"time\\\"=&gt;\\\"13:25:00\\\\\\\"\\\"}\",    \"column_type\": \"DateColumn\"  }}}\n</code></pre>\n<p>This is the string I am sending:</p>\n<pre><code class=\"lang-auto\">string dt = \"2019-06-03 13:25:00\";\nstring value = @\"\\\\\\\"\"\" + dt + @\"\\\\\\\"\"\";\nstring query = \"{\\\"query\\\" : \\\"mutation { change_simple_column_value(board_id: \" + boardId + \", item_id: \" + itemId + \" , column_id: \\\\\\\"\" + columnId + \"\\\\\\\", value: \\\\\\\"\" + value + \"\\\\\\\") { id } }\\\"}\";\n</code></pre>\n<p>This works in the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> “API Playground”. I think that there is an issue with the date format, but nothing I try works.  Other column type updates work without issue.  Thanks for any help!</p>"
+    },
+    {
+      "id": 138541,
+      "postNumber": 2,
+      "createdAt": "2023-08-10T04:25:06.086Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ianestu\">@ianestu</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I am not experienced with Python but I created this example from our Postman examples for you (Exporting to Python):</p>\n<pre><code class=\"lang-auto\">import http.client\n\nimport json\n\nconn = http.client.HTTPSConnection(\"api.monday.com\")\n\npayload = json.dumps({\n\n\"query\": \"mutation {change_multiple_column_values(item_id:11111, board_id:22222, column_values: \\\"{\\\\\\\"date\\\\\\\" : {\\\\\\\"date\\\\\\\" : \\\\\\\"1993-08-27\\\\\\\", \\\\\\\"time\\\\\\\" : \\\\\\\"18:00:00\\\\\\\"}}\\\") {id}}\"\n\n})\n\nheaders = {\n\n'Authorization': 'RELEVANT_API_KEY',\n\n'Content-Type': 'application/json'\n\n}\n\nconn.request(\"POST\", \"/v2\", payload, headers)\n\nres = conn.getresponse()\n\ndata = res.read()\n\nprint(data.decode(\"utf-8\"))\n</code></pre>\n<p>What happens if you try something like this?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 138583,
+      "postNumber": 3,
+      "createdAt": "2023-08-10T10:29:24.037Z",
+      "author": "ianestu (Ian Stuart)",
+      "cookedHtml": "<p>Hi, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>.  I am working with <strong>C#</strong>, not Python.  Can you please provide an example that updates a date column value using C#?</p>\n<p>It seems to me that the change_simple_column_value endpoint that I describe above is recognizing the column, but not the format.  Is there any insight that you can provide on what I am doing wrong there?</p>\n<p>Thanks again!</p>"
+    },
+    {
+      "id": 138592,
+      "postNumber": 4,
+      "createdAt": "2023-08-10T11:15:12.972Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Sorry about that! My bad.</p>\n<p>Here is the <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-aa0dd82e-b101-4146-befb-585ea965bf74?ctx=code\">Postman example</a> exported to C#:</p>\n<pre><code class=\"lang-auto\">var client = new HttpClient();\n\nvar request = new HttpRequestMessage(HttpMethod.Post, \"https://api.monday.com/v2\");\n\nrequest.Headers.Add(\"Authorization\", \"RELEVANT_API_KEY\");\n\nvar content = new StringContent(\"{\\n \\\"query\\\": \\\"mutation {change_multiple_column_values(item_id:11111, board_id:22222, column_values: \\\\\\\"{\\\\\\\\\\\\\\\"date\\\\\\\\\\\\\\\" : {\\\\\\\\\\\\\\\"date\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"1993-08-27\\\\\\\\\\\\\\\", \\\\\\\\\\\\\\\"time\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"18:00:00\\\\\\\\\\\\\\\"}}\\\\\\\") {id}}\\\" \\n}\", null, \"application/json\");\n\nrequest.Content = content;\n\nvar response = await client.SendAsync(request);\n\nresponse.EnsureSuccessStatusCode();\n\nConsole.WriteLine(await response.Content.ReadAsStringAsync());\n</code></pre>\n<p>Looks to me like the issue may be related to how quotes are being escaped.</p>\n<p>Please let me know how this goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 138955,
+      "postNumber": 5,
+      "createdAt": "2023-08-14T10:40:55.436Z",
+      "author": "ianestu (Ian Stuart)",
+      "cookedHtml": "<p>Hi, I was able to successfully update a column using “change_multiple_column_values” from the example provided.  Thank you <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> .</p>"
+    },
+    {
+      "id": 139382,
+      "postNumber": 6,
+      "createdAt": "2023-08-16T06:29:58.104Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/ianestu\">@ianestu</a> !!</p>"
+    }
+  ]
+}

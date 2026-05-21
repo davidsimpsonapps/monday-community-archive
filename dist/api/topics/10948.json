@@ -1,0 +1,137 @@
+{
+  "id": 10948,
+  "title": "[RELEASED] Monday.api doesn't return when user is viewer or guest",
+  "slug": "released-monday-api-doesnt-return-when-user-is-viewer-or-guest",
+  "categoryId": 58,
+  "tagIds": [
+    276
+  ],
+  "createdAt": "2020-09-07T09:19:03.499Z",
+  "lastPostedAt": "2021-03-05T15:35:21.007Z",
+  "postsCount": 15,
+  "excerpt": "Hey, \nWhen my board view loads, I’m calling monday api for info about me and board. If the user is an account  viewer, I see in the chrome dev console there was an error, but my code never gets it (not with await and not&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 5737,
+  "posts": [
+    {
+      "id": 27836,
+      "postNumber": 1,
+      "createdAt": "2020-09-07T09:19:03.557Z",
+      "author": "rbabayoff (Ronen Babayoff @ Easyapps)",
+      "cookedHtml": "<p>Hey,</p>\n<p>When my board view loads, I’m calling monday api for info about me and board. If the user is an account  viewer, I see in the chrome dev console there was an error, but my code never gets it (not with await and not with .then / .catch). The error in the console is:</p>\n<pre><code class=\"lang-auto\">POST https://eazyapps.monday.com/v2 403\nError: There was an error in response from monday.com graphql API\n</code></pre>\n<p>And if I look at the http response body in the chrome dev console, I see:</p>\n<pre><code class=\"lang-auto\">{\"error_code\":\"UserUnauthroizedException\",\"status_code\":403,\"error_message\":\"The user is unauthorized to use the api_v2\",\"error_data\":{\"user_id\":15943487}}\n</code></pre>\n<p>Related question - I’m trying to figure out if the current user who loaded my board view is a viewer or guest, what’s the best way of doing that? If the api call will return the error above to me, that will be the preferred way I think, since I don’t want to ask for more scopes than needed when installing my app (i.e. users:read).</p>\n<p>Thanks,<br />\nRonen</p>"
+    },
+    {
+      "id": 27838,
+      "postNumber": 2,
+      "createdAt": "2020-09-07T09:33:02.465Z",
+      "author": "LaurentConroux (Laurent Conroux)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/rbabayoff\">@rbabayoff</a>,</p>\n<p>Are you using monday.api() to make the api calls?</p>\n<p>And if syou do, are you setting the token yourself, or do you let the monday sdk set it automatically?</p>"
+    },
+    {
+      "id": 27840,
+      "postNumber": 3,
+      "createdAt": "2020-09-07T09:37:21.938Z",
+      "author": "rbabayoff (Ronen Babayoff @ Easyapps)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/laurentconroux\">@LaurentConroux</a>, yes I’m using monday.api to make the calls, and since its from within the board view,  no need to use a token.</p>\n<p>It’s not the first time that I ran into the monday api “swallowing” errors without returning. The error is ok, that’s not the problem, but I need to get it back.</p>\n<p>Seems like the monday.api is wrapped internally with a catch handler that swallows errors or not using await when calling an async function and therefore the errors are lost.</p>"
+    },
+    {
+      "id": 28313,
+      "postNumber": 4,
+      "createdAt": "2020-09-11T17:29:50.316Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 28314,
+      "postNumber": 5,
+      "createdAt": "2020-09-11T17:33:56.362Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/rbabayoff\">@rbabayoff</a>,</p>\n<p>I see the error in your console seems to include your domain (slug + <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>) - is the URL you are trying to query against in your application?</p>\n<p>If so - could you try querying against our API url instead?</p>\n<p><a href=\"https://api.monday.com/v2/\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a></p>\n<p>Let me know if that helps.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 28319,
+      "postNumber": 6,
+      "createdAt": "2020-09-11T18:14:33.520Z",
+      "author": "rbabayoff (Ronen Babayoff @ Easyapps)",
+      "cookedHtml": "<p>Hey Daniel,</p>\n<p>I don’t control that - I’m using monday.api from the monday sdk, i.e.:</p>\n<pre><code class=\"lang-auto\">import mondaySdk from \"monday-sdk-js\";\nconst monday = mondaySdk();\n...\nconst res = await monday.api(`\nquery MyQuery($boardId: Int!) {\n\tme {\n    id\n    email\n    name\n  }\n...\n</code></pre>"
+    },
+    {
+      "id": 28320,
+      "postNumber": 7,
+      "createdAt": "2020-09-11T18:37:39.660Z",
+      "author": "rbabayoff (Ronen Babayoff @ Easyapps)",
+      "cookedHtml": "<p>Daniel,</p>\n<p>This is a known issue with the monday sdk that has already been reported previously as an issue in your gihub repo. See <a href=\"https://github.com/mondaycom/monday-sdk-js/issues/36\" rel=\"noopener nofollow ugc\">here</a>.</p>\n<p>Ronen</p>"
+    },
+    {
+      "id": 28321,
+      "postNumber": 8,
+      "createdAt": "2020-09-11T18:39:18.033Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/rbabayoff\">@rbabayoff</a>,</p>\n<p>Apologies! For a moment there I thought you were running into this error through the API rather than the SDK, please disregard <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I checked in with the team and propagating API errors through the SDK is actually something on our roadmap that we hope to be tackling soon, but don’t have an ETA just yet.</p>\n<p>In terms of figuring out the current user loading the board view - this wouldn’t be possible through an API call right now, it would require making an SDK call.</p>\n<p>Let me know if we can further assist!</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 28632,
+      "postNumber": 9,
+      "createdAt": "2020-09-16T08:58:05.250Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/rbabayoff\">@rbabayoff</a>, thanks for reporting this issue!<br />\nThe problem with API error propagation was solved in the new version of the SDK (0.1.1)<br />\nJust update your dependency and the promise should be rejected when there is an error from the API</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/c/cac3dd2a406cb05c2926b272b4670d922869c339.png\" alt=\"image\" width=\"606\" height=\"167\" /></p>"
+    },
+    {
+      "id": 28934,
+      "postNumber": 10,
+      "createdAt": "2020-09-19T09:16:04.862Z",
+      "author": "jaacquees (Jacques Barouhiel)",
+      "cookedHtml": "<p>Hi. I am having the same issue. Testing Board View app for a potential viewer, the SDK doesn’t return any data from the board. For “full” board members the app works perfectly.</p>\n<p>I understand the discussion about exception catching, but my question is: why would a viewer be unauthorised from reading data via the SDK/API when they are able to see this data in the board itself ? <a class=\"mention\" href=\"/u/rbabayoff\">@rbabayoff</a> did you resolve your issue?</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 28951,
+      "postNumber": 11,
+      "createdAt": "2020-09-19T15:59:08.335Z",
+      "author": "rbabayoff (Ronen Babayoff @ Easyapps)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/vladmonday\">@VladMonday</a>, so I updated to v0.1.1 and yes, now it throws an exception, but the exception is not an Error instance with details about the error, it’s an empty object without any info, and I’m still not able to know if the user is a viewer or a guest.</p>\n<p>What I’d like to get is the error response from the api call so I know if it’s a not authorized error and not some unknown error. This is what I’d like to get back in some fashion (this is the http response from the api which you can also get in the api playground:</p>\n<pre><code class=\"lang-auto\">{\n  \"error_code\": \"UserUnauthroizedException\",\n  \"status_code\": 403,\n  \"error_message\": \"The user is unauthorized to use the api_v2\",\n  \"error_data\": {\n    \"user_id\": 15943487\n  }\n}\n</code></pre>\n<p>Thanks,<br />\nRonen</p>"
+    },
+    {
+      "id": 34410,
+      "postNumber": 12,
+      "createdAt": "2020-11-23T16:00:22.887Z",
+      "author": "Andrzej (Andrzej Bieniek)",
+      "cookedHtml": "<p>Same problem here, I’m trying to capture ColumnValueException error code, but it is not returned back to application.</p>\n<p><a class=\"mention\" href=\"/u/vladmonday\">@VladMonday</a>, can monday.api() call return error code in exception?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/f61e58c6251cfca0d380a3ff6cc3487a68321352.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/f61e58c6251cfca0d380a3ff6cc3487a68321352_2_690x352.png\" alt=\"image\" width=\"690\" height=\"352\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">999×510 67.3 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 34608,
+      "postNumber": 13,
+      "createdAt": "2020-11-26T06:18:30.779Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Checking internally: <a href=\"https://monday.slack.com/archives/C018J3C259C/p1606378041223100\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 34797,
+      "postNumber": 14,
+      "createdAt": "2020-11-28T06:03:06.913Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey folks! Thanks for your feedback on this feature. Due to the number of people running into this issue, we’ve added it to the upcoming iteration. Keep a look out for this feature in the next 3-4 weeks.</p>"
+    },
+    {
+      "id": 36567,
+      "postNumber": 15,
+      "createdAt": "2020-12-29T19:35:47.830Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/andrzej\">@Andrzej</a>, <a class=\"mention\" href=\"/u/rbabayoff\">@rbabayoff</a><br />\nThe issue is solved in version 0.1.2 of the SDK, right now it will return error data as part of the error object.<br />\nMore details here: <a href=\"https://github.com/mondaycom/monday-sdk-js/releases/tag/0.1.2\" class=\"inline-onebox\">Release API error data object · mondaycom/monday-sdk-js · GitHub</a></p>"
+    },
+    {
+      "id": 36636,
+      "postNumber": 16,
+      "createdAt": "2020-12-31T08:50:57.485Z",
+      "author": "Andrzej (Andrzej Bieniek)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/vladmonday\">@VladMonday</a>, it works great now.</p>"
+    },
+    {
+      "id": 43588,
+      "postNumber": 17,
+      "createdAt": "2021-03-05T15:35:21.007Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    }
+  ]
+}

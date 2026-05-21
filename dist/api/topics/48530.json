@@ -1,0 +1,89 @@
+{
+  "id": 48530,
+  "title": "API Issues Disappearing Items/Subitems after Adding",
+  "slug": "api-issues-disappearing-items-subitems-after-adding",
+  "categoryId": 8,
+  "tagIds": [
+    107,
+    187
+  ],
+  "createdAt": "2023-01-05T19:12:27.243Z",
+  "lastPostedAt": "2023-01-09T11:11:23.521Z",
+  "postsCount": 9,
+  "excerpt": "I reported this to support but have no idea how long it will take to get a response and wanted to ask the community if they knew what was going on: \nI created a local app which processes a CSV file. It loops through the &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1659,
+  "posts": [
+    {
+      "id": 109380,
+      "postNumber": 1,
+      "createdAt": "2023-01-05T19:12:27.338Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>I reported this to support but have no idea how long it will take to get a response and wanted to ask the community if they knew what was going on:</p>\n<p>I created a local app which processes a CSV file. It loops through the rows and follows the following steps using API calls:</p>\n<ol>\n<li>List itemin my local APP I created a loop through a CSV file and read the rows. For each row I do the following with the API:</li>\n<li>Check if item exists with same name using search for item with name column</li>\n<li>If doesn’t exist Add it as an Item and use specific columns from Row to populate specified column IDs</li>\n<li>Check if SubItem Exists</li>\n<li>If not add a SubItem to the Item created in step 2  using specific columns from Row to populate specified column IDs</li>\n</ol>\n<p>All of these steps receive responses of success and IDs for whatever is created.</p>\n<p>I suspected items were missing, often watch the browser and there would be an item/subitem sum I looked at as it grew in the import. It would complete and the page would refresh at some point and count would be less than it was when completed the process of looping through the CSV rows. FYI I am not importing the CSV directly because I am performing calculations like Due Dates and who to assign and the format change of many of columns wouldn’t be feasible.</p>\n<p>After I added step 6. Verify Item Exists, I found around the same count of items/subitems created, it fails to find the Item. I have tried API to search for item using column name and simply getting a list of items and their names on the board and tried filtering the board in a browser manually. For all, the item is missing. Usually it’s about 100 api queries after started but that’s a guess and not exact. The Item and SubItem actually show up in the browser and no matter how long I wait, if I hit refresh it disappears as though I did not add them. It is not item specific because if I start import again it starts with the missing item and that ends up in the next failure still being there. It fails on another item.</p>\n<p>I could create a step to add them again however this would be mistake since it is only a band-aid.</p>\n<p>Let me repeat just in case it is missed: the Item is added gets ID of item from API and adds Subitem getting the ID successfully. It is only after I verify the item exists in the board through API I get any indication it’s not there anymore. Before I addedStep 5 Verify, I had no idea item was missing. I can create a new board from a template without any items on it and same issue occurs.</p>\n<p>I have reviewed Activity/History for the Board and the activity shows the Item and SubItem was added but nothing else related to them like being deleted or moved.</p>\n<p>Any help is greatly appreciated! This is bizarre for sure. I have a loom video I can send if desired showing it.</p>"
+    },
+    {
+      "id": 109511,
+      "postNumber": 2,
+      "createdAt": "2023-01-06T17:52:10.722Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Can you share all the API calls you’re making, and the order you’re making them? Pseudocode is fine, I’m curious about what mutations you’re doing and in what order.</p>\n<p>Also, what does the activity log say about these items? Does it show they were created? Deleted?</p>\n<p>Here are two other possible culprits:</p>\n<p><strong>Indexing lag time for items_by_column_values</strong><br />\nIt takes 30 seconds for items to be visible to the <code>items_by_column_values</code> and <code>items_by_multiple_column_values</code> queries, due to the time it takes our system to index the values.</p>\n<p><strong>Parallel mutations</strong><br />\nIf you try to make multiple mutations concurrently on the same board or item, the data may not be properly stored in our system. If you do this you may see disappearing items, column values that don’t make sense, or an activity log that doesn’t match the board data.</p>"
+    },
+    {
+      "id": 109525,
+      "postNumber": 3,
+      "createdAt": "2023-01-06T19:57:39.396Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<blockquote>\n<p>Also, what does the activity log say about these items? Does it show they were created? Deleted?</p>\n</blockquote>\n<p>The activity logs show the items were created but not deleted.</p>\n<p>In response to the 2 possible culprits:<br />\nIndexing for items_by_column_values would explain why the item can’t be found but not why they disappear after the fact. I am not making parallel calls but perhaps if I add an item then quickly mutate changing a column is where the issue is? See below for API Calls and steps. When you see the steps you’ll understand why the mutation is necessary after the fact.</p>\n<p>Here’s the order of calls and pseudocode looping through rows of spreadsheet. For ease of reading, I removed the escaped quotes from my pseudocode:</p>\n<ol>\n<li>check for item by name if exists on board using ID of board.</li>\n</ol>\n<pre><code class=\"lang-auto\">{\"query\": \"query {items_by_column_values (board_id: theBoardID, column_id: \"name\", column_value: \"theItemName\") {id}}\" }\"\n</code></pre>\n<ol>\n<li>If item is not found create new item with column values.</li>\n</ol>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation {create_item (board_id: theBoardIDhere, group_id: theGroupIdHere, item_name: \"ItemName\" , column_values: { my columnIds and values here..}){id}},\"variables\":\"\"}\n</code></pre>\n<ol>\n<li>Check if subitem exists with a name using similar API call as step 1 with subitemboard ID.</li>\n<li>If subitem is not found use the Item ID returned from Step 2 and Sub-Item Board ID to create new subitem with column values.</li>\n</ol>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation ($parentItemId: Int!, $subItemName: String!, $columnvalues: JSON!) {create_subitem (parent_item_id: $parentItemId, item_name: $subItemName, column_values: $columnvalues){id}}\",\"variables\":{\"parentItemId\":\" parentID,\"subItemName\": \"nameString\",\"columnvalues\": myColumnValuesHere}}\n</code></pre>\n<ol>\n<li>If Step 4 was completed Insert a weblink containing the sub-item ID from Step 4</li>\n</ol>\n<pre><code class=\"lang-auto\">{\"query\": \"mutation {change_multiple_column_values(item_id:\" &amp; subItemID &amp; \", board_id:\" &amp; prodSubItemBoardID &amp; \", column_values: \"{\"link\" : {\"url\" : \"http://mywebsite.com?id=subItemID\", \"text\": \"web link to call api from a third party server\"}}\") {id}}\" }\t\t\t\n</code></pre>\n<ol>\n<li>This step I added yesterday after I realized items were disappearing usually around the 20-25 loop mark. I will likely remove if I can confirm subitems/items stop disappearing.  Originally I did the search by name from step 1 but it took longer to find the item then pulling a list of all items on the board which is probably as you mentioned due to column values being indexed yet. I search the results of this result for the item name. If not found I delay 5 seconds and try again. If fails the loop stops.</li>\n</ol>\n<pre><code class=\"lang-auto\">{\"query\":\"{ boards(ids: theBoardID) {id name items (limit: 5000) { id name}}}\",\"variables\":\"\"}\n</code></pre>\n<p>The entire process takes about 5 mins to process about 250 rows due to code I have to calculate due dates and figure out who to assign in the process and with the API calls which will not matter since it will happen periodically to import new items/subitems. Twice daily for now.</p>\n<p>Thank you for your assistance</p>"
+    },
+    {
+      "id": 109530,
+      "postNumber": 4,
+      "createdAt": "2023-01-06T20:30:48.034Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> I’m thinking now that it’s step 5 when I add the URL using change_multiple_column_values after your comment on indexing log time. I can’t wait 30 seconds every time I add a subitem and you would think it would fail more often. Do you think this could be it and if so do you know of another method to add a link to a column? I am not sure how else can add the URL to a link column through the API.</p>"
+    },
+    {
+      "id": 109540,
+      "postNumber": 5,
+      "createdAt": "2023-01-06T21:10:21.566Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Honestly, since items are being created then deleted it sounds like a board-level bug. Our support team can investigate the root cause here. You opened a ticket with our team already, right?</p>\n<p>Regarding indexing time – how big is your board? If your board is small enough to be quickly queried for column values, I suggest pulling the board data into your app and then writing some logic to filter for the relevant values. Unless your board is huge, this will be faster than waiting 30 seconds for the board to index.</p>\n<p>Regarding updating the URL column – you’re doing it the right way, you need to use one of our change column value mutations to add the subitem’s URL.</p>"
+    },
+    {
+      "id": 109541,
+      "postNumber": 6,
+      "createdAt": "2023-01-06T21:12:41.288Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Found his ticket - <a href=\"https://monday.zendesk.com/agent/tickets/2450475\">https://monday.zendesk.com/agent/tickets/2450475</a></p>"
+    },
+    {
+      "id": 109549,
+      "postNumber": 7,
+      "createdAt": "2023-01-06T22:11:27.823Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p>Thank you. I the board is not that big. I did get email from support right after I responded to you and they indicated this is issue that was resolved sometime today and that they were in process of restoring the items that disappeared for other users. I’m surprised it hasn’t been reported to users. Is there a place this sort of stuff is logged so people don’t waste their time?</p>"
+    },
+    {
+      "id": 109601,
+      "postNumber": 8,
+      "createdAt": "2023-01-08T07:04:23.269Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/dean_m\">@dean_m</a>,</p>\n<p>Yes. The issue was found and fixed.</p>\n<p>Please do let us know if you have any other issues.</p>\n<p>Depending on each situation, bugs are communicated in different ways.</p>\n<p>I would love to hear your thoughts about how you think an issue like this one would be best communicated to users so I can pass on that feedback to our team <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 109678,
+      "postNumber": 9,
+      "createdAt": "2023-01-09T10:44:11.653Z",
+      "author": "dean_m (Dean Marshall)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>A discussion could be reported on the Forums when more than a user is experiencing a verified issue or bug and when it has been resolved. This would easily transition into the possibility for the same on release beta API features that could be shared with your community. Again, it was frustrating to be unaware of the issue and the fact it was being addressed and resolved after the fact. OR even better…Why not showcase your softwares capability for issues to be opened and closed using your own tools for both bug reporting, feature requests and plans?</p>"
+    },
+    {
+      "id": 109683,
+      "postNumber": 10,
+      "createdAt": "2023-01-09T11:11:23.521Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/dean_m\">@dean_m</a>,</p>\n<p>Thank you for the feedback and suggestions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>I will share this with our team.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

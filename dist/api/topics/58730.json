@@ -1,0 +1,39 @@
+{
+  "id": 58730,
+  "title": "Help with errors when doing calculations within IF Formula",
+  "slug": "help-with-errors-when-doing-calculations-within-if-formula",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-05-21T17:46:10.452Z",
+  "lastPostedAt": "2023-05-22T14:44:41.812Z",
+  "postsCount": 3,
+  "excerpt": "I’m having an issue with calculating a ratio of Purchase / ARV. My board has 3 columns that all have $ values: Purchase Price, Estimated ARV, and Final ARV. The way our process works is that initially we enter an Estimat&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1011,
+  "posts": [
+    {
+      "id": 128854,
+      "postNumber": 1,
+      "createdAt": "2023-05-21T17:46:10.547Z",
+      "author": "AimfulMelissa (Melissa Yatzeck)",
+      "cookedHtml": "<p>I’m having an issue with calculating a ratio of Purchase / ARV. My board has 3 columns that all have $ values: Purchase Price, Estimated ARV, and Final ARV. The way our process works is that initially we enter an Estimate ARV $, and later on we enter a Final ARV $. This means that at first, Final ARV will be blank.</p>\n<p>I want to set up a Formula column for Purchase / ARV ratio where if Final ARV is blank, the calculation is done with Estimate ARV, and if FINAL ARV is not blank, the calculation is done with FINAL ARV.</p>\n<p>As a test, I entered this formula:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/1/7/1731ca1e8ad52edda601c0eaf10bff8469b8b3bc.png\" alt=\"Screenshot 2023-05-21 at 4.39.49 PM\" width=\"485\" height=\"68\" /></p>\n<p>The results look great:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/f/8/f8c1317d501cf9cc634cb62c4516e344ce617d9e.png\" alt=\"Screenshot 2023-05-21 at 4.40.04 PM\" width=\"575\" height=\"235\" /></p>\n<p>But here’s where the issue is - when I try to replace either of those text displays with a formula that calculates the ratio, I see an error. Is this a bug? Is there a limitation of formulas where I can’t do a calculation nested within an IF formula?</p>\n<p>Here is an example - in this case, if Final ARV is not zero, it should show the calculated ratio as a %. If the Final ARV is zero, it should still display the text “Final ARV is zero”, but here is what happens:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/4/f/4fc646bce21ea8340488e2a80a7fe63e2071cb72.png\" alt=\"Screenshot 2023-05-21 at 4.43.35 PM\" width=\"487\" height=\"71\" /><br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/2/9/29f260a943f06e4f604dba7bd00c4d4079e62633.png\" alt=\"Screenshot 2023-05-21 at 4.43.50 PM\" width=\"583\" height=\"241\" /></p>\n<p>The full formula should actually be this:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/c/0/c0a25c75ac1b6fd7f3a5ea0dcded699cafe3d95d.png\" alt=\"Screenshot 2023-05-21 at 4.45.14 PM\" width=\"482\" height=\"68\" /></p>\n<p>But I always see the red exclamation points whenever Final ARV is zero, and the error says “Can’t divide by 0” - which I am aware of, and is the whole reason I am using an IF formula. Any ideas on how to get around this?</p>"
+    },
+    {
+      "id": 128961,
+      "postNumber": 2,
+      "createdAt": "2023-05-22T11:52:39.171Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Here’s the easy fix for that:</p>\n<pre><code class=\"lang-auto\">IF ( \n    {Final ARV}=\"O\",\n    ROUND( \n        {Purchase Price} / {Estimated ARV} *100,\n        0\n    ),\n    ROUND(\n        {Purchase Price} /\n        MAX(\n            {Final ARV},\n            1\n        ) *100,\n        0\n    )\n)\n</code></pre>\n<p>Essentially, you’re guaranteeing that it will always divide by a minimum of 1. I agree that the formula should be smart enough not to throw an error for the Else statement that isn’t reached, but at least the fix is simple!</p>\n<p>Let me know if the formula has any issues. I haven’t tested it.</p>"
+    },
+    {
+      "id": 128981,
+      "postNumber": 3,
+      "createdAt": "2023-05-22T14:44:41.812Z",
+      "author": "AimfulMelissa (Melissa Yatzeck)",
+      "cookedHtml": "<p>Thanks for the workaround, this solved it!</p>"
+    }
+  ]
+}

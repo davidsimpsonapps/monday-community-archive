@@ -1,0 +1,54 @@
+{
+  "id": 101809,
+  "title": "Formula Column",
+  "slug": "formula-column",
+  "categoryId": 6,
+  "tagIds": [
+    104,
+    108
+  ],
+  "createdAt": "2024-10-29T06:19:01.903Z",
+  "lastPostedAt": "2024-11-07T17:16:05.434Z",
+  "postsCount": 5,
+  "excerpt": "I am using a column named Planned Timeline* to select dates and a status column named Status* with labels “Planned Task,” “Working on it,” “Completed,” and “Stuck / On Hold” in monday.com. I want to create a formula colu&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 55,
+  "posts": [
+    {
+      "id": 207700,
+      "postNumber": 1,
+      "createdAt": "2024-10-29T06:19:01.985Z",
+      "author": "Shoaibali450 (Shoaib Ali)",
+      "cookedHtml": "<p>I am using a column named Planned Timeline* to select dates and a status column named Status* with labels “Planned Task,” “Working on it,” “Completed,” and “Stuck / On Hold” in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>. I want to create a formula column named Priority with the following conditions:</p>\n<p><strong>For Example</strong> If the Planned Timeline* is between 01-Oct-24 and 30-Oct-24, and the end date (30-Oct-24) is within 7 days of the current date, the priority should be set to “High” with a red icon, only if the Status* is not “Completed.”</p>\n<p>If the Planned Timeline* dates are not set (i.e., empty), the priority should automatically be “Medium” with a blue icon, regardless of the Status*.</p>"
+    },
+    {
+      "id": 207702,
+      "postNumber": 2,
+      "createdAt": "2024-10-29T06:34:53.551Z",
+      "author": "Mindflows_Shanine (Shanine Velarde)",
+      "cookedHtml": "<p>Hi Shaoaib,</p>\n<p>Shanine here from Mindflows <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I suggest using <a href=\"http://Make.com/Zapier\" rel=\"noopener nofollow ugc\">Make.com/Zapier</a> for this scenario.</p>"
+    },
+    {
+      "id": 207733,
+      "postNumber": 3,
+      "createdAt": "2024-10-29T12:28:09.683Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shoaibali450\">@Shoaibali450</a></p>\n<p>Try this:</p>\n<pre><code class=\"lang-auto\">IF({Status} &lt;&gt; \"Complete\",\n  IF(\n    AND(\n      DAYS(FORMAT_DATE({Timeline#Start}),\"10/1/2024\") &gt;= 0, \n      DAYS(\"10/30/2024\",FORMAT_DATE({Timeline#Start})) &gt;=0,\n      ABS(DAYS(FORMAT_DATE({Timeline#End}),\n         FORMAT_DATE(TODAY()))) &lt;= 7\n    ),\n    \"🟥 High\",\n    IF({Timeline#Start} = \"\", \"🟦 Medium\", \"\")\n    , \"\"\n  )\n)   \n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a><br />\n<strong><a href=\"https://themondayman.com/custom/\">Get Custom Apps, Integrations &amp; Automations for monday</a></strong></p>"
+    },
+    {
+      "id": 208736,
+      "postNumber": 5,
+      "createdAt": "2024-11-05T15:50:15.208Z",
+      "author": "Shoaibali450 (Shoaib Ali)",
+      "cookedHtml": "<p>This is Great help. However can we remove the dates from this formula? the above given dates are only for example. We need to select the timeline column instead to pick date 7 days before timeline ends.<br />\nLooking forward to get this done.</p>"
+    },
+    {
+      "id": 209103,
+      "postNumber": 6,
+      "createdAt": "2024-11-07T17:16:05.434Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>I got it now. Here you go:</p>\n<pre><code class=\"lang-auto\">IF({Status} = \"Completed\", \"\", \n  IF(DAYS(FORMAT_DATE({Timeline#End}),\n    FORMAT_DATE(TODAY())) &lt;= 7, \"🟥 High\",\n    \"🟦 Medium\"\n  )\n)\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://themondayman.com/\">The Monday Man</a><br />\n<strong><a href=\"https://themondayman.com/custom/\">Get Custom Apps, Integrations &amp; Automations for monday</a></strong></p>"
+    }
+  ]
+}

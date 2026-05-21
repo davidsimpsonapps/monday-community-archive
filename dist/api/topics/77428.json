@@ -1,0 +1,63 @@
+{
+  "id": 77428,
+  "title": "Python script, graphql fetching subitems = Query has complexity > 5000000",
+  "slug": "python-script-graphql-fetching-subitems-query-has-complexity-5000000",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    139,
+    187,
+    203
+  ],
+  "createdAt": "2024-02-07T20:21:34.529Z",
+  "lastPostedAt": "2024-02-14T13:36:43.968Z",
+  "postsCount": 6,
+  "excerpt": "I am trying to run a quick query on python trying to fetch a lot of subitem information. Then I get the following error: \n{&#39;errors&#39;: [{&#39;message&#39;: &#39;Query has complexity of 11010020, which exceeds max complexity of 5000000&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 381,
+  "posts": [
+    {
+      "id": 166499,
+      "postNumber": 1,
+      "createdAt": "2024-02-07T20:21:34.620Z",
+      "author": "juholaan1 (Juan Becerra)",
+      "cookedHtml": "<p>I am trying to run a quick query on python trying to fetch a lot of subitem information. Then I get the following error:</p>\n<pre><code class=\"lang-auto\">{'errors': [{'message': 'Query has complexity of 11010020, which exceeds max complexity of 5000000', 'extensions': {'code': 'maxComplexityExceeded', 'complexity': 11010020, 'maxComplexity': 5000000}}], 'extensions': {'warnings': [{'message': 'Replaced by Board.items_page in 2023-10', 'locations': [{'line': 4, 'column': 9}], 'path': ['query', 'boards', 'items'], 'extensions': {'code': 'deprecatedField', 'typeName': 'Board', 'fieldName': 'items'}}]}, 'account_id': 16336358}\n</code></pre>\n<p>The query is:</p>\n<p>query = f’‘’<br />\nquery{{<br />\nboards(ids: board_id){{<br />\nitems{{<br />\nsubitems{{<br />\ncolumn_values{{<br />\ntitle<br />\n}}<br />\n}}<br />\n}}<br />\n}}<br />\n}}<br />\n‘’’<br />\nAnd the script is as simple as this:</p>\n<pre><code class=\"lang-auto\">import requests\nimport pandas as pd\nimport os\nimport json\n\napi_key = api_key\nurl = f'https://api.monday.com/v2'\nheaders = {\n    'Authorization': api_key\n}\n\nquery = query (above)\nresponse = requests.post(url, headers=headers, json={'query': query})\nrjson = response.json()\nprint(rjson)\n</code></pre>\n<p>Obviously it fails on the response.</p>\n<p>Is it possible to get this items?</p>\n<p>The idea is to create some dataframes with pandas and toy with the information.</p>"
+    },
+    {
+      "id": 166641,
+      "postNumber": 2,
+      "createdAt": "2024-02-08T07:03:17.203Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/juholaan1\">@juholaan1</a>,</p>\n<p>That is a deprecated query. You can use items_page instead (as explained <a href=\"https://developer.monday.com/api-reference/reference/items-page\">here</a>).</p>\n<p>For example:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 11111) {\n    items_page(limit: 10) {\n      items {\n        name\n        id\n        subitems {\n          name\n          id\n          column_values {\n            value\n            text\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 166740,
+      "postNumber": 3,
+      "createdAt": "2024-02-08T13:19:54.972Z",
+      "author": "juholaan1 (Juan Becerra)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 11111) {\n    items_page(limit: 10) {\n      items {\n        name\n        id\n        subitems {\n          name\n          id\n          column_values {\n            value\n            text\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n</blockquote>\n</aside>\n<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, thank you so much for you answer. I have tried that code directly on the playground and it definetevely works, but when I tried to replicate the query on my python script I get the following error:</p>\n<p><code>{'errors': [{'message': \"Field 'items_page' doesn't exist on type 'Board'\", 'locations': [{'line': 4, 'column': 5}], 'path': ['query', 'boards', 'items_page'], 'extensions': {'code': 'undefinedField', 'typeName': 'Board', 'fieldName': 'items_page'}}], 'account_id': 16336358}</code></p>\n<p>Can you please provide some insights regarding this issue?</p>"
+    },
+    {
+      "id": 166750,
+      "postNumber": 4,
+      "createdAt": "2024-02-08T14:09:36.287Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Make sure you’re passing the <a href=\"https://developer.monday.com/api-reference/docs/api-versioning#how-to-access-different-versions\">API-Version header</a> with one of the current versions in there (2023-10, 2024-01, 2024-04) <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 166807,
+      "postNumber": 5,
+      "createdAt": "2024-02-08T19:05:33.273Z",
+      "author": "juholaan1 (Juan Becerra)",
+      "cookedHtml": "<p>Hello Rachel,</p>\n<p>This completely solves my doubt, it works to update the header to:</p>\n<pre><code class=\"lang-auto\">headers = {\n    'Authorization': api_key,\n    'API-Version' : '2024-01'\n}\n</code></pre>\n<p>Thanks a lot</p>"
+    },
+    {
+      "id": 167835,
+      "postNumber": 6,
+      "createdAt": "2024-02-14T13:36:43.968Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>That is great <a class=\"mention\" href=\"/u/juholaan1\">@juholaan1</a>!</p>\n<p>Let us know if you need anything else!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

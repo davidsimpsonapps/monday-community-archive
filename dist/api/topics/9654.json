@@ -1,0 +1,75 @@
+{
+  "id": 9654,
+  "title": "Webhook event type change_specific_column_value",
+  "slug": "webhook-event-type-change-specific-column-value",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    144
+  ],
+  "createdAt": "2020-08-01T20:00:16.317Z",
+  "lastPostedAt": "2020-10-29T08:33:46.151Z",
+  "postsCount": 8,
+  "excerpt": "I noticed a new(?) eventType for the create_webhook API call: change_specific_column_value. From the name I expect this webhook fires when a specific column changes :slight_smile: . \nI also noticed a (not very well docum&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 4996,
+  "posts": [
+    {
+      "id": 24314,
+      "postNumber": 1,
+      "createdAt": "2020-08-01T20:00:16.390Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I noticed a new(?) eventType for the create_webhook API call: change_specific_column_value. From the name I expect this webhook fires when a specific column changes <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> .</p>\n<p>I also noticed a (not very well documented) config (JSON) argument to the create_webhook call which probably needs to have the specifics for the column to watch for.</p>\n<p>My question is: how should the config argument look like to be able to setup a webhook through the API that only fires when a specific column changes.</p>\n<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a>, <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>, can one of you shine a light here?</p>"
+    },
+    {
+      "id": 24700,
+      "postNumber": 2,
+      "createdAt": "2020-08-05T13:02:58.464Z",
+      "author": "ptsgJason (Jason Ludwig)",
+      "cookedHtml": "<p>I did some digging (becuase I wanted to know how to) and i found out that the config is a GraphQL JSON string. The whole mutation will look like this:</p>\n<p>mutation {<br />\ncreate_webhook ( board_id: 111111, url: “<a href=\"https://a/webhook/url\" rel=\"noopener nofollow ugc\">https://a/webhook/url</a>”, event: change_specific_column_value config:“{\"columnId\":\"status1\"}”) {<br />\nid<br />\nboard_id<br />\n}<br />\n}</p>\n<p>where status1 is the column that you want to be notified by.</p>"
+    },
+    {
+      "id": 24703,
+      "postNumber": 3,
+      "createdAt": "2020-08-05T13:03:53.178Z",
+      "author": "ptsgJason (Jason Ludwig)",
+      "cookedHtml": "<p>note: the Inner \" require a \\ in front of them.</p>"
+    },
+    {
+      "id": 24734,
+      "postNumber": 4,
+      "createdAt": "2020-08-05T18:58:40.720Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ptsgjason\">@ptsgJason</a>, Jason</p>\n<p>You are the champ! Works like a charm. Just curious to know where you got the info from as I was unable to find any documentation on this. Especially the lack of the comma between the WebhookType and the config  argument is a really good find <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>This saves a lot of back and forth traffic.</p>"
+    },
+    {
+      "id": 24741,
+      "postNumber": 5,
+      "createdAt": "2020-08-05T20:07:07.340Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>For those who are adding webhooks to a board through the API (e.g. in a subscribe event from a custom trigger) take care: lot of escaping to do!</p>\n<p>I use a function like below to inset any type of webhook to a board and returns the trigger Id. (forgive the formatting, not the best editor here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<blockquote>\n<p>static async createWebhook(token, boardId, webhookUrl, webhookType) {<br />\ntry {<br />\nconst mondayClient = initMondayClient();<br />\nmondayClient.setToken(token);<br />\nconst query =<br />\n<code>mutation create_webhook($boardId: Int!, $webhookUrl: String!) {           create_webhook(board_id: $boardId, url: $webhookUrl, event: </code> +<br />\nwebhookType +<br />\n<code>) {           id         }       }       </code>;<br />\nconst variables = { boardId, webhookUrl };<br />\nconst response = await mondayClient.api(query, { variables });<br />\nreturn response.data.create_webhook.id;<br />\n} catch (err) {<br />\nconsole.log(err);<br />\n}<br />\n}</p>\n</blockquote>\n<p>This function is called like this for an add_item webhook, with a token, a boardId, a webhookUrl (I my specific case I needed the host part dynamic) and a webhookType.</p>\n<blockquote>\n<p>const triggerHooks = await mondayService.createWebhook(<br />\ntoken,<br />\nboardId,<br />\n“https://” + req.headers.host + “/vote-to-group/webhookaction”,<br />\n“change_column_value”<br />\n);</p>\n</blockquote>\n<p>Now, for the change_specific_column_value webhook you can still use the same function but take care of all the escaping done for the last argument (webhookType). <strong>All the \\ characters in the last argument are really double-backslashes (\\\\) but lost in this code editor.</strong> At least in VSCode you need to escape the escape character <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<blockquote>\n<p>const triggerHooks = await mondayService.createWebhook(<br />\ntoken,<br />\nboardId,<br />\n“https://” + req.headers.host + “/vote-to-group/webhookaction”,<br />\n‘change_specific_column_value config: “{\\“columnId\\”:\\”’ + columnId + ‘\\“}”’<br />\n);</p>\n</blockquote>\n<p>Many thanks to <a class=\"mention\" href=\"/u/ptsgjason\">@ptsgJason</a> for this find and happy webhooking <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 26599,
+      "postNumber": 6,
+      "createdAt": "2020-08-25T12:29:04.862Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Sorry for our delay in handling this! I’m glad to see this is working correctly now!<br />\nLet us know if we can help with anything else.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 32266,
+      "postNumber": 7,
+      "createdAt": "2020-10-29T08:33:46.151Z",
+      "author": "Cyril (CHAPON)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ptsgjason\">@ptsgJason</a>, when you states “I did some digging”; how did you do this ? <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=9\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" /></p>"
+    },
+    {
+      "id": 43632,
+      "postNumber": 8,
+      "createdAt": "2021-03-05T16:12:42.719Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

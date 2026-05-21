@@ -1,0 +1,62 @@
+{
+  "id": 38385,
+  "title": "Unable to update week column with API",
+  "slug": "unable-to-update-week-column-with-api",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2022-06-27T16:47:00.651Z",
+  "lastPostedAt": "2022-07-06T09:11:16.465Z",
+  "postsCount": 6,
+  "excerpt": "I am trying to update a week column with the api, however, I am running into an issue. \nWhenever I try to add a value to the week column for a given item, the API returns successfully, however, the week fails to update o&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 820,
+  "posts": [
+    {
+      "id": 89795,
+      "postNumber": 1,
+      "createdAt": "2022-06-27T16:47:00.774Z",
+      "author": "anthony.lombardi (Anthony Lombardi)",
+      "cookedHtml": "<p>I am trying to update a week column with the api, however, I am running into an issue.<br />\nWhenever I try to add a value to the week column for a given item, the API returns successfully, however, the week fails to update on my board. This happens no matter what I am using (python or the graphql explorer) and even when I try to run the example provided in the documentation <a href=\"https://api.developer.monday.com/docs/week\" rel=\"noopener nofollow ugc\">here</a>, replacing the boardid and itemid with my values.</p>\n<p>I have also noticed that when I fill the value in monday normally and then try to update it with the api, the value gets wiped from the item.</p>\n<p>Not sure what is going on here, any and all help will be apricated.</p>"
+    },
+    {
+      "id": 89803,
+      "postNumber": 2,
+      "createdAt": "2022-06-27T18:44:27.183Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/anthony.lombardi\">@anthony.lombardi</a></p>\n<p>Welcome to the community! What I always do when it doesn’t seem to update is:</p>\n<ol>\n<li>create a new board with the column type you need (in the case a week column)</li>\n<li>update the column in the UI</li>\n<li>use API playground to read the item / value, with:</li>\n</ol>\n<pre><code class=\"lang-auto\">{\n  items(ids: 123456789) {\n    column_values(ids: \"week\") {\n      value\n    }\n  }\n}\n</code></pre>\n<ol>\n<li>copy/paste the returned value, in my case:</li>\n</ol>\n<pre><code class=\"lang-auto\">\"value\": \"{\\\"week\\\":{\\\"endDate\\\":\\\"2022-07-24\\\",\\\"startDate\\\":\\\"2022-07-18\\\"}}\"\n</code></pre>\n<ol>\n<li>use API playground to do update (in this case with modified start and end dates)</li>\n</ol>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value(board_id: 123456789, item_id: 123456789, column_id: \"week\", value: \"{\\\"week\\\":{\\\"endDate\\\":\\\"2022-07-17\\\",\\\"startDate\\\":\\\"2022-07-11\\\"}}\") {\n    id\n  }\n}\n</code></pre>\n<ol>\n<li>run it and check the result in the board. I am sure your week will be updated</li>\n</ol>\n<p>In many case people have the value wrong (with the escape characters etc) and using this method you will quickly learn what value is expected (in which format) for that column.</p>"
+    },
+    {
+      "id": 89894,
+      "postNumber": 3,
+      "createdAt": "2022-06-28T10:47:02.881Z",
+      "author": "anthony.lombardi (Anthony Lombardi)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> Thanks for the response!<br />\nI have got the change_column_value mutation working in both the playground and my python script<br />\nHowever, I have now found out that the issue lies with the change_multiple_column_values mutation<br />\nIn the playground I ran this snippet:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(item_id: XXXXXX, board_id: XXXXXXX, column_values: \"{\\\"week\\\":{\\\"endDate\\\":\\\"2022-07-24\\\",\\\"startDate\\\":\\\"2022-07-18\\\"}}\") {\n    id\n  }\n}\n\n</code></pre>\n<p>And I got this response:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"change_multiple_column_values\": {\n      \"id\": \"XXXXXXXXX\"\n    }\n  },\n  \"account_id\": XXXXXX\n}\n</code></pre>\n<p>However, the week column remains not updated for this item, and when I fill in the value with the UI and then run this mutation the value gets removed from the item.</p>"
+    },
+    {
+      "id": 89912,
+      "postNumber": 4,
+      "createdAt": "2022-06-28T12:36:57.551Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/anthony.lombardi\">@anthony.lombardi</a></p>\n<p>If you want to use change_multiple_values you have to sepecify the column/value pairs (“columnId”:“value”). As this column type requires an object in the form:</p>\n<pre><code class=\"lang-auto\">\"{\\\"week\\\":{\\\"endDate\\\":\\\"2022-07-17\\\",\\\"startDate\\\":\\\"2022-07-11\\\"}}\"\n</code></pre>\n<p>and the columnId is probably “week” also, your full mutation will look a little weird as the string “week” is 2 times present (1st is the columnid and 2nd is part of the object)</p>\n<p>This one should do it</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(board_id: 123456789, item_id: 987654321, column_values: \"{\\\"week\\\":{\\\"week\\\":{\\\"endDate\\\":\\\"2022-07-17\\\",\\\"startDate\\\":\\\"2022-07-11\\\"}}}\") {\n    id\n  }\n}\n</code></pre>\n<p>This one works perfectly fine for me.</p>"
+    },
+    {
+      "id": 89986,
+      "postNumber": 5,
+      "createdAt": "2022-06-29T09:11:08.743Z",
+      "author": "anthony.lombardi (Anthony Lombardi)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> Yes that was it! Thank you for your help!</p>"
+    },
+    {
+      "id": 90511,
+      "postNumber": 6,
+      "createdAt": "2022-07-06T09:11:16.465Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

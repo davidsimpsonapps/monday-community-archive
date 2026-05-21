@@ -1,0 +1,62 @@
+{
+  "id": 71777,
+  "title": "Python 3.9 Mutation for linking items",
+  "slug": "python-3-9-mutation-for-linking-items",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    139,
+    351
+  ],
+  "createdAt": "2023-11-29T10:42:36.411Z",
+  "lastPostedAt": "2023-12-01T08:04:38.916Z",
+  "postsCount": 4,
+  "excerpt": "Hello! \nI have two connected boards trying to connect one item in board1 with multiple items from board2. I’m using apiVersion = “2023-10”. \nFirst of all, I tested this mutation in playground, and everything worked: \nmut&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 319,
+  "posts": [
+    {
+      "id": 155296,
+      "postNumber": 1,
+      "createdAt": "2023-11-29T10:42:36.594Z",
+      "author": "SVK (Stanislav Kolesnikov)",
+      "cookedHtml": "<p>Hello!<br />\nI have two connected boards trying to connect one item in board1 with multiple items from board2. I’m using apiVersion = “2023-10”.</p>\n<p>First of all, I tested this mutation in playground, and everything worked:</p>\n<pre><code class=\"lang-auto\">mutation{\n\tchange_multiple_column_values(item_id:123456, board_id: 123456, column_values: \"{\\\"link_to_another_board\\\" : {\\\"item_ids\\\" : [123457, 123458, 123459]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>But, when I try to implement this code into my Python script, there are some issues with strings, backslashes, and variables.</p>\n<p>I only have 2 variables:</p>\n<pre><code class=\"lang-auto\"># The int, contains items id from board1:\nnew_item_id = r2.json()['data']['create_item']['id']\n\nprint(f'New item id: {new_item_id}')   --&gt; New item id: 123456\n</code></pre>\n<pre><code class=\"lang-auto\">#The list of items from board2, which must to be linked with item above:\n\nprint(f\"linked_items: {linked_items}\") --&gt; linked_items: [123457, 123458, 123459]\n</code></pre>\n<p>Now, I need to make ‘mutation query’.</p>\n<p>First, lets declare a variables for GraphQL schema:</p>\n<pre><code class=\"lang-auto\">graph_var_id = {\"item_id\": int(new_item_id), \"linked_items\": json.dumps(linked_items)}\n\nprint(f'graph_var_id: {graph_var_id}') --&gt; graph_var_id: {'item_id': 1330819451, 'linked_items': '[123457, 123458, 123459]'}\n</code></pre>\n<p>It looks good, but I already don’t like the ‘’ around the [123457, 123458, 123459]</p>\n<p>Ok, make query:</p>\n<pre><code class=\"lang-auto\">query_link_creation = 'mutation ($linked_items: JSON!, $item_id: Int!) {change_multiple_column_values(item_id: $item_id, board_id: 123456, column_values: \"{\\\" link_to_another_board \\\" : {\\\"item_ids\\\" : $linked_items}}\") {id}}'\n</code></pre>\n<p>Make data and request:</p>\n<pre><code class=\"lang-auto\">data3 = {'query': query_link_creation, 'variables': graph_var_id}\n\nprint(f'data3: {data3}') --&gt; \ndata3: {'query': 'mutation ($linked_items: JSON!, $item_id: Int!) {change_multiple_column_values(item_id: $item_id, board_id: 123456, column_values: \"{\" link_to_another_board \" : {\"item_ids\" : $linked_items}}\") {id}}', 'variables': {'item_id': 123456, 'linked_items': '[123457, 123458, 123459]'}}\n</code></pre>\n<p>And, of course, the lack of backslashes\\ it causes an error:</p>\n<pre><code class=\"lang-auto\">r3 = requests.post(url=apiUrl, json=data3, headers=headers)\n\nprint(f'r3: {r3.json()}') --&gt;\n\nr3: {'errors': [{'message': 'Parse error on \" : {\" (STRING) at [1, 151]', 'locations': [{'line': 1, 'column': 151}]}], 'account_id': 1111111111111}\n</code></pre>\n<p>But I really don’t know how to make this query. I already trying to use f-string (and become an errors, because f-string didn’t support backslashes), trying to use placeholders, and even this: my_string = f\"This is a backslash: {chr(92)}\".</p>\n<p>I already read this topic:</p><aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/d/258eb7/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/create-an-item-and-link-to-other-item/23978\">Create an item and link to other item</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    I am trying to create an item on a board, then have the ID of the Item and create another Item in another board and link to items. \nHere is the code that create the first Item and retrieves the Id of the new item: \nnew_client_name = 'test new client'\npeople = '774666386' # The Owner ID of the task\nphone = '123456789'\nemail = 'email@email.com'\ntext0 = 'CEO' #Title\nstatus4 = 'Kick Off' # Stage\ndate = datetime.today().strftime('%Y-%m-%d') # Created date\nstatus = 'Customer' # Type of item - Customer…\n  </blockquote>\n</aside>\n\n<p>But it didn’t help me.</p>\n<p>Please, help me <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 155500,
+      "postNumber": 3,
+      "createdAt": "2023-11-30T07:34:47.420Z",
+      "author": "SVK (Stanislav Kolesnikov)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/c/a88e4f/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">const columnValues = {\n  link_to_another_board: {itemIds: [123123,124423,4523423]\n }\n}\n</code></pre>\n</blockquote>\n</aside>\n<p>I can’t do that because of Python syntaxis, this is the main problem <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\nThe {var} in python is a variable declaration inside “f-string”.<br />\nWhen i try to make “column_values” variable i need to use {{}} for GraphQL syntaxis, and then i also need to add inside {{}} another {} with my variable, which contain a list of ids.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/e/ee15578e5e218a11dc74f015f3e6b1739e75b693.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/e/e/ee15578e5e218a11dc74f015f3e6b1739e75b693.png\" alt=\"image\" width=\"690\" height=\"109\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">751×119 13.9 KB</span></div></a></div><p></p>\n<p>This is exactly why im trying to make the whole query as a string, and put as variables only IDs</p>"
+    },
+    {
+      "id": 155502,
+      "postNumber": 4,
+      "createdAt": "2023-11-30T08:05:57.916Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 155532,
+      "postNumber": 5,
+      "createdAt": "2023-11-30T11:26:14.621Z",
+      "author": "SVK (Stanislav Kolesnikov)",
+      "cookedHtml": "<p>I did it the other way, but it still doesn’t work:</p>\n<pre><code class=\"lang-auto\">UA_id: [1328478802, 1330082698, 1330278661]\nNew_item_id: 1332245910\n\ncolumn_values = '{\\\"link_to_t_am\\\" : {\\\"item_ids\\\" : ' + str(UA_id) + '}}'\n\ngraph_var_id = {\"item_id\": int(new_item_id), \"$values\": json.dumps(column_values)}\n\nquery_link_creation = 'mutation ($values: JSON!, $item_id: ID!) {change_multiple_column_values(item_id:$item_id, board_id:1315023730, column_values: $values) {id}}'\n\ndata3 = {\"query\": query_link_creation, \"variables\": graph_var_id}\n\nprint(f'data3: {data3}')\n\nr3 = requests.post(url=apiUrl, json=data3, headers=headers)\n\nprint(f'r3: {r3.json()}')\n</code></pre>\n<p>And result:</p>\n<pre><code class=\"lang-auto\">\nUA_id: [1328478802, 1330082698, 1330278661]\n\ngraph_var_id: {'item_id': 1332245910, '$values': '\"{\\\\\"link_to_t_am\\\\\" : {\\\\\"item_ids\\\\\" : [1328478802, 1330082698, 1330278661]}}\"'}\n\ndata3: {'query': 'mutation ($values: JSON!, $item_id: ID!) {change_multiple_column_values(item_id:$item_id, board_id:1315023730, column_values: $values) {id}}', 'variables': {'item_id': 1332245910, '$values': '\"{\\\\\"link_to_t_am\\\\\" : {\\\\\"item_ids\\\\\" : [1328478802, 1330082698, 1330278661]}}\"'}}\n\nr3: {'errors': [{'message': 'Variable $values of type JSON! was provided invalid value', 'locations': [{'line': 1, 'column': 11}], 'extensions': {'value': None, 'problems': [{'path': [], 'explanation': 'Expected value to not be null'}]}}], 'account_id': xxxxxx}\n</code></pre>"
+    },
+    {
+      "id": 155737,
+      "postNumber": 7,
+      "createdAt": "2023-12-01T08:04:38.916Z",
+      "author": "SVK (Stanislav Kolesnikov)",
+      "cookedHtml": "<p>Okay, i solve the problem. My solution looks stupid, but it works.</p>\n<p>I have some variables in my Python script:</p>\n<pre><code class=\"lang-auto\">New item id: 1333012078\n\nUA_id: [1328478802, 1330082698, 1330278661, 1333009859]\n</code></pre>\n<p>Make query by hands:</p>\n<pre><code class=\"lang-auto\">part1 = 'mutation {change_multiple_column_values(item_id: ' + str(new_item_id) + ', board_id: 1315023730, column_values: \"{\\\\\\\"link_to_t_am\\\\\\\" : {\\\\\\\"item_ids\\\\\\\" : '\npart3 = '}}\") {id}}'\nquery_link_creation = part1 + str(UA_id) + part3\n\ndata3 = {\"query\": query_link_creation}\n\nr3 = requests.post(url=apiUrl, json=data3, headers=headers)\n</code></pre>\n<p>And everything works, without query $variables</p>"
+    },
+    {
+      "id": 155940,
+      "postNumber": 9,
+      "createdAt": "2023-12-03T13:17:03.932Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

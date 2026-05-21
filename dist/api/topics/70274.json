@@ -1,0 +1,37 @@
+{
+  "id": 70274,
+  "title": "Power BI API Script Update",
+  "slug": "power-bi-api-script-update",
+  "categoryId": 58,
+  "tagIds": [],
+  "createdAt": "2023-11-07T18:02:01.598Z",
+  "lastPostedAt": "2023-11-07T18:30:05.934Z",
+  "postsCount": 2,
+  "excerpt": "With the updates to the API, I’ve had to adjust my script to be able to access the board and I’ve gotten the query worked out in the API Playground however trying to piece it back together has been a challenge. Does anyo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 259,
+  "posts": [
+    {
+      "id": 152107,
+      "postNumber": 1,
+      "createdAt": "2023-11-07T18:02:01.674Z",
+      "author": "MVPSK (Shane)",
+      "cookedHtml": "<p>With the updates to the API, I’ve had to adjust my script to be able to access the board and I’ve gotten the query worked out in the API Playground however trying to piece it back together has been a challenge. Does anyone know what I’m doing wrong?</p>\n<p>let<br />\nKey = ,<br />\nBoard = “123456969420”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”= “Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) {    items_page(limit:1,query_params: {}) {<br />\nitems {<br />\nname<br />\ncolumn_values {<br />\ncolumn {<br />\ntitle } text}}}}}””}”)<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, {“ID”, “Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\n#“Monday” = Table.FromRecords(Table.TransformRows(Data, each<br />\nList.Accumulate([Columns], [<br />\nID = [ID],<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[title], current[text]) )<br />\n))<br />\nin<br />\n#“Monday”</p>"
+    },
+    {
+      "id": 152116,
+      "postNumber": 2,
+      "createdAt": "2023-11-07T18:30:05.934Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Could you provide the errors being returned by monday? or is it an error from BI?</p>"
+    },
+    {
+      "id": 152187,
+      "postNumber": 3,
+      "createdAt": "2023-11-08T06:31:40.238Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

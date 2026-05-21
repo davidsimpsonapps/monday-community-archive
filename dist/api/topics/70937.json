@@ -1,0 +1,90 @@
+{
+  "id": 70937,
+  "title": "Automation: when 2 columns has the same value, change the status",
+  "slug": "automation-when-2-columns-has-the-same-value-change-the-status",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    13,
+    187
+  ],
+  "createdAt": "2023-11-16T15:22:20.055Z",
+  "lastPostedAt": "2026-02-11T07:27:52.639Z",
+  "postsCount": 10,
+  "excerpt": "I would like to create a new automation to compare the value of 2 columns and the condition is met to change the status. Currently only can compare to a fix value or number. \nExample: \nWhen “items” equals “items complete&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1921,
+  "posts": [
+    {
+      "id": 153501,
+      "postNumber": 1,
+      "createdAt": "2023-11-16T15:22:20.132Z",
+      "author": "Vics (Victor)",
+      "cookedHtml": "<p>I would like to create a new automation to compare the value of 2 columns and the condition is met to change the status. Currently only can compare to a fix value or number.<br />\nExample:<br />\nWhen “items” equals “items completed”<br />\nchange status to “completed”<br />\nCould you please let me know if this is possible?<br />\nThank you<br />\nVictor,</p>"
+    },
+    {
+      "id": 153508,
+      "postNumber": 2,
+      "createdAt": "2023-11-16T15:46:39.587Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>For the two columns that you’re comparing, first make sure the column-types are supported as “Triggers”. If they’re not supported as triggers, provide some more detail of what you’re wanting to accomplish and maybe we can help find a built-in solution.</p>\n<p>Then you’ll need to create two automations - one for each item to react to the other - for each condition.</p>\n<p>The end result will be something to this effect:</p>\n<blockquote>\n<p>When Status_Column_1 changes to Something …<br />\nand only if …<br />\nStatus_Column_2 is Something,<br />\nChange Status_Column_3 to Something.</p>\n</blockquote>\n<p>Then your next automation needs to trigger when Status_Column_2 changes to the correct value.<br />\nRinse &amp; repeat for every condition.</p>\n<p>Let me know if this helped <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> Good luck!</p>"
+    },
+    {
+      "id": 153563,
+      "postNumber": 3,
+      "createdAt": "2023-11-16T20:14:38.279Z",
+      "author": "Vics (Victor)",
+      "cookedHtml": "<p>Hi Calum,<br />\nThank you for your reply, however the value of “Something” is not a fixed number, depends on the task.<br />\nFor example:<br />\nTask 1 &gt; Subitem with following Columns: “Items to Complete” 60 - “Items Completed” 0<br />\nTask 2 &gt; Subitem with following Columns: “Items to Complete” 95 - “Items Completed” 25</p>\n<p>Only when “Items to Complete” equals “Items Completed” change status to “Completed”<br />\nHope this make sense and I can find a solution since this is the starting point to trigger and move items across different boards.<br />\nThank you.<br />\nVictor,</p>"
+    },
+    {
+      "id": 153567,
+      "postNumber": 4,
+      "createdAt": "2023-11-16T21:14:57.247Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>Hey Victor,<br />\nThat makes sense. That’s a super common use case, but there isn’t a built-in feature that will change a column based on a numbers calculation. You could possibly try using a Formula column, but it can’t be used to update another column or as a Trigger in automations.</p>\n<p>For your exact desired behavior, you’ll need an app or integration like these: <a href=\"https://monday.com/marketplace/8\" rel=\"noopener nofollow ugc\">General Caster</a>, <a href=\"https://monday.com/marketplace/10000112\" rel=\"noopener nofollow ugc\">Autoboost</a>, or <a href=\"https://monday.com/marketplace/10000289\" rel=\"noopener nofollow ugc\">Formula in Automation Recipes</a>.</p>\n<p>However, with a minor change to your design I think we can find a solution without having to use an integration or app:</p>\n<ol>\n<li>\n<p>With your intended logic, the “Items to Complete” column really means the “<em>Total</em> Items to Complete” versus a running number of the current items that need to be completed.<br />\nSo, change the name of that column to “Total Items to Complete” and add a new Numbers column for “Current Items to Complete”.</p>\n</li>\n<li>\n<p>Then you’ll need an automation that decrements the “Current Item to Complete” column at the same time you’re incrementing the “Items Completed” column.</p>\n</li>\n<li>\n<p>Last thing to do is create an automation that triggers when either of those column changes and says as long as the “Current Items to Complete” column is equal to 0, change the Status column to \"Completed.</p>\n</li>\n</ol>\n<p>One caveat is if your “Total Items to Complete” column is ever updated or increased. In that case, you’ll just want to make sure and also increase the “Current Items to Complete” column by the same amount.</p>\n<p>Let me know if that helped,<br />\nBest of luck to you!</p>"
+    },
+    {
+      "id": 153569,
+      "postNumber": 5,
+      "createdAt": "2023-11-16T21:31:35.710Z",
+      "author": "Vics (Victor)",
+      "cookedHtml": "<p>Hi Calum,<br />\nThank you for your reply. I understand your logic, but I think I have the same issue since the “increase” or “decrease” value must be a fix number, can’t be “decrease by value of Items Completed value”. Can decrease 1,2,… 25 or any number.<br />\nI think it is quite straight forward logic that should be built-in feature already.<br />\nAny other option that may I use?<br />\nThank you<br />\nVictor,</p>"
+    },
+    {
+      "id": 153659,
+      "postNumber": 6,
+      "createdAt": "2023-11-17T13:55:36.694Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>Hey Victor,</p>\n<p>I agree, it is straightforward to calculate a value based on two unrelated columns and change another column to the calculated value, or another value based on the calculation. However, there’s a lot of nuance under-the-hood that does not make it straightforward to develop. I can imagine, that’s why it’s not a built-in feature yet.</p>\n<p>For this situation though, if we have a counter that keeps track of a number of things it should count every individual thing, not groups of them.<br />\nFor your scenario, your counter needs to be updated every time an item gets added to the “to be completed” queue.</p>\n<p>If you give some more information on the high-level of what your workflow is trying to accomplish, and some details of how you’re trying to accomplish it, then I can try to be of more help.</p>\n<p>Best of luck to you Victor!</p>"
+    },
+    {
+      "id": 153999,
+      "postNumber": 7,
+      "createdAt": "2023-11-20T21:12:03.919Z",
+      "author": "Vics (Victor)",
+      "cookedHtml": "<p>Hey Calum,<br />\nThank you for your reply.<br />\nActually, the functionality it is very simple. I just want to track the progress of the items completed within a packaging machine process.<br />\n“Items to complete” is 80 (or any other value). “Completed Items” is 0 at the beginning, and can be increased by any number lower or equal than “Items to complete”.<br />\nOnce both attributes are equal, the Status should change to “Completed” and trigger some other actions. I think is quite straight forward, I am surprise this can not be done as standard functionality. For now, we’ll proceed manually but I am quite disappointed to see all the basic technical limitations.<br />\nThank you<br />\nRegards<br />\nVictor,</p>"
+    },
+    {
+      "id": 154127,
+      "postNumber": 8,
+      "createdAt": "2023-11-21T13:55:11.947Z",
+      "author": "APICaptain (Calum Klesel)",
+      "cookedHtml": "<p>Hi Victor,</p>\n<p>I appreciate your persistence in seeking a solution. Your desired outcome IS achievable, though it might require a different approach than you initially anticipated.<br />\nLet’s revisit the recommendation I made earlier.</p>\n<p>Consider focusing on getting one field to reach zero as the trigger for your automation. This approach involves a shift in perspective - instead of directly comparing two fields, we aim for a specific condition (a field reaching zero) to activate the desired status change. This method aligns with your requirement where the status changes to “Completed” once the remaining tasks drop to zero (or once the completed tasks and the total number of tasks are equal).</p>\n<p>The concept is akin to operating a vehicle: when you press the gas pedal, you don’t consider the complex mechanics of fuel combustion and energy conversion. Your primary concern is moving the vehicle forward. Similarly, when <em>engineering</em> workflows on Monday or any other platform, it’s not always about the direct route or the obvious solution. Sometimes, you need to think outside the box and adapt your strategies to align with the tool’s capabilities to achieve your desired behaviors. Often, the key to effective automation lies in finding inventive ways to work with existing functionalities, rather than expecting the tool to match our initial vision perfectly.</p>\n<p>I hope this perspective helps you in configuring the automation as needed. Remember, the goal is to find a workable solution within the constraints of the platform. If you have any more questions or need further clarification, please don’t hesitate to ask.</p>\n<p>Best of luck to you Victor!</p>"
+    },
+    {
+      "id": 245806,
+      "postNumber": 9,
+      "createdAt": "2026-02-11T07:06:01.869Z",
+      "author": "hellotimi (David Kalu (Formula Pro - Use formula column results in automations!))",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/v/9dc877/48.png\" class=\"avatar\" /> Vics:</div>\n<blockquote>\n<p>When “items” equals “items completed”<br />\nchange status to “completed”</p>\n</blockquote>\n</aside>\n<p>Hi,</p>\n<p>This can be achieved without an additional column by using a formula column to trigger the automation.</p>\n<p>Here are the steps:</p>\n<ol>\n<li>\n<p>Create a formula column with the formula:<br />\n<code>￼IF(EXACT({Items}, {Items completed}), \"completed\", \"\")￼</code></p>\n</li>\n<li>\n<p>Using a custom recipe built into our app <a href=\"https://monday.com/marketplace/listing/10000685/formula-pro-automations?utm_source=community&amp;utm_medium=post&amp;utm_campaign=recipe_pro_tips&amp;utm_content=monday_community\" rel=\"noopener nofollow ugc\">Formula Pro</a>,<br />\n“When <strong>formula column</strong> changes, project result to <strong>column</strong>”</p>\n<p>No whenver either Items or Items completed changes, the formula recalculates and the automation recipe copies the new formula result to the <strong>status column</strong></p>\n</li>\n</ol>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/5/257d0f81a690dc06d37553486c9a335d57c2ee63.png\" title=\"Screenshot 2026-02-11 at 10.05.22\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/5/257d0f81a690dc06d37553486c9a335d57c2ee63_2_690x487.png\" alt=\"Screenshot 2026-02-11 at 10.05.22\" width=\"690\" height=\"487\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2026-02-11 at 10.05.22</span><span class=\"informations\">1552×1096 40.3 KB</span></div></a></div><p></p>\n<p>Cheers.</p>"
+    },
+    {
+      "id": 245807,
+      "postNumber": 10,
+      "createdAt": "2026-02-11T07:27:52.639Z",
+      "author": "MsquareAutomation (Msquare Automation Solutions)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/v/9dc877/48.png\" class=\"avatar\" /> Vics:</div>\n<blockquote>\n<p>items completed</p>\n</blockquote>\n</aside>\n<p>Hi <a class=\"mention\" href=\"/u/vics\">@Vics</a></p>\n<p>This formula might help you<br />\nIF(EXACT({Status 1}, {Status 2}), “Complete”, “Incomplete”)</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/7/e7b2556f35e7265f9cca20319bd7d8957e01b520.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/7/e7b2556f35e7265f9cca20319bd7d8957e01b520_2_690x401.png\" alt=\"image\" width=\"690\" height=\"401\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">711×414 17.3 KB</span></div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/0/801ab5a43e92aab85d4eb543212bc7898dee52af.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/0/801ab5a43e92aab85d4eb543212bc7898dee52af.png\" alt=\"image\" width=\"408\" height=\"187\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">408×187 10.8 KB</span></div></a></div><p></p>\n<p>If you require additional assistance, please don’t hesitate to reach out to us.<br />\n<a href=\"https://calendly.com/msquarepro/meeting\" rel=\"noopener nofollow ugc\">MSquare Support</a> | <a href=\"https://calendly.com/msquarepro/msquareautomation-live\" rel=\"noopener nofollow ugc\">Book Live Implementation</a><br />\nVisit us <a href=\"https://www.msquare.pro/\" rel=\"noopener nofollow ugc\">here</a><br />\n<a href=\"https://www.youtube.com/channel/UCqidlIIwbejxZmRUWBICcjQ\" rel=\"noopener nofollow ugc\">Youtube Channel</a></p>"
+    }
+  ]
+}

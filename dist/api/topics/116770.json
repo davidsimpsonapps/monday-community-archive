@@ -1,0 +1,82 @@
+{
+  "id": 116770,
+  "title": "EDATE Function",
+  "slug": "edate-function",
+  "categoryId": 5,
+  "tagIds": [
+    108,
+    313
+  ],
+  "createdAt": "2025-06-27T12:40:18.578Z",
+  "lastPostedAt": "2025-07-07T12:13:08.831Z",
+  "postsCount": 9,
+  "excerpt": "Hello Folks, \nI am trying to use the below formula, but Monday is not recognizing the EDATE function. Any ideas? \nIF(AND( \nFORMAT_DATE(DATE(2024,2,DAY({StartDate})),“YYYY-MM-DD”)&gt;={StartDate}, \nFORMAT_DATE(DATE(2024,2,DA&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 41,
+  "posts": [
+    {
+      "id": 233073,
+      "postNumber": 1,
+      "createdAt": "2025-06-27T12:40:18.646Z",
+      "author": "naethb (Brad Naeth)",
+      "cookedHtml": "<p>Hello Folks,</p>\n<p>I am trying to use the below formula, but Monday is not recognizing the EDATE function. Any ideas?</p>\n<p>IF(AND(<br />\nFORMAT_DATE(DATE(2024,2,DAY({StartDate})),“YYYY-MM-DD”)&gt;={StartDate},<br />\nFORMAT_DATE(DATE(2024,2,DAY({StartDate})),“YYYY-MM-DD”)<br />\n&lt;FORMAT_DATE(EDATE({StartDate},{DurationInMonths},“YYYY-MM-DD”))<br />\n),{DealAmount}/{DurationInMonths},“”)</p>"
+    },
+    {
+      "id": 233088,
+      "postNumber": 2,
+      "createdAt": "2025-06-27T12:58:22.595Z",
+      "author": "Clover_Gal (Desiree McCarthy | monday.com Ambassador)",
+      "cookedHtml": "<p>monday doesn’t have Edate. You’ll probably need to use the ‘push date’ function in the automations or workflow center. You can set an item for a specific date and then ‘push’ it by X dates months</p>"
+    },
+    {
+      "id": 233116,
+      "postNumber": 3,
+      "createdAt": "2025-06-28T05:45:42.195Z",
+      "author": "Avo_FluidApps (Avo)",
+      "cookedHtml": "<p>Hey Brad <a class=\"mention\" href=\"/u/naethb\">@naethb</a> - if you’re open to using apps, our <a href=\"https://monday.com/marketplace/listing/10000824/smart-timeline--duration\" rel=\"noopener nofollow ugc\"><strong>Smart Timeline + Duration</strong></a> could be helpful for your use case. It works with date, timeline, and duration fields, and lets you trigger automations based on those, making it easier to keep things in sync automatically.</p>\n<p>Happy to help if you’d like to explore how it might fit your workflow!</p>"
+    },
+    {
+      "id": 233143,
+      "postNumber": 4,
+      "createdAt": "2025-06-29T09:22:50.797Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/naethb\">@naethb</a></p>\n<p>monday’s EDATE() function is undocumented. It adds (or subtracts) months to the given date returning a serial number representing the calculated date. It’s also a bit squirrely with dates and times. I have found that it will work if you add a time to the date you are evaluating. The syntax is EDATE(date, months to add (can be negative)).</p>\n<p>Example: FORMAT_DATE(EDATE(“2019-01-20 0:00”, 1)) =&gt; “Feb 20, 2019”.</p>\n<p>Try this:</p>\n<pre><code class=\"lang-auto\">IF(\n  AND(\n    FORMAT_DATE(DATE(2024, 2, DAY({StartDate})), \"YYYY-MM-DD\") &gt;= FORMAT_DATE({StartDate}, \"YYYY-MM-DD\"),\n    FORMAT_DATE(DATE(2024, 2, DAY({StartDate})), \"YYYY-MM-DD\") &lt; FORMAT_DATE(EDATE({StartDate} &amp; \" 0:00\", {DurationInMonths}), \"YYYY-MM-DD\")\n  ),\n  {DealAmount} / {DurationInMonths},\n  \"\"\n)\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a><br />\n<strong><a href=\"https://themondayman.com/custom/\">Get Custom Apps, Integrations &amp; Automations for monday</a></strong></p>"
+    },
+    {
+      "id": 233198,
+      "postNumber": 5,
+      "createdAt": "2025-06-30T11:59:30.225Z",
+      "author": "naethb (Brad Naeth)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/jcorrell/48/10443_2.png\" class=\"avatar\" /> Jim - The Monday Man:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">IF(\n  AND(\n    FORMAT_DATE(DATE(2024, 2, DAY({StartDate})), \"YYYY-MM-DD\") &gt;= FORMAT_DATE({StartDate}, \"YYYY-MM-DD\"),\n    FORMAT_DATE(DATE(2024, 2, DAY({StartDate})), \"YYYY-MM-DD\") &lt; FORMAT_DATE(EDATE({StartDate} &amp; \" 0:00\", {DurationInMonths}), \"YYYY-MM-DD\")\n  ),\n  {DealAmount} / {DurationInMonths},\n  \"\"\n)\n</code></pre>\n</blockquote>\n</aside>\n<p>Thanks Jim. The challenge that I have, is that the formula does not recognize the end date for some reason. See below snapshot. It keeps carrying the forecasted value out past the end date of the project. You will notice for the first project, it has revenue showing in September. Goal is to have the $6k total revenue split in June and July.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/5/951d1599f793c5e096641b3ea9de76f77edf0376.jpeg\" title=\"Screenshot 2025-06-30 073041\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/9/5/951d1599f793c5e096641b3ea9de76f77edf0376_2_690x51.jpeg\" alt=\"Screenshot 2025-06-30 073041\" width=\"690\" height=\"51\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2025-06-30 073041</span><span class=\"informations\">1508×112 30.7 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 233233,
+      "postNumber": 6,
+      "createdAt": "2025-06-30T15:51:22.877Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>Can you put into words what you want the formula to do?</p>"
+    },
+    {
+      "id": 233430,
+      "postNumber": 7,
+      "createdAt": "2025-07-02T13:14:52.682Z",
+      "author": "naethb (Brad Naeth)",
+      "cookedHtml": "<p>That would help, lol.</p>\n<p>I am trying to use Workday to forecast revenue pipeline. The formula is intended to compare the start date and end date, and then blend the contract. Value across those applicable months.</p>\n<p>I can use the EDATE function to get the End Date, as shown in an earlier column, but when I try to incorporate into a forecasting column it won’t recognize the end date, and carries the revenue out indefinitely.</p>"
+    },
+    {
+      "id": 233721,
+      "postNumber": 8,
+      "createdAt": "2025-07-07T09:09:09.619Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>If I am getting the details correct, this is what I am seeing:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/5/45dc701228e5903c45924ed1ccea6375977d005b.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/5/45dc701228e5903c45924ed1ccea6375977d005b_2_690x69.png\" alt=\"image\" width=\"690\" height=\"69\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2836×286 29.8 KB</span></div></a></div><p></p>\n<p>I suspect that all your Date/Revenue columns have the same formula. You will need to adjust the formula for each column to correspond the date for the column. See below.</p>\n<pre><code class=\"lang-auto\">Here is the formula for June 2025:\nIF(\n  AND(\n    FORMAT_DATE(DATE(2025, 6, DAY({StartDate})), \"YYYY-MM-DD\") &gt;= FORMAT_DATE({StartDate}, \"YYYY-MM-DD\"),\n    FORMAT_DATE(DATE(2025, 6, DAY({StartDate})), \"YYYY-MM-DD\") &lt; FORMAT_DATE(EDATE({StartDate} &amp; \" 0:00\", {DurationInMonths}), \"YYYY-MM-DD\")\n  ),\n  {DealAmount} / {DurationInMonths},\n  \"\"\n)\n</code></pre>\n<pre><code class=\"lang-auto\">Here is the formula for August 2025:\nIF(\n  AND(\n    FORMAT_DATE(DATE(2025, 8, DAY({StartDate})), \"YYYY-MM-DD\") &gt;= FORMAT_DATE({StartDate}, \"YYYY-MM-DD\"),\n    FORMAT_DATE(DATE(2025, 8, DAY({StartDate})), \"YYYY-MM-DD\") &lt; FORMAT_DATE(EDATE({StartDate} &amp; \" 0:00\", {DurationInMonths}), \"YYYY-MM-DD\")\n  ),\n  {DealAmount} / {DurationInMonths},\n  \"\"\n)\n</code></pre>\n<p>Notice the change in months in the formula.</p>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a><br />\n<strong><a href=\"https://themondayman.com/custom/\">Get Custom Apps, Integrations &amp; Automations for monday</a></strong></p>"
+    },
+    {
+      "id": 233800,
+      "postNumber": 9,
+      "createdAt": "2025-07-07T12:13:08.831Z",
+      "author": "naethb (Brad Naeth)",
+      "cookedHtml": "<p>Figured it out, this prompt works:</p>\n<p>IF(AND(FORMAT_DATE(DATE(2025, 11, DAY({End Date})), “YYYY-MM-DD”) &gt;= FORMAT_DATE({Start Date}, “YYYY-MM-DD”), FORMAT_DATE(DATE(2025, 11, DAY({End Date})), “YYYY-MM-DD”) &lt; FORMAT_DATE({End Date}, “YYYY-MM-DD”)), {Adjusted Revenue} / {Duration (Months)},0)</p>"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": 85211,
+  "title": "Cursor value is not null",
+  "slug": "cursor-value-is-not-null",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-26T05:25:57.938Z",
+  "lastPostedAt": "2024-04-29T12:27:11.072Z",
+  "postsCount": 4,
+  "excerpt": "Hello, I need help with my Python code where I am retrieving element information from all boards specified in a table named: df_boards_norm. But i run into a problem that in some boards there are more then 500 items (and&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 136,
+  "posts": [
+    {
+      "id": 181002,
+      "postNumber": 1,
+      "createdAt": "2024-04-26T05:25:58.021Z",
+      "author": "agness15 (Agne)",
+      "cookedHtml": "<p>Hello, I need help with my Python code where I am retrieving element information from all boards specified in a table named: df_boards_norm. But i run into a problem that in some boards there are more then 500 items (and i have a limit of 500, I cant change this part), and the cursor then is not null. I need somehow to check if the cursor is not null to run the code again with the same board id where it left of, but if it comes on null, run other boards like normal.<br />\nThie is my part of the code:</p>\n<pre><code class=\"lang-auto\">pulse_1 = pd.DataFrame()\nfor i in range(len(df_boards_norm)):\n    q_pulses = (\n        \"{boards(ids:\"\n        + df_boards_norm.loc[i, \"id\"]\n        + \"){items_page (limit:500){cursor items{id name column_values (types: time_tracking){value}}}}}\" \n    )\n    data_pulses = {\"query\": q_pulses}\n    r_pulses = requests.post(url=apiUrl, json=data_pulses, headers=headers)\n\n    pulses_json = r_pulses.json()\n    df_pulses_norm = pd.json_normalize(\n        pulses_json['data']['boards'][0]['items_page'],\n        record_path=['items', 'column_values'],\n        meta=[\n            ['items', 'id'],\n            ['items', 'name'],\n        ],\n        errors=\"ignore\",\n    )\n    df_pulses_norm.insert(0, \"board_id\", df_boards_norm.loc[i, \"id\"])\n    pulse_1 = pd.concat([pulse_1, df_pulses_norm], ignore_index=True)\n    \npulse_1['value'] = pulse_1['value'].apply(lambda x: {} if pd.isna(x) else x)    \npulse_1 = pulse_1[pulse_1['value'] != {}].reset_index()\npulse_1.head()\n</code></pre>\n<p>Also, is there a possibility to add more: so it will take more columns from monday. Something like this:</p>\n<p>{cursor  items{id updated_at name column_values (types: time_tracking){value … on TimeTrackingValue<br />\n{<br />\nrunning<br />\nstarted_at<br />\nupdated_at<br />\nhistory<br />\n{<br />\nstarted_at<br />\nended_at<br />\nstarted_user_id<br />\nended_user_id<br />\n}<br />\n}<br />\n}}}}}</p>\n<p>I just do not know how to incorporate these two things into my code. I will be really pleased if someone will help me, because in this part right now I feel helpless <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 181091,
+      "postNumber": 2,
+      "createdAt": "2024-04-26T14:43:55.148Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Try making the first API call, then using a while loop – that will repeat as long as the cursor is NOT null.</p>"
+    },
+    {
+      "id": 181264,
+      "postNumber": 3,
+      "createdAt": "2024-04-29T04:30:44.011Z",
+      "author": "agness15 (Agne)",
+      "cookedHtml": "<p>How can I do that?</p>"
+    },
+    {
+      "id": 181342,
+      "postNumber": 4,
+      "createdAt": "2024-04-29T12:27:11.072Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>My Python is rusty so I will not write you an example, but here are the general steps:</p>\n<ol>\n<li>Make your first API call – get the first batch of items from the board, and a cursor</li>\n<li>Assign a variable <code>currentCursor</code> to the cursor</li>\n<li>Start a while loop, something like:</li>\n</ol>\n<pre><code class=\"lang-python\">while currentCursor is not None:\n   [cursor, items] = getNextItemPage() \n   currentCursor = cursor # set the cursor from the API call to \"currentCursor\"\n</code></pre>\n<ol>\n<li>After the while loop, continue the rest of your app’s logic.</li>\n</ol>\n<p><a href=\"https://www.coursera.org/tutorials/python-while-loop\">The while loop is a special kind of loop</a> that will continue as long as the condition is true - in this case, as long as your API call returns a cursor and there are more items to get, it will keep running.</p>"
+    }
+  ]
+}

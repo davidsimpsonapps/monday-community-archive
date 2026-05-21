@@ -1,0 +1,96 @@
+{
+  "id": 23117,
+  "title": "Preventing change_multiple_column_values from creating a new column",
+  "slug": "preventing-change-multiple-column-values-from-creating-a-new-column",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-08-02T09:18:08.905Z",
+  "lastPostedAt": "2021-08-13T11:35:04.818Z",
+  "postsCount": 9,
+  "excerpt": "I’ve noticed when using change_multiple_column_values with a column that doesn’t exist, instead of registering an error or simply doing nothing, it creates that column and populates it.  How do I prevent this?  I want to&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1847,
+  "posts": [
+    {
+      "id": 59556,
+      "postNumber": 1,
+      "createdAt": "2021-08-02T09:18:09.014Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>I’ve noticed when using change_multiple_column_values with a column that doesn’t exist, instead of registering an error or simply doing nothing, it creates that column and populates it.  How do I prevent this?  I want to make sure that only existing columns are updated.</p>"
+    },
+    {
+      "id": 59557,
+      "postNumber": 2,
+      "createdAt": "2021-08-02T09:35:13.602Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/msh\">@Msh</a><br />\nYou should first query the structure and check if the column exists.<br />\nIn case it doesn’t, you need to remove it from your mutation.</p>"
+    },
+    {
+      "id": 59561,
+      "postNumber": 3,
+      "createdAt": "2021-08-02T10:08:23.968Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/msh\">@Msh</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=10\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>that’s quite odd. I’ve just tried using column IDs that do not exist on my board in a change_multiplise_column_values call, and wasn’t able to replicate the behavior. Could you please shed more light on how we could backtrace this, so we can investigate further?</p>\n<p>I’m looking forward to hearing from you soon! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 59595,
+      "postNumber": 4,
+      "createdAt": "2021-08-02T17:30:23.000Z",
+      "author": "Msh (Moshe Sherman)",
+      "cookedHtml": "<p>I see. Weird behavior…when I try this command on the API playground, it refuses and gives an InvalidColumnIdException error ( “error_reason”: “store.monday.automation.error.missing_column”). But when I issue the exact same command in my program (which uses the javascript mondaySDK), it makes a new column as I described before.</p>\n<p>command (sample board/item #'s):<br />\nmutation {<br />\nchange_multiple_column_values (item_id: 1234567, board_id: 7654321, column_values: “{“s_cd”: “s 888” , “s_cd_yy”: “s yy 456” , “area_cd”: “area 2” , “new_col444”: “new col beh444” }”) {<br />\nid<br />\n}<br />\n}</p>\n<p>full API playground result:<br />\n{<br />\n“error_code”: “InvalidColumnIdException”,<br />\n“status_code”: 200,<br />\n“error_message”: “This column ID doesn’t exist for the board”,<br />\n“error_data”: {<br />\n“column_id”: “new_col444”,<br />\n“error_reason”: “store.monday.automation.error.missing_column”<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 59628,
+      "postNumber": 5,
+      "createdAt": "2021-08-03T06:31:18.515Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/msh\">@Msh</a></p>\n<p>thank you for shedding more light on this! I’m going to try and reproduce this on my end and I will get back to you as soon as I can with an update. To confirm, I was able to get the same error you’ve mentioned in our API Playground and Postman, so I’m glad we’re aligned there.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 59629,
+      "postNumber": 6,
+      "createdAt": "2021-08-03T06:32:09.383Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><span class=\"hashtag\">#asked-apps</span>, couldn’t reproduce<br />\n<a href=\"https://monday.slack.com/archives/C018J3C259C/p1627982494025400\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://monday.slack.com/archives/C018J3C259C/p1627982494025400</a></p>"
+    },
+    {
+      "id": 60073,
+      "postNumber": 7,
+      "createdAt": "2021-08-06T12:35:54.675Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 60726,
+      "postNumber": 8,
+      "createdAt": "2021-08-12T21:27:58.873Z",
+      "author": "shaunmb98 (Shaun Brown)",
+      "cookedHtml": "<p>Hi Alex,</p>\n<p>I’m running into a similar issue but while trying to mutate a single column.</p>\n<p>With the following output:</p>\n<p>{error_data={column_id=“status”, error_reason=store.monday.automation.error.missing_column}, error_code=InvalidColumnIdException, status_code=200.0, error_message=This column ID doesn’t exist for the board}</p>\n<p>Another individual column I’m trying to change:<br />\n{error_data={column_id=“text1”, error_reason=store.monday.automation.error.missing_column}, error_code=InvalidColumnIdException, error_message=This column ID doesn’t exist for the board, status_code=200.0}</p>"
+    },
+    {
+      "id": 60812,
+      "postNumber": 9,
+      "createdAt": "2021-08-13T10:04:30.917Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shaunmb98\">@shaunmb98</a></p>\n<p>Thank you for reaching out to us. To be transparent with you, it seems like you are trying to mutate columns that don’t exist in the board you’e sending the API call to, so this seems like expected behavior right now. Could you please provide the query you are currently using so we could take a further look? Could you also confirm if the board you’re sending the API request to has columns with ID of “text1”, and “status”?</p>\n<p>I’d love to confirm my understanding after investigating the exact API call further.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 60821,
+      "postNumber": 10,
+      "createdAt": "2021-08-13T10:52:48.125Z",
+      "author": "shaunmb98 (Shaun Brown)",
+      "cookedHtml": "<p>Here’s the query I’m using:<br />\nquery = “mutation($item:Int!, $board:Int!, $val:JSON!, $col:String!){change_column_value(item_id:$item, board_id:$board, column_id:$col, value:$val){id}}”</p>\n<p>variables = {<br />\n“item” : parseInt(pulseID),<br />\n“board” : boardID,<br />\n“col” : JSON.stringify(colMappings[i]),<br />\n“val” : JSON.stringify(cellValue)<br />\n};</p>\n<p>The api call:<br />\nvar url = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”;<br />\nvar options = {<br />\n“method” : “post”,<br />\n“headers” : {<br />\n“Authorization” : key,<br />\n},<br />\n“payload” : JSON.stringify({<br />\n“query” : query,<br />\n“variables” : variables<br />\n}),<br />\n“contentType” : “application/json”<br />\n};<br />\nvar response = UrlFetchApp.fetch(url, options);</p>\n<p>And the two column ids:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/8/8ba339eaee9a7b3d00dac21001450defdec48390.png\" alt=\"image\" width=\"526\" height=\"139\" /><br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/d/da6613b6e8fe20c99911353ca6aa42626bdd3d03.png\" alt=\"image\" width=\"404\" height=\"131\" /></p>"
+    },
+    {
+      "id": 60826,
+      "postNumber": 11,
+      "createdAt": "2021-08-13T11:35:04.818Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shaunmb98\">@shaunmb98</a></p>\n<p>Thank you for circling back with me!</p>\n<p>That does look a bit odd. I would try and check if the board ID matches the board you are looking to update.</p>\n<p>Otherwise, I would love to continue investigating this over email so that we can gather more specific detail here. I’ve sent you a DM to troubleshoot further and I appreciate your cooperation thus far!</p>\n<p>-Alex</p>"
+    }
+  ]
+}

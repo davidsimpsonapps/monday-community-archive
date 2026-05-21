@@ -1,0 +1,41 @@
+{
+  "id": 110560,
+  "title": "Issues with Limit using python api query",
+  "slug": "issues-with-limit-using-python-api-query",
+  "categoryId": 5,
+  "tagIds": [
+    94,
+    118,
+    139
+  ],
+  "createdAt": "2025-02-27T14:48:05.384Z",
+  "lastPostedAt": "2025-03-05T19:35:49.243Z",
+  "postsCount": 3,
+  "excerpt": "Hello Community!, \nI am having a lot of issues exporting information from monday. I have a general script on python where I dinamically create queries (editing limit, filters and of course identifying if pagination is ne&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 61,
+  "posts": [
+    {
+      "id": 222624,
+      "postNumber": 1,
+      "createdAt": "2025-02-27T14:48:05.462Z",
+      "author": "juholaan1 (Juan Becerra)",
+      "cookedHtml": "<p>Hello Community!,</p>\n<p>I am having a lot of issues exporting information from monday. I have a general script on python where I dinamically create queries (editing limit, filters and of course identifying if pagination is needed). Most of the time I need to pull out all the information from boards, but as the boards have been growing the request have been failing more. So the way to fix this is just to move limit from 500 to a lesser value. Some boards in 400, some boards in 300, but some of those I have had to limit below 50 (and it takes an eternity).</p>\n<p>Giving all this context, is there a way to better use request library on python so it does not crash? I am thinking that maybe between the API and the request there is a way to give more time to react in do not go below 500 limit, this will reduce time greatly as lower limits (mostly getting subitems queries) can take hours.</p>\n<p>Thank you!</p>\n<p>I can sahre the query I am using, or code but the code does not make anything outside normal, the issue goes by the request mostly.</p>"
+    },
+    {
+      "id": 223278,
+      "postNumber": 2,
+      "createdAt": "2025-03-05T18:29:38.533Z",
+      "author": "trevor13 (Trevor Chauvin-DeCaro)",
+      "cookedHtml": "<p>It sounds like the issue is related to how Monday. com’s API handles large requests, especially as your boards grow. Lowering the limit helps avoid crashes, but it also slows down the process significantly. Here are a few things you can try to improve performance without dropping the limit too much:</p>\n<ol>\n<li><strong>Increase Timeout and Retry Failed Requests</strong></li>\n</ol>\n<ul>\n<li>Use the <code>timeout</code> parameter in the <code>requests</code> library to give the API more time to respond.</li>\n<li>Implement a retry mechanism with exponential backoff to handle temporary failures.Example:</li>\n</ul>\n<pre><code class=\"lang-auto\">import requests\nimport time\n\ndef make_request(query, retries=3, backoff=2):\n    url = \"https://api.monday.com/v2\"\n    headers = {\"Authorization\": \"your_api_key\", \"Content-Type\": \"application/json\"}\n    for attempt in range(retries):\n        try:\n            response = requests.post(url, json={\"query\": query}, headers=headers, timeout=30)\n            response.raise_for_status()\n            return response.json()\n        except requests.exceptions.RequestException as e:\n            if attempt &lt; retries - 1:\n                time.sleep(backoff ** attempt)  # Exponential backoff\n            else:\n                raise e\n</code></pre>\n<ol>\n<li><strong>Use Cursor-Based Pagination Instead of Fixed Limits</strong></li>\n</ol>\n<ul>\n<li>If you aren’t already using <code>cursor</code> pagination, switch to it so you can pull data in chunks dynamically rather than setting a hard limit.</li>\n<li>Example query:</li>\n</ul>\n<pre><code class=\"lang-auto\">query {\n  boards (limit: 500) {\n    items_page (cursor: \"your_cursor_value\") {\n      items {\n        id\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<ol>\n<li><strong>Optimize Queries to Fetch Only Necessary Data</strong></li>\n</ol>\n<ul>\n<li>Reduce the fields you are querying, especially for subitems. Requesting large nested data sets can cause failures.</li>\n<li>Try breaking large requests into multiple smaller ones and only fetching required fields.</li>\n</ul>\n<ol>\n<li><strong>Check API Rate Limits</strong></li>\n</ol>\n<ul>\n<li>If you’re making too many requests in a short time, you might be hitting Monday. com’s rate limits.</li>\n<li>Use logging to track when requests fail and see if rate limits might be the cause.</li>\n</ul>\n<ol>\n<li><strong>Parallelize Requests</strong></li>\n</ol>\n<ul>\n<li>If you’re fetching multiple boards, try using multithreading or asynchronous requests to process them in parallel instead of sequentially.</li>\n</ul>\n<p>Curiious to see if any of that works. Hope this helps!<br />\nTrevor</p>"
+    },
+    {
+      "id": 223285,
+      "postNumber": 3,
+      "createdAt": "2025-03-05T19:35:49.243Z",
+      "author": "juholaan1 (Juan Becerra)",
+      "cookedHtml": "<p>Hello Trevor, this is actually more than I was expecting,  we will do some trials and let you know how it went,</p>\n<p>Thank you!</p>"
+    }
+  ]
+}

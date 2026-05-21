@@ -1,0 +1,58 @@
+{
+  "id": 50018,
+  "title": "OAuth Recipe for Monday, or is it really that easy?",
+  "slug": "oauth-recipe-for-monday-or-is-it-really-that-easy",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    208,
+    209,
+    234,
+    249,
+    351
+  ],
+  "createdAt": "2023-01-25T14:35:06.835Z",
+  "lastPostedAt": "2023-01-27T01:53:12.516Z",
+  "postsCount": 5,
+  "excerpt": "I’ve only ever dealt with OAuth using things like Google, Facebook, and Twitter and they offer extremely easy to use tools. Doing OAuth with Monday is the first time I actually have to use my own brain, which is fine but&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 992,
+  "posts": [
+    {
+      "id": 112214,
+      "postNumber": 1,
+      "createdAt": "2023-01-25T14:35:06.914Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<p>I’ve only ever dealt with OAuth using things like Google, Facebook, and Twitter and they offer extremely easy to use tools. Doing OAuth with Monday is the first time I actually have to use my own brain, which is fine but I may get it wrong and mess up security.</p>\n<p>It seems simple enough to send the user to the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> server, grab the code from the url parameters when the user comes back, and finally ask for the token using the code and my client secret. Is that all there is to it? I do understand this needs to happen on a server and not in the user’s browser so that the client secret stays secret.</p>\n<p>I’ve asked around somewhere else and passport.js was recommended, however they don’t have a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> recipe. I’m hesitant to jump into a library for this if it’s not going to hold my hand because I don’t really know what it’s supposed to be doing.</p>\n<p>Is there anything I need to consider before doing this myself or do I have it right?</p>"
+    },
+    {
+      "id": 112267,
+      "postNumber": 2,
+      "createdAt": "2023-01-25T19:57:06.905Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>passport.js doesnt have support for <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> yet. I’ve thought about creating the recipe for it but never had the time/ambition since I wrote my own already.</p>\n<p>Pretty much as you said, its straight forward. Here are a few things  worth mentioning.</p>\n<ul>\n<li>verify the JWT sent as “token” in the query string, using your signing secret.</li>\n<li>check if you already have an OAuth token for the user/account/app ID combination. Then you can just redirect to the backToUrl if you already have a token.</li>\n<li>store the user_id, app_id, account_id, back_to_url, and state string  in some sort of datastore. You need the first three for storing the token, as its not provided in the callback. You need the back_to_url for the same reason.</li>\n<li>I use a UUID for the state string and as the key in the datastore.</li>\n</ul>\n<p>Those are the only gocthas i can think of.</p>"
+    },
+    {
+      "id": 112291,
+      "postNumber": 3,
+      "createdAt": "2023-01-25T20:58:33.318Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<p>Thanks, that makes a lot of sense. I’ve managed to receive the tokens and just now am thinking about how to make it persist. I think I remember seeing a suggestion to user a cookie or localstorage but a secure database makes sense. I read about state string in the OAuth Simplified article but haven’t tried using it yet. I’ll try doing it your way because I don’t want to mess with cookies.</p>\n<p>But I am confused how this all goes together. I send UUID as a state string with the code to get the token, and then use the UUID as the key in a database to store the user information. But I don’t see how I reference that UUID at any other time and I don’t have access to any user data before they log in*, right?</p>\n<ul>\n<li>\n<em>edit</em> by this I mean that before they go through the OAuth process I don’t have any information on the user. Right?? I must be missing something.</li>\n</ul>"
+    },
+    {
+      "id": 112456,
+      "postNumber": 4,
+      "createdAt": "2023-01-26T20:01:52.583Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The callback with the code includes the state only, so you need to store the userid, accountid, and appid from the initial request (which is in the JWT in the initial request, you get this as output from jwt.verify).</p>\n<p>Once you get the token you store it along with the accountid, userid, and appid you stored previously. Then when you receive events for your app, you can look up the oauth token using the accountid, userid, and appid.</p>\n<p><em>That said, what is your use case that you need OAuth tokens, and the Short Lived Tokens don’t work?</em></p>"
+    },
+    {
+      "id": 112482,
+      "postNumber": 5,
+      "createdAt": "2023-01-27T01:53:12.516Z",
+      "author": "Janssen (Janssen Kuhn)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p><em>That said, what is your use case that you need OAuth tokens, and the Short Lived Tokens don’t work?</em></p>\n</blockquote>\n</aside>\n<p>That’s a good question. Ultimately I probably want to try to have something running on the monday platform so I think I can just use the sdk to make authentication a lot easier. I don’t really know what I have in mind, tbh, I’m just trying to throw something together that does something with Monday and I got stuck on auth. I did have in mind an app that might run off the platform and I’d want to keep the user logged in between sessions.</p>\n<p>I think I see now that I’m storing these values and the JWT if my app runs in the background and needs to respond to events. I hadn’t thought of that but I’m sure this is something that would happen in a lot of situations.</p>\n<p>I’m not sure if you can help me, or anyone else, but I am having a HELL of a time verifying my JWT. I’ve run jsonwebtoken in the browser but I’m not sure if that even works so I made an edge function on supabase with denojwt (djwt) and I can only get ‘the jwt’s signature does not match’. I’ve run the jwt and the signing secret a dozen times through <a href=\"http://jwt.io\" rel=\"noopener nofollow ugc\">jwt.io</a>. If I put the signature in first and then the jwt it says it doesn’t match, and when I put the jwt in first and then the signature it just changes the last section of the jwt to make it match. I’ve spent a day on this and I’m still 90% sure it’s user error, but if I can’t get anything the verify the pair I wonder if something is actually wrong. I’ve tried regenerating the signing secret and getting a new jwt with no luck.</p>"
+    }
+  ]
+}

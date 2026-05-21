@@ -1,0 +1,61 @@
+{
+  "id": 17263,
+  "title": "Authentication using webhook to my backend",
+  "slug": "authentication-using-webhook-to-my-backend",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2021-03-07T17:51:11.730Z",
+  "lastPostedAt": "2021-03-12T14:27:49.574Z",
+  "postsCount": 6,
+  "excerpt": "Hello!  im building my first monday app and im having some issues.  my app has a board view and an integration with a webhook to my backend.  im registering to events on the board such as column changes, and im manually &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1808,
+  "posts": [
+    {
+      "id": 43763,
+      "postNumber": 1,
+      "createdAt": "2021-03-07T17:51:11.787Z",
+      "author": "stavYaarBar (Stav Yaar Bar)",
+      "cookedHtml": "<p>Hello!  im building my first monday app and im having some issues.  my app has a board view and an integration with a webhook to my backend.  im registering to events on the board such as column changes, and im manually sending query and mutation request from my backend to the board, using my admin api token.<br />\nwhen im working on my own account everything  seems to work fine, but when im installing the app on a different account i dosent work.<br />\nim getting an event from the webhook with the board and item ids that i want to mutate, but my requests dont do anything.</p>\n<p>so my question is first of all if has something to do with authentication, and if it does, how can i authenticate my requests using webhooks?</p>"
+    },
+    {
+      "id": 43772,
+      "postNumber": 2,
+      "createdAt": "2021-03-07T18:48:45.085Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/stavyaarbar\">@stavYaarBar</a></p>\n<p>Welcome to the community. I don’t know about boardviews but do have extensive experience with integrations. How do you add the webhook to your board? Is that through a custom trigger and do you add the webhook form your code triggered by the subscribe event?</p>\n<p>It looks you are looking at en authentication issue. If you use your admin token that token is not valid in another account. That would be very unsafe <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> . So you need the token from the user from that other account. There are basically two methods:</p>\n<ol>\n<li>do an OAuth handshake and store the token somewhere that it can be retrieved later</li>\n<li>make use of shortLivedTokens (seamless authentication)</li>\n</ol>\n<p>In option 2. monday will send you the token from the logged in user (encrypted with the client secret) which you can use 60 seconds do maken an API call to the account. This token will have the scope you defined in the OAuth scope of your app.</p>\n<p><strong>However</strong>, if your webhook sends to an endpoint in your app that is the only event where monday <strong>does not</strong> send the token. If you build your integration recipe you also have an action part. What you need to do when receiving the event from the webhook trigger is to POST to the action part. The action part can be a custom action (yet another endpoint) that receives the data send in the POST (from your webhook triggered endpoint) and the shortLivedToken.</p>"
+    },
+    {
+      "id": 43775,
+      "postNumber": 3,
+      "createdAt": "2021-03-07T20:13:24.283Z",
+      "author": "stavYaarBar (Stav Yaar Bar)",
+      "cookedHtml": "<p>First of all, thank you very much for the detailed and quick response.<br />\nTo answer your first question, i didnt use a recipe or  an integration feature, ive just chose the webhook option in 'Integrations.<br />\nLike you said, the webhook sends to an endpoint in my app, and i dont receive the token.</p>\n<p>So to make sure i understand, the only way (without a handshake) is to make an integration feature in my app and make a recipe with a custom trigger and action?</p>\n<p>im not sure i understand why do i need need the action part.  if im building a custom trigger recipe and manage to get the token, can’t i then use the monday sdk and and just post requests like that?</p>\n<p>Again, thank you very much, and have a wonderful week</p>"
+    },
+    {
+      "id": 43777,
+      "postNumber": 4,
+      "createdAt": "2021-03-07T20:43:28.007Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>ok, understood.<br />\nSo, the million dollar question is: “how to get a token?”</p>\n<p>When you look at <a href=\"https://monday.com/developers/apps/integration-authorization/\">https://monday.com/developers/apps/integration-authorization/</a> section (left side) Authorization it shows when monday will send the shortLivedToken. Posting to a webhook is not one of these events. If you want to make API calls from that endpoint you need to supply a token and the problem here is that you don’t get an encrypted token from monday. I am not familiar with the monday sdk (used in views etc) but I don’t see another way than creating a custom trigger and a custom action.</p>"
+    },
+    {
+      "id": 43781,
+      "postNumber": 5,
+      "createdAt": "2021-03-07T21:54:23.944Z",
+      "author": "stavYaarBar (Stav Yaar Bar)",
+      "cookedHtml": "<p>i also understand now <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />  after taking your advise everything is working now! actually i dont know exactly why ive tried to avoid recipes so much, it was almost the same configuration i had before with only the webhook.</p>\n<p>Cheers!</p>"
+    },
+    {
+      "id": 44599,
+      "postNumber": 6,
+      "createdAt": "2021-03-12T14:27:49.574Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    }
+  ]
+}

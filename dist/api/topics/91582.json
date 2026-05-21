@@ -1,0 +1,51 @@
+{
+  "id": 91582,
+  "title": "How to Add an Authentication Screen for Server Communication in a Monday.com Integration App?",
+  "slug": "how-to-add-an-authentication-screen-for-server-communication-in-a-monday-com-integration-app",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-06-27T04:53:46.663Z",
+  "lastPostedAt": "2024-06-30T10:52:51.763Z",
+  "postsCount": 3,
+  "excerpt": "Does anyone know how to add an authentication screen for server communication when developing an integration app for Monday.com? I would like it to look like the image attached below. Please share your information.",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 112,
+  "posts": [
+    {
+      "id": 191167,
+      "postNumber": 1,
+      "createdAt": "2024-06-27T04:53:46.754Z",
+      "author": "dydzm (jeff)",
+      "cookedHtml": "<p>Does anyone know how to add an authentication screen for server communication when developing an integration app for <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>? I would like it to look like the image attached below. Please share your information.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/3/d3347c9f9c5adf6ebc40fd6b28103f7b5faaeb5b.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/3/d3347c9f9c5adf6ebc40fd6b28103f7b5faaeb5b_2_690x320.png\" alt=\"image\" width=\"690\" height=\"320\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">3246×1510 220 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 191562,
+      "postNumber": 2,
+      "createdAt": "2024-06-30T08:40:46.813Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/dydzm\">@dydzm</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can use the authorization URL of your integration feature as shown <a href=\"https://developer.monday.com/apps/docs/integration-authorization#the-authorization-url\">here</a> to add such a screen to your flow <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 191584,
+      "postNumber": 3,
+      "createdAt": "2024-06-30T10:52:51.763Z",
+      "author": "souravray (Sourav)",
+      "cookedHtml": "<p>I haven’t tested this yet but believe the following approach should work:</p>\n<p>You can set an authentication endpoint in your integration feature as shown below.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/2/82cf72b473a4216acbdb5c1b769b01647a6bf5f8.png\" title=\"Screenshot 2024-06-30 at 3.35.48 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/2/82cf72b473a4216acbdb5c1b769b01647a6bf5f8_2_625x500.png\" alt=\"Screenshot 2024-06-30 at 3.35.48 PM\" width=\"625\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-06-30 at 3.35.48 PM</span><span class=\"informations\">1578×1262 82.7 KB</span></div></a></div><p></p>\n<p>At your endpoint, you’ll receive a token in the query parameter. You can extract the userId and backToURL from the token like this</p>\n<pre><code class=\"lang-auto\">const { userId, backToUrl } = jwt.verify(\n   token,\n   MyMondaySigningSecret\n )\n</code></pre>\n<p>Next, you can render your own authentication page, authorise the user, and maintain a mapping between the Monday userId and your application session token. After that, redirect the user back to the integration template with -</p>\n<pre><code class=\"lang-auto\">async function customAuthController(req, res) {\n # you customer code goes here\n return res.redirect(backToUrl)\n}\n</code></pre>\n<p>One thing to note is that the redirection may only work for a limited period, so it’s important to check the expiry time of the token.</p>\n<p>Give it a try and let me know if you need any help.</p>"
+    },
+    {
+      "id": 191634,
+      "postNumber": 4,
+      "createdAt": "2024-07-01T04:38:47.213Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

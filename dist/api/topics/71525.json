@@ -1,0 +1,48 @@
+{
+  "id": 71525,
+  "title": "Two way connection does not trigger automation",
+  "slug": "two-way-connection-does-not-trigger-automation",
+  "categoryId": 5,
+  "tagIds": [
+    6,
+    20,
+    351
+  ],
+  "createdAt": "2023-11-26T16:48:43.048Z",
+  "lastPostedAt": "2023-11-27T01:20:12.856Z",
+  "postsCount": 4,
+  "excerpt": "TL;DR: \nWhen there is a 2 way connection between board A and B, connecting items through board A won’t trigger automation monitoring changes to the connected column in board B (even though it changes). \nWhat I’m trying t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 514,
+  "posts": [
+    {
+      "id": 154775,
+      "postNumber": 1,
+      "createdAt": "2023-11-26T16:48:43.144Z",
+      "author": "shlifer (shlifer)",
+      "cookedHtml": "<p>TL;DR:<br />\nWhen there is a 2 way connection between board <code>A</code> and <code>B</code>, connecting items through board <code>A</code> won’t trigger automation monitoring changes to the connected column in board <code>B</code> (even though it changes).</p>\n<p>What I’m trying to do:<br />\nI have 2 boards - <code>requests</code> and <code>clients</code>. When I receive new request I wish to connect it to its client, but I don’t know whether the request came from a new client or an existing one. If it is a new client I need to create it as well.</p>\n<p>My solution:<br />\n<code>clients</code>  has 2 groups - <code>perm</code> and <code>tmp</code>. When a request is made, an automation creates a new client in <code>tmp</code> and a match automation is used to connect the request to a client.<br />\nAnother automation should move clients from <code>tmp</code> to <code>perm</code> if the connected column in <code>clients</code> changes.</p>\n<p>The problem:<br />\nThe last automation isn’t triggered for some reason. I did it manually as well, it doesn’t work unless I change the connected column from through the <code>clients</code> board.</p>\n<p>Is there a way to make it work?</p>"
+    },
+    {
+      "id": 154782,
+      "postNumber": 2,
+      "createdAt": "2023-11-26T18:32:30.776Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You will need to create a status column on requests, and mirror it on clients. on requests you need an automation that changes that status on the connection being created (since on requests board the change in connect boards triggers).</p>\n<p>Then on clients you need to mirror that status column.</p>\n<p>On clients, create an automation from the built-in automations (<em>not</em> create custom automation) - “When a <strong>status</strong> changes to <strong>something</strong> change another <strong>status</strong> to <strong>something</strong>”. This is because a small number of the built-in status change recipes can be triggered by mirrors of statuses changing!</p>\n<p>Now, create a third recipe, that when status changed by the recipe above changes, move the item.</p>\n<p>Very much a work around, but it does make it work.</p>"
+    },
+    {
+      "id": 154787,
+      "postNumber": 3,
+      "createdAt": "2023-11-26T20:26:29.279Z",
+      "author": "shlifer (shlifer)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p>When a <strong>status</strong> changes to <strong>something</strong> change another <strong>status</strong> to <strong>something</strong></p>\n</blockquote>\n</aside>\n<p>Thank you, this work around works!<br />\nBut why it didn’t work they way I tried before? Seems like a bug to me (or at least an unexpected behavior). Is there a way to report it?</p>"
+    },
+    {
+      "id": 154805,
+      "postNumber": 4,
+      "createdAt": "2023-11-27T01:20:12.856Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I consider it a bug and it has been reported. Basically, its because there is no action changing the value on the clients board - the value just shows up.</p>\n<p>Definitely annoying.</p>"
+    }
+  ]
+}

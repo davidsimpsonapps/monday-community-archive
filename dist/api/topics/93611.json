@@ -1,0 +1,72 @@
+{
+  "id": 93611,
+  "title": "Query complexity",
+  "slug": "query-complexity",
+  "categoryId": 8,
+  "tagIds": [
+    22,
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-07-22T16:43:24.153Z",
+  "lastPostedAt": "2024-07-23T16:44:31.105Z",
+  "postsCount": 6,
+  "excerpt": "Not sure I understand how this can yield a complexity that blocks my access to the API… \n\tboards (limit: 5) {\n          id\n          name\n          groups {\n              title\n              items_page (limit: 2) {\n     &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 106,
+  "posts": [
+    {
+      "id": 194378,
+      "postNumber": 1,
+      "createdAt": "2024-07-22T16:43:24.233Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p>Not sure I understand how this can yield a complexity that blocks my access to the API…</p>\n<pre><code class=\"lang-auto\">\tboards (limit: 5) {\n          id\n          name\n          groups {\n              title\n              items_page (limit: 2) {\n              items {\n                  name\n                  id\n                  url\n              }\n          }\n      }\n\t}\n}\n</code></pre>\n<p>The response error:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Query has complexity of 15095070, which exceeds max complexity of 5000000\",\n      \"extensions\": {\n        \"code\": \"maxComplexityExceeded\",\n        \"complexity\": 15095070,\n        \"maxComplexity\": 5000000\n      }\n    }\n  ]\n}\n</code></pre>\n<p>I have a developer plan account so that I can deploy my app on Monday but I run into complexity limits so often, it’s becoming essentially impossible to do actual testing for my app.  My account has only 4 or 5 boards and each board only has a couple test groups and a max of 3 items in each group.</p>\n<p>However, to actually test my app so I can execute queries that return dozens or hundreds / paginated of results for various items like groups/items/etc, the rules around complexity literally prevent me from doing so.  Therefore, it seems it might not be possible to test an app on the Monday platform for queries that return anything more than a few rows for the most simple queries.  Is that correct??</p>\n<p>OPTIONS?</p>\n<ul>\n<li>I can create multiple queries (get one board, find groups in one board, then go issue another query to get a tiny list/page of items in that single group and repeat this process by issuing literally dozens if not hundreds of queries)</li>\n<li>Only test my app with completely mock data on my own test server and literally not call the Monday’s API at all.  Far from ideal in every possible way.</li>\n<li>What else??</li>\n</ul>"
+    },
+    {
+      "id": 194382,
+      "postNumber": 2,
+      "createdAt": "2024-07-22T17:07:12.950Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Rather than doing this:</p>\n<p>boards &gt; groups &gt; items/items_page</p>\n<p>Why not try this:</p>\n<p>boards &gt; items/items_page &gt; groups</p>\n<p>Include the group in your items query but then sort the items into groups yourself after you’ve got the data.</p>\n<p>You’ll have to remove the limits, but that could be ok?</p>\n<p>This query, while a bit slow has a complexity of  “only” <code>85310</code>, but you get a result:</p>\n<pre><code class=\"lang-auto\">{\n  boards {\n    id\n    name\n    items_page {\n      items {\n        group {\n          id\n          title\n        }\n        name\n        id\n        url\n      }\n    }\n  }\n}\n</code></pre>\n<p>You’ll then have to parse the result to find just the data that you want.</p>"
+    },
+    {
+      "id": 194425,
+      "postNumber": 3,
+      "createdAt": "2024-07-22T18:07:12.946Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p>Thank you!  Will investigate this.  Other than trial and error, how would a new app developer on Monday know/find out this type of info about Monday queries.  I find it VERY limiting and VERY unusual that a platform restricts queries this way.</p>\n<p>I could understand if a customer’s account had X &gt; Ygb of data in their account that exceeds some threshold.  And, then queries/joins/graphql data sources might start to slow down or “tax” the system.  But, in this case, I have a basic free/dev account for the sole purpose of creating a complex app for Monday.</p>\n<p>Hmm, I get the feeling the dark art of trial and error query planning/complexity analysis is how to truly find out the “best” way to query the platform.  Which of course as a busy dev I have ZERO time to do.  I just want to write a query, test it and move on like every other platform on planet earth allows…</p>"
+    },
+    {
+      "id": 194432,
+      "postNumber": 4,
+      "createdAt": "2024-07-22T18:46:23.438Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Add…</p>\n<pre><code class=\"lang-auto\">complexity {\n  query\n}\n</code></pre>\n<p>…to each query to find its complexity.</p>\n<p>I’m not an expert on complexity, I think you just have to get some experience writing queries and seeing which are more complex.</p>\n<p>Take a look at this comment:</p><aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/a-few-questions-about-429-complexity-budget-exhausted-error/53779/6\">A few questions about 429 Complexity Budget Exhausted Error</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span style=\"--category-badge-color:#00ca72;--category-badge-text-color:#FFFFFF\" class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Thank you <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> !! \n<a class=\"mention\" href=\"/u/oktadev\">@OktaDev</a>, what <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> said is correct. \n\nA single query is limited to 5,000,000 complexity points\nAll queries made through an API token belonging to a specific user must not exceed 10,000,000 points per minute (1M for trial and free accounts)\nFor apps only, reads and writes are each limited to 5,000,000 complexity points per minute\nEnterprise accounts have a 10,000,000 points limit per minute\n\nIf you are developing an app for the marketplace and need a higher limit, please…\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 194515,
+      "postNumber": 5,
+      "createdAt": "2024-07-23T15:48:15.847Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Something else to remember on complexity is its recursively multiplied by the maximum objects possible for each subquery. Group has no limit so its treated as 1000. Something else to remember - even if the API can only return 500 items in items_page, if you don’t specify a limit it acts as though there are a maximum of 1000 items to return. (at least it used to). I consider that a bug.</p>\n<p>first number of any of the multiplications is the complexity of the deepest object/field.</p>\n<p>10 for calling boards<br />\n10 = 2 * 5 for getting id &amp; name on 5 boards.<br />\n50 = 10 * 5 for getting groups on 5 boards.<br />\n5000 = 1 * 1000 * 5 for getting title of 1000 groups on 5 boards.<br />\n15000000 = 3000 * 1000 * 5 for calling items_page in each of 1000 groups on 5 boards<br />\n50000 = 10 * 1000 * 5 for calling items within 1000 items_page in 1000 groups on 5 boards<br />\n10000 = 1 * 2 * 1000 * 5 for getting 2 items in 1000 groups on 5 boards<br />\n30000 = 3 * 2 * 1000 * 5 for getting 3 fields on 2 items in 1000 groups on 5 boards.</p>\n<p>Grand total is 15095070</p>"
+    },
+    {
+      "id": 194528,
+      "postNumber": 6,
+      "createdAt": "2024-07-23T16:44:31.105Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p>wow THANKS!!  ok, yep, i’ve had to narrow the scope of my app bc for a 1.0 i need to keep it simple / stable and i’m going to slowly learn the query cost as i go.  so i’m reducing the number of items i’m fetching, etc.</p>\n<p>both of these replies are super helpful!</p>"
+    },
+    {
+      "id": 195181,
+      "postNumber": 7,
+      "createdAt": "2024-07-28T10:27:38.471Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

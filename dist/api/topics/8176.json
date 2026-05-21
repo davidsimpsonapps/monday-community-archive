@@ -1,0 +1,93 @@
+{
+  "id": 8176,
+  "title": "Timeout and data return issues when requesting large queries",
+  "slug": "timeout-and-data-return-issues-when-requesting-large-queries",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-06-19T03:33:57.032Z",
+  "lastPostedAt": "2020-07-28T11:47:12.215Z",
+  "postsCount": 11,
+  "excerpt": "I’m running into an interesting issue while performing heavy queries. \nIf the call takes longer than 60 seconds, I get one of two responses from the server. Both are errors, and both are in HTML body. One is a general 50&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 13184,
+  "posts": [
+    {
+      "id": 20464,
+      "postNumber": 1,
+      "createdAt": "2020-06-19T03:33:57.099Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p>I’m running into an interesting issue while performing heavy queries.<br />\nIf the call takes longer than 60 seconds, I get one of two responses from the server. Both are errors, and both are in HTML body. One is a general 504 timeout warning. The second one is returned the page text below. After watching the timing, this happens at exactly the 60 second mark, so the timeout seems to be 60 seconds from the server. I’m not seeing this mentioned anywhere on the documentation.</p>\n<p>–returned page<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/bc70d901081124a082e5fbc2af5fe503d2b46d6c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/bc70d901081124a082e5fbc2af5fe503d2b46d6c_2_589x500.png\" alt=\"image\" width=\"589\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">923×783 39.5 KB</span></div></a></div><p></p>\n<p>This exposes a few critical issues and opportunities.</p>\n<ol>\n<li>\n<p>If the anticipated API response body is JSON, ALL API response bodies should be JSON. Every. Single. One. I think it is inappropriate to return a page body when there’s an error, instead of simply {“error”:“Server timeout. Maximum query duration is 60 seconds.”} or something similar displaying the reason for the error. We can always manage exceptions, however response body format should never vary like this.</p>\n</li>\n<li>\n<p>I’m disappointed  further that pagination doesn’t interrupt query timeouts. Return an error at data transmission if anticipated query call will result in greater than 60 seconds, or just complete the query and send the data.</p>\n</li>\n</ol>"
+    },
+    {
+      "id": 20980,
+      "postNumber": 2,
+      "createdAt": "2020-06-26T15:44:27.512Z",
+      "author": "arnold_wikey (Arnold Wikey)",
+      "cookedHtml": "<p>I have noticed similar issues receiving a 504 Timeout Error when trying to retrieve large queries. You bring up very good points about issues and possible opportunities.</p>\n<p>I would like to share something that I discovered about query requests that I have not been able to find in the documentation either:<br />\nWhen passing the <code>limit</code> parameter to a query response, subsequent queries to the same board (e.g. within a looping structure) will select the next contiguous block of items from the board, instead of starting from the beginning of the board. I haven’t been able to confirm this, but it seems that <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> maintains an internal cursor when a query returns a limited number of items.</p>\n<p>When working with large boards (either a large number of items, or a large number of columns), I have found that the ability to “break up” the data that comes from the query solves the problem of the request timeout, and then I can concatenate all results locally.</p>"
+    },
+    {
+      "id": 21206,
+      "postNumber": 3,
+      "createdAt": "2020-06-30T11:33:24.481Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/arnold_wikey\">@arnold_wikey</a> yes! I’ve found the same. The two seem to work together so long as they are at the root level of your request. I’m currently pulling full pulse sets across all boards the way you are describing above. I had some weird responses having page requests anywhere except at root during testing that was a bit annoying. For example, I couldn’t successfully pull board --&gt; item with page on item, and of course page on board just breaks up the boards. I think the pagination documentation could use some more description regarding when it does and does not work, as well as documentation regarding time outs and Monday’s recommendation for avoidance.</p>"
+    },
+    {
+      "id": 21276,
+      "postNumber": 4,
+      "createdAt": "2020-07-01T03:50:30.861Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey guys,</p>\n<p>there are API rate limits on the complexity levels which are 10,000,000 / minute per account on <a href=\"http://monday.com\">monday.com</a>.<br />\nIt’s higly recommended to lower the complexity level of your querys.</p>\n<p>You can read more about rate limits here:</p>\n<p><a href=\"https://monday.com/developers/v2#rate-limits-section\" class=\"onebox\" target=\"_blank\" rel=\"noopener\">https://monday.com/developers/v2#rate-limits-section</a></p>"
+    },
+    {
+      "id": 21325,
+      "postNumber": 5,
+      "createdAt": "2020-07-01T10:49:45.325Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> I appreciate your response, however I think we are discussing different topics.</p>\n<ol>\n<li>I record the cost of every query I run.</li>\n<li>From what I see query costs do not align with machine workload</li>\n<li>This is the most expensive query I run. It costs 2,013,010 and runs in less than a second. It costs so much because I pulled a lazy move and didn’t feel like cycling through board page, and Monday’s cost calculator multiplies by 1,000. Regardless, here it is.</li>\n</ol>\n<blockquote>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/4/416f5ed2a1d0009e6098d207fc0e6617a91bf7ff.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/4/416f5ed2a1d0009e6098d207fc0e6617a91bf7ff.png\" alt=\"image\" width=\"690\" height=\"28\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1042×43 2.47 KB</span></div></a></div><p></p>\n</blockquote>\n<ol>\n<li>The paginated item pulls I am running require much less cost, and still take between 15-45 seconds to run.</li>\n</ol>\n<blockquote>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e7220ed04e98dd5a726d966c13e61fb5ab3434eb.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/e/e7220ed04e98dd5a726d966c13e61fb5ab3434eb.png\" alt=\"image\" width=\"690\" height=\"109\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1102×175 6.98 KB</span></div></a></div><p></p>\n</blockquote>\n<ol>\n<li>Any limit over 2000 on these item requests pushes response time too closely to the 60 second mark for comfort. When I adjust my limit to 4000 or 5000 I bump into response times that are 60+ seconds and run into timeout issues, with a minimal query cost per run time. Here’s an example, using a page number higher than what currently exists in my dataset. Minimal cost, but if the data existed the call is likely to timeout.</li>\n</ol>\n<blockquote>\n<p>{complexity{query, after}, items (page: 50, limit: 5000) {board {id}id,name,state,group {id},column_values {id,text,value}}}<br />\nreturns:  “query”: 190010</p>\n</blockquote>\n<ol>\n<li>When a timeout is achieved, the response is an html page body, instead of a json body with an error code. This add unnecessary complication to error handling.</li>\n</ol>"
+    },
+    {
+      "id": 21329,
+      "postNumber": 6,
+      "createdAt": "2020-07-01T11:29:41.700Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/morhriveion\">@morhriveion</a> ,</p>\n<p>I don’t represent monday, I’m a dev just like you who wants to help <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> .</p>\n<p>And I’m sorry, I obviously missunderstood your question.</p>"
+    },
+    {
+      "id": 21437,
+      "postNumber": 7,
+      "createdAt": "2020-07-02T08:38:46.154Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> apologies, I’ll edit my previous response accordingly.</p>"
+    },
+    {
+      "id": 21474,
+      "postNumber": 8,
+      "createdAt": "2020-07-02T20:14:06.325Z",
+      "author": "Scott-monday.com (Scott Underwood)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/morhriveion\">@morhriveion</a>!</p>\n<p>Scott here from <a href=\"http://monday.com\">monday.com</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Thank you so much for taking the time to bring this to our attention. The errors being returned in HTML as opposed to JSON is something that we’re aware of and are working on resolving. I’ve passed this feedback along to the team to let them know it’s a pain point that you’re currently running into.</p>\n<p>You’d also noted:</p>\n<blockquote>\n<p>I’m disappointed further that pagination doesn’t interrupt query timeouts. Return an error at data transmission if anticipated query call will result in greater than 60 seconds, or just complete the query and send the data.</p>\n</blockquote>\n<p>I just wanted to let you know that I’ve passed that feedback along to the team as well <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>If you have any other suggestions, please let me know! <img src=\"https://emoji.discourse-cdn.com/apple/raised_hands.png?v=12\" title=\":raised_hands:\" class=\"emoji\" alt=\":raised_hands:\" width=\"20\" height=\"20\" /></p>\n<p>-Scott</p>"
+    },
+    {
+      "id": 23861,
+      "postNumber": 9,
+      "createdAt": "2020-07-28T05:50:23.935Z",
+      "author": "morneluckybeard (Morne)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/morhriveion\">@morhriveion</a> <a class=\"mention\" href=\"/u/arnold_wikey\">@arnold_wikey</a>  how have you guys been calculating the total pages? I’m running into a similar issue of timeout and was hoping I could loop through the items locally. Any tips or tricks? Thanks guys!</p>"
+    },
+    {
+      "id": 23880,
+      "postNumber": 10,
+      "createdAt": "2020-07-28T11:34:23.121Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/morneluckybeard\">@morneluckybeard</a> my use may be different from yours depending on the amount of columns you are calling at a time.</p>\n<p>I used a variable to control how many rows/pulses I called at a time and dropped that down until the highest call wast no more than 20-30 seconds. I left that variable at 2000.</p>\n<p>I don’t remember why I chose to not check for a response equal to the variable. Instead I opted to call the next page so long as the previous call returned pulses. I didn’t leave any notes on it but I’m sure either would work.</p>\n<p>The time out issue was my biggest frustration while working with this. Definitely make sure you are not at risk of bumping into this timeout. During my first test phase I was around the 4000-5000 mark, and had zero issues. Unfortunately I do a lot of work during non-peak hours, and once I moved into any where near peak hours I ran into timeouts that broke every request sequence.</p>"
+    },
+    {
+      "id": 23883,
+      "postNumber": 11,
+      "createdAt": "2020-07-28T11:47:12.215Z",
+      "author": "morneluckybeard (Morne)",
+      "cookedHtml": "<p>Thanks for taking the time to respond, I was hoping I could kick off all of my calls asynchronously instead of calling them sequentially, but I think I might have to do that, reduce the limit to like 200 and keep calling until I get an empty array back.</p>\n<p>Thanks again, I really appreciate your response.</p>"
+    }
+  ]
+}

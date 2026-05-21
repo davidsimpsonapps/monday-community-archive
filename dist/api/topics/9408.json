@@ -1,0 +1,181 @@
+{
+  "id": 9408,
+  "title": "The best development environment for monday apps... your opinion and setup",
+  "slug": "the-best-development-environment-for-monday-apps-your-opinion-and-setup",
+  "categoryId": 8,
+  "tagIds": [
+    174,
+    203,
+    234
+  ],
+  "createdAt": "2020-07-25T18:54:13.627Z",
+  "lastPostedAt": "2024-12-02T19:47:20.960Z",
+  "postsCount": 22,
+  "excerpt": "I am wondering how you develop and test monday apps (specially integration features). To start the discussion I will share my setup and curious to know about your best practices. \nI use a windows client but wanted to dev&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 5555,
+  "posts": [
+    {
+      "id": 23644,
+      "postNumber": 1,
+      "createdAt": "2020-07-25T18:54:13.702Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I am wondering how you develop and test monday apps (specially integration features). To start the discussion I will share my setup and curious to know about your best practices.</p>\n<p>I use a windows client but wanted to develop on an Ubuntu system. Therefore I am using a Plesk server with Ubuntu (from 15 US/month @ different hosting providers) which also hosts my Wordpress sites. Plesk (Phusion Passenger &amp; nginx will take care of running multiple domains on a single IP and do the  caching) and evrything is safeguareded with firewall and mod security.</p>\n<p>On this Plesk server I configured 2 subdomains mondaydev and mondayapps together with 2 backend databases I need to support my apps (eg to keep tokens).</p>\n<p>On my Windows machine I use VSCode with a remote (ssh) connection to my mondaydev subdomain. So anything I change in VSCode (on the Windows PC) is really changed directly on the dev server. My VSCode is connected to Github, so if I am happy with a “release” I commit changes and push it to Github.</p>\n<p>Plesk has a very nice feature called Node.js, where you have options to build and run your Node app (you don’t need to do npm build / run etc). Because it is running on a hosted server with a public IP, I don’t need to bother about ever changing IP addresses and ngrok tunnels.</p>\n<p>In <a href=\"https://slack-redir.net/link?url=http%3A%2F%2Fmonday.com\">monday.com</a> I have apps (starting with DEV) that uses authorization and run URL from the mondaydev subdomain which is serving the endpoints.</p>\n<p>On the production subdomain my Plesk subdomain is connected to the same Github account, and Plesk can simply pull (in that subdomain) the latest version from Github and all I need to do is build and run.</p>\n<p>I have a clean package.json file with no npm command in it as Plesk is taking care of this. The Node.js extension of Plesk also enable you to set environment variable without the need of a .env file, so you don’t have to bother about securing the .env file holding your client secret etc.</p>\n<p>There is only one little thing I would like to see in monday and that is to copy a feature (frontend of an integration) from one monday app to another. Currently my production app is public and my development app is private. Therefore I need to “rebuild” or “reconfigure” the frontend side of the app in the production version.</p>\n<p>This setup works very good for me and I hope some of you benefit from this idea. Also like to know how you are handling testing vs. production.</p>"
+    },
+    {
+      "id": 25523,
+      "postNumber": 2,
+      "createdAt": "2020-08-14T13:51:02.599Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>That is really amazing ! Thanks for sharing!</p>"
+    },
+    {
+      "id": 25571,
+      "postNumber": 3,
+      "createdAt": "2020-08-15T04:26:05.033Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> - thanks for starting an important conversation here and I do hope other team members will join in and share their experience as well <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> Sometimes, it takes one person to start a journey that many others will be able to follow and I appreciate the opportunity this post creates.</p>\n<p><a class=\"mention\" href=\"/u/tmnxt-dev\">@TMNXT-Dev</a> thank you as well for acknowledging the effort here! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> That said, what’s your setup like? Is there anything you’d like to share that you find works well for you?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 31018,
+      "postNumber": 4,
+      "createdAt": "2020-10-13T12:41:26.851Z",
+      "author": "freek-gcompany (Freek van de Griendt)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> I have a question on this one. I’m currently using the template from the quickstart-integrations which includes setting up a development environment with ngrok from <a class=\"mention\" href=\"/u/dipro\">@dipro</a> 's webinar. However, each time I’m saving the code after changes,  the web server seems to crash with the following message:</p>\n<p>[nodemon] app crashed - waiting for file changes before starting…<br />\n[nodemon] restarting due to changes…<br />\nnodemon] starting <code>node ./src/app.js</code><br />\nevents.js:288<br />\nthrow er; // Unhandled ‘error’ event<br />\n^</p>\n<p>I need to relaunch my server thus generating a new ngrok URL and I have to update my integration recipes, which is quite annoying.</p>\n<p>Did you also run into this issue?</p>\n<p>Regards,</p>\n<p>Freek</p>"
+    },
+    {
+      "id": 31022,
+      "postNumber": 5,
+      "createdAt": "2020-10-13T13:15:41.069Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/freek-gcompany\">@freek-gcompany</a> Not exactly the same issue, but (in general) the webserver (Apache) has to restart when you make changes to your code. When you run an ngrok tunnel to your local PC this will result in a new URL and thus the need to reconfigure your app on the client side.</p>\n<p>I am using a setup with an server hosted on the Internet with Plesk/NodeJS/Apache/nginx. When I make changes to the code it also restarts but you will not notice that because the URL is a public URL hosted on the internet.</p>\n<p>Does that make sense?</p>"
+    },
+    {
+      "id": 31058,
+      "postNumber": 6,
+      "createdAt": "2020-10-13T18:04:12.716Z",
+      "author": "freek-gcompany (Freek van de Griendt)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> not entirely, but that’s my probably on my end <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I’m using a server with node.js (based on the quickstart-integrations) where I’m used that whatever code change I make locally is immediately reflected by the site that’s hosted by that code (similar to what you’re describing with the SSL connection but locally on my machine).<br />\nNow, with ngrok (maybe that’s the cause), whenever I make a code change I get the aforementioned error, causing me to relaunch the server which changes the ngrok URL and thus I need to update my recipe.</p>\n<p>The setup I run for production, hosting the endpoint on Google Cloud Platform causes me to push my code to a github repository and then redeploying the cloud function to reflect the most recent source code. The endpoint always stays the same but the redeploy takes a couple of minutes thus drastically decreasing my development speed.</p>\n<p>I suppose what I’m looking for is the best way to run a nodejs server which immediately reflects my latest code changes while keeping the same endpoint across different versions.<br />\nAny suggestions on such a setup are more than welcome!</p>"
+    },
+    {
+      "id": 31059,
+      "postNumber": 7,
+      "createdAt": "2020-10-13T18:17:17.238Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/freek-gcompany\">@freek-gcompany</a></p>\n<p>Good chance that I misunderstood you <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />. The setup I described  (hosted Plesk/nodejs) is for me perfect for development. Whenever I make a change in my code (remember I develop on my local Windows machine with VScode/ssh connection to my server) I hit the Restart node button in Plesk and the new code is active in a matter of 2 seconds without the need for any reconfig due to ngrok. I simply do not use ngrok at all.</p>"
+    },
+    {
+      "id": 33648,
+      "postNumber": 8,
+      "createdAt": "2020-11-14T02:47:33.719Z",
+      "author": "jonkurtis (Jonathan Killian)",
+      "cookedHtml": "<p>I love your setup and I am trying to replicate it but running into issues. Remote WSL does not seem to be working for me. I am used to developing through Remote-WSL with VS Code. But this setup with Remote-SSH VS Code extension uses the Windows 10 host for WSL through Powershell. I installed Open SSH client in powershell, generated keys and put them in the authorized keys on my Digital Ocean server. I can connect via SSH in powershell to the remote server but when I try to connect via the Remote-SSH VS Code extension it does not work. Do you have a tutorial on how you set this up? Any help is much appreciated.</p>"
+    },
+    {
+      "id": 33649,
+      "postNumber": 9,
+      "createdAt": "2020-11-14T02:53:51.159Z",
+      "author": "jonkurtis (Jonathan Killian)",
+      "cookedHtml": "<p>Solved my own problem. In case this helps any one else out, I had to open VS code with Run as Administrator and then ctrl+shit+p for command palette in VS Code, then Remote-WSL Connect current window to host in order to connect using the Admin VS Code instead of opening a new instance for the connection.</p>"
+    },
+    {
+      "id": 108089,
+      "postNumber": 10,
+      "createdAt": "2022-12-22T08:49:48.063Z",
+      "author": "guidou4 (GuillaumeDoucet)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>Thank you for starting this topic. I’m looking right now for the best possible setup for our monday integration.</p>\n<p>My setup is currently this:</p>\n<ul>\n<li>Monday to monday integration app in order to use the graphQL API (nodeJS with typescript)</li>\n<li>Persistence is a MySQL DB for user tokens</li>\n<li>I develop locally in VSCode &amp; run in docker compose for testing. I control the ngrok tunnel myself (starting it manually through command line), hence I do not need to change URL when I restart my docker compose.</li>\n<li>For now i deploy my app on a very small AWS EC2 instance, running inside a docker container, behind NGINX.</li>\n<li>the MySQL container is replaced by RDS instance in prod.</li>\n</ul>\n<p>I’m wondering if this is enough, particularly for production… I’m thinking an orchestrator manager like K8s would be better, but I have the feeling this is a little bit overkill.</p>\n<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> , do you have a lot of clients that uses your app in production ? How does it scales ?</p>"
+    },
+    {
+      "id": 108127,
+      "postNumber": 11,
+      "createdAt": "2022-12-22T15:27:53.312Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/guidou4\">@guidou4</a></p>\n<p>Since the original post I changed some infra. Now running 3 environments, Dev, Test and Prod. The Prod server is a AWS Lightsail 2 VCPU/8GB Plesk/Ubuntu servicing 1.500+ accounts over 15+ different apps. Measured over a 20-day period this is making approx. 400K API request per 24h.</p>"
+    },
+    {
+      "id": 108265,
+      "postNumber": 12,
+      "createdAt": "2022-12-25T02:38:35.980Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I develop in Windows as well, but utilize WSL with Ubuntu. (I am planning though to abandon windows soon, possibly for some flavor of linux. Though saving for a new MacMini if they come out with an M2 based one spec’d between the current mini and the mac studio)</p>\n<p>Since I deploy to AWS, I use the aws-cdk to define my infrastructure, etc. (I’m not going to go into specifics, but i will say its progressive.)</p>\n<p>using “cdk watch stackname --profile=dev -e -hotswap” I can view an only slightly delayed log stream from my app. As I make and save changes, the new code gets deployed automatically (to dev… NOT PRODUCTION). Very similar to running nodemon locally with ngrok, except the code changes get pushed to aws. Not quit as fast as full remote development would be, but also pretty transparent.</p>\n<p>Beyond that, I do everything in vscode with a terminal on another display for the logs to flow by (because the vscode integrated terminal just needs too much space for that to be useful).</p>"
+    },
+    {
+      "id": 116290,
+      "postNumber": 13,
+      "createdAt": "2023-02-20T18:49:04.613Z",
+      "author": "ann.biel (Anna)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> if you’re still active here, please give some sign. I really need your help. I’d like to ask about some more details about these environments because now we’re working on some plugins to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> and want to prepare some testing environments or at least check what are the possibilities. I hope, you’re still on this forum. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> Greetings</p>"
+    },
+    {
+      "id": 116293,
+      "postNumber": 14,
+      "createdAt": "2023-02-20T18:53:35.097Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Anna</p>\n<p>Yea, I am still on the forum. In the mean time I did make some changes to the development environment.</p>"
+    },
+    {
+      "id": 116295,
+      "postNumber": 15,
+      "createdAt": "2023-02-20T19:00:27.115Z",
+      "author": "ann.biel (Anna)",
+      "cookedHtml": "<p>Thank you for the reply. Is it possible for us as integrations’ creators to create a testing environments that’s exactly like <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>? Or some local environment? Did I understand right that you have such environments? I asked monday support directly but they suggest to test integrations on their website before publishing them.</p>"
+    },
+    {
+      "id": 116297,
+      "postNumber": 16,
+      "createdAt": "2023-02-20T19:09:39.142Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I develop all integration in <a href=\"http://abc.monday.com\">abc.monday.com</a> and I have another account (free) for testing while in production called <a href=\"http://xyz.monday.com\">xyz.monday.com</a></p>\n<p>In <a href=\"http://abc.monday.com\">abc.monday.com</a> I set the baseURL to dev.mydomain/myapp. I can test inside <a href=\"http://abc.monday.com\">abc.monday.com</a> and the backend runs isolated at dev.mydomain/myapp</p>\n<p>When ready for user testing I:</p>\n<ul>\n<li>change the baseURL to test.mydomain/myapp</li>\n<li>promote the app to live</li>\n<li>chare the apps installation link with the testing customer</li>\n</ul>\n<p>For continuous development I create a new minor version and change the base URL back to dev.mydomain/myapp</p>\n<p>etc. etc.</p>"
+    },
+    {
+      "id": 116544,
+      "postNumber": 17,
+      "createdAt": "2023-02-22T07:08:06.700Z",
+      "author": "ann.biel (Anna)",
+      "cookedHtml": "<p>Could you explain how you change the base URL?</p>"
+    },
+    {
+      "id": 116562,
+      "postNumber": 18,
+      "createdAt": "2023-02-22T10:32:29.203Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/1/71340a941f09a8f50cb9796da325e1a452916d18.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/1/71340a941f09a8f50cb9796da325e1a452916d18_2_690x407.png\" alt=\"image\" width=\"690\" height=\"407\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1263×746 38.6 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 116702,
+      "postNumber": 19,
+      "createdAt": "2023-02-23T07:24:22.246Z",
+      "author": "ann.biel (Anna)",
+      "cookedHtml": "<p>Unfortunately, I can’t find this view on <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>. Where is it?</p>"
+    },
+    {
+      "id": 116704,
+      "postNumber": 20,
+      "createdAt": "2023-02-23T07:48:22.591Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>avatar &gt; developers &gt; your app &gt;  your integration feature</p>"
+    },
+    {
+      "id": 212533,
+      "postNumber": 21,
+      "createdAt": "2024-12-02T14:45:35.124Z",
+      "author": "devon.henegar (Devon)",
+      "cookedHtml": "<p>Hey Bas, I’m just fining this thread so I have no idea if it’s still be watched but it’s the most relevant to what I’m trying to understand that I’ve found.</p>\n<p>You change your base URL during testing, doesn’t this then break your prod environment while the base URL is pointed to the test server? Am I missing a piece here?</p>\n<p>If you’re still active here I’d love to better understand the proper flow for using a single app for multiple environments rather than needing several apps that are manually kept identical except for the feature URL.</p>"
+    },
+    {
+      "id": 212553,
+      "postNumber": 22,
+      "createdAt": "2024-12-02T19:47:20.960Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Devon,</p>\n<p>You can only change the base URL after you created a new version. You can than test that new version (the current version still works with the current base URL) against the ne (test environment) URL.</p>"
+    },
+    {
+      "id": 212579,
+      "postNumber": 23,
+      "createdAt": "2024-12-03T06:45:12.663Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

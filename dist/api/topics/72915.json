@@ -1,0 +1,68 @@
+{
+  "id": 72915,
+  "title": "Monday.com API Connect Error - Forcibly Closed",
+  "slug": "monday-com-api-connect-error-forcibly-closed",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-12-13T04:51:00.599Z",
+  "lastPostedAt": "2023-12-13T15:34:22.360Z",
+  "postsCount": 5,
+  "excerpt": "I would consider that I have a pretty hefty monday.com script that is creating, moving, updating, etc. around 8k items. I occasionally run into errors indicating that my new board was not created correctly. Normally if I&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 329,
+  "posts": [
+    {
+      "id": 157635,
+      "postNumber": 1,
+      "createdAt": "2023-12-13T04:51:00.676Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I would consider that I have a pretty hefty <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> script that is creating, moving, updating, etc. around 8k items. I occasionally run into errors indicating that my new board was not created correctly. Normally if I just run the script again, it’s fixed. I’d assume this is just due to latency. I’ve also put <code>time.sleep()</code> functions throughout my script to make sure I am not hitting any limits. I’ve had a couple successful runs.</p>\n<p>However, I recently ran into this error: <code>[Errno 10054] An existing connection was forcibly closed by the remote host</code>. Through stack exchange and other community platforms, it seems that this is actually due to being connected to monday’s API for too long??? My script is taking on average about 2 hours to run. Sometimes my computer will “fall asleep”, could this be an issue?</p>\n<p>Has anyone else come upon this error or have any suggestions?</p>\n<p>Currently trying this method to hone down on where the error might be coming from, or if it’s consistent.</p>\n<pre><code class=\"lang-auto\">try:\n    r = requests.post(url=apiUrl, headers=headers, json=data, timeout=60) # make request\nexcept:\n    print('Monday.com Error | location of error | Sleeping for 60 seconds')\n    time.sleep(60)\n    r = requests.post(url=apiUrl, headers=headers, json=data, timeout=60) # make request\n</code></pre>"
+    },
+    {
+      "id": 157640,
+      "postNumber": 2,
+      "createdAt": "2023-12-13T05:40:31.981Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>For Joseph.</p>\n<p>Note: Never seen that in my life, so I would investigate and check with the devs if necessary. Could be an issue not related to monday.</p>"
+    },
+    {
+      "id": 157703,
+      "postNumber": 3,
+      "createdAt": "2023-12-13T12:13:14.886Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>As far as I know, <a href=\"http://monday.com\">monday.com</a> does not support http/2 or keep-alive on its API server. But that could have changed. My understanding is that your script should have to establish a new connection each time it makes a call. So none should be getting too old.</p>\n<p>Falling asleep would definitely be an issue though.</p>\n<p>That said, there is a rate limit of 5000 connections per minute from a single IP address thats not well documented.</p>"
+    },
+    {
+      "id": 157750,
+      "postNumber": 4,
+      "createdAt": "2023-12-13T14:58:18.625Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I changed my setting to “Never” fall asleep and ran the process again, no error this time. Though those type of connection error or data manipulation errors seem rather random.</p>\n<p>Thanks for the additional rate limit information. I’d be very surprised to hit that in a single minute. It takes about a second for each manipulation operation. So unless I put multiprocessing back in, I should be in the clear.</p>"
+    },
+    {
+      "id": 157760,
+      "postNumber": 5,
+      "createdAt": "2023-12-13T15:32:56.242Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Is there a standard method to test if I am hitting limits. Is there a specific status.code for that or…?</p>\n<p>When running testing data for my project, everything works correctly, but as soon as I put in the multi-hour process, data starts to get “skipped” like I’m hitting a limit, but it’s not clear what that limit is.</p>"
+    },
+    {
+      "id": 157761,
+      "postNumber": 6,
+      "createdAt": "2023-12-13T15:34:22.360Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You need to check your responses for a “data” key, if its missing - log it the respons. something is throwing an error that isn’t coming back as a status code other than 200.</p>"
+    },
+    {
+      "id": 159296,
+      "postNumber": 7,
+      "createdAt": "2023-12-27T09:00:39.202Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

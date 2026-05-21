@@ -1,0 +1,42 @@
+{
+  "id": 123236,
+  "title": "After OAuth Completion, Where Should the Access Token Be Stored and How Do I Retrieve It Later?",
+  "slug": "after-oauth-completion-where-should-the-access-token-be-stored-and-how-do-i-retrieve-it-later",
+  "categoryId": 80,
+  "tagIds": [
+    5,
+    94,
+    159,
+    351
+  ],
+  "createdAt": "2026-01-25T13:48:07.749Z",
+  "lastPostedAt": "2026-02-12T20:53:25.911Z",
+  "postsCount": 3,
+  "excerpt": "I need to use a storage service from my backend using the Monday Apps SDK: \nimport { Storage } from ‘@mondaycom/apps-sdk’; \nconst storage = new Storage(‘&lt;ACCESS_TOKEN&gt;’); \nAccording to the documentation, the ACCESS_TOKEN &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 14,
+  "posts": [
+    {
+      "id": 244734,
+      "postNumber": 1,
+      "createdAt": "2026-01-25T13:48:07.843Z",
+      "author": "Tamilarasi (Tamilarasi)",
+      "cookedHtml": "<p>I need to use a storage service from my backend using the Monday Apps SDK:</p>\n<p>import { Storage } from ‘<span class=\"mention\">@mondaycom</span>/apps-sdk’;</p>\n<p>const storage = new Storage(‘&lt;ACCESS_TOKEN&gt;’);</p>\n<p>According to the documentation, the <code>ACCESS_TOKEN</code> must be obtained via the OAuth flow:</p>\n<ul>\n<li>The access token represents the user/account the app works for.</li>\n<li>The <code>sessionToken</code> passed from the frontend will not work.</li>\n<li>Access tokens <strong>do not expire</strong> and remain valid until the user uninstalls the app.</li>\n<li>Monday’s OAuth flow <strong>does not support refresh tokens</strong>.</li>\n</ul>\n<p>Given this, I have a few questions:</p>\n<ol>\n<li>Whenever my backend needs to access storage, do I need to provide an access token every time?</li>\n<li>Does that mean I need to run the OAuth flow repeatedly?</li>\n<li>Or is the recommended approach to <strong>generate the access token once during OAuth and store it securely</strong> on the backend?</li>\n<li>If Monday already stores the access token securely after OAuth:</li>\n</ol>\n<ul>\n<li>How can my backend <strong>retrieve and use</strong> that stored token?</li>\n</ul>\n<ol>\n<li>If I need to store the token myself:</li>\n</ol>\n<ul>\n<li>What is the recommended way to <strong>store the access token securely</strong>?</li>\n<li>How should the token be <strong>revoked or retired</strong> when needed (for example, on uninstall or security concerns)?</li>\n</ul>"
+    },
+    {
+      "id": 244885,
+      "postNumber": 2,
+      "createdAt": "2026-01-27T19:25:02.470Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello  <a class=\"mention\" href=\"/u/tamilarasi\">@Tamilarasi</a>  You do not rerun OAuth every time. You run OAuth once per installing account, receive a long lived access token, store it securely on your backend, and pass that same token whenever your backend uses the Storage SDK.</p>\n<p>monday does not expose a way for your backend to retrieve a token it stores. After OAuth, your app owns the token lifecycle.</p>\n<p>Recommended approach<br />\nGenerate the access token during OAuth<br />\nStore it server side as a secret (encrypted at rest, never logged, scoped per account)<br />\nReuse it for all backend Storage access</p>\n<p>Revocation and cleanup<br />\nListen for the app uninstall event and delete the stored token and related data. Once uninstalled, the token is no longer valid.</p>\n<p>Dr. Tanvi Sachar<br />\nMonday Certified Partner, Tuesday Wizard</p>"
+    },
+    {
+      "id": 245971,
+      "postNumber": 3,
+      "createdAt": "2026-02-12T20:53:25.911Z",
+      "author": "g.agoncillo (Gab)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/tamilarasi\">@Tamilarasi</a> . Just checking on this as I have a same question. Do you have a solution already regarding on where to store the oauth token in backend side? What is your solution? I’m currently figuring out as well how to store it in server side since <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> doesn’t have a database like sql and we need also the oauth token to fetch specific storage values in the monday sdk.. Thanks</p>"
+    }
+  ]
+}

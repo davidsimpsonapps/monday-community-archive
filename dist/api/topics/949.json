@@ -1,0 +1,88 @@
+{
+  "id": 949,
+  "title": "Mutation: create_column for a 'formula' type column",
+  "slug": "mutation-create-column-for-a-formula-type-column",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2019-07-18T11:01:15.852Z",
+  "lastPostedAt": "2021-02-25T12:23:14.104Z",
+  "postsCount": 10,
+  "excerpt": "I’m trying to use create_column to create a column of the ‘formula’ type, but the schema on the GraphiQL tool doesn’t appear to list this as a valid value for the column_type variable, which as far as I can see should be&hellip;",
+  "solvedPostId": null,
+  "likeCount": 11,
+  "views": 6947,
+  "posts": [
+    {
+      "id": 2635,
+      "postNumber": 1,
+      "createdAt": "2019-07-18T11:01:15.924Z",
+      "author": "lucy.parry (Lucy Parry)",
+      "cookedHtml": "<p>I’m trying to use <code>create_column</code> to create a column of the ‘formula’ type, but the schema on the GraphiQL tool doesn’t appear to list this as a valid value for the column_type variable, which as far as I can see should be a ColumnType. Can anyone let me know if this is possible?</p>\n<p>Querying for a board created through the normal user interface does seem to show ‘formula’ as the type. Is ‘formula’ maybe some special case of one of the listed types?</p>\n<pre><code>{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": [\n          {\n            \"id\": \"name\",\n            \"type\": \"name\"\n          },\n          ...\n          {\n            \"id\": \"formula3\",\n            \"type\": \"formula\"\n          }\n        ]\n      }\n    ]\n  }\n}\n</code></pre>\n<p>Many thanks in advance!</p>"
+    },
+    {
+      "id": 2789,
+      "postNumber": 2,
+      "createdAt": "2019-07-22T12:59:32.953Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/lucy.parry\">@lucy.parry</a>,<br />\nThe formula type is not supported yet by the API. The reason for that is that this column requires special settings to work and we did not yet created the ability to set column settings with the API.<br />\nWithout the settings the formula column is not usable (the formula itself is saved in the column settings).<br />\nWe are working on it and hope we can get this ready soon <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 2869,
+      "postNumber": 3,
+      "createdAt": "2019-07-23T09:06:33.645Z",
+      "author": "lucy.parry (Lucy Parry)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ayelet\">@Ayelet</a>,<br />\nThanks for the response! Will look forward to being able to create the column settings when this feature is available in that case <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=9\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>"
+    },
+    {
+      "id": 23473,
+      "postNumber": 4,
+      "createdAt": "2020-07-23T04:19:14.767Z",
+      "author": "amit.lzkpa (Amit Nambiar)",
+      "cookedHtml": "<p>Any update on enabling the Formula column type?</p>"
+    },
+    {
+      "id": 23602,
+      "postNumber": 5,
+      "createdAt": "2020-07-25T03:56:51.904Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/amit.lzkpa\">@amit.lzkpa</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>I’m afraid that I do not have any good news for you at this point in time - the Formula column is still not accessible through our API as of now. I definitely understand how this would be a very relevant feature to have, and I really wish I could shed more light here, but I’m not able to provide an ETA just yet on when this would be supported.</p>\n<p>Alex</p>"
+    },
+    {
+      "id": 23609,
+      "postNumber": 6,
+      "createdAt": "2020-07-25T05:04:27.660Z",
+      "author": "amit.lzkpa (Amit Nambiar)",
+      "cookedHtml": "<p>Hi Alex<br />\nThanks for the reply.<br />\nThat’s fine. I have a few ideas for how I can work around that limitation (however I’d be more comfortable with that as properly integrated feature).<br />\nWith regards to the ongoing hackathon, can you provide some clarification how such workarounds would be evaluated?<br />\nAmit</p>"
+    },
+    {
+      "id": 24994,
+      "postNumber": 7,
+      "createdAt": "2020-08-09T22:09:19.122Z",
+      "author": "PolishedGeek (Polished Geek | Platinum Partner)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> &amp; <a class=\"mention\" href=\"/u/dipro\">@dipro</a> - The formula reference page all looks a lot like Excel formula format. Is that what they are or is it a custom formula script language only used by <a href=\"http://monday.com\">monday.com</a>?  We’re wondering if we can pull the formula settings out via the API, parse them and execute them as Excel to get the same result inside our app.</p>"
+    },
+    {
+      "id": 25562,
+      "postNumber": 8,
+      "createdAt": "2020-08-14T19:44:37.395Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey everyone! Just wanted to follow up on this – <a class=\"mention\" href=\"/u/polishedgeek\">@PolishedGeek</a> is right!</p>\n<p>While our API does not support reading the calculated value of a formula column, you can use the <code>settings_str</code> field to get the config of the formula column.</p>\n<p>This config contains the raw formula. Since the formula is almost identical to the Excel syntax, you should be able to pipe this into a formula parser of your choice.</p>\n<p>Here’s a simple example of the process:</p>\n<ol>\n<li>Get all the column values from the board</li>\n<li>Get the formula in a given formula column</li>\n<li>Replace the references to {columns} with the values of the column</li>\n<li>Calculate the formula result</li>\n</ol>\n<p>I don’t have specific example code for this workaround, but I wanted to chip in and validate <a class=\"mention\" href=\"/u/polishedgeek\">@PolishedGeek</a>’s suggestion!</p>"
+    },
+    {
+      "id": 34349,
+      "postNumber": 9,
+      "createdAt": "2020-11-23T08:23:43.783Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>This is what we do with our “perform existing formula and cast result to column” recipe in <a href=\"https://general-caster.omnidea.it/documentation.html\">General Caster</a> app.</p>"
+    },
+    {
+      "id": 42132,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T12:23:14.104Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

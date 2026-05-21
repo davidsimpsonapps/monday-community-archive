@@ -1,0 +1,47 @@
+{
+  "id": 92703,
+  "title": "Can you improve error handling?",
+  "slug": "can-you-improve-error-handling",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    281
+  ],
+  "createdAt": "2024-07-11T07:15:27.119Z",
+  "lastPostedAt": "2024-07-17T18:51:42.479Z",
+  "postsCount": 3,
+  "excerpt": "Hi, \nI’ve been using your GraphQL API extensively for a while now and I think it is about time to write you a few sentences about error handling that I think you could improve. \nOverall I think your API is working great &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 44,
+  "posts": [
+    {
+      "id": 192888,
+      "postNumber": 1,
+      "createdAt": "2024-07-11T07:15:27.218Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’ve been using your GraphQL API extensively for a while now and I think it is about time to write you a few sentences about error handling that I think you could improve.</p>\n<p>Overall I think your API is working great but when we come to error handling it is very bad (if you ask me).</p>\n<p>Usually when using REST API the HTTP status code 200 always means that the request went OK. But this isn’t the case with <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> GraphQL API. In almost all cases I am getting HTTP status code 200 but the response then doesn’t contain the expected response. Instead it contains the error message. See the example below:</p>\n<p><code>{\"error_message\":\"This column ID doesn't exist for the board\",\"error_code\":\"InvalidColumnIdException\",\"error_data\":{\"column_id\":\"text2\",\"board_id\":null,\"error_reason\":\"store.monday.automation.error.missing_column\"},\"status_code\":200,\"account_id\":22225094}</code></p>\n<p>If necessary I can copy-paste the request body but for sake of ease I will omit it for now.</p>\n<p>The HTTP request has HTTP status code 200 but the response is an error. Why don’t you use HTTP error code 4xx for this use-case? There are plenty of 4xx error codes you can use for this purpose.</p>\n<p>In order to handle this kind of error I have to check each and every response like following (Swift code):</p>\n<pre><code class=\"lang-auto\">if lowercasedDataString.contains(\"\\\"error_code\\\":\\\"ComplexityException\\\"\".lowercased()) ||\nlowercasedDataString.contains(\"\\\"error_code\\\":\\\"complexityBudgetExhausted\\\"\".lowercased()) ||\nlowercasedDataString.contains(\"\\\"error_code\\\":\\\"ColumnValueException\\\"\".lowercased()) ||\nlowercasedDataString.contains(\"\\\"status_code\\\":429\".lowercased()) {\n... error 1\n} else if dataString.contains(\"\\\"error_code\\\":\\\"ResourceNotFoundException\\\"\") &amp;&amp;\ndataString.contains(\"\\\"status_code\\\":404\") {\n... errror 2\n}\n...etc.\n</code></pre>\n<p>The example above is just a small code snippet of how my error handling looks like.<br />\nAnd I have to do this for each HTTP request because every request returns with HTTP status code 200. Definitely not the most performant code we can get.<br />\nSecondly, I have to rely on searching for error messages that can change at any moment. I.e. if some developer makes a typo then my error checking code won’t work properly anymore.</p>\n<p>On the other hand, if you would return this as HTTP status code 4xx then I would do this check only in case of HTTP status code 4xx. Or even better, if you would enumerate each and every error by HTTP status code then I could simply compare them by the code number.</p>\n<p>The other part of the problem is the fact that I can’t find the list of all possible errors that your system can throw. This means I simply have to force a lot of different scenarios that would simulate problems and collect all possible errors.<br />\nIn the end this leads me in the situation where my users end up having errors that I forgot to create. Again, definitely not the best UX you can offer to the users.</p>\n<p>Please don’t get me wrong, I appreciate the work you have done with your API and the constant improvements you deliver to us by regular API updates! I would be really happy if you can also make some improvements with error handling <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Thanks,<br />\nJosip</p>"
+    },
+    {
+      "id": 193244,
+      "postNumber": 2,
+      "createdAt": "2024-07-14T07:15:17.422Z",
+      "author": "josipbernat (Josip Bernat)",
+      "cookedHtml": "<p>One more use-case that is not logical.</p>\n<p>I am creating an API call that has invalid column_id (basically a fake column_id). In one scenario I am getting this error:</p>\n<pre><code class=\"lang-auto\">{\n  \"error_message\": \"This column ID doesn't exist for the board\",\n  \"error_code\": \"InvalidColumnIdException\",\n  \"error_data\": { \"column_id\": \"text2\", \"board_id\": null, \"error_reason\": \"store.monday.automation.error.missing_column\" },\n  \"status_code\": 200,\n  \"account_id\": 22225094\n}\n</code></pre>\n<p>And in other scenario I am getting this one:</p>\n<pre><code class=\"lang-auto\">{\n  \"error_message\": \"Column not found\",\n  \"error_code\": \"ResourceNotFoundException\",\n  \"error_data\": {\n    \"resource_type\": \"column\",\n    \"column_id\": \"date4212\",\n    \"board_id\": 6068264184,\n    \"error_reason\": \"store.monday.automation.error.missing_column\"\n  },\n  \"status_code\": 404,\n  \"account_id\": 2092815\n}\n</code></pre>\n<p>Why can’t I always get the same error? Then to make things even more confusing, the error_code <code>ResourceNotFoundException</code> is often related to other errors that have different error_messages and the only way how to differentiate the errors is by combining <code>status_code</code> and <code>error_message</code>. This in the end leads to comparing text messages that can change at any time.</p>\n<p>Thanks,<br />\nJosip</p>"
+    },
+    {
+      "id": 193794,
+      "postNumber": 3,
+      "createdAt": "2024-07-17T18:51:42.479Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I have heard that in a future (soon) API version they will be start sending <a href=\"https://spec.graphql.org/October2021/#sec-Errors\">GraphQL spec</a> compliant errors for everything (while still sending the non-compliant data alongside for a while to allow a transition).</p>\n<p>Along with this, they maybe also being improving the errors themselves. The first one gives us a consistent manner for dealing with them. (It also opens the door for using GraphQL clients which will generate actual exceptions for the errors if you want)</p>\n<p>I’d recommend checking queries in the preview and dev versions in the API playground to see if there are any changes in each version. They also will announce in the change log.</p>"
+    },
+    {
+      "id": 195131,
+      "postNumber": 4,
+      "createdAt": "2024-07-28T09:06:44.129Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

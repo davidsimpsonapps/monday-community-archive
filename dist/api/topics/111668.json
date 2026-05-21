@@ -1,0 +1,41 @@
+{
+  "id": 111668,
+  "title": "Query add_file_to_column: Unsupported query",
+  "slug": "query-add-file-to-column-unsupported-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    484
+  ],
+  "createdAt": "2025-03-17T08:13:54.022Z",
+  "lastPostedAt": "2025-03-17T13:49:20.709Z",
+  "postsCount": 3,
+  "excerpt": "Hey, \nI’am currently working with n8n workflows and try to upload a file to a monday item column. Unfortunately it’s a pretty tough task as the error messages aren’t very detailed.. \nMy last try returned an error 400 wit&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 18,
+  "posts": [
+    {
+      "id": 224350,
+      "postNumber": 1,
+      "createdAt": "2025-03-17T08:13:54.113Z",
+      "author": "MonWe (Max)",
+      "cookedHtml": "<p>Hey,<br />\nI’am currently working with n8n workflows and try to upload a file to a monday item column. Unfortunately it’s a pretty tough task as the error messages aren’t very detailed..</p>\n<p>My last try returned an error 400 with “error_message”:<br />\n“Unsupported query”.</p>\n<p>Maybe someone see the problem in my code and can give me a hint? <img src=\"https://emoji.discourse-cdn.com/apple/confused.png?v=14\" title=\":confused:\" class=\"emoji\" alt=\":confused:\" width=\"20\" height=\"20\" /> I’am working on this for hours now.. pretty frustrating.</p>\n<pre><code class=\"lang-auto\">const fetch = require('node-fetch');\nconst { Blob } = require(\"buffer\");\n\n// set auth token and query\n//API-KEY removed for safety reasons\nvar API_KEY = \"YOUR-API-KEY\"\n\n//set query\nvar query = 'mutation ($file: File!) {add_file_to_column (file: $file, item_id: \"'+$('Extract Monday IDs from path').first().json.itemid+'\", column_id: \"'+$('Filter2').first().json.id+'\") { id } }';\n\n// set URL\nvar url = \"https://api.monday.com/v2/file\";\n\n//Create blob from binary data\nconst uploadFile = new Blob([$('Code').first().json.binaryFile.data.data], { type: $('Code').first().json.binaryFile.data.mimeType });\n\n//Create Formdata\nvar formData = new FormData();\n// Set the query\nformData.append('query', query);\n// Set the map (this is crucial for file uploads)\nformData.append('map', JSON.stringify({\"image\": \"variables.file\"}));\n// Add the file with the correct field name\nformData.append('image', uploadFile, $('Code').first().json.binaryFile.data.fileName);\n\nconsole.log(formData);\n// FormData {\n//     query: 'mutation ($file: File!) {add_file_to_column (file: $file, item_id: \"8629869934\", column_id: \"datei__1\") { id } }',\n//     map: '{\"image\":\"variables.file\"}',\n//     image: File {\n//       size: 7556064,\n//       type: 'image/jpeg',\n//       name: 'filename.jpg',\n//       lastModified: 1741961715020\n//     }\n//   }\n\n// construct request options\nvar options = {\n    method: 'post',\n    headers: {\n        \"Authorization\" : API_KEY,\n        \n// fetch will set it correctly with the boundary\n    },\n    body: formData\n};\n\n// make request\nconst rq = await fetch(url, options);\nconst rqjson = await rq.json();\n\nreturn rqjson;\n</code></pre>\n<p>You get some different solutions froms google but none of them really helped me or work for me.</p>\n<p>Greetings,<br />\nMax</p>"
+    },
+    {
+      "id": 224390,
+      "postNumber": 2,
+      "createdAt": "2025-03-17T13:47:16.902Z",
+      "author": "MonWe (Max)",
+      "cookedHtml": "<p>I have been able to solve the problem in the meantime, so this thread can be closed <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=14\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> Finally I was able to create a simple HTTP request in n8n, previous attempts always resulted in a code 500, but this was due to incorrect test data.</p>"
+    },
+    {
+      "id": 224391,
+      "postNumber": 3,
+      "createdAt": "2025-03-17T13:49:20.709Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/monwe\">@MonWe</a>,</p>\n<p>Welcome to the community!</p>\n<p>I’m glad you were able to resolve this. Moving forward, you can also open a support ticket <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">here</a> if you don’t get a quick response here. Our technical team can take a closer look at your specific query and help troubleshoot!</p>\n<p>Best,<br />\nRachel</p>"
+    }
+  ]
+}

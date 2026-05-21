@@ -1,0 +1,41 @@
+{
+  "id": 111885,
+  "title": "FileValue: FileDocValue name is null",
+  "slug": "filevalue-filedocvalue-name-is-null",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    351
+  ],
+  "createdAt": "2025-03-21T09:59:40.338Z",
+  "lastPostedAt": "2025-03-31T11:26:29.667Z",
+  "postsCount": 3,
+  "excerpt": "Hello, I’ve been working with files lately and I’ve come across something strange. In the FileValue column we have access to FileDocValue, FileLinkValue and FileAssetValue. \nI try to use compare_value and the contains_te&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 13,
+  "posts": [
+    {
+      "id": 224770,
+      "postNumber": 1,
+      "createdAt": "2025-03-21T09:59:40.427Z",
+      "author": "JSnarski (Jakub Snarski)",
+      "cookedHtml": "<p>Hello, I’ve been working with files lately and I’ve come across something strange. In the <strong>FileValue</strong> column we have access to <strong>FileDocValue</strong>, <strong>FileLinkValue</strong> and <strong>FileAssetValue</strong>.</p>\n<p>I try to use <strong>compare_value</strong> and the <strong>contains_terms</strong> operator to filter files. And here comes the problem, namely for the <strong>FileDocValue</strong> column this search does not work.  This is probably due to the fact that the property <strong>value</strong> which is a string consisting of many fields, contains <strong>name</strong> and this <strong>name</strong> is null. On the other hand in <strong>DocValue</strong>: <strong>FileDocValue</strong> we can see that in <strong>value</strong> <strong>name</strong> has value of docs name.</p>\n<p>From my analysis, it turns out that <strong>contains_terms</strong> operates on this <strong>name</strong> in <strong>value</strong> prop, which is why when we try to use <strong>compare_value</strong> and operator <strong>contains_terms</strong>, null is returned for the <strong>FileValue</strong>: <strong>FileDocValue</strong> columns. Is this intentional or is it an oversight and bug?</p>\n<p>This is my query:</p>\n<pre><code class=\"lang-auto\">query getFiles($boardsIds: [ID!]!) {\n  complexity {\n    query\n  }\n  boards(ids: $boardsIds) {\n    id\n    name\n    items_page(\n      limit: 500\n      query_params: {rules: \n        {column_id: \"column_id\", \n          operator: is_not_empty, \n        compare_value: \"\"}}\n    ) {\n      items {\n        id\n        name\n        column_values {\n          ... on DocValue {\n            value\n            text\n            file {\n              doc {\n                name\n              }\n            }\n          }\n          ... on FileValue {\n            text\n            value\n            files {\n              __typename\n              ... on FileAssetValue {\n                asset {\n                  name\n                }\n              }\n              ... on FileDocValue {\n                doc {\n                  name\n                }\n\n              }\n              ... on FileLinkValue {\n                name\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>As you can see name has value in _typename: <strong>DocValue</strong> but it is null in <strong>FileValue</strong><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/2/723477014da0ca7ac37ae93722d359ecb2ea4d71.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/2/723477014da0ca7ac37ae93722d359ecb2ea4d71_2_478x500.png\" alt=\"image\" width=\"478\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">749×782 46.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 225405,
+      "postNumber": 2,
+      "createdAt": "2025-03-27T22:12:43.793Z",
+      "author": "Billchenau (Bill)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/jsnarski\">@JSnarski</a></p>\n<p>Bill here from <a href=\"http://monday.com\">monday.com</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=14\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it (such as account ID, board IDs, item IDs, timestamps, etc.) so that our team can take a look into it?</p>\n<p>Cheers,<br />\nBill</p>"
+    },
+    {
+      "id": 225629,
+      "postNumber": 3,
+      "createdAt": "2025-03-31T11:26:29.667Z",
+      "author": "JSnarski (Jakub Snarski)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/billchenau\">@Billchenau</a> done, I’m waiting for a reply <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=14\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

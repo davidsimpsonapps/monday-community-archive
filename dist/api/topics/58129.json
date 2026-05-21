@@ -1,0 +1,69 @@
+{
+  "id": 58129,
+  "title": "Querying people in items_by_column_values",
+  "slug": "querying-people-in-items-by-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    340,
+    351
+  ],
+  "createdAt": "2023-05-13T10:34:42.131Z",
+  "lastPostedAt": "2023-05-17T09:11:13.597Z",
+  "postsCount": 6,
+  "excerpt": "Hi, \nI’m trying to find all the tasks assigned to me via the API. I don’t mind how I do this, alternatives are welcome. \nRunning a specific query like: \nquery {\n  boards(ids:[417546880]) {\n    name\n    id\n    items(ids: &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 702,
+  "posts": [
+    {
+      "id": 127771,
+      "postNumber": 1,
+      "createdAt": "2023-05-13T10:34:42.225Z",
+      "author": "bradleyfalzon (Bradley Falzon)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m trying to find all the tasks assigned to me via the API. I don’t mind how I do this, alternatives are welcome.</p>\n<p>Running a specific query like:</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids:[417546880]) {\n    name\n    id\n    items(ids: [4414440649]) {\n      id\n      name\n      board {\n        name\n      }\n      column_values (ids: [\"people\"]) {\n\t\t\t\ttitle\n        id\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>Returns the expected result:</p>\n<pre><code class=\"lang-auto\">    \"boards\": [\n      {\n        \"name\": \"Bradley's Tasks\",\n        \"id\": \"417546880\",\n        \"items\": [\n          {\n            \"id\": \"4414440649\",\n            \"name\": \"test\",\n            \"board\": {\n              \"name\": \"Bradley's Tasks\"\n            },\n            \"column_values\": [\n              {\n                \"title\": \"People\",\n                \"id\": \"people\",\n                \"value\": \"{\\\"changed_at\\\":\\\"2023-05-04T00:23:16.999Z\\\",\\\"personsAndTeams\\\":[{\\\"id\\\":12015589,\\\"kind\\\":\\\"person\\\"}]}\"\n              }\n            ]\n          }\n        ]\n      }\n    ]\n</code></pre>\n<p>But when I write <code>items_by_column_values</code> query that should match that result, it returns nothing:</p>\n<pre><code class=\"lang-auto\">query {\n  items_by_column_values (board_id: 417546880, column_id: \"person\", column_value: \"{\\\"personsAndTeams\\\":[{\\\"id\\\":12015589,\\\"kind\\\":\\\"person\\\"}]}\") {\n  \tid\n    name\n    board {\n      name\n    }\n    column_values {\n    \tid,\n    \ttitle,\n    \tvalue\n  \t}\n  }\n}\n</code></pre>\n<p>Result:</p>\n<pre><code class=\"lang-auto\">\"items_by_column_values\": [],\n</code></pre>\n<p>I believe this is probably because the <code>items_by_column_values</code> query doesn’t support multiple value responses. I’m assuming this is true based on this thread <a href=\"https://community.monday.com/t/find-items-assigned-to-a-user/10642/6\" class=\"inline-onebox\">Find items assigned to a user - #6 by TMNXT-Dev</a> and the more recent <a href=\"https://community.monday.com/t/find-all-board-items-assigned-to-a-person/53939/4\" class=\"inline-onebox\">Find all board items assigned to a person - #4 by BiancaT</a></p>\n<p>The last post seems to be exactly what I’m asking, but I can’t imagine this behaviour isn’t supported in the API server side?</p>"
+    },
+    {
+      "id": 127774,
+      "postNumber": 2,
+      "createdAt": "2023-05-13T11:04:47.192Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/bradleyfalzon\">@bradleyfalzon</a></p>\n<p>See also <a href=\"https://developer.monday.com/api-reference/docs/items-by-column-values#supported-columns\" class=\"inline-onebox\">Items by column values</a> and specially this part</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/8/d87c1b343132d0c4a735a29e35901ed27f75f7ad.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/8/d87c1b343132d0c4a735a29e35901ed27f75f7ad.png\" alt=\"image\" width=\"690\" height=\"85\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">908×113 9.9 KB</span>\n</div></a></div><p></p>\n<p>The query value should be the person’s name, not an object holding the id as in your example. Furthermore it will only return a value when there is exactly one person assigned in the column.</p>"
+    },
+    {
+      "id": 127776,
+      "postNumber": 3,
+      "createdAt": "2023-05-13T11:14:35.852Z",
+      "author": "bradleyfalzon (Bradley Falzon)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> I did try that, but didn’t see that specific comment, so I didn’t include that note. I am the only person assigned to it, and I have queried using my name.</p>\n<p>Although if we do get this to work, but there’s another person that happens to be assigned, then it’s not quite suitable, so perhaps looping through all items across all boards and checking the column client side really is the only solution.</p>\n<p>See this query:</p>\n<pre><code class=\"lang-auto\">query {\n  me {\n    id\n    name\n  }\n  \n  items_by_column_values (board_id: 417546880, column_id: \"person\", column_value: \"Bradley Falzon\") {\n  \tid\n    name\n    board {\n      name\n    }\n    column_values {\n    \tid,\n    \ttitle,\n    \tvalue\n  \t}\n  }\n  \n  boards(ids:[417546880]) {\n    name\n    id\n    items(ids: [4414440649]) {\n      id\n      name\n      board {\n        name\n      }\n      column_values (ids: [\"people\"]) {\n\t\t\t\ttitle\n        id\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>And the response:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"me\": {\n      \"id\": 12015589,\n      \"name\": \"Bradley Falzon\"\n    },\n    \"items_by_column_values\": [],\n    \"boards\": [\n      {\n        \"name\": \"Bradley's Tasks\",\n        \"id\": \"417546880\",\n        \"items\": [\n          {\n            \"id\": \"4414440649\",\n            \"name\": \"test\",\n            \"board\": {\n              \"name\": \"Bradley's Tasks\"\n            },\n            \"column_values\": [\n              {\n                \"title\": \"People\",\n                \"id\": \"people\",\n                \"value\": \"{\\\"changed_at\\\":\\\"2023-05-04T00:23:16.999Z\\\",\\\"personsAndTeams\\\":[{\\\"id\\\":12015589,\\\"kind\\\":\\\"person\\\"}]}\"\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": xx\n}\n</code></pre>"
+    },
+    {
+      "id": 127844,
+      "postNumber": 4,
+      "createdAt": "2023-05-14T12:32:12.585Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/bradleyfalzon\">@bradleyfalzon</a>,</p>\n<p>That is correct.</p>\n<p>Something like this should work:</p>\n<pre><code class=\"lang-auto\">{\n  items_by_column_values(\n    board_id: 1234567890\n    column_id: \"person\"\n    column_value: \"Matias Lopez\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>But if another person is assigned to the same item, then it will not work.</p>\n<p>In this case, if that is an issue, you should, query for the values of that column for all your items and get the IDs of the items where a specific user is assigned, on your end.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 128141,
+      "postNumber": 5,
+      "createdAt": "2023-05-16T08:18:52.721Z",
+      "author": "bradleyfalzon (Bradley Falzon)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, our use case can definitely have other people assigned.</p>\n<p>As I need to do this across all boards, I’ll track a last updated date, fetch all boards, check their last updated date, and if greater than last updated, then fetch all items and check individual colums.</p>\n<p>But definitely plus one if there’s an issue tracking support for this feature.</p>"
+    },
+    {
+      "id": 128304,
+      "postNumber": 6,
+      "createdAt": "2023-05-17T09:11:13.597Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/bradleyfalzon\">@bradleyfalzon</a> I will add your vote for this request!</p>"
+    },
+    {
+      "id": 128305,
+      "postNumber": 7,
+      "createdAt": "2023-05-17T09:13:15.036Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/4487571159\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    }
+  ]
+}

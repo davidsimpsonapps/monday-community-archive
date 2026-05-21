@@ -1,0 +1,47 @@
+{
+  "id": 123863,
+  "title": "Nested IF statements not working",
+  "slug": "nested-if-statements-not-working",
+  "categoryId": 5,
+  "tagIds": [
+    13,
+    108
+  ],
+  "createdAt": "2026-02-20T19:41:10.120Z",
+  "lastPostedAt": "2026-03-23T08:20:58.654Z",
+  "postsCount": 4,
+  "excerpt": "I have built the following formula that checks a checkbox and, if checked, checks another field to see if that is null. If the field is null, then it pulls a [negative] value from another field. If not null, then it pull&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 16,
+  "posts": [
+    {
+      "id": 246327,
+      "postNumber": 1,
+      "createdAt": "2026-02-20T19:41:10.195Z",
+      "author": "zapatero (Mike Shoemaker)",
+      "cookedHtml": "<p>I have built the following formula that checks a checkbox and, if checked, checks another field to see if that is null. If the field is null, then it pulls a [negative] value from another field. If not null, then it pulls the value from the first field.</p>\n<p>IF({Incl in Pipeline?}, IF({Net Cash Proceeds} = “”, -{Total Cash to Acq}, {Net Cash Proceeds}),“”).</p>\n<p>All of the logic seems to be working except for when it’s supposed to pull the -{Total Cash to Acq} number. When the logic runs into this scenario, the formula returns a value of “0”. Any ideas?</p>"
+    },
+    {
+      "id": 246334,
+      "postNumber": 2,
+      "createdAt": "2026-02-20T22:01:33.343Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/zapatero\">@zapatero</a><br />\nThis is likely happening because Numbers columns in <a href=\"http://monday.com\">monday.com</a> are not truly blank. If no value is entered, they are treated as 0. So this check:</p>\n<p><code>{Net Cash Proceeds} = \"\"</code></p>\n<p>will not work as expected.</p>\n<p>Try checking for 0 instead:</p>\n<pre><code class=\"lang-auto\">IF(\n  {Incl in Pipeline?},\n  IF(\n    {Net Cash Proceeds} = 0,\n    -{Total Cash to Acq},\n    {Net Cash Proceeds}\n  ),\n  \"\"\n)\n</code></pre>\n<p>If needed, you can also use ISBLANK depending on your column type.</p>\n<p>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=15\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" /> <a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\" class=\"inline-onebox\">Calendly</a></p>"
+    },
+    {
+      "id": 247606,
+      "postNumber": 3,
+      "createdAt": "2026-03-23T05:30:04.748Z",
+      "author": "nitesh (Nitesh Singh)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zapatero\">@zapatero</a> ,</p>\n<p>one thing worth adding to the answer above. The suggestion to check for <code>= 0</code> works, but be careful if 0 is ever a legitimate value in your Net Cash Proceeds column — for example if a deal genuinely has zero proceeds. In that case checking <code>= 0</code> would incorrectly trigger the negative acquisition value even when the user intentionally entered 0.</p>\n<p>The safer approach is to use <code>ISBLANK</code> which only triggers when the field is truly empty, not when someone entered 0:</p>\n<p><code>IF({Incl in Pipeline?}, IF(ISBLANK({Net Cash Proceeds}), -{Total Cash to Acq}, {Net Cash Proceeds}), \"\")</code></p>\n<p>If 0 and blank should both trigger the negative acquisition value, you can combine both checks:</p>\n<p><code>IF({Incl in Pipeline?}, IF(OR(ISBLANK({Net Cash Proceeds}), {Net Cash Proceeds} = 0), -{Total Cash to Acq}, {Net Cash Proceeds}), \"\")</code></p>\n<p>Worth deciding which behaviour you actually need before settling on the formula.</p>"
+    },
+    {
+      "id": 247614,
+      "postNumber": 4,
+      "createdAt": "2026-03-23T08:20:58.654Z",
+      "author": "MsquareAutomation (Msquare Automation Solutions)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/zapatero\">@zapatero</a><br />\nTry the following formula<br />\nIF({Numbers 2} = “”, -1 * {Numbers}, {Numbers 2})</p>\n<p><strong>If you need any implementation support kindly contact us</strong></p>\n<p><a href=\"https://calendly.com/msquarepro/meeting\" title=\"https://calendly.com/msquarepro/meeting\" rel=\"noopener nofollow ugc\">MSquare Support</a><br />\nVisit us <a href=\"https://www.msquare.pro/\" title=\"https://www.msquare.pro/\" rel=\"noopener nofollow ugc\">here</a><br />\n<a href=\"https://www.youtube.com/channel/UCqidlIIwbejxZmRUWBICcjQ\" title=\"https://www.youtube.com/channel/ucqidliiwbejxzmruwbiccjq\" rel=\"noopener nofollow ugc\">Youtube Channel</a></p>"
+    }
+  ]
+}

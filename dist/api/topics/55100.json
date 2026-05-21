@@ -1,0 +1,56 @@
+{
+  "id": 55100,
+  "title": "Error when creating an item with column values",
+  "slug": "error-when-creating-an-item-with-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2023-03-31T05:15:12.610Z",
+  "lastPostedAt": "2023-04-03T06:26:50.651Z",
+  "postsCount": 5,
+  "excerpt": "Hello, I use monday API from a while now, and suddenly an error has appears (on the 29/03) after days of good work. \nI have test many possibility of queries but I can’t figured it out. \nThere is my query : \n$query =\n    &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 738,
+  "posts": [
+    {
+      "id": 122178,
+      "postNumber": 1,
+      "createdAt": "2023-03-31T05:15:12.696Z",
+      "author": "Cleement (Clément Bolard)",
+      "cookedHtml": "<p>Hello, I use monday API from a while now, and suddenly an error has appears (on the 29/03) after days of good work.</p>\n<p>I have test many possibility of queries but I can’t figured it out.</p>\n<p>There is my query :</p>\n<pre><code class=\"lang-auto\">$query =\n            'mutation {\n            create_item ( board_id: 409788845, group_id: \"topics\", item_name: \"TEST MODULE\",\n                column_values: \"{\n                    \\\"texte5\\\" : \\\"test tex\\\",\n                    \\\"texte\\\" : \\\"Dev\\\",\n                    \\\"person\\\" : \\\"2556545674\\\",\n                    \\\"connecter_les_tableaux7\\\" : {\\\"item_ids\\\" : [14564564960]},\n                    \\\"date\\\" : {\\\"date\\\" : \\\"2023-03-30\\\", \\\"time\\\" : \\\"08:49:02\\\"},\n                    \\\"date6\\\" : {\\\"date\\\" : \\\"2023-03-30\\\", \\\"time\\\" : \\\"10:25:00\\\"},\n                    \\\"chiffres\\\" : \\\"1.6\\\",\n                    \\\"chiffres0\\\" : \\\"372847239\\\"\n                }\")  {\n                    id\n                }\n            }';\n</code></pre>\n<p>This return me this error :</p>\n<pre><code class=\"lang-auto\">{\n    \"errors\": [\n        {\n            \"message\": \"Parse error on bad Unicode escape sequence: \\\"{\\\\n                    \\\\\\\\\\\\\\\"texte5\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"test tex\\\\\\\\\\\\\\\",\\\\n                    \\\\\\\\\\\\\\\"texte\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"Dev\\\\\\\\\\\\\\\",\\\\n                    \\\\\\\\\\\\\\\"person\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"2556545674\\\\\\\\\\\\\\\",\\\\n                    \\\\\\\\\\\\\\\"connecter_les_tableaux7\\\\\\\\\\\\\\\" : {\\\\\\\\\\\\\\\"item_ids\\\\\\\\\\\\\\\" : [14564564960]},\\\\n                    \\\\\\\\\\\\\\\"date\\\\\\\\\\\\\\\" : {\\\\\\\\\\\\\\\"date\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"2023-03-30\\\\\\\\\\\\\\\", \\\\\\\\\\\\\\\"time\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"08:49:02\\\\\\\\\\\\\\\"},\\\\n                    \\\\\\\\\\\\\\\"date6\\\\\\\\\\\\\\\" : {\\\\\\\\\\\\\\\"date\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"2023-03-30\\\\\\\\\\\\\\\", \\\\\\\\\\\\\\\"time\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"10:25:00\\\\\\\\\\\\\\\"},\\\\n                    \\\\\\\\\\\\\\\"chiffres\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"1.6\\\\\\\\\\\\\\\",\\\\n                    \\\\\\\\\\\\\\\"chiffres0\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"372847239\\\\\\\\\\\\n                }\\\" (error) at [3, 32]\",\n            \"locations\": [\n                {\n                    \"line\": 3,\n                    \"column\": 32\n                }\n            ]\n        }\n    ],\n\n</code></pre>\n<p>Here is how I send the data in PHP :</p>\n<pre><code class=\"lang-auto\"> $result = @file_get_contents($this-&gt;apiUrl, false, stream_context_create([\n            'http' =&gt; [\n                'method' =&gt; 'POST',\n                'header' =&gt; $this-&gt;headers,\n                'content' =&gt; json_encode(['query' =&gt; $query]),\n            ]\n        ]));\n</code></pre>\n<p>I understand that the error is at the beginning of the column_values but impossible to make work again.</p>\n<p>Again I want to specify that my request were working before the 29 (I have tried with the exact data who works previously).</p>\n<p>Could you take a look at this ?</p>\n<p>Thanks.<br />\nClement.</p>"
+    },
+    {
+      "id": 122301,
+      "postNumber": 2,
+      "createdAt": "2023-04-01T06:06:01.227Z",
+      "author": "WeblabsTech (William Rich)",
+      "cookedHtml": "<p>Just to double on this I have had some live software also stop working recently due to the same error, anyone know if this is an API change or what?</p>"
+    },
+    {
+      "id": 122353,
+      "postNumber": 3,
+      "createdAt": "2023-04-02T07:36:39.431Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>I have checked with the team and it looks like you might be seeing this errors because of a migration that was done on our end.</p>\n<p>The new changes follow the GraphQL specifications more closely and patches lots of different gaps, just like strings with line endings.</p>\n<p>To have a <a href=\"https://spec.graphql.org/June2018/#sec-String-Value\">multiline string</a> you need to use block strings <code>\"\"\"text\"\"\"</code> , not <code>\"text\".</code></p>\n<p>You can also remove line endings from the query and keep it in one line.</p>\n<p>You can also use GraphQL variables to put in any text as a JSON. It’s recommended to use this approach for big values, as this improves readability of queries.</p>\n<p>I attached some examples of valid and invalid queries.</p>\n<p>Please let me know if you have any questions!</p>\n<p>Valid:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/5/2/529b76f65deed4f17d511b56abfdf46a14627839.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/5/2/529b76f65deed4f17d511b56abfdf46a14627839_2_690x358.png\" alt=\"image\" width=\"690\" height=\"358\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1433×745 48.9 KB</span>\n</div></a></div><p></p>\n<p>Valid:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/5/45eca28f5e55a2c6142f060412bc8d7d96f8983f.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/5/45eca28f5e55a2c6142f060412bc8d7d96f8983f_2_666x500.png\" alt=\"image\" width=\"666\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">832×624 31.2 KB</span>\n</div></a></div><p></p>\n<p>Invalid:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/d/cddf1d085872667237fd99891876bfdc0f2e9fcc.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/d/cddf1d085872667237fd99891876bfdc0f2e9fcc_2_665x500.png\" alt=\"image\" width=\"665\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">837×629 38 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 122448,
+      "postNumber": 4,
+      "createdAt": "2023-04-03T04:21:58.490Z",
+      "author": "Cleement (Clément Bolard)",
+      "cookedHtml": "<p>Thanks for your reply.</p>\n<p>Effectively, passing the variable as GraphQL variables fix the issues.</p>\n<p>Here is an example in PHP if it can help somebody :</p>\n<pre><code class=\"lang-auto\">$query_update_item =\n            'mutation($column: JSON!) {\n                change_multiple_column_values ( item_id: '. $id .', board_id: '.$this-&gt;board_id.', column_values: $column )  {\n                    id\n                }\n            }';\n\n        $var = [\n            'column' =&gt; '{\n                    \"texte5\" : \"'. $text .'\",\n                    \"texte\" : \"'. $text1 .'\",\n                    \"connecter_les_tableaux7\" : {\"item_ids\" : ['. $timer-&gt;project_id .']},\n                    \"date\" : {\"date\" : \"'.$day_start.'\", \"time\" : \"'.$hour_start.'\"},\n                    \"date6\" : {\"date\" : \"'.$day_end.'\", \"time\" : \"'.$hour_end.'\"},\n                    \"chiffres\" : \"'. $chiffres .'\",\n                    \"chiffres0\" : \"'. $chiffres0 .'\"\n                }'\n        ];\n\n\n        $result = @file_get_contents($this-&gt;apiUrl, false, stream_context_create([\n            'http' =&gt; [\n                'method' =&gt; 'POST',\n                'header' =&gt; $this-&gt;headers,\n                'content' =&gt; json_encode(['query' =&gt; $query_update_item, 'variables' =&gt; $var]),\n            ]\n        ]));\n</code></pre>"
+    },
+    {
+      "id": 122465,
+      "postNumber": 5,
+      "createdAt": "2023-04-03T06:26:50.651Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I am glad that worked!</p>\n<p>Thank you for sharing this!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

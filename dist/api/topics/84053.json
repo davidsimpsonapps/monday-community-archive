@@ -1,0 +1,61 @@
+{
+  "id": 84053,
+  "title": "Add field \"isEmpty\" and \"itemCount\" to Group in API",
+  "slug": "add-field-isempty-and-itemcount-to-group-in-api",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    115
+  ],
+  "createdAt": "2024-04-16T05:23:30.963Z",
+  "lastPostedAt": "2024-04-17T09:00:27.853Z",
+  "postsCount": 6,
+  "excerpt": "Hello, \nCurrently, if we want to check if a group has no item, we need to perform this GraphQL query: \nquery {\n  boards (ids: [xxxxxx]) {\n    groups  {\n      items_page (limit: 1) {\n        cursor\n        items {\n       &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 86,
+  "posts": [
+    {
+      "id": 178838,
+      "postNumber": 1,
+      "createdAt": "2024-04-16T05:23:31.044Z",
+      "author": "clement.devdevils (Clément)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Currently, if we want to check if a group has no item, we need to perform this GraphQL query:</p>\n<pre><code class=\"lang-graphql\">query {\n  boards (ids: [xxxxxx]) {\n    groups  {\n      items_page (limit: 1) {\n        cursor\n        items {\n          id\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>It requests one item in each board group. If no item returned, the group is empty. The main drawback of this query is its complexity cost :</p>\n<pre><code class=\"lang-json\">\"complexity\": {\n    \"before\": 5000000,\n    \"after\": 1986980,\n    \"query\": 3013020\n  }\n</code></pre>\n<p><code>3013020</code> in complexity (with 1, 5, 20, x groups - it’s always the same complexity is way to much to only check if a group is empty. And imagine, if I want to compute the number of items in each group…</p>\n<h3><a name=\"p-178838-so-the-request-is-1\" class=\"anchor\" href=\"#p-178838-so-the-request-is-1\"></a>So the request is:</h3>\n<ul>\n<li>add a field <code>isEmpty</code> in the <code>Group</code> object to avoid this type of complex query</li>\n<li>add a field <code>itemCount</code> in the <code>Group</code> object for the same reason</li>\n</ul>\n<p>Regards</p>"
+    },
+    {
+      "id": 178889,
+      "postNumber": 2,
+      "createdAt": "2024-04-16T08:35:36.294Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/clement.devdevils\">@clement.devdevils</a>,</p>\n<p>What about using something like this?</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    groups(ids: \"new_group1\") {\n      items_page {\n        items {\n          name\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>If it is empty, then you have no items in that group.</p>\n<p>The query costs 3080 complexity points.</p>\n<p>If you need to check the ID first, you can use:</p>\n<pre><code class=\"lang-auto\">  boards(ids: 1234567890) {\n    groups {\n      id\n      title\n    }\n  }\n}\n</code></pre>\n<p>This one costs 2020 complexity points.</p>\n<p>What do you think?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 178892,
+      "postNumber": 3,
+      "createdAt": "2024-04-16T08:49:54.984Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>I guess the question is: why is not specifying the groupId 1.000 times more expensive then querying the items in a group specified by it’s groupId.</p>"
+    },
+    {
+      "id": 178894,
+      "postNumber": 4,
+      "createdAt": "2024-04-16T08:59:48.581Z",
+      "author": "clement.devdevils (Clément)",
+      "cookedHtml": "<blockquote>\n<p>What about using something like this?</p>\n</blockquote>\n<p>I currently use this as a workaround for many group. But as the number of group increase, the time to execute the query, which is not user friendly.</p>\n<p>(Also, it doesn’t apply to the <code>itemCount</code> issue)</p>\n<blockquote>\n<p>I guess the question is: why is not specifying the groupId 1.000 times more expensive then querying the items in a group specified by it’s groupId.</p>\n</blockquote>\n<p>Indeed, doesn’t seem really logical.</p>\n<p>In my opnion, requesting these two information should not destroy our complexity budget, since it’s something that can be computed and stored by <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> backend</p>"
+    },
+    {
+      "id": 178962,
+      "postNumber": 5,
+      "createdAt": "2024-04-16T11:39:36.098Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Especially since the item_count is a property on the board already.</p>"
+    },
+    {
+      "id": 179228,
+      "postNumber": 6,
+      "createdAt": "2024-04-17T09:00:27.853Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone!</p>\n<p>Thank you for the explanations and the feedback!</p>\n<p>People reading this: You can vote for this at the top left corner of this screen <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

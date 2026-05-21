@@ -1,0 +1,47 @@
+{
+  "id": 41842,
+  "title": "Dynamically retrieve column ID using the column title",
+  "slug": "dynamically-retrieve-column-id-using-the-column-title",
+  "categoryId": 6,
+  "tagIds": [
+    5,
+    94
+  ],
+  "createdAt": "2022-08-31T14:26:51.430Z",
+  "lastPostedAt": "2024-05-08T09:52:09.005Z",
+  "postsCount": 4,
+  "excerpt": "Hi guys, \nIs is possible to dynamically retrieve column ID using the column title? \nI would like to reuse the same Make scenario across multiple boards, but the same columns carry different IDs across the boards. \nI can &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1831,
+  "posts": [
+    {
+      "id": 96565,
+      "postNumber": 1,
+      "createdAt": "2022-08-31T14:26:51.510Z",
+      "author": "RyanBY (Ryan BY)",
+      "cookedHtml": "<p>Hi guys,<br />\nIs is possible to dynamically retrieve column ID using the column title?</p>\n<p>I would like to reuse the same Make scenario across multiple boards, but the same columns carry different IDs across the boards.<br />\nI can set a limitation (not best practice, I know…), where the target column to be updated with a new value MUST carry a specific name.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 96566,
+      "postNumber": 2,
+      "createdAt": "2022-08-31T14:30:14.377Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/ryanby\">@RyanBY</a></p>\n<p>The columnId and the columnName are two different things. Even if you edit the column name to be the same the columnId will still be different and the API (and therefore Make) is using the columnIds. There is not an easy way to retrieve the Id knowing the name, other than go through all columns and check for the column name.</p>"
+    },
+    {
+      "id": 96634,
+      "postNumber": 3,
+      "createdAt": "2022-09-01T07:30:47.113Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ryanby\">@RyanBY</a></p>\n<p>Bas is correct, of course. However, getting the Id in Make it not difficult…</p>\n<p>You can use the get board module to get the column information. Then to use the columnId of the column you want, just use an expression like this:<br />\n<code>{{get(map(1.columns; \"id\"; \"title\"; \"Person\"); 1)}}</code> (where “Person” is the title of the column you want)</p>\n<h3><a name=\"p-96634-get-board-data-1\" class=\"anchor\" href=\"#p-96634-get-board-data-1\"></a>Get Board data:</h3>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/703fc1271e64d8f3aad162b9c2ee4a6a3dc48499.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/703fc1271e64d8f3aad162b9c2ee4a6a3dc48499_2_444x375.png\" alt=\"image\" width=\"444\" height=\"375\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1504×1268 134 KB</span></div></a></div><p></p>\n<h3><a name=\"p-96634-expression-presented-in-a-set-variables-module-2\" class=\"anchor\" href=\"#p-96634-expression-presented-in-a-set-variables-module-2\"></a>Expression (presented in a set variables module):</h3>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5acd6e96f5a722305b9052dca6550526bae9626c.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/5acd6e96f5a722305b9052dca6550526bae9626c_2_319x250.png\" alt=\"image\" width=\"319\" height=\"250\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1399×1094 94.3 KB</span></div></a></div><p></p>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a></p>\n<h3><a name=\"p-96634-column-magic-httpsmondaycommarketplace10000102-the-magical-columns-toolbox-app-3\" class=\"anchor\" href=\"#p-96634-column-magic-httpsmondaycommarketplace10000102-the-magical-columns-toolbox-app-3\"></a><strong><a href=\"https://monday.com/marketplace/10000102\"><img src=\"https://emoji.discourse-cdn.com/apple/magic_wand.png?v=15\" title=\":magic_wand:\" class=\"emoji\" alt=\":magic_wand:\" width=\"20\" height=\"20\" /> Column Magic <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=15\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" /></a></strong>- the magical columns toolbox app</h3>"
+    },
+    {
+      "id": 182767,
+      "postNumber": 4,
+      "createdAt": "2024-05-08T09:52:09.005Z",
+      "author": "mcdemon (M.McD)",
+      "cookedHtml": "<p>Here’s an easy way in PowerShell:<br />\n$BoardID = “5688786056”<br />\n$ColumnTitle=“Title to search for”</p>\n<p>$body = @\"<br />\n{<br />\n<code>\"query</code>\": <code>\"query {boards(ids: $BoardID) {columns {id title}}}</code>\"<br />\n}<br />\n\"@</p>\n<p>$response = Invoke-RestMethod ‘<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>’ -Method ‘POST’ -Headers $headers -Body $body<br />\n$response | ConvertTo-Json</p>\n<p>$response.data.boards[0].columns | foreach {<br />\nif ($<em>.title -eq “$ColumnTitle”) {<br />\n$Column_id =  $($</em>.id)<br />\nWrite-Host “$Column_id”<br />\n}<br />\n}</p>"
+    }
+  ]
+}

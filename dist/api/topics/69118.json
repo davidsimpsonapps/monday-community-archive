@@ -1,0 +1,53 @@
+{
+  "id": 69118,
+  "title": "Adding days with formula",
+  "slug": "adding-days-with-formula",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2023-10-24T15:26:15.230Z",
+  "lastPostedAt": "2023-10-25T15:44:48.464Z",
+  "postsCount": 5,
+  "excerpt": "Hello there, I have a questions \nSo the below formula \n\nIf(and({call status reason}=“No answer”,{BFS Date}=“”),format_date(add_days({Date of call},30,0))) \n\nThis works fine \nIt does add 30 days on {date of call} if {BFS &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1808,
+  "posts": [
+    {
+      "id": 149762,
+      "postNumber": 1,
+      "createdAt": "2023-10-24T15:26:15.301Z",
+      "author": "izzyphilia (Izz)",
+      "cookedHtml": "<p>Hello there, I have a questions</p>\n<p>So the below formula</p>\n<blockquote>\n<p>If(and({call status reason}=“No answer”,{BFS Date}=“”),format_date(add_days({Date of call},30,0)))</p>\n</blockquote>\n<p>This works fine</p>\n<p>It does add 30 days on {date of call} if {BFS Date} is empty</p>\n<p>Now I want to add 30 days on {BFS Date}, if the {BFS Date} contains a date instead of adding on {Date of Call} even tho {Date of call} contains a date.</p>\n<p>How can I have both formulas to work? Thank you in advance</p>"
+    },
+    {
+      "id": 149767,
+      "postNumber": 2,
+      "createdAt": "2023-10-24T16:08:03.522Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Izzy,</p>\n<p>I couldn’t get your formula to work at all actually, so I’m surprised that it worked for you!</p>\n<p>Nevertheless, I’ve interpreted your requirements and created this, which I believe is what you’re looking for.</p>\n<p>Bear in mind that you may need to adjust the date format—I couldn’t see one in your original formula, so I’m not sure what your preferred format would be.</p>\n<pre><code class=\"lang-auto\">IF(\n    {call status reason}=\"No answer\",\n    FORMAT_DATE(\n        ADD_DAYS(\n            IF(\n                {BFS Date}=\"\",\n                {Date of call},\n                {BFS Date}\n            ),\n            30\n        ),\n        \"MMM DD, YYYY\"\n    ),\n    \"\"\n)\n</code></pre>"
+    },
+    {
+      "id": 149859,
+      "postNumber": 4,
+      "createdAt": "2023-10-25T05:23:23.457Z",
+      "author": "izzyphilia (Izz)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/franciselliott\">@FrancisElliott</a>,</p>\n<p>I edited the first formula I sent. I must have added some extra function to it when I pasted it here.</p>\n<p>The formula you sent worked perfectly.<br />\nThank you for that</p>\n<p>Other question is<br />\nI want to add 1 day on {BFS Date}, if the {BFS Date} contains a date even though {Date of call} contains a date, but add 30 days on {Date of call} if {BFS Date} is empty.</p>\n<p>And what if I have multiple {call Status reasons}, how would the calculation change?<br />\nLet’s say</p>\n<blockquote>\n<p>{call status reason}=“Answered”</p>\n</blockquote>\n<p>and I want to add <strong>3 days</strong> instead of 30 days for that <strong>specific call reason</strong>.  so the calculation works for both <strong>no answer</strong> &amp; <strong>answered</strong> call reason status.</p>\n<p>Could you help me with that?</p>\n<p>Thank you</p>"
+    },
+    {
+      "id": 149981,
+      "postNumber": 5,
+      "createdAt": "2023-10-25T15:12:23.816Z",
+      "author": "FrancisElliott (Francis Elliott)",
+      "cookedHtml": "<p>Hi Izzy,</p>\n<p>I have interpreted your requirements. I didn’t fully get certain situations. Here is how it works now:</p>\n<ol>\n<li>BFS Date exists (in this case, adds 1 day to BFS Date)</li>\n<li>BFS Date does not exist and call Answered (in this case adds 3 days to Date of call)</li>\n<li>BFS Date does not exist and call No answer (in this case adds 30 days to Date of call)</li>\n</ol>\n<p>Consider also that as formulas become more complex, it may be more manageable to separate the logic into different columns. i.e. you can have a “Days to Add” column, which takes care of that part of the logic and then a separate column which decides which date to use.</p>\n<p>Here are two formulas. Both have effectively the same function, but the hierarchy is different. In the first, it would be easier to create specific custom logic for different statuses. In the second, which is more simple, it would be easier to change the number of days only for different statuses.</p>\n<p>I’d recommend familiarizing yourself with the functions and how <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> formulas work if you’re planning to continue maintaining your system by yourself.</p>\n<pre><code class=\"lang-auto\">FORMAT_DATE(\n    SWITCH(\n        {call status reason},\n        \"No answer\",\n        IF(\n            {BFS Date}=\"\",\n            ADD_DAYS(\n                {Date of call},\n                30\n            ),\n            ADD_DAYS(\n                {BFS Date},\n                1\n            )\n        ),\n        \"Answered\",\n        IF(\n            {BFS Date}=\"\",\n            ADD_DAYS(\n                {Date of call},\n                3\n            ),\n            ADD_DAYS(\n                {BFS Date},\n                1\n            )\n        ),\n        \"\"\n    ),\n    \"MMM DD, YYYY\"\n)\n</code></pre>\n<pre><code class=\"lang-auto\">FORMAT_DATE(\n    IF(\n        {BFS Date}=\"\",\n        ADD_DAYS(\n            {Date of call},\n            SWITCH(\n                {call status reason},\n                \"No answer\",\n                30,\n                \"Answered\",\n                3,\n                0\n            )\n        ),\n        ADD_DAYS(\n            {BFS Date},\n            1\n        )\n    ),\n    \"MMM DD, YYYY\"\n)\n</code></pre>"
+    },
+    {
+      "id": 149986,
+      "postNumber": 6,
+      "createdAt": "2023-10-25T15:44:48.464Z",
+      "author": "izzyphilia (Izz)",
+      "cookedHtml": "<p>Hello, <a class=\"mention\" href=\"/u/franciselliott\">@FrancisElliott</a></p>\n<p>This formula worked brilliantly.</p>\n<p>Thank you for your help.</p>\n<p>And, yes, I will familiarize myself with the functions. I will do that, for sure.</p>\n<p>Thank you once again.</p>"
+    }
+  ]
+}

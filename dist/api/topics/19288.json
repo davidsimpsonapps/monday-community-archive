@@ -1,0 +1,68 @@
+{
+  "id": 19288,
+  "title": "Question on autopopulate fields in messages",
+  "slug": "question-on-autopopulate-fields-in-messages",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2021-04-26T19:33:12.985Z",
+  "lastPostedAt": "2021-05-08T13:48:48.322Z",
+  "postsCount": 6,
+  "excerpt": "Hi, \nin my integration I want to replace the item fields that can be selected in a message of a recipe. On my board I have one date column called Date and one dropdown column called Effort. When I select these in a recip&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1626,
+  "posts": [
+    {
+      "id": 48970,
+      "postNumber": 1,
+      "createdAt": "2021-04-26T19:33:13.059Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi,<br />\nin my integration I want to replace the item fields that can be selected in a message of a recipe. On my board I have one date column called <strong>Date</strong> and one dropdown column called <strong>Effort</strong>. When I select these in a recipe’s message, I get <strong>{item’s Date}</strong> and <strong>{item’s Effort}</strong> as text. But my custom action receives this as <strong>{pulse.date4}</strong> and <strong>{pulse.dropdown}</strong> in the provided message (the pulse renaming is not the problem).<br />\nTo get the approriate values from the board I query the item’s column_values and find that the <em>title</em> is exactly that what is shown as selected fields. But it is hard to correlate this in my custom action. It seems that something like the <em>type</em> of the column is given, but what happens if I use more than one column with the same type on the board (I didn’t check that yet)? Also I am wondering about the 4 in the date field.<br />\nAs a side note, it seems that the representation of the autopopulated fields in a recipe’s message have change since yesterday: before it was like <strong>{item.person}</strong> and now it is <strong>{item’s Person}</strong>.<br />\nSo my overall question is: how exactly can I correlate the selected autopopulated fields with the column_values in a query to the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API for a certain item?</p>"
+    },
+    {
+      "id": 49038,
+      "postNumber": 2,
+      "createdAt": "2021-04-27T11:28:23.374Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 49039,
+      "postNumber": 3,
+      "createdAt": "2021-04-27T11:32:31.868Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a>!</p>\n<p>I believe what you may be confused about here are the column IDs for each column on your board.</p>\n<p>It sounds like the column ID for this date column is “date4.” Typically, this is how all column IDs will be structured. For example, Timeline columns will have the column IDs “timeline,” or “timeline2,” or “timeline4”… etc. etc.</p>\n<p>This is how you can differentiate between the different columns of the same type within your boards. Column IDs are board-specific.</p>\n<p>Regarding your overall question, I’m not totally sure I understand. What is your integration recipe doing? I think this is the context I’m missing.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 49102,
+      "postNumber": 4,
+      "createdAt": "2021-04-27T17:49:14.188Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>,<br />\nmany thanks for the hint. That was exactly what I missed. I never tried to query the ID of the columns as I thought this will be just another big number that I could not use. And yes, the ID of the date column is indeed <em>date4</em>.<br />\nAs background, my integration gets the prepared message, e.g. when a new item is created and needs to replace the autopopulated fields with the values from the board via the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API and shows it as the complete text to the user on an external messaging server.<br />\nAnd just as a question: did I miss this information in your documentation for developers? As I think it is very useful to know what is needed to query your API to get the values of these autopopulated fields in a recipe’s message.</p>"
+    },
+    {
+      "id": 49146,
+      "postNumber": 5,
+      "createdAt": "2021-04-28T08:03:34.648Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Thank you for following up here! That’s a great question.</p>\n<p>We did recently change our interface to use the actual column names, instead of showing the IDs of th columns in the notification configuration, in an effort to make the interface more user-friendly. In general, when you try and construct the message in an integration recipe, you will need to query the column values of those specific columns by ID, and then insert that as text into your message directly.</p>\n<p>Within your app, you should receive a payload that will contain the Item ID that triggered the integration recipe, and you can use that to query specific column values of that item, using a query like the below:</p>\n<pre><code class=\"lang-auto\">query {\n  items (ids:1248088168) {\n    column_values (ids:\"status\") {\n      text\n    }\n  }\n}\n</code></pre>\n<p>Where the Item ID is used from the triggering item, and the column ID comes from the user’s message config. The result of this query will typically look like so:</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/2X/b/b80b109b80bbc3efd41fc13d3fee5ad82029f0d3.png\" alt=\"image\" width=\"560\" height=\"284\" /></p>\n<p>You can then input that result into your actual message. Hope this makes a bit more sense!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 49505,
+      "postNumber": 6,
+      "createdAt": "2021-05-01T13:48:34.605Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a>,<br />\nthanks for the additional info. Yes, it makes it more clear. And I already could continue with Helen’s answer <img src=\"https://emoji.discourse-cdn.com/apple/grinning.png?v=9\" title=\":grinning:\" class=\"emoji\" alt=\":grinning:\" />.<br />\nCheers, Marcus</p>"
+    },
+    {
+      "id": 50648,
+      "postNumber": 7,
+      "createdAt": "2021-05-08T13:48:48.322Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

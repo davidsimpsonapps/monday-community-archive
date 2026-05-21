@@ -1,0 +1,61 @@
+{
+  "id": 73975,
+  "title": "API V2 endpoint does not recognize version 2023-10 changes ? Is there a new endpoint?",
+  "slug": "api-v2-endpoint-does-not-recognize-version-2023-10-changes-is-there-a-new-endpoint",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-02T20:20:17.105Z",
+  "lastPostedAt": "2024-01-03T11:05:07.326Z",
+  "postsCount": 5,
+  "excerpt": "We are using the monday API endpoint  https://api.monday.com/v2 which is currently working fine without the breaking changes mentioned in new version 2023-10. \nHowever, when I implement the changes required for 2023-10, &hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 350,
+  "posts": [
+    {
+      "id": 159892,
+      "postNumber": 1,
+      "createdAt": "2024-01-02T20:20:17.186Z",
+      "author": "dingo_ate_my_pb (DJ)",
+      "cookedHtml": "<p>We are using the monday API endpoint  <a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a> which is currently working fine without the breaking changes mentioned in new version 2023-10.<br />\nHowever, when I implement the changes required for 2023-10,  the query works fine from the playground on the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> developer center,  however produces an error when I attempt to run the same query from Postman or from my web application.<br />\nFor example,  one of the required changes is to use items_page for nesting group level items , whereas previously it was just items attribute under groups.  But the error received when using items_page is as follows :<br />\n“errors”: [<br />\n{<br />\n“message”: “Field ‘items_page’ doesn’t exist on type ‘Group’”,<br />\n“locations”: [<br />\n{<br />\n“line”: 15,<br />\n“column”: 7<br />\n}<br />\n],<br />\n“path”: [<br />\n“query”,<br />\n“boards”,<br />\n“groups”,<br />\n“items_page”<br />\n],<br />\n“extensions”: {<br />\n“code”: “undefinedField”,<br />\n“typeName”: “Group”,<br />\n“fieldName”: “items_page”<br />\n}<br />\n}<br />\n],</p>\n<p>The query request body being sent in the request is as follows :</p>\n<p>query {<br />\nboards(ids: [414373342]) {<br />\nid<br />\nname<br />\ngroups(ids: [“topics”]) {<br />\ntitle<br />\nid<br />\nitems_page(limit: 500, query_params: {order_by: [{column_id: “name”}]}) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values(ids: [“date4”, “status27”, “status40”, “status727”, “text65”]) {<br />\nid<br />\ntext<br />\nvalue<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>The above query works fine from the developer console playground , just not from an external application like Postman.</p>\n<p>Prior to making these changes, the request body that is being used and still works fine from Postman is as follows :<br />\nquery {<br />\nboards(ids:[414373342]) {<br />\nid<br />\nname<br />\ngroups(ids:[topics]) {<br />\ntitle<br />\nid<br />\nitems {<br />\nid<br />\nname<br />\ncolumn_values(ids:[date4,status27,status40,status727,text65]) {<br />\nid<br />\ntext<br />\nvalue<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>Is there a new endpoint besides <a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>  that needs to be used to implement version 2023-10.  If not, how do we implement these changes ?</p>"
+    },
+    {
+      "id": 159894,
+      "postNumber": 2,
+      "createdAt": "2024-01-02T20:32:39.754Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I would recommend reviewing this support document: <a href=\"https://developer.monday.com/api-reference/docs/api-versioning#how-to-access-different-api-versions\" class=\"inline-onebox\">API Versioning</a> which links to the section on setting the API version.</p>\n<p>Short answer is a header of “API-Version” and value is “2023-10”. If using the monday-sdk there are convenience methods described in the article.</p>"
+    },
+    {
+      "id": 159895,
+      "postNumber": 3,
+      "createdAt": "2024-01-02T20:34:50.822Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dingo_ate_my_pb\">@dingo_ate_my_pb</a></p>\n<p>Welcome to the community! There is no other endpoint for 2023-10 version of the API. The API uses 2023-07 by default. If you want to use 2023-10 you have to specify this in the header of the request. See also <a href=\"https://developer.monday.com/api-reference/docs/api-versioning#making-a-request\" class=\"inline-onebox\">API Versioning</a></p>\n<pre><code class=\"lang-auto\">You can test the new version of the API in two ways:\n\nUsing the version selection button in the API playground (instructions)\nPassing the following header in your HTTP requests: API-Version: 2023-10 (instructions)\n</code></pre>"
+    },
+    {
+      "id": 159907,
+      "postNumber": 4,
+      "createdAt": "2024-01-02T21:09:44.421Z",
+      "author": "dingo_ate_my_pb (DJ)",
+      "cookedHtml": "<p>Thank you for the response.  With API version provided in the header, it works fine.</p>"
+    },
+    {
+      "id": 159924,
+      "postNumber": 5,
+      "createdAt": "2024-01-03T05:37:49.439Z",
+      "author": "TomFri (Tom Fridman)",
+      "cookedHtml": "<p>exclude_reply_from_SLA</p>"
+    },
+    {
+      "id": 159971,
+      "postNumber": 6,
+      "createdAt": "2024-01-03T11:05:07.326Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for the help!</p>"
+    }
+  ]
+}

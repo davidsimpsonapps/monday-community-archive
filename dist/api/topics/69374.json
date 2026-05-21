@@ -1,0 +1,60 @@
+{
+  "id": 69374,
+  "title": "Data Type Error",
+  "slug": "data-type-error",
+  "categoryId": 6,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-10-27T03:11:20.702Z",
+  "lastPostedAt": "2023-10-27T11:35:53.460Z",
+  "postsCount": 6,
+  "excerpt": "I am beginning to use Monday API through C#. I am using Monday Client \nHere is a sample code which gives a weird error when trying to load details of specific dashboard. \n    var dashboardId = &lt;lngid&gt;;\n\n    MondayClient &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 804,
+  "posts": [
+    {
+      "id": 150243,
+      "postNumber": 1,
+      "createdAt": "2023-10-27T03:11:20.776Z",
+      "author": "lavanyadeepak (Deepak Kumar Vasudevan)",
+      "cookedHtml": "<p>I am beginning to use Monday API through C#. I am using <a href=\"https://github.com/clintmasden/monday.client.v2\" rel=\"noopener nofollow ugc\">Monday Client</a></p>\n<p>Here is a sample code which gives a weird error when trying to load details of specific dashboard.</p>\n<pre><code>    var dashboardId = &lt;lngid&gt;;\n\n    MondayClient client = new MondayClient(\"MyAuthKey\");\n    var b = client.GetBoards().GetAwaiter().GetResult();\n    foreach (var item in b)\n    {\n       if (item.Id == dashboardId)\n        {\n            var thisBoard = client.GetBoard(item.Id).GetAwaiter().GetResult();\n            Console.WriteLine(thisBoard.Name);\n        }    \n    }\n</code></pre>\n<p>And the error is as below:</p>\n<p>Unhandled exception. System.Exception: Type mismatch on variable $id and argument ids ([Int]! / [ID!])<br />\nat Monday.Client.MondayClient.ThrowResponseErrors(GraphQLError<span class=\"chcklst-box fa fa-square-o fa-fw\"></span> graphQlErrors) in C:\\LavanyaDeepak\\projects\\monday.client.v2-master\\Monday.Client\\MondayClient.cs:line 47<br />\nat Monday.Client.MondayClient.GetBoard(Int64 boardId) in C:\\LavanyaDeepak\\projects\\monday.client.v2-master\\Monday.Client\\MondayClient.cs:line 154<br />\nat MondayConsumer.Main(String<span class=\"chcklst-box fa fa-square-o fa-fw\"></span> args) in C:\\LavanyaDeepak\\projects\\monday.client.v2-master\\Monday.Consumer\\Program.cs:line 18</p>\n<p>C:\\LavanyaDeepak\\projects\\monday.client.v2-master\\Monday.Consumer\\bin\\Debug\\net6.0\\Monday.Consumer.exe (process 16704) exited with code -532462766.</p>"
+    },
+    {
+      "id": 150249,
+      "postNumber": 2,
+      "createdAt": "2023-10-27T05:47:30.637Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/lavanyadeepak\">@lavanyadeepak</a></p>\n<p>Welcome to the community. The error is generated in the function <code>GetBoard</code> and shows that you are sending the boardId in the wrong type. The API expect the boardId of being type <code>ID!</code> and you are apparently sending it as type <code>Int64</code>.</p>"
+    },
+    {
+      "id": 150250,
+      "postNumber": 3,
+      "createdAt": "2023-10-27T06:06:28.917Z",
+      "author": "lavanyadeepak (Deepak Kumar Vasudevan)",
+      "cookedHtml": "<p>I tried to do a .ToString() however the parameter the library takes is only long. Can you help guide me with a snippet syntax?</p>"
+    },
+    {
+      "id": 150251,
+      "postNumber": 4,
+      "createdAt": "2023-10-27T06:08:46.857Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Please show your function making the actual API call. I believe that is <code>GetBoard</code></p>"
+    },
+    {
+      "id": 150252,
+      "postNumber": 5,
+      "createdAt": "2023-10-27T06:10:44.055Z",
+      "author": "lavanyadeepak (Deepak Kumar Vasudevan)",
+      "cookedHtml": "<pre><code>    public async Task&lt;Board&gt; GetBoard(long boardId)\n    {\n        var request = new GraphQLRequest\n        {\n            Query = @\"query request($id:Int) { boards(ids:[$id]) { id name description board_kind state board_folder_id permissions owner { id name email url photo_original title birthday country_code location time_zone_identifier phone mobile_phone is_guest is_pending enabled created_at } columns { id, title, type, archived settings_str } } }\",\n            Variables = new\n            {\n                id = boardId\n            }\n        };\n\n        var result = await _graphQlHttpClient.SendQueryAsync&lt;GetBoardsResponse&gt;(request);\n\n        ThrowResponseErrors(result.Errors);\n\n        return result.Data.Boards.FirstOrDefault();\n    }\n</code></pre>\n<p>From <a href=\"https://github.com/clintmasden/monday.client.v2\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - clintmasden/monday.client.v2: A .NET Standard/C# implementation of Monday.com API v2.</a></p>\n<p>This is what I get in Postman:</p>\n<p>{<br />\n“errors”: [<br />\n{<br />\n“message”: “Type mismatch on variable $id and argument ids ([Int]! / [ID!])”,<br />\n“locations”: [<br />\n{<br />\n“line”: 1,<br />\n“column”: 33<br />\n}<br />\n],<br />\n“path”: [<br />\n“query request”,<br />\n“boards”,<br />\n“ids”<br />\n],<br />\n“extensions”: {<br />\n“code”: “variableMismatch”,<br />\n“variableName”: “id”,<br />\n“typeName”: “[Int]!”,<br />\n“argumentName”: “ids”,<br />\n“errorMessage”: “Type mismatch”<br />\n}<br />\n}<br />\n],<br />\n“account_id”: 0123456<br />\n}</p>"
+    },
+    {
+      "id": 150287,
+      "postNumber": 6,
+      "createdAt": "2023-10-27T11:35:53.460Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/l/4bbf92/48.png\" class=\"avatar\" /> Deepak Kumar Vasudevan:</div>\n<blockquote>\n<p><code>Query = @\"query request($id:Int)</code></p>\n</blockquote>\n</aside>\n<p>This is where the error originates from, can you change to:</p>\n<p><code>Query = @\"query request($id:[ID!])</code></p>"
+    }
+  ]
+}

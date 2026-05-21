@@ -1,0 +1,125 @@
+{
+  "id": 23387,
+  "title": "Rating column from PHP to API Monday : Can't reach to create an item with value into rating column",
+  "slug": "rating-column-from-php-to-api-monday-cant-reach-to-create-an-item-with-value-into-rating-column",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2021-08-06T06:59:12.333Z",
+  "lastPostedAt": "2021-08-12T12:53:20.153Z",
+  "postsCount": 14,
+  "excerpt": "While creating a Monday API to connect our server to Monday board, \nI want to create an item with values for each colums. \nProblem : it works for every colum except for the rating one. I &#39;ve tried many syntax but no one &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1243,
+  "posts": [
+    {
+      "id": 60038,
+      "postNumber": 1,
+      "createdAt": "2021-08-06T06:59:12.474Z",
+      "author": "big.th (Bigth)",
+      "cookedHtml": "<p>While creating a Monday API to connect our server to Monday board,<br />\nI want to create an item with values for each colums.<br />\nProblem : it works for every colum except for the rating one. I 've tried many syntax but no one works.<br />\nThe official doc at <a href=\"https://api.developer.monday.com/docs/rating\" rel=\"noopener nofollow ugc\">https://api.developer.monday.com/docs/rating</a> doesn’t help.<br />\nDoes anybody know how to do it ?<br />\nHere is the code :</p>\n<pre><code class=\"lang-auto\">$column_values = [\n    'name' =&gt; 'xxxxxxxxxx',\n    'person' =&gt; '20985745',\n    'status' =&gt; '14',\n//    'classement' =&gt; '5',\n//    'classement' =&gt; '5/5',\n//    'classement' =&gt; \"{\\\"rating\\\":1}\",\n//    'classement' =&gt; \"{\\\"rating\\\":1\\\"}\",\n//    'classement' =&gt; \"{rating:1}\",\n//    'classement' =&gt; rating:1',\n//    'classement' =&gt; {'rating:1'},\n//    'classement' =&gt; \"{\\\"rating:1\\\"}\",\n//    'classement' =&gt; 'rating 1',\n    'classement' =&gt; 'rating\\:1',\n    'date' =&gt; '2021-09-01 16:30:00',\n    'texte' =&gt; 'Bonjour',\n    'statut_1' =&gt; '1',\n    'personnes' =&gt; '20791487',\n    'lien_internet' =&gt; 'http://google.fr salut' \n ];\n</code></pre>"
+    },
+    {
+      "id": 60040,
+      "postNumber": 2,
+      "createdAt": "2021-08-06T07:14:41.290Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Rating takes an object with a key string and a value string<br />\nTry this.</p>\n<pre><code class=\"lang-auto\">'classement' =&gt; {\\\"rating\\\" : \\\"1\\\"}\n</code></pre>"
+    },
+    {
+      "id": 60041,
+      "postNumber": 3,
+      "createdAt": "2021-08-06T07:23:53.435Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>The rating object needs a number, not a string. So, I guess</p>\n<p><code>'classement' =&gt; {\\\"rating\\\" : 1}</code></p>\n<p>should do the job.</p>"
+    },
+    {
+      "id": 60043,
+      "postNumber": 4,
+      "createdAt": "2021-08-06T07:36:20.397Z",
+      "author": "big.th (Bigth)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/kolaai/48/7787_2.png\" class=\"avatar\" /> kolaai:</div>\n<blockquote>\n<p><code>{\\\"rating\\\" : \\\"1\\\"}</code></p>\n</blockquote>\n</aside>\n<p>Hello kolaai, \"  <code>'classement' =&gt; '{\\\"rating\\\" : \\\"1\\\"}',</code> doesn’t work…</p>"
+    },
+    {
+      "id": 60044,
+      "postNumber": 5,
+      "createdAt": "2021-08-06T07:38:21.033Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Sorry, I was quoting from the documentation <a href=\"https://api.developer.monday.com/docs/rating#code-example\" rel=\"noopener nofollow ugc\">example</a></p>"
+    },
+    {
+      "id": 60045,
+      "postNumber": 6,
+      "createdAt": "2021-08-06T07:39:44.885Z",
+      "author": "big.th (Bigth)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> , I tried your suggestion such as :</p>\n<pre><code class=\"lang-auto\">    'classement' =&gt; '{\\\"rating\\\" : 1}',\n</code></pre>\n<p>and even</p>\n<pre><code class=\"lang-auto\">    'classement' =&gt; {\\\"rating\\\" : 1},\n</code></pre>\n<p>and it doesn’t work either.</p>"
+    },
+    {
+      "id": 60046,
+      "postNumber": 7,
+      "createdAt": "2021-08-06T07:40:15.784Z",
+      "author": "big.th (Bigth)",
+      "cookedHtml": "<p>Thanks for trying to help…</p>"
+    },
+    {
+      "id": 60048,
+      "postNumber": 8,
+      "createdAt": "2021-08-06T08:06:09.030Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>This one works in my API playground. I propose you test it from there and make the necessary adjustments</p>\n<p><code>mutation {change_column_value (item_id: 1111111111, board_id: 222222222, column_id: \"rating\", value: \"{\\\"rating\\\": 2}\") {id}}</code></p>\n<p>When you want to combine with create_item this one works in the API playground</p>\n<p><code>mutation { create_item (item_name: \"New item\", board_id: 22222222, column_values: \"{\\\"rating\\\": {\\\"rating\\\": 2}}\") {id}}</code></p>"
+    },
+    {
+      "id": 60053,
+      "postNumber": 9,
+      "createdAt": "2021-08-06T10:24:26.215Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 60054,
+      "postNumber": 10,
+      "createdAt": "2021-08-06T10:26:13.021Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/big.th\">@big.th</a> and everyone on this thread,</p>\n<p>Thank you <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> and <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> for your help here!</p>\n<p>I believe the issue is as Bas stated, you need two <code>rating</code> keys in the column value that you’re sending. One is the column ID <code>rating</code> and the other is the key for the JSON you’re sending.</p>\n<p>I see that there is a mistake in our documentation and the value should be an Int, not a String. Going to fix it now.</p>\n<p>Let us know if this still does not work for you!</p>"
+    },
+    {
+      "id": 60621,
+      "postNumber": 11,
+      "createdAt": "2021-08-12T10:52:44.825Z",
+      "author": "big.th (Bigth)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>, indeed it works in graphQL but still not from my PHP function. I keep working on it…</p>"
+    },
+    {
+      "id": 60632,
+      "postNumber": 12,
+      "createdAt": "2021-08-12T11:48:59.192Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/big.th\">@big.th</a></p>\n<p>I’m glad to hear <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>’s suggestion was a step in the right direction, at least for the GraphQL playground! If you’d like, you can share your Python code with us here as well, and we could try tinkering and fine-tuning it to a working state from there.</p>\n<p>Here’s what Postman outputs for a Python - Requests code snippet:</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\n\nurl = \"https://api.monday.com/v2\"\npayload = json.dumps({\n  \"query\": \"mutation { create_item (item_name: \\\"New item\\\", board_id: boardId, column_values: \\\" {\\\\\\\"rating\\\\\\\": {\\\\\\\"rating\\\\\\\": 2}} \\\") {id}}\"\n})\nheaders = {\n  'Authorization': 'yourApiKey',\n  'Content-Type': 'application/json',\n}\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\nprint(response.text)\n</code></pre>"
+    },
+    {
+      "id": 60644,
+      "postNumber": 13,
+      "createdAt": "2021-08-12T12:28:40.731Z",
+      "author": "big.th (Bigth)",
+      "cookedHtml": "<p>Finally, I’ve just found !!! I post it here so it can help…</p>\n<pre><code class=\"lang-auto\"> $array = [\n     'classement' =&gt; [ \"rating\" =&gt; 1 ],\n ];\n</code></pre>"
+    },
+    {
+      "id": 60651,
+      "postNumber": 14,
+      "createdAt": "2021-08-12T12:53:20.153Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/big.th\">@big.th</a></p>\n<p>Amazing, i’m glad you were able to sort this out <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Hope your development is a smooth sail from here on out. <img src=\"https://emoji.discourse-cdn.com/apple/motor_boat.png?v=10\" title=\":motor_boat:\" class=\"emoji\" alt=\":motor_boat:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 61322,
+      "postNumber": 15,
+      "createdAt": "2021-08-19T12:53:32.271Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

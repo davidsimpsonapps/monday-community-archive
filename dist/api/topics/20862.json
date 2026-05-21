@@ -1,0 +1,68 @@
+{
+  "id": 20862,
+  "title": "Accessing the ItemId in an Item View app",
+  "slug": "accessing-the-itemid-in-an-item-view-app",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2021-06-04T04:19:11.382Z",
+  "lastPostedAt": "2021-06-08T01:09:10.636Z",
+  "postsCount": 6,
+  "excerpt": "Hi community, \nI’m attempting to write a simple app to display information in an Item View. I started with the app described in the Quickstart guide and have compiled and run this little ‘hello world’ without problem. \nI&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1941,
+  "posts": [
+    {
+      "id": 53693,
+      "postNumber": 1,
+      "createdAt": "2021-06-04T04:19:11.508Z",
+      "author": "mattfitzgerald (Matt Fitzgerald)",
+      "cookedHtml": "<p>Hi community,</p>\n<p>I’m attempting to write a simple app to display information in an <em>Item View</em>. I started with the app described in the <a href=\"https://monday.com/developers/apps/quickstart-integration/\" rel=\"noopener nofollow ugc\">Quickstart guide</a> and have compiled and run this little ‘hello world’ without problem.</p>\n<p>I’m now trying to access the <em>ItemId</em> of the <em>Item</em> that the <em>Item View</em> is connected to. I can access the “context” with something like this</p>\n<pre><code class=\"lang-auto\">monday.listen(\"context\", res =&gt; {\n  // do something with res.data\n}\n</code></pre>\n<p>but this just seems to store global app properties, not the ItemId that this is an <em>Item View</em> of.</p>\n<p>I haven’t been able to find much documentation about developing <em>Item Views</em>, I think they’re pretty new so a lot of the official documentation doesn’t mention them at all (like the Quickstart guide).  They are listed <a href=\"https://monday.com/developers/apps/intro\" rel=\"noopener nofollow ugc\">here</a> as one of the three app types.</p>\n<p>Thanks in advance,<br />\nMatt</p>"
+    },
+    {
+      "id": 53736,
+      "postNumber": 2,
+      "createdAt": "2021-06-04T13:47:33.693Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 53737,
+      "postNumber": 3,
+      "createdAt": "2021-06-04T14:01:03.115Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mattfitzgerald\">@mattfitzgerald</a>!</p>\n<p>Thank you for the awesome feedback. We’re definitely looking to update our Quickstart React tutorial to encompass more of our SDK methods for the future.</p>\n<p>For now, do you mind letting me know if using the <code>monday.get(\"context\")</code> SDK method works for you to retrieve the item ID? I tested this out and was able to see the item ID with the relevant item card.</p>\n<p>As a reference, here is our comprehensive SDK documentation: <a href=\"https://github.com/mondaycom/monday-sdk-js\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - mondaycom/monday-sdk-js: Node.js and JavaScript SDK for developing over the monday.com platform</a>. This will show you all of the methods available in our SDK.</p>"
+    },
+    {
+      "id": 53770,
+      "postNumber": 4,
+      "createdAt": "2021-06-05T03:33:38.233Z",
+      "author": "mattfitzgerald (Matt Fitzgerald)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a>,</p>\n<p>Thanks for your prompt response.</p>\n<p>Should I expect that the data available using <code>monday.get(\"context\")</code> to be different to what’s available using <code>monday.listen(\"context\")</code>?  Could you share the code that you’re using that gives you access to the ItemId in an Item View app?</p>\n<p>The following app.js (modified from the app in the Quickstart guide)</p>\n<pre><code class=\"lang-auto\">import React from \"react\";\nimport \"./App.css\";\nimport mondaySdk from \"monday-sdk-js\";\nimport \"monday-ui-react-core/dist/main.css\"\n//Explore more Monday React Components here: https://style.monday.com/\nimport AttentionBox from \"monday-ui-react-core/dist/AttentionBox.js\"\n\nconst monday = mondaySdk();\n\nclass App extends React.Component {\n  constructor(props) {\n    super(props);\n\n    // Default state\n    this.state = {\n      settings: {},\n      name: \"\",\n    };\n  }\n\n  componentDidMount() {\n\n    monday.listen(\"context\", res =&gt; {\n      this.setState({contextData: res.data});\n      console.log(res.data);\n    })\n  }\n\n  render() {\n    return &lt;div className=\"App\"&gt;\n      {JSON.stringify(this.state.contextData)}\n    &lt;/div&gt;;\n  }\n}\n\nexport default App;\n</code></pre>\n<p>Produces the following output:</p>\n<pre><code class=\"lang-auto\">{\"theme\":\"light\",\n\"user\":{\"id\":\"22247712\",\"isAdmin\":true,\"isGuest\":false,\"isViewOnly\":false},\n\"boardIds\":[1343136079],\n\"viewMode\":\"fullscreen\",\n\"editMode\":true,\n\"instanceId\":-1}\n</code></pre>\n<p>Note the absence of <code>boardId</code> (singular) and <code>itemId</code> as described in <a href=\"https://www.monday.com/developers/apps/quickstart-view\" rel=\"noopener nofollow ugc\">The Quickstart Guide: Views &amp; Widgets</a> under the heading <em>Set up a context listener that calls the monday API</em>. It really seems like it’s the wrong set of context data for an Item View app.</p>\n<p>Thanks again,<br />\nMatt</p>"
+    },
+    {
+      "id": 53935,
+      "postNumber": 5,
+      "createdAt": "2021-06-07T12:29:26.264Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mattfitzgerald\">@mattfitzgerald</a>!</p>\n<p>Ahh okay actually I think I may have figured it out. Are you testing this on a board with an item? Or are you testing this in the app preview section?</p>\n<p>The reason I ask is because I was able to retrieve the relevant item ID using both the <code>monday.listen(\"context\",...)</code> method, as well as the <code>monday.get(\"context\",...)</code> method.</p>\n<p>However, this <strong>only</strong> worked for me when testing on a relevant item in my board (i.e. I go into one of the items on one of my boards, and add this example item view to it). When testing in my app preview area, I did not get any item ID information, since there isn’t any context to get from the app preview section!</p>\n<p>Regarding your question, the <code>listen</code> SDK method acts largely like a webhook for your view app, and essentially subscribes you to event changes initiated in your view app. The <code>get</code> method will retrieve information about your view app, but won’t be subscribed and “listening” to events initiated.</p>\n<p>As such, the documentation is indeed correct. I copied your code and was able to get it working for me. This is the payload I’m seeing on my end:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d0493ec7ad1d336fbde6a2ee2ced35e1880c575a.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/d/d0493ec7ad1d336fbde6a2ee2ced35e1880c575a_2_345x136.png\" alt=\"image\" width=\"345\" height=\"136\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">854×338 52.2 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 53988,
+      "postNumber": 6,
+      "createdAt": "2021-06-08T01:09:10.636Z",
+      "author": "mattfitzgerald (Matt Fitzgerald)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/helen\">@Helen</a>, you’ve solved the mystery!</p>\n<p>I was indeed using the preview area to view the app during development.</p>\n<p>I built, zipped and uploaded the app and I can now see the attributes I expected in the context hash including the elusive <em>ItemId</em>.</p>\n<p>I’ve also now seen that a build can be created from a URL so this build/zip/upload workflow will not be required every time I want to run my code in the Monday environment during development. Great success!</p>\n<p>Cheers,<br />\nMatt</p>"
+    },
+    {
+      "id": 54672,
+      "postNumber": 7,
+      "createdAt": "2021-06-15T01:09:40.426Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

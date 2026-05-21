@@ -1,0 +1,53 @@
+{
+  "id": 97760,
+  "title": "Using IF/AND in Formula - ISSUE",
+  "slug": "using-if-and-in-formula-issue",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2024-09-15T07:54:52.383Z",
+  "lastPostedAt": "2024-09-19T16:15:36.029Z",
+  "postsCount": 5,
+  "excerpt": "Hello, \nI am trying to create a formula where if the Completion Date column is blank AND today’s date is past the date in the Due Date column, the formula returns a value of 1. Otherwise, it returns a value of 0. \nThe fo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 48,
+  "posts": [
+    {
+      "id": 201290,
+      "postNumber": 1,
+      "createdAt": "2024-09-15T07:54:52.462Z",
+      "author": "echoi1207 (Erica Choi)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I am trying to create a formula where if the Completion Date column is blank AND today’s date is past the date in the Due Date column, the formula returns a value of 1. Otherwise, it returns a value of 0.</p>\n<p>The formula I have tried is <strong>IF(AND({Completion Date} = “”, TODAY() &gt; {Due Date}), 1, 0)</strong> but I’m only getting a return value of 0. Does anyone have any suggestions on an alternate formula that can potentially work?</p>"
+    },
+    {
+      "id": 201374,
+      "postNumber": 2,
+      "createdAt": "2024-09-16T12:08:48.904Z",
+      "author": "MCautreels (Maarten Cautreels - Tryve)",
+      "cookedHtml": "<p>Hi Erica,</p>\n<p>There’s something weird about date comparisons on computers in general and certainly on monday as well.</p>\n<p>The formula you can use is the following:</p>\n<pre><code class=\"lang-auto\">IF(\n\tAND(\n    \t{Completion Date}=\"\",\n        DATEVALUE({Due Date})&lt;DATEVALUE(FORMAT_DATE(TODAY()))\n    ), \n   \t0, \n    1\n)\n</code></pre>\n<p>As you can see I’m using the DATEVALUE function. This function returns the number of days between January 1st 1900 and the given date which allows for better date comparison. The FORMAT_DATE function around TODAY on its end is used to avoid any timezone issues that might occur if users in different timezones us the same board.</p>\n<p>As you can see in the following screenshot the formula should work as expected:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/d/7/d713642e808f07eec106fe6d4e7a622a7928d029.png\" alt=\"image\" width=\"456\" height=\"236\" /></p>\n<p>Hope this helps!</p>\n<p>Best,</p>\n<p>Maarten</p>"
+    },
+    {
+      "id": 201515,
+      "postNumber": 3,
+      "createdAt": "2024-09-17T16:12:48.593Z",
+      "author": "echoi1207 (Erica Choi)",
+      "cookedHtml": "<p>Hi Maarten! Thanks so much for your help. I tried out this formula, and unfortunately I am still getting a value of “1” even if the completion date column is not empty. I do appreciate the comment about date comparisons though - I’ll have to keep checking it out with that in mind!</p>"
+    },
+    {
+      "id": 201552,
+      "postNumber": 4,
+      "createdAt": "2024-09-17T16:18:06.667Z",
+      "author": "Megan345 (Megan)",
+      "cookedHtml": "<p>Hi Erica, I think this should work for you. If you don’t want it to flag when Due Date = Today, you can just change the number after the &lt; symbol:</p>\n<p>IF(AND(DAYS({Due Date},TODAY())&lt;0,{Completion Date}=“”),1,0)</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/0/4/049bf485e21540a03b30a69341259d0c56112135.png\" alt=\"image\" width=\"461\" height=\"180\" /></p>"
+    },
+    {
+      "id": 201806,
+      "postNumber": 5,
+      "createdAt": "2024-09-19T16:15:36.029Z",
+      "author": "echoi1207 (Erica Choi)",
+      "cookedHtml": "<p>Hi everyone, I wanted to provide an update that the monday team was able to help with a solution!</p>\n<p>The final formula is:<br />\n<strong>IF(AND({Completion Date}=“”, DATEVALUE(FORMAT_DATE(TODAY())) &gt; DATEVALUE({Due Date})), 1, 0)</strong></p>\n<p>The reasoning: We can not compare dates only using &lt;&gt;. This only works for numbers. The solution to this puzzle is a hidden function in monday, called <strong>DATEVALUE</strong> . Datevalue assigns a unique numerical value to every date, and therefore allows comparing dates to each other. The general format of the function is DATEVALUE({Date}), but when using TODAY() we need to add a FORMAT_DATE() before today to make it work.</p>\n<p>Thank you all for your help, and hope this helps others as well! Cheers.</p>"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": 80783,
+  "title": "Way to get all items (across all boards / workspaces) that have a specific status via API",
+  "slug": "way-to-get-all-items-across-all-boards-workspaces-that-have-a-specific-status-via-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2024-03-12T00:40:04.810Z",
+  "lastPostedAt": "2024-03-19T08:23:11.535Z",
+  "postsCount": 6,
+  "excerpt": "Hi there, \nJust wondering if there is an easy way to return all tasks /items that have a specific priority value (ie ‘blocker’) across all boards and workspaces we have access to via the API. \nWe have hundreds of boards &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 245,
+  "posts": [
+    {
+      "id": 172656,
+      "postNumber": 1,
+      "createdAt": "2024-03-12T00:40:04.890Z",
+      "author": "B.H (Brett Hamilton)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>Just wondering if there is an easy way to return all tasks /items that have a specific priority value (ie ‘blocker’) across all boards and workspaces we have access to via the API.</p>\n<p>We have hundreds of boards so looking to avoid querying by individual board.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 172786,
+      "postNumber": 2,
+      "createdAt": "2024-03-12T11:56:27.580Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/b.h\">@B.H</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>There is no way of doing that. You will have to go through each board.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 173686,
+      "postNumber": 3,
+      "createdAt": "2024-03-17T22:12:21.191Z",
+      "author": "B.H (Brett Hamilton)",
+      "cookedHtml": "<p>Thanks, <a class=\"mention\" href=\"/u/matias\">@matias</a> i figured as much.</p>\n<p>So moving on from that plan we now need to implement webhooks on each board to listen for “Blocker” status values.</p>\n<p>I added an automation as a test on one of the boards so I could see how it specified the webhook params but it seems to focus on color and indexes rather than the specific selected label of “Blocker”</p>\n<p>eg</p>\n<pre><code class=\"lang-auto\">{\n        \"id\": \"4688629\",\n        \"event\": \"change_status_column_value\",\n        \"board_id\": \"1851931940\",\n        \"config\": \"{\\\"columnId\\\"=&gt;{\\\"boardId\\\"=&gt;1851931940, \\\"columnId\\\"=&gt;\\\"priority\\\", \\\"columnType\\\"=&gt;\\\"color\\\"}, \\\"columnValue\\\"=&gt;{\\\"index\\\"=&gt;3}}\"\n},\n</code></pre>\n<p>Is there a way to define the webhook based on the label rather than the color index - im concerned this may not be the same for all boards.</p>\n<p>So basically when priority is set to ‘Blocker’ trigger webhook.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/b/7bd16d94ddc4c8700adf6488fc0a7bc4737d0769.png\" title=\"priority - blocker\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/b/7bd16d94ddc4c8700adf6488fc0a7bc4737d0769_2_690x286.png\" alt=\"priority - blocker\" width=\"690\" height=\"286\" /><div class=\"meta\"><span class=\"filename\">priority - blocker</span><span class=\"informations\">1970×818 69.5 KB</span></div></a></div><p></p>\n<p>I am looking to create these for each board using the API so if you could assist with the appropriate settings for the config values for a create webhook mutation based on the label having a value of blocker that would be appreciated.</p>"
+    },
+    {
+      "id": 173774,
+      "postNumber": 4,
+      "createdAt": "2024-03-18T08:54:24.767Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>In this case, you will have to check for the index in which “Blocker” is set in each board with a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    columns(ids: \"status\") {\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>And then use that index to create the webhook in that board for that index:</p>\n<p>Cheers,<br />\nMatias</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_webhook(\n    board_id: 1234567890\n    event: change_status_column_value\n    config: \"{\\\"columnId\\\":\\\"status\\\", \\\"columnValue\\\":{\\\"index\\\" : \\\"1\\\"}}\"\n    url: \"https://abcd-11-111-11-111.ngrok-free.app/webhook\"\n  ) {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 173888,
+      "postNumber": 5,
+      "createdAt": "2024-03-19T00:12:29.586Z",
+      "author": "B.H (Brett Hamilton)",
+      "cookedHtml": "<p>Nice one, thanks <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> that did the trick</p>"
+    },
+    {
+      "id": 173935,
+      "postNumber": 6,
+      "createdAt": "2024-03-19T08:23:11.535Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>I am glad I could help <a class=\"mention\" href=\"/u/b.h\">@B.H</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

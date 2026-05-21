@@ -1,0 +1,55 @@
+{
+  "id": 10753,
+  "title": "C# wrapper for inserting items",
+  "slug": "c-wrapper-for-inserting-items",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2020-09-01T03:29:22.426Z",
+  "lastPostedAt": "2021-02-25T14:43:36.418Z",
+  "postsCount": 5,
+  "excerpt": "I have used some time now on integrating with monday. And a lot of people here has been very helpful so want to give a little back. This is just POC code but can properly help some getting started with c#. I will start t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 2113,
+  "posts": [
+    {
+      "id": 27279,
+      "postNumber": 1,
+      "createdAt": "2020-09-01T03:29:22.496Z",
+      "author": "ThomasSe (Thomas Segato)",
+      "cookedHtml": "<p>I have used some time now on integrating with monday. And a lot of people here has been very helpful so want to give a little back. This is just POC code but can properly help some getting started with c#. I will start to extend it for production and return in some weeks with more functionality.<br />\n<strong>How to use the code</strong></p>\n<pre><code>var boardId = \"111\";\nvar groupId = \"topics\";\n\nvar monday = new Monday(_config.MondayAPIKey);\n\nvar columnValues = new List&lt;IMondayColumn&gt;();\n\nvar systemObservationColumn = new LongTextColumn(\"long_text\", \"LongTextColumn text\");\ncolumnValues.Add(systemObservationColumn);\n\nvar actionColumn = new LongTextColumn(\"long_text1\", \"LongTextColumn text\");\ncolumnValues.Add(actionColumn);\n\nvar warningGivenToColumn = new PersonColumn(\"person\", \"13958870\");\ncolumnValues.Add(warningGivenToColumn);\n\nvar typeColumn = new DropDownColumn(\"dropdown\", \"Due date\");\ncolumnValues.Add(typeColumn);\n\nvar result = await monday.InsertItem(boardId, groupId, \"Tester 2\", columnValues);\n</code></pre>\n<p><strong>The code:</strong></p>\n<pre><code>public interface IMondayColumn\n{\n    string GetJSON();\n}\n\npublic class DropDownColumn : IMondayColumn\n{\n    string _label;\n    string _columnName;\n\n    public DropDownColumn(string columnName, string label)\n    {\n        _columnName = columnName;\n        _label = label;\n    }\n    public string GetJSON()\n    {\n        return @\"\\\\\\\"\"\"+_columnName+@\"\\\\\\\"\":{\\\\\\\"\"labels\\\\\\\"\":[\\\\\\\"\"\"+_label+@\"\\\\\\\"\"]}\";\n    }\n}\n\npublic class LongTextColumn : IMondayColumn\n{\n    string _text;\n    string _columnName;\n    public LongTextColumn(string columnName, string text)\n    {\n        _columnName = columnName;\n        _text = text;\n    }\n    public string GetJSON()\n    {\n        return @\"\\\\\\\"\"\"+_columnName+@\"\\\\\\\"\": { \\\\\\\"\"text\\\\\\\"\": \\\\\\\"\"\" + _text+ @\"\\\\\\\"\"}\";\n    }\n}\n\npublic class PersonColumn : IMondayColumn\n{\n    string _userId;\n    string _columnName;\n\n    public PersonColumn(string columName, string userId)\n    {\n        _userId = userId;\n        _columnName = columName;\n    }\n\n    public string GetJSON()\n    {\n        return @\"\\\\\\\"\"\"+_columnName+@\"\\\\\\\"\":{\\\\\\\"\"personsAndTeams\\\\\\\"\":[{\\\\\\\"\"id\\\\\\\"\":\"+_userId+@\",\\\\\\\"\"kind\\\\\\\"\":\\\\\\\"\"person\\\\\\\"\"}]}\";\n    }\n}\n\npublic class Monday\n{\n\tstring _apiKey;\n\tstring MondayApiUrl = \"https://api.monday.com/v2/\";\n\n\tpublic Monday(string apiKey)\n    {\n\t\t_apiKey = apiKey;\n\t}\n\n\tpublic async Task&lt;string&gt; InsertItem(string boardId, string groupId, string itemName, List&lt;IMondayColumn&gt; columnValues)\n    {\n\t\tvar columnValuesStr = GetColumnValuesFronList(columnValues);\n\t\t//var query = @\"{\"\"query\"\": \"\"mutation {create_item(board_id: 674077648, group_id:\\\"\"topics\\\"\", item_name: \\\"\"adding works\\\"\", column_values: \\\"\" {\\\\\\\"\"long_text\\\\\\\"\": { \\\\\\\"\"text\\\\\\\"\": \\\\\\\"\"Sample text\\\\\\\"\"}} \\\"\") {id}  }\"\" }\";\n\t\tvar query = @\"{\"\"query\"\": \"\"mutation {create_item(board_id: \"+boardId+@\", group_id:\\\"\"\"+groupId+@\"\\\"\", item_name: \\\"\"\"+itemName+@\"\\\"\", column_values: \\\"\" {\" + columnValuesStr + @\"} \\\"\") {id}  }\"\" }\";\n\n\n\n\n\t\treturn await Query(query);\n    }\n\n\tstring GetColumnValuesFronList(List&lt;IMondayColumn&gt; columnValues)\n    {\n\t\tstring columnValuesStr = string.Empty;\n\n\t\tforeach(var column in columnValues)\n        {\n\t\t\tcolumnValuesStr += column.GetJSON()+\",\";\n\t\t}\n\t\tcolumnValuesStr = columnValuesStr.Trim(',');\n\n\t\treturn columnValuesStr;\n\n\t}\n\n\tpublic async Task&lt;string&gt; Query(string query)\n\t{\n\t\tbyte[] dataBytes = System.Text.Encoding.UTF8.GetBytes(query);\n\n\t\tHttpWebRequest request = (HttpWebRequest)WebRequest.Create(MondayApiUrl);\n\t\trequest.ContentType = \"application/json\";\n\t\trequest.Method = \"POST\";\n\t\trequest.Headers.Add(\"Authorization\", _apiKey);\n\n\t\tusing (Stream requestBody = request.GetRequestStream())\n\t\t{\n\t\t\tawait requestBody.WriteAsync(dataBytes, 0, dataBytes.Length);\n\t\t}\n\n\t\tusing (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())\n\t\tusing (Stream stream = response.GetResponseStream())\n\t\tusing (StreamReader reader = new StreamReader(stream))\n\t\t{\n\t\t\treturn await reader.ReadToEndAsync();\n\t\t}\n\t}\n}\n</code></pre>"
+    },
+    {
+      "id": 27288,
+      "postNumber": 2,
+      "createdAt": "2020-09-01T06:21:22.749Z",
+      "author": "tpaktop (Maxim Filimonov)",
+      "cookedHtml": "<p>Thanks for sharing ! Are you planning to make it into nuget package ?</p>"
+    },
+    {
+      "id": 27401,
+      "postNumber": 3,
+      "createdAt": "2020-09-02T03:43:37.041Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/thomasse\">@ThomasSe</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>I LOVE this! Thanks so much for sharing with the community and giving back to other builders <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> I’m sure this will help some developers get a quicker and smoother start when building apps and integrations with C#.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27409,
+      "postNumber": 4,
+      "createdAt": "2020-09-02T04:50:00.961Z",
+      "author": "ThomasSe (Thomas Segato)",
+      "cookedHtml": "<p>Yes I am. I will get back later.</p>"
+    },
+    {
+      "id": 42529,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T14:43:36.418Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

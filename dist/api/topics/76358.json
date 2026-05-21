@@ -1,0 +1,111 @@
+{
+  "id": 76358,
+  "title": "Python requests change_column_value (or change_multiple_columns) of subitem in sub-board",
+  "slug": "python-requests-change-column-value-or-change-multiple-columns-of-subitem-in-sub-board",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2024-01-28T17:51:06.258Z",
+  "lastPostedAt": "2024-02-01T11:31:41.834Z",
+  "postsCount": 11,
+  "excerpt": "I am currently unable to write to a subitems column. If you know, change_multiple_columns would be preferred. The examples of the documentation do not help me as the devil is in the json formatting and parameter passing.&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 333,
+  "posts": [
+    {
+      "id": 164544,
+      "postNumber": 1,
+      "createdAt": "2024-01-28T17:51:06.332Z",
+      "author": "charter (charter wolf)",
+      "cookedHtml": "<p>I am currently unable to write to a subitems column. If you know, change_multiple_columns would be preferred. The examples of the documentation do not help me as the devil is in the json formatting and parameter passing. If you know a python code that works for this, I would be so happy.<br />\nAmong 3000 versions, I tried the following:</p>\n<pre><code class=\"lang-auto\">        sub_data = {\n                \"url\": \"http://example.com\",\n                \"text\": \"website\"\n        }\n\n        mutation_query = '''\n        mutation(\n            $itemId: ID!,\n            $boardId: ID!,\n            $columnId: String!,\n            $colValue: JSON!) {\n                change_column_value(\n                    item_id: $itemId,\n                    board_id: $boardId,\n                    column_id: $columnId,\n                    value: $colValue) {\n                    id\n                }\n        }\n        '''\n\n        response = requests.post(params[\"api-url\"], headers=headers,\n                                json={\n                                    \"query\": mutation_query,\n                                    \"variables\": {\n                                        \"itemId\": int(sub_id),                                        \n                                        \"boardId\": int(sub_board_id),\n                                        \"columnId\": \"link\",\n                                        \"colValue\": json.dumps(sub_data)\n                                    }\n                                }\n                                )\n\n</code></pre>\n<p>To get the subitem board id, I used the following:</p>\n<pre><code class=\"lang-auto\">        query = \"\"\"\n        query {\n            items (ids: %i) {\n                parent_item  {\n                    id\n                }\n            }\n        }\n        \"\"\" % (int(sub_id))\n\n        response = requests.post(params[\"api-url\"], headers=headers,\n                                  json={\"query\": query})\n</code></pre>\n<p>The error is response.status 500, the html with “We are having technical issues<br />\nPlease visit our <a href=\"https://status.monday.com/\" rel=\"noopener nofollow ugc\">Status Page</a> for updates. We apologize for any inconvenience.” although the status website shows that everything should be ok</p>"
+    },
+    {
+      "id": 164558,
+      "postNumber": 2,
+      "createdAt": "2024-01-28T20:39:27.274Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Posting the errors you get would be quite useful. Usually they minimally tell you the issue. If it seems to “silently” fail thats not true, GraphQL returns its errors in a 200 response so your client will not throw an exception. You need to log out the response itself to get the error.</p>"
+    },
+    {
+      "id": 164600,
+      "postNumber": 3,
+      "createdAt": "2024-01-29T06:37:52.766Z",
+      "author": "charter (charter wolf)",
+      "cookedHtml": "<p>yes, sorry, now added something but not sure if helpful. If there is a specific test you think would be telling - or if someone amazingly just knows how to write to a subitem column via api and python - please tell me</p>"
+    },
+    {
+      "id": 164663,
+      "postNumber": 4,
+      "createdAt": "2024-01-29T11:27:07.382Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I see how you’re getting the subitem board ID… and it makes no sense to me because no board ID is being returned. In that second query, what item ID are you providing? Assuming the subitems item ID is the one youre querying, The <code>parent_item</code> ID is just the ID of the parent item on the parent board.</p>\n<pre><code class=\"lang-auto\">query (items (ids: %i) {\n id\n board {\n  id\n }\n}\n</code></pre>\n<p>That query, <code>data.items[0].board.id</code> would the subitems board ID, assuming the item ID you queried is the subitem ID.</p>"
+    },
+    {
+      "id": 164690,
+      "postNumber": 5,
+      "createdAt": "2024-01-29T13:13:26.171Z",
+      "author": "charter (charter wolf)",
+      "cookedHtml": "<p>The method to get the subitem board id via the parent was given by a monday team meber here: <a href=\"https://community.monday.com/t/how-to-determine-whether-a-board-is-a-subitem-board-via-the-api/35946/3\" class=\"inline-onebox\">How to determine whether a board is a subitem board via the API - #3 by TomUK</a><br />\nBut you are right, and your method now works! I must have made a mistake when this gave me the main board id earlier.<br />\nHowever, my main question still remains and even with that sub board id, I get the same error page</p>"
+    },
+    {
+      "id": 164695,
+      "postNumber": 6,
+      "createdAt": "2024-01-29T13:29:05.193Z",
+      "author": "charter (charter wolf)",
+      "cookedHtml": "<p>Ah, thanks to your help, I now got more meaningful error messages again and it turns out that my json for the url data was incomplete. With this one (and the above query code) it now works:</p>\n<pre><code class=\"lang-auto\">        sub_data = {\n                \"link\": {\"url\": \"http://example.com\",\n                        \"text\": \"website\"}\n            }\n</code></pre>\n<p>Thanks for your fast help again!</p>"
+    },
+    {
+      "id": 164706,
+      "postNumber": 7,
+      "createdAt": "2024-01-29T14:32:12.635Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>That JSON you provided is for the <code>change_multiple_column_values</code> mutation but your original code showed <code>change_column_value</code> so I didn’t think it would be incorrect. Just an FYI <code>link</code> in your new one is the column Id so you may want to use your column ID in question as the key rather than hard coding “link”</p>"
+    },
+    {
+      "id": 164707,
+      "postNumber": 8,
+      "createdAt": "2024-01-29T14:36:27.741Z",
+      "author": "charter (charter wolf)",
+      "cookedHtml": "<p>Ah ok, thanks for the additional info! “link” is what the guy who created the board thought would be a good ID <img src=\"https://emoji.discourse-cdn.com/apple/sweat_smile.png?v=12\" title=\":sweat_smile:\" class=\"emoji\" alt=\":sweat_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 164755,
+      "postNumber": 9,
+      "createdAt": "2024-01-29T19:38:45.055Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>its also the default for the first Link column created on the board, you don’t really get a choice in column ID when you create a column via UI - only the API.</p>"
+    },
+    {
+      "id": 164872,
+      "postNumber": 10,
+      "createdAt": "2024-01-30T08:08:42.575Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 165322,
+      "postNumber": 11,
+      "createdAt": "2024-02-01T07:49:23.890Z",
+      "author": "charter (charter wolf)",
+      "cookedHtml": "<p>ah ok, so its not his fault, its the monday UI that creates these ids like “text” and then “text17”</p>"
+    },
+    {
+      "id": 165353,
+      "postNumber": 12,
+      "createdAt": "2024-02-01T11:31:41.834Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>yes, you cannot specify the ID when you create a column by UI. You can specify it when you do it by API though. If developing an app for general consumption, you would never code any IDs in, its okay if its a one off specific use case.</p>"
+    },
+    {
+      "id": 165362,
+      "postNumber": 13,
+      "createdAt": "2024-02-01T11:47:38.339Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

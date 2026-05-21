@@ -1,0 +1,126 @@
+{
+  "id": 33183,
+  "title": "Changing subitems column values",
+  "slug": "changing-subitems-column-values",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    187,
+    351
+  ],
+  "createdAt": "2022-03-16T21:44:19.440Z",
+  "lastPostedAt": "2022-03-23T19:52:04.008Z",
+  "postsCount": 15,
+  "excerpt": "In the API Playground I can change a text column value for an item using: \nmutation{change_simple_column_value (board_id: XXXXXXXXXX,  item_id: YYYYYYYYYY, column_id: &quot;text&quot;, value: &quot;NEW&quot; ){id}} \nBut when I replace the i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 3720,
+  "posts": [
+    {
+      "id": 80057,
+      "postNumber": 1,
+      "createdAt": "2022-03-16T21:44:19.516Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>In the API Playground I can change a text column value for an item using:<br />\n<code>mutation{change_simple_column_value (board_id: XXXXXXXXXX,  item_id: YYYYYYYYYY, column_id: \"text\", value: \"NEW\" ){id}}</code><br />\nBut when I replace the item_id with the id of a <em>subitem</em> I get:</p>\n<pre><code class=\"lang-auto\">{\n  \"error_code\": \"ResourceNotFoundException\",\n  \"status_code\": 404,\n  \"error_message\": \"Item not found in board\",\n  \"error_data\": {\n    \"resource_type\": \"item\",\n...\n    \"error_reason\": null\n  }\n}\n</code></pre>\n<p>I can’t find any reference to changing subitem values in the documentation, only (parent) item values. Do I need to pass a parent_id as well or…?</p>"
+    },
+    {
+      "id": 80058,
+      "postNumber": 2,
+      "createdAt": "2022-03-16T22:48:59.667Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jsararas\">@jsararas</a></p>\n<p>The subitems actually lives on another board. You have to change the boardId to the id of the board holding the subitems. You can query the subitems column to retrieve this.</p>"
+    },
+    {
+      "id": 80157,
+      "postNumber": 3,
+      "createdAt": "2022-03-17T19:59:34.754Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/basdebruin/48/688_2.png\" class=\"avatar\" /> basdebruin:</div>\n<blockquote>\n<p>You can query the subitems column to retrieve this.</p>\n</blockquote>\n</aside>\n<p>Are you referring to what is described on  <a href=\"https://api.developer.monday.com/docs/subitems\" rel=\"noopener nofollow ugc\">https://api.developer.monday.com/docs/subitems</a>? I tried to run the sample query in the Playground against my board id, and this is the response:</p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Field 'column_values' doesn't accept argument 'id'\",\n      \"locations\": [\n        {\n          \"line\": 6,\n          \"column\": 28\n        }\n      ],\n      \"fields\": [\n        \"query\",\n        \"boards\",\n        \"items\",\n        \"column_values\",\n        \"id\"\n      ]\n    }\n  ],\n  \"account_id\": 1618989\n}\n</code></pre>\n<p>Not sure if the sample code is wrong or I’m doing something wrong but I’m unable to get at the boardID for the subitems.</p>"
+    },
+    {
+      "id": 80158,
+      "postNumber": 4,
+      "createdAt": "2022-03-17T20:24:54.788Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/jsararas\">@jsararas</a></p>\n<p>When I copy/paste the example code in the API playground and change “yourBoardId” to the boardId of the board holding the main items it returns data correctly. Don’t understand why you get this error.</p>\n<p>Anyhow, with this you can query the subitems but you can’t change them. What I meant was to query all columns on your board with this query:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 123456789) {\n    columns  {\n      id\n      type\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>Then iterate through the results and look for column_type “subtasks”. The setting_str of ths column will look like this:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"columns\": [\n          {\n            \"id\": \"subitems8\",\n            \"type\": \"subtasks\",\n            \"settings_str\": \"{\\\"allowMultipleItems\\\":true,\\\"itemTypeName\\\":\\\"column.subtasks.title\\\",\\\"displayType\\\":\\\"BOARD_INLINE\\\",\\\"boardIds\\\":[9999999]}\"\n          },\n</code></pre>\n<p>The array boardIDS (in the example with value 9999999) is the boardId of the board holding your subitems.</p>"
+    },
+    {
+      "id": 80418,
+      "postNumber": 5,
+      "createdAt": "2022-03-21T16:06:53.772Z",
+      "author": "TheWes (Wes Myers)",
+      "cookedHtml": "<p>alternatively… if you don’t have a ton of different boards and you’re not trying to deal with several boards at once, it may be worth it to you to just get the subitem board id manually…</p>\n<p>if you go into your monday board, you’ll notice that the URL has your board id… if you click on an item in your board you’ll see the board id and the item id in the url (board id first, then item id after “/pulses/”).<br />\n<code>https://yourdomain.monday.com/boards/xxxxxxxxxx/pulses/xxxxxxxxxx</code><br />\n…now if you click on a subitem in that board, you’ll see that first number change (because subitems are just items on a different board and are only nested under parent items visually in your ‘parent’ board). The second number is your subitem id… Now you can just grab that subitem board id (first number) and use that as your ‘board_id’ instead of the board id for your parent items. Plug it in and it should work for you.</p>"
+    },
+    {
+      "id": 80438,
+      "postNumber": 6,
+      "createdAt": "2022-03-21T20:42:15.604Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/thewes\">@TheWes</a> ! Now it’s clicking how this is all being stored in the background. I’m able to change_multiple_column_values for a subitem successfully in the Playground. I also saw your post on GAS - that will also come in handy at some point! Right now I’m trying to create these subitems in VBA and it’s kicking my ass. I don’t suppose you’ve achieved this in VBA? I’m trying to mimic the Python Quickstart code to pass the column values as variables upon creating the subitem. Here’s attempt <span class=\"hashtag\">#643:</span></p>\n<pre><code class=\"lang-auto\">query_msub = \"{\"\"query\"\": \"\"mutation ($StockCode: String!, $columnVals: JSON!) { create_subitem (parent_item_id: \" &amp; ItemID &amp; \", item_name:$StockCode, column_values:$columnVals) { id board { id } } }\"\" \"\nvars = \"{\\\"\"StockCode\\\"\": \\\"\"300.TEST1\\\"\", \"\"columnVals\"\": \"\"{\\\"\"text\\\"\": \\\"\"Things\\\"\"}\"\" } }\"\nmutate = \"\" &amp; query_msub &amp; \", \"\"variables\"\":\" &amp; vars &amp; \"\"\n</code></pre>"
+    },
+    {
+      "id": 80453,
+      "postNumber": 7,
+      "createdAt": "2022-03-21T22:35:33.896Z",
+      "author": "TheWes (Wes Myers)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jsararas\">@jsararas</a>!</p>\n<p>Ever since I started working with JavaScript I swore off VBA, so it’s been a good while since I’ve done anything in VBA.</p>\n<p>However… I’ll take a stab at it… but take this response worth a grain of salt because I’ve got no clue if this will be right or not.</p>\n<p>I see what you’re doing there… at first I thought you had bracket problems (an extra ‘{’ in ‘query_msub’ and then I saw an extra ‘}’ in ‘vars’… makes it a little difficult to read… but I’m guessing from here you put…<br />\n<code>\"payload\" : mutate</code><br />\n…in your request?</p>\n<p>I think maybe you might need some backslashes for ‘query’ and ‘variables’… it’s always the little things… I’d recommend trying to keep your code as close to monday’s examples as you can… makes things easier to compare and translate so you can figure it out.</p>\n<p>What I mean is… instead of trying to build your payload string while defining your query and variables (I’m talking about those extra brackets) , just define your query and variables on their own and then put them together in the payload string… might help you see where your going wrong.</p>\n<p>…see if this works:</p>\n<p><code>query_msub = \"mutation ($StockCode: String!, $columnVals: JSON!) { create_subitem (parent_item_id: \" &amp; ItemID &amp; \", item_name:$StockCode, column_values:$columnVals) { id board { id } } }\"</code></p>\n<p><code>vars = \"{\\\"\"StockCode\\\"\": \\\"\"300.TEST1\\\"\", \"\"columnVals\"\": \"\"{\\\"\"text\\\"\": \\\"\"Things\\\"\"}\"\" }\"</code></p>\n<p>and then in your request put:</p>\n<p><code>\"payload\" : \"{\\\"\"query\\\"\" :\" &amp; query_msub &amp; \", \\\"\"variables\\\"\" :\" &amp; vars &amp; \"}\"</code></p>\n<p>…and then let me know if luck is on my side!!! <img src=\"https://emoji.discourse-cdn.com/apple/rofl.png?v=12\" title=\":rofl:\" class=\"emoji\" alt=\":rofl:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 80522,
+      "postNumber": 8,
+      "createdAt": "2022-03-22T14:42:41.009Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Thanks for taking a crack at it <a class=\"mention\" href=\"/u/thewes\">@TheWes</a>! No luck I’m afraid. What I do is build up that query string and then pass it to another function as queryStr. The query request is structured as:</p>\n<pre><code class=\"lang-auto\">    Dim monday As New WinHttpRequest\n    With monday\n        .Open \"POST\", apiURL, False\n        .SetRequestHeader \"Content-Type\", \"application/json\"\n        .SetRequestHeader \"Accept\", \"application/json\"\n        .SetRequestHeader \"Authorization\", apiKey\n        .Send queryStr\n        response = .ResponseText\n        status = .status &amp; \" | \" &amp; .StatusText\n    End With\n</code></pre>\n<p>I’m curious about your <code>\"payload\" : mutate</code> suggestion. I haven’t seen “payload” used before- were you suggesting I change:</p>\n<p><code>.Send queryStr</code> to <code>.Send \"payload\" : queryStr</code>? That gives me a syntax error- i imagine it needs to be enclosed?</p>\n<p>It feels like the component that Monday is choking on are the quotes around the columnVals “{ … }”. In Python that’s wrapped with a single quote ‘{ … }’ but I’ve tried both in VBA with no luck. The reason I’m thinking that is because I can do change_simple_column_values using this:</p>\n<p><code>query_msub = \" { \"\"query\"\" : \"\"mutation{change_simple_column_value (board_id: XXXXXXXXX, item_id: XXXXXXXXXX, column_id: \\\"\"text\\\"\", value: \\\"\"NOFUN\\\"\" ){id}}\"\"}\"</code></p>\n<p>and it works. But when I try and re-jig it as a change_multiple_column_values:</p>\n<p><code>query_msub = \" { \"\"query\"\" : \"\"mutation {change_multiple_column_values (item_id: XXXXXXXXXX, board_id: XXXXXXXXXX, column_values: \"\"{\\\"\"text\\\"\": \\\"\"FUN\\\"\",\\\"\"text_1\\\"\": \\\"\"TIMES\\\"\"}\"\" ){id}}\"\"}\"</code></p>\n<p>then I’m back to the 500 error. The only real difference - unless you can spot something else- is the multiple column values. The logs on Monday’s end say <em>Invalid Token</em>.</p>"
+    },
+    {
+      "id": 80718,
+      "postNumber": 9,
+      "createdAt": "2022-03-23T16:07:23.613Z",
+      "author": "TheWes (Wes Myers)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/jsararas\">@jsararas</a>!<br />\nSorry… forget about the payload thing… I’m trying to translate things from GAS… my requests look like:</p>\n<pre><code class=\"lang-auto\">var query = \"mutation($item:Int!, $board:Int!, $columnVals:JSON!){change_multiple_column_values(item_id:$item, board_id:$board, column_values:$columnVals, create_labels_if_missing: true){id}}\";\n    var variables = {\n      \"item\": parseInt(itemID),\n      \"board\": parseInt(boardID),\n      \"columnVals\": '{' + mondayRow.toString() + '}'\n    };\n    var url = \"https://api.monday.com/v2\";\n    var options = {\n      \"method\": \"post\",\n      \"headers\": {\n        \"Authorization\": key,\n      },\n      \"payload\": JSON.stringify({\n        \"query\": query,\n        \"variables\": variables\n      }),\n      \"contentType\": \"application/json\"\n    };\n    var response = UrlFetchApp.fetch(url, options);\n</code></pre>\n<p>Looking at your multiple columns… I’ve never seen an underscore in any of my column ids… maybe “text_1” should be “text1”??? …maybe try your multiple_column_values with only the “text” column, and without the second “text_1” column… have you tried “text_1” on simple_column_value?</p>"
+    },
+    {
+      "id": 80729,
+      "postNumber": 10,
+      "createdAt": "2022-03-23T17:30:24.729Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/thewes\">@TheWes</a>, interesting that you have double quotes on your variable keys, then single quotes on the values. I might try some more variations on that.</p>\n<p>Yes the column (and group!) auto-naming conventions in Monday don’t seem to be very conventional <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> - my column is indeed text_1. I tried your suggestions anyway, but didn’t find any different results. Appreciate the help.<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/c/cf3949475e128e562b877a1dbfc628cca6b748f4.png\" alt=\"image\" width=\"383\" height=\"120\" /></p>"
+    },
+    {
+      "id": 80734,
+      "postNumber": 11,
+      "createdAt": "2022-03-23T18:31:21.631Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jsararas\">@jsararas</a></p>\n<p>I replied to your email. But not sure where you are most active (and for others watching)…</p>\n<p>I’m pretty sure the issue is not due items v. subitems; but the syntax difference between change_simple_column_value() and change_multiple_column_values() and some “escaping”.</p>\n<p>query_msub = \" { ““query”” : <em>\"\"mutation {change_multiple_column_values (item_id: XXXXXXXXXX, board_id: XXXXXXXXXX, column_values: <strong>“”{\"“text\"”: \"“FUN\"”,\"“text_1\"”: \"“TIMES\"”}“”</strong></em> ){id}}“”}\"</p>\n<p>The <strong>BOLD</strong> part is “inside” the italicized part and will need “more escaping”… something like:</p>\n<p><code>query_msub = \" { \"\"query\"\" : \"\"mutation {change_multiple_column_values (item_id: XXXXXXXXXX, board_id: XXXXXXXXXX, column_values: \\\"\"{\\\\\\\"\"text\\\\\\\"\": \\\\\\\"\"FUN\\\\\\\"\",\\\\\\\"\"text_1\\\\\\\"\": \\\\\\\"\"TIMES\\\\\\\"\"}\\\"\" ){id}}\"\"}\"</code></p>\n<p>Also, both column ID’s and group ID’s can (and often do) have underscores. Every time there is an invalid character to be used in an ID it is replaced with an underscore.</p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/SARq3tmCIX8\" class=\"inline-onebox\">Should I convert my Integromat account to Make? - YouTube</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 80736,
+      "postNumber": 12,
+      "createdAt": "2022-03-23T19:27:20.677Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>, that worked, thank you so much! That particular layout was not in the 743 combinations I had tried <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /> I <em>had</em> tried the <code>\\\\\\\"</code> escaping on the columns, but I think I see now, I was treating the column_values block the same as <code>\"\"query\"\"</code> and <code>\"\"mutate\"\"</code>, so all quotes were disappearing by the time the query hit, but I needed to preserve one set around the column_values block. Have I got that right?</p>"
+    },
+    {
+      "id": 80739,
+      "postNumber": 13,
+      "createdAt": "2022-03-23T19:38:05.488Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jsararas\">@jsararas</a></p>\n<p>Glad it worked.</p>\n<p>It can get a little tricky when you’re trying to figure it from scratch. Basically, at each level, for quotes within quotes, within quotes you have to add an additional “escape” level. Honestly, I don’t know the correct terminology.</p>\n<p>The way I ended up constructing my VBA routines was to basically create my own “stringify” sub. So, that when I wanted to add another API call/command string I could keep it simple and let the program figure it out.</p>"
+    },
+    {
+      "id": 80742,
+      "postNumber": 14,
+      "createdAt": "2022-03-23T19:52:04.008Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> For sure. I do have the VBA-JSON package installed, so now that I know what ‘good’ looks like, I may bend that to my will in order to stringify/serialize the values- or build my own as you suggest. Honestly, I can’t believe this isn’t a more common need. At least a dozen people use Excel, no? Either way- many thanks again for your help!</p>"
+    },
+    {
+      "id": 81454,
+      "postNumber": 15,
+      "createdAt": "2022-03-30T18:52:48.196Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

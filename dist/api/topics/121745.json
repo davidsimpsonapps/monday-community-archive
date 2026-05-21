@@ -1,0 +1,33 @@
+{
+  "id": 121745,
+  "title": "Automations for Dependent Tasks",
+  "slug": "automations-for-dependent-tasks",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    123
+  ],
+  "createdAt": "2025-11-17T06:23:10.660Z",
+  "lastPostedAt": "2025-11-17T07:43:42.877Z",
+  "postsCount": 2,
+  "excerpt": "Hello, is there a way to use if only logic for Dependent task automations? \nHere’s what I need…. \nTask B is Dependent on Task A \nWhen Task A status is changed to done, update status of Task B to ready to start. \nI have t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 20,
+  "posts": [
+    {
+      "id": 241903,
+      "postNumber": 1,
+      "createdAt": "2025-11-17T06:23:10.737Z",
+      "author": "land2homes (Jonathan Tipton)",
+      "cookedHtml": "<p>Hello, is there a way to use if only logic for Dependent task automations?</p>\n<p>Here’s what I need….<br />\nTask B is Dependent on Task A</p>\n<p>When Task A status is changed to done, update status of Task B to ready to start.</p>\n<p>I have the automation set up to accomplish this. However, in some cases, Task B would already be marked done, or marked N/A if it doesn’t apply.  However, when this automation runs, it removes where it was already marked as N/A or Done and moves it back to Ready to Start.</p>\n<p>This can also cause problems if you do finish Task A, and for some reason have to go back and update the status, then it will re-trigger automations as well.</p>\n<p>I need a way to be able to add if only the status is showing as not started.  The automation is premade and doesn’t allow customization (unless I am totally missing something), and you can’t set up dependent column automations from scratch.</p>\n<p>Any suggestions?</p>"
+    },
+    {
+      "id": 241927,
+      "postNumber": 2,
+      "createdAt": "2025-11-17T07:43:42.877Z",
+      "author": "Clarey (MondayMotivator)",
+      "cookedHtml": "<p>You’re not missing anything — the built‑in “Dependencies” recipes are pretty rigid and don’t support an “only if status is X” condition. They’ll always fire when the trigger happens, regardless of the current status of the dependent item.</p>\n<p>To get the behavior you want (update B only if it’s still “Not Started”), you’ll need to stop relying on the premade dependency automation for status changes and instead:</p>\n<ol>\n<li>\n<p>Use a regular “When status changes” automation, and</p>\n</li>\n<li>\n<p>Add a condition that checks the current status of the dependent item before updating it.</p>\n</li>\n</ol>\n<p>Since you can’t build custom recipes directly on the Dependencies column, the usual pattern is:</p>\n<p>1. Link A and B with a Connect Boards / Mirror (or use your existing structure)</p>\n<p>If A and B are on the same board:</p>\n<ul>\n<li>\n<p>Use a Connect boards column (or use the existing dependency link if one is already there), and</p>\n</li>\n<li>\n<p>Add a Mirror column to bring Task B’s Status into Task A (or vice versa), so the automation has something it can “see” and check.</p>\n</li>\n</ul>\n<p>If they’re on separate boards, the same idea applies: connect and mirror the status.</p>\n<p>2. Build a conditional automation</p>\n<p>Use a custom automation something like:</p>\n<blockquote>\n<p><strong>When Status (of Task A) changes to Done</strong><br />\n<strong>and only if</strong> Mirrored Status of Task B is Not Started<br />\n<strong>then</strong> change Status (of Task B) to Ready to Start</p>\n</blockquote>\n<p>In monday’s builder, that’s typically:</p>\n<ul>\n<li>\n<p>Trigger:<br />\n<strong><code>When status changes to Done</code></strong></p>\n</li>\n<li>\n<p>Condition:<br />\n<strong><code>and only if {Mirrored Status of Task B} is Not Started</code></strong></p>\n</li>\n<li>\n<p>Action:<br />\n<strong><code>change status of {Task B} to Ready to Start</code></strong></p>\n</li>\n</ul>\n<p>This way:</p>\n<ul>\n<li>\n<p>If Task B is already Done or N/A, the condition fails and the automation does nothing.</p>\n</li>\n<li>\n<p>If you change Task A’s status multiple times, it only updates Task B when B is still Not Started.</p>\n</li>\n</ul>\n<p>3. Disable / limit the premade Dependencies recipe</p>\n<p>If you still have the original dependency automation enabled (the one that always sets B to Ready to Start when A is done), turn it off or adjust your setup so it’s no longer responsible for the status change. Otherwise it will keep overriding N/A / Done.</p>"
+    }
+  ]
+}

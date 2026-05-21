@@ -1,0 +1,37 @@
+{
+  "id": 96901,
+  "title": "New item automation",
+  "slug": "new-item-automation",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    13,
+    22,
+    107,
+    157,
+    351
+  ],
+  "createdAt": "2024-09-04T16:33:10.621Z",
+  "lastPostedAt": "2024-09-08T09:22:25.589Z",
+  "postsCount": 2,
+  "excerpt": "All, \nWe have Monday board with several phases. When all subitems in phase 1 are marked as done, the item moves to phase 2 and a few sub-items are created. What I am looking for is the ability to auto assign some of thos&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 18,
+  "posts": [
+    {
+      "id": 199975,
+      "postNumber": 1,
+      "createdAt": "2024-09-04T16:33:10.794Z",
+      "author": "Somoscode (Rafael)",
+      "cookedHtml": "<p>All,<br />\nWe have Monday board with several phases. When all subitems in phase 1 are marked as done, the item moves to phase 2 and a few sub-items are created. What I am looking for is the ability to auto assign some of those new sub-items based on the owner of the top/main item. Looking at the automation engine, I did not find a way to do this. wondering if this is possible at all even if using API, etc. thanks.</p>"
+    },
+    {
+      "id": 200467,
+      "postNumber": 2,
+      "createdAt": "2024-09-08T09:22:25.589Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/somoscode\">@Somoscode</a>,</p>\n<p>You could use a webhook (as shown <a href=\"https://developer.monday.com/api-reference/reference/webhooks\">here</a>) to receive a notification each time a sub item is created. Then in that webhook you would receive that subitem’s ID, and you can use that ID in a query like this one to get the value of who is assigned to the “parent item”:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: YOURSUBITEMIDHERE) {\n    parent_item {\n      name\n      id\n      column_values(ids: \"THEIDOFTHEPEOPLECOLUMNHERE\") {\n        value\n        text\n      }\n    }\n  }\n}\n</code></pre>\n<p>Then you can use that to change the value of the people column of the subitem to based on that information, with a mutation such as this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_simple_column_value(item_id:YOURSUBITEMIDHERE, board_id:THEIDOFTHESUBITEMSBOARDHERE, column_id:\"people\", value:\"THEIDOFTHEUSERHERE\") {\n    id\n  }\n}\n</code></pre>\n<p>To get the ID of the subitems board, you can use a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: THESUBITEMIDHERE) {\n    board {\n      id\n    }\n  }\n}\n</code></pre>\n<p>To get the IDs of your boards, you can use something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: BOARDIDHERE) {\n    columns {\n      title\n      id\n    }\n  }\n}\n</code></pre>\n<p>To get your users’ IDs, you can use something like this:</p>\n<pre><code class=\"lang-auto\">{\n  users {\n    name\n    id\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

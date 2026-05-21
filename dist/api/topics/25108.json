@@ -1,0 +1,77 @@
+{
+  "id": 25108,
+  "title": "Order of columns data retrieved",
+  "slug": "order-of-columns-data-retrieved",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2021-09-21T10:37:21.090Z",
+  "lastPostedAt": "2021-09-22T04:48:30.689Z",
+  "postsCount": 8,
+  "excerpt": "Hello Monday community, \nI have a small GraphQL query as below: \n{\n  vat_quarterly: boards(ids: 684144642) {\n    groups(ids: &quot;topics&quot;) {\n      ...NumberDateFields2\n    }\n  }\n}\n\nfragment NumberDateFields2 on Group {\n  ite&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1454,
+  "posts": [
+    {
+      "id": 64077,
+      "postNumber": 1,
+      "createdAt": "2021-09-21T10:37:21.179Z",
+      "author": "vivek (Vivek T)",
+      "cookedHtml": "<p>Hello Monday community,</p>\n<p>I have a small GraphQL query as below:</p>\n<pre><code class=\"lang-auto\">{\n  vat_quarterly: boards(ids: 684144642) {\n    groups(ids: \"topics\") {\n      ...NumberDateFields2\n    }\n  }\n}\n\nfragment NumberDateFields2 on Group {\n  items {\n    column_values(ids: [\"numbers\", \"date72\", \"mirror66\"]) {\n      text\n    }\n  }\n}\n</code></pre>\n<p>The result I retrieve is as below(just a small snippet):</p>\n<pre><code class=\"lang-auto\">{\n                \"column_values\": [\n                  {\n                    \"text\": \"Courtney Stretton\"\n                  },\n                  {\n                    \"text\": \"2021-08-31\"\n                  },\n                  {\n                    \"text\": \"1\"\n                  }\n                ]\n              }\n}\n</code></pre>\n<p>Now, the column ID <code>mirror66</code> is actually a user’s name. In my Graph QL query I had added <code>mirror66</code> at the end, but it appeared first in the result set for each row. Is there a way to achieve more definitive results, like the result order to match the columns order that the system was requested with?</p>\n<p>So, here result should be in the order of <code>numbers</code>,<code>date72</code> and then <code>mirror66</code> which is the user’s name.</p>\n<p>Could someone provide some insights as to how we can change this default behaviour?</p>"
+    },
+    {
+      "id": 64080,
+      "postNumber": 2,
+      "createdAt": "2021-09-21T11:24:08.738Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/vivek\">@vivek</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=10\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Thanks for reaching out. That’s a great question!</p>\n<p>To be transparent with you,  I’m afraid that specifying the ID in a specific order will not result in a query that will return column results in the order you’ve mentioned. Specifying the ID acts as a way to limit the data your query will return, but doesn’t determine or sort the results.</p>\n<p>Instead, would it make any sense to use the column <code>id</code> or <code>title</code> in order to sort the results in your application’s logic, as the results would always be paired like:</p>\n<pre><code class=\"lang-auto\">text: 1\n</code></pre>\n<p>What do you think?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64197,
+      "postNumber": 3,
+      "createdAt": "2021-09-22T04:17:47.223Z",
+      "author": "vivek (Vivek T)",
+      "cookedHtml": "<p>Thanks for replying and sorry for my late reply. It is mainly because of timezone difference.</p>\n<p>I couldn’t understand your sorting idea. Could you elaborate? Actually, my graph QL query can have many groups to fetch from like below:</p>\n<pre><code class=\"lang-auto\">{\n  new_key: boards(ids: new_board_id) {\n    groups(ids: new_group_id) {\n      ...NumberDateFields2\n    }\n  }\n  vat_quarterly: boards(ids: 684144642) {\n    groups(ids: \"topics\") {\n      ...NumberDateFields2\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 64199,
+      "postNumber": 4,
+      "createdAt": "2021-09-22T04:23:44.933Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/vivek\">@vivek</a></p>\n<p>Thank you for circling back with me! No worries at all, thank you for being here with me <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I recommend returning the column IDs or Title within your API query, and then grouping the results within your code the way you’d like, based on the ID/Title, as our API will not currently perform that for you. So instead of just returning <code>column_values { text }</code>, you could retrieve <code>column_values { text id title }</code> and then interpret the results the way you’d like.</p>\n<p>Does that make more sense?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64200,
+      "postNumber": 5,
+      "createdAt": "2021-09-22T04:32:42.526Z",
+      "author": "vivek (Vivek T)",
+      "cookedHtml": "<p>Thanks Alex. That does seem to make sense to me. So you mean something like below:</p>\n<pre><code class=\"lang-auto\">{\n  vat_quarterly: boards(ids: 684144642) {\n    groups(ids: \"topics\") {\n      ...NumberDateFields2\n    }\n  }\n}\n\nfragment NumberDateFields2 on Group {\n  items {\n    column_values(ids: [\"numbers\", \"date72\", \"mirror66\"]) {\n      title,\n      id,\n      text\n    }\n  }\n}\n</code></pre>\n<p>The result I get is as below:</p>\n<pre><code class=\"lang-auto\">\"column_values\": [\n                  {\n                    \"title\": \"CS\",\n                    \"id\": \"mirror66\",\n                    \"text\": \"Courtney Stretton\"\n                  },\n                  {\n                    \"title\": \"Deadline\",\n                    \"id\": \"date72\",\n                    \"text\": \"2021-08-31\"\n                  },\n                  {\n                    \"title\": \"Count\",\n                    \"id\": \"numbers\",\n                    \"text\": \"1\"\n                  }\n  ]\n</code></pre>\n<p>So you mean to define custom sort order in my application based on <code>title</code> or <code>id</code> value and sort those individual rows?</p>"
+    },
+    {
+      "id": 64202,
+      "postNumber": 6,
+      "createdAt": "2021-09-22T04:44:36.215Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/vivek\">@vivek</a></p>\n<p>Exactly! I’m glad we’re on the same page here, thank you for clarifiyng.</p>\n<p>I realize this will involve some extra work on your end, but I hope this helps you achieve the end result that would be ideal for you.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64204,
+      "postNumber": 7,
+      "createdAt": "2021-09-22T04:48:30.689Z",
+      "author": "vivek (Vivek T)",
+      "cookedHtml": "<p>Thanks Alex for clarifying. It would involve a bit of extra work on our end but that’s fine if we could achieve the right order before processing.</p>\n<p>Thanks for your time <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 64875,
+      "postNumber": 8,
+      "createdAt": "2021-09-29T04:49:27.267Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

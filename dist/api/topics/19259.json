@@ -1,0 +1,84 @@
+{
+  "id": 19259,
+  "title": "Hour column doesnt store values",
+  "slug": "hour-column-doesnt-store-values",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    13,
+    208,
+    351
+  ],
+  "createdAt": "2021-04-26T10:30:48.363Z",
+  "lastPostedAt": "2021-05-19T15:52:16.462Z",
+  "postsCount": 8,
+  "excerpt": "Hey, \nI have created a integration that fills inn information from another document. Everything works as it should, but when i refresh the site all the values in the hour columns disappear. \nThey show the right value bef&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1335,
+  "posts": [
+    {
+      "id": 48861,
+      "postNumber": 1,
+      "createdAt": "2021-04-26T10:30:48.464Z",
+      "author": "SindreSvee (Sindre Svee)",
+      "cookedHtml": "<p>Hey,<br />\nI have created a integration that fills inn information from another document. Everything works as it should, but when i refresh the site all the values in the hour columns disappear.<br />\nThey show the right value before i refresh. And all the other columns that gets updated keeps their values, its only the hour column that disappears.</p>\n<p>When the integration runs (before refresh).<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/757a9bd198fe682dd28ab885351f40fed2b0d22e.png\" title=\"before refresh\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/7/757a9bd198fe682dd28ab885351f40fed2b0d22e.png\" alt=\"before refresh\" width=\"263\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">before refresh</span><span class=\"informations\">323×612 16.5 KB</span>\n</div></a></div><p></p>\n<p>After refresh:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/7/7b5b707cb883e2b233a96ab1c878c7f0b5cda601.png\" title=\"after refresh\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/7/7b5b707cb883e2b233a96ab1c878c7f0b5cda601_2_257x500.png\" alt=\"after refresh\" width=\"257\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">after refresh</span><span class=\"informations\">341×663 11.5 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 48889,
+      "postNumber": 2,
+      "createdAt": "2021-04-26T11:35:41.247Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/sindresvee\">@SindreSvee</a></p>\n<p>I’d love to take a further look at this behavior with you! Just to make sure we’re on the same page here, is there any chance you could provide a screenshot of your Integromat setup? This would help us understand what might be causing those results for you.</p>\n<p>Once we have those details, we’d be able to take a closer look and see how to best resolve this together <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Thank you so much for your patience and cooperation!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 48890,
+      "postNumber": 3,
+      "createdAt": "2021-04-26T11:35:49.081Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 48920,
+      "postNumber": 4,
+      "createdAt": "2021-04-26T12:35:07.453Z",
+      "author": "SindreSvee (Sindre Svee)",
+      "cookedHtml": "<p>Hey hey <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a> !</p>\n<p>Thank you so much for your reply, I am using the monday-sdk in nodeJs to fetch an array from an external XML file.<br />\nThen it checks if the ID from the array exist in an number column on the board, if it does update column values, if it doesnt exist create new item.</p>\n<p>Everything here works as it should exept that the values from the hour columns both disappears when i refresh the page. When i log the output from the changeColumnValue it sends it as it should.</p>\n<p>I have simplefied some of the code here, but i have validated that the issue still occurs.</p>\n<p>monday-controller.js:</p>\n<pre><code>const mondayService = require('../services/monday-service');\nconst xmlService = require('../services/xmlRead-service');\n\nasync function addDataToBoard(req, res) {\n  const { shortLivedToken } = req.session;\n  const { payload } = req.body;\n\n  try {\nconst { inputFields } = payload;\nconst { boardId, groupId, xmlLink, dataIDColumnId, targetTime, targetNumber} = inputFields;\n\n//Get data data\nconst fetchData = await xmlService.queryXMLData(xmlLink);\n\nfetchData.forEach(async getData =&gt;{ // Run for all IDs\n  const listAllColumnWithID = await mondayService.getItemByColumnValue(shortLivedToken, boardId, dataIDColumnId, \"\"+parseInt(getData.$.id)+\"\", 1);\n\n  if(listAllColumnWithID.toString()){ //If ID Exist on board, update values.\n    let mondayItemIdToUpdate = listAllColumnWithID.map(({ id }) =&gt; id).toString(); // Item ids from monday that have\n\n    //Update column values.\n    await mondayService.changeColumnValue(shortLivedToken, boardId, parseInt(mondayItemIdToUpdate), targetTime, JSON.stringify({\"hour\": parseInt(getData.Time_of_event).toString().substring(0,2),\"minute\": parseInt(getData.Time_of_event).toString().substring(2,4)}));\n    await mondayService.changeColumnValue(shortLivedToken, boardId, parseInt(mondayItemIdToUpdate), targetNumber, \"\\\"\"+parseInt(getData.Number_of_available_seats)+\"\\\"\");\n\n  } else { // If ID doesnt exist on board, create new item.\n    //removed to simplify.\n\n  };\n\n});\n\nreturn res.status(200).send({});\n  } catch (err) {\nconsole.error(err);\nreturn res.status(500).send({ message: 'internal server error' });\n  }\n}\n</code></pre>\n<p>mondayService.changeColumnValue:</p>\n<pre><code>const changeColumnValue = async (token, boardId, itemId, columnId, value) =&gt; {\n  try {\n    const mondayClient = initMondayClient({ token });\n    const query = `mutation change_column_value($boardId: Int!, $itemId: Int!, $columnId: String!, $value: JSON!) {\n            change_column_value(board_id: $boardId, item_id: $itemId, column_id: $columnId, value: $value) {\n              id\n            }\n          }\n          `;\n        const variables = { boardId, columnId, itemId, value };\n\n        const response = await mondayClient.api(query, { variables });\n        return response;\n      } catch (err) {\n        console.error(err);\n      }\n    };\n</code></pre>\n<p>mondayService.getItemByColumnValue:</p>\n<pre><code>const getItemByColumnValue = async (token,  boardId, columnId, columnValue, limit) =&gt; {\n  try {\n    const mondayClient = initMondayClient();\n    mondayClient.setToken(token);\n\n    const query = `query($boardId: Int!, $columnId: String!, $columnValue: String!, $limit: Int!) {\n        items_by_column_values(board_id: $boardId, column_id: $columnId, column_value: $columnValue, limit: $limit) {\n          id\n        }\n      }`;\n\n    const variables = { boardId, columnId, columnValue, limit };\n    const response = await mondayClient.api(query, { variables });\n    return response.data.items_by_column_values;\n\n  } catch (err) {\n    console.error(err);\n  }\n};\n</code></pre>\n<p>I have sendt you a message with a link to a quick video how it looks on the board.</p>\n<p>Thanks.<br />\n-Sindre</p>"
+    },
+    {
+      "id": 48947,
+      "postNumber": 5,
+      "createdAt": "2021-04-26T14:29:48.624Z",
+      "author": "andrewalmand (Andrew Almand)",
+      "cookedHtml": "<p>Not sure if this is related, but we have some recurring meetings in a Monday calendar board. I have automations set to copy the item and push the date by 1 week and I notice that the Hour columns don’t always copy correctly or are blank.</p>"
+    },
+    {
+      "id": 49000,
+      "postNumber": 6,
+      "createdAt": "2021-04-27T04:35:00.172Z",
+      "author": "SindreSvee (Sindre Svee)",
+      "cookedHtml": "<p>Hey,<br />\nTo follow up on this,<br />\nWhen i change the column to a text or number column it works as it should.</p>\n<p>Here is the same values on a hour column and one on a number column.<br />\nBefore refresh:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/9/9b8541fabc5e2312d858c79f6bb4da832e378fff.png\" title=\"hour-number\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/9/9b8541fabc5e2312d858c79f6bb4da832e378fff.png\" alt=\"hour-number\" width=\"226\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">hour-number</span><span class=\"informations\">297×657 10.1 KB</span>\n</div></a></div><p></p>\n<p>After refresh:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/59eaa359c5ae6be6de8ba78969080b9cb9d280d7.png\" title=\"after\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/59eaa359c5ae6be6de8ba78969080b9cb9d280d7_2_244x500.png\" alt=\"after\" width=\"244\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">after</span><span class=\"informations\">309×632 12.7 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 49153,
+      "postNumber": 7,
+      "createdAt": "2021-04-28T08:32:44.186Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/andrewalmand\">@andrewalmand</a>,</p>\n<p>Thanks for chiming in! I would suggest writing to our support inbox directly, as it sounds like a potential issue with the automation setup, perhaps. You can reach us at <a href=\"mailto:support@monday.com\">support@monday.com</a> - this would be your best point of contact for this specific case!</p>\n<p><a class=\"mention\" href=\"/u/sindresvee\">@SindreSvee</a></p>\n<p>Thank you for following up on this and adding further detail to how your code is structured! I would love to take a further look at the exact column values you are attempting to send here. I’ve just tested updating the column values of a Hour column via the API, using both the GraphQL playground, as well as Postman, and wasn’t able to reproduce this. The format for my Hour column values is as follows:</p>\n<p><code>\"{\\\"hour\\\":16,\\\"minute\\\":42}\"</code></p>\n<p>Would you be able to provide the exact values you are currently sending? I’d love to take a closer look at a specific example here.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 52023,
+      "postNumber": 8,
+      "createdAt": "2021-05-19T15:52:10.312Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    },
+    {
+      "id": 52024,
+      "postNumber": 9,
+      "createdAt": "2021-05-19T15:52:16.462Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sindresvee\">@SindreSvee</a> and <a class=\"mention\" href=\"/u/andrewalmand\">@andrewalmand</a>,</p>\n<p>Since it’s been a while since we last heard from you, I’m going to mark Alex’s last comment as the solution. This thread will proceed to close within 7 days.</p>\n<p>If this issue is still persisting for you, feel free to comment on this thread before then or start a new topic.</p>\n<p>Thanks!</p>"
+    }
+  ]
+}

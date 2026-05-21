@@ -1,0 +1,88 @@
+{
+  "id": 1996,
+  "title": "Error using GraphQL",
+  "slug": "error-using-graphql",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2019-08-30T14:32:07.108Z",
+  "lastPostedAt": "2021-02-25T12:23:14.729Z",
+  "postsCount": 10,
+  "excerpt": "Greetings! \nI’m trying to use the api version 2 of your plataform, and i’m receiving the following error: \nSyntax Error GraphQL request (1:105) Expected :, found String “: {” \nI’m using python version 3.6 with  gql modul&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 3581,
+  "posts": [
+    {
+      "id": 5225,
+      "postNumber": 1,
+      "createdAt": "2019-08-30T14:32:07.302Z",
+      "author": "brunoinvestflex (Bruno)",
+      "cookedHtml": "<p>Greetings!<br />\nI’m trying to use the api version 2 of your plataform, and i’m receiving the following error:</p>\n<p>Syntax Error GraphQL request (1:105) Expected :, found String “: {”</p>\n<p>I’m using python version 3.6 with  gql module.<br />\nThis occurs when i try a mutation in a board.<br />\nHere is the query:<br />\nquery = gql(“”\" mutation {change_multiple_column_values (board_id: XXXXXXXX , item_id: XXXXXXX, column_values: “{“dma2”: {\"index\": \"teste\"}}”) {id}}  “”\")</p>\n<p>The query to select data is ok when i test with the same module and script.</p>\n<p>Could you please help-me with this problem?</p>"
+    },
+    {
+      "id": 5277,
+      "postNumber": 2,
+      "createdAt": "2019-09-02T04:01:52.766Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>hey <a class=\"mention\" href=\"/u/brunoinvestflex\">@brunoinvestflex</a>,<br />\nyou need to use escaping when using the column value field, try this:</p>\n<p><code>query = gql(\"\"\" mutation {change_multiple_column_values (board_id: XXXXXXXX , item_id: XXXXXXX, column_values: \"{\\\"dma2\\\": {\\\"index\\\": \\\"teste\\\"}}\") {id}} \"\"\")</code></p>"
+    },
+    {
+      "id": 5284,
+      "postNumber": 3,
+      "createdAt": "2019-09-02T08:54:37.498Z",
+      "author": "brunoinvestflex (Bruno)",
+      "cookedHtml": "<p>Hi Ayelet. Thanks for yout answer!<br />\ni tried at yout way, and got the same error!!</p>\n<p>graphql.error.syntax_error.GraphQLSyntaxError: Syntax Error GraphQL request (1:104) Expected :, found String “: {”</p>\n<p>1:  mutation {change_multiple_column_values (board_id: XXXXXXXX, item_id: XXXXXXXX, column_values: “{“dma2”: {“index”: “teste”}}”) {id}}</p>"
+    },
+    {
+      "id": 5285,
+      "postNumber": 4,
+      "createdAt": "2019-09-02T09:13:58.043Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>is “dma2” the ID of your column? you can get the column ids using this query</p>\n<pre><code>boards (ids: 123456){\n  columns{\n    id\n    title\n    type\n    settings_str\n  }\n}\n</code></pre>\n<p>what type is your column?<br />\nit seems like status column and if so, you need to either use the index which is the status color index (you can see in in the settings) or the label text.<br />\nso it should look like: {“index”: 0} or {“label”: “teste”}</p>"
+    },
+    {
+      "id": 5287,
+      "postNumber": 5,
+      "createdAt": "2019-09-02T09:24:25.924Z",
+      "author": "brunoinvestflex (Bruno)",
+      "cookedHtml": "<p>This are the column settings:</p>\n<p>{u’settings_str’: u’{}’, u’type’: u’text’, u’id’: u’dma2’, u’title’: u’DMA2’}</p>\n<p>My mutation is wrong even with this settings?</p>"
+    },
+    {
+      "id": 5288,
+      "postNumber": 6,
+      "createdAt": "2019-09-02T09:29:49.524Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>according to your settings “dma2” column is a text column. for text column you don’t need any json just the text value, like so:</p>\n<p><code>\"{\\\"dma2\\\": \\\"teste\\\"}</code></p>\n<p>each type has a different way to update it, check it out here: <a href=\"https://monday.com/developers/v2#column-values-section\">https://monday.com/developers/v2#column-values-section</a></p>"
+    },
+    {
+      "id": 5290,
+      "postNumber": 7,
+      "createdAt": "2019-09-02T09:49:36.605Z",
+      "author": "brunoinvestflex (Bruno)",
+      "cookedHtml": "<p>I’m using this query:<br />\nquery = gql(\" mutation {change_multiple_column_values (board_id: XXXXXXXX, item_id: XXXXXXXX, column_values: “{“dma2”:“teste”}” \") {id}} \")</p>\n<p>And got the same error <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=9\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" /></p>\n<p>graphql.error.syntax_error.GraphQLSyntaxError: Syntax Error GraphQL request (1:104) Expected :, found String “:”</p>\n<p>1:  mutation {change_multiple_column_values (board_id: 75059531, item_id: 75059577, column_values: \"{“dma2”:“Sample text”}) {id}}</p>"
+    },
+    {
+      "id": 5291,
+      "postNumber": 8,
+      "createdAt": "2019-09-02T10:05:36.816Z",
+      "author": "Ayelet (Ayelet Holtzman)",
+      "cookedHtml": "<p>did you try performing the same query in the GraphiQL explorer?<br />\nyou can find it here: <a href=\"https://monday.com/developers/v2/try-it-yourself\" class=\"inline-onebox\">monday.com</a></p>\n<p>don’t forget to escape the strings like so: <code>\"{\\\"dma2\\\": \\\"teste\\\"}</code></p>"
+    },
+    {
+      "id": 5294,
+      "postNumber": 9,
+      "createdAt": "2019-09-02T12:07:41.933Z",
+      "author": "brunoinvestflex (Bruno)",
+      "cookedHtml": "<p>It worked when i captured part of the mutation query from the payload of whe tester that you send-me. Thanks very much!!! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 42139,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T12:23:14.729Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": 75976,
+  "title": "New to GraphQL and struggling",
+  "slug": "new-to-graphql-and-struggling",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-01-24T00:33:00.037Z",
+  "lastPostedAt": "2024-01-24T01:46:53.000Z",
+  "postsCount": 5,
+  "excerpt": "I ran this query: \n{\n  boards(ids: my-board-id) {\n    columns {\n      id\n      title\n    }\n  }\n}\n\nAs expected, that gave me a list of columns with their id &amp; title. \nAmong those columns are: \n          {\n            &quot;id&quot;&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 370,
+  "posts": [
+    {
+      "id": 163823,
+      "postNumber": 1,
+      "createdAt": "2024-01-24T00:33:00.115Z",
+      "author": "mcasto (Mike Casto)",
+      "cookedHtml": "<p>I ran this query:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: my-board-id) {\n    columns {\n      id\n      title\n    }\n  }\n}\n</code></pre>\n<p>As expected, that gave me a list of columns with their id &amp; title.</p>\n<p>Among those columns are:</p>\n<pre><code class=\"lang-auto\">          {\n            \"id\": \"name\",\n            \"title\": \"Name\"\n          },\n            \"id\": \"contact_phone\",\n            \"title\": \"Phone\"\n          },\n          {\n            \"id\": \"contact_email\",\n            \"title\": \"Email\"\n          },\n</code></pre>\n<p>I assumed I could then run a query like:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: my-board-id) {\n    items_page {\n      items {\n        name\n        contact_phone\n        contact_email\n      }\n    }\n  }\n}\n</code></pre>\n<p>But it tells me I cannot query “contact_phone” and “contact_email” on type item.</p>\n<p>So I have no idea how to retrieve the contact’s name, email, and phone from that board. I’ve spent the last couple hours looking through the documentation but can’t find anything, so here I am.</p>\n<p>Thanks in advance.</p>"
+    },
+    {
+      "id": 163825,
+      "postNumber": 2,
+      "createdAt": "2024-01-24T00:40:18.150Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The <code>name</code> is an item level field, the rest are <code>column_values</code> and need to be retrieved as such. It is annoying that name cannot be retrieved as a <code>column_value</code> despite being returned in a <code>columns</code> query on the board.</p>\n<p>I am using column type fragments to expedite getting the data, but the <code>value</code> key on a <code>column_value</code> is a JSON serialized form of the column’s value. The fragment <code>... on EmailValue</code> only executes on columns that are of the type <code>email</code> for example, so will return those additional fields.</p>\n<p>Pass the column IDs you want in an array to the ids argument of <code>column_values</code>. Always return your ID for boads, items, columns, updates, etc. when querying or else you’ll have no idea which is which.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: my-board-id) {\n    id\n    items_page {\n      items {\n        id\n        name\n        column_values (ids: [\"contact_phone\", \"contact_email\"]) {\n          id\n          text\n          value\n          type\n          ... on EmailValue {\n            email\n            label\n          }\n          ... on PhoneValue {\n            phone\n            country_short_name\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/column-values-v2\" target=\"_blank\" rel=\"noopener\">GraphQL API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/column-values-v2\" target=\"_blank\" rel=\"noopener\">Column values v2</a></h3>\n\n  <p>Every monday.com board has one or more columns, each of which holds a particular type of information. These column values are essentially the board's content, and their inner value structure varies based on their type.As a developer working with...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/column-types-reference\" target=\"_blank\" rel=\"noopener\">GraphQL API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/column-types-reference\" target=\"_blank\" rel=\"noopener\">Column types reference</a></h3>\n\n  <p>The monday.com platform supports a variety of column types to store different data. Our API supports most types, allowing you to read, filter, delete, and update those columns. A handful of columns have limited support that allows you to either read...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 163826,
+      "postNumber": 3,
+      "createdAt": "2024-01-24T00:55:06.562Z",
+      "author": "mcasto (Mike Casto)",
+      "cookedHtml": "<p>Ah! This points me in the right direction. Thanks!</p>"
+    },
+    {
+      "id": 163827,
+      "postNumber": 4,
+      "createdAt": "2024-01-24T01:05:16.206Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I forgot to mention, if you don’t pass any column Ids to to <code>column_values</code> it will return all columns.</p>"
+    },
+    {
+      "id": 163830,
+      "postNumber": 5,
+      "createdAt": "2024-01-24T01:46:53.000Z",
+      "author": "mcasto (Mike Casto)",
+      "cookedHtml": "<p>Good to know. I doubt I’ll ever use it like that, but it’s nice to know it’s there if I need it.</p>"
+    },
+    {
+      "id": 163895,
+      "postNumber": 6,
+      "createdAt": "2024-01-24T09:31:48.370Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

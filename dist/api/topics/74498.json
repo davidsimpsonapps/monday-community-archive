@@ -1,0 +1,139 @@
+{
+  "id": 74498,
+  "title": "Get app_subscription info on the app level (without needing customer API key)",
+  "slug": "get-app-subscription-info-on-the-app-level-without-needing-customer-api-key",
+  "categoryId": 58,
+  "tagIds": [
+    249,
+    276,
+    351
+  ],
+  "createdAt": "2024-01-08T15:15:06.644Z",
+  "lastPostedAt": "2024-11-13T12:20:01.073Z",
+  "postsCount": 12,
+  "excerpt": "Newbie question here: I am using Postman to query the app_subscription API for subscriptions to our DocuGen app: \n\nThe documentation mentions that “you can only make this call within the context of an application, not fr&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 336,
+  "posts": [
+    {
+      "id": 160840,
+      "postNumber": 1,
+      "createdAt": "2024-01-08T15:15:06.720Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Newbie question here: I am using Postman to query the app_subscription API for subscriptions to our DocuGen app:</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/reference/app-subscription\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday.com Platform API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/4/0/4005563d911b52634489bff44a7c345ce1686d22.png\" class=\"thumbnail\" width=\"358\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/api-reference/reference/app-subscription\" target=\"_blank\" rel=\"noopener nofollow ugc\">App subscription</a></h3>\n\n  <p>Learn how to query app subscription data using the monday.com platform API</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>The documentation mentions that “you can only make this call within the context of an application, not from our API Playground”. How can I do this in Postman? Where can I get the API token for this?</p>\n<p>Thank you all in advance!</p>"
+    },
+    {
+      "id": 160841,
+      "postNumber": 2,
+      "createdAt": "2024-01-08T15:21:31.926Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You’d need to do the oauth process through postman to get an oauth token, postman supports oauth as an authentication type for a collection. You’d also need to add the callback url postman creates to your app as a valid callback URL.</p>\n<p>I’ve done this before, but to be honest, its been over a year so I don’t remember all of the specifics.</p>\n<p>The other thing, is the app subscription returned is JUST for the account that you used creating the token. There is not currently a way to return the subscription with the app installs or for other accounts (I’ve asked for this because its just dumb that we have zero method to look up all subscriptions going on 2 years after monetization became a thing.)</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/app-installs\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/app-installs\" target=\"_blank\" rel=\"noopener\">App installs</a></h3>\n\n  <p>👍Only available in API version 2024-01The app_installs object is only available in API version 2024-01 and later.Whenever a monday.com user installs an app, we send the installation information to the app developer to help them further understand...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n"
+    },
+    {
+      "id": 161209,
+      "postNumber": 3,
+      "createdAt": "2024-01-10T04:56:54.821Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Thank you very much <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> !</p>\n<p>Say we have 500 customers, some of which are active (paying) and some are churned. If I understand you correctly, we have to get 500 different tokens and run 500 separate queries to get the full list of subscriptions? This doesn’t sound right…</p>"
+    },
+    {
+      "id": 161271,
+      "postNumber": 4,
+      "createdAt": "2024-01-10T11:40:51.224Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yet it is right.</p>\n<p>The only way to query an accunts subscription is with a token for the that app and account, or in the context of your UI.</p>\n<p>So you could embed code in your UI that checks it, and sends it back to your backend.</p>\n<p>If you got an OAuth token when a view was created on a board, or integration recipe was added, you can use that stored token.</p>\n<p>If you have integrations, they send a short lived token you can use to look it up and store it when the integration runs.</p>\n<p>There is currently, at least thats gotten published, no way to query all app installs for their subscription information. When they announced the app_installs API query, I asked them about the subscription and they said they’d add it to the feature requests.</p>\n<p>Yes I am as baffled as you that we as developers have zero solid method to query subscription data for accounts - except if we’ve stored an OAuth token in our backend, query for app_installs, then iterate those to find tokens for each account and make a query on an per account basis.</p>\n<p>And if the account uninstalled the app, then your tokens are void, so it will fail - and you have to assume uninstalled that missed getting recorded from the webhook.</p>\n<p>I presume you’re receiving lifecycle webhooks which should send you all account changes, subscription renewals, etc. that you can then store the last known state into your database?</p>"
+    },
+    {
+      "id": 161280,
+      "postNumber": 5,
+      "createdAt": "2024-01-10T12:12:44.192Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Spot on – you feel my pain! The bottom line is that there is no way to get a definitive list of our customers at any point in time. We need to piece together a puzzle of tokens, last known states, and a good bit of good luck <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 161311,
+      "postNumber": 6,
+      "createdAt": "2024-01-10T13:24:03.886Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 161379,
+      "postNumber": 7,
+      "createdAt": "2024-01-10T17:25:27.148Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I’ve had pretty good luck with the lifecycle webhooks, though not perfect, they at least do send events for all the subscriptions and churn now days. Assuming there isn’t an error.</p>\n<p>Since the app I work on is strictly an integration app, I get the subscription data for the account ID with every event. Since I have to get the record thats stored in anyway, I make a comparison at runtime and if there is a discrepancy I update the record.</p>\n<p>(Thats a simplification, I’m doing a whole lot more but its not relevant to the general discussion)</p>"
+    },
+    {
+      "id": 161550,
+      "postNumber": 8,
+      "createdAt": "2024-01-11T11:25:14.151Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 161625,
+      "postNumber": 9,
+      "createdAt": "2024-01-11T15:34:23.550Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>+1 on this.<br />\nI’ve already submitted this request to monday devs several months ago.<br />\nCurrently there’s no way to check what’s the subscription situation for an account outside of our apps.</p>"
+    },
+    {
+      "id": 161635,
+      "postNumber": 10,
+      "createdAt": "2024-01-11T17:14:29.044Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I’m baffled why it seemed a good idea to release app_installs in 2024-01 without including subscriptions. Seems like dev teams with tunnel vision to me.</p>"
+    },
+    {
+      "id": 161949,
+      "postNumber": 11,
+      "createdAt": "2024-01-14T11:24:29.170Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 180334,
+      "postNumber": 12,
+      "createdAt": "2024-04-23T12:03:41.295Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Bumping this.</p>\n<p>Converted this into a feature request as this is a limitation that can be improved, not just a question!</p>"
+    },
+    {
+      "id": 180497,
+      "postNumber": 13,
+      "createdAt": "2024-04-24T03:12:58.546Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>+1 from me and my team <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 180689,
+      "postNumber": 14,
+      "createdAt": "2024-04-24T11:14:33.469Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 209691,
+      "postNumber": 15,
+      "createdAt": "2024-11-12T17:33:33.588Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>This was released!</p>\n<p>You can now get a list of current app subscriptions for your app, including account ID, currency info, renewal date, and discounts.</p>\n<p>Check out the <a href=\"https://developer.monday.com/api-reference/reference/app-subscriptions\">App Subscriptions object</a> and the <a href=\"https://developer.monday.com/api-reference/reference/apps-api-reference-other-types#app-subscription-details\">AppSubsciptionDetails field</a> to learn more.</p>"
+    },
+    {
+      "id": 209766,
+      "postNumber": 16,
+      "createdAt": "2024-11-13T12:20:01.073Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>This is fantastic! Great relief!<br />\nI am trying it out in the next few days… feedback to follow</p>"
+    },
+    {
+      "id": 209809,
+      "postNumber": 17,
+      "createdAt": "2024-11-13T14:00:14.150Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

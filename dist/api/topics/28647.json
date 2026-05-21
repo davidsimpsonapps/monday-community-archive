@@ -1,0 +1,47 @@
+{
+  "id": 28647,
+  "title": "API PHP item_id as $variable",
+  "slug": "api-php-item-id-as-variable",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    155
+  ],
+  "createdAt": "2021-12-14T10:55:28.728Z",
+  "lastPostedAt": "2021-12-14T12:16:41.760Z",
+  "postsCount": 4,
+  "excerpt": "Hi, \nI’m writing a function that updates certain items we have. Now when I use the create_update mutation, and send item_id as a variable I get: \n{&quot;errors&quot;:[{&quot;message&quot;:&quot;Variable myItemName of type Int! was provided inval&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 5376,
+  "posts": [
+    {
+      "id": 71416,
+      "postNumber": 1,
+      "createdAt": "2021-12-14T10:55:28.827Z",
+      "author": "nidhogg (Tommy Gabrielsen)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m writing a function that updates certain items we have. Now when I use the create_update mutation, and send item_id as a variable I get:</p>\n<pre><code class=\"lang-auto\">{\"errors\":[{\"message\":\"Variable myItemName of type Int! was provided invalid value\",\"locations\":[{\"line\":1,\"column\":11}],\"value\":null,\"problems\":[{\"path\":[],\"explanation\":\"Expected value to not be null\"}]}],\"account_id\":XXXXXXX}\n</code></pre>\n<p>However if I were to omit the variable, and enter the ID in code: item_id:YYYYYYYYYYYY the update works just fine. I am providing sample code under.</p>\n<pre><code class=\"lang-auto\">function testUpdate() {\n    global $token, $apiUrl, $headers, $generalBoardID;\n    $testID = YYYYYYYYYY;\n    //settype($testID, \"Integer\");\n    echo \"item_id: $testID\\n\";\n    echo \"Datatype of testID: \".gettype($testID);\n    echo \"\\n\";\n\n    $query = 'mutation ($myItemName: Int!) { create_update (item_id:$myItemName, body:\"HELLO\") { id } }';\n    $vars = ['myItemName' =&gt; $testID];\n\n    $data = @file_get_contents($apiUrl, false, stream_context_create([\n    'http' =&gt; [\n        'method' =&gt; 'POST',\n        'header' =&gt; $headers,\n        'content' =&gt; json_encode(['query' =&gt; $query]),\n    ]\n    ]));\n    $responseContent = json_decode($data, true);\n    echo json_encode($responseContent);\n}\n</code></pre>\n<p>Any suggestions as to what is going wrong?</p>"
+    },
+    {
+      "id": 71424,
+      "postNumber": 2,
+      "createdAt": "2021-12-14T11:46:01.323Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/nidhogg\">@nidhogg</a></p>\n<p>The problem is in the <code>mutation ($myItemName: Int!) {</code> part.</p>\n<p>Just remove <code>($myItemName: Int!)</code> and use</p>\n<p><code>$query = 'mutation { create_update (item_id:$myItemName, body:\"HELLO\") { id } }';</code></p>"
+    },
+    {
+      "id": 71426,
+      "postNumber": 3,
+      "createdAt": "2021-12-14T12:02:09.588Z",
+      "author": "nidhogg (Tommy Gabrielsen)",
+      "cookedHtml": "<p>Thank you for the reply <a class=\"mention\" href=\"/u/rob\">@rob</a> .</p>\n<p>That could have been an option, but that leads to variable not declared error.</p>\n<pre><code class=\"lang-auto\">{\"errors\":[{\"message\":\"Variable $myItemName is used by  but not declared\",\"locations\":[{\"line\":1,\"column\":35}],\"fields\":[\"mutation\",\"create_update\",\"item_id\"]}],\n</code></pre>"
+    },
+    {
+      "id": 71428,
+      "postNumber": 4,
+      "createdAt": "2021-12-14T12:16:41.760Z",
+      "author": "nidhogg (Tommy Gabrielsen)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/n/a9a28c/48.png\" class=\"avatar\" /> nidhogg:</div>\n<blockquote>\n<p><code> 'content' =&gt; json_encode(['query' =&gt; $query]),</code></p>\n</blockquote>\n</aside>\n<p>Error lies there, forgot to add inn ‘variables’ =&gt; $vars</p>"
+    }
+  ]
+}

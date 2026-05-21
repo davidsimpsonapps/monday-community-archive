@@ -1,0 +1,114 @@
+{
+  "id": 94768,
+  "title": "Allow to set the maximum number of integration requests an app can handle",
+  "slug": "allow-to-set-the-maximum-number-of-integration-requests-an-app-can-handle",
+  "categoryId": 58,
+  "tagIds": [],
+  "createdAt": "2024-08-07T10:09:56.963Z",
+  "lastPostedAt": "2024-08-13T15:33:00.355Z",
+  "postsCount": 11,
+  "excerpt": "We have multiple apps using integrations. One of which is Location Importer. This app is used to convert Text columns to a Location column, a typical bulk action. monday limits users to bulk change 500 items at once but &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 75,
+  "posts": [
+    {
+      "id": 196418,
+      "postNumber": 1,
+      "createdAt": "2024-08-07T10:09:57.063Z",
+      "author": "MCautreels (Maarten Cautreels - Tryve)",
+      "cookedHtml": "<p>We have multiple apps using integrations. One of which is <a href=\"https://monday.com/marketplace/listing/10000540/location-importer\" rel=\"noopener nofollow ugc\">Location Importer</a>. This app is used to convert Text columns to a Location column, a typical bulk action. monday limits users to bulk change 500 items at once but when you configure an automation to be triggered when “An item is created” you can literally trigger thousands of requests by importing an Excel or CSV.</p>\n<p>For the app to work it has to perform some other API calls to the monday API such as retrieving the text value (<code>query</code>) and writing (<code>mutation</code>) the result back.</p>\n<p>Especially with the mutations we run into complexity budget issues after we process the first 140-160 requests. Since the mutation request is at the end of our flow we have already performed other API calls such as increasing the operations (which is a cost for users) as well as using an external API to convert the text into an address (which is a cost for us).</p>\n<p>We’ve introduced a complexity budget check before doing anything else to make sure we have enough “mutation” complexity budget available but due to concurrent requests we still see quite a lot of requests passing the complexity check but still running into complexity issues when performing the mutation.</p>\n<p>We’ve also thought about using a queueing mechanism for the mutations itself but that would mean we can’t pass back any feedback to the user if anything goes wrong (as we already responded to the integration request with a 200 response).</p>\n<p>Furthermore the Short Lived Token is only valid for 5 minutes so that means we would only be able to process between 700 - 800 items at once which is not enough in many cases, if we would go over this maximum, we will run into expired token issues without any ability to report back to the user or ask for a retry request from the monday backend.</p>\n<p>Therefore we are suggesting the ability to <strong>configure a maximum amount of request your integration actions can process per minute.</strong> If monday would take those maximums into account we will:</p>\n<ul>\n<li>Avoid unnecessary retries from monday towards our app (when we first responded with an error because of the complexity issues)</li>\n<li>Avoid unnecessary users &amp; developer costs</li>\n<li>Avoid the maximum limit of 800 items when using a queue</li>\n</ul>\n<p>If you agree or run into the same issues, please vote for this feature request!</p>\n<p><strong>Some numbers</strong></p>\n<ul>\n<li>Without the complexity check built in we were actually processing 900+ requests for just 500 action triggers (80% redundant calls)</li>\n<li>With the complexity check built in we are still processing 650+ requests for just 500 actions (30% redundant calls)</li>\n</ul>"
+    },
+    {
+      "id": 196441,
+      "postNumber": 2,
+      "createdAt": "2024-08-07T10:44:54.103Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I have a couple more specific technical requests open that are in support of this concept.</p>\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/integration-action-429-should-pause-queue-for-board-integration/94469\">Integration action - 429 should pause queue for board integration</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/api-feature-requests/58\"><span style=\"--category-badge-color:#9CD326;--category-badge-text-color:#FFFFFF;--parent-category-badge-color:#00ca72\" class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Feature Requests - API and Apps Framework</span></span></a>\n  </div>\n  <blockquote>\n    Currently when we return a 429 to an integration action, the action will retry (or at least is supposed to <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>) at 60 seconds from when it last tried. I have a separate request open for honoring retry-after headers. \nScenario: User has changed status on 500 items, triggering an integration. Monday queues these 500 operations and begins processing (I think its about 20 initially). If we return a 429 with a retry-after then the entire queue should pause. Any actions with a 429 should be co…\n  </blockquote>\n</aside>\n\n<aside class=\"quote\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/support-retry-after-on-429-for-integration-actions/92108\">Support retry-after on 429 for integration actions</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/api-feature-requests/58\"><span style=\"--category-badge-color:#9CD326;--category-badge-text-color:#FFFFFF;--parent-category-badge-color:#00ca72\" class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Feature Requests - API and Apps Framework</span></span></a>\n  </div>\n  <blockquote>\n    Support the retry-after header for integration actions on 429. If we need the action to retry in 35 seconds (for example third party API is rate limited) then we should be able to pass that to monday to retry in 35 seconds. \nThis will reduce needless retry waiting for the user - their actions will be completed sooner. \nI still believe the best queue for rate limited actions is monday’s queue, since that will show in-progress rather than succeeded/failed to the user in the activity log.\n  </blockquote>\n</aside>\n\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/long-lived-actions/93725\">Long-lived actions</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/api-feature-requests/58\"><span style=\"--category-badge-color:#9CD326;--category-badge-text-color:#FFFFFF;--parent-category-badge-color:#00ca72\" class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Feature Requests - API and Apps Framework</span></span></a>\n  </div>\n  <blockquote>\n    Implement a 202 based method for long-lived actions. \nEither of these methods will work: \n\n202 response. We return an in progress message, the URL monday should check for updates, and how long to wait for the update. Polling would permit us to update in progress with an estimated time remaining, percent complete, etc.)\n202 response. We return an in progress message. We then use an API method to post a call back with the status when completed. We could also post back progress statuses for complet…\n  </blockquote>\n</aside>\n\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/enhance-integration-activity-to-support-success-and-in-progress-messaging/90548\">Enhance integration activity to support success and in progress messaging</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/api-feature-requests/58\"><span style=\"--category-badge-color:#9CD326;--category-badge-text-color:#FFFFFF;--parent-category-badge-color:#00ca72\" class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Feature Requests - API and Apps Framework</span></span></a>\n  </div>\n  <blockquote>\n    Today it is possible to provide failure messaging - and disable an automation if there is a failure (such as the stored token for an external service belongs to a user who doesn’t have access to the system any longer). \nenhance this capability to include the ability to return messaging on success (changed project state to xyz), and for in progress allow us to return the 2000 severity (which exists) and display that message for “in progress” states. \nFor the in progress it would be something like…\n  </blockquote>\n</aside>\n\n<aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/include-remaining-query-and-mutation-complexities-in-action-payloads/47687\">Include remaining query and mutation complexities in action payloads</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/api-feature-requests/58\"><span style=\"--category-badge-color:#9CD326;--category-badge-text-color:#FFFFFF;--parent-category-badge-color:#00ca72\" class=\"badge-category --has-parent\"><span class=\"badge-category__name\">Feature Requests - API and Apps Framework</span></span></a>\n  </div>\n  <blockquote>\n    It would be really useful if the current “after” query and mutation complexity values, along with the reset in x seconds, were sent in action payloads. \nWe know what our integration recipes will use minimally, to be able to get this information at our router (or before) means we can respond with an error to the event, causing monday to retry in 30 seconds with a new token (or better if we can specify a retry-after value). \nWhile we can query for the complexity of the query pool, there is no way …\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 196444,
+      "postNumber": 3,
+      "createdAt": "2024-08-07T10:52:52.491Z",
+      "author": "MCautreels (Maarten Cautreels - Tryve)",
+      "cookedHtml": "<p>Thanks for the reference Cody, they do indeed relate. And I completely agree that monday’s queue for integrations is the best queue to use instead of implementing our own queue <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 196472,
+      "postNumber": 4,
+      "createdAt": "2024-08-07T13:35:48.791Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>On a side note (also for <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>). I just found out this week (the hard way) that monday is maintaining a “secret” list of apps that did “too many” retries in the past (don’t ask me how many “too many” is <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />). When your app hit that list monday will simply ignore retry requests (429 responses) from the app. Because the list is “secret” nobody knows about this and only 3 weeks of support email back and forth with the customer and monday support, support will kindly tell about this list and remove the app from it… what a laugh <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 196483,
+      "postNumber": 5,
+      "createdAt": "2024-08-07T15:00:25.632Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> just calling out that the situation <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> is describing is asinine.</p>\n<p>We’re going to be punished for retrying requests because of monday’s low API rate limits (mutating 150 items per account per minute or there about, maybe 162 depending on the exact number of columns).</p>\n<p>We’re supposedly supposed to queue requests - but to do that we have to return “success” to the request (as we’ve discussed many times over) which is going to lead to multiple problems - the least of which is erroneous activity log entries. The worst of which is with a custom automation sentence, queuing and returning success will cause the next action to execute - even though the prior action is not complete and may need the values changed by the queued action.</p>\n<p>Monday is literally forcing us to create race conditions for customers. This seriously undermines <a href=\"http://monday.com\">monday.com</a>’s credibility as an enterprise platform.</p>"
+    },
+    {
+      "id": 196901,
+      "postNumber": 6,
+      "createdAt": "2024-08-11T09:51:55.648Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1723382631195639\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 197206,
+      "postNumber": 7,
+      "createdAt": "2024-08-13T10:36:20.308Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C06PWBD3PMX/p1723556164888979?thread_ts=1723212626.160629&amp;cid=C06PWBD3PMX\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 197229,
+      "postNumber": 8,
+      "createdAt": "2024-08-13T12:49:52.588Z",
+      "author": "HeidiCrockett (Heidi Crockett)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> &amp; <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> - Our focus is transparency in all aspects, so I would like to better address why this specific feature flag was added to your account. The intention was never to be vague &amp; for that, we do apologize.</p>\n<p>This specific feature flag was granted to the app in response to the app not adhering to the prescribed error handling guidelines (<a href=\"https://developer.monday.com/apps/docs/error-handling\" class=\"inline-onebox\">Error handling</a>). Unfortunately, the guidance was not followed when the error was not retryable and caused an influx of errors crowding our automations queue. To mitigate this, we instated a feature flag blocking further retries for this app.</p>\n<p>This in mind, we agree that the communication of this decision fell short. It’s important to us that no one is left in the dark about such changes, and we assure you, we’re revisiting our communication process to better execute such announcements in the future.</p>"
+    },
+    {
+      "id": 197230,
+      "postNumber": 9,
+      "createdAt": "2024-08-13T12:59:43.579Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Just to clarify, I am totally separate from Bas (as far as apps).</p>\n<p>My apps return a 429 when we are up against API complexity limits on the monday side of things. We would queue on our side, except to do so we have to return a success to monday. This means we cannot report actual failures for what is now queued - the customer always sees success. This confuses them (trust me, we used to do this!)</p>\n<p>It also means next steps in automations will start running before we’ve completed our queued actions and that will confuse end users with unpredictable behavior/results for their workflows.</p>\n<p><strong>How are we supposed to handle it in a way that has consistent and predictable results for our customers, provides them accurate activity feedback, and doesn’t risk getting our app flagged as misbehaving in some way?</strong></p>"
+    },
+    {
+      "id": 197232,
+      "postNumber": 10,
+      "createdAt": "2024-08-13T13:21:24.907Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/heidicrockett\">@HeidiCrockett</a></p>\n<p>How can we make sure which of our current apps are on that list. It has never been communicated and working through support took over 2 month to find out.</p>\n<p>When an integration app is triggered by a user that selects e.g. 2.000 items on a board and make a change to a column the app will obviously receive a complexity error when trying to change a column value as a result of the trigger. The app sends a 429 and rely on monday retry mechanism. The retry will happen while we are still processing the queue so another 429 will be send. At the end monday will give up (understandably) but we don’t know if that is the trigger to put the app on this list.</p>\n<p>Also, you are mentioning “specific feature flag was added to your account”, is that 'specific\" feature account wide or app wide?</p>\n<p>This needs to be clearly documented.</p>"
+    },
+    {
+      "id": 197236,
+      "postNumber": 11,
+      "createdAt": "2024-08-13T14:14:28.405Z",
+      "author": "HeidiCrockett (Heidi Crockett)",
+      "cookedHtml": "<p>Agreed that this needs to be clearly documented and we plan to contact any apps where this flag was added. The flag is added per app, not per account. As the fix was targeting the behavior of specific apps, not an entire account.</p>\n<p>Again, it is on us for not communicating this and efforts to increase transparency have always been top priority.</p>\n<p>If you do have a specific technical question on the app or error handling, please open a technical request with our team and they will be able to help!</p>"
+    },
+    {
+      "id": 197239,
+      "postNumber": 12,
+      "createdAt": "2024-08-13T14:32:31.967Z",
+      "author": "HeidiCrockett (Heidi Crockett)",
+      "cookedHtml": "<p>Thank you for the follow up here Cody! I know you all have separate apps, but the challenge you are both facing is similar so I wanted to address both of your concerns around preventing retries together. Although none of your apps were granted this feature blocking retries(<em>we will be communicating with all affected apps as soon as possible</em>), the issue with reporting failures, providing consistent behavior for customers, and maintaining seamless service are the same.</p>\n<p>I can see you’ve opened several feature requests so I would recommend promoting those within the community with other developers. I would also recommend reaching out to our technical team via a support request if you have a specific situation or concern we can take a closer look at with you! It can be very helpful to have context of a specific situation within the context of your app so our team can make the best recommendations from there.</p>"
+    },
+    {
+      "id": 197241,
+      "postNumber": 13,
+      "createdAt": "2024-08-13T15:33:00.355Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Mostly I want to avoid ending up on that naughty list! So I await communication about the criteria of when that flag gets added, etc. so I can try to avoid it.</p>"
+    },
+    {
+      "id": 197306,
+      "postNumber": 14,
+      "createdAt": "2024-08-14T08:59:35.794Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

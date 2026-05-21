@@ -1,0 +1,64 @@
+{
+  "id": 92395,
+  "title": "Auth flow and WebHook integration for Custom URL (IFRAME based) apps",
+  "slug": "auth-flow-and-webhook-integration-for-custom-url-iframe-based-apps",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-07-07T05:43:24.141Z",
+  "lastPostedAt": "2024-07-11T00:09:10.698Z",
+  "postsCount": 5,
+  "excerpt": "Hi, new Monday dev here.  My app is a Custom URL (IFRAME hosted) app.  Just want to confirm that the only way to do authentication for this type of app is OAuth?  (i.e. Seamless auth is obviously not an option in my use &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 132,
+  "posts": [
+    {
+      "id": 192377,
+      "postNumber": 1,
+      "createdAt": "2024-07-07T05:43:24.214Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p>Hi, new Monday dev here.  My app is a Custom URL (IFRAME hosted) app.  Just want to confirm that the only way to do authentication for this type of app is OAuth?  (i.e. Seamless auth is obviously not an option in my use case, correct?)</p>\n<p>Along these same lines, just want to clarify the basic process I need to implement:</p>\n<ul>\n<li>Setup my WebHook for lifecycle events</li>\n<li>Configure my OAuth / Redirect URI settings</li>\n<li>Configure my scopes I need to request</li>\n<li>User installs/trial my app</li>\n<li>I will get a WebHook notification at this point, possibly with some basic user info</li>\n<li>User launches my app</li>\n<li>OAuth flow starts, user authorizes the scopes I request</li>\n<li>Once approved I get the user’s API token (store in my backend)</li>\n<li>The WebHook lifecycle events are the only integration requests I’ll get from Monday as my users manage my app’s install/delete/cancel/renew/subscribe/etc</li>\n</ul>\n<p>And, with the Monday SDK I’ll do auth/login/init using the user’s OAuth token.  At that point, all requests I make via the initialized SDK will be for that user.</p>\n<p>Is this the basic flow for an external/IFRAME app integration?  Thanks</p>"
+    },
+    {
+      "id": 192488,
+      "postNumber": 2,
+      "createdAt": "2024-07-08T05:56:49.938Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/deepdev\">@deepdev</a> and welcome to the community!</p>\n<p>You can <a href=\"https://developer.monday.com/apps/docs/mondayapi\">use the SDK</a> to make your API calls if needed.</p>\n<p>Regarding OAuth, your steps look good to me. You can read more about it <a href=\"https://developer.monday.com/apps/docs/oauth\">here</a> and check out an example <a href=\"https://github.com/yuhgto/monday-oauth-example\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/smile.png?v=12\" title=\":smile:\" class=\"emoji\" alt=\":smile:\" width=\"20\" height=\"20\" /></p>\n<p>As mentioned, you can use the SDK directly if you do not want to use OAuth.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 192596,
+      "postNumber": 3,
+      "createdAt": "2024-07-09T07:10:01.671Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p>Hi, I’m proceeding with OAuth testing.  Not sure what the problem is but I get a response from the token service with the error:</p>\n<pre><code class=\"lang-auto\">  (log) ControllerMonday: sending request to get token with - {\"client_id\":\"NNNNN\",\"client_secret\":\"NNNNN\",\"redirect_uri\":\"MY_REDIRECT_URI\",\"code\":\"NNNN\"}\n  (log) ControllerMonday: token response, getting access token\n  (log) ControllerMonday: token response, body is - {\"error\":\"invalid_request\",\"error_description\":\"Missing client_id param\"}\n</code></pre>\n<p>I’m receiving the redirect callback with the access code just fine.  But, then I set all the values including “client_id” and calling <a>https://auth.monday.com/oauth2/token</a> and I get the response that “client_id” is missing…</p>\n<p>I had a similar error when I first started testing OAuth for Monday apps and it was because my app settings had changed and I had to redeploy the app so that my OAuth settings had taken effect.  But, my app hasn’t changed and I’ve verified the client_id and client_secret as well as the code being sent are correct.</p>\n<p>But, at this point, I’m at a loss.  I’m passing the client_id and what I thought was odd was that in the sample code that you referenced, they used this for their POST configuration:</p>\n<pre><code class=\"lang-auto\">GITHUB EXAMPLE CODE\n\n    var authRequest = {\n      url: 'THE_TOKEN_URI',\n      form: {\n        redirect_uri: redirect_uri + \"/oauth/callback\",\n        client_id: client_id,\n        client_secret: client_secret,\n        code: code,\n      },\n    };\n</code></pre>\n<p>They’re using “form” instead of “body” to POST the data to the token service.  I tried both with “body” and with “form” and get the same response.  Here’s my code…</p>\n<pre><code class=\"lang-auto\">        // Call monday enpoint\n        var config = {\n            method: 'POST',            \n            body: JSON.stringify({\n                client_id: this.Env.MONDAY_CLIENT_ID,\n                client_secret: this.Env.MONDAY_CLIENT_SECRET,\n                redirect_uri: ControllerMonday.OAUTH_REDIRECT_URI,\n                code: code     \n            })\n        };\n        console.log(\"ControllerMonday: sending request to get token with - \"+ config.body);\n        var req = new Request(ControllerMonday.OAUTH_TOKEN_URI);\n        var res = await fetch(req, config);      \n</code></pre>\n<p>Any ideas?  Thanks</p>"
+    },
+    {
+      "id": 192609,
+      "postNumber": 4,
+      "createdAt": "2024-07-09T07:11:37.528Z",
+      "author": "deepdev (Chris Douglass)",
+      "cookedHtml": "<p>I see thanks!  Yep, I think I understand now how an IFRAME can use the SDK and allow my app to auth via the SDK (sessionToken being present/available) vs having to implement OAuth and do the user/token mapping in my own backend.  I got the OAuth support written this weekend so I’m going to test it and maybe just run with that for now.</p>\n<p>But, as I get more experience and understanding of the Monday platform, I suspect just using the SDK and the JWT/sessionToken can work just as well and possibly a little easier.  I guess it never hurts to implement both just so I truly understand all the pros/cons and exactly how Monday works.</p>\n<p>Thanks again!</p>"
+    },
+    {
+      "id": 192834,
+      "postNumber": 5,
+      "createdAt": "2024-07-11T00:09:10.698Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>There are only three circumstances I know of that you need an OAuth token for:</p>\n<ol>\n<li>You have long running tasks that take more than the 5 minutes of the JWT/shortLivedToken.</li>\n<li>You want to offload front end tasks to a backend (maybe some sort of queue)</li>\n<li>You wish to run background tasks on a backend - such as cron jobs to get account size and subscription data.</li>\n</ol>\n<p>There is a fourth, which is you have webhooks which you then execute some sort of saved configuration for, rather than using actual integration recipes. This is an anti-pattern. Though it comes up because there is no way to create an integration recipe from a front end app - only webhooks.</p>"
+    },
+    {
+      "id": 195092,
+      "postNumber": 6,
+      "createdAt": "2024-07-28T06:20:16.624Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

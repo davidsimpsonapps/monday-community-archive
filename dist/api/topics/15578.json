@@ -1,0 +1,123 @@
+{
+  "id": 15578,
+  "title": "Formula Help, If field = this, multiply other fields",
+  "slug": "formula-help-if-field-this-multiply-other-fields",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2021-01-28T18:57:26.163Z",
+  "lastPostedAt": "2021-02-19T21:36:29.139Z",
+  "postsCount": 15,
+  "excerpt": "I am looking for help setting up the following: \nIf Column 1 (drop-down menu called “Line”) is LABEL1, multiply Column 2, Column 3, 0.8, \nIf Column 1 is LABEL2, multiply Column 2, Column 3, \nIf Column 1 is LABEL3, multip&hellip;",
+  "solvedPostId": null,
+  "likeCount": 6,
+  "views": 5419,
+  "posts": [
+    {
+      "id": 39022,
+      "postNumber": 1,
+      "createdAt": "2021-01-28T18:57:26.243Z",
+      "author": "MelissaPFA (Melissa Reyes)",
+      "cookedHtml": "<p>I am looking for help setting up the following:</p>\n<p>If Column 1 (drop-down menu called “Line”) is LABEL1, multiply Column 2, Column 3, 0.8,<br />\nIf Column 1 is LABEL2, multiply Column 2, Column 3,<br />\nIf Column 1 is LABEL3, multiply Column 2, Column 3, 0.6</p>\n<p>It seems pretty straightforward (in my head), but I can’t get it to work.</p>\n<p>IF({Line#Labels}=“LABEL1”,MULTIPLY({Column2},{Column3})),<br />\nIF({Line#Labels}=“LABEL2”,MULTIPLY(({Column2},{Column3}),0.80)),<br />\nIF({Line#Labels}=“LABEL3”,MULTIPLY({Column2},{Column3},0.6))</p>\n<p>Any ideas would be appreciated!</p>"
+    },
+    {
+      "id": 39023,
+      "postNumber": 2,
+      "createdAt": "2021-01-28T19:21:06.012Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/melissapfa\">@MelissaPFA</a>,</p>\n<p>Assuming that it’s working if you put just one line, you could do this…</p>\n<pre><code>IF({Line#Labels}=\"LABEL1\", MULTIPLY({Column2},{Column3}),0) + IF({Line#Labels}=\"LABEL2\", MULTIPLY(({Column2},{Column3}),0.80),0) + IF({Line#Labels}=\"LABEL3\", MULTIPLY({Column2},{Column3},0.6),0)</code></pre>"
+    },
+    {
+      "id": 39080,
+      "postNumber": 4,
+      "createdAt": "2021-01-29T10:59:41.080Z",
+      "author": "MelissaPFA (Melissa Reyes)",
+      "cookedHtml": "<p>One line of the equation at a time works, but the formula as a whole is still producing an error.</p>"
+    },
+    {
+      "id": 39082,
+      "postNumber": 5,
+      "createdAt": "2021-01-29T11:30:44.151Z",
+      "author": "andrewalmand (Andrew Almand)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/melissapfa\">@MelissaPFA</a> <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a></p>\n<p>I don’t think the IF formula in Monday allows more than one variable + default. See description:</p>\n<blockquote>\n<p>Checks if a condition is met, if so, returns the first value, o/w returns the other.</p>\n</blockquote>\n<p>That is why it works as separate formulas, but not one string. Try using the SWITCH formula as that allows multiple variables.</p>"
+    },
+    {
+      "id": 39086,
+      "postNumber": 6,
+      "createdAt": "2021-01-29T11:51:23.913Z",
+      "author": "MelissaPFA (Melissa Reyes)",
+      "cookedHtml": "<p>Can you provide an example? I get why that could work, but I can’t wrap my brain around setting this up without an IF.</p>"
+    },
+    {
+      "id": 39094,
+      "postNumber": 7,
+      "createdAt": "2021-01-29T12:40:30.597Z",
+      "author": "andrewalmand (Andrew Almand)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/melissapfa\">@MelissaPFA</a></p>\n<p>I’m not great with formatting Monday formulas, but first attempt would look something like this:</p>\n<blockquote>\n<p>SWITCH({Dropdown#Labels},“Label 1”, MULTIPLY({Numbers 1},{Numbers 2}),“Label 2”, MULTIPLY(({Numbers 1},{Numbers 2}),0.80),“Label 3”, MULTIPLY(({Numbers 1},{Numbers 2},0.60),“”)</p>\n</blockquote>\n<p>Set up is, SWITCH({Column}, “variable1”, “result 1”, “variable2”, “result 2”,</p>\n<p>Now the only kicker is that SWITCH may not be able to process additional formulas as “Results”. Maybe someone who is more knowledgeable about this can help as I may just take some format tweaking to get it right.</p>\n<p>Another option for you might be the General Caster app. <a href=\"https://community.monday.com/t/general-caster-is-here-get-rid-of-formula-columns/8549\" class=\"inline-onebox\">General Caster is here. Get rid of formula columns!</a> You can do a lot more formula wise and it will be better for you down the road since the Formula Column in Monday often creates limitations when it doesn’t interact with other features. Here is a list of all the formula options you can use with General Caster, including <strong>IFS</strong>. <a href=\"https://formulajs.info/functions/\" class=\"inline-onebox\">Functions | Formula.js</a>. <strong>IFS</strong> was my first thought for fixing this but Monday doesn’t support that currently.</p>"
+    },
+    {
+      "id": 39095,
+      "postNumber": 8,
+      "createdAt": "2021-01-29T12:44:10.186Z",
+      "author": "MelissaPFA (Melissa Reyes)",
+      "cookedHtml": "<p>Thank you - I will try these options. Yes - I can get it to work beautifully in Excel with IFS!</p>"
+    },
+    {
+      "id": 39103,
+      "postNumber": 9,
+      "createdAt": "2021-01-29T14:21:05.989Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/melissapfa\">@MelissaPFA</a>,</p>\n<p>The switch function is a completely valid solution.</p>\n<p>If you want to get IF’s to work, try each line separately first. Then put them together.  If you get an error, post the formula here. It will be easy to fix.</p>"
+    },
+    {
+      "id": 39106,
+      "postNumber": 10,
+      "createdAt": "2021-01-29T14:32:46.568Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/melissapfa\">@MelissaPFA</a>,</p>\n<p>I rechecked your first formula. You have some extra “()”. Try this:</p>\n<pre><code>IF({Line#Labels}=\"LABEL1\", MULTIPLY({Column2},{Column3}),0) + IF({Line#Labels}=\"LABEL2\", MULTIPLY({Column2},{Column3},0.80),0) + IF({Line#Labels}=\"LABEL3\", MULTIPLY({Column2},{Column3},0.6),0)\n</code></pre>\n<p>For the switch, try:</p>\n<pre><code>SWITCH({Line#Labels}, \"LABEL1\",MULTIPLY({Column2},{Column3}), \"LABEL2\",MULTIPLY({Column2},{Column3},0.80), \"LABEL3\",MULTIPLY({Column2},{Column3},0.6), \"ERROR\")</code></pre>"
+    },
+    {
+      "id": 39114,
+      "postNumber": 11,
+      "createdAt": "2021-01-29T16:22:43.126Z",
+      "author": "MelissaPFA (Melissa Reyes)",
+      "cookedHtml": "<p>Almost! Actually both of these seem to work when there are 2 things being multiplied, but not when we add in the third multiplier (0.8 or 0.6).</p>"
+    },
+    {
+      "id": 39119,
+      "postNumber": 12,
+      "createdAt": "2021-01-29T17:50:30.138Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/melissapfa\">@MelissaPFA</a>,</p>\n<p>My bad. I don’t use the MULTIPLY function. I just assumed how it worked.</p>\n<p>This will work:</p>\n<pre><code>IF({Line#Labels}=\"LABEL1\",{Column2}*{Column3},0) + IF({Line#Labels}=\"LABEL2\",{Column2}*{Column3}*0.80,0) + IF({Line#Labels}=\"LABEL3\", {Column2}*{Column3}*0.6,0)\n</code></pre>\n<p>(or the corresponding syntax for the switch function)</p>"
+    },
+    {
+      "id": 39121,
+      "postNumber": 13,
+      "createdAt": "2021-01-29T18:11:00.245Z",
+      "author": "MelissaPFA (Melissa Reyes)",
+      "cookedHtml": "<p>You’re a rock star! Thank you so much! The Multiply Function was new for me too, but I’m happy to see it worked without it.</p>"
+    },
+    {
+      "id": 39486,
+      "postNumber": 14,
+      "createdAt": "2021-02-02T20:31:51.342Z",
+      "author": "kthe4167 (Keenan)",
+      "cookedHtml": "<p>You can actually use nested if statements, by adding another If statement to the Else parameter.</p>\n<p>For Example</p>\n<p>IF({Line#Labels}=“LABEL1”, MULTIPLY({Column2},{Column3}),IF({Line#Labels}=“LABEL2”,MULTIPLY({Column2},{Column3},0.80,0),  IF({Line#Labels}=“LABEL3”, MULTIPLY({Column2},{Column3},0.6,0))))</p>\n<p>Not sure if the above formula works but just want to demonstrate that you can use ELSE IF to create a nested IF statement if that makes sense</p>"
+    },
+    {
+      "id": 41456,
+      "postNumber": 15,
+      "createdAt": "2021-02-19T21:36:29.139Z",
+      "author": "TRB-monday.com (Talia)",
+      "cookedHtml": "<p>This new knowledge base article may also be helpful for future reference <img src=\"https://emoji.discourse-cdn.com/apple/blush.png?v=12\" title=\":blush:\" class=\"emoji\" alt=\":blush:\" width=\"20\" height=\"20\" /> <a href=\"https://support.monday.com/hc/en-us/articles/360019261259-The-IF-Function\">The IF Function</a></p>"
+    },
+    {
+      "id": 50327,
+      "postNumber": 16,
+      "createdAt": "2021-05-06T09:32:45.556Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

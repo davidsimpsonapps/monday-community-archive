@@ -1,0 +1,76 @@
+{
+  "id": 69289,
+  "title": "Automation by column change does not work if the change was by automation",
+  "slug": "automation-by-column-change-does-not-work-if-the-change-was-by-automation",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    13,
+    20
+  ],
+  "createdAt": "2023-10-26T04:27:03.737Z",
+  "lastPostedAt": "2024-08-20T15:32:58.855Z",
+  "postsCount": 8,
+  "excerpt": "Hi, \nThis is my scenario: \nI have three boards (new, current, archive). \nwhen an item is created in the board NEW an automation is activated to connect (two ways connection) the item with an item with the same NAME on th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 821,
+  "posts": [
+    {
+      "id": 150093,
+      "postNumber": 1,
+      "createdAt": "2023-10-26T04:27:03.816Z",
+      "author": "elromlu (Elrom Lulaee)",
+      "cookedHtml": "<p>Hi,<br />\nThis is my scenario:<br />\nI have three boards (new, current, archive).<br />\nwhen an item is created in the board NEW an automation is activated to connect (two ways connection) the item with an item with the same NAME on the board CURRENT. this woks fine.<br />\nOn the board CURRENT there is an automation that suppose to be activated by column change and move the item to the board ARCHIVE.<br />\nIt does not get activated by the change that happens with the automation. If I manually connect the fields it work’ but not when the change happens by automation.</p>\n<p>Is there any work around?</p>\n<p>By the way, with other columns it works even if the change happens with automations, but not with the connect boards column.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 150102,
+      "postNumber": 2,
+      "createdAt": "2023-10-26T05:08:40.078Z",
+      "author": "GiannisKoukounas (Giannis Koukounas)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/elromlu\">@elromlu</a> ,</p>\n<p>Welcome to the monday community! <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I had encountered this issue in the past as well. I believe this is not yet supported by monday yet, but I’ll let <a class=\"mention\" href=\"/u/biancat\">@BiancaT</a> chime in to verify.</p>\n<p>Best,<br />\nGiannis, Implementation Consultant at <a href=\"http://thespelas.com\" rel=\"noopener nofollow ugc\">thespelas.com</a></p>"
+    },
+    {
+      "id": 150355,
+      "postNumber": 3,
+      "createdAt": "2023-10-27T23:26:03.675Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>What you’re experiencing is normal, with two-way connections the “passive” change (where as the one on NEW is active, the one on CURRENT is a side-effect of the two-way link) does not trigger events. This also crops up when a connected item is deleted and removed, no change is triggered on the boards linking to the item.</p>\n<p>There is a workaround though.</p>\n<ul>\n<li>\n<p>On the NEW board where the automation triggers that connect the item, add a status column call it something like “Item Connected”.</p>\n</li>\n<li>\n<p>On the  NEW board, create an automation to set this new status to “Connected” when connect board changes.</p>\n</li>\n<li>\n<p>On the CURRENT board, create a mirror of the “Item Connected” column from NEW.</p>\n</li>\n<li>\n<p>On the CURRENT board create another status column, called “Move Trigger”</p>\n</li>\n<li>\n<p>On the CURRENT board, use the pre-made “When <strong>Item Connected (Status Mirror)</strong> changes to <strong>Connected</strong>, change <strong>Move Trigger</strong> to <strong>Move</strong>” (from the Categories =&gt; Status Change group of recipes on the left of the automations center, not the “create custom automation” or “add new automation” buttons). This is one of the few magical recipes that you can select a mirror status column as the trigger, and use item connected to change the move trigger status. <strong>This step is the key to the whole thing working.</strong><br />\n<img src=\"https://global.discourse-cdn.com/monday/original/3X/a/f/af573ef8f5ac5315c0caaf8b8a7cbf5746731896.png\" alt=\"image\" width=\"452\" height=\"290\" /></p>\n</li>\n<li>\n<p>On CURRENT create a “When <strong>Move Trigger</strong> changes to <strong>Move</strong>, move item to <strong>ARCHIVE</strong>” recipe.</p>\n</li>\n</ul>\n<p>I know it adds a couple automations to the mix but by using the not well publicized ability to trigger a few pre-built recipes from mirrors of status columns changing, you can convey the effect to the other which is normally not conveyed.</p>\n<p>There is a possible shortcut where instead of changing the Connected status column when the connect board column changes, you use an item default value to set Connected. But I believe this is prone to sometimes happening before the link to the item on CURRENT is created, and won’t always be reliable to trigger on through the mirror on CURRENT.</p>"
+    },
+    {
+      "id": 196335,
+      "postNumber": 4,
+      "createdAt": "2024-08-06T20:59:03.225Z",
+      "author": "User129438 (John S)",
+      "cookedHtml": "<p>This is an extremely helpful comment that I just wanted to express my appreciation for. It’s an overly complicated but most simple possible solution to an absolutely ridiculous Monday limitation, and it worked beautifully for the same issue I was encountering. Thank you Cody!</p>"
+    },
+    {
+      "id": 196370,
+      "postNumber": 5,
+      "createdAt": "2024-08-06T22:28:40.134Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I want to add since I can no longer edit my original post:</p>\n<p>The recipe that can trigger on a mirror status change is now located in the “Mirror” category of recipes on the left of the new automation center.</p>"
+    },
+    {
+      "id": 198064,
+      "postNumber": 6,
+      "createdAt": "2024-08-19T22:27:41.132Z",
+      "author": "User129438 (John S)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/u/a9a28c/48.png\" class=\"avatar\" /> John S:</div>\n<blockquote>\n<p>This is an extremely helpful comment that I just wanted to express my appreciation for. It’s an overly complicated but most simple possible solution to an absolutely ridiculous Monday limitation, and it worked beautifully for the same issue I was encountering. Thank you Cody!</p>\n</blockquote>\n</aside>\n<p>Hey Cody, any tips on accomplishing this same thing except when the connected board column is connected to more than 1 board? The automation says it doesn’t support status columns that are connected to more than 1 board, but it needs to be connected to 2 because the item moves between boards. Thanks in advance!</p>"
+    },
+    {
+      "id": 198125,
+      "postNumber": 7,
+      "createdAt": "2024-08-20T10:36:34.964Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Unfortunately that is a limit I haven’t found a native solution to - yet. It also doesn’t support mirrors of mirrors.</p>\n<p>Wish I had an easy answer.</p>"
+    },
+    {
+      "id": 198153,
+      "postNumber": 8,
+      "createdAt": "2024-08-20T15:32:58.855Z",
+      "author": "User129438 (John S)",
+      "cookedHtml": "<p>Thanks Cody - I got around it by creating a 2nd connected board column for only the relevant board that connects via automation at the same time as the 1st column and then mirroring the status from the 2nd connected board column. So basically a duplicate connected board column that is only mapped to a single board that has the relevant status on a 1-way connection…what a stupid system.</p>"
+    }
+  ]
+}

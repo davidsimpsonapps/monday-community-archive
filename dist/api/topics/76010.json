@@ -1,0 +1,125 @@
+{
+  "id": 76010,
+  "title": "Show warning when app is restricted to specific workspaces & better error messages",
+  "slug": "show-warning-when-app-is-restricted-to-specific-workspaces-better-error-messages",
+  "categoryId": 58,
+  "tagIds": [
+    203,
+    208,
+    275
+  ],
+  "createdAt": "2024-01-24T07:42:42.095Z",
+  "lastPostedAt": "2024-02-01T23:35:33.977Z",
+  "postsCount": 13,
+  "excerpt": "Hi devs. \nWe daily receive support requests reporting the “Your automation has failed due to a resource not being found” error message received after the app runs. \nAs far as I know, this error message is sent when the a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 553,
+  "posts": [
+    {
+      "id": 163883,
+      "postNumber": 1,
+      "createdAt": "2024-01-24T07:42:42.174Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi devs.<br />\nWe daily receive support requests reporting the “Your automation has failed due to a resource not being found” error message received after the app runs.<br />\nAs far as I know, this error message is sent when the app is not enabled to operate in that particular workspace. The problem can be fixed by enabling the app in that or all workspaces.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/2/225b9d5530e29f58535650bba05fb6935958a974.jpeg\" title=\"image00112 copy\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/2/2/225b9d5530e29f58535650bba05fb6935958a974_2_690x328.jpeg\" alt=\"image00112 copy\" width=\"690\" height=\"328\" /><div class=\"meta\"><span class=\"filename\">image00112 copy</span><span class=\"informations\">1625×773 115 KB</span></div></a></div><p></p>\n<p>So I’m here to ask the monday devs a couple of improvements:</p>\n<ol>\n<li>\n<p>Even if an app is not enabled in a workspace, it can be added and set up, without any warning. Only after the user runs it, he get the error.<br />\n<strong>If you still want to show the app in the marketplace despite not being enabled in the workspace, please at least add a warning saying that permissions have to been changed.</strong></p>\n</li>\n<li>\n<p>The error message is enigmatic and most users don’t know what to do. <strong>Please change it into something more meaningful, like “Your automation failed because [APP_NAME] is not enabled in the workspace”.</strong></p>\n</li>\n</ol>\n<p>Finally, I noticed that now the action “internal name” is displayed in the activity log (see <em>“Send to General Caster (formula - no triggerColumnId)”</em> label in the screenshot above).<br />\n<strong>This is an internal label not meant to be shown to the user.</strong></p>"
+    },
+    {
+      "id": 163925,
+      "postNumber": 2,
+      "createdAt": "2024-01-24T12:49:25.026Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>My experience is that the even when the app isn’t enabled in a workspace, it still sends the payloads to our back ends, with a token. The issue pops up when the token fails to retrieve the requested data (it just doesn’t get returned, no GraphQL errors) because its not granted access to the workspace.</p>\n<p>The resource not found shows up when we return a 404, so if your code returns a 404 if you can’t find something (say something like read item 123123123, and 123123123 isn’t returned by the query, you return a 404 not found) then it will show “resource not being found”.</p>\n<p>In this case, what I do is return an error response saying there is a permission issue, check the recipe creator is a board owner and the app has permission to the workspace. This shows up in the integration log specifically saying this.</p>"
+    },
+    {
+      "id": 163927,
+      "postNumber": 3,
+      "createdAt": "2024-01-24T13:04:49.415Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Thank you, <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>, for your feedback.<br />\nWe return proper HTTP error codes, so I guess this is the case.<br />\nError messages must be improved on monday’s side anyway.</p>"
+    },
+    {
+      "id": 163928,
+      "postNumber": 4,
+      "createdAt": "2024-01-24T13:09:49.739Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I don’t disagree.</p>\n<p>If you include the <a href=\"https://developer.monday.com/apps/docs/error-handling\" class=\"inline-onebox\">Error handling</a> in the response body, and fail to include <code>runtimeErrorDescription</code> then it will default to the default 404 error message there (assuming you returned a 404). If you do provide a meaningful <code>runtimeErrorDescription</code> then your custom message gets displayed instead.</p>"
+    },
+    {
+      "id": 164505,
+      "postNumber": 5,
+      "createdAt": "2024-01-28T13:35:55.607Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello y’all!</p>\n<p>Thank you for this!</p>\n<p>I have changed this into a request topic. You can vote for it at the top!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 164701,
+      "postNumber": 6,
+      "createdAt": "2024-01-29T14:25:18.254Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rob\">@rob</a>,</p>\n<p>Thanks for your feedback - we’ve passed it on to the team. They’ve already deployed a fix for the action name issue, and we will keep you all updated on the others <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 164710,
+      "postNumber": 7,
+      "createdAt": "2024-01-29T14:55:25.654Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/rachelatmonday/48/14631_2.png\" class=\"avatar\" /> Rachel:</div>\n<blockquote>\n<p>They’ve already deployed a fix for the action name issue, and we will keep you all updated on the others</p>\n</blockquote>\n</aside>\n<p>Thanks, <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a></p>\n<p><a href=\"https://status.monday.com/incidents/lf1rfh975n1n\">https://status.monday.com/incidents/lf1rfh975n1n</a><br />\nI hope it’s not related to the fix… <img src=\"https://emoji.discourse-cdn.com/apple/wink.png?v=12\" title=\":wink:\" class=\"emoji\" alt=\":wink:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 164869,
+      "postNumber": 8,
+      "createdAt": "2024-01-30T08:05:04.753Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 165429,
+      "postNumber": 9,
+      "createdAt": "2024-02-01T16:46:36.230Z",
+      "author": "mdalzell (Meredith Dalzell)",
+      "cookedHtml": "<p>I am a functional user who has built a lot of automations and general caster integrations. Today I loaded some data into a complex board and some, but not all, integrations failed “Due to a resource not being found”. I checked the integrations and the columns in the formula still exist on the board and the target columns still exist on the board. These processes used to run without issue, but i have not run them since early January. My “app” is General Caster and it’s running fine on some integrations. Sorry for not being more technical, but can someone provide some advice about how to debug this?</p>"
+    },
+    {
+      "id": 165452,
+      "postNumber": 10,
+      "createdAt": "2024-02-01T18:51:19.095Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mdalzell\">@mdalzell</a> By chance are you seeing errors in one workspace but not another?</p>"
+    },
+    {
+      "id": 165460,
+      "postNumber": 11,
+      "createdAt": "2024-02-01T19:10:49.592Z",
+      "author": "mdalzell (Meredith Dalzell)",
+      "cookedHtml": "<p>Yes, it seems to be isolated to my workspace. I am not seeing the same issues in my colleague’s integration activity logs. What are you thinking might be the issue?</p>\n<p>I am noticing some different General Caster failures from 1/29/24 in another workspace, but I am thinking they can be attributed to Monday’s platform issues this week. Those are “This automation failed due to an issue with an app you installed. Contact the app developer to fix this.”</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/2/c2927475acdc284f0f26ced0f9d9b8144ca90fd6.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/2/c2927475acdc284f0f26ced0f9d9b8144ca90fd6_2_690x197.png\" alt=\"image\" width=\"690\" height=\"197\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1428×408 27.3 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 165473,
+      "postNumber": 12,
+      "createdAt": "2024-02-01T20:23:04.922Z",
+      "author": "mdalzell (Meredith Dalzell)",
+      "cookedHtml": "<p>Do you think that Monday could still be having platform issues? Is it possible our environment doesn’t have enough computing resources dedicated which would make my integrations fail for lack of resources/horsepower? I just ran another form through the same process with the same data and most, but not all, the integrations ran fine. This is very odd.</p>"
+    },
+    {
+      "id": 165485,
+      "postNumber": 13,
+      "createdAt": "2024-02-01T23:00:42.767Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>That is odd, I was going to say if the issue is isolated to a specific workspace, check this article out: <a href=\"https://support.monday.com/hc/en-us/articles/8576973881362-Managing-app-access-on-your-account\">https://support.monday.com/hc/en-us/articles/8576973881362-Managing-app-access-on-your-account</a></p>\n<p>Its possible somebody inadvertently restricted it, and did not include or removed your workspace from allowed workspaces.</p>\n<p>Basically an app needs access to any workspace it runs in (or the whole account) and if its looking at mirror columns, the boards being mirrored may also need to be in workspaces it has access to.</p>"
+    },
+    {
+      "id": 165493,
+      "postNumber": 14,
+      "createdAt": "2024-02-01T23:35:33.977Z",
+      "author": "mdalzell (Meredith Dalzell)",
+      "cookedHtml": "<p>Thank you Cody. I appreciate the assist. Everything ran fine when I sent the data through a second time. A head scratcher.</p>"
+    },
+    {
+      "id": 165728,
+      "postNumber": 15,
+      "createdAt": "2024-02-04T11:13:59.704Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": 51361,
+  "title": "Parse Error on User Query",
+  "slug": "parse-error-on-user-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    242
+  ],
+  "createdAt": "2023-02-11T02:33:36.711Z",
+  "lastPostedAt": "2023-02-11T10:33:12.979Z",
+  "postsCount": 3,
+  "excerpt": "I am struggling to understand the error here.  Using make’s Monday.com GraphQL module I am getting a parse error when populating the Ids array with data from a previous module, even though the input data looks identical &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1011,
+  "posts": [
+    {
+      "id": 114983,
+      "postNumber": 1,
+      "createdAt": "2023-02-11T02:33:36.821Z",
+      "author": "mtesdell (Matt Tesdell)",
+      "cookedHtml": "<p>I am struggling to understand the error here.  Using make’s <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> GraphQL module I am getting a parse error when populating the Ids array with data from a previous module, even though the input data looks identical from that of hand entering the 2 user ID’s</p>\n<p>This is the error thrown<br />\nThe operation failed with an error. [200] [{“message”:“Parse error on \"\\xC2\" (error) at [2, 27]”,“locations”:[{“line”:2,“column”:27}]}]</p>\n<p>This is what the query looks like (where 27.value is just a map function grabbing the users ID’s from a people column). If I manually enter the two ID’s in a comma separated list it runs fine, which tells me it is something with the data from the text module, but I just don’t see any difference in input to the module (it all looks correct to me)<br />\nI have also NOT copied and pasted from the api playground as that is known to cause parse issues with <a href=\"http://Make.com\" rel=\"noopener nofollow ugc\">Make.com</a>.</p>\n<p>query {<br />\nusers (ids: [{{27.value}}]) {<br />\nname<br />\nemail<br />\n}<br />\n}</p>\n<p>This is what the processed input to the module looked like (I can’t see anything wrong with it)</p>\n<p>{<br />\n“method”: “POST”,<br />\n“queryBody”: “query {\\n    users (ids: [14550468, 15656192]) {\\n      name\\n      email\\n    }\\n}”,<br />\n“variables”: <span class=\"chcklst-box checked fa fa-check-square-o fa-fw\"></span>,<br />\n“operationName”: null,<br />\n“variablesDataSource”: “array”<br />\n}</p>\n<p>Any help would be appreciated!</p>"
+    },
+    {
+      "id": 114985,
+      "postNumber": 2,
+      "createdAt": "2023-02-11T04:49:06.221Z",
+      "author": "mitchell.hudson (Mitchell hudson)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mtesdell\">@mtesdell</a> ,</p>\n<p>I had a quick look at this one and it took me a while to figure it out.</p>\n<p>The <code>users</code> query expects an array of <code>Int</code> as the argument for <code>ids</code> however make adds in the ‘array’ component for us, so we only need to provide in a comma separated string and make wraps this string in <code>[]</code> to form the ‘array’</p>\n<p>I was able to provide this by using the following value for the <code>compose a string</code> tool:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/2e03800e85bf0b2f37d28f4f330559af347982b9.png\" title=\"Screenshot 2023-02-11 at 5.42.24 pm\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/2e03800e85bf0b2f37d28f4f330559af347982b9_2_690x462.png\" alt=\"Screenshot 2023-02-11 at 5.42.24 pm\" width=\"690\" height=\"462\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-02-11 at 5.42.24 pm</span><span class=\"informations\">838×562 30.9 KB</span>\n</div></a></div><p></p>\n<p>I the passed this value to <code>Get A User</code> module:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e3e20fb8fa1131efbc745abaeabc0856aa8a66c2.png\" title=\"Screenshot 2023-02-11 at 5.44.12 pm\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e3e20fb8fa1131efbc745abaeabc0856aa8a66c2_2_690x350.png\" alt=\"Screenshot 2023-02-11 at 5.44.12 pm\" width=\"690\" height=\"350\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-02-11 at 5.44.12 pm</span><span class=\"informations\">826×420 18.7 KB</span>\n</div></a></div><p></p>\n<p>The full scenario (I am sure yours is probably more complex) I ended up with was:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/29cb448356257590fd5e88ea2276426fdb8cc553.png\" title=\"Screenshot 2023-02-11 at 5.44.19 pm\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/29cb448356257590fd5e88ea2276426fdb8cc553_2_690x264.png\" alt=\"Screenshot 2023-02-11 at 5.44.19 pm\" width=\"690\" height=\"264\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-02-11 at 5.44.19 pm</span><span class=\"informations\">2444×936 166 KB</span>\n</div></a></div><p></p>\n<p>Hopefully this solves it for you too!</p>"
+    },
+    {
+      "id": 114995,
+      "postNumber": 3,
+      "createdAt": "2023-02-11T10:33:12.979Z",
+      "author": "mtesdell (Matt Tesdell)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/mitchell.hudson\">@mitchell.hudson</a> - Thank you so much for your quick and detailed response! I was so close. I knew it needed an array, as the data type was [Int!], but was trying to simply insert the text string of ID, ID inside of the array <span class=\"chcklst-box fa fa-square-o fa-fw\"></span>. I had tried almost that exact scenario, but didn’t have the <em>join function</em> included in my <em>Compose a String module</em>.</p>\n<p>Adding that to it has solved the issue! Thanks again for taking the time to work it out!</p>"
+    },
+    {
+      "id": 115247,
+      "postNumber": 4,
+      "createdAt": "2023-02-13T19:47:43.489Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

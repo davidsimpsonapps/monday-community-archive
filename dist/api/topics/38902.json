@@ -1,0 +1,95 @@
+{
+  "id": 38902,
+  "title": "Formula help – Count then number of days between a date column and today, stop counting days based on column status, but keep value",
+  "slug": "formula-help-count-then-number-of-days-between-a-date-column-and-today-stop-counting-days-based-on-column-status-but-keep-value",
+  "categoryId": 5,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-07-07T16:16:17.615Z",
+  "lastPostedAt": "2022-07-26T20:36:58.565Z",
+  "postsCount": 11,
+  "excerpt": "Hi, \nI’m building a workflow or a car inventory board. I’m trying to create a formula to track how many days a car has been in storage by using a Date column for the storage start date. Currently I am using ROUND(DAYS({A&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2107,
+  "posts": [
+    {
+      "id": 90720,
+      "postNumber": 1,
+      "createdAt": "2022-07-07T16:16:17.686Z",
+      "author": "AriellaD (Ariella Dayan)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m building a workflow or a car inventory board. I’m trying to create a formula to track how many days a car has been in storage by using a Date column for the storage start date. Currently I am using ROUND(DAYS({Arrival Date},TODAY()),0)*-1 to calculate those days, but this continues to track days even after the car has left the storage.</p>\n<p>I need the formula to stop counting days when the Departure Date column is not blank anymore, but retain the number value it was until that date.</p>\n<p>Any assistance would be greatly appreciated!</p>"
+    },
+    {
+      "id": 90801,
+      "postNumber": 2,
+      "createdAt": "2022-07-08T15:51:54.075Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ariellad\">@AriellaD</a> - you could just put it in an IF statement to use the Departure Date when populated:</p>\n<p>IF({Departure Date}=“”, ROUND(DAYS(TODAY(),{Arrival Date}),1),ROUND(DAYS({Departure Date},{Arrival Date}),1))</p>\n<p>You also don’t need the *1 at the end to make it a positive if you flip the dates in the DAYS() function as it should be DAYS({End Date}, {Start Date}).</p>\n<p>Thanks,<br />\nMark</p>"
+    },
+    {
+      "id": 92087,
+      "postNumber": 3,
+      "createdAt": "2022-07-21T16:57:13.294Z",
+      "author": "AriellaD (Ariella Dayan)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/mark.anley\">@mark.anley</a>!</p>\n<p>This is the formula I ended up going with since I added a “storage status” column and one of the options is “departed storage”.</p>\n<p>IF({Storage Status}=“Departed Storage”,ROUND(DAYS({Departed},{Arrived}),0),ROUND(DAYS(TODAY(),{Arrived}),0))</p>\n<p>I have one more question for you. I’m looking to add two more columns to this board to indicate when a car has temporarily left the storage. I would like to subtract the number of days that the car was temporarily removed from storage from the final “Days in storage” column. How can I go about doing that?</p>"
+    },
+    {
+      "id": 92096,
+      "postNumber": 4,
+      "createdAt": "2022-07-21T18:03:30.654Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/ariellad\">@AriellaD</a> - by the two new fields do you mean two additional date columns (Start and End date the car was temporarily removed)?  If so this should work:</p>\n<p>IF({Storage Status}=“Departed Storage”,<br />\nROUND(DAYS({Departed},{Arrived}) - DAYS({Temp End Date},{Temp Start Date}),0),<br />\nROUND(DAYS(TODAY(),{Arrived}) - DAYS({Temp End Date},{Temp Start Date}),0))</p>"
+    },
+    {
+      "id": 92480,
+      "postNumber": 5,
+      "createdAt": "2022-07-25T16:31:50.803Z",
+      "author": "AriellaD (Ariella Dayan)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mark.anley\">@mark.anley</a> yes, I’ve added two additional date columns! I’m not sure why, but that formula is giving me an error.</p>"
+    },
+    {
+      "id": 92600,
+      "postNumber": 6,
+      "createdAt": "2022-07-26T17:49:07.857Z",
+      "author": "AriellaD (Ariella Dayan)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> Can you help me with this formula too?</p>"
+    },
+    {
+      "id": 92606,
+      "postNumber": 7,
+      "createdAt": "2022-07-26T18:08:47.238Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ariellad\">@AriellaD</a></p>\n<p>LOL, sure… can you share your current formula?</p>"
+    },
+    {
+      "id": 92609,
+      "postNumber": 8,
+      "createdAt": "2022-07-26T18:17:21.449Z",
+      "author": "AriellaD (Ariella Dayan)",
+      "cookedHtml": "<p>Sure! This is my current formula: IF({Storage Status}=“Departed Storage”,ROUND(DAYS({Departed},{Arrived}),0),ROUND(DAYS(TODAY(),{Arrived}),0))</p>\n<p>The formula that Mark suggested earlier didn’t work for me. See below. I’ve added two more date columns to this board for cars that temporarily leave the storage facility and then return. I want to subtract the days the car temporarily left the storage facility from my current equation shown above.</p>\n<p><strong>Mark’s suggested formula:</strong><br />\nIF({Storage Status}=“Departed Storage”,<br />\nROUND(DAYS({Departed},{Arrived}) - DAYS({Temp End Date},{Temp Start Date}),0),<br />\nROUND(DAYS(TODAY(),{Arrived}) - DAYS({Temp End Date},{Temp Start Date}),0))</p>"
+    },
+    {
+      "id": 92616,
+      "postNumber": 9,
+      "createdAt": "2022-07-26T18:55:50.858Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ariellad\">@AriellaD</a></p>\n<p>When you say it’s not working… is it giving you undesired results or an error?</p>"
+    },
+    {
+      "id": 92617,
+      "postNumber": 10,
+      "createdAt": "2022-07-26T19:11:23.273Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ariellad\">@AriellaD</a></p>\n<p>Mark’s function looks correct to me… The only issue I see is that it does require that all of the date columns have values.</p>\n<p>Can you describe which dates might be blank?</p>"
+    },
+    {
+      "id": 92620,
+      "postNumber": 11,
+      "createdAt": "2022-07-26T20:36:58.565Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p>It’s always right <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> <img src=\"https://emoji.discourse-cdn.com/apple/rofl.png?v=12\" title=\":rofl:\" class=\"emoji\" alt=\":rofl:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

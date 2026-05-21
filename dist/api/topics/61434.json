@@ -1,0 +1,105 @@
+{
+  "id": 61434,
+  "title": "Work docs and forms",
+  "slug": "work-docs-and-forms",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    13,
+    362,
+    462
+  ],
+  "createdAt": "2023-07-11T12:50:43.019Z",
+  "lastPostedAt": "2025-10-08T06:18:30.691Z",
+  "postsCount": 12,
+  "excerpt": "Hello, \nIs it possible to get information from a submitted form to upload onto a workdoc automatically? \nI have a form for people to complete when requesting tasks, with a docs column on that board with a set template. H&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 1368,
+  "posts": [
+    {
+      "id": 134588,
+      "postNumber": 1,
+      "createdAt": "2023-07-11T12:50:43.122Z",
+      "author": "Matt_Frost (Dr Matt Frost - www.frostgroup.uk)",
+      "cookedHtml": "<p>Hello,</p>\n<p>Is it possible to get information from a submitted form to upload onto a workdoc automatically?</p>\n<p>I have a form for people to complete when requesting tasks, with a docs column on that board with a set template. Having this on an actual document is the ideal format, but I’ve been stumped how to get it to automatically populate the data.</p>\n<p>Any help or workarounds would be great <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 134596,
+      "postNumber": 2,
+      "createdAt": "2023-07-11T14:08:16.135Z",
+      "author": "Harsh (farioconsulting.com)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matt_frost\">@Matt_Frost</a></p>\n<p>The Monday API has the ability to automatically to create new docs.</p>\n<p>As such, you could (programmatically) whenever a new form is submitted , create a doc based on the form’s data (via the Monday API)</p>\n<p>Hope this helps!</p>"
+    },
+    {
+      "id": 134697,
+      "postNumber": 3,
+      "createdAt": "2023-07-12T07:35:47.796Z",
+      "author": "Matt_Frost (Dr Matt Frost - www.frostgroup.uk)",
+      "cookedHtml": "<p>Oh that’s interesting.</p>\n<p>I don’t have those technical skills yet to be able to do that, yet.<br />\nWhere would you even start? <img src=\"https://emoji.discourse-cdn.com/apple/rofl.png?v=12\" title=\":rofl:\" class=\"emoji\" alt=\":rofl:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 193394,
+      "postNumber": 4,
+      "createdAt": "2024-07-15T11:23:24.037Z",
+      "author": "KellyArco (Kelly Arco)",
+      "cookedHtml": "<p>Hey there!  Did you ever find a solution for this?  Would love to be able generate a pdf/word document from a form response to attach to a line item.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 204090,
+      "postNumber": 5,
+      "createdAt": "2024-10-01T17:28:19.712Z",
+      "author": "arf (Alex R-F)",
+      "cookedHtml": "<p>You just need an automation to make it start creating those docs by itself!</p>\n<p><strong>When new item created,</strong><br />\n<strong>Add Doc to column</strong></p>\n<p>Then, as long as the selected Docs column is already tied to a template you set up and <a href=\"https://support.monday.com/hc/en-us/articles/4499184558610-The-Doc-Column#Dynamic_text:~:text=as%20a%20template.-,Dynamic%20text,-Do%20you%20have\" rel=\"noopener nofollow ugc\">mapped your values into</a>, you’ll get what you’re looking for.</p>\n<p>[cc: <a class=\"mention\" href=\"/u/kellyarco\">@KellyArco</a> <a class=\"mention\" href=\"/u/matt_frost\">@Matt_Frost</a> <a class=\"mention\" href=\"/u/harsh\">@Harsh</a>]</p>"
+    },
+    {
+      "id": 204571,
+      "postNumber": 6,
+      "createdAt": "2024-10-06T12:07:05.307Z",
+      "author": "jack456jokky (Jack Jokky)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matt_frost/48/32626_2.png\" class=\"avatar\" /> Dr Matt Frost - www.frostgroup.uk:</div>\n<blockquote>\n<p>Is it possible to get information from a submitted form to upload onto a workdoc automatically?</p>\n<p>I have a form for people to complete when requesting tasks, with a docs column on that board with a set template. Having this on an actual document is the ideal format, but I’ve been stumped how to get it to automatically populate the data.</p>\n</blockquote>\n</aside>\n<p>Hello,</p>\n<p>Yes, it is possible to automatically populate data from a submitted form into a document (like a Word or Google Docs file) using various tools and integrations. Here’s a general approach on how to achieve this:</p>\n<ol>\n<li>Using Google Forms and Google Docs<br />\nIf you’re using Google Forms, you can utilize Google Apps Script to automate the process:</li>\n</ol>\n<p>Steps:</p>\n<p>Create the Form:</p>\n<p>Set up your form with all necessary fields.<br />\nSet Up a Google Doc Template:</p>\n<p>Create a Google Doc with placeholders for the data (e.g., {{Name}}, {{Task}}, etc.).<br />\nUse Google Apps Script:</p>\n<p>Open your Google Form, click on the three dots (More) → Script editor.<br />\nWrite a script to trigger when a form response is submitted. Here’s a sample script: function onFormSubmit(e) {<br />\nconst docTemplate = “TEMPLATE_DOC_ID”; // Replace with your document template ID<br />\nconst folderId = “FOLDER_ID”; // Replace with the folder ID where you want to save the documents</p>\n<pre><code>const responses = e.values; // All responses\nconst docName = responses[1]; // Assuming first column is the name\n\nconst templateDoc = DriveApp.getFileById(docTemplate);\nconst newDoc = templateDoc.makeCopy(docName, DriveApp.getFolderById(folderId));\nconst newDocId = newDoc.getId();\n\nconst doc = DocumentApp.openById(newDocId);\nconst body = doc.getBody();\n\n// Replace placeholders with actual responses\nbody.replaceText(\"{{Name}}\", responses[1]);\nbody.replaceText(\"{{Task}}\", responses[2]);\n// Add more replacements as needed\n\ndoc.saveAndClose();\n</code></pre>\n<p>}<br />\nSet Up Trigger:</p>\n<p>In the Script editor, go to Triggers (clock icon), then add a trigger to run onFormSubmit on form submissions.<br />\n2. Using Microsoft Forms and Power Automate<br />\nIf you’re using Microsoft Forms, you can use Power Automate (formerly Microsoft Flow) to achieve this:</p>\n<p>Steps:</p>\n<p>Create the Form:</p>\n<p>Set up your form in Microsoft Forms.<br />\nCreate a Document Template:</p>\n<p>Use Word to create a template with placeholders (e.g., {{Name}}, {{Task}}).<br />\nSet Up a Power Automate Flow:</p>\n<p>In Power Automate, create a new flow that triggers on form submission.<br />\nUse the “Get response details” action to retrieve form data.<br />\nUse the “Create a new Word document” action with your template, and fill in the placeholders with the form responses.<br />\nSave the Document:</p>\n<p>Add an action to save the populated document in OneDrive or SharePoint.<br />\n3. Using Third-Party Tools<br />\nIf you’re looking for an easier, no-code solution, consider using tools like Zapier or Integromat (Make):</p>\n<p>Zapier: Create a Zap that triggers when a form is submitted and creates a document from a template in Google Docs or Word.<br />\nIntegromat: Similar to Zapier, set up a scenario to watch for form submissions and populate documents accordingly.</p>\n<p>hope that helps!</p>"
+    },
+    {
+      "id": 207814,
+      "postNumber": 7,
+      "createdAt": "2024-10-29T22:59:57.423Z",
+      "author": "arf (Alex R-F)",
+      "cookedHtml": "<p>This is a great explanation, but I don’t think it addresses what the OP was asking for. They specifically referred to wanting to create a <a href=\"https://monday.com/workdocs\" rel=\"noopener nofollow ugc\"><strong>workdoc</strong></a> (using Monday’s native collaborative document feature.) And based on the description, it sounds like they specifically want to use their existing <strong><a href=\"https://support.monday.com/hc/en-us/articles/360000358700-All-about-monday-WorkForms\" rel=\"noopener nofollow ugc\">workform</a></strong> (Monday’s native form tool) as the trigger, not a form built on a third-party platform.</p>\n<p>As I mentioned in my reply above, all of that is possible to do using functionality that’s already built into Monday. They’d actually already built 98% of their solution—the form, and the <a href=\"https://support.monday.com/hc/en-us/articles/4499184558610-The-Doc-Column\" rel=\"noopener nofollow ugc\">Doc column</a> with a template configured—they just needed the automation to create a new doc from their template when the new submission item is created. Easy peasy.</p>\n<hr />\n<p>FWIW, I agree that there are many <em>much</em> better form tools out there than Monday’s, but if the one built into the platform they’re already paying for meets their needs (and we have no reason to believe that it doesn’t) why not keep it all under the same umbrella?</p>"
+    },
+    {
+      "id": 207818,
+      "postNumber": 8,
+      "createdAt": "2024-10-29T23:51:34.357Z",
+      "author": "Matt_Frost (Dr Matt Frost - www.frostgroup.uk)",
+      "cookedHtml": "<p>Thank you for all the advice on this <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>When I posted in July 2023 I was totally stumped, but monday has come along way since, and I’ve been able to resolve this <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\nReally appreciate all the advice though</p>"
+    },
+    {
+      "id": 215243,
+      "postNumber": 9,
+      "createdAt": "2024-12-25T12:39:39.066Z",
+      "author": "chaimg (Chaim Gelber)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matt_frost\">@Matt_Frost</a><br />\nHow have you been able to resolve this? This is a need we have at the moment.</p>"
+    },
+    {
+      "id": 218524,
+      "postNumber": 10,
+      "createdAt": "2025-01-22T22:03:15.022Z",
+      "author": "Matt_Frost (Dr Matt Frost - www.frostgroup.uk)",
+      "cookedHtml": "<p>Hello <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\nI used the Dynamic Fields <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 220108,
+      "postNumber": 11,
+      "createdAt": "2025-02-05T11:40:34.936Z",
+      "author": "chaimg (Chaim Gelber)",
+      "cookedHtml": "<p>yeah we ended up doing the same. thanks!</p>"
+    },
+    {
+      "id": 239870,
+      "postNumber": 12,
+      "createdAt": "2025-10-08T06:18:30.691Z",
+      "author": "JenefaJ (Jenefa)",
+      "cookedHtml": "<p>Yes — that’s exactly what <strong>The PDF Maker inside <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a></strong> can do.</p>\n<p>Instead of manually copying form data into a workdoc, you can <strong>automatically generate a formatted PDF or document</strong> the moment a form is submitted. Here’s how it works:</p>\n<ul>\n<li>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/puzzle_piece.png?v=14\" title=\":puzzle_piece:\" class=\"emoji\" alt=\":puzzle_piece:\" width=\"20\" height=\"20\" /> <strong>Connect your form to The PDF Maker</strong> — Map each form field (like requester name, task details, due date, etc.) into a custom PDF template.</p>\n</li>\n<li>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/gear.png?v=14\" title=\":gear:\" class=\"emoji\" alt=\":gear:\" width=\"20\" height=\"20\" /> <strong>Automate document creation</strong> — Once a form is submitted, The PDF Maker instantly pulls the responses and fills your template automatically.</p>\n</li>\n<li>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/page_facing_up.png?v=14\" title=\":page_facing_up:\" class=\"emoji\" alt=\":page_facing_up:\" width=\"20\" height=\"20\" /> <strong>Attach or store the document</strong> — The generated PDF can be attached back to the same board item, shared via email, or saved in the Docs column — so your team sees the formatted document without extra steps.</p>\n</li>\n<li>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/writing_hand.png?v=14\" title=\":writing_hand:\" class=\"emoji\" alt=\":writing_hand:\" width=\"20\" height=\"20\" /> <strong>Optional: Add eSignatures</strong> — If approvals or sign-offs are needed, you can include signature fields right in the generated document.</p>\n</li>\n</ul>\n<p>This gives you the same end result as having a workdoc automatically populated — but with far more flexibility, structure, and automation.</p>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/open_book.png?v=14\" title=\":open_book:\" class=\"emoji\" alt=\":open_book:\" width=\"20\" height=\"20\" /> Here’s the full guide: <a href=\"https://help.thepdfmaker.com/en/articles/10956797-automate-documents-with-the-monday-app-full-guide\" rel=\"noopener nofollow ugc\">Automate documents with The PDF Maker</a></p>"
+    }
+  ]
+}

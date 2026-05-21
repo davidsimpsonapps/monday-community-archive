@@ -1,0 +1,102 @@
+{
+  "id": 37636,
+  "title": "Formula (need help!) - when a date column within x days of that date, change a formula or status column",
+  "slug": "formula-need-help-when-a-date-column-within-x-days-of-that-date-change-a-formula-or-status-column",
+  "categoryId": 6,
+  "tagIds": [
+    108
+  ],
+  "createdAt": "2022-06-12T07:12:02.646Z",
+  "lastPostedAt": "2022-06-30T04:58:14.247Z",
+  "postsCount": 12,
+  "excerpt": "Hi, \nI could really use help with this formula. When a date (in a date column) is within 14 days (before the date), I want to mark either a status or the formula column as yes.  If it is not within 14 days, it should be &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2833,
+  "posts": [
+    {
+      "id": 88312,
+      "postNumber": 1,
+      "createdAt": "2022-06-12T07:12:02.714Z",
+      "author": "tara (tara)",
+      "cookedHtml": "<p>Hi,<br />\nI could really use help with this formula. When a date (in a date column) is within 14 days (before the date), I want to mark either a status or the formula column as yes.  If it is not within 14 days, it should be marked as no. Then after the date, I want to mark the column as completed. Anyone know how I can do this?</p>"
+    },
+    {
+      "id": 88430,
+      "postNumber": 2,
+      "createdAt": "2022-06-13T15:41:43.165Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tara\">@tara</a></p>\n<p>Try this:</p>\n<pre><code class=\"lang-auto\">IF(DAYS(FORMAT_DATE({Date}), FORMAT_DATE(TODAY())) &lt; -14,\n   \"No\",\n   IF(DAYS(FORMAT_DATE({Date}), FORMAT_DATE(TODAY())) &gt; 0,\n      \"Complete\",\n      \"Yes\"\n   )\n)\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/LRWLhnktNs0\">Creating monday subitems using Make/Integromat The Monday Man Way</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 88444,
+      "postNumber": 3,
+      "createdAt": "2022-06-13T17:11:12.499Z",
+      "author": "tara (tara)",
+      "cookedHtml": "<p>thank you very much! I tried this but I think there is an issue that I could use your help with. If you look at June 29, it is more than 2 weeks in advance, so it should not be “complete”, it should be no until it is 2 weeks in advance. Also I saw that if there is no date entered into the column, that the column is marked “yes”. Could it be blank if there is no date?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/307b1f91256d6453c98cbc572f802f12125a4bf7.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/307b1f91256d6453c98cbc572f802f12125a4bf7_2_690x287.png\" alt=\"image\" width=\"690\" height=\"287\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">765×319 11.9 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 88457,
+      "postNumber": 4,
+      "createdAt": "2022-06-13T20:02:12.976Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tara\">@tara</a></p>\n<p>If I am now understanding what you want…</p>\n<pre><code class=\"lang-auto\">IF({Date} = \"\", \"\",\n   IF(ABS(DAYS(FORMAT_DATE({Date}), FORMAT_DATE(TODAY()))) &gt; 14,\n      \"No\",\n      IF(DAYS(FORMAT_DATE({Date}), FORMAT_DATE(TODAY())) &gt; 0,\n         \"Complete\",\n         \"Yes\"\n      )\n   )\n)\n</code></pre>"
+    },
+    {
+      "id": 89131,
+      "postNumber": 5,
+      "createdAt": "2022-06-20T21:24:20.461Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tara\">@tara</a></p>\n<p>Did that work for you?</p>"
+    },
+    {
+      "id": 89254,
+      "postNumber": 6,
+      "createdAt": "2022-06-21T17:34:30.286Z",
+      "author": "tara (tara)",
+      "cookedHtml": "<p>Hi, I think it needs some tweaks but I am waiting to hear back from the client…I will let you know - thanks!</p>"
+    },
+    {
+      "id": 89662,
+      "postNumber": 7,
+      "createdAt": "2022-06-26T16:14:59.143Z",
+      "author": "tara (tara)",
+      "cookedHtml": "<p>Hi Jim,<br />\nWould you be able to help me with this again?   The formula should be if the (date) is filled in and it is a date in the future, then the formula column should say “yes” and if there is not date then it should remain blank. I guess once the date passed it should turn to completed (is that possible?)thanks again for your help.</p>"
+    },
+    {
+      "id": 89738,
+      "postNumber": 8,
+      "createdAt": "2022-06-27T10:33:25.452Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tara\">@tara</a></p>\n<pre><code class=\"lang-auto\">IF({Date} = \"\", \"\",\n   IF(DAYS(FORMAT_DATE({Date}), FORMAT_DATE(TODAY())) &lt; 0,\n      \"Completed\",\n      IF(DAYS(FORMAT_DATE({Date}), FORMAT_DATE(TODAY())) &gt; 14,\n         \"No\",\n         IF(DAYS(FORMAT_DATE({Date}), FORMAT_DATE(TODAY())) &gt; 0,\n            \"Complete\",\n            \"Yes\"\n         )\n      )\n   )\n)\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\n<strong><a href=\"https://themondayman.com/custom/\">We Create Custom Solutions</a></strong><br />\n<strong><a href=\"https://themondayman.com/tutorial/\">Schedule a 1-on-1 Tutorial Session</a></strong></p>"
+    },
+    {
+      "id": 89865,
+      "postNumber": 9,
+      "createdAt": "2022-06-28T08:02:10.323Z",
+      "author": "tara (tara)",
+      "cookedHtml": "<p>Hi Jim,<br />\nSo I tried to update the formula a bit and here is what I have so far</p>\n<p>IF({Ship Date} = “”, “”,<br />\nIF(DAYS(FORMAT_DATE({Ship Date}), FORMAT_DATE(TODAY())) &lt; 0,<br />\n“Completed”,<br />\nIF(DAYS(FORMAT_DATE({Ship Date}), FORMAT_DATE(TODAY())) &gt; 14,<br />\n“No”,<br />\nIF(DAYS(FORMAT_DATE({Ship Date}), FORMAT_DATE(TODAY())) &gt; 0,</p>\n<pre><code>        \"Yes\"\n     )\n  )\n</code></pre>\n<p>)<br />\n)</p>\n<p>My issue is that the “no” does not show up for anything. I want the no to show up if there is no date entered (the 14 days is not relevant any more). Could you help me out again? thanks!</p>"
+    },
+    {
+      "id": 90023,
+      "postNumber": 10,
+      "createdAt": "2022-06-29T15:38:08.530Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tara\">@tara</a></p>\n<p>…based on our conversation:</p>\n<pre><code class=\"lang-auto\">IF({Date} = \"\", \"Not Set\",\n   IF(DAYS(FORMAT_DATE({Date}), FORMAT_DATE(TODAY())) &lt; 0, \"Completed\", \"Yes\")\n)\n</code></pre>"
+    },
+    {
+      "id": 90053,
+      "postNumber": 11,
+      "createdAt": "2022-06-30T04:58:14.247Z",
+      "author": "tara (tara)",
+      "cookedHtml": "<p>Thank you very much! This worked exactly how I need it to. I really appreciate you taking the time to help me.</p>"
+    },
+    {
+      "id": 90624,
+      "postNumber": 12,
+      "createdAt": "2022-07-07T04:58:42.264Z",
+      "author": "tara (tara)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

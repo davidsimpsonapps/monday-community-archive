@@ -1,0 +1,60 @@
+{
+  "id": 67497,
+  "title": "How to insert the reply to Conversation thru API?",
+  "slug": "how-to-insert-the-reply-to-conversation-thru-api",
+  "categoryId": 58,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2023-10-03T07:02:29.477Z",
+  "lastPostedAt": "2023-10-05T09:05:29.337Z",
+  "postsCount": 6,
+  "excerpt": "I need to use the API to create a ‘reply’ within a conversation reply. How can I do this? How do I obtain the Conversation ID to reply to it if there are multiple conversation chats? \nThank you",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 191,
+  "posts": [
+    {
+      "id": 146527,
+      "postNumber": 1,
+      "createdAt": "2023-10-03T07:02:29.544Z",
+      "author": "ryanhaha (Ryan)",
+      "cookedHtml": "<p>I need to use the API to create a ‘reply’ within a conversation reply. How can I do this? How do I obtain the Conversation ID to reply to it if there are multiple conversation chats?</p>\n<p>Thank you</p>"
+    },
+    {
+      "id": 146777,
+      "postNumber": 2,
+      "createdAt": "2023-10-04T09:16:21.667Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/ryanhaha\">@ryanhaha</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>You can use a query like this one to get data about your item’s updates and replies to the updates:</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: 1234567890) {\n    updates {\n      text_body\n      id\n      replies {\n        text_body\n        id\n      }\n    }\n  }\n}\n</code></pre>\n<p>Then you can create an update for an item with a query like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_update(item_id: 2233445566, body: \"Some text\") {\n    id\n  }\n}\n</code></pre>\n<p>And if you want to create a reply to an update, you will have to use the parent_id as explained <a href=\"https://developer.monday.com/api-reference/docs/updates\">here</a>.</p>\n<p>You can not create a reply to a reply. Only replies to updates. You can create multiple replies in the same update.</p>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146948,
+      "postNumber": 3,
+      "createdAt": "2023-10-04T22:25:43.950Z",
+      "author": "ryanhaha (Ryan)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>Thank you for your reply. I have attached a picture as a sample. So, can this be achieved using the method you mentioned earlier? like pass in the parent_id?</p>\n<p>mutation {<br />\ncreate_update(item_id: 2233445566, body: “Some text”) {<br />\nid<br />\n}<br />\n}</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/6/16836eacb4b490e11814ad835b8034e3d074086d.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/6/16836eacb4b490e11814ad835b8034e3d074086d_2_616x500.png\" alt=\"image\" width=\"616\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1496×1214 89.4 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 146983,
+      "postNumber": 4,
+      "createdAt": "2023-10-05T04:21:29.099Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/ryanhaha\">@ryanhaha</a>,</p>\n<p>Exactly! For the update (the image on the left), you would use the item_id.</p>\n<p>For the reply to the update (the image on the right) you would use the parent_id (the ID of the update).</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 147006,
+      "postNumber": 5,
+      "createdAt": "2023-10-05T06:21:40.260Z",
+      "author": "ryanhaha (Ryan)",
+      "cookedHtml": "<p>Hi Matias,</p>\n<p>Thank you… i managed to use API to add into reply.<br />\nbut now i want to add the “more information” into table instead of just a string. Is it possible thru API?<br />\nplease refer the image below:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/c/4c2c7bb51dd5c0093564da01907fcc87a2b43aa0.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/c/4c2c7bb51dd5c0093564da01907fcc87a2b43aa0_2_690x414.png\" alt=\"image\" width=\"690\" height=\"414\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2132×1282 274 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 147037,
+      "postNumber": 6,
+      "createdAt": "2023-10-05T09:05:29.337Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/ryanhaha\">@ryanhaha</a>,</p>\n<p>You can add HTML as the body of an update:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_update (item_id: 1234567890, body: \"&lt;table&gt;&lt;tr&gt;&lt;td&gt;Emil&lt;/td&gt;&lt;td&gt;Tobias&lt;/td&gt;&lt;td&gt;Linus&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\") {\n    id\n  }\n}\n</code></pre>\n<p>But that can not be used for a body of a reply.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

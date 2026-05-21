@@ -1,0 +1,44 @@
+{
+  "id": 62330,
+  "title": "APi version 2023-10 CompareValue as arguments",
+  "slug": "api-version-2023-10-comparevalue-as-arguments",
+  "categoryId": 98,
+  "tagIds": [],
+  "createdAt": "2023-07-26T11:16:08.076Z",
+  "lastPostedAt": "2023-07-31T05:23:18.867Z",
+  "postsCount": 4,
+  "excerpt": "Hello, \nI’m trying to use the new function item_page, \nAnd i would like to know how to pass an array of CompareValue to the rules param. \nHere is my query  (not accepting the array so not working): \nquery GetItemPage($bo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1068,
+  "posts": [
+    {
+      "id": 136497,
+      "postNumber": 1,
+      "createdAt": "2023-07-26T11:16:08.155Z",
+      "author": "y-labyed (labyed)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I’m trying to use the new function item_page,<br />\nAnd i would like to know how to pass an array of CompareValue to the rules param.<br />\nHere is my query  (not accepting the array so not working):</p>\n<pre><code class=\"lang-auto\">query GetItemPage($boardId: [ID!], $columnId: ID!, $columnValue: CompareValue!, $columnId1: ID!, $columnvalue1: [CompareValue!]) {\n  boards(ids: $boardId) {\n    items_page(\n      query_params: {rules: [{column_id: $columnId, compare_value: $columnValue},{column_id: $columnId1, compare_value: $columnvalue1, operator: any_of}], operator: and}\n    ) {\n      items {\n        id\n        name\n        updated_at\n        created_at\n        column_values {\n          id\n          value\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>with vars :</p>\n<pre><code class=\"lang-auto\">{\n  \"boardId\": 321654987,\n  \"columnId\": \"name\",\n  \"columnValue\": \"TEST\",\n  \"columnId1\": \"contact_account\",\n  \"columnvalue1\": [123456789, 987654321]\n}\n</code></pre>\n<p>i want to achieve the same thing as below (working query but i need to pass the array as a variable):</p>\n<pre><code class=\"lang-auto\">query GetItemPage($boardId: [ID!], $columnId: ID!, $columnValue: CompareValue!, $columnId1: ID!) {\n  boards(ids: $boardId) {\n    items_page(\n      query_params: {rules: [{column_id: $columnId, compare_value: $columnValue},{column_id: $columnId1, compare_value: [123456789, 987654321], operator: any_of}], operator: and}\n    ) {\n      items {\n        id\n        name\n        updated_at\n        created_at\n        column_values {\n          id\n          value\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>with vars :</p>\n<pre><code class=\"lang-auto\">{\n  \"boardId\": 321654987,\n  \"columnId\": \"name\",\n  \"columnValue\": \"TEST\",\n  \"columnId1\": \"contact_account\",\n}\n</code></pre>\n<p>Thanks</p>"
+    },
+    {
+      "id": 136917,
+      "postNumber": 2,
+      "createdAt": "2023-07-30T09:17:30.822Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>I believe this should work if you use a structure like this one:</p>\n<pre><code class=\"lang-auto\">query GetItemPage($columnvalue1: CompareValue!) {\n  boards(ids: 1234567890) {\n    items_page(\n      query_params: {rules: [\n        {column_id: \"name\", \n          compare_value: $columnvalue1, \n          operator: any_of}], operator: and}\n    ) {\n      items {\n        id\n        name\n        updated_at\n        created_at\n        column_values {\n          id\n          value\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Variables:</p>\n<pre><code class=\"lang-auto\">{\n  \"columnvalue1\": [\n    \"Item 1\",\n    \"Item 2\"\n  ]\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 137019,
+      "postNumber": 3,
+      "createdAt": "2023-07-31T05:04:49.891Z",
+      "author": "y-labyed (labyed)",
+      "cookedHtml": "<p>Hello Matias,</p>\n<p>Thanks for your reply !</p>\n<p>I’ve tested your solution and it’s  solved my problem.</p>\n<p>When i use the array in the api playground, the var “columnvalue1” and the values are underlined in red with error message in the tooltip “expected value of type CompareValue”, but that does not prevent the request for working and returning result.</p>\n<p>Thanks<br />\nYassine</p>"
+    },
+    {
+      "id": 137026,
+      "postNumber": 4,
+      "createdAt": "2023-07-31T05:23:18.867Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/y-labyed\">@y-labyed</a>,</p>\n<p>That’s great to hear!</p>\n<p>Regarding the underlined text, I will send this to our team so that they can take a look into it <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

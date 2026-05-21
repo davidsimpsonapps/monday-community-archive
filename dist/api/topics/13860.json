@@ -1,0 +1,89 @@
+{
+  "id": 13860,
+  "title": "Python API integration help",
+  "slug": "python-api-integration-help",
+  "categoryId": 8,
+  "tagIds": [
+    105,
+    139
+  ],
+  "createdAt": "2020-12-02T14:41:12.089Z",
+  "lastPostedAt": "2021-01-20T10:13:07.377Z",
+  "postsCount": 10,
+  "excerpt": "Hi, I have been struggling with this API, it could just be me but I don’t find the docs very useful. \nI find the use of $ in variables names (within the examples) odd (in python context) and am not sure if they have any &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 6254,
+  "posts": [
+    {
+      "id": 35067,
+      "postNumber": 1,
+      "createdAt": "2020-12-02T14:41:12.152Z",
+      "author": "meandI (darryl lane)",
+      "cookedHtml": "<p>Hi, I have been struggling with this API, it could just be me but I don’t find the docs very useful.</p>\n<p>I find the use of $ in variables names (within the examples) odd (in python context) and am not sure if they have any significance, I removed them and got different errors so I’m guessing they have.</p>\n<p>I am attempting to get particular dashboard columns updated. This was the attempt (I cant see anything to mark text as code so apologies if this isn’t formatted as expected.</p>\n<blockquote>\n<p>import requests<br />\nimport json</p>\n<p>apiKey = “value”<br />\napiUrl = “<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”<br />\nheaders = {“Authorization” : apiKey}</p>\n<p>query5 = ‘mutation ($myItemName: String!, columnVals: JSON!) { create_item (board_id:BOARDID, item_name:$myItemName, column_values:$columnVals) { id } }’<br />\nvars = {<br />\n‘$myItemName’ : ‘Test’,<br />\n‘$columnVals’ : json.dumps({<br />\n‘text0’: ‘Title’,<br />\n‘text’: ‘Company’,<br />\n‘status’: ‘Customer’,<br />\n‘status5’: ‘High’,<br />\n‘phone’: ‘01234567890’,<br />\n‘email’: ‘Test@mail.com’,<br />\n‘date’: {‘date’ : ‘2020-08-27’},<br />\n‘text4’:   ‘Lots of notes’<br />\n})<br />\n}</p>\n<p>data = {‘query’ : query5, ‘variables’ : vars}<br />\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request<br />\nprint(r.json())</p>\n</blockquote>\n<p>This of course doesn’t work, the error being</p>\n<p>{‘errors’: [{‘message’: ‘Parse error on “columnVals” (IDENTIFIER) at [1, 33]’, ‘locations’: [{‘line’: 1, ‘column’: 33}]}], ‘account_id’: REMOVED}</p>"
+    },
+    {
+      "id": 35101,
+      "postNumber": 2,
+      "createdAt": "2020-12-03T03:59:09.581Z",
+      "author": "Shilpa (Shilpa N)",
+      "cookedHtml": "<p>I have used their python examples and in general the API docs and it works. The below snippet is from a code that I have tested. You can replace the board id ‘1111111’ with yours and other column ids.</p>\n<p>Within the vars section, we do not need the “$”</p>\n<p>query5 = ‘mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:1111111, item_name:$myItemName, column_values:$columnVals) { id } }’<br />\nvars = {<br />\n‘myItemName’ : ‘ABC’,<br />\n‘columnVals’ : json.dumps({<br />\n‘status’ : {‘label’ : ‘Done’},<br />\n‘date4’ : {‘date’ : ‘1993-08-27’},<br />\n‘email’ : {‘email’: ‘itsmyemail@mailserver.com’,  ‘text’: ‘itsmyemail@mailserver.com’}<br />\n})<br />\n}</p>\n<p>data = {‘query’ : query5, ‘variables’ : vars}<br />\nr = requests.post(url=apiUrl, json=data, headers=headers) # make request<br />\njsondata = r.json()<br />\nprint(jsondata)</p>"
+    },
+    {
+      "id": 35106,
+      "postNumber": 3,
+      "createdAt": "2020-12-03T07:09:00.196Z",
+      "author": "meandI (darryl lane)",
+      "cookedHtml": "<p>Aarr thank you for the response Shilpa, I was, of course, passing in strings as a value to the key. Looking at your example they are clearly dictionaries of various key:value pairs. Is there a reference to these anywhere? So I can see what each key type is expecting?</p>"
+    },
+    {
+      "id": 35109,
+      "postNumber": 4,
+      "createdAt": "2020-12-03T07:33:25.000Z",
+      "author": "Shilpa (Shilpa N)",
+      "cookedHtml": "<p>Each ‘key’ is the column id. You can find out the type it is from the columns on your board</p>"
+    },
+    {
+      "id": 35123,
+      "postNumber": 5,
+      "createdAt": "2020-12-03T11:17:34.958Z",
+      "author": "meandI (darryl lane)",
+      "cookedHtml": "<p><a href=\"https://monday.com/developers/v2#column-values-section\" rel=\"noopener nofollow ugc\">This</a> seems to have the info I wanted. Thanks</p>"
+    },
+    {
+      "id": 35278,
+      "postNumber": 6,
+      "createdAt": "2020-12-04T20:03:38.096Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/meandi\">@meandI</a> - apologies for the delay here. Shoutout to to rockstar <a class=\"mention\" href=\"/u/shilpa\">@Shilpa</a> for stepping in.</p>\n<p>Let me know if we can help with anything else!</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 38153,
+      "postNumber": 7,
+      "createdAt": "2021-01-19T23:36:31.062Z",
+      "author": "jrainesHMRI (Jon Raines)",
+      "cookedHtml": "<p>‘status’ : {‘label’ : ‘Done’},</p>\n<p>How do you know what goes in that middle field?   Status is of type “color”.  Why is this “label” in this instance?</p>\n<p>And for the life of me I can’t figure out a “numeric” field.  I’ve tried “label”, “numeric”, “text”… and with quotes on the number value or without.   No combination of values seems to work.</p>\n<p>Frankly… this API is really terribly documented…</p>"
+    },
+    {
+      "id": 38160,
+      "postNumber": 8,
+      "createdAt": "2021-01-20T06:29:51.821Z",
+      "author": "Shilpa (Shilpa N)",
+      "cookedHtml": "<p>The doumentation has examples for each column “type”</p>\n<p>For status - <a href=\"https://monday.com/developers/v2#column-values-section-status\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#column-values-section-status</a><br />\nFor numeric - <a href=\"https://monday.com/developers/v2#column-values-section-number\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#column-values-section-number</a></p>\n<p>For a numeric example, if the column id is “numbers” and value is 3 you would have to format as below.<br />\n‘columnVals’ : json.dumps({<br />\n‘status’ : {‘label’ : ‘Done’},<br />\n‘date4’ : {‘date’ : ‘1993-08-27’}<br />\n‘numbers’: “3”<br />\n})</p>\n<p>They have complete examples in <a href=\"https://support.monday.com/hc/en-us/articles/360013483119-API-Quickstart-Tutorial-Python\" rel=\"noopener nofollow ugc\">https://support.monday.com/hc/en-us/articles/360013483119-API-Quickstart-Tutorial-Python</a></p>"
+    },
+    {
+      "id": 38174,
+      "postNumber": 9,
+      "createdAt": "2021-01-20T10:13:07.377Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/shilpa\">@Shilpa</a> - thanks so much for providing awesome answers here throughout the thread, I really appreciate it! So helpful <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p><a class=\"mention\" href=\"/u/jraineshmri\">@jrainesHMRI</a> I am sorry to hear you feel that way about our API docs, and I’d love to see if <a class=\"mention\" href=\"/u/shilpa\">@Shilpa</a> 's suggestions were able to provide a helpful pointer in this case. Would you be able to review and let us know if that helps?</p>\n<p>To shed more light on this, the Status column uses both labels and index as value keys. Labels allow you to use plain text to populate the data, like using “Done” to set the Status column to a Green Status label, while Indexes would be based on Color. You can find the colors by index deck here:</p>\n<p><a href=\"https://view.monday.com/471878000-13f8e67ced7f0463687b9694f8044fac\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://view.monday.com/471878000-13f8e67ced7f0463687b9694f8044fac</a></p>\n<p>For values to the Numbers column, you do need to send an Int as the value.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 43310,
+      "postNumber": 10,
+      "createdAt": "2021-03-03T14:43:14.642Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

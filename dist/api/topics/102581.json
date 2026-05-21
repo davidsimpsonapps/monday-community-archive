@@ -1,0 +1,68 @@
+{
+  "id": 102581,
+  "title": "Webhooks and Short Lived Tokens",
+  "slug": "webhooks-and-short-lived-tokens",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2024-11-07T22:32:55.900Z",
+  "lastPostedAt": "2025-03-09T16:06:54.224Z",
+  "postsCount": 6,
+  "excerpt": "I have a Monday Code hosted app that I’m working on implementing webhooks for, but I’m having an issue getting a shortLivedToken. \nThis code handles the webhook POST call: \nimport { NextResponse } from &#39;next/server&#39;;\nimp&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 51,
+  "posts": [
+    {
+      "id": 209120,
+      "postNumber": 1,
+      "createdAt": "2024-11-07T22:32:56.020Z",
+      "author": "bradfoster (Brad Foster)",
+      "cookedHtml": "<p>I have a Monday Code hosted app that I’m working on implementing webhooks for, but I’m having an issue getting a shortLivedToken.</p>\n<p>This code handles the webhook POST call:</p>\n<pre><code class=\"lang-auto\">import { NextResponse } from 'next/server';\nimport jwt from 'jsonwebtoken';\nimport { headers } from 'next/headers';\n\nexport async function POST(request: Request) {\n  try {\n    const headersList = headers();\n    const authHeader = headersList.get('Authorization');\n\n    const token = authHeader!.replace('Bearer ', '');\n    const clientSecret = process.env.CLIENT_SECRET;\n\n    const decoded = jwt.verify(token, clientSecret!);\n    const accessToken = decoded.shortLivedToken;\n  }\n  catch (error) {\n    // handle error\n  }\n}\n</code></pre>\n<p>and <code>decoded</code> evaluates to:</p>\n<pre><code class=\"lang-auto\">    {\n      \"fields\": {\n        \"dat\": {\n          \"structValue\": {\n            \"fields\": {\n              \"client_id\": {\n                \"stringValue\": \"b11**********************\",\n                \"kind\": \"stringValue\"\n              },\n              \"app_version_id\": {\n                \"numberValue\": 104******,\n                \"kind\": \"numberValue\"\n              },\n              \"is_admin\": {\n                \"boolValue\": true,\n                \"kind\": \"boolValue\"\n              },\n              \"is_guest\": {\n                \"boolValue\": false,\n                \"kind\": \"boolValue\"\n              },\n              \"app_id\": {\n                \"numberValue\": 101******,\n                \"kind\": \"numberValue\"\n              },\n              \"install_id\": {\n                \"numberValue\": 112*****,\n                \"kind\": \"numberValue\"\n              },\n              \"user_kind\": {\n                \"stringValue\": \"admin\",\n                \"kind\": \"stringValue\"\n              },\n              \"user_id\": {\n                \"numberValue\": 620******,\n                \"kind\": \"numberValue\"\n              },\n              \"account_id\": {\n                \"numberValue\": 238******,\n                \"kind\": \"numberValue\"\n              },\n              \"is_view_only\": {\n                \"boolValue\": false,\n                \"kind\": \"boolValue\"\n              },\n              \"slug\": {\n                \"stringValue\": \"example-app\",\n                \"kind\": \"stringValue\"\n              }\n            }\n          },\n          \"kind\": \"structValue\"\n        },\n        \"exp\": {\n          \"numberValue\": 173********,\n          \"kind\": \"numberValue\"\n        }\n      }\n    }\n</code></pre>\n<p>This is very different from the shape of the object in <a href=\"https://developer.monday.com/apps/docs/integration-authorization#authorization-header\" rel=\"noopener nofollow ugc\">the Authorization Header documentation</a>:</p>\n<pre><code class=\"lang-auto\">{\n  \"accountId\": 1825528,\n  \"userId\": 4012689,\n  \"aud\": \"https://www.yourserver.com/endpoint\",\n  \"exp\": 1606808758,\n  \"shortLivedToken\": \"SHORT_LIVED_TOKEN_HERE\",\n  \"iat\": 1606808458\n}\n</code></pre>\n<p>There’s this caveat in the documentation: “We will not issue a short-lived token if your app’s endpoints do not start with <code>https://</code> .”</p>\n<p>But my webhooks url starts with <code>https://</code>. This is it: <code>https://live1-service-23******-f43*******.us.monday.app/api/webhooks</code></p>\n<p>My decoded token data is so drastically different from what’s in the docs.  I’m not sure if I’m just totally off track or if the docs are outdated for this.</p>\n<p>Any guidance would be sincerely appreciated!</p>"
+    },
+    {
+      "id": 209292,
+      "postNumber": 2,
+      "createdAt": "2024-11-10T07:13:19.021Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/bradfoster\">@bradfoster</a>,</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it (such as app ID, account ID, timestamps, etc.) so that our team can take a look into it?</p>"
+    },
+    {
+      "id": 209393,
+      "postNumber": 3,
+      "createdAt": "2024-11-10T18:40:45.349Z",
+      "author": "bradfoster (Brad Foster)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> thank you for the reply - I submitted ticket <span class=\"hashtag-raw\">#3706301</span>.</p>"
+    },
+    {
+      "id": 209398,
+      "postNumber": 4,
+      "createdAt": "2024-11-10T22:12:58.070Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>The authorization header JWT sent with webhooks (the webhooks created with the API <code>create_webhook</code>) is not the same as the JWT sent by recipe sentence builder (or workflow builder) actions.</p>\n<p>Only the actions for integrations/workflow builder contain the shortLivedToken.</p>\n<p>The ones sent with webhooks is the same as the sessionToken you get with UI features (<code>monday.get('sessionToken')</code>) - and does not contain a shortLivedToken.</p>"
+    },
+    {
+      "id": 209493,
+      "postNumber": 5,
+      "createdAt": "2024-11-11T13:22:20.901Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 223614,
+      "postNumber": 6,
+      "createdAt": "2025-03-09T11:26:58.413Z",
+      "author": "gdmill55 (Griffin)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> Since there is no short lived token in the JWT sent in the webhook, is there any way to authenticate the monday SDK? Our app doesn’t store an oauth token so we rely on the short lived token in requests to access their data.</p>\n<p>For our specific use-case, we need to delete customer data on the uninstall webhook. Is there no automated way to delete the data since the webhook doesn’t come with any method to authenticate the sdk?</p>"
+    },
+    {
+      "id": 223653,
+      "postNumber": 7,
+      "createdAt": "2025-03-09T16:06:54.224Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Assuming you’re using monday storage? In this case - nope, you’re forced to just leave the data behind.</p>\n<p>Once they uninstall the app the oauth tokens are all stale too - the uninstall deletes a private signature generated for the app install. If they reinstall none of those saved OAuth tokens will work anymore either.</p>\n<p>The data abandonment issue is known to monday and they have stated its something they intend to address. Not sure how they plan to though.</p>"
+    }
+  ]
+}

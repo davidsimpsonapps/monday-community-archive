@@ -1,0 +1,39 @@
+{
+  "id": 115455,
+  "title": "Monday > Power BI ",
+  "slug": "monday-power-bi",
+  "categoryId": 80,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2025-05-30T12:42:56.440Z",
+  "lastPostedAt": "2026-03-18T16:12:09.303Z",
+  "postsCount": 3,
+  "excerpt": "Any Power BI Weapons around?, Im currently tearing my hair out with authentication issues for Power BI to Monday API. \nIve read through a few similar threads but no luck on their coding or soltuions? \nany help would be a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 42,
+  "posts": [
+    {
+      "id": 230935,
+      "postNumber": 1,
+      "createdAt": "2025-05-30T12:42:56.512Z",
+      "author": "Maschette (Marc Maschette)",
+      "cookedHtml": "<p>Any Power BI Weapons around?, Im currently tearing my hair out with authentication issues for Power BI to Monday API.</p>\n<p>Ive read through a few similar threads but no luck on their coding or soltuions?</p>\n<p>any help would be appreciated!</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/6/7/672a6084b770d7fe020fe9c3baf6aa85d6b5cd81.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/6/7/672a6084b770d7fe020fe9c3baf6aa85d6b5cd81.png\" alt=\"image\" width=\"597\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">940×786 23.2 KB</span></div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/4/14b92c1532666c7bcd421e557729d2c33a74136a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/1/4/14b92c1532666c7bcd421e557729d2c33a74136a.png\" alt=\"image\" width=\"690\" height=\"130\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1266×240 10 KB</span></div></a></div><br />\n<div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/7/07a381bf07647fcb226876316bd238c242a317c8.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/0/7/07a381bf07647fcb226876316bd238c242a317c8.png\" alt=\"image\" width=\"690\" height=\"311\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">746×337 11.1 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 247362,
+      "postNumber": 2,
+      "createdAt": "2026-03-18T09:34:28.452Z",
+      "author": "nicstt (Nicholas)",
+      "cookedHtml": "<p>I’m a bit late to this, but try this, the Authorization API Key:<br />\nHeaders = [<br />\nAuthorization = “Bearer YOUR_API_KEY”,<br />\n#“Content-Type” = “application/json”<br />\n]</p>\n<p>I have something else, but haven’t the time atm. I’ll add onto my response in a day to. Hopefully this helps someone.</p>"
+    },
+    {
+      "id": 247375,
+      "postNumber": 3,
+      "createdAt": "2026-03-18T16:12:09.303Z",
+      "author": "YOGESHP (Yogesh Pokale)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/maschette\">@Maschette</a></p>\n<p>Try this</p>\n<p>let<br />\n// GraphQL query with placeholders<br />\nqueryText =<br />\n“{”“query”“:”“query getItems($cursor: String) { boards(ids: BOARD_ID) { items_page(limit: 500, cursor: $cursor) { items { id name column_values(ids: [““COLUMN_ID_1””, ““COLUMN_ID_2””, ““COLUMN_ID_3””, ““COLUMN_ID_4””, ““COLUMN_ID_5””]) { id text } } cursor } } }”“}”,</p>\n<p>// API request<br />\nSource =<br />\nWeb.Contents(<br />\n“<a href=\"https://api.monday.com/v2%E2%80%9D\">https://api.monday.com/v2”</a>,<br />\n[<br />\nHeaders = [<br />\n#“Content-Type” = “application/json”,<br />\n#“Authorization” = “Bearer YOUR_API_KEY”<br />\n],<br />\nContent = Text.ToBinary(queryText)<br />\n]<br />\n),</p>\n<p>// Convert response to JSON<br />\nJsonResponse = Json.Document(Source),</p>\n<p>// Navigate response<br />\nboards = JsonResponse[data][boards],<br />\nitems_page = boards{0}[items_page],<br />\nitems = items_page[items],</p>\n<p>// Convert to table<br />\nItemsTable =<br />\nTable.FromList(<br />\nitems,<br />\nSplitter.SplitByNothing(),<br />\n{“Column1”}<br />\n),</p>\n<p>// Expand item data<br />\nExpandedItems =<br />\nTable.ExpandRecordColumn(<br />\nItemsTable,<br />\n“Column1”,<br />\n{“id”, “name”, “column_values”}<br />\n),</p>\n<p>// Expand column values list<br />\nExpandedColumnValues =<br />\nTable.ExpandListColumn(<br />\nExpandedItems,<br />\n“column_values”<br />\n),</p>\n<p>// Expand column values details<br />\nFinalTable =<br />\nTable.ExpandRecordColumn(<br />\nExpandedColumnValues,<br />\n“column_values”,<br />\n{“id”, “text”},<br />\n{“column_id”, “column_value”}<br />\n)</p>\n<p>in<br />\nFinalTable</p>"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "id": 71141,
+  "title": "MirrorValue drastically increasing response times",
+  "slug": "mirrorvalue-drastically-increasing-response-times",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    103,
+    351
+  ],
+  "createdAt": "2023-11-20T16:07:38.102Z",
+  "lastPostedAt": "2023-12-12T19:38:17.666Z",
+  "postsCount": 10,
+  "excerpt": "I’ve got a query that I am running, in which there are a large amount of Mirror columns. Previously, I was able to fetch all of this data using the text field. However, introducing unravelling MirrorValue increases the t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 8,
+  "views": 357,
+  "posts": [
+    {
+      "id": 153937,
+      "postNumber": 1,
+      "createdAt": "2023-11-20T16:07:38.193Z",
+      "author": "fbanks (Finn Banks)",
+      "cookedHtml": "<p>I’ve got a query that I am running, in which there are a large amount of Mirror columns. Previously, I was able to fetch all of this data using the <code>text</code> field. However, introducing unravelling MirrorValue increases the time of this request from 2 seconds to 7.5 seconds while <strong>still only querying a single column.</strong> It looks like this continues to compound with more data and columns.<br />\nThe data stored in the MirrorValue is required to resolve the value of the column.</p>\n<p>Am I doing this completely wrong? This seems like a massive regression with the new API. In addition, since the pagination requires a cursor from the previous response, this drastically increases the net time to paginate through a board as concurrent queries are not possible.</p>\n<p>In addition, it doesn’t look like I can actually grab the text values of Dropdowns at all with this new system.</p>\n<p>Old Query (2 seconds):</p>\n<pre><code class=\"lang-auto\">\"{boards(ids:[BOARD_ID]){items (limit: 50, page: 1) {name, group(){title} column_values(ids: [mirror1, dropdown, shift_days1, shift0, sample_column, mirror42, mirror82, mirror3, check4, data_catalog_id]) {id, title, text}}}}\"\n</code></pre>\n<p>New Query, Single Column, No MirrorValue (2 seconds):</p>\n<pre><code class=\"lang-auto\">\"{boards(ids:[BOARD_ID]){items_page (limit: 50) {cursor items { name column_values ( ids: [\\\"mirror1\\\"]){column {id} id type value }}}}}\"\n</code></pre>\n<p>New Query, Single Column, Expand MirrorValue (11 seconds):</p>\n<pre><code class=\"lang-auto\">\"{boards(ids:[BOARD_ID]){items_page (limit: 50) {cursor items { name column_values ( ids: [\\\"mirror1\\\"]){column {id} id type value ...on MirrorValue{ text: display_value} }}}}}\"\n</code></pre>\n<p>New Query, All Columns, No MirrorValue (2 seconds):</p>\n<pre><code class=\"lang-auto\">\"{boards(ids:BOARD_ID){items_page (limit: 50) {cursor items { name group {title} column_values ( ids: [\\\"mirror1\\\",\\\"dropdown\\\",\\\"shift_days1\\\",\\\"shift0\\\",\\\"sample_column\\\",\\\"mirror42\\\",\\\"mirror82\\\",\\\"mirror3\\\",\\\"check4\\\",\\\"data_catalog_id\\\"]){column {id} id type value }}}}}\"\n</code></pre>\n<p>New Query, All Columns, Expand MirrorValue (40 seconds):</p>\n<pre><code class=\"lang-auto\">\"{boards(ids:[BOARD_ID]){items_page (limit: 50) {cursor items { name group {title} column_values ( ids: [\\\"mirror1\\\",\\\"dropdown\\\",\\\"shift_days1\\\",\\\"shift0\\\",\\\"sample_column\\\",\\\"mirror42\\\",\\\"mirror82\\\",\\\"mirror3\\\",\\\"check4\\\",\\\"data_catalog_id\\\"]){column {id} id type value ...on MirrorValue{ display_value} }}}}}\"\n</code></pre>"
+    },
+    {
+      "id": 153956,
+      "postNumber": 2,
+      "createdAt": "2023-11-20T17:46:26.138Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>This is a known issue with the <code>display_value</code> of mirror columns and they are actively working on a fix.</p>\n<p>Just an FYI previously with dropdowns the value also only provided the index. You could get text values within the <code>text</code> field of the column value and this still works. You could never get them in a structured value in the old API (you could match them up with an index via the <code>settings_str</code> of the column though). With the new API for dropdowns you can do something like this and actually return the selected dropdown values with the id and label.</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: \"123342342\"){\n    column_values(ids: \"dropdown\"){\n      id\n      type\n      text\n      value\n      ... on DropdownValue {\n        values {\n          id\n          label\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>One method of speeding up pagination in the new API is to return just items and their IDs (and maybe names), avoiding column values which require additional lookups by the GraphQL resolvers. You can get up to 500 at a time this way relatively quickly.</p>\n<p>Then you can parallelize requesting the full data with simple <code>items(ids: [ids])</code> queries, which you can do batches of 100 and execute 5 at a time. Simultaneously, you can be fetching the next batch of IDs.</p>\n<p>Not the ideal solution, but it should speed things up. That said, for your main performance issue, wait and test periodically over the next week or two and you may find they’ve solved it hopefully.</p>"
+    },
+    {
+      "id": 153973,
+      "postNumber": 3,
+      "createdAt": "2023-11-20T18:54:11.601Z",
+      "author": "fbanks (Finn Banks)",
+      "cookedHtml": "<p>Awesome, thanks for the fast response. I missed the DropdownValue, thanks for the details there.</p>\n<p>I’ll wait for the MirrorValue performance to get better, good to know this is on the team’s radar.</p>"
+    },
+    {
+      "id": 154079,
+      "postNumber": 4,
+      "createdAt": "2023-11-21T08:30:27.978Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 155619,
+      "postNumber": 5,
+      "createdAt": "2023-11-30T18:13:02.111Z",
+      "author": "fbanks (Finn Banks)",
+      "cookedHtml": "<p>It seems like this was fixed temporarily yesterday, but it has regressed back. Do we have an idea of<br />\nA. When the testing environment will be stable<br />\nB. When this will be fixed?</p>\n<p>We are getting pretty close to the holiday season and I’m getting worried about the implementation details here.</p>"
+    },
+    {
+      "id": 155622,
+      "postNumber": 6,
+      "createdAt": "2023-11-30T18:29:09.819Z",
+      "author": "fbanks (Finn Banks)",
+      "cookedHtml": "<p>So I’m understanding the optimization that you described, it would be the following:</p>\n<ol>\n<li>Fetch all items on a board, but only grab their IDs</li>\n<li>Create x parallel requests out to resolve batches of y IDs at a time</li>\n</ol>\n<p>The issue I see with this is that it doesn’t seem like this is something you actively endorse (<a href=\"https://developer.monday.com/api-reference/docs/items\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Items</a>)</p>\n<p>The data I’m trying to grab here is so simple I feel like I must be missing an endpoint. Is there a way to quickly grab <strong>the visible data on a given board</strong> quickly?</p>\n<p>For reference, it takes around 3 seconds per 100 items returned <strong>without MirrorValue</strong>. At 2000 items in the board (which is a relatively small amount of data), this is a minute of response time. This was acceptable before because we could parallelize the query, but the recent changes have forced us to be serial.</p>"
+    },
+    {
+      "id": 155635,
+      "postNumber": 7,
+      "createdAt": "2023-11-30T19:14:40.708Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I don’t work for monday <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> so I am not the one saying its “slower”.</p>\n<p>The documentation there is misleading I think. The reason using boards.items_page.items is “faster” than items directly is root objects are limited to 100 IDs, and items_page.items is limited to 500 items per requests. Therefore fewer requests = faster. Before items_page, boards.items was 1000 ids limit. So yes, faster in the sense of fewer requests (assuming you didn’t parallelize them).</p>\n<p>The other issue is the old database (pre-mondaydb) indexed data differently than the current database, with items being indexed with the board. I don’t believe the new database has that structural limitation (being schema-less)</p>\n<p>The slow down with MirrorValue is an issue I know they are actively working on and found the root cause to, and issued a fix they had to roll back because of a regression. Once this is fixed you can use the items_page to iterate the whole board, in a few seconds for each request again.</p>"
+    },
+    {
+      "id": 155639,
+      "postNumber": 8,
+      "createdAt": "2023-11-30T19:31:57.845Z",
+      "author": "fbanks (Finn Banks)",
+      "cookedHtml": "<p>Ah, didn’t realize you were just helping out, apologies. Let me see if I can get my company’s rep involved.</p>\n<p>Thanks for the help on this!</p>"
+    },
+    {
+      "id": 155945,
+      "postNumber": 9,
+      "createdAt": "2023-12-03T13:29:02.603Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>Our team is working on a fix for this that should improve the response time for queries like this one.</p>\n<p>I do not have an ETA yet, but we will probably announce when we deploy it.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 157579,
+      "postNumber": 10,
+      "createdAt": "2023-12-12T19:36:47.034Z",
+      "author": "fbanks (Finn Banks)",
+      "cookedHtml": "<p>Looks like the fix is live, and I was able to get response times down to somewhat reasonable limits (~12 seconds for 500 items).</p>\n<p>Thanks for the help everyone!</p>"
+    },
+    {
+      "id": 157581,
+      "postNumber": 11,
+      "createdAt": "2023-12-12T19:38:17.666Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Happy to hear that!</p>"
+    }
+  ]
+}

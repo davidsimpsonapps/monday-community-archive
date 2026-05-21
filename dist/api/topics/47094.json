@@ -1,0 +1,62 @@
+{
+  "id": 47094,
+  "title": "Items by Column Value for blank fields",
+  "slug": "items-by-column-value-for-blank-fields",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    107
+  ],
+  "createdAt": "2022-12-08T14:42:01.386Z",
+  "lastPostedAt": "2023-02-13T19:30:47.088Z",
+  "postsCount": 5,
+  "excerpt": "I am trying to programmatically query via items_by_column_values for fields with blank values (passing “” as the value). I have tried to query for blank on the following field types: Person, Timeline, Number, and they al&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1564,
+  "posts": [
+    {
+      "id": 106730,
+      "postNumber": 1,
+      "createdAt": "2022-12-08T14:42:01.463Z",
+      "author": "avp (Amanda)",
+      "cookedHtml": "<p>I am trying to programmatically query via items_by_column_values for fields with blank values (passing “” as the value). I have tried to query for blank on the following field types: Person, Timeline, Number, and they all return no results although there are many responses:</p>\n<p>“data”: {<br />\n“items_by_column_values”: <span class=\"chcklst-box fa fa-square-o fa-fw\"></span><br />\n},</p>\n<p>Is querying for blank fields supported?</p>"
+    },
+    {
+      "id": 106793,
+      "postNumber": 2,
+      "createdAt": "2022-12-08T19:01:54.954Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/avp\">@avp</a>,</p>\n<p>While it’s not possible to query for blank values, there are other queries that can help you get this information.</p>\n<p>For example, you could use the Items query to query for column values, and the response of this call will include the null values:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids:1234567) {\n    items {\n      id\n      column_values (ids: \"text\") {\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>Here’s an example of what the response could look like:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"boards\": [\n      {\n        \"items\": [\n          {\n            \"id\": \"3334510076\",\n            \"column_values\": [\n              {\n                \"value\": \"\\\"Buy\\\"\"\n              }\n            ]\n          },\n          {\n            \"id\": \"2674964569\",\n            \"column_values\": [\n              {\n                \"value\": null\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n</code></pre>\n<p>I hope this helps! Please let me know if you have any more questions.</p>"
+    },
+    {
+      "id": 106809,
+      "postNumber": 3,
+      "createdAt": "2022-12-08T20:00:18.245Z",
+      "author": "avp (Amanda)",
+      "cookedHtml": "<p>Thanks for the response! Unfortunately this is not really a viable option for us. The board in question contains thousands of items and getting all that information back from the Monday API takes quite a long time.</p>\n<p>For an example of scale, we’re talking something like 10 blank fields per 2000 items, and running this check periodically. It would be greatly advantageous for this and other scenarios to be able to request only items with column X is “”. Is there any intention to support this in future?</p>"
+    },
+    {
+      "id": 106870,
+      "postNumber": 4,
+      "createdAt": "2022-12-09T12:19:50.185Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>If time is your concern, you can retrieve the data in parts (instead of getting all columns or all items).</p>\n<p>The trick is to filter on items AND on column values in each call, and run them in parallel. Example queries below.</p>\n<p>By the way, a note on API calls in parallel: you cannot make multiple updates to your data at the same time, but simple reads like this are relatively safe.</p>\n<p>Query 1:</p>\n<pre><code class=\"lang-auto\">query {\nThis text will be hidden  boards (ids:1234567) {\n    items (limit:100, page:1) {\n      id\n      column_values (ids: \"text\") {\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>Query 2+:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids:1234567) {\n    items (limit:100, page:2) {\n      id\n      column_values (ids: \"text\") {\n        value\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 115238,
+      "postNumber": 5,
+      "createdAt": "2023-02-13T19:30:47.088Z",
+      "author": "pblo (Paul Boyer)",
+      "cookedHtml": "<p>Hi,<br />\nI was faced with the same issue and found a workaround :</p>\n<p>I added a new label column named “is empty”, which is by default set to “Yes”, and an automation that sets the value to “No” when the column i’m interested in is changed. I can now filter for the “No” value on my status column.</p>\n<p>It’s rather heavy, but at least it allows me to work around the issue.</p>\n<p>PS: I tried first with a formula column to avoid the automation, but dynamic formula values don’t seem to be available in the API.</p>"
+    },
+    {
+      "id": 115707,
+      "postNumber": 6,
+      "createdAt": "2023-02-15T19:09:37.764Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

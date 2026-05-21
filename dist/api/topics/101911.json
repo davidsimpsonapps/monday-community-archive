@@ -1,0 +1,160 @@
+{
+  "id": 101911,
+  "title": "Getting an Item's Updates via API is broken on version 2024-10",
+  "slug": "getting-an-items-updates-via-api-is-broken-on-version-2024-10",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    484
+  ],
+  "createdAt": "2024-10-30T14:23:38.172Z",
+  "lastPostedAt": "2025-04-10T16:45:55.813Z",
+  "postsCount": 16,
+  "excerpt": "Attempting to get an item’s updates via GraphQL has broken with the rollout of version 2024-10. \nThis query would work on version 2024-07, but now does not work.  Please try it on the API Playground: \nquery {\n  items(ids&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 70,
+  "posts": [
+    {
+      "id": 207884,
+      "postNumber": 1,
+      "createdAt": "2024-10-30T14:23:38.261Z",
+      "author": "aholtzhauer (Andrew)",
+      "cookedHtml": "<p>Attempting to get an item’s updates via GraphQL has broken with the rollout of version 2024-10.</p>\n<p>This query would work on version 2024-07, but now does not work.  Please try it on the API Playground:</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: [itemIdHere]) {\n    name\n    updates(limit: 40) {\n      creator {\n        name\n      }\n    }\n  }\n}\n</code></pre>\n<p>This same query works fine even with about 190 columns on a board:</p>\n<pre><code class=\"lang-auto\">query {\n  items(ids: [itemIdHere]) {\n    name\n    column_values {\n      id\n      value\n      text\n      type\n    }\n  }\n}\n</code></pre>\n<p>For the first query, lowering the update limit to something like 20 or 25 causes the query to execute properly.  Previously in version 2024-07, you could request something very large like 300 updates in one request and it would run just fine.</p>\n<p>Why has this functionality been changed?  What is the proper process for getting all updates from an item now?</p>"
+    },
+    {
+      "id": 207892,
+      "postNumber": 2,
+      "createdAt": "2024-10-30T14:55:22.665Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Checking in <a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1730307027283889\">Slack</a></p>"
+    },
+    {
+      "id": 208413,
+      "postNumber": 3,
+      "createdAt": "2024-11-04T06:22:20.319Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/aholtzhauer\">@aholtzhauer</a>,</p>\n<p>That is odd. I ran the query on my end and it works fine.</p>\n<p>Would you be able to please fill this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> adding as much information as possible to it (such as account ID, board IDs, item IDs, timestamps, etc.) so that our team can take a look into it?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 208618,
+      "postNumber": 4,
+      "createdAt": "2024-11-04T19:32:20.520Z",
+      "author": "aholtzhauer (Andrew)",
+      "cookedHtml": "<p>The issue actually appears to have been resolved as of this past weekend (was still broken Friday but is working now!).  The only change it seems that was made in Monday’s API is that when getting Updates, if there was an update created by a Monday automation, the creator is now null, with no fields attributed to it (name, photo_thumb_small, etc)</p>\n<p>I’ll go ahead and code around that for now, but I’m not sure if it’s intended or not.</p>"
+    },
+    {
+      "id": 208730,
+      "postNumber": 5,
+      "createdAt": "2024-11-05T14:39:14.442Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/aholtzhauer\">@aholtzhauer</a>,</p>\n<p>I checked with the team - the higher limit was causing a timeout internally. They deployed a fix for this on Sunday, so you should be good to go!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 208746,
+      "postNumber": 6,
+      "createdAt": "2024-11-05T17:43:24.591Z",
+      "author": "aholtzhauer (Andrew)",
+      "cookedHtml": "<p>For anyone else reading this thread - know that if you’re getting updates via the API, the <code>creator</code> parameter will indeed be <code>null</code> for an update posted by a Monday Automation, but the <code>creator_id</code> parameter should return -4 for an Automation.</p>\n<p>Other than that, everything should be good to go now!</p>"
+    },
+    {
+      "id": 208872,
+      "postNumber": 7,
+      "createdAt": "2024-11-06T11:25:58.475Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you for sharing <a class=\"mention\" href=\"/u/aholtzhauer\">@aholtzhauer</a> !</p>"
+    },
+    {
+      "id": 209983,
+      "postNumber": 8,
+      "createdAt": "2024-11-14T13:27:04.178Z",
+      "author": "aholtzhauer (Andrew)",
+      "cookedHtml": "<p>Sorry to revive an old topic, but… does anyone know why in version “2024-10”, getting updates from an item returns the updates in order from earliest created to last created, as opposed to the default style in “2024-07” and earlier where the first update returned would be the last/most recent update?  Is there a way to flip the order retrieved when making the GraphQL request?</p>\n<p>The documentation on this page here: (<a href=\"https://developer.monday.com/api-reference/reference/updates\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Updates</a>) states “Updates are returned in descending order (newest ones first)”.  This holds true when grabbing updates universally from a board, but when grabbing updates from an item, the updates are retrieved in reverse order now.  Was this an intentional change?</p>"
+    },
+    {
+      "id": 210154,
+      "postNumber": 9,
+      "createdAt": "2024-11-15T18:12:59.994Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Checking in <a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1731701559411659\">Slack</a></p>"
+    },
+    {
+      "id": 210912,
+      "postNumber": 10,
+      "createdAt": "2024-11-21T06:29:00.208Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/aholtzhauer\">@aholtzhauer</a>,</p>\n<p>I heard back from the team and the order should be the right one now.</p>\n<p>Would you be able to please test it on your end?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 225868,
+      "postNumber": 11,
+      "createdAt": "2025-04-02T22:54:14.230Z",
+      "author": "erockx (erockx)",
+      "cookedHtml": "<p>This seems to be happening again.  I’ve tested the query below with 2025-01, 2025-04, and 2025-07 over the API and in the Playground.  In every case, the updates response is null.  No difference if I add a limit to updates either.</p>\n<p>It is SUPER important to our usage of <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> that we can retrieve updates using the API.  Can someone please look into this ASAP?</p>\n<pre><code class=\"lang-auto\">{\n  items(ids: [123456789]) {\n    id\n    name\n    column_values {\n      id\n      text\n      column {\n        title\n      }\n    }\n    subitems {\n      id\n      name\n      column_values {\n        id\n        text\n        column {\n          title\n        }\n      }\n      updates {\n        created_at\n        body\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 225875,
+      "postNumber": 12,
+      "createdAt": "2025-04-03T02:13:12.383Z",
+      "author": "erockx (erockx)",
+      "cookedHtml": "<p>I just notice that my response via API or Playground, contains this error for every subitem returned.  So something with the updates are erroring out in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>, but the response returns the rest of the data found.</p>\n<p>This is bug that should be escalated, please.</p>\n<pre><code class=\"lang-auto\">[\n   {\n      \"message\": \"Internal server error\",\n      \"path\": [\n        \"items\",\n        0,\n        \"subitems\",\n        0,\n        \"updates\"\n      ],\n      \"extensions\": {\n        \"code\": \"INTERNAL_SERVER_ERROR\"\n      }\n    },\n {\n      \"message\": \"Internal server error\",\n      \"path\": [\n        \"items\",\n        0,\n        \"subitems\",\n        1,\n        \"updates\"\n      ],\n      \"extensions\": {\n        \"code\": \"INTERNAL_SERVER_ERROR\"\n      }\n    },\n    ...\n]\n</code></pre>"
+    },
+    {
+      "id": 225972,
+      "postNumber": 13,
+      "createdAt": "2025-04-03T15:01:55.363Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/erockx\">@erockx</a>,</p>\n<p>Can you please fill out a support request <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">here</a> so the team can take a look at your queries and properly escalate it, if needed?</p>\n<p>Thank you!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 225979,
+      "postNumber": 14,
+      "createdAt": "2025-04-03T16:27:14.000Z",
+      "author": "erockx (erockx)",
+      "cookedHtml": "<p>Already did, <span class=\"hashtag-raw\">#3983988</span>.</p>\n<blockquote></blockquote>\n<p><a href=\"http://www.anything-helps.org/\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/b/b/bb10ad8a52f149dd961c174ef5b2e4150fe5c722.png\" alt=\"http://www.anything-helps.org\" width=\"147\" height=\"24\" /></a><sup></sup><strong><sup>Trust through Transparency | Progress through Partnership | Change through Community</sup></strong></p>"
+    },
+    {
+      "id": 226028,
+      "postNumber": 15,
+      "createdAt": "2025-04-04T13:55:38.355Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 226336,
+      "postNumber": 16,
+      "createdAt": "2025-04-08T14:31:25.500Z",
+      "author": "erockx (erockx)",
+      "cookedHtml": "<p>I’ve received ZERO response from the support ticket.  I can’t imagine this is only happening to me.  My GQL query is super simple and there have to be tons of customers that have items with subitems with updates.  Is your entire engineering team putting out this fire and unable to communicate?  I’m super confused how no communication about what seems to be a system-wide failure is the right call here.</p>"
+    },
+    {
+      "id": 226434,
+      "postNumber": 17,
+      "createdAt": "2025-04-09T14:22:40.472Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/erockx\">@erockx</a>,</p>\n<p>I’m apologize for the delay - I know our support team is trying to work through a backlog and responses are taking longer than normal.</p>\n<p>I myself can’t seem to replicate the error you’re getting. I copied the query you provided, changed the item ID, and am getting a successful response for all of the requested fields (across all versions). Are you still having this issue? If so, does it consistently return an error?</p>\n<p>The good news is that it likely means it isn’t a bug! However, this could indicate an issue with something you’re querying and might require looking at your specific board/items.</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 226531,
+      "postNumber": 18,
+      "createdAt": "2025-04-09T18:40:31.363Z",
+      "author": "erockx (erockx)",
+      "cookedHtml": "<p>Yes, this is still happening.  While I concede it may be specific to my account, I am getting actual instances of “INTERNAL_SERVER_ERROR” in the response.  Therefore, you must be able to see what the actual error is in your logs.  Also, because this is an uncaught error, I have to believe it is affecting others.</p>\n<p>I can also confirm that another query returned null for the “subitems” column value of an item, even though that item had subitems.</p>\n<p>Because this problem seems to only occur when using a multi-level query (i.e. items &gt; subitems &gt; updates or items &gt; subitems), I can work around it by using multiple queries with just one level (i.e. get all sub items, then use each subitem to get its updates).</p>\n<p>If you have so many uncaught errors that this isn’t even on your dev team’s radar, I’m starting to question the quality of Monday as a product.</p>"
+    },
+    {
+      "id": 226632,
+      "postNumber": 19,
+      "createdAt": "2025-04-10T14:46:59.104Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>exclude_reply_from_sla Heidi is taking the ticket</p>"
+    },
+    {
+      "id": 226649,
+      "postNumber": 20,
+      "createdAt": "2025-04-10T16:45:55.813Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/erockx\">@erockx</a>,</p>\n<p>Our support team should be reaching out through your ticket!</p>\n<p>Best,<br />\nRachel</p>"
+    }
+  ]
+}

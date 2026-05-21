@@ -1,0 +1,82 @@
+{
+  "id": 17645,
+  "title": "The Notification Receiver and the Message field not working properly inside recipe sentence",
+  "slug": "the-notification-receiver-and-the-message-field-not-working-properly-inside-recipe-sentence",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2021-03-15T12:49:45.800Z",
+  "lastPostedAt": "2021-03-28T19:42:02.289Z",
+  "postsCount": 8,
+  "excerpt": "I try to build a integration. I made a recipe using a custom action I made, I attached a picture of it.   \nI got some problems using the field I mentioned in the question. \n\nNotification Receiver does not works if I sele&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1626,
+  "posts": [
+    {
+      "id": 44772,
+      "postNumber": 1,
+      "createdAt": "2021-03-15T12:49:45.882Z",
+      "author": "catalin (Radu Vasile Catalin)",
+      "cookedHtml": "<p>I try to build a integration. I made a recipe using a custom action I made, I attached a picture of it. </p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/02a0d49789f1265ceee60ee88a4d4fd5d8692166.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/02a0d49789f1265ceee60ee88a4d4fd5d8692166_2_690x417.png\" alt=\"image\" width=\"690\" height=\"417\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">939×568 19.8 KB</span>\n</div></a></div><p></p>\n<p>I got some problems using the field I mentioned in the question.</p>\n<ol>\n<li>Notification Receiver does not works if I select a field instead of a person. My field is of type people but I receive no information about the content of the column.</li>\n<li>Message field does not send any auto-populated fields. This is how it is set-up<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/a/a9db007d05f8d38871b470ccfc41f213fbf3ae91.png\" alt=\"image\" width=\"510\" height=\"390\" />\n</li>\n</ol>\n<p>This is the json I receive in my backend:<br />\n{<br />\n“payload”:{<br />\n“blockKind”:“action”,<br />\n“blockMetadata”:null,<br />\n“inboundFieldValues”:{<br />\n“boardId”:1112637424,<br />\n“receiver”:{<br />\n“type”:“column”,<br />\n“value”:“people0”<br />\n},<br />\n“message”:“{pulse.name}|{board.name}|{user.name}|{pulse.group}|{pulse.people0}|{pulse.status}|{pulse.timeline}|{pulse.numbers0}|{pulse.numbers45}|{pulse.status_1}|{pulse.dropdown4}|{pulse.date_1}|{pulse.labor_budget_spent}”<br />\n},<br />\n“inputFields”:{<br />\n“boardId”:1112637424,<br />\n“receiver”:{<br />\n“type”:“column”,<br />\n“value”:“people0”<br />\n},<br />\n“message”:“{pulse.name}|{board.name}|{user.name}|{pulse.group}|{pulse.people0}|{pulse.status}|{pulse.timeline}|{pulse.numbers0}|{pulse.numbers45}|{pulse.status_1}|{pulse.dropdown4}|{pulse.date_1}|{pulse.labor_budget_spent}”<br />\n},<br />\n“recipeId”:1137626,<br />\n“integrationId”:37553360<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 44774,
+      "postNumber": 2,
+      "createdAt": "2021-03-15T12:53:14.778Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 44788,
+      "postNumber": 3,
+      "createdAt": "2021-03-15T13:16:06.395Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/catalin\">@catalin</a>,</p>\n<p>That’s a great use case!</p>\n<p>One thing I’ve noticed right off the bat is that your custom action is not using any Item IDs, so it would not be possible for the integration recipe to pick up the column values of the item this relates to.</p>\n<p>In general, when building integration recipes like this one out, you will need to query the column values of the board in order to get the values you are looking for. For example, to send the notification to the correct person, you would need to query the value of the column that is selected as the Notification Receiver, and then use that value in your app. To use the references to other columns in your Message block, you will also need to query the actual column values of those columns, and then parse them in your action. Here’s how the quickstart queries for column values:</p>\n<pre><code>const getColumnValue = async (token, itemId, columnId) =&gt; {\n  try {\n    const mondayClient = initMondayClient();\n    mondayClient.setToken(token);\n\n    const query = `query($itemId: [Int], $columnId: [String]) {\n        items (ids: $itemId) {\n          column_values(ids:$columnId) {\n            value\n          }\n        }\n      }`;\n    const variables = { columnId, itemId };\n\n    const response = await mondayClient.api(query, { variables });\n    return response.data.items[0].column_values[0].value;\n  } catch (err) {\n    console.error(err);\n  }\n};\n</code></pre>\n<p>Does that make sense?  I hope this helps. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 44822,
+      "postNumber": 4,
+      "createdAt": "2021-03-15T14:05:58.550Z",
+      "author": "catalin (Radu Vasile Catalin)",
+      "cookedHtml": "<p>I will look into your solution. How about my second problem?</p>"
+    },
+    {
+      "id": 44824,
+      "postNumber": 5,
+      "createdAt": "2021-03-15T14:06:58.691Z",
+      "author": "catalin (Radu Vasile Catalin)",
+      "cookedHtml": "<p>And for your first answer. A link to the docs will help more than node code or at least the query as it is in the playground. I code in PHP</p>"
+    },
+    {
+      "id": 44964,
+      "postNumber": 6,
+      "createdAt": "2021-03-16T13:22:08.827Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/catalin\">@catalin</a></p>\n<p>To clarify further, the message that you input will not be auto-populated by default. You will need to run a query in order to get the values that the item currently has. For example, item.numbers0 =&gt; column value of the item from the column with Numbers0 ID, and then input that into the message. Does that make sense?</p>\n<p>Perhaps the PHP quick-start would be more helpful in this case as far as building out your queries gos?</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/1X/ae08846fb0d9c7adeaa11e168bc9e470701ed514.png\" class=\"site-icon\" width=\"152\" height=\"152\" />\n\n      <a href=\"https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP\" target=\"_blank\" rel=\"noopener nofollow ugc\">Support</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/1X/41f46e5e9ea124f10772b48bfbf05a8c96547b79_2_690x127.jpeg\" class=\"thumbnail\" width=\"690\" height=\"127\" /></div>\n\n<h3><a href=\"https://support.monday.com/hc/en-us/articles/360013465659-API-Quickstart-Tutorial-PHP\" target=\"_blank\" rel=\"noopener nofollow ugc\">API Quickstart Tutorial - PHP</a></h3>\n\n  <p>7 min read\n\n\n Feature\n\n\n \nThis article will walk you through making some basic operations using the monday.com GraphQL API, and then ramp up to more complicated queries. Go through it as quickly or...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>It will walk you through building your queries out in PHP to get column values and general queries. I hope this helps!</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 45420,
+      "postNumber": 7,
+      "createdAt": "2021-03-20T12:11:49.611Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi Alex,</p>\n<p>questions about this: do I understand it right, that an integration, that wants to query some information about a users board, e.g. to replace some placeholders in a message with the proper values, needs the API token of the user?<br />\nAnd if so, what is the correct way to provide the token to the integration?<br />\nCould it be possible to populate such a message with placeholders before sending it to an integration (or as part of an integration)? E.g. as an intermediate step?<br />\nI ask, because with an API token, an integration has full read and write access to the users board(s), which I would not recommend (to protect users data).</p>\n<p>Update: after reading the documentation I understand, that the integration gets a short living token in the JWT to access the API. So no token of the user is needed. And it seems, that the integration can only access the data of the board where installed, right?</p>\n<p>Thanks in advance, Marcus</p>"
+    },
+    {
+      "id": 45485,
+      "postNumber": 8,
+      "createdAt": "2021-03-21T20:41:41.274Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Marcus – welcome to the community!</p>\n<p>What you said in the second part of your post is exactly right – when the monday server sends a request to your integration endpoints, we’ll supply a <code>shortLivedToken</code> that is scoped according to the app and is valid for 1 minute. That token will only have read/write access to a user’s boards if your app has the <code>boards:read</code> and <code>boards:write</code> scope.</p>\n<p>You can use this token to make API calls and it should accomplish 90% of use cases for an integration.</p>\n<p>For a rundown of the various auth methods we support, check out this article: <a href=\"https://monday.com/developers/apps/choosing-auth\">Choosing Authentication Methods</a></p>"
+    },
+    {
+      "id": 46129,
+      "postNumber": 9,
+      "createdAt": "2021-03-28T19:42:02.289Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

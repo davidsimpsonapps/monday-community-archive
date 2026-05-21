@@ -1,0 +1,71 @@
+{
+  "id": 75032,
+  "title": "Issue with create item with dropdown values",
+  "slug": "issue-with-create-item-with-dropdown-values",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    22,
+    34,
+    94,
+    351
+  ],
+  "createdAt": "2024-01-13T11:24:18.385Z",
+  "lastPostedAt": "2024-01-21T08:58:44.549Z",
+  "postsCount": 6,
+  "excerpt": "Hey all, I’m using the API connector to call multiple items to a board on my Monday account. The text values are loading but not the dropdown items, telephone number, nor the file uploader. Here’s my POST call: \n{ \n“quer&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 340,
+  "posts": [
+    {
+      "id": 161898,
+      "postNumber": 1,
+      "createdAt": "2024-01-13T11:24:18.472Z",
+      "author": "mpdx (madeline kriara peterson)",
+      "cookedHtml": "<p>Hey all, I’m using the API connector to call multiple items to a board on my Monday account. The text values are loading but not the dropdown items, telephone number, nor the file uploader. Here’s my POST call:</p>\n<p>{<br />\n“query”: “mutation { create_item ( board_id: 5805558084, item_name: “&lt;Current_User's_first_name&gt; &lt;Current_User's_last_name(s)&gt;”, column_values: “{ \"texto7\":\"&lt;Current_User's_address&gt;\", \"ciudad\":\"<strong>&lt;Current_User's_city's_Display&gt;\"</strong>, \"dropdown2\":\"In the afternoon\", \"tipo_de_problema52\":\"Community\", \"long_text\":\"&lt;DescribeIncidences's_value&gt;\", \"Documentos\":\"&lt;LinkUploadFiles's_value&gt;\", \"texto8\": null, \"tel_fono\": null}”) { id, name, column_values { id, value } } }”<br />\n}</p>\n<p>In bold is the dropdown item that I’ve been playing around with for hours and no luck. I’ve tried dozens of different ways, like putting in the status/label IDs (1: Madrid, 2: Barcelona, 5: Not listed, 19: Valencia), overriding them and more.</p>\n<p>As for the other dropdown options, I temporarily chose an option just so it would run (like “in the afternoon”). I’m also unsure how to add the telephone number (the format in both Bubble and Monday is country flag, country calling code then phone number). The file uploader column doesn’t work either.</p>\n<p>Anyone able to help?</p>"
+    },
+    {
+      "id": 161906,
+      "postNumber": 2,
+      "createdAt": "2024-01-13T13:58:45.257Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>What programming language are you working in?</p>\n<p>There is a field on create_item called <code>create_labels_if_missing</code> which you need to set to true if the label doesn’t yet exist in the column. See the documentation.</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/items#arguments-1\" target=\"_blank\" rel=\"noopener\">GraphQL API</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/items#arguments-1\" target=\"_blank\" rel=\"noopener\">Items</a></h3>\n\n  <p>❗️The behaviour of this query will change in version 2023-10If you're getting items from a specific board or group, use use items_page instead of items. You can still query items at the root to retrieve specific items by their ID.Items are core...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>Trying to build a full query as just a string is painful and fraught with pitfalls. If you’re working with a language like Javascript its much better to use GraphQL variables, build values with code, and then stringify the request at the end. The graphql query is actually a string, not a data structure - this throws people for a loop when they come from REST APIs. You put variable placeholders in the string, then the request is an object where the query is a string value, along with a variables object containing all of the values you use within the query.</p>"
+    },
+    {
+      "id": 161954,
+      "postNumber": 3,
+      "createdAt": "2024-01-14T11:27:31.380Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 162348,
+      "postNumber": 4,
+      "createdAt": "2024-01-16T13:07:47.810Z",
+      "author": "mpdx (madeline kriara peterson)",
+      "cookedHtml": "<p>Thanks for the reply! I am using GraphQL. I ended up finding a workaround by changing the column and telephone fields to text instead of dropdown and the telephone format. The only thing I’m still struggling with is the file uploader column. Anyone able to help with uploading files?</p>"
+    },
+    {
+      "id": 162362,
+      "postNumber": 5,
+      "createdAt": "2024-01-16T13:39:27.799Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mpdx\">@mpdx</a>,</p>\n<p>You can find the documentation for it <a href=\"https://developer.monday.com/api-reference/docs/assets\">here</a>, and a Postman example <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-e99d1a13-df13-4e8c-bef3-99ce40f2faf1\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>You will need to upload the file in a different HTTP request.</p>\n<p>I hope that helps!!!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 162986,
+      "postNumber": 6,
+      "createdAt": "2024-01-18T21:41:01.870Z",
+      "author": "mpdx (madeline kriara peterson)",
+      "cookedHtml": "<p>Thank you so much! I finally got it work in Postman following the example. Unfortunately, I can’t say the same for the API connector in bubble. The item ID and image values need to be replaced with dynamic data and my expressions aren’t working. Anyone with experience in this?</p>"
+    },
+    {
+      "id": 163225,
+      "postNumber": 7,
+      "createdAt": "2024-01-21T08:58:44.549Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/mpdx\">@mpdx</a>,</p>\n<p>I am glad that worked for you in Postman!</p>\n<p>I do not have experience with bubble. Let’s hope someone here has done this before and can help <img src=\"https://emoji.discourse-cdn.com/apple/crossed_fingers.png?v=12\" title=\":crossed_fingers:\" class=\"emoji\" alt=\":crossed_fingers:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

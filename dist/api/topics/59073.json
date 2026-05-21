@@ -1,0 +1,75 @@
+{
+  "id": 59073,
+  "title": "Board hangs on getting items in GraphQL",
+  "slug": "board-hangs-on-getting-items-in-graphql",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-05-26T04:38:48.545Z",
+  "lastPostedAt": "2023-06-01T05:37:54.299Z",
+  "postsCount": 8,
+  "excerpt": "Hi everybody. \nI try to get board items using boards/items GraphQL get query. It worked fine, but after some period this query is getting hang and does not respond. Board contains more than 1000 records, also with subite&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 376,
+  "posts": [
+    {
+      "id": 129549,
+      "postNumber": 1,
+      "createdAt": "2023-05-26T04:38:48.645Z",
+      "author": "snb (Sergey Batishchev)",
+      "cookedHtml": "<p>Hi everybody.<br />\nI try to get board items using boards/items GraphQL get query. It worked fine, but after some period this query is getting hang and does not respond. Board contains more than 1000 records, also with subitems.<br />\nBut If I duplicate this board, this query works fine against it.<br />\nSo I think original board contains some garbage and cannot be read.<br />\nIs there any way to make it healthy again?</p>\n<p>Thanks, Sergey.</p>"
+    },
+    {
+      "id": 129554,
+      "postNumber": 2,
+      "createdAt": "2023-05-26T04:58:05.574Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>What kind of response did you get from GraphQL? It could very well be a complexity error which was thrown. If you try the same query while you got new credits (once every minute) it might work again.</p>"
+    },
+    {
+      "id": 129687,
+      "postNumber": 3,
+      "createdAt": "2023-05-29T04:22:59.960Z",
+      "author": "snb (Sergey Batishchev)",
+      "cookedHtml": "<p>Well, I just get “Upstream request timeout” error after 70 seconds. When I repeat, I just get the same error and cannot move forward.<br />\nDuplicating of this board to new board solves the problem. So I think there is some garbage inside the board that prevents to read the data.<br />\nIs there any way to cleanup/reindex the board?</p>"
+    },
+    {
+      "id": 129823,
+      "postNumber": 4,
+      "createdAt": "2023-05-30T11:35:13.533Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/snb\">@snb</a>,</p>\n<p>Which query are you using?</p>"
+    },
+    {
+      "id": 129909,
+      "postNumber": 5,
+      "createdAt": "2023-05-31T11:17:03.528Z",
+      "author": "snb (Sergey Batishchev)",
+      "cookedHtml": "<p>{ boards (ids: SOME_ID) { items { id name column_values { title type value} } } }</p>"
+    },
+    {
+      "id": 129914,
+      "postNumber": 6,
+      "createdAt": "2023-05-31T11:50:37.167Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/snb\">@snb</a> what if you use pagination as explained <a href=\"https://developer.monday.com/api-reference/docs/rate-limits#pagination\">here</a>?</p>\n<p>You could limit the items per page and then just go trough the pages until you get all the results.</p>\n<p>To avoid hitting the rate limits, you could <a href=\"https://developer.monday.com/api-reference/docs/complexity#queries\">query for the complexity points</a> usage, quota and seconds until the next reset and use that information to use timeouts when the limit is about to be reached.</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    items(limit: 25, page: 1) {\n      id\n      name\n      column_values {\n        title\n        type\n        value\n      }\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 129995,
+      "postNumber": 7,
+      "createdAt": "2023-05-31T22:23:05.001Z",
+      "author": "snb (Sergey Batishchev)",
+      "cookedHtml": "<p>Thanks, I will try!</p>"
+    },
+    {
+      "id": 130048,
+      "postNumber": 8,
+      "createdAt": "2023-06-01T05:37:54.299Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Let us know how that goes!</p>"
+    }
+  ]
+}

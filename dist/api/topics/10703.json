@@ -1,0 +1,54 @@
+{
+  "id": 10703,
+  "title": "The order of columns returned by this GraphQL query might not be what you think",
+  "slug": "the-order-of-columns-returned-by-this-graphql-query-might-not-be-what-you-think",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94
+  ],
+  "createdAt": "2020-08-31T05:03:30.197Z",
+  "lastPostedAt": "2021-02-25T14:32:53.014Z",
+  "postsCount": 4,
+  "excerpt": "Hi fellow developers, \nI ran into an issue with my app (and solved it :slight_smile:) and I though others might benefit from this information as well. \nTake this query in the API Playground \n \nI was expecting a result wi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 2047,
+  "posts": [
+    {
+      "id": 27145,
+      "postNumber": 1,
+      "createdAt": "2020-08-31T05:03:30.271Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi fellow developers,</p>\n<p>I ran into an issue with my app (and solved it <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />) and I though others might benefit from this information as well.</p>\n<p>Take this query in the API Playground<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/1/1ca7eab0aa258f8407ecbd618167d98d312e12e0.png\" alt=\"image\" width=\"376\" height=\"236\" /><br />\nI was expecting a result with an array of column values [{text obj}, {status obj}] as that is the order of the arguments.</p>\n<p>However what I did got returned was an array [{status obj}, {text obj}] (see below) as the API returns things in the order they appear in the board, and <strong>not</strong> in the order of the arguments.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/36689832cd0be8e7cf8c584c78b140ce4ff1c292.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/3/36689832cd0be8e7cf8c584c78b140ce4ff1c292_2_690x249.png\" alt=\"image\" width=\"690\" height=\"249\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1315×476 23.4 KB</span>\n</div></a></div><p></p>\n<p>So, if you think your code can iterate through the items array and then rely on column_values[0] and column_values[1] you might want to rethink <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" />. Also, make sure you test your app on your board after you jiggled around some columns.<br />\nThe most easy way to make your code independent of the order of columns in your board is to make sure you always ask for one column at the time. A more challenging solutions to solve this phenomenon is to sort the array in the order you want it sorted.</p>"
+    },
+    {
+      "id": 27179,
+      "postNumber": 2,
+      "createdAt": "2020-08-31T11:29:39.878Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 27181,
+      "postNumber": 3,
+      "createdAt": "2020-08-31T11:36:08.596Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>,</p>\n<p>Great catch! As you mentioned this is a good thing to keep in mind depending on your code and what you’re expecting to receive as a response (like if you’re storing it in an array).</p>\n<p>Depending on your code you might also be able to generate the array based on the column name you are looking for. This is an example in Python, but the code would specifically look into the ‘teams’ value from the API response:</p>\n<pre><code>parsed_json = (json.loads(jsonString))\nteam_list = []\nfor t in parsed_json ['data']['me']['teams']:\n   team_list.append(int(t['id']))\nteam_string = str(team_list)\n</code></pre>\n<p>Hope this helps - and thank you again for sharing!</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 27195,
+      "postNumber": 4,
+      "createdAt": "2020-08-31T12:54:47.568Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dsilva\">@dsilva</a></p>\n<p>That absolutely helps in certain scenarios. In this case there is something more to it. What I get returned is an array of items (in this example just 1) where each entry in that array contains an array (column_values) that in its turn is an array of objects (id, value).</p>\n<p>I don’t know how to get the value that belongs to a given id for each item in the items array (other then iterating though the column_values and check each id). Maybe this is because my moderate coding experience <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" />. I found a “solution” by splitting my query into 2 queries (one for both columns). Does that makes sense?</p>"
+    },
+    {
+      "id": 42387,
+      "postNumber": 5,
+      "createdAt": "2021-02-25T14:32:53.014Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

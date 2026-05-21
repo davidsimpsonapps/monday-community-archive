@@ -1,0 +1,44 @@
+{
+  "id": 116049,
+  "title": "How can I scale a monday-code integration recipe to process 100+ items at once?",
+  "slug": "how-can-i-scale-a-monday-code-integration-recipe-to-process-100-items-at-once",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    94,
+    108,
+    208,
+    351
+  ],
+  "createdAt": "2025-06-12T15:36:44.870Z",
+  "lastPostedAt": "2025-06-17T16:21:29.207Z",
+  "postsCount": 3,
+  "excerpt": "Hello everyone, \nI’m building an Integration with the monday Apps Framework and deploying my webhook handler via mapps code:push into the monday-code serverless environment. My /monday/execute_action function does the fo&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 38,
+  "posts": [
+    {
+      "id": 231941,
+      "postNumber": 1,
+      "createdAt": "2025-06-12T15:36:44.957Z",
+      "author": "code (oh)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>I’m building an Integration with the monday Apps Framework and deploying my webhook handler via <code>mapps code:push</code> into the monday-code serverless environment. My <code>/monday/execute_action</code> function does the following on each status-change event:</p>\n<ol>\n<li>Creates a new item on a target board</li>\n<li>Copies over connected-board column relations</li>\n<li>Fetches &amp; recreates subitems (including mapping their columns)</li>\n<li>Sends GraphQL mutations back to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a></li>\n</ol>\n<p>This works fine when users “Approve” a handful of items, but if they trigger the same recipe on ~100 items simultaneously, I start seeing:</p>\n<ul>\n<li>“Complexity budget exhausted” errors</li>\n<li>Timeouts or retries from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a></li>\n<li>Intermittent “itemId not found” errors when creating subitems</li>\n</ul>\n<p>Questions:</p>\n<p>Can I safely enqueue jobs from within monday-code? For example, pushing payloads to AWS SQS / Redis-Bull and using another Lambda or container to process them with controlled concurrency (e.g. <code>p-limit(5)</code>)—or is that discouraged?</p>\n<p>Are there any pure-serverless patterns (monday-code + SQS event mappings, DynamoDB dedupe, etc.) that people have successfully used to avoid spinning up dedicated servers?</p>\n<p>Token-refresh &amp; dedupe: How do others handle OAuth token expiry in a long-running job queue, and persist de-duplication state across many parallel executions?</p>\n<p>Thanks for all the insights!</p>"
+    },
+    {
+      "id": 232069,
+      "postNumber": 2,
+      "createdAt": "2025-06-15T19:25:12.149Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>Take a look at the monday code queue</p><aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/3X/2/7/279d6c49c26dd38347d668ffb26c0ba4637a6ce5.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/apps/docs/monday-code-javascript-sdk#queue\" target=\"_blank\" rel=\"noopener nofollow ugc\">Apps Framework</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <div class=\"aspect-image\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/8/3/8325f1a28793fa1163d11e463033d572166f56c4.png\" class=\"thumbnail\" width=\"420\" height=\"36\" /></div>\n\n<h3><a href=\"https://developer.monday.com/apps/docs/monday-code-javascript-sdk#queue\" target=\"_blank\" rel=\"noopener nofollow ugc\">JavaScript SDK</a></h3>\n\n  <p>The monday code JavaScript SDK gives developers useful tools to build and host secure apps using monday code that seamlessly integrate with the monday.com platform. It currently contains six methods: storage secure storage environment variables...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>The “Need help” AI button says:</p>\n<p>—-</p>\n<p>The monday code queue is a built-in message queue system based on a simple publish-subscribe (pub/sub) model, available for apps hosted on monday code. Each minor and major app version has its own queue.</p>\n<p><strong>Key features:</strong></p>\n<ul>\n<li>\n<p><strong>Publishing messages:</strong> Use the JavaScript SDK to publish messages to the queue. Messages are sent as POST requests to your app’s <code>/mndy-queue</code> endpoint.</p>\n<pre><code class=\"lang-javascript\">import { Queue } from \"@mondaycom/apps-sdk\";\nconst queue = new Queue();\n\nconst messageContent = JSON.stringify({ content: \"This is a message\" });\nconst messageId = await queue.publishMessage(messageContent);\n</code></pre>\n</li>\n<li>\n<p><strong>Receiving messages:</strong> Your app should listen for POST requests at <code>/mndy-queue</code>. When a message is received, process it and respond with HTTP 200 within 10 minutes. If not, monday code will retry up to 9 more times.</p>\n<pre><code class=\"lang-javascript\">app.post(\n    \"/mndy-queue\",\n    async (req, res) =&gt; {\n        try {\n            const { body, query } = req;\n            readQueueMessage({ body, query });\n            return res.status(200).send({});\n        } catch (err) {\n            logger.error(err.error);\n            return res.status(500).send({ message: \"internal server error\" });\n        }\n    }\n);\n</code></pre>\n</li>\n<li>\n<p><strong>Security:</strong> Each message includes a random <code>secret</code> in the query parameters. Use <code>validateMessageSecret</code> to ensure the message is authentic.</p>\n<pre><code class=\"lang-javascript\">const queryParams = req.query;\nif (!queue.validateMessageSecret(queryParams.secret))  {\n  logger.info(\"Queue message received is not valid, since secret does not match. This message could come from an attacker.\");\n  throw new Error('not allowed');\n}\n</code></pre>\n</li>\n<li>\n<p><strong>Retries:</strong> If your endpoint does not respond with HTTP 200 within 10 minutes, the message will be retried up to 10 times before being dropped.</p>\n</li>\n</ul>\n<p>For more details and code samples, see the official documentation: <a href=\"https://developer.monday.com/apps/docs/monday-code-javascript-sdk#queue\" rel=\"noopener nofollow ugc\">Queue SDK</a>.</p>"
+    },
+    {
+      "id": 232262,
+      "postNumber": 3,
+      "createdAt": "2025-06-17T16:21:29.207Z",
+      "author": "code (oh)",
+      "cookedHtml": "<p>Is there a way for the queue to provide a way to control the queue’s concurrency or rate? Once tasks enter the queue, they seem to execute simultaneously, leading to complexity issues. Is there a mechanism to regulate execution flow?\"</p>"
+    }
+  ]
+}

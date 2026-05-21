@@ -1,0 +1,47 @@
+{
+  "id": 33356,
+  "title": "API Issues with POST reqeust",
+  "slug": "api-issues-with-post-reqeust",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-03-21T11:33:37.612Z",
+  "lastPostedAt": "2022-03-23T12:52:57.896Z",
+  "postsCount": 4,
+  "excerpt": "Hi there, \nCan anyone tell me what is wrong with my payload? I keep getting a 500 error back, which from my reading on the board, signifies a malformed request. I am not using Node.js or similar back end software. I am u&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1344,
+  "posts": [
+    {
+      "id": 80380,
+      "postNumber": 1,
+      "createdAt": "2022-03-21T11:33:37.702Z",
+      "author": "Perk (Sean Perkins)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>Can anyone tell me what is wrong with my payload? I keep getting a 500 error back, which from my reading on the board, signifies a malformed request. I am not using Node.js or similar back end software. I am using an ETL software that allows for web requests. So I am really trying to find out what the issue is in terms of the structure of the request rather than the code that makes the request like I have seen in other posts.</p>\n<p>In the response back I have removed the urls for the content-security-policy because I am limited to a max of 20 urls in a post. Additionally, the beginning of the auhtorization key is x’d out. The key itself is fine. I just didn’t want to post it in the forum. Please assume there is no issue with the authorization key.</p>\n<p>If anyone could give me some pointers, I would be appreciative. Thanks!</p>\n<p>Payload:</p>\n<p>POST <a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a><br />\nAuthorization: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxNToyNy41MTdaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6OTk2Nzk3NywicmduIjoidXNlMSJ9.mHuTjTWVAdmNxuz5gWUoglXL46-0caqPAbN76xuZaVU<br />\nAccept: application/json<br />\nContent-Type: application/json; charset=utf-8</p>\n<p>{<br />\n“query”: “mutation ($myItemId:Int!, $myBoardId:Int!,  $myColumnValues:JSON!) {change_multiple_column_values(item_id:$myItemId, board_id:$myBoardId, column_values: $myColumnValues) {id}}”,<br />\n“variables”: {<br />\n“myItemId”: 2443401735,<br />\n“myBoardId”: 2128789134,<br />\n“myColumnValues”: {<br />\n“state”: “Released”,<br />\n“ceid”: “Tiger88”<br />\n}<br />\n}<br />\n}</p>\n<p>Response:</p>\n<p>HTTP/1.1 500 Internal Server Error<br />\nTransfer-Encoding: chunked<br />\nConnection: keep-alive<br />\nvary: Origin, Accept-Encoding<br />\nx-request-id: 003a1736-c14d-4feb-9b82-6988c3082777<br />\nx-runtime: 0.028100<br />\nx-envoy-upstream-service-time: 204<br />\ncontent-security-policy:<br />\nx-robots-tag: none<br />\nx-xss-protection: 1; mode=block<br />\nx-monday-rgn: use1<br />\nCF-Cache-Status: DYNAMIC<br />\nExpect-CT: max-age=604800, report-uri=“<a href=\"https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct\" rel=\"noopener nofollow ugc\">https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct</a>”<br />\nStrict-Transport-Security: max-age=15552000; includeSubDomains; preload<br />\nCF-RAY: 6ef6f9adb86fdedd-SEA<br />\nCache-Control: no-cache<br />\nDate: Mon, 21 Mar 2022 13:18:45 GMT<br />\nSet-Cookie: __cf_bm=mwKjRF43wvjb07Csd84.jCtnK.DwZYvFJPRKoe0.YBk-1647868725-0-AWuMl14Wso5Rf2wE9Ce6PLXTEpxL/eFc5uKAVIRfVh0hq2/FrutBBrn31zRL5fifm5MZ3VwIAGnwQ3RZ50y0nQXPVz6QMWRMRqya323Kalp6; path=/; expires=Mon, 21-Mar-22 13:48:45 GMT; <a href=\"http://domain=.monday.com\" rel=\"noopener nofollow ugc\">domain=.monday.com</a>; HttpOnly; Secure<br />\nServer: cloudflare<br />\nContent-Type: application/json; charset=utf-8</p>\n<p>{“error_message”:“Internal server error”,“status_code”:500}</p>"
+    },
+    {
+      "id": 80414,
+      "postNumber": 2,
+      "createdAt": "2022-03-21T15:29:31.649Z",
+      "author": "TheWes (Wes Myers)",
+      "cookedHtml": "<p>I may be wrong, but I think it’s that the brackets following “myColumnValues” (around both of your column entries) need to be included in the quotes too.</p>\n<p>example: <code>\"{\\\"state\\\" : \\\"Released\\\", \\\"ceid\\\" : \\\"Tiger88\\\"}\"</code></p>\n<p>or… what I do is build out the column value variables before I get to this stage so I’ve got an array of all the column ids &amp; values… logger output looks like <code>[\"state\" : \"Released\", \"ceid\" : \"Tiger88\"]</code>… I call my array var mondayRow… then when I get to the payload part I say:<br />\n<code>\"myColumnValues\": '{' + mondayRow.toString() + '}'</code></p>\n<p>I’m working in GAS, and to me it looks like there is more to this that is wrong, but there’s a good chance that’s just because maybe I have to send the request a bit differently than you. Let me know if you’ve not been able to get any request to work at all (like a simple query instead of a mutation) - if you’ve had no success I’ve got other ideas on what you need to change, but if you have had success in other requests then I think it’s the brackets needing to be in quotes.</p>"
+    },
+    {
+      "id": 80679,
+      "postNumber": 3,
+      "createdAt": "2022-03-23T12:50:58.948Z",
+      "author": "Perk (Sean Perkins)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/thewes\">@TheWes</a></p>\n<p>Thank you for the reply. This was enough of a hint for me to get it figured out in the ETL software I am using. The actions in my ETL tool that constructs JSON does create it correctly but I was getting strange escaping characters in the payload. The tool doesn’t have functionality strictly formatting for GraphQL requests.</p>\n<p>I ended up having to use your approach of creating an array when I construct the json<br />\n‘{’ + mondayRow.toString() + ‘}’ like you indicated except instead of toString, the result just exists as a  value in a column in the table. I then had to explicitly remove the “{[” and “]}” from the result in order to get it format correctly.</p>\n<p>For anyone trying to look this up in the future, though a slightly different example from the initial post, as the below query portion of the payload is for creating and item and setting certain columns on creation instead of just updating multiple columns on an already existing entry, the payload should look something like the below.</p>\n<p>{<br />\n“query”: “mutation ($myBoardId:Int!, $myItemName:String!, $myColumnValues:JSON!) {create_item(board_id:$myBoardId, item_name: $myItemName, column_values: $myColumnValues) {id}}”,<br />\n“variables”: {<br />\n“myBoardId”: 2128789134,<br />\n“myItemName”: “111”,<br />\n“myColumnValues”: “{“state”:“Released”,“release_date”:“2022-02-12”}”<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 80680,
+      "postNumber": 4,
+      "createdAt": "2022-03-23T12:52:57.896Z",
+      "author": "Perk (Sean Perkins)",
+      "cookedHtml": "<p>Sorry, the escape characters from the payload are getting removed from the post so attaching an image as well.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/3/3044340787c1049d23ad7fc908d7f9eaa8bba79f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/3/3044340787c1049d23ad7fc908d7f9eaa8bba79f.png\" alt=\"image\" width=\"690\" height=\"77\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1520×171 5.35 KB</span>\n</div></a></div><p></p>"
+    }
+  ]
+}

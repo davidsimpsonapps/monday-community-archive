@@ -1,0 +1,34 @@
+{
+  "id": 114205,
+  "title": "compound if formula  ",
+  "slug": "compound-if-formula",
+  "categoryId": 6,
+  "tagIds": [
+    13,
+    108,
+    303
+  ],
+  "createdAt": "2025-05-07T12:51:52.517Z",
+  "lastPostedAt": "2025-05-07T13:02:21.223Z",
+  "postsCount": 2,
+  "excerpt": "Hi \nI wrote the formula below to checks the status of moderation based on the ‘Moderation Completed’ and ‘Moderation Due Date’ columns. If ‘Moderation Completed’ is ‘Yes’, it returns ‘Completed’. If the due date is past &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 17,
+  "posts": [
+    {
+      "id": 228886,
+      "postNumber": 1,
+      "createdAt": "2025-05-07T12:51:52.586Z",
+      "author": "Kabas (Kabas)",
+      "cookedHtml": "<p>Hi<br />\nI wrote the formula below to checks the status of moderation based on the ‘Moderation Completed’ and ‘Moderation Due Date’ columns. If ‘Moderation Completed’ is ‘Yes’, it returns ‘Completed’. If the due date is past and ‘Moderation Completed’ is ‘No’, it returns ‘Overdue’. If the due date is today or in the future and ‘Moderation Completed’ is ‘No’, it returns ‘Date yet to come’. Otherwise, it returns nothing.<br />\nIt currently returns invalid formula, I really appreciate it if anyone could help me understand why it is not working and how to fix it, thank you<br />\nIF({Moderation Completed} = “Yes”, “Completed”,<br />\nIF(AND(FORMAT_DATE({Moderation Due Date}, “DD/MM/YYYY”) &lt; FORMAT_DATE(TODAY(), “DD/MM/YYYY”),{Moderation Completed}=“No”), “Overdue”, IF(AND (FORMAT_DATE({Moderation Due Date}, “DD/MM/YYYY”) &gt;= FORMAT_DATE(TODAY(), “DD/MM/YYYY”),{Moderation Completed}=“No”), “Date yet to come”, “” )))</p>"
+    },
+    {
+      "id": 228893,
+      "postNumber": 2,
+      "createdAt": "2025-05-07T13:02:21.223Z",
+      "author": "hellotimi (David Kalu (Formula Pro - Use formula column results in automations!))",
+      "cookedHtml": "<p>The issue with your formula appears to be in how you’re comparing dates. When comparing dates in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> formulas, you should use the actual date values rather than formatting them as strings first.</p>\n<p>Try this:</p>\n<pre><code class=\"lang-auto\">IF({Moderation Completed} = \"Yes\", \"Completed\",\n  IF(AND({Moderation Due Date} &lt; TODAY(), {Moderation Completed} = \"No\"), \"Overdue\", \n    IF(AND({Moderation Due Date} &gt;= TODAY(), {Moderation Completed} = \"No\"), \"Date yet to come\", \"\")))\n</code></pre>\n<p>The key changes to your formula:</p>\n<ol>\n<li>\n<p>Removed the <code>FORMAT_DATE()</code> functions - comparing formatted date strings can lead to incorrect results</p>\n</li>\n<li>\n<p>Directly compared the date values using <code>&lt;</code> and <code>&gt;=</code> operators</p>\n</li>\n<li>\n<p>Ensured all parentheses are properly matched</p>\n</li>\n</ol>\n<p>Let me know if that helps.</p>"
+    }
+  ]
+}

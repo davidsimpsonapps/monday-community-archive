@@ -1,0 +1,58 @@
+{
+  "id": 3934,
+  "title": "How to format the JSON string to match the \"try-it-yourself\" query I've made? API v2",
+  "slug": "how-to-format-the-json-string-to-match-the-try-it-yourself-query-ive-made-api-v2",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2020-01-15T13:13:10.198Z",
+  "lastPostedAt": "2021-02-25T14:32:50.665Z",
+  "postsCount": 6,
+  "excerpt": "Hello! \nI have written the following mutation on the “try-it-yourself” page, and it works flawlessly. \nmutation {\n  change_multiple_column_values(board_id: XXXXXXXXX, item_id: XXXXXXXXX, column_values: &quot;{\\&quot;text\\&quot;:\\&quot;test1&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2787,
+  "posts": [
+    {
+      "id": 10401,
+      "postNumber": 1,
+      "createdAt": "2020-01-15T13:13:10.265Z",
+      "author": "Andy_Monday (Andreas Gustafsson)",
+      "cookedHtml": "<p>Hello!</p>\n<p>I have written the following mutation on the “try-it-yourself” page, and it works flawlessly.</p>\n<pre><code>mutation {\n  change_multiple_column_values(board_id: XXXXXXXXX, item_id: XXXXXXXXX, column_values: \"{\\\"text\\\":\\\"test1\\\", \\\"numbers7\\\":\\\"0\\\", \\\"date\\\" : { \\\"date\\\" : \\\"1955-10-28\\\" }}\") {\n    id\n  }\n}\n</code></pre>\n<p>However, the next step in the process for me is to integrate this into Java code. I have managed to post the data with authentication and so on which works fine. However I struggle greatly with formatting the body correctly so that the above mentioned query gets executed. Could anyone kindly help me as I am at a loss how to actually format it correctly? At the moment the error code I get by the post is code 400.</p>\n<p>I have tried many different variations to no avail with my latest try being the following:</p>\n<p>String body = “{ \"query\" : mutation { change_multiple_column_values(board_id: XXXXXXXX, item_id: XXXXXXXX, column_values: {\"text\":\"test1\", \"numbers7\":\"0\", \"date\" : { \"date\" : \"1955-10-08\" }}\") { id }}}”;</p>\n<p>Do note that the change in date is intentional so that I could see any change on Monday in case that my query worked.</p>\n<p>Thank you in advance for your help.</p>"
+    },
+    {
+      "id": 10403,
+      "postNumber": 2,
+      "createdAt": "2020-01-15T13:47:40.586Z",
+      "author": "Alex.M (Alexander Macon)",
+      "cookedHtml": "<p>I’m new here so I may be mistaken, but I think I was just having the same issue with formatting.<br />\nIn your body it you have quotes around the data types i.e {“text”:“test1”} should be {text:“test1”} and so on for each data type. Be sure to check the data type each pair needs, I believe numbers7 would need an int not a string.</p>\n<blockquote>\n<p>String body = “{ query: mutation { change_multiple_column_values(board_id: XXXXXXXX, item_id: XXXXXXXX, column_values: {text:“test1”, numbers7:0, date: { date : “1955-10-08” }}) { id }}}\";</p>\n</blockquote>"
+    },
+    {
+      "id": 10417,
+      "postNumber": 3,
+      "createdAt": "2020-01-15T19:49:22.000Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey Andreas and Alexander,</p>\n<p>Alex is right on the mark – each column type needs a different format of data.</p>\n<p>On top of that, you need to ensure that your program is sending the correct strings to the API. From your example, it looks like your quotes are not paired correctly. I would suggest escaping inner quotes so they don’t get interpreted literally as the end of a string:</p>\n<p><code>String body = \"{ \\\"query\\\" : \\\"mutation ... \\\" }\"</code></p>\n<p>Let me know if that helps.</p>"
+    },
+    {
+      "id": 10499,
+      "postNumber": 4,
+      "createdAt": "2020-01-17T08:11:15.922Z",
+      "author": "Andy_Monday (Andreas Gustafsson)",
+      "cookedHtml": "<p>Hey and thanks for the help <a class=\"mention\" href=\"/u/alex.m\">@Alex.M</a> and <a class=\"mention\" href=\"/u/dipro\">@dipro</a></p>\n<p>I am testing with your advice right now and have the following body. However I haven’t managed to make it work as of yet. In case you see any mistakes please do not hesitate to say so. I will update with a new post if I manage to get it going.</p>\n<pre><code>    String body = \"{ \\\"query\\\": \\\"mutation { change_multiple_column_values(board_id: XXXX, item_id: XXXX, column_values: {text:\\\"test1\\\", numbers7:100, date: { date : \\\"1999-01-01\\\" }}) { id }}\\\"}\";\n</code></pre>\n<p>Kind regards.</p>"
+    },
+    {
+      "id": 10502,
+      "postNumber": 5,
+      "createdAt": "2020-01-17T11:06:19.215Z",
+      "author": "Andy_Monday (Andreas Gustafsson)",
+      "cookedHtml": "<p>I got it to work with the following string. Thanks for the help once more!</p>\n<pre><code>    String q = \"\\\"mutation {change_multiple_column_values(board_id: XXXX, item_id: XXXX, column_values: \\\\\\\"{\\\\\\\\\\\\\\\"text\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"test1\\\\\\\\\\\\\\\", \\\\\\\\\\\\\\\"numbers7\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"10\\\\\\\\\\\\\\\", \\\\\\\\\\\\\\\"date\\\\\\\\\\\\\\\" : { \\\\\\\\\\\\\\\"date\\\\\\\\\\\\\\\" : \\\\\\\\\\\\\\\"1999-10-18\\\\\\\\\\\\\\\" }}\\\\\\\") {id}}\\\"\";\n    String v = \"null\";\n    String body = String.format(\"{\\\"query\\\": %1$s, \\\"variables\\\": %2$s}\", q, v);\n</code></pre>\n<p>It is far from beautiful, but it works well and can be wrapped to not be an eyesore.</p>"
+    },
+    {
+      "id": 42362,
+      "postNumber": 6,
+      "createdAt": "2021-02-25T14:32:50.665Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

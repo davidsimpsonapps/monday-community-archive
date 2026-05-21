@@ -1,0 +1,79 @@
+{
+  "id": 49489,
+  "title": "Monday App Integration Quickstart, \"Failed to load options\"",
+  "slug": "monday-app-integration-quickstart-failed-to-load-options",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    208,
+    209,
+    249,
+    351
+  ],
+  "createdAt": "2023-01-18T17:09:34.686Z",
+  "lastPostedAt": "2023-10-01T04:59:52.508Z",
+  "postsCount": 8,
+  "excerpt": "Hey there, Monday Apps novice here… \n  \nI completed the quickstart guide for creating a custom Monday App Integration Feature, but when trying to add the example integration (“When column changes transform it [to upper c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 2174,
+  "posts": [
+    {
+      "id": 111197,
+      "postNumber": 1,
+      "createdAt": "2023-01-18T17:09:34.778Z",
+      "author": "sammyl (Sammy L)",
+      "cookedHtml": "<p>Hey there, Monday Apps novice here…</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/2a88e5bda0c40a2f25a913f9782f4094d8ad7969.png\" title=\"Screenshot 2023-01-18 at 2.07.12 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/2a88e5bda0c40a2f25a913f9782f4094d8ad7969_2_690x137.png\" alt=\"Screenshot 2023-01-18 at 2.07.12 PM\" width=\"690\" height=\"137\" /><div class=\"meta\">\n<span class=\"filename\">Screenshot 2023-01-18 at 2.07.12 PM</span><span class=\"informations\">1862×370 26.4 KB</span>\n</div></a></div><p></p>\n<p>I completed the <a href=\"https://developer.monday.com/apps/docs/quickstart-integration\" rel=\"noopener nofollow ugc\">quickstart guide</a> for creating a custom Monday App Integration Feature, but when trying to add the example integration (“When column changes transform it [to upper case/to lower case] into text column”) I get a “Failed to load options” message.</p>\n<p>So far, I’ve tried uninstalling and reinstalling the dev environment using the <a href=\"https://developer.monday.com/apps/docs/quickstart-integration\" rel=\"noopener nofollow ugc\">Monday quickstart guide</a> and using the <a href=\"https://github.com/mondaycom/welcome-apps/tree/master/apps/quickstart-integrations\" rel=\"noopener nofollow ugc\">Monday example apps GitHub</a>, installing all dependencies, and stopping and restarting the Node server, but have not been able to resolve the issue.</p>\n<p>It’s possible I’m missing something obvious but cannot quite put my finger on what.</p>"
+    },
+    {
+      "id": 111438,
+      "postNumber": 2,
+      "createdAt": "2023-01-19T18:07:20.812Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey! Here are some things to try:</p>\n<p><span class=\"hashtag\">#1</span> - Check if your URL is correct. If you restart the server, you’ll get a new tunnel URL. You need to keep that updated in your app config!</p>\n<p><span class=\"hashtag\">#2</span> - No useful errors on the client side. But are you getting any errors on the server side?</p>\n<p><span class=\"hashtag\">#3</span> - It’ll be useful to know if your server even gets the HTTP request. To do this, you can try logging each request in the console. Here’s how:</p>\n<p>Start by adding a middleware function to <a href=\"https://github.com/mondaycom/welcome-apps/blob/08584f8f41f395523d005567ad8146fe80a93edb/apps/quickstart-integrations/src/routes/monday.js#L4\">src/routes/monday.js</a> to log the request, so you can see what’s going on.</p>\n<p>Your function can look like this:</p>\n<pre><code class=\"lang-auto\">async function loggerMiddleware (req, res, next) {\n   let returnedData = await req.json()\n   console.log(returnedData); // you may need to \n   next();\n}\n</code></pre>\n<p>And then you’ll have to attach this middleware to each of your routes. <a href=\"https://github.com/mondaycom/welcome-apps/blob/08584f8f41f395523d005567ad8146fe80a93edb/apps/quickstart-integrations/src/routes/monday.js#L5-L6\">Change lines 5-6 to this:</a></p>\n<pre><code class=\"lang-auto\">router.post('/monday/execute_action', loggerMiddleware, authenticationMiddleware, mondayController.executeAction);\nrouter.post('/monday/get_remote_list_options', loggerMiddleware, authenticationMiddleware, mondayController.getRemoteListOptions);\n</code></pre>"
+    },
+    {
+      "id": 112689,
+      "postNumber": 3,
+      "createdAt": "2023-01-29T01:32:28.521Z",
+      "author": "zsmidt (Peter Smidt)",
+      "cookedHtml": "<p>I am a noob. I had the same issue.  Here are some screenshots they may help anybody else with the same issue in the future:</p>\n<ol>\n<li>\n<p>Create your new Integration feature<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/e/e771e2b1ebe629983cdcab311761bbd7a4bc9097.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/e/e771e2b1ebe629983cdcab311761bbd7a4bc9097_2_690x298.png\" alt=\"image\" width=\"690\" height=\"298\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">700×303 49.1 KB</span>\n</div></a></div><p></p>\n</li>\n<li>\n<p>Copy the given npx command to your server command line</p>\n</li>\n<li>\n<p>Copy the tunnel URL when the npx command completes (leave the command window open, the command is now running as a server)<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/129aad72a68a405c0438f8410346c4bb773591e1.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/129aad72a68a405c0438f8410346c4bb773591e1.png\" alt=\"image\" width=\"684\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">690×504 6.88 KB</span>\n</div></a></div><p></p>\n</li>\n<li>\n<p>Paste the tunnel URL to your “Feature Details” as your base URL.<br />\n(Initially I pasted <a href=\"http://localhost\" rel=\"noopener nofollow ugc\">http://localhost</a>:xxxx; this will not work and was one thing I was doing wrong)<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5711648252cec09c2ee207de2694e635409cab31.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/5711648252cec09c2ee207de2694e635409cab31_2_660x500.png\" alt=\"image\" width=\"660\" height=\"500\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">698×528 57 KB</span>\n</div></a></div><p></p>\n</li>\n<li>\n<p>Test that the tunnel URL is working in your browser<br />\n(If it does not work try next step, then try this step again)<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/a/aa9be0c670208557348855ea3a23133b4fa67b37.png\" alt=\"image\" width=\"594\" height=\"223\" /></p>\n</li>\n<li>\n<p>Try creating the integration in a board on Monday<br />\n(If it doesn’t work try it again.  I had to try this twice before it started to work)<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/df29af989390765bafb129f0fedb8f431c4d579a.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/d/df29af989390765bafb129f0fedb8f431c4d579a.png\" alt=\"image\" width=\"690\" height=\"158\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1047×241 4.2 KB</span>\n</div></a></div><p></p>\n</li>\n</ol>"
+    },
+    {
+      "id": 112715,
+      "postNumber": 4,
+      "createdAt": "2023-01-29T08:26:11.745Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you so much <a class=\"mention\" href=\"/u/zsmidt\">@zsmidt</a> for that explanation <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Hello <a class=\"mention\" href=\"/u/sammyl\">@sammyl</a>, does that, or what Dipro suggested help?</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 114232,
+      "postNumber": 5,
+      "createdAt": "2023-02-07T05:53:22.723Z",
+      "author": "DamcoSolutions ( Neelam Bhatt)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/sammyl\">@sammyl</a>,</p>\n<p>Welcome to the monday com community.</p>\n<p>It is likely that you may have not followed all the steps when creating a custom monday app integration and that’s why you are getting ‘failed to load options’. I would suggest you get in touch with certified monday partners and seek help regarding <strong><a href=\"https://www.damcogroup.com/monday-com-integrations\" rel=\"noopener nofollow ugc\">monday.com integrations</a></strong>. Since experts are well-versed with integration recipes, they can help you build a custom integration in no time.</p>\n<p>Regards<br />\nNeelam B<br />\n<strong><a href=\"https://www.damcogroup.com/\" rel=\"noopener nofollow ugc\">Damco Solutions</a></strong><br />\nPhone: +1 609 632 0350 | Email : <a href=\"mailto:info@damcogroup.com\">info@damcogroup.com</a></p>"
+    },
+    {
+      "id": 114601,
+      "postNumber": 6,
+      "createdAt": "2023-02-08T19:30:36.018Z",
+      "author": "alessandra (Alessandra)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sammyl\">@sammyl</a>,</p>\n<p>I hope you’ve found the solution that works for you. Please do not hesitate to write in again if you continue to see any issues.</p>"
+    },
+    {
+      "id": 146050,
+      "postNumber": 7,
+      "createdAt": "2023-09-28T16:28:33.455Z",
+      "author": "Soroh (Soroh Donn)",
+      "cookedHtml": "<p>I’m having this issue with the Jotform integration. Jotform told me that since I am on the enterprise plan, the integration won’t work because it doesn’t point to enterprise servers. Does anyone know if there is a workaround to this? I’m receiving an error “failed to load options” when trying to select the Jotform form to link <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> to.</p>"
+    },
+    {
+      "id": 146269,
+      "postNumber": 8,
+      "createdAt": "2023-10-01T04:59:52.508Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there,</p>\n<p>In this case, we will need you to please contact us with the form here: <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962</a>. Please include all the relevant information, including what you were told by Jotform’s team.</p>\n<p>We can take a look from there <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Looking forward to hearing from you via email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

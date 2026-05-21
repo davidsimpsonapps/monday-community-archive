@@ -1,0 +1,75 @@
+{
+  "id": 21835,
+  "title": "Compare Dates in an If Statement (Calculating offset quarter)",
+  "slug": "compare-dates-in-an-if-statement-calculating-offset-quarter",
+  "categoryId": 5,
+  "tagIds": [
+    104,
+    108
+  ],
+  "createdAt": "2021-06-30T11:43:25.661Z",
+  "lastPostedAt": "2024-06-24T22:48:23.273Z",
+  "postsCount": 8,
+  "excerpt": "I’d like to use an If Statement in a Formula field to check if a date falls within a quarter.  Based on the range, I would note Q1, Q2, etc.  Is this possible?  I haven’t been able to compare a date yet.  May not be poss&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 5112,
+  "posts": [
+    {
+      "id": 56639,
+      "postNumber": 1,
+      "createdAt": "2021-06-30T11:43:25.804Z",
+      "author": "BruceB (Bruce Baldwin)",
+      "cookedHtml": "<p>I’d like to use an If Statement in a Formula field to check if a date falls within a quarter.  Based on the range, I would note Q1, Q2, etc.  Is this possible?  I haven’t been able to compare a date yet.  May not be possible or I just can’t find the correct syntax.  It does look like I can trim to capture the month, so that may work.  Ideally I could say IF({Request Date}&gt;=1/1/2021 and &lt;= 3/31/2021,“Q1”, Next check)</p>"
+    },
+    {
+      "id": 56651,
+      "postNumber": 2,
+      "createdAt": "2021-06-30T12:39:56.652Z",
+      "author": "timlittletech (Tim Little)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/bruceb\">@BruceB</a></p>\n<p>I think you are on the right track with calculating the month and determining if that falls in the correct range. I created 2 formula columns</p>\n<ol>\n<li>calculates month of the date Formula: <code>MONTH({Date 2})</code>\n</li>\n<li>takes month and calculates the Quarter that month is in. Formula: <code>IF({Month}&lt;=3,\"Q1\",IF(AND({Month}&gt;3,{Month}&lt;=6),\"Q2\",IF(AND({Month}&gt;6,{Month}&lt;=9),\"Q3\",\"Q4\")))</code>\n</li>\n</ol>\n<p>This seemed to work for me. Although if you have blank dates, then I guess you’d have to add a 4th IF statement for Q4, I was just lazy and said if its not any of the other Qs then it must be Q4.</p>\n<p>Another option is to create a bar chart of your date column, and group by Quarter. That is much simpler, but you also lose the ability to see which exact items are in which quarter.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/b/b1018ce1f152e16898fa1c003893893a1c39c12d.jpeg\" title=\"Screen Shot 2021-06-30 at 8.35.29 AM\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/b/b1018ce1f152e16898fa1c003893893a1c39c12d_2_690x367.jpeg\" alt=\"Screen Shot 2021-06-30 at 8.35.29 AM\" width=\"690\" height=\"367\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2021-06-30 at 8.35.29 AM</span><span class=\"informations\">2860×1524 207 KB</span>\n</div></a></div><p></p>\n<p>Hope that helps!</p>"
+    },
+    {
+      "id": 56655,
+      "postNumber": 3,
+      "createdAt": "2021-06-30T12:47:57.812Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/bruceb\">@BruceB</a>,</p>\n<p>Another alternative will return the quarter directly:</p>\n<pre><code>FORMAT_DATE({Date},\"Q\")\n</code></pre>\n<p>If you want the “Q” in front:</p>\n<pre><code>IF(FORMAT_DATE({Date},\"Q\")&lt;&gt;\"\",\"Q\",\"\") &amp; FORMAT_DATE({Date},\"Q\")</code></pre>"
+    },
+    {
+      "id": 56656,
+      "postNumber": 4,
+      "createdAt": "2021-06-30T12:51:22.173Z",
+      "author": "BruceB (Bruce Baldwin)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/jcorrell/48/10443_2.png\" class=\"avatar\" /> JCorrell:</div>\n<blockquote>\n<p><code>IF(FORMAT_DATE({Date},\"Q\")&lt;&gt;\"\",\"Q\",\"\") &amp; FORMAT_DATE({Date},\"Q\")</code></p>\n</blockquote>\n</aside>\n<p>Thanks.  That’s a bit cleaner.  It looks like it determines Q base on calendar year.  What if you want to use your company’s fiscal year?  Ours begins on Nov 1.</p>"
+    },
+    {
+      "id": 56673,
+      "postNumber": 5,
+      "createdAt": "2021-06-30T16:26:09.088Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/bruceb\">@BruceB</a>,</p>\n<p>That’s a little more complicated…</p>\n<p>If you are sure that it will never be blank:</p>\n<pre><code>\"Q\" &amp; ROUNDDOWN( DIVIDE( MOD( MONTH({Date})+1, 12), 3)+1, 0)\n</code></pre>\n<p>Otherwise:</p>\n<pre><code>IF({Date}&lt;&gt;\"\", \"Q\" &amp; ROUNDDOWN( DIVIDE( MOD( MONTH(IF({Date}&lt;&gt;\"\",{Date},1))+1,12),3)+1,0),\"\")</code></pre>"
+    },
+    {
+      "id": 56677,
+      "postNumber": 6,
+      "createdAt": "2021-06-30T17:11:28.465Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/bruceb\">@BruceB</a>,</p>\n<p>To answer your original question… probably the simplest way to compare date column values to a constant, put the constants in quotes and YYYY-MM-DD format. Like this:</p>\n<pre><code>IF({Date}&lt;\"2021-01-15\", \"Date is Before 1/15/2021\", \"Date is on or after 1/15/2021\")</code></pre>"
+    },
+    {
+      "id": 62971,
+      "postNumber": 7,
+      "createdAt": "2021-09-07T22:29:46.458Z",
+      "author": "jennap (Jenna)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/bruceb\">@BruceB</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=10\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>It looks like Jcorrell may have answered your question! If you still need more help with the formula, let us know and we’d be happy to continue assisting <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Otherwise, please remember to mark the answer as the “solution” to close out the topic and help future readers find the answer quickly!</p>\n<p>Thanks,<br />\nJenna</p>"
+    },
+    {
+      "id": 190227,
+      "postNumber": 8,
+      "createdAt": "2024-06-24T22:48:23.273Z",
+      "author": "Fab_PM (Erika)",
+      "cookedHtml": "<p>Hi! This formula is almost exactly what I need for my board, however, our fiscal year begins in July. Could someone assist with the correct formula to use? And maybe a small breakdown on how you came to the conclusion - been at it for about 4+ hours tryna crack the code! Thanks</p>\n<p>Running into the issue of Q4 stating Q0 and I am using a due date column to reference the timing, would a timeline be easier in this case! Please help, my brain is fried at this point!</p>"
+    }
+  ]
+}

@@ -1,0 +1,201 @@
+{
+  "id": 67218,
+  "title": "Monetization and upgrading/downgrading plans",
+  "slug": "monetization-and-upgrading-downgrading-plans",
+  "categoryId": 8,
+  "tagIds": [
+    203,
+    249
+  ],
+  "createdAt": "2023-09-28T09:53:16.409Z",
+  "lastPostedAt": "2025-02-28T09:27:49.340Z",
+  "postsCount": 19,
+  "excerpt": "Hi everyone. \nI would like to know your opinion about the upgrading/downgrading process of a plan under the monetization system. \nFirst question \nAs far as I know, when a user upgrades to a higher plan, monday applies a &hellip;",
+  "solvedPostId": null,
+  "likeCount": 15,
+  "views": 949,
+  "posts": [
+    {
+      "id": 145977,
+      "postNumber": 1,
+      "createdAt": "2023-09-28T09:53:16.487Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Hi everyone.<br />\nI would like to know your opinion about the upgrading/downgrading process of a plan under the monetization system.</p>\n<p><strong>First question</strong><br />\nAs far as I know, when a user upgrades to a higher plan, monday applies a pro-rata price and the plan is immediately activated.<br />\nSimilarly, when a user downgrades to a lower plan, the plan is immediately activated, but no refund is issued.</p>\n<p>If this is the case, I think the process is not correct.<br />\nIf no refund is issued, at least the lower plan should be activated at the subscription renewal.</p>\n<p><strong>Second question</strong><br />\nAs said, when a user upgrades to a higher plan, a pro-rata price is applied.<br />\nThis is correct if your subscription model is based entirely on the time.<br />\nBut that’s not correct with other models.</p>\n<p>For example, in General Caster the small plan offers 5k ops/month (70 USD) and the medium plan offers 25k ops/month (140 USD).<br />\nIf a user with the small plan consumes all the available ops on the first day and then upgrades to the medium plan, he receives a refund of about 68 USD for the unused period of the small plan and he basically pays 70 + 140 - 68 = 142 USD.<br />\nThe user should pay for the small and the medium plan entirely (210 USD), without receiving any refund, as he basically consumed all the resources offered by the small plan, regardless of the time.</p>\n<p>If your subscription model is based on the consume of some kind of resource (for example, operations/month as in General Caster), I think that the subscription should restart and no refund should be issued.</p>\n<p>What do you think?</p>"
+    },
+    {
+      "id": 145990,
+      "postNumber": 2,
+      "createdAt": "2023-09-28T10:20:40.312Z",
+      "author": "samicaracand (Sami Caracand (DocuGen))",
+      "cookedHtml": "<p>Spot on! This is exactly the dilemma we are facing at DocuGen where our pricing is based on consumption. Unfortunately this is preventing us from moving fully to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> Monetization.</p>\n<p>I’ve discussed this with the folks in Monetization over a long call two months ago and they promised to look at it. Basically what we want is the ability to sell feature-based tiers (‘plans’) along with consumption quotas. Think of Zapier or Mailchimp – exactly the same. Alas, not possible in the Marketplace at the moment.</p>"
+    },
+    {
+      "id": 146004,
+      "postNumber": 3,
+      "createdAt": "2023-09-28T11:18:19.056Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>My understanding from what I’ve seen in the invoice data when an account upgrades</p>\n<p>Original plan, unused duration is refunded.<br />\n<strong>New plan is pro-rated until the renewal date of the original plan.</strong></p>\n<p>This results in three transactions total: one for the original plan, a refund for the remainder of the original plan, and a discounted new plan.</p>\n<p>In this case, when upgrading, carry over the used ops from the original plan to the new plan rather than zeroing them out, but increase the quota. A customer could upgrade late in the period and get the new quota and not pay as much as they should. This assumes that the user will then use the remaining quota up before the renewal date. Entirely possible of course, but would require intent.</p>\n<p>My understanding on down grades is that the platform is not supposed to activate the downgraded plan until the renewal date, and rebilling happens at the new plan rate. However, I do not have hard evidence this is how is actually behaving.</p>"
+    },
+    {
+      "id": 146025,
+      "postNumber": 4,
+      "createdAt": "2023-09-28T12:39:16.335Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p>My understanding on down grades is that the platform is not supposed to activate the downgraded plan until the renewal date, and rebilling happens at the new plan rate. However, I do not have hard evidence this is how is actually behaving.</p>\n</blockquote>\n</aside>\n<p>I confirm that the <code>downgraded_plan_id</code> is passed to any requests as soon as the user downgrades.</p>"
+    },
+    {
+      "id": 146038,
+      "postNumber": 5,
+      "createdAt": "2023-09-28T14:36:08.221Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> can you confirm this is the expected behavior? Customers who downgrade are immediately downgraded without any prorated refund of the higher plan? I would think if no refund then the effective date would be the end of the period of the higher plan. Seems like a bug to me.</p>\n<p>In this case I would think a WorkAround™ would be this pseudocode</p>\n<pre><code class=\"lang-auto\">if (incomingPlanOps &lt; currentPlanOps &amp;&amp; isFuture(currentRenewalDate)) then doNothing\n</code></pre>\n<p>Basically, ignore monday until the old period expires?</p>\n<p>All these gotchas are one reason I do very little with the monetization webhooks directly and instead evaluate what to do based on the subscription object. (Which for trial started and ended I have to replace with new objects that are correct because the webhooks can send bogus values)</p>"
+    },
+    {
+      "id": 146280,
+      "postNumber": 6,
+      "createdAt": "2023-10-01T05:38:31.999Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking with Hen</p>"
+    },
+    {
+      "id": 146286,
+      "postNumber": 7,
+      "createdAt": "2023-10-01T08:33:26.719Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1696159991625719\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 146334,
+      "postNumber": 8,
+      "createdAt": "2023-10-02T04:31:38.828Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello everyone,</p>\n<p>What <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> said is correct. When an account downgrades, they are immediately downgraded without a refund.</p>\n<p>Having said that, I have shared your feedback with the team. I think your use cases are very interesting and of course, all feedback is welcome and helps us improve, so thank you for sharing this.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146338,
+      "postNumber": 9,
+      "createdAt": "2023-10-02T05:36:10.664Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> Cody:</div>\n<blockquote>\n<p>In this case I would think a WorkAround™ would be this pseudocode</p>\n<pre><code class=\"lang-auto\">if (incomingPlanOps &lt; currentPlanOps &amp;&amp; isFuture(currentRenewalDate)) then doNothing\n</code></pre>\n<p>Basically, ignore monday until the old period expires?</p>\n</blockquote>\n</aside>\n<p>Nice suggestion, <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>.<br />\nAs we are moving entirely on the monetization system, this workaround, unfortunately, has a downside.<br />\nWe also need to manage a subscription system on our side, while relying entirely on monday would let us eliminate the functionality on our servers.</p>"
+    },
+    {
+      "id": 146340,
+      "postNumber": 10,
+      "createdAt": "2023-10-02T06:11:39.712Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 146382,
+      "postNumber": 11,
+      "createdAt": "2023-10-02T11:46:31.033Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>True, but its not like you can get away from of having a database of installs, and keeping track of their subscriptions is likely a good idea still since there is no easy way to look it all up by API (short of API calls for every account).</p>"
+    },
+    {
+      "id": 146472,
+      "postNumber": 12,
+      "createdAt": "2023-10-02T22:57:56.454Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Thank you.</p>\n<p><em>Another question, if the customer downgrades from paid plan 100 to paid plan 50, are they charged for paid plan 50 at the time of downgrade or not until the original paid plan 100 term ends?</em></p>\n<p>If the customer has paid, they should get what they’ve paid for until the next renewal date. (otherwise, from a customer perspective, their money was taken for a full month or year but they did not get the features for the full month or year).</p>\n<p>I’m somewhat baffled as to the thinking of why it would downgrade immediately without refund.  I am curious to hear the reasoning behind that choice. I’ve never seen a service downgrade immediately without crediting and almost universally services downgrade at expiration.</p>\n<p>I bring this up, because if customers don’t understand the app developer is not setting this policy, it reflects on us.</p>"
+    },
+    {
+      "id": 146509,
+      "postNumber": 13,
+      "createdAt": "2023-10-03T05:05:29.654Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C04NAQWQSQM/p1696320318075899\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 146745,
+      "postNumber": 15,
+      "createdAt": "2023-10-04T04:58:55.776Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group quote-post-not-found\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>My new cycle starts now on the 15th. And I would pay $50 immediately to start the new basic plan, but, in this case, I will pay nothing, because I still have the $50 unused from the Pro plan, so those $50 work as “credit” to pay for my new Basic plan.</p>\n</blockquote>\n</aside>\n<p>No, it doesn’t.<br />\nThe period doesn’t reset.<br />\nHere’s a sample webhook we receive on downgrade.</p>\n<pre><code class=\"lang-auto\">(object) array(\n  'type' =&gt; 'app_subscription_changed',\n  'data' =&gt;\n (object) array(\n    'app_id' =&gt; 8031,\n    'user_id' =&gt; 000,\n    'user_email' =&gt; 'xxx@xxx.com',\n    'user_name' =&gt; 'xxx xxxx',\n    'user_cluster' =&gt; 'project_management',\n    'account_tier' =&gt; 'enterprise',\n    'account_max_users' =&gt; 15,\n    'account_id' =&gt; 000,\n    'account_name' =&gt; 'xxx',\n    'account_slug' =&gt; 'xxx',\n    'version_data' =&gt;\n   (object) array(\n      'major' =&gt; 2,\n      'minor' =&gt; 2,\n      'patch' =&gt; 0,\n      'type' =&gt; 'minor',\n   ),\n    'timestamp' =&gt; '2023-09-28T06:35:53.886+00:00',\n    'subscription' =&gt;\n   (object) array(\n      'plan_id' =&gt; 'gc_plan_s',\n      'renewal_date' =&gt; '2023-10-07T00:00:00+00:00',\n      'is_trial' =&gt; false,\n      'billing_period' =&gt; 'monthly',\n      'days_left' =&gt; 5,\n      'pricing_version' =&gt; 1,\n   ),\n    'user_country' =&gt; 'DE',\n ),\n)\n</code></pre>\n<p>As you can see in the <code>timestamp</code> and <code>subscription.renewal_date</code> fields, the period doesn’t restart.<br />\nThe user downgraded from <code>gc_plan_m</code> (140 USD) to <code>gc_plan_s</code> (70 USD).<br />\nI agree he doesn’t pay anything for the downgrade, but the <code>gc_plan_s</code> is applied immediately and the period doesn’t reset.</p>"
+    },
+    {
+      "id": 146762,
+      "postNumber": 16,
+      "createdAt": "2023-10-04T07:27:43.204Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/rob\">@rob</a></p>\n<p>I deleted the other post just to avoid confusion since I had checked with the team prior to sending it but it seems like the information I got might not have been accurate.</p>\n<p>I am sorry about that.</p>\n<p>I asked our monetization team to check this again so that I can give you an accurate answer.</p>\n<p>Again sorry for the confusion.</p>\n<p>I will let you know as soon as I hear back from them.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 146763,
+      "postNumber": 17,
+      "createdAt": "2023-10-04T07:27:55.064Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking with anat Katz (DOW) <a href=\"https://monday.slack.com/archives/D04C2P0QPM2/p1696415133449799\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 147548,
+      "postNumber": 18,
+      "createdAt": "2023-10-09T13:09:47.326Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/rob\">@rob</a>,</p>\n<p>I checked again with the team.</p>\n<ul>\n<li>If there is a downgrade monthly-&gt;monthly or yearly-&gt;yearly, the renewal date does not change.</li>\n<li>If there is a downgrade monthly-&gt;yearly or yearly-&gt;monthly, the renewal date changes to the date of the downgrade.</li>\n</ul>\n<p>Sorry again about the miscommunication that lead to the inaccurate information of the other post.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 147550,
+      "postNumber": 19,
+      "createdAt": "2023-10-09T13:24:17.812Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>Thanks for your feedback, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>.<br />\nIs there a planned fix to this behavior?</p>"
+    },
+    {
+      "id": 147652,
+      "postNumber": 20,
+      "createdAt": "2023-10-10T04:14:59.789Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/rob\">@rob</a> the flow is being reviewed but nothing final yet (or ETAs).</p>\n<p>We will announce any changes on this, of course <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 147700,
+      "postNumber": 21,
+      "createdAt": "2023-10-10T11:54:07.073Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I’m not 100% sure anything needs fixing as long as any credit for unused portion of a more expensive plan gets carried forward for the customer to use for future billing on the app. That was my primary concern</p>\n<p>However, what I would like to see is a  “details” object on app_subscription_changed webhooks that includes the details of how the billing adjustments were done - if they are purchasing quotas of usage, then getting the amounts prorated on each side of the change would let us set the new quotas accordingly.</p>\n<p>That said, ideally the customer should have a choice if the plan change takes effect immediately or at the end of the current period. Trust me, having once worked corporate IT, the amount of grief you get from accounting… makes you want to become a programmer of one of these <a href=\"https://en.wikipedia.org/wiki/Esoteric_programming_language\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Esoteric programming language - Wikipedia</a></p>"
+    },
+    {
+      "id": 147808,
+      "postNumber": 22,
+      "createdAt": "2023-10-11T05:31:05.158Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> and thank you for the feedback!</p>\n<p>It was shared with the team <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 147809,
+      "postNumber": 23,
+      "createdAt": "2023-10-11T05:31:13.688Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/5311616605\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 147827,
+      "postNumber": 24,
+      "createdAt": "2023-10-11T07:15:01.369Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/77aa72/48.png\" class=\"avatar\" /> anon29275264:</div>\n<blockquote>\n<p>I’m not 100% sure anything needs fixing as long as any credit for unused portion of a more expensive plan gets carried forward for the customer to use for future billing on the app. That was my primary concern</p>\n<p>However, what I would like to see is a “details” object on app_subscription_changed webhooks that includes the details of how the billing adjustments were done - if they are purchasing quotas of usage, then getting the amounts prorated on each side of the change would let us set the new quotas accordingly.</p>\n</blockquote>\n</aside>\n<p>+100 on this.<br />\nBalance carry over for the unused period and having the amounts shared in the webhook.</p>"
+    },
+    {
+      "id": 147838,
+      "postNumber": 25,
+      "createdAt": "2023-10-11T08:57:56.383Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 222689,
+      "postNumber": 26,
+      "createdAt": "2025-02-28T09:11:33.505Z",
+      "author": "kranthi_thoughtflow (Kranthi Kiran)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> - Is there any update on the current behaviour of downgrades?</p>\n<p>Ideally, I’d like downgrade to be applied from the next billing cycle, so that there is no need to refund anything, and customer also doesn’t feel that its unfair.</p>"
+    },
+    {
+      "id": 222691,
+      "postNumber": 27,
+      "createdAt": "2025-02-28T09:27:49.340Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>One year and a half has passed.<br />\nNo changes or fixes in sight…</p>"
+    }
+  ]
+}

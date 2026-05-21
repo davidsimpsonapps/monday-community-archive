@@ -1,0 +1,39 @@
+{
+  "id": 2626,
+  "title": "Import data from Trello using API",
+  "slug": "import-data-from-trello-using-api",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2019-10-15T04:44:03.617Z",
+  "lastPostedAt": "2021-02-25T12:23:06.300Z",
+  "postsCount": 3,
+  "excerpt": "Hi \nI’m dealing with a CSV of Trello that is too big for excel. \nTrying to instead use the API to achieve this. Is anyone familar with MondayClient, the documentation I found is not sufficient. \n\n\nAll I really need to do&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1581,
+  "posts": [
+    {
+      "id": 7073,
+      "postNumber": 1,
+      "createdAt": "2019-10-15T04:44:03.796Z",
+      "author": "hmbl4 (Henry Lawrence)",
+      "cookedHtml": "<p>Hi<br />\nI’m dealing with a CSV of Trello that is too big for excel.</p>\n<p>Trying to instead use the API to achieve this. Is anyone familar with MondayClient, the documentation I found is not sufficient.</p>\n<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/5/566e0094098fb1a3a40f5e80c38886bd8ba5775a.png\" class=\"site-icon\" width=\"32\" height=\"30\" />\n\n      <a href=\"https://pypi.org/project/monday/\" target=\"_blank\" rel=\"noopener nofollow ugc\">PyPI</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    <img src=\"https://pypi.org/static/images/twitter.abaf4b19.webp\" class=\"thumbnail\" />\n\n<h3><a href=\"https://pypi.org/project/monday/\" target=\"_blank\" rel=\"noopener nofollow ugc\">monday</a></h3>\n\n  <p>A Python client library for Monday.com</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>All I really need to do is find how to create a group, and then an item with in that group with a description and a checklist. So not too hard but having difficulties with the premade solutions provided by Monday in that respect.</p>\n<p>Thanks very much</p>"
+    },
+    {
+      "id": 7568,
+      "postNumber": 2,
+      "createdAt": "2019-10-25T18:27:01.007Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/hmbl4\">@hmbl4</a>, welcome to the community!</p>\n<p>While this isn’t an official Python library, it’s awesome that one of our users created it! In the meantime, here’s some code you can use to start doing what you’re trying to do.</p>\n<p>Here is a snippet that I’ve found super helpful for sending generic queries over to our API:</p>\n<pre><code># Function to make an API query using the string passed in \"query\"\ndef makeAPIQuery(query, variables, apiKey):\n\theaders = {\"Authorization\" : apiKey} # set headers\n\tURL = \"https://api.monday.com/v2\"\n\tdata = {\"query\" : query, \"variables\" : variables}\n\tr = requests.post(url=URL, json=data, headers=headers) # make request\n\tif r.status_code == 401:\n\t\tprint('Status: ', r.status_code)\n\t\traise PermissionError(\"Check your API key!\")\n\tif r.status_code != 200:\n\t\tprint('Status:', r.status_code)\n\t\traise ValueError(\"Check your query contents!\")\n\tif (\"errors\" in r.json().keys()):\n\t\tprint(r.json())\n\t\traise SyntaxError(\"Check your query syntax!\")\n\telse: \n\t\tresults = r.json()\n\t\treturn results\n</code></pre>\n<p>As for creating a group, you’ll want to use the “create_group” mutation:</p>\n<pre><code>mutation {\n  create_group (board_id: 20178755, group_name: \"new group\") {\n    id\n  }\n}\n</code></pre>\n<p>And this mutation for creating an item:</p>\n<pre><code>mutation {\n  create_item (board_id: 20178755, group_id: \"today\", item_name: \"Hello world\") {\n    id\n  }\n}\n</code></pre>\n<p>Finally, you can use the create_update mutation to add an update. I’d suggest putting the description and checklist inside an update:</p>\n<pre><code>mutation {\n  create_update (item_id: 20178755, body: \"This update will be added to the item\") {\n    id\n  }\n}\n</code></pre>\n<p>I hope that helps! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>"
+    },
+    {
+      "id": 42120,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T12:23:06.300Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

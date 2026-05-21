@@ -1,0 +1,131 @@
+{
+  "id": 85251,
+  "title": "Uploading files via API in Python",
+  "slug": "uploading-files-via-api-in-python",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-04-26T11:21:39.788Z",
+  "lastPostedAt": "2024-12-18T10:48:44.173Z",
+  "postsCount": 16,
+  "excerpt": "Hello all! \nThere are bits and pieces of documentation that relate to this topic, but none that explicitly show how to use this mutation from Python (that I’ve been able to find). \nBasically, I’d like the query set up so&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1761,
+  "posts": [
+    {
+      "id": 181062,
+      "postNumber": 1,
+      "createdAt": "2024-04-26T11:21:39.878Z",
+      "author": "kyleweise (Kyle Weise)",
+      "cookedHtml": "<p>Hello all!</p>\n<p>There are bits and pieces of documentation that relate to this topic, but none that explicitly show how to use <a href=\"https://developer.monday.com/api-reference/reference/assets-1#add-file-to-the-file-column\" rel=\"noopener nofollow ugc\">this mutation</a> from Python (that I’ve been able to find).</p>\n<p>Basically, I’d like the query set up so that I have dynamic variables for both <code>file</code> (the image being uploaded) and <code>item_id</code> (the Item to which the image is uploaded to).</p>\n<p>Does anyone have an example script showing how this is done? Here is what I’ve tried so far:</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\nimport os\nimport pandas as pd\nfrom pprint import pp\n\napiKey = os.getenv(\"MONDAY_API_TOKEN\")\napiUrl = \"https://api.monday.com/v2\"\nheaders = {\"Authorization\" : apiKey}\nurl = \"https://api.monday.com/v2/file\"\npayload = {'query': 'mutation add_file($file: File!, $item: ID!) {add_file_to_column (item_id: $item, column_id:\"files__1\" file: $file) { id } }'}\nvariables = {\n    'file': open('/path/to/my/file.svg', 'rb'),\n    'item_id': '6530743418'\n}\npayload['variables'] = variables\nresponse = requests.post(url, headers=headers, data=payload)\npp(response.headers)\n\n</code></pre>\n<p>Appreciate any help.</p>\n<p>Best,<br />\n-Kyle</p>"
+    },
+    {
+      "id": 181089,
+      "postNumber": 2,
+      "createdAt": "2024-04-26T14:39:29.527Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>There are two issues with your request (that I can see):</p>\n<ul>\n<li>You need to make a multipart request, which typically will require a different syntax than a regular POST request.</li>\n<li>You need to send three parts – a query, a map (which maps the ‘parts’ of your request to variables), and then the variables themselves (including the file).</li>\n</ul>\n<p>You can refer to <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-fed6a141-844b-4390-be54-00228a90293d?tab=body\">this working Postman example</a> to see how the final HTTP requests should look.</p>\n<p>From some Googling, looks like passing the <code>files</code> argument to <code> requests.post</code> will make it a multipart: <a href=\"https://stackoverflow.com/questions/12385179/how-to-send-a-multipart-form-data-with-requests-in-python\" class=\"inline-onebox\">How to send a \"multipart/form-data\" with requests in python? - Stack Overflow</a></p>\n<p>So the syntax is something like this (pardon if my Python is rusty):</p>\n<pre><code class=\"lang-python\">apiUrl = \"https://api.monday.com/v2\"\napiQuery = 'mutation add_file($file: File!, $item: ID!) {add_file_to_column (item_id: $item, column_id:\"files__1\" file: $file) { id } }'\napiMap = json.dumps({\"image\" : \"variables.file\", \"item\" : \"variables.item_id\"})# please check if this syntax is correct\npayload = {\n  'query': apiQuery, \n  'map': apiMap, \n  'file': open('/path/to/my/file.svg', 'rb'),\n  'item': '6530743418'\n}\nresponse = requests.post(url, headers=headers, files=payload) # this is where you're using the 'files' argument to make a multipart request\n</code></pre>"
+    },
+    {
+      "id": 181107,
+      "postNumber": 3,
+      "createdAt": "2024-04-26T16:25:19.239Z",
+      "author": "kyleweise (Kyle Weise)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> Appreciate your response! I made some changes, but am still running into issues (receiving <code>500 Internal Server Error</code>’s):</p>\n<ol>\n<li>I am using the <code>/file</code> API, not the base one.</li>\n<li>I changed the <code>item</code> key of <code>payload</code> to match the value of the corresponding key-value pair in <code>apiMap</code>.</li>\n<li>I set the correct file path to the file I want to upload (not including here for security)</li>\n</ol>\n<pre><code class=\"lang-auto\">url = \"https://api.monday.com/v2/file\" \napiQuery = 'mutation add_file($file: File!, $item: ID!) {add_file_to_column (item_id: $item, column_id:\"files__1\" file: $file) { id } }'\napiMap = json.dumps({\"image\" : \"variables.file\", \"item\" : \"variables.item_id\"})\npayload = {\n  'query': apiQuery, \n  'map': apiMap, \n  'file': open('/path/to/my/file.svg', 'rb'),\n  'item_id': '6530743418'\n}\nresponse = requests.post(url, headers=headers, files=payload) \nprint(response.status_code)\nprint(response.reason)\n</code></pre>"
+    },
+    {
+      "id": 181343,
+      "postNumber": 4,
+      "createdAt": "2024-04-29T12:34:09.355Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>The add_file mutation is a bit fussy and will return a 500 status more often than the other ones…</p>\n<p>Anyway, looking at the above, your map is wrong – the parts of the HTTP form should correspond to the left-hand-side of the map JSON.</p>\n<p>So if your map is:</p>\n<pre><code class=\"lang-json\">{ \"image\" : \"variables.file\" }\n</code></pre>\n<p>The API will expect to get an HTTP part called “image”. In your code above, it gets “file”.</p>\n<p>Try one of these instead:</p>\n<pre><code class=\"lang-python\">url = \"https://api.monday.com/v2/file\" \napiQuery = 'mutation add_file($file: File!, $item: ID!) {add_file_to_column (item_id: $item, column_id:\"files__1\" file: $file) { id } }'\napiMap = json.dumps({\"image\" : \"variables.file\", \"item\" : \"variables.item_id\"})\npayload = {\n  'query': apiQuery, \n  'map': apiMap, \n  'image': open('/path/to/my/file.svg', 'rb'),\n  'item': '6530743418'\n}\nresponse = requests.post(url, headers=headers, files=payload) \nprint(response.status_code)\nprint(response.reason)\n</code></pre>\n<p>Or perhaps better…</p>\n<pre><code class=\"lang-python\">url = \"https://api.monday.com/v2/file\" \napiQuery = 'mutation add_file($file: File!, $item: ID!) {add_file_to_column (item_id: $item, column_id:\"files__1\" file: $file) { id } }'\napiMap = json.dumps({\"file\" : \"variables.file\", \"item_id\" : \"variables.item_id\"})\npayload = {\n  'query': apiQuery, \n  'map': apiMap, \n  'file': open('/path/to/my/file.svg', 'rb'),\n  'item_id': '6530743418'\n}\nresponse = requests.post(url, headers=headers, files=payload) \nprint(response.status_code)\nprint(response.reason)\n</code></pre>\n<p>If this doesn’t work, <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">it’s worth opening a ticket at this form</a> so we can get your account info and look up error logs on our side!</p>"
+    },
+    {
+      "id": 181356,
+      "postNumber": 5,
+      "createdAt": "2024-04-29T14:18:21.481Z",
+      "author": "kyleweise (Kyle Weise)",
+      "cookedHtml": "<p>Appreciate the follow up <a class=\"mention\" href=\"/u/dipro\">@dipro</a> . Your code did not work, but I’d like to provide some code that did and maybe you can help me expand from there. The following (based on the Python-Requests code snippet provided by the <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/request/17637789-e99d1a13-df13-4e8c-bef3-99ce40f2faf1\" rel=\"noopener nofollow ugc\"> Postman example here</a>), did in fact work:</p>\n<pre><code class=\"lang-auto\">import requests\nimport json\nimport os\nimport pandas as pd\n\napiKey = os.getenv(\"MONDAY_API_TOKEN\")\nheaders = {\"Authorization\" : apiKey, 'API-version':'2023-10'}\nurl = \"https://api.monday.com/v2/file\"\npayload = {\n    'query': 'mutation add_file($file: File!) {add_file_to_column (item_id: 6530743418, column_id:\"files__1\" file: $file) {id}}',\n    'map': '{\"image\":\"variables.file\"}'\n    }\nfiles=[\n  ('image',('file',open('/path/to/my/file.svg','rb'),'application/octet-stream'))\n]\n\n\nresponse = requests.post(url, headers=headers, data=payload, files=files)\n\nprint(response.text)\nprint(response.reason)\n</code></pre>\n<p>Now, I just need some guidance on how to also pass <code>item_id</code> as a dynamic variable argument to the query. I know that the query itself would probably look something like:</p>\n<pre><code class=\"lang-auto\">mutation add_file($file: File!, $item_id: ID!) {add_file_to_column (item_id: $item_id, column_id:\"files__1\" file: $file) {id}}\n</code></pre>\n<p>but it is unclear to me where to put the Python variable containing the <code>item_id</code> so that it gets interpreted properly.</p>\n<p>Appreciate your help.</p>"
+    },
+    {
+      "id": 181366,
+      "postNumber": 6,
+      "createdAt": "2024-04-29T16:08:43.379Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Ah great, glad you got something working.</p>\n<p>If you want to add the item ID as a variable, add it to three places:</p>\n<ul>\n<li>The query</li>\n<li>The map – in the format <code>{ \"key_in_http_form\" : \"variables.variable_name_in_query}</code></li>\n<li>As a key in the form (aka the <code>payload</code> variable above)</li>\n</ul>\n<pre><code class=\"lang-python\">payload = {\n    'query': 'mutation add_file($file: File!, $item_id:ID!) {add_file_to_column (item_id: $item_id, column_id:\"files__1\" file: $file) {id}}',\n    'map': '{\"image\":\"variables.file\", \"item\" : \"variables.item_id\"}',\n    'item' : 6530743418\n    }\nfiles=[\n  ('image',('file',open('/path/to/my/file.svg','rb'),'application/octet-stream'))\n]\n\n\nresponse = requests.post(url, headers=headers, data=payload, files=files)\n</code></pre>"
+    },
+    {
+      "id": 181383,
+      "postNumber": 7,
+      "createdAt": "2024-04-29T17:37:07.692Z",
+      "author": "kyleweise (Kyle Weise)",
+      "cookedHtml": "<p>Thanks so much <a class=\"mention\" href=\"/u/dipro\">@dipro</a>! Appreciate your help, this worked wonderfully.  I have a few follow-up questions.</p>\n<p>One thing that’s unexpected:</p>\n<p>When I navigate to the Board/Item of interest, the ‘files’ column does not actually show the image preview, but instead a file attachment icon, with options to download/etc.</p>\n<p><img src=\"https://global.discourse-cdn.com/monday/original/3X/d/6/d6cccd01b765e1010c4e263761ad722feea56c49.png\" alt=\"image\" width=\"364\" height=\"324\" /></p>\n<p><strong>Please</strong> tell me there is a way to display the image itself. Seems to be <a href=\"https://community.monday.com/t/cant-preview-pdf-in-files-column/85253\">a previously identified issue</a>.</p>\n<p>Also, does the API support giving a name to the file? It seems it does not use the original filename, and something a bit more descriptive than <code>file</code> would be preferred.</p>\n<p>Thanks again</p>"
+    },
+    {
+      "id": 181659,
+      "postNumber": 8,
+      "createdAt": "2024-05-01T09:05:24.796Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/kyleweise\">@kyleweise</a> what type of file is that?</p>\n<p>There is no way to select a name for the file when uploading it via API.</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 181665,
+      "postNumber": 9,
+      "createdAt": "2024-05-01T09:18:25.664Z",
+      "author": "kyleweise (Kyle Weise)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>!</p>\n<p>It is a <code>.svg</code>  image file. The other issue I linked to seems to have the same behavior with <code>pdf</code>’s (although it didn’t look like they were using the API), so I’m not sure it’s a file type-specific problem.</p>"
+    },
+    {
+      "id": 181816,
+      "postNumber": 10,
+      "createdAt": "2024-05-02T05:28:01.428Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/kyleweise\">@kyleweise</a>,</p>\n<p>I could not reproduce the issue.</p>\n<p>Would you be able to please fill this form (<a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962</a>) adding as much information as possible to it (such as account ID, board IDs, item IDs, timestamps, etc.) so that our team can take a look into it?</p>\n<p>Looking forward to hearing from you via the form!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 183563,
+      "postNumber": 11,
+      "createdAt": "2024-05-13T11:18:17.516Z",
+      "author": "kyleweise (Kyle Weise)",
+      "cookedHtml": "<p>For completeness, this is the what the Technical Support Engineer sent me which helped me solve my issue:</p>\n<pre><code class=\"lang-auto\">import requests \nimport json \nimport os \nimport pandas as pd \napiKey = \"token\" \nheaders = {\"Authorization\" : apiKey, 'API-version':'2023-10'} \nurl = \"https://api.monday.com/v2/file\" \npayload = { \n    'query': 'mutation add_file($file: File!) {add_file_to_column (item_id: 123456789, column_id:\"files__1\" file: $file) {id}}', \n    'map': '{\"image\":\"variables.file\"}' \n    } \nfiles=[ \n  ('image',('test.png',open('test.png','rb'),'image/png')) \n] \nresponse = requests.post(url, headers=headers, data=payload, files=files) \nprint(response.text) \nprint(response.reason)\n</code></pre>\n<p>I needed to:</p>\n<ul>\n<li>set the header correctly: <code>image/png</code>, not <code>application/octet-stream</code></li>\n<li>specify the file type <em>both</em> in the name of the file: <code>test.png</code>, and the actual file itself: <code>open('test.png', 'rb')</code></li>\n</ul>"
+    },
+    {
+      "id": 184053,
+      "postNumber": 12,
+      "createdAt": "2024-05-15T09:25:11.063Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/kyleweise\">@kyleweise</a> for sharing this!</p>"
+    },
+    {
+      "id": 213154,
+      "postNumber": 13,
+      "createdAt": "2024-12-08T08:39:13.002Z",
+      "author": "Flowsen (Florian)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> could it be that something changed in the API?<br />\nMy older integrations that used moncli stopped working. So I started from scratch in python and reading the suggestions in this thread.<br />\nNone of them worked for me, this is what I tried:</p>\n<pre><code class=\"lang-auto\">import requests\n\napiKey = MONDAY_APIKEY\nheaders = {\"Authorization\" : apiKey, 'API-version':'2023-10'}\nurl = \"https://api.monday.com/v2/file\"\n\npayload = { \n    'query': 'mutation add_file($file: File!) {add_file_to_column (item_id: 8005103588, column_id:\"datei\" file: $file) {id}}', \n    'map': '{\"pdf\":\"variables.file\"}' \n    } \nfiles=[ \n  ('pdf',('file',open('12400861.pdf','rb'),'application/octet-stream')) \n]\n\n\nresponse = requests.post(url, headers=headers, data=payload, files=files)\n\nprint(\"Direct Response Status Code:\", response.status_code)\nprint(\"Direct Response Text:\", response.text)\n</code></pre>\n<p>and thats what I get:<br />\nRequest Data (json): {‘query’: ‘mutation add_file($file: File!) {add_file_to_column (item_id: 8005103588, column_id:“datei” file: $file) {id}}’, ‘map’: ‘{“pdf”:“variables.file”}’}<br />\nDirect Response Status Code: 400<br />\nDirect Response Text: {“status_code”:400,“error_message”:“Unsupported query”,“errors”:[{“message”:“Unsupported query”,“extensions”:{“status_code”:400}}]}</p>\n<p>I tried several other things but I am not getting rid of that 400 error_code:<br />\nSince my old integrations broke about 5 days ago I assume something changed in he API?</p>\n<p>Any advise would be highly appreciated!</p>"
+    },
+    {
+      "id": 213190,
+      "postNumber": 14,
+      "createdAt": "2024-12-08T12:05:43.360Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/flowsen\">@Flowsen</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I just made and tested this script that I hope hlelps:</p>\n<pre><code class=\"lang-auto\">import requests\n\n# Set filename\nupfile = 'myImage.jpg'\n\n# Set query (mutation) for GraphQL request\nquery = '''\nmutation ($file: File!) {\n    add_file_to_column(file: $file, item_id: \"1112223334\", column_id: \"files__1\") {\n        id\n    }\n}\n'''\n\n# Set URL and boundary\nurl = \"https://api.monday.com/v2/file\"\nboundary = \"xxxxxxxxxx\"\ndata = \"\"\n\n# Read the file content\ntry:\n    with open(upfile, 'rb') as f:\n        content = f.read()\n\nexcept Exception as err:\n    print(f\"Error reading file: {err}\")\n    exit(1)\n\n# Construct the multipart/form-data body\ndata += f\"--{boundary}\\r\\n\"\ndata += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\"\ndata += \"Content-Type: application/json\\r\\n\\r\\n\"\ndata += query + \"\\r\\n\"\n\ndata += f\"--{boundary}\\r\\n\"\ndata += f\"Content-Disposition: form-data; name=\\\"variables[file]\\\"; filename=\\\"{upfile}\\\"\\r\\n\"\ndata += \"Content-Type: application/octet-stream\\r\\n\\r\\n\"\n\n# Prepare the full multipart body with the file\npayload = data.encode('utf-8') + content + f\"\\r\\n--{boundary}--\\r\\n\".encode('utf-8')\n\n# Set headers\nheaders = {\n    \"Content-Type\": f\"multipart/form-data; boundary={boundary}\",\n    \"Authorization\": \"Bearer APITOKENHERE\",\n}\n\n# Make the POST request\ntry:\n    response = requests.post(url, headers=headers, data=payload)\n\n    # Check if the request was successful\n    if response.status_code == 200:\n        print(response.json())  # Log the response JSON\n    else:\n        print(f\"Error: {response.status_code}, {response.text}\")\n        exit(1)\n\nexcept requests.exceptions.RequestException as err:\n    print(f\"Request failed: {err}\")\n    exit(1)\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 214410,
+      "postNumber": 15,
+      "createdAt": "2024-12-17T16:07:25.048Z",
+      "author": "Flo (Florian)",
+      "cookedHtml": "<p>Kudos, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nThis saved my day—I was able to fix my script!<br />\nIt seems something in the API has changed without documentation, so I hope this helps others facing the same issue.</p>\n<p>Best Regards<br />\nFlorian</p>"
+    },
+    {
+      "id": 214567,
+      "postNumber": 16,
+      "createdAt": "2024-12-18T10:48:44.173Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/flo\">@Flo</a> !</p>"
+    }
+  ]
+}

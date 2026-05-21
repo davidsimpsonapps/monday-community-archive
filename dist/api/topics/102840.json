@@ -1,0 +1,36 @@
+{
+  "id": 102840,
+  "title": "API calls no longer retrieving expected results",
+  "slug": "api-calls-no-longer-retrieving-expected-results",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-11-11T17:25:35.122Z",
+  "lastPostedAt": "2024-11-17T06:33:23.516Z",
+  "postsCount": 2,
+  "excerpt": "Hello, we have a number of in house API calls we make against Monday.com boards our users have developed, the calls such as \nquery = &#39;{boards(ids: ’ + board_id + ‘){columns(ids: “subitems”){settings_str}}}’ \nHas always r&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 16,
+  "posts": [
+    {
+      "id": 209526,
+      "postNumber": 1,
+      "createdAt": "2024-11-11T17:25:35.244Z",
+      "author": "jobby889 (john berry)",
+      "cookedHtml": "<p>Hello, we have a number of in house API calls we make against <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> boards our users have developed, the calls such as<br />\nquery = '{boards(ids: ’ + board_id + ‘){columns(ids: “subitems”){settings_str}}}’<br />\nHas always retrieved the sub board id without issue, last week on a new board we found the hard coded ids “subitems” no longer worked, and we had to find the item id for the Item title on the main board(which can be Subitems or SubTasks) and on new boards returns a subitem id of subitem__1</p>\n<p>Today we have found another change of functionality around Status Text (Our calls are programmatically iterative with smaller slice size and only the sample output of interest is shown below)</p>\n<p>On older boards we can use the following to get the selected status text.</p>\n<p>query {boards (ids: ’ + board_id + ') {columns {id title}}}</p>\n<pre><code>      {\n        \"id\": \"status7\",\n        \"title\": \"Exclude\"\n      },\n</code></pre>\n<p>and</p>\n<p>query {boards (ids: ’ + board_id + '){items_page (limit: 500) {cursor items {group {id title} id name column_values{id type value text} subitems {id name column_values {id type value text}} }}}}</p>\n<pre><code>            {\n              \"id\": \"status7\",\n              \"type\": \"status\",\n              \"value\": \"{\\\"index\\\":2,\\\"post_id\\\":null,\\\"changed_at\\\":\\\"2024-02-06T08:44:30.402Z\\\"}\",\n              \"text\": \"Yes\"\n            },\n</code></pre>\n<p>The same call on a newly created board produces.</p>\n<p>query {boards (ids: ’ + board_id + '){items_page (limit: 500) {cursor items {group {id title} id name column_values{id type value text} subitems {id name column_values {id type value text}} }}}}<br />\n{<br />\n“id”: “status_1__1”,<br />\n“type”: “status”,<br />\n“value”: null,<br />\n“text”: null<br />\n},</p>\n<p>Can I ask where are these changes documented in the change log? it would be useful to cope with changes before they hit us</p>\n<p>and is there a nice way of retrieving all column, ids types, values and texts that includes the change of functionality with status text</p>\n<p>And</p>"
+    },
+    {
+      "id": 210288,
+      "postNumber": 2,
+      "createdAt": "2024-11-17T06:33:23.516Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/jobby889\">@jobby889</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>Regarding what you mention first, instead of hardcoding the ID of the subitems column, you could use a query like this one to get that column’s ID (checking the type):</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 7867452110) {\n    columns {\n      id\n      type\n      title\n    }\n  }\n}\n</code></pre>\n<p>Regarding the second thing you mention, I do not see any differences in the format of the results. If you get value and text as null, it might be because for that item, there is no value for that status column.</p>\n<p>If you see the value and text as null for an item that has data in that status column, please let us know <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">here</a> and we will be happy to take a look into it!</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

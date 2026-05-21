@@ -1,0 +1,180 @@
+{
+  "id": 71724,
+  "title": "Monday.com API Convert Items to Sub Items",
+  "slug": "monday-com-api-convert-items-to-sub-items",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-11-28T21:52:32.095Z",
+  "lastPostedAt": "2023-12-08T17:44:43.111Z",
+  "postsCount": 20,
+  "excerpt": "Looking for some aid or suggested alternate solution on how to use the API to move/convert an item within a group, to a subitem within the same group. \nHave: \n  \nWanted: \n  \nCurrent Workflow: \nI have been successful with&hellip;",
+  "solvedPostId": null,
+  "likeCount": 11,
+  "views": 887,
+  "posts": [
+    {
+      "id": 155185,
+      "postNumber": 1,
+      "createdAt": "2023-11-28T21:52:32.185Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Looking for some aid or suggested alternate solution on how to use the API to move/convert an item within a group, to a subitem within the same group.</p>\n<p><strong>Have</strong>:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/2/428710f5b720232fe3dcd51f605aad51444f2414.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/2/428710f5b720232fe3dcd51f605aad51444f2414_2_690x297.png\" alt=\"image\" width=\"690\" height=\"297\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1618×698 66.5 KB</span></div></a></div><p></p>\n<p><strong>Wanted</strong>:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/8/a/8a49ea1d819cda66a12b94627592b5cbc880fe6c.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/8/a/8a49ea1d819cda66a12b94627592b5cbc880fe6c_2_690x369.png\" alt=\"image\" width=\"690\" height=\"369\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1631×873 82.4 KB</span></div></a></div><p></p>\n<p><strong>Current Workflow</strong>:</p>\n<p>I have been successful with taking the name of the group and creating an additional item within its group. For example:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/a/7/a732710c3ec23bcdb87df90ca14564e400949783.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/a/7/a732710c3ec23bcdb87df90ca14564e400949783_2_690x162.png\" alt=\"image\" width=\"690\" height=\"162\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1563×368 37.1 KB</span></div></a></div><p></p>\n<p>I have also been successful with creating the subitem in Group One, however, the columns do not transfer over. I’d like to avoid this methodolgy since it requires me to first query and format the group data to be fed into “create_subitems”. Seems like a very redundent method. (Note, the printed column_values in the code do not match the picture. Just an example).</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/d/4d51421fb5059c3e2abab707c987505303d7fd55.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/d/4d51421fb5059c3e2abab707c987505303d7fd55_2_690x295.png\" alt=\"image\" width=\"690\" height=\"295\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1566×671 56.1 KB</span></div></a></div><p></p>\n<pre><code class=\"lang-auto\">def create_subitem_for_item(item_id, sub_item_name, column_values):\n    query = \"\"\"\n    mutation ($itemId: ID!, $subItemName: String!, $columnValues: JSON) {\n        create_subitem (\n            parent_item_id: $itemId,\n            item_name: $subItemName,\n            column_values: $columnValues\n            create_labels_if_missing: true\n            ) {\n                id\n        }\n    }   \n    \"\"\"\n\n    variables = {\n        'itemId': item_id,\n        'subItemName': sub_item_name,\n        'columnValues': json.dumps(column_values, separators=(',', ':'))\n    }\n\n    datas = {\n        'query': query,\n        'variables': variables\n    }\n\n    r_boards = requests.post(url=apiUrl, headers=headers, data=json.dumps(datas)) # make request\n    print(variables)\n    print(r_boards.json())\n    return r_boards\n\n&gt;&gt;&gt;\n{'itemId': '123', 'subItemName': 'Item 1', 'columnValues': '{\"text1\":\"\\\\\"Some Text\\\\\"\",\"text2\":\"\\\\\"Some More Text\\\\\"\",\"number1\":\"\\\\\"200\\\\\"\",\"number2\":\"\\\\\"12541.9\\\\\"\"}'}\n{'data': {'create_subitem': {'id': '1234'}}, 'account_id': 56789}\n</code></pre>\n<p><strong>Question 1</strong>:<br />\nI know in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> you can select the item row and then “convert” into a subitem. Is there a way to do that through the API?</p>\n<p><strong>Question 2</strong>:<br />\nIf there is no API methodology, how do I create a subitem with desired columns and it’s respective values? It seems that I am building out the <code>column_values</code> correctly within <code>create_subitem</code>, yet the columns nor the values are being built.</p>\n<p>“”“”<br />\nLet me know if you need additional information/examples.</p>"
+    },
+    {
+      "id": 155230,
+      "postNumber": 2,
+      "createdAt": "2023-11-29T01:20:57.313Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>It looks like you may be using the column titles instead of column ID? column Ids are always lowercase and your column IDs are “Text1” and “Numbers2” for example instead of “text1” and “numbers2”. So its just not finding the columns possibly?</p>"
+    },
+    {
+      "id": 155250,
+      "postNumber": 3,
+      "createdAt": "2023-11-29T04:58:58.472Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Apologies and thanks for catching that, but in my data I do have them as lowercase. Just updated my post to reflect that. I doubled checked my data and I can confirm those are the column IDs.</p>"
+    },
+    {
+      "id": 155318,
+      "postNumber": 4,
+      "createdAt": "2023-11-29T12:12:32.916Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>It seems odd to me, there seems to be too many \" marks around the values in column values. Like every string includes the quotes. Which may cause errors with number columns.</p>\n<p>What I do know is your query is correct, so the issue is in the formatting of the values. My only thought is your strings going into the have quotes in them and they shouldn’t - particularly the numbers.</p>"
+    },
+    {
+      "id": 155431,
+      "postNumber": 5,
+      "createdAt": "2023-11-29T21:47:07.323Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>I fabricated some better data. Maybe that will help shed some better light. Also, here is some more code on how I am constructing the data to be fed into the create_sub_item function I have above. This run shows that the sub item title wasn’t constructed at all, but a subitem was in fact created. Sometimes the title is constructed and sometimes not.</p>\n<p>Strangely, every time I create a sub item, I get one <code>Internal server error, status code == 500</code> message. That is the purpose for my <code>while</code> loop below. It only happens once, so if I were to not <code>sys.exit()</code> out, the other two groups would not encounter that error.</p>\n<pre><code class=\"lang-auto\"># Query each group and create a subitem for item\nquery_group_id = f\"\"\"\n{{\n    boards (ids: {dup_board_id}) {{\n        groups {{\n            title\n            items_page (limit: 50) {{\n                cursor\n                items {{\n                    id\n                    name\n                    column_values {{\n                        id\n                        value\n                    }}\n                }}\n            }}\n        }}\n    }}\n}}\n\"\"\"\ndata = {'query' : query_group_id}\nr = requests.post(url=apiUrl, json=data, headers=headers)\nr_dict = r.json()\nprint(r_dict)\ngroup_board_info = r_dict['data']['boards'][0]['groups']\nprint(group_board_info)\n\n# Iterate through each group, skipping the first item. First item is skipped since that will be the \"parent item\"\n# Copy column values and names to be created as a subitem for the parent item (relative to that group)\nfor dictionary in group_board_info:\n    print(dictionary)\n    items = dictionary['items_page']['items']\n    print(items)\n\n    for cnt, item in enumerate(items):\n        if cnt == 0:\n            parent_item_id = item['id']\n            continue\n        \n        cv = item['column_values']\n        subitem_name = item['name']\n        column_value_dict = {}\n\n        for d in cv:\n            column_value_dict[d['id']] = d['value']\n\n        print(item)\n        print(parent_item_id)\n        print(cv)\n        print(subitem_name)\n        print(column_value_dict)\n\n        # Internal server error (unknown)\n        run_again = True\n        while run_again:\n            r = create_subitem_for_item(parent_item_id, subitem_name, column_value_dict)\n            if r.status_code == 500:\n                time.sleep(1)\n                print('Internal server error found')\n            else:\n                run_again = False\n        sys.exit()\n</code></pre>\n<p><strong>Print Outputs</strong></p>\n<pre><code class=\"lang-auto\">&gt;&gt;&gt;\nr_dict:\n{'data': {'boards': [{'groups': [{'title': 'Home - Mortgage - Oceans 2023', 'items_page': {'cursor': None, 'items': [{'id': '12345', 'name': 'Oceans 2023', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}, {'id': '12345', 'name': 'Imagery', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial : Work\"'}, {'id': 'compensation', 'value': '\"0\"'}]}]}}, {'title': 'Home - Mortgage - Ground 2023', 'items_page': {'cursor': None, 'items': [{'id': '12345', 'name': 'Ground 2023', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}, {'id': '12345', 'name': '2000.1 - 2000.1 Vegetation', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial : Hours\"'}, {'id': 'compensation', 'value': '\"0\"'}]}]}}, {'title': 'Home - Mortgage - Mountains 2023', 'items_page': {'cursor': None, 'items': [{'id': '12345', 'name': 'Mountains 2023', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}, {'id': '12345', 'name': 'Detection', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial\"'}, {'id': 'compensation', 'value': '\"0\"'}]}]}}, {'title': 'Group Title', 'items_page': {'cursor': None, 'items': [{'id': '12345', 'name': 'Task 1', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}]}}]}]}, 'account_id': 12345}\n\ngroup_board_info:\n[{'title': 'Home - Mortgage - Oceans 2023', 'items_page': {'cursor': None, 'items': [{'id': '12345', 'name': 'Oceans 2023', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}, {'id': '12345', 'name': 'Imagery', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial : Work\"'}, {'id': 'compensation', 'value': '\"0\"'}]}]}}, {'title': 'Home - Mortgage - Ground 2023', 'items_page': {'cursor': None, 'items': [{'id': '12345', 'name': 'Ground 2023', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}, {'id': '12345', 'name': '2000.1 - 2000.1 Vegetation', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial : Hours\"'}, {'id': 'compensation', 'value': '\"0\"'}]}]}}, {'title': 'Home - Mortgage - Mountains 2023', 'items_page': {'cursor': None, 'items': [{'id': '12345', 'name': 'Mountains 2023', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}, {'id': '12345', 'name': 'Detection', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial\"'}, {'id': 'compensation', 'value': '\"0\"'}]}]}}, {'title': 'Group Title', 'items_page': {'cursor': None, 'items': [{'id': '5597071563', 'name': 'Task 1', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}]}}]\n\ndictionary:\n{'title': 'Home - Mortgage - Oceans 2023', 'items_page': {'cursor': None, 'items': [{'id': '12345', 'name': 'Oceans 2023', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}, {'id': '12345', 'name': 'Imagery', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial : Work\"'}, {'id': 'compensation', 'value': '\"0\"'}]}]}}\n\nitems:\n[{'id': '12345', 'name': 'Oceans 2023', 'column_values': [{'id': 'phase', 'value': None}, {'id': 'compensation', 'value': None}]}, {'id': '12345', 'name': 'Imagery', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial : Work\"'}, {'id': 'compensation', 'value': '\"0\"'}]}]\n\nitem:\n{'id': '12345', 'name': 'Imagery', 'column_values': [{'id': 'phase', 'value': '\"1000 - 1000 Geospatial : Work\"'}, {'id': 'compensation', 'value': '\"0\"'}]}\n\nparent_item_id:\n12345\n\ncv:\n[{'id': 'phase', 'value': '\"1000 - 1000 Geospatial : Work\"'}, {'id': 'compensation', 'value': '\"0\"'}]\n\nsubitem_name:\nImagery\n\ncolumn_value_dict:\n{'phase': '\"1000 - 1000 Geospatial : Work\"', 'compensation': '\"0\"'}\n\nfunction variables:\n{'itemId': '12345', 'subItemName': 'Imagery', 'columnValues': '{\"phase\":\"\\\\\"1000 - 1000 Geospatial : Work\\\\\"\",\"compensation\":\"\\\\\"0\\\\\"\"}'}\n\nfunction .json():\n{'data': {'create_subitem': {'id': '12345'}}, 'account_id': 12345}\n</code></pre>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/d/bdf3a57c973d65cb992bcfc4dd2432bc1c391f32.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/d/bdf3a57c973d65cb992bcfc4dd2432bc1c391f32_2_690x419.png\" alt=\"image\" width=\"690\" height=\"419\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1584×964 66.4 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 155515,
+      "postNumber": 7,
+      "createdAt": "2023-11-30T08:37:13.884Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/binx96\">@Binx96</a>,</p>\n<p>I am not experienced with Python, but your mutation does look correct.</p>\n<p>Something like this is valid:</p>\n<pre><code class=\"lang-auto\">mutation ($itemId: ID!, $subItemName: String!, $columnValues: JSON) {\n        create_subitem (\n            parent_item_id: $itemId,\n            item_name: $subItemName,\n            column_values: $columnValues\n            create_labels_if_missing: true\n            ) {\n                id\n        }\n    }\n</code></pre>\n<pre><code class=\"lang-auto\">        {\n        \"itemId\": 1234567890,\n        \"subItemName\": \"Some name\",\n        \"columnValues\": \"{\\\"text\\\":\\\"Some text\\\", \\\"numbers\\\":\\\"100.1\\\"}\"\n        }\n</code></pre>\n<p>Postman translates this to Python as:</p>\n<pre><code class=\"lang-auto\">import http.client\nimport json\n\nconn = http.client.HTTPSConnection(\"api.monday.com\")\npayload = \"{\\\"query\\\":\\\"mutation ($itemId: ID!, $subItemName: String!, $columnValues: JSON) {\\\\n        create_subitem (\\\\n            parent_item_id: $itemId,\\\\n            item_name: $subItemName,\\\\n            column_values: $columnValues\\\\n            create_labels_if_missing: true\\\\n            ) {\\\\n                id\\\\n        }\\\\n    } \\\",\\\"variables\\\":{\\\"itemId\\\":1234567890,\\\"subItemName\\\":\\\"Some name\\\",\\\"columnValues\\\":\\\"{\\\\\\\"text\\\\\\\":\\\\\\\"Some text\\\\\\\", \\\\\\\"numbers\\\\\\\":\\\\\\\"100.1\\\\\\\"}\\\"}}\"\nheaders = {\n  'API-Version': '2023-10',\n  'Authorization': 'APITOKENHERE',\n  'Content-Type': 'application/json',\n}\nconn.request(\"POST\", \"/v2/\", payload, headers)\nres = conn.getresponse()\ndata = res.read()\nprint(data.decode(\"utf-8\"))\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 155539,
+      "postNumber": 8,
+      "createdAt": "2023-11-30T11:58:19.243Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>It looks like all the strings you have for values have \" around them within the strings themselves - even for the numbers.</p>"
+    },
+    {
+      "id": 155613,
+      "postNumber": 9,
+      "createdAt": "2023-11-30T17:58:55.683Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Yeah I am seeing that too. I am not manipulating those at all though. They are coming straight from querying the board.</p>"
+    },
+    {
+      "id": 155615,
+      "postNumber": 10,
+      "createdAt": "2023-11-30T17:59:48.498Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Thanks Matias, I’ll look through this later this week and report back my findings.</p>"
+    },
+    {
+      "id": 155953,
+      "postNumber": 11,
+      "createdAt": "2023-12-03T13:38:17.759Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 156189,
+      "postNumber": 12,
+      "createdAt": "2023-12-04T21:09:56.073Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Looked through your mutation, but still no luck. I copied your postman example and replaced it with my ids and data. Columns and values were still not being populated. The default columns when creating a subitem were only present.</p>\n<p>I’ve also tried running it straight from the playground. Same results as above (item names are populated, but columns/column values do not change).</p>\n<p>I am running out of ideas. Should I submit a ticket to your IT support?</p>\n<pre><code class=\"lang-auto\">import requests\n\napiKey = '...'\napiUrl = \"https://api.monday.com/v2\"\nheaders = {\"Authorization\" : apiKey,\n        \"Content-Type\" : 'application/json',\n        \"API-Version\" : '2023-10'}\n\n# My payload\npayload = \"{\\\"query\\\":\\\"mutation ($itemId: ID!, $subItemName: String!, $columnValues: JSON) {\\\\n        create_subitem (\\\\n            parent_item_id: $itemId,\\\\n            item_name: $subItemName,\\\\n            column_values: $columnValues\\\\n            create_labels_if_missing: true\\\\n            ) {\\\\n                id\\\\n        }\\\\n    } \\\",\\\"variables\\\": {\\\"itemId\\\": 12345,\\\"subItemName\\\":\\\"Imagery\\\",\\\"columnValues\\\":\\\"{\\\\\\\"phase\\\\\\\":\\\\\\\"1000 - 1000 Geospatial\\\\\\\", \\\\\\\"compensation\\\\\\\":\\\\\\\"0\\\\\\\"}\\\"}}\"\n\n# Your payload example\n# payload = \"{\\\"query\\\":\\\"mutation ($itemId: ID!, $subItemName: String!, $columnValues: JSON) {\\\\n        create_subitem (\\\\n            parent_item_id: $itemId,\\\\n            item_name: $subItemName,\\\\n            column_values: $columnValues\\\\n            create_labels_if_missing: true\\\\n            ) {\\\\n                id\\\\n        }\\\\n    } \\\",\\\"variables\\\":{\\\"itemId\\\":1234567890,\\\"subItemName\\\":\\\"Some name\\\",\\\"columnValues\\\":\\\"{\\\\\\\"text\\\\\\\":\\\\\\\"Some text\\\\\\\", \\\\\\\"numbers\\\\\\\":\\\\\\\"100.1\\\\\\\"}\\\"}}\"\n\n\nr_boards = requests.post(url=apiUrl, headers=headers, data=payload)\nprint(r_boards.json())\n</code></pre>\n<p><strong><a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> Playground</strong></p>\n<pre><code class=\"lang-auto\">mutation {\n  create_subitem (\n    parent_item_id: 12345\n    item_name: \"Test_Name\"\n    column_values: \"{\\\"phase\\\":\\\"1000 - 1000 Geospatial : Work\\\", \\\"compensation\\\": \\\"0\\\"}\"\n    create_labels_if_missing:true\n  ) {\n    id\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 156204,
+      "postNumber": 13,
+      "createdAt": "2023-12-04T22:34:33.227Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>Maybe there is some miscommunication with what I am trying to accomplish. I have been looking around at other posts and it seems that I may need to create a initial subitem first, and then create columns within that subitem. Then I can use my current code to fill in the values. However, I’ve <a href=\"https://community.monday.com/t/using-the-api-is-it-possible-to-create-a-column-with-column-type-subitems/9854/4\">read</a> that the API does not support creating columns within a subitem. Is this still true?</p>"
+    },
+    {
+      "id": 156244,
+      "postNumber": 14,
+      "createdAt": "2023-12-05T00:58:25.500Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>You need to query the settings_str of <code>boards{columns(ids: \"subitems\"){settings_str}}</code>, do json.dumps on that and you’ll get an object that includes <code>boardIds</code> an array of integers. It will only contain one board ID, that of the subitems board.</p>\n<p>You can then do a regular create column mutation on the subitems board to create a column.</p>"
+    },
+    {
+      "id": 156263,
+      "postNumber": 15,
+      "createdAt": "2023-12-05T06:43:58.896Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a>! There was some extra code I had to put together to get everything to run smoothly. TLDR, that did the trick. Thank you for pointing that out!</p>"
+    },
+    {
+      "id": 156278,
+      "postNumber": 16,
+      "createdAt": "2023-12-05T09:11:32.584Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a> for the help!</p>"
+    },
+    {
+      "id": 156425,
+      "postNumber": 17,
+      "createdAt": "2023-12-05T23:15:43.507Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Quick question, because subitems are a board, can I use <code>move_item_to_board</code>. Here I am creating a subitem, but does move item support moving an item to a subitem? I tried it in the api playground and ran into a Internal Server Error. Before I continue digging, want to make sure I can do that before I waste too much time.</p>"
+    },
+    {
+      "id": 156433,
+      "postNumber": 18,
+      "createdAt": "2023-12-06T01:04:21.100Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Not a clue to be honest.</p>"
+    },
+    {
+      "id": 156462,
+      "postNumber": 19,
+      "createdAt": "2023-12-06T07:45:39.061Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C018J3C259C/p1701855920405009\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 156539,
+      "postNumber": 20,
+      "createdAt": "2023-12-06T15:00:41.888Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a>, do you know if this can be done?</p>"
+    },
+    {
+      "id": 156959,
+      "postNumber": 21,
+      "createdAt": "2023-12-08T15:14:19.980Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/binx96\">@Binx96</a>,</p>\n<p>Thanks for following up.</p>\n<p>The team just confirmed that it is not possible as of now, and there are no immediate plans to implement it…but I’ve opened a feature request and added your vote to it <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></p>\n<p>Also, do you mind sharing your use case for the request?</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 156984,
+      "postNumber": 22,
+      "createdAt": "2023-12-08T16:57:20.497Z",
+      "author": "Binx96 (Zach)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a> ,</p>\n<p>Thanks for confirming. Absolutely I can share!</p>\n<p>Lets use my original post as an example. Image one is a board that contains multiple groups with a range of 1-50 items. The second image is another board with one group. Board_2 items will be the name of each group from board_1. The subitems of each item are the items from board_1 in respect to their group. Image 2 illustrates that better.</p>\n<p>My current solution:</p>\n<ol>\n<li>Duplicate board_1</li>\n<li>Create the “Active Projects” group</li>\n<li>Create an “initiate” subitem to allow adding and removing of it’s columns</li>\n<li>For each group:<br />\na. Create an item of the group name<br />\nb. Create an subitem for each item in the group<br />\nc. Delete the item once it’s subitem is created<br />\nd. Once all subitems are created, move the item (with subitems) up to “Active Projects”<br />\ne. Delete group</li>\n</ol>\n<p>Wanted solution:</p>\n<ol>\n<li>Create new board</li>\n<li>Create “Active Projects” group</li>\n<li>Create columns/types</li>\n<li>Create items based on group names from board_1 (already built in my code).</li>\n<li>Move the items from board_1 to subitems in board_2 in respect to their group</li>\n</ol>\n<p>When working with a small dataset, current solution works just fine. However, when working with several thousands of items. Each create, delete, move step takes a few seconds. Moving an item to a specific location takes significantly less time (my hope) then duplicating it, re-creating it as a subitem, deleting the original and moving it to another group.</p>\n<p>Subitems already has it’s own board id, so I would think it would be trivial to be able to move an item between two boards so long as they have the same columns.</p>\n<p>Hope that makes sense and feel free to ask any clarifying questions.</p>"
+    },
+    {
+      "id": 156991,
+      "postNumber": 23,
+      "createdAt": "2023-12-08T17:34:30.741Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Requested <a href=\"https://monday.monday.com/boards/2444564946/views/54957189/pulses/5654185452\">here</a></p>"
+    },
+    {
+      "id": 156992,
+      "postNumber": 24,
+      "createdAt": "2023-12-08T17:44:43.111Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/binx96\">@Binx96</a> thanks for the context! It’s always beneficial to include a use case/as many details as possible for requests <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>I’ve added all of this to the feature request, and we will be sure to update here in the community and the changelog if/when it’s resolved.</p>\n<p>Best,<br />\nRachel</p>"
+    }
+  ]
+}

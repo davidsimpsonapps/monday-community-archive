@@ -1,0 +1,71 @@
+{
+  "id": 34633,
+  "title": "Connecting Board uses a deleted pulse id",
+  "slug": "connecting-board-uses-a-deleted-pulse-id",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2022-04-12T17:53:16.639Z",
+  "lastPostedAt": "2022-07-01T20:13:16.125Z",
+  "postsCount": 7,
+  "excerpt": "I am updating data from the api and started to notice that some of the connecting_board values where were not populating. \nCause: When the api event fired an update_column_value for a connecing_board column. It send the &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1807,
+  "posts": [
+    {
+      "id": 82860,
+      "postNumber": 1,
+      "createdAt": "2022-04-12T17:53:16.728Z",
+      "author": "jkin (Pete)",
+      "cookedHtml": "<p>I am updating data from the api and started to notice that some of the connecting_board values where were not populating.</p>\n<p>Cause: When the api event fired an update_column_value for a connecing_board column. It send the values from the board_id (connected board) and linked_ids (records). However, the event is sending linked_ids that have been deleted and recreated.</p>\n<p>I traced this back using the activity logs within graphQL.</p>\n<p>How do I get the events to start sending the correct pulse_ids from a connected board?</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 82879,
+      "postNumber": 2,
+      "createdAt": "2022-04-12T19:24:57.234Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jkin\">@jkin</a></p>\n<p>It is not only through the API, a mirror column still shows data if a deleted (mirrored) item. See also: <a href=\"https://community.monday.com/t/mirrored-items-pulling-through-deleted-items/21506/9\" class=\"inline-onebox\">Mirrored Items pulling through deleted items - #9 by codyfrisch</a></p>"
+    },
+    {
+      "id": 82929,
+      "postNumber": 3,
+      "createdAt": "2022-04-13T10:15:51.731Z",
+      "author": "jkin (Pete)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>. That is very helpful to know.</p>"
+    },
+    {
+      "id": 82968,
+      "postNumber": 4,
+      "createdAt": "2022-04-13T12:11:43.776Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Tips to help this a bit:</p>\n<p>Assumptions: Items on Board A link to a single item on Board B using a connect-board column set up for a two-way connection. Board B may link to many items on Board A using this one column.</p>\n<ul>\n<li>Configure Board A’s connect-board column (with Board B) to allow only one item</li>\n<li>Configure Board B’s connect-board column (with Board A) to allow multiple items.</li>\n<li>If using an account with column permissions, prevent editing of the connect-board column on board B by all but owners. (see below for why)</li>\n<li>Create a webhook for “When item is deleted” on Board A (this existed on the enterprise account i was recently part of - it was new). Set up your application/integromat/make.com scenario to set the connect-board column on the now deleted item to “null”.</li>\n<li>Always create the connections from Board A to Board B, and remove them the same way.</li>\n</ul>\n<p>There is another issue that if you create a connection from Board B to Board A - the value of Board A is stored differently and you cannot simply set the column to null to have the connection vanish from board B. The connection has to be set on Board A to be able to null the column and have it then remove from Board B. Dumb.</p>\n<p>The end result is setting the connect-board column on Board A to null on delete will cause that item to be removed from the list of connected items on Board B.</p>\n<p>This shouldnt be required and I have discussed this with an enterprise customer success manager for my previous organization that deleted and archived items should filtered out from the connect-board column and hence mirror columns (this should be a column setting - maybe someone wants them for some use case), and API calls should not return them unless an “include deleted/archived” parameter is set on the query.</p>"
+    },
+    {
+      "id": 82995,
+      "postNumber": 5,
+      "createdAt": "2022-04-13T14:18:20.747Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/anon29275264\">@anon29275264</a></p>\n<p>Correct, the delete_item webhook was announced recently, I believe also for Pro accounts. That would help but I agree with you that this complex workaround should not be necessary at all.</p>"
+    },
+    {
+      "id": 83010,
+      "postNumber": 6,
+      "createdAt": "2022-04-13T15:58:48.583Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Yeah and without the delete_item webhook, my process was using another webhook. But now days, there is an easier workaround to that with a custom recipe</p>\n<p>Trigger event (status change, button press) then<br />\nClear column<br />\ndelete item.</p>\n<p>While it doesnt use the direct delete feature - it at least lets it be done without going to custom code. Still requires training people to use a Delete button instead of delete function.</p>\n<p>If we had an “Item Deleted” trigger for custom automations that would make it easier.</p>\n<p>Easiest though would be if they just fixed the issue. Deleted items shouldnt show up in connected boards or be mirrored. Plain and simple.</p>"
+    },
+    {
+      "id": 90258,
+      "postNumber": 7,
+      "createdAt": "2022-07-01T20:13:16.125Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>We just release our first version of Rollup Multiple Boards that is using the item_deleted and item_archived triggers. Works wonderful.</p>"
+    }
+  ]
+}

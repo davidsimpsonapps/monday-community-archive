@@ -1,0 +1,54 @@
+{
+  "id": 65634,
+  "title": "How to update columns of an item, without item id",
+  "slug": "how-to-update-columns-of-an-item-without-item-id",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2023-09-11T06:06:13.386Z",
+  "lastPostedAt": "2023-09-13T04:39:03.651Z",
+  "postsCount": 5,
+  "excerpt": "We have uploaded a list of patients, including the patient_id (Unique identifier for finding the patient) to a board. We need to update the patient columns via API, using the patient_id. How we can do this flow.",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 333,
+  "posts": [
+    {
+      "id": 142894,
+      "postNumber": 1,
+      "createdAt": "2023-09-11T06:06:13.457Z",
+      "author": "akhilg (Akhil G Krishnan)",
+      "cookedHtml": "<p>We have uploaded a list of patients, including the patient_id (Unique identifier for finding the patient) to a board. We need to update the patient columns via API, using the patient_id. How we can do this flow.</p>"
+    },
+    {
+      "id": 142897,
+      "postNumber": 2,
+      "createdAt": "2023-09-11T06:39:42.975Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/akhilg\">@akhilg</a>,<br />\nAt the moment, you cannot update items using column values. You will have to query the items to get their ids and then use those ids to them the items</p>"
+    },
+    {
+      "id": 142899,
+      "postNumber": 3,
+      "createdAt": "2023-09-11T06:42:56.868Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/akhilg\">@akhilg</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>As <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> said, you will need to query for the item ID of each of these items using the patient ID you have, and then use the item ID to mutate data in the item.</p>\n<p>How to get the item ID this with API version 2023-07: <a href=\"https://developer.monday.com/api-reference/docs/items-by-column-values\" class=\"inline-onebox\">Items by column values</a></p>\n<p>How to get the item ID with API version 2023-10: <a href=\"https://developer.monday.com/api-reference/docs/items-page-by-column-values\" class=\"inline-onebox\">Items page by column values</a></p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 143151,
+      "postNumber": 4,
+      "createdAt": "2023-09-12T14:50:04.100Z",
+      "author": "akhilg (Akhil G Krishnan)",
+      "cookedHtml": "<p>Thanks <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> and <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> for the response,</p>\n<p>Also we have more than 20k records, so the record might split into different boards, So I there any we can update an item without knowing the board_id.</p>\n<p>The ultimate goal is update an item record. And we only have patient_id.<br />\nFor using this <code>Items page by column values</code> it requires both board_id and item_id. So how effectevely use this…</p>"
+    },
+    {
+      "id": 143283,
+      "postNumber": 5,
+      "createdAt": "2023-09-13T04:39:03.651Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/akhilg\">@akhilg</a>,</p>\n<p>If you only have the patient ID, and that item can be in any board, in that case you would need to check ALL the items in ALL your boards. You have to know that this might take a very long time to do each time:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890, 1122334455, ... THE ID OF ALL YOUR BOARDS]) {\n    items(limit: 100, page: 1) {\n      column_values {\n        id\n        title\n        text\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>and then you would iterate through all the pages until the result is empty.</p>\n<p>This is not a great flow to have. It would be much better if you could save the board ID of each item to know where to look for it.</p>\n<p>Cheers,<br />\nMatias</p>"
+    }
+  ]
+}

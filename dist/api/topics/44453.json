@@ -1,0 +1,61 @@
+{
+  "id": 44453,
+  "title": "IF formula for SKUs before and after exact date",
+  "slug": "if-formula-for-skus-before-and-after-exact-date",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    108
+  ],
+  "createdAt": "2022-10-24T10:09:09.278Z",
+  "lastPostedAt": "2022-11-01T18:57:21.004Z",
+  "postsCount": 6,
+  "excerpt": "Hello! This is our situation \nWe have a couple of boards that have IF statements based on 4 SKUs. On each board we input how many bottles of each SKU were ordered (sometimes manually, sometimes pulled w/integration), and&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1258,
+  "posts": [
+    {
+      "id": 101572,
+      "postNumber": 1,
+      "createdAt": "2022-10-24T10:09:09.368Z",
+      "author": "marcepz (Ana Marcela Perez)",
+      "cookedHtml": "<p>Hello! This is our situation</p>\n<p>We have a couple of boards that have IF statements based on 4 SKUs. On each board we input how many bottles of each SKU were ordered (sometimes manually, sometimes pulled w/integration), and so we get a subtotal column for each SKU + tax + shipping + etc.<br />\nHowever, prices changed last week and so I need a formula that will allow me to use X price before Oct 10 2022 and Y price after.</p>\n<p><strong>These are a couple of examples of the formulas already in place:</strong></p>\n<ol>\n<li>This example is a column for one single SKU, but depending on the label it will mark different prices (for example employees have a secial price, if its a sample its 0). The one changing is the 331.03 priced one:</li>\n</ol>\n<p>multiply({Limón},150),(IF({Canal#Labels} = “Empleado - Gratis”, multiply({Limón},0),(IF({Canal#Labels} = “Muestra Venta”, multiply({Limón},0),(IF({Canal#Labels} = “Muestra Mkt”, multiply({Limón},0),multiply({Limón},331.034483)))))))),2)</p>\n<ol>\n<li>But then I have this other type of formula when on 1 board we have multiple retailers, so the price for 1 SKU depends on the retailer (retailers edited for privacy):</li>\n</ol>\n<p>IF({Retailer#Labels} = “1”, multiply({Junior},336.36),IF({Retailer#Labels} = “2”, multiply({Junior},325),(IF({Retailer#Labels} = “3”,multiply({Junior},334.55),(IF({Retailer#Labels} = “4”,multiply({Junior},311.32),(IF({Retailer#Labels} = “5”,multiply({Junior},325.26),(IF({Retailer#Labels} = “6”,multiply({Junior},376.04),(IF({Retailer#Labels} = “7”,multiply({Junior},325.25),(IF({Retailer#Labels} = “8”,multiply({Junior},292.73)))))))))))))))</p>\n<p>There are already so many IFs and labels I have no idea how to add this other level to the formula. My knowledge on this is limited and now its become time sensitive, hopefully someone has the solution to help us.<br />\nThank you!!!</p>"
+    },
+    {
+      "id": 101615,
+      "postNumber": 2,
+      "createdAt": "2022-10-24T15:39:37.800Z",
+      "author": "mark.anley (Green Llamas Consulting)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/marcepz\">@marcepz</a> - quick question, is there a common price change (%) that is consistent across the board for all products/customers or is in a different change for each?</p>\n<p>Thanks<br />\nMark</p>"
+    },
+    {
+      "id": 101762,
+      "postNumber": 3,
+      "createdAt": "2022-10-25T15:49:00.460Z",
+      "author": "marcepz (Ana Marcela Perez)",
+      "cookedHtml": "<p>Hii <a class=\"mention\" href=\"/u/mark.anley\">@mark.anley</a>! Its does vary by channel and retailer. For example in some channels bottles went from 331.08 to 374.13 (which is 7.24% I think), but on other channels price will vary by 7.43%.</p>\n<p>In the first example I gave each of the SKUs changed by a specific % and we will actually be removing the labels to leave the formula as a simple: round(multiply({SKU1},331.034483),2).<br />\nI believe this is much simpler however, I still dont understand how to separate the formula before and after a date.</p>\n<p>In the second example the changes do vary depending on contract. So RetailerA will have X%  increase with SKU1 and Y% increase with SKU2, and so on and so forth for each retailer. What I thought could be done was this, but I am not even sure if it works that way:</p>\n<p>**IF ‘date column’ is on or before 10/10/2022  (and show the complete formula as it is now), IF NOT (have the same nested formula but with the new prices) **</p>\n<p>Hopefully this makes sense, I’'m still tryong to see if theres anything similiar in ny other thread.</p>"
+    },
+    {
+      "id": 102207,
+      "postNumber": 4,
+      "createdAt": "2022-10-28T20:41:50.662Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/marcepz\">@marcepz</a></p>\n<p>First, your multi-retailer formula could be simplified with a syntax similar to this:<br />\n<code>SWITCH({Retailer#Labels}, \"1\", multiply({Junior}, 336.36, \"2\",.... \"8\", multiply({Junior}, 292.73))</code></p>\n<p>To then do the date condition:</p>\n<pre><code class=\"lang-auto\">IF(DAYS(FORMAT_DATE({Date 1}), \"2022/10/10\") &lt;= 0, \n   SWITCH({Retailer#Labels}, \"1\", multiply({Junior}, 336.36, \"2\",...., \"8\", multiply({Junior}, 292.73)), \n   SWITCH({Retailer#Labels}, \"1\", multiply({Junior}, 888.88, \"2\",...., \"8\", multiply({Junior}, 999.73))\n)\n</code></pre>\n<p>To add more:</p>\n<pre><code class=\"lang-auto\">IF(DAYS(FORMAT_DATE({Date 1}), \"2022/10/10\") &lt;= 0,\n   SWITCH({Retailer#Labels}, \"1\", multiply({Junior}, 336.36, \"2\",...., \"8\", multiply({Junior}, 292.73)), \n   IF(DAYS(FORMAT_DATE({Date 1}), \"2023/1/31\") &lt;= 0,\n      SWITCH({Retailer#Labels}, \"1\", multiply({Junior}, 888.88, \"2\",...., \"8\", multiply({Junior}, 999.73)),\n      SWITCH({Retailer#Labels}, \"1\", multiply({Junior}, 1888.88, \"2\",...., \"8\", multiply({Junior}, 1999.73))\n   )\n)\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://TheMondayMan.com\">The Monday Man</a><br />\n<strong><a href=\"https://monday.com/marketplace/10000102\"><img src=\"https://emoji.discourse-cdn.com/apple/magic_wand.png?v=12\" title=\":magic_wand:\" class=\"emoji\" alt=\":magic_wand:\" width=\"20\" height=\"20\" /> Column Magic <img src=\"https://emoji.discourse-cdn.com/apple/sparkles.png?v=12\" title=\":sparkles:\" class=\"emoji\" alt=\":sparkles:\" width=\"20\" height=\"20\" /></a></strong>- the magical columns toolbox app</p>"
+    },
+    {
+      "id": 102477,
+      "postNumber": 5,
+      "createdAt": "2022-11-01T18:57:21.004Z",
+      "author": "marcepz (Ana Marcela Perez)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> you’ve done it again, this worked like a charm!! Thank you so much for the input <img src=\"https://emoji.discourse-cdn.com/apple/raised_hands.png?v=12\" title=\":raised_hands:\" class=\"emoji\" alt=\":raised_hands:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 103419,
+      "postNumber": 6,
+      "createdAt": "2022-11-08T18:57:59.352Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

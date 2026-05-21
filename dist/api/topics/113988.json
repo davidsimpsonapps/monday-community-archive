@@ -1,0 +1,57 @@
+{
+  "id": 113988,
+  "title": "Add the option to find board email address via API",
+  "slug": "add-the-option-to-find-board-email-address-via-api",
+  "categoryId": 58,
+  "tagIds": [
+    22,
+    29,
+    94,
+    351,
+    484
+  ],
+  "createdAt": "2025-05-03T09:31:06.264Z",
+  "lastPostedAt": "2025-05-06T06:46:46.756Z",
+  "postsCount": 5,
+  "excerpt": "Converted to a Feature Request \nYou can email updates to an item by sending to the email here: \n  \nSimilarly, you can create items in a board by email using the email address found here: \n  \nBoth of these should be expos&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 23,
+  "posts": [
+    {
+      "id": 228486,
+      "postNumber": 1,
+      "createdAt": "2025-05-03T09:31:06.357Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><strong>Converted to a Feature Request</strong></p>\n<p>You can email updates to an item by sending to the email here:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/6/76852b6b709315d22c7f76c017bb536c3eebc7ac.png\" title=\"Screenshot 2025-05-03 at 13.12.22\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/6/76852b6b709315d22c7f76c017bb536c3eebc7ac_2_690x406.png\" alt=\"Screenshot 2025-05-03 at 13.12.22\" width=\"690\" height=\"406\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2025-05-03 at 13.12.22</span><span class=\"informations\">1730×1020 111 KB</span></div></a></div><p></p>\n<p>Similarly, you can <a href=\"https://support.monday.com/hc/en-us/articles/115005339645-Email-to-board\" rel=\"noopener nofollow ugc\">create items in a board by email</a> using the email address found here:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/c/4/c4ebc65635e666fc6ade715764b9c141379dfef9.png\" title=\"Screenshot 2025-05-03 at 13.12.03\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/c/4/c4ebc65635e666fc6ade715764b9c141379dfef9_2_681x500.png\" alt=\"Screenshot 2025-05-03 at 13.12.03\" width=\"681\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2025-05-03 at 13.12.03</span><span class=\"informations\">1712×1256 324 KB</span></div></a></div><p></p>\n<p>Both of these should be exposed in the GraphQL API, but I can only find the one for items:</p>\n<pre><code class=\"lang-auto\">query get_board_items($ids: [ID!]!) {\n  account {\n    slug\n  }\n  boards(ids: $ids) {\n    id\n    # email # THIS IS INVALID !!!\n    items_page (limit: 1)  {\n      items {\n        id\n        email\n      }\n    }\n  }\n  me {\n    id\n  }\n}\n</code></pre>\n<p>With variables:</p>\n<pre><code class=\"lang-auto\">{\n  \"ids\": [\n    \"1870827708\"\n  ]\n}\n</code></pre>\n<p>Produces:</p>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"account\": {\n      \"slug\": \"dsapps-develop\"\n    },\n    \"boards\": [\n      {\n        \"id\": \"1870827708\",\n        \"items_page\": {\n          \"items\": [\n            {\n              \"id\": \"1941585297\",\n              \"email\": \"dsapps_pulse_194XXX97_943XXX7f12839c1c53ef__60XXX4@euc1.mx.monday.com\"\n            }\n          ]\n        }\n      }\n    ],\n    \"me\": {\n      \"id\": \"60XXX4\"\n    }\n  },\n  ...\n}\n</code></pre>\n<p>But the <code>email</code> property is not available in the <code>boards</code> object.</p>\n<p><img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=14\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" /> <strong>How can I get the email for the board?</strong></p>\n<p>If it’s not available in the API, perhaps it can be constructed from something?</p>\n<p>It appears that the email address is in the following format:</p>\n<pre><code class=\"lang-auto\">`${slug}_board_${boardId}_${someGuid}__${myUserId}@${region}.mx.monday.com`\n</code></pre>\n<p>We already have <code>slug</code>, <code>boardId</code>, &amp; <code>myUserId</code>.</p>\n<p>Perhaps we can get the missing elements from the API?</p>\n<ul>\n<li><code>someGuid</code> - <em>no idea what this is</em></li>\n<li><code>region</code> - <em>where you’re hosted</em> –<code>au</code>, <code>euc</code>, or <code>us</code></li>\n</ul>\n<p><strong>Cc:</strong> <a class=\"mention\" href=\"/u/dipro\">@dipro</a> please convert to a feature request if not currently possible</p>"
+    },
+    {
+      "id": 228649,
+      "postNumber": 3,
+      "createdAt": "2025-05-05T08:48:09.088Z",
+      "author": "OmerK (Omer Koort)",
+      "cookedHtml": "<p>So right now its exposed only on the item level and not on board level (probably will be added in the future)<br />\nif it helps, you can build the second address since there is a template for it -<br />\n<code>board-[boardId]@[domain].[region].</code> <code>monday.com</code><br />\neventually it looks like that-<br />\n<code>board-7876531672@monday.us.monday.com</code><br />\n(this is the address that can be use by account members only. unlike the first address that anyone can send to it on behalf of the user)</p>\n<p>Hope it helps,<br />\nOmer</p>"
+    },
+    {
+      "id": 228651,
+      "postNumber": 4,
+      "createdAt": "2025-05-05T09:05:51.321Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/omerk\">@OmerK</a> thank you for the details.</p>\n<p>Also does domain mean account slug???</p>\n<p>Could you convert this into a feature request please?</p>"
+    },
+    {
+      "id": 228656,
+      "postNumber": 5,
+      "createdAt": "2025-05-05T09:41:43.293Z",
+      "author": "OmerK (Omer Koort)",
+      "cookedHtml": "<p>yes:) and converted</p>"
+    },
+    {
+      "id": 228743,
+      "postNumber": 6,
+      "createdAt": "2025-05-06T06:46:46.756Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/omerk\">@OmerK</a> Just one more thing. Is region in the following format - <code>au</code>, <code>eu</code>, <code>us</code>?</p>\n<p>So that would give:</p>\n<pre><code class=\"lang-auto\">board-7876531672@myslug.au.monday.com\nboard-7876531672@myslug.eu.monday.com\nboard-7876531672@myslug.us.monday.com\n</code></pre>\n<p>…because for EU hosted accounts, we currently have <code>dsapps_pulse_194XXX97_943XXX7f12839c1c53ef__60XXX4@euc1.mx.monday.com</code></p>\n<p>That’s <code>euc1</code> rather than <code>eu</code> - which is available by decoding the <code>shortLivedToken</code> and using the <code>rgn</code> property from within:</p>\n<pre><code class=\"lang-auto\">{\n  \"shortLived\": true,\n  \"uid\": &lt;number&gt;,\n  \"actid\": &lt;number&gt;,\n  \"aid\": &lt;number&gt;,\n  \"aai\": &lt;number&gt;,\n  \"rgn\": \"euc1\",         // This value here\n  \"exp\": &lt;number&gt;,\n  \"iat\": &lt;number&gt;\n}\n</code></pre>"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": 112883,
+  "title": "Internal Server 500 error thrown on querying one specific item during pagination",
+  "slug": "internal-server-500-error-thrown-on-querying-one-specific-item-during-pagination",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    103,
+    351
+  ],
+  "createdAt": "2025-04-09T15:48:39.433Z",
+  "lastPostedAt": "2025-04-11T07:57:10.989Z",
+  "postsCount": 2,
+  "excerpt": "I have this query that works \nquery {\n  next_items_page(\n    cursor: &quot;Removed Cursor For Privacy&quot;\n    limit: 167\n  ) {\n    cursor\n    items {\n      name\n      id\n      column_values {\n        ... on FormulaValue {\n      &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 13,
+  "posts": [
+    {
+      "id": 226455,
+      "postNumber": 1,
+      "createdAt": "2025-04-09T15:48:39.511Z",
+      "author": "peter15682 (Peter Lemaire)",
+      "cookedHtml": "<p>I have this query that works</p>\n<pre><code class=\"lang-auto\">query {\n  next_items_page(\n    cursor: \"Removed Cursor For Privacy\"\n    limit: 167\n  ) {\n    cursor\n    items {\n      name\n      id\n      column_values {\n        ... on FormulaValue {\n          display_value\n        }\n        ... on TextValue {\n          text\n        }\n        ... on PeopleValue {\n          text\n        }\n        ... on DropdownValue {\n          text\n        }\n        ... on NumbersValue {\n          number\n        }\n        ... on PersonValue {\n          text\n        }\n        ... on DateValue {\n          date\n        }\n        ... on BoardRelationValue {\n          display_value\n        }\n        ... on MirrorValue {\n          display_value\n        }\n        ... on StatusValue {\n          label\n        }\n        ... on LocationValue {\n          text\n        }\n        ... on PhoneValue {\n          text\n        }\n        ... on EmailValue {\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<pre><code class=\"lang-auto\">And this query that does not\n\nquery {\n  next_items_page(\n    cursor: \"Removed Cursor for Privacy\" #Same cursor as above\n    limit: 168\n  ) {\n    cursor\n    items {\n      name\n      id\n      column_values {\n        ... on FormulaValue {\n          display_value\n        }\n        ... on TextValue {\n          text\n        }\n        ... on PeopleValue {\n          text\n        }\n        ... on DropdownValue {\n          text\n        }\n        ... on NumbersValue {\n          number\n        }\n        ... on PersonValue {\n          text\n        }\n        ... on DateValue {\n          date\n        }\n        ... on BoardRelationValue {\n          display_value\n        }\n        ... on MirrorValue {\n          display_value\n        }\n        ... on StatusValue {\n          label\n        }\n        ... on LocationValue {\n          text\n        }\n        ... on PhoneValue {\n          text\n        }\n        ... on EmailValue {\n          text\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>The query itself runs in about 5-6 seconds, so I am nowhere near the timeout period and if I shift my limits around, I can replicate that when I am trying to retrieve this one specific item, a 500 error is returned (And it also throws this error very quickly). This is replicated in my Python Script and in the API playground. Inspecting the item itself in Monday, I cannot see anything unusual about it. Is there any known issue or does anyone have any experience with one item causing an API error like this?</p>"
+    },
+    {
+      "id": 226692,
+      "postNumber": 2,
+      "createdAt": "2025-04-11T07:57:10.989Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/p/3ab097/48.png\" class=\"avatar\" /> Peter Lemaire:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">        ... on BoardRelationValue {\n          display_value\n        }\n        ... on MirrorValue {\n          display_value\n        }\n</code></pre>\n</blockquote>\n</aside>\n<p>We had a similar problem with our app.<br />\nWhen accessing <code>BoardRelationValue</code> and <code>MirrorValue</code> columns of an item hosted in a workspace which our app didn’t have access to, Monday returned a 500 error.<br />\nThe quick fix was to give the app access to that workspace, but it’s something that must be fixed by Monday.</p>"
+    }
+  ]
+}

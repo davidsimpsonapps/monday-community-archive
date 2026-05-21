@@ -1,0 +1,55 @@
+{
+  "id": 122619,
+  "title": "Need help correcting a formula to subtract time tracked from planned hours",
+  "slug": "need-help-correcting-a-formula-to-subtract-time-tracked-from-planned-hours",
+  "categoryId": 6,
+  "tagIds": [
+    9,
+    108,
+    351
+  ],
+  "createdAt": "2025-12-30T19:50:36.478Z",
+  "lastPostedAt": "2026-01-08T20:09:44.859Z",
+  "postsCount": 5,
+  "excerpt": "Hi! Ive searched and searched, and in theory I’m doing everthing right, but I’m not getting the right response. \nI have a task for “total monthly hours” and subitems where the time tracking rolls up to that top item. I c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 31,
+  "posts": [
+    {
+      "id": 243550,
+      "postNumber": 1,
+      "createdAt": "2025-12-30T19:50:36.559Z",
+      "author": "LaurenA (Lauren)",
+      "cookedHtml": "<p>Hi! Ive searched and searched, and in theory I’m doing everthing right, but I’m not getting the right response.<br />\nI have a task for “total monthly hours” and subitems where the time tracking rolls up to that top item. I created a “planned hours” budget in the image below of 12 hours, the “time tracking” shows 1 hour clocked, but I’m getting a result of -3,588 - the result returned should be 11.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/2/a/2a55f02e6b606fddbfb26d126a666ef0f91aa690.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/2/a/2a55f02e6b606fddbfb26d126a666ef0f91aa690.png\" alt=\"image\" width=\"450\" height=\"111\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">450×111 6.01 KB</span></div></a></div><p></p>\n<p>I’ve tried both of these formulas and it returns the same result<br />\nminus({Planned Hours}, {Time Tracking#Hours})<br />\n{Planned Hours}-{Time Tracking}</p>"
+    },
+    {
+      "id": 243571,
+      "postNumber": 2,
+      "createdAt": "2026-01-01T05:33:59.846Z",
+      "author": "sanmart (sanmart)",
+      "cookedHtml": "<p>This happens because the <strong>Time Tracking column is calculated in seconds</strong>, even though it shows hours on the board. Your Planned Hours are in hours, so the formula is mixing units. To fix it, convert time tracking to hours by dividing by 3600, like this: <code>{Planned Hours} - ({Time Tracking} / 3600)</code>. This should return the correct result, such as 11 hours instead of a large negative number.</p>"
+    },
+    {
+      "id": 243584,
+      "postNumber": 3,
+      "createdAt": "2026-01-02T04:43:55.535Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/laurena\">@LaurenA</a>  welcome to the community.</p>\n<p>This one is a classic monday gotcha and you’re not doing anything wrong.</p>\n<p>The issue is that the <strong>Time Tracking column does not store time as decimal hours</strong> internally. It stores time in <strong>seconds</strong>, even though it’s displayed to you as hours and minutes. Your Planned Hours column is a plain number in hours, so the formula is subtracting hours from seconds, which is why you’re seeing a huge negative value like -3,588.</p>\n<p>Here’s what’s happening under the hood:<br />\n12 planned hours minus 1 hour of tracked time is actually being calculated as<br />\n12 minus 3,600 seconds<br />\nwhich results in the large negative number you’re seeing.</p>\n<p>To fix this, you need to convert the time tracking value into hours inside the formula.</p>\n<p>Use this formula instead:<br />\n{Planned Hours} - ({Time Tracking} / 3600)</p>\n<p>That divides the tracked seconds by 3,600 to convert them into hours, so 1h 0m becomes 1. Then the math works correctly and you’ll get 11 as expected.</p>\n<p>A couple of extra tips:<br />\nMake sure your Planned Hours column is a Numbers column, not Formula or Status<br />\nIf you’re rolling time up from subitems, confirm the rollup is set to Time Tracking and not a mirrored value<br />\nIf you ever want minutes instead of hours, divide by 60 instead of 3,600</p>\n<p>Once you convert the units, both formulas you tried will behave exactly as expected.</p>"
+    },
+    {
+      "id": 243619,
+      "postNumber": 4,
+      "createdAt": "2026-01-02T20:29:07.824Z",
+      "author": "LaurenA (Lauren)",
+      "cookedHtml": "<p>Thank you! this worked!</p>"
+    },
+    {
+      "id": 243874,
+      "postNumber": 5,
+      "createdAt": "2026-01-08T20:09:44.859Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Glad it worked <a class=\"mention\" href=\"/u/laurena\">@LaurenA</a></p>"
+    }
+  ]
+}

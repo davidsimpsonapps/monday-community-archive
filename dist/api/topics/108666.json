@@ -1,0 +1,33 @@
+{
+  "id": 108666,
+  "title": "API - Rate limits and usability.",
+  "slug": "api-rate-limits-and-usability",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    203
+  ],
+  "createdAt": "2025-01-29T17:20:16.805Z",
+  "lastPostedAt": "2025-01-29T22:58:13.742Z",
+  "postsCount": 2,
+  "excerpt": "So, I’ve been attempting to build a better dashboard so that I can view multiple stats and progress across multiple projects, however the API complexity limits and overall usability have just stopped me in my tracks. I c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 19,
+  "posts": [
+    {
+      "id": 219358,
+      "postNumber": 1,
+      "createdAt": "2025-01-29T17:20:16.874Z",
+      "author": "kevin.robertson (Kevin Robertson)",
+      "cookedHtml": "<p>So, I’ve been attempting to build a better dashboard so that I can view multiple stats and progress across multiple projects, however the API complexity limits and overall usability have just stopped me in my tracks. I can’t even do this query without it being 2.5x the complexity limit:</p>\n<pre><code class=\"lang-auto\">  const query = `\n    query fetchBoards($boardIds: [ID!]!) {\n      complexity {\n        before\n        query\n        after\n        reset_in_x_seconds\n      }\n      boards(ids: $boardIds) {\n        id\n        name\n        groups {\n          id\n          title\n          items_page(limit: 100) {\n            items {\n              column_values(ids: [\"status\"]) {\n                text\n              }\n            }\n          }\n        }\n      }\n    }\n  `;\n</code></pre>\n<p>Either I’m missing something or is the API just completely unusable?</p>"
+    },
+    {
+      "id": 219449,
+      "postNumber": 2,
+      "createdAt": "2025-01-29T22:58:13.742Z",
+      "author": "Billchenau (Bill)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/kevin.robertson\">@kevin.robertson</a>,</p>\n<p>Bill here from <a href=\"http://monday.com\">monday.com</a> - Welcome to the community! <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>Complexity limits increase exponentially if queries are nested. The reason why your complexity is so high is because you’ve nested the items_page query within the groups query.</p>\n<p>If you remove the nesting and send something like this, it should reduce the complexity.</p>\n<pre><code class=\"lang-auto\">const query = `\n    query fetchBoards($boardIds: [ID!]!) {\n      complexity {\n        before\n        query\n        after\n        reset_in_x_seconds\n      }\n      boards(ids: $boardIds) {\n        id\n        name\n        groups {\n          id\n          title\n        }\n   items_page(limit: 100) {\n            items {\n              column_values(ids: [\"status\"]) {\n                text\n              }\n            }\n          }\n      }\n    }\n  `;\n</code></pre>\n<p>Let me know if that works for you.</p>\n<p>Cheers,<br />\nBill</p>"
+    }
+  ]
+}

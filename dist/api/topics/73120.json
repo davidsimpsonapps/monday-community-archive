@@ -1,0 +1,76 @@
+{
+  "id": 73120,
+  "title": "How to know which items have been failed to update due to time error in an API call",
+  "slug": "how-to-know-which-items-have-been-failed-to-update-due-to-time-error-in-an-api-call",
+  "categoryId": 8,
+  "tagIds": [
+    53,
+    94,
+    351
+  ],
+  "createdAt": "2023-12-15T05:52:47.546Z",
+  "lastPostedAt": "2023-12-15T13:26:47.142Z",
+  "postsCount": 7,
+  "excerpt": "I have 20 items to be updated via one API call, sometimes it run successfully and sometime it give me time out error after one minute of execution, I noticed that even it give time out error it updates some items, I want&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 322,
+  "posts": [
+    {
+      "id": 158066,
+      "postNumber": 1,
+      "createdAt": "2023-12-15T05:52:47.629Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p>I have 20 items to be updated via one API call, sometimes it run successfully and sometime it give me time out error after one minute of execution, I noticed that even it give time out error it updates some items, I want to know what items it exactly updated, or what items it failed to update, is there any way to know this information?</p>"
+    },
+    {
+      "id": 158103,
+      "postNumber": 2,
+      "createdAt": "2023-12-15T11:29:43.445Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Assuming you’re making one request per item, and not multiple items per request, then you know by virtue of which request failed.</p>\n<p>This is why I never use multiple mutations per request, and just execute 20 requests in parallel. Much easier to handle errors.</p>"
+    },
+    {
+      "id": 158105,
+      "postNumber": 3,
+      "createdAt": "2023-12-15T11:57:13.279Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p>I am updating 20 items in one call.</p>"
+    },
+    {
+      "id": 158113,
+      "postNumber": 4,
+      "createdAt": "2023-12-15T12:28:23.096Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>In that case you will likely be told the name of the mutation (since with multiple mutations in one call you have to name them) in the error which you will need to parse out manually from the error messages.</p>\n<p>This is Javascript, will be different if you’re using another language of course…</p>\n<p>This is why I only make one update per call, i can always use <code>await Promise.allSettled([promises])</code> and handle each one separately. It also means I don’t need code to build a query string from the source data, and I can just use one query with variables.  The <code>Promise.all</code> method actually improves apparent performance because the monday API resolver processes each mutation in the query one at a time. <code>Promise.all()</code> will let them process asynchronously then process the results when they are all done.</p>"
+    },
+    {
+      "id": 158119,
+      "postNumber": 5,
+      "createdAt": "2023-12-15T12:50:50.867Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p>How could I get an error message from the call?</p>"
+    },
+    {
+      "id": 158120,
+      "postNumber": 6,
+      "createdAt": "2023-12-15T12:56:23.128Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<aside class=\"onebox allowlistedgeneric\">\n  <header class=\"source\">\n      <img src=\"https://global.discourse-cdn.com/monday/original/2X/7/7bfd2edf3c0259b3048238de3e35866f88305b6b.png\" class=\"site-icon\" width=\"32\" height=\"32\" />\n\n      <a href=\"https://developer.monday.com/api-reference/docs/errors\" target=\"_blank\" rel=\"noopener\">monday API docs</a>\n  </header>\n\n  <article class=\"onebox-body\">\n    \n\n<h3><a href=\"https://developer.monday.com/api-reference/docs/errors\" target=\"_blank\" rel=\"noopener\">Error codes</a></h3>\n\n  <p>Our monday.com GraphQL API returns the set of predefined errors listed below. If an exception is handled by the GraphQL application later, it will return a 200 status code and further information in the three following...</p>\n\n\n  </article>\n\n  <div class=\"onebox-metadata\">\n    \n    \n  </div>\n\n  <div></div>\n</aside>\n\n<p>These are returned in the body of the response. Most calls return with an HTTP 200 code, but then contain the errors (in the formats in that link) for handling. The best way to check if there are errors is by checking if “data” exists - it won’t exist if there is an error. Then you know to look at errors.</p>"
+    },
+    {
+      "id": 158124,
+      "postNumber": 7,
+      "createdAt": "2023-12-15T13:26:47.142Z",
+      "author": "AmirSaleem (Amir Saleem)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/cody\">@Cody</a>, you solved my problem. I appreciate it.</p>"
+    },
+    {
+      "id": 158407,
+      "postNumber": 8,
+      "createdAt": "2023-12-18T10:45:24.586Z",
+      "author": "TomFri (Tom Fridman)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

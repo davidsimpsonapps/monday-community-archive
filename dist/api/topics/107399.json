@@ -1,0 +1,46 @@
+{
+  "id": 107399,
+  "title": "Webhook authorization header",
+  "slug": "webhook-authorization-header",
+  "categoryId": 6,
+  "tagIds": [
+    6,
+    94,
+    144,
+    157,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2025-01-13T08:00:51.534Z",
+  "lastPostedAt": "2025-01-26T07:15:48.680Z",
+  "postsCount": 3,
+  "excerpt": "Hello, \nI created an app in the Developer Center, and then created an integration feature using the “quickstart integration - NodeJS” option&quot;. \nI ran the command provided in my development directory, and it created all t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 83,
+  "posts": [
+    {
+      "id": 217094,
+      "postNumber": 1,
+      "createdAt": "2025-01-13T08:00:51.622Z",
+      "author": "dan13l (Daniel)",
+      "cookedHtml": "<p>Hello,</p>\n<p>I created an app in the Developer Center, and then created an integration feature using the “quickstart integration - NodeJS” option\".</p>\n<p>I ran the command provided in my development directory, and it created all the files, etc., it also provided the url for linking.</p>\n<p>Now, I set up an automation on my board using this webhook: “when an item is created, send a webhook”. This automation is linked to a route I created.</p>\n<p>When I create a new project in my table, it posts the route and runs middleware code that handles the challenge fine. But I am inspecting the headers with these posts, and I cannot find the authorization header. So, the ‘authenticatonMiddleware’ middleware code that came with the template code outputs “Authentication failed: JWT must be provided.”</p>\n<p>Likewise, the code in the ‘monday-controlller.js’ is also running into issues because it’s expecting req.session to contain a shortLivedToken.</p>\n<p>Could anyone please assist? I am new to Monday development.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 217206,
+      "postNumber": 2,
+      "createdAt": "2025-01-13T17:42:37.349Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/dan13l\">@dan13l</a></p>\n<p>Welcome to the community. Do I understand correctly that you are handling the challenge response and authorization in the same piece of middleware? If so, take care: the challenge send by the webhook is not signed (all future posts are singed). Something like this should work:</p>\n<pre><code class=\"lang-auto\">  try {\n    let { authorization } = req.headers;\n    let { challenge } = req.body;\n    //The challenge from the webhook is not signed\n    if (challenge) return next();\n    if (!authorization &amp;&amp; req.query) {\n      authorization = req.query.shortLivedToken;\n    }\n    const { accountId, userId, backToUrl } = jwt.verify(authorization, envVars.signingSecret);\n    req.session = { accountId, userId, backToUrl };\n    next();\n  } catch (err) {\n    res.status(401).json({ error: \"not authenticated\" });\n  }```</code></pre>"
+    },
+    {
+      "id": 218932,
+      "postNumber": 3,
+      "createdAt": "2025-01-26T07:15:48.680Z",
+      "author": "mondayMan1 (Monday)",
+      "cookedHtml": "<p>Only webhooks created with an api mutation that include an api key, session token, or oauth token will be authenticated.</p>\n<p>The first time Monday hits the endpoint it will come without an authorization and just a challenge. After that it will include the auth.</p>\n<pre><code class=\"lang-auto\">const webhookChallenge = (req: Request, res: Response, next: NextFunction) =&gt; {\n  if (req.body.challenge) {\n    return res.status(200).send(req.body);\n  }\n  next();\n};\n</code></pre>\n<pre><code class=\"lang-auto\">  '/create-update',\n  webhookChallenge,\n  authenticationMiddleware,\n  handleCreateUpdate\n);```</code></pre>"
+    }
+  ]
+}

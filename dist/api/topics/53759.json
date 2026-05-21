@@ -1,0 +1,39 @@
+{
+  "id": 53759,
+  "title": "Possible to set up a running task (task with start, but no end date)?",
+  "slug": "possible-to-set-up-a-running-task-task-with-start-but-no-end-date",
+  "categoryId": 6,
+  "tagIds": [
+    131
+  ],
+  "createdAt": "2023-03-14T16:49:52.679Z",
+  "lastPostedAt": "2023-03-14T18:11:29.485Z",
+  "postsCount": 3,
+  "excerpt": "Is there a possibility to set up a “running” task - a task with a start date, but no end date? I would like to achieve behavior in Gantt view similar to the following: assume the numbers below refer to days: \n  1  2  3  &hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1028,
+  "posts": [
+    {
+      "id": 119572,
+      "postNumber": 1,
+      "createdAt": "2023-03-14T16:49:52.766Z",
+      "author": "sdbbs (sdbbs)",
+      "cookedHtml": "<p>Is there a possibility to set up a “running” task - a task with a start date, but no end date? I would like to achieve behavior in Gantt view similar to the following: assume the numbers below refer to days:</p>\n<pre><code class=\"lang-auto\">  1  2  3  4  5  6  7  8  9\n</code></pre>\n<p>Let’s say “today” is day 2, and I open a running task A starting from “today” - then the Gantt visualisation will be a “day symbol” (like for the existing Milestone type - but let’s use <code>*</code> here), so maybe something like this:</p>\n<pre><code class=\"lang-auto\">  1  2  3  4  5  6  7  8  9\nA    *\n</code></pre>\n<p>Then, I login the “next day”, - so, on day 3 - and I’d observe the task entry to be “extended” to “today”, say like this:</p>\n<pre><code class=\"lang-auto\">  1  2  3  4  5  6  7  8  9\nA    *--]\n</code></pre>\n<p>Let’s say I create another running task here, B - I’d have this:</p>\n<pre><code class=\"lang-auto\">  1  2  3  4  5  6  7  8  9\nA    *--]\nB       *\n</code></pre>\n<p>Then, I login the “next day”, - so, on day 4 - and I’d observe the task entries to be “extended” to “today”, like this:</p>\n<pre><code class=\"lang-auto\">  1  2  3  4  5  6  7  8  9\nA    *-----]\nB       *--]\n</code></pre>\n<p>So, let’s say I’m done with task A “today” - then I simply set “today” as an end date - and it stops being a “running” task, and instead becomes the regular start+end date type of task in <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> - so the state becomes:</p>\n<pre><code class=\"lang-auto\">  1  2  3  4  5  6  7  8  9\nA    *-----*\nB       *--]\n</code></pre>\n<p>Then, I login the “next day”, - so, on day 5 - and I’d observe only the B task entry to be “extended” to “today” (since A is not a running task anymore), like this:</p>\n<pre><code class=\"lang-auto\">  1  2  3  4  5  6  7  8  9\nA    *-----*\nB       *-----]\n</code></pre>\n<p>… and so on …</p>\n<p>Is there a facility for something like this in the web UI? Lacking that, could I use the API (or some scripting?) to achieve something like this?</p>"
+    },
+    {
+      "id": 119578,
+      "postNumber": 2,
+      "createdAt": "2023-03-14T17:30:06.265Z",
+      "author": "Jarv (Ian Jarvie)",
+      "cookedHtml": "<p>You could set a status column then use automations to start time tracking. when the status is then changed, you can set another automation to stop the time tracking for the 1st status then start time tracking for 2nd status and so on.</p>"
+    },
+    {
+      "id": 119582,
+      "postNumber": 3,
+      "createdAt": "2023-03-14T18:11:29.485Z",
+      "author": "sdbbs (sdbbs)",
+      "cookedHtml": "<p>Many thanks <a class=\"mention\" href=\"/u/jarv\">@Jarv</a> - It turns out <a href=\"https://support.monday.com/hc/en-us/articles/360001143809-The-Time-Tracking-Column-\" rel=\"noopener nofollow ugc\">Time Tracking Column</a> is a Pro and Enterprise feature, but apparently we have access to it.</p>\n<p>Anyways, I looked at Time Tracking Column more closely, and apparently it requires pressing of a “play” like button, and then it measures/keeps track of time during which this button is active. I guess that is the core of your suggestion too, to use automations to “trigger” this button, and therefore keep track of time.</p>\n<p>But I don’t really need this kind of “granular” time measurement - all I want is a task, where the end date is always <code>TODAY()</code>, solely for the purpose of observing it in a Gantt chart.</p>\n<p>I was trying some things out, and it turns out you <s><strong>MUST</strong> have a Timeline column defined for your task/entry, else it will NEVER get shown in Gantt view.</s> EDIT: turns out, there is in the Gantt view: More options (…) / Settings / Choose Timeline columns / and you can choose any of “Timeline”, “Completion Date” and “Date”.</p>\n<p>Therefore, one thing I might have to solve my problem, is an automation like this:</p>\n<pre><code>Every day (every 1 day, at 0:00) modify end date of Timeline column of task A set to TODAY()\n</code></pre>\n<p>… except, when I enter “Every day (every 1 day, at 0:00)” the only “verbs” I have available are “notify”, “create group”, “duplicate group”, “create item”. If there was “modify”, I guess it would have been easily doable …</p>"
+    }
+  ]
+}

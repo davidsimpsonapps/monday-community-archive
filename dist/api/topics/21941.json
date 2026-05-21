@@ -1,0 +1,61 @@
+{
+  "id": 21941,
+  "title": "Improve mutation performance",
+  "slug": "improve-mutation-performance",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187
+  ],
+  "createdAt": "2021-07-04T21:51:46.257Z",
+  "lastPostedAt": "2021-07-15T14:53:31.572Z",
+  "postsCount": 5,
+  "excerpt": "Hi everyone, \nSo I have a monday app, where I need to create multiple subitems after a click action. I saw this post bulk creation and so far the solution there it’s working. The issue comes when I have to create like 15&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1501,
+  "posts": [
+    {
+      "id": 56854,
+      "postNumber": 1,
+      "createdAt": "2021-07-04T21:51:46.353Z",
+      "author": "Ellebkey (Joel Barranco)",
+      "cookedHtml": "<p>Hi everyone,</p>\n<p>So I have a monday app, where I need to create multiple subitems after a click action. I saw this post <a href=\"https://community.monday.com/t/bulk-update-of-items-through-api/6763/7\">bulk creation</a> and so far the solution there it’s working. The issue comes when I have to create like 15+ subitems at the same time and the query response starts to be noticed by the user causing that they close the pulse view and cancel the process before finishing. I added a spinner feedback in the mean time but I would like to know if there is any way that I can improve the mutation to reduce the execution time.</p>\n<p>Thanks in advance.</p>\n<pre><code class=\"lang-auto\">const queryStrings = subItems\n    .map(item =&gt; {\n        return `si${item.id}: create_subitem(parent_item_id: $itemId, item_name: \"${item.name}\", column_values: ${columnValues}) { id, column_values { id, value } }`;\n    })\n    .join(' ');\n\nconst query = `mutation bulk_create_sub_items($itemId: Int!) { ${queryStrings} }`;\n\nconst variables = { itemId: this.itemId };\n\nawait monday.api(query, { variables });\n</code></pre>"
+    },
+    {
+      "id": 56908,
+      "postNumber": 2,
+      "createdAt": "2021-07-05T11:53:41.166Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ellebkey\">@Ellebkey</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>That’s a great question! I’m afraid that at this time, we do not offer a bulk mutation option just yet, so your users could indeed experience some delay before the mutation completes running. That said, it seems like your mutation stops completely as soon as they leave your Item view - is that correct?</p>\n<p>I’m curious if it would make sense to adjust the way your app runs to keep sending the create_subitem mutations even if the item card view is closed already, similar to how SubItem Templates seems to run.</p>\n<p>What do you think?</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 56990,
+      "postNumber": 3,
+      "createdAt": "2021-07-06T11:35:06.657Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 57121,
+      "postNumber": 4,
+      "createdAt": "2021-07-07T21:02:36.962Z",
+      "author": "Ellebkey (Joel Barranco)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>\n<p>Sorry for the late answer, it’s been a pretty busy week. So first, yes the mutation stops when they leave the item view, I’m referring the right modal where my app is.<br />\nAnd how could I keep running the mutation, just not handling the promise? I don’t think that will be good. By the way, I’m part of the developer team from Subitems Template, and our users and having this problem. Maybe could we take the conversation over a mail?</p>\n<p>Best regards.</p>\n<p>-Joel</p>"
+    },
+    {
+      "id": 57209,
+      "postNumber": 5,
+      "createdAt": "2021-07-08T14:53:12.434Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/ellebkey\">@Ellebkey</a></p>\n<p>Thank you for circling back with me! No worries at all, I appreciate your response.</p>\n<p>That’s odd - I’ve tested the Sub-item Templates app when trying to figure out potential rough corners and I’ve had no issues creating 50+ items when leaving the modal view, so I’m curious as to what might be causing this.</p>\n<p>If we can discuss this over email, that would be amazing! I would appreciate further input into the way this si working for you currently.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 57920,
+      "postNumber": 6,
+      "createdAt": "2021-07-15T14:53:31.572Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "id": 48666,
+  "title": "How handling special characters in mutation query?",
+  "slug": "how-handling-special-characters-in-mutation-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    239,
+    351
+  ],
+  "createdAt": "2023-01-08T23:26:19.139Z",
+  "lastPostedAt": "2023-04-04T05:23:37.998Z",
+  "postsCount": 10,
+  "excerpt": "I want to create item which have text column with special characters. \n[attach my query] \nmutation {\n    create_item (board_id:$board_id, group_id: $group_id, item_name: $item_name, column_values: &quot;{\\&quot;,\\&quot;___9\\&quot;:\\&quot;&lt;hello&gt;&lt;&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1813,
+  "posts": [
+    {
+      "id": 109628,
+      "postNumber": 1,
+      "createdAt": "2023-01-08T23:26:19.227Z",
+      "author": "thlee (Taeho Lee)",
+      "cookedHtml": "<p>I want to create item which have text column with special characters.</p>\n<p>[attach my query]</p>\n<pre><code class=\"lang-auto\">mutation {\n    create_item (board_id:$board_id, group_id: $group_id, item_name: $item_name, column_values: \"{\\\",\\\"___9\\\":\\\"&lt;hello&gt;&lt;World!&gt;\\\"}}\") {\n       id\n   }\n}\n</code></pre>\n<p>The query works fine, but it doesn’t print out the value I want on the screen.<br />\nIt shows like this.(There’s no value in column.)<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5b3e01edebacd747efb09bb14a72feb81a4ca68c.png\" title=\"스크린샷 2023-01-09 오전 10.23.11\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/5/5b3e01edebacd747efb09bb14a72feb81a4ca68c.png\" alt=\"스크린샷 2023-01-09 오전 10.23.11\" width=\"690\" height=\"64\" /><div class=\"meta\">\n<span class=\"filename\">스크린샷 2023-01-09 오전 10.23.11</span><span class=\"informations\">900×84 211 Bytes</span>\n</div></a></div><p></p>\n<p>These symptoms do not occur only in &lt;&gt;. These symptoms also occur in other special characters.<br />\nHow can i handling special characters?</p>"
+    },
+    {
+      "id": 109642,
+      "postNumber": 2,
+      "createdAt": "2023-01-09T05:37:15.277Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/thlee\">@thlee</a>,</p>\n<p>It looks like there is a syntax error there. I am not sure what the comma is in that mutation you sent. I guess ___9 is the ID of the column.</p>\n<p>In any case, I just created a working mutation you can use as an example:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_item(board_id: 1234567890, group_id: \"topics\", item_name: \"My name\", column_values: \"{\\\"text\\\":\\\"&lt;hello&gt;&lt;World!&gt;\\\"}\") {\n    id\n  }\n}\n</code></pre>\n<p>In this case “text” would be the ID of the column.</p>\n<p>Let me know if you have any other questions <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 109797,
+      "postNumber": 3,
+      "createdAt": "2023-01-09T22:45:10.406Z",
+      "author": "thlee (Taeho Lee)",
+      "cookedHtml": "<p>Thank you for your apply.<br />\n___9 is the Column which type is long text.</p>\n<p>Attach my mutation query.(I used Postman to try mutation.)</p>\n<pre><code class=\"lang-auto\">mutation {\n    create_item (board_id: 1234567890, group_id: \"topics\", item_name: \"Hello World!\", column_values: \"\"\"{\"___9\": \"&lt;Samsung&gt;\"}\"\"\") {\n       id\n   }\n}\n</code></pre>\n<p>Expected : Create item with ___9 column containing  value.<br />\nResult : Create item with ___9 column containing Nothing.</p>"
+    },
+    {
+      "id": 109820,
+      "postNumber": 4,
+      "createdAt": "2023-01-10T06:06:37.213Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>That is not the correct syntax for quotes and escaping outer quotes.</p>\n<p>This is a working Postman example:</p>\n<pre><code class=\"lang-auto\">mutation {\n            create_item (board_id: 1234567890, group_id: \"topics\", item_name: \"Hello World!\", column_values: \"{\\\"text\\\": \\\"&lt;Samsung&gt;\\\"}\") {\n       id\n   }\n}\n</code></pre>\n<p>You can find many Postman examples we created <a href=\"https://www.postman.com/matiasdavidson/workspace/monday-com-queries-and-mutations/collection/17637789-b18ebc66-bc27-49b5-a950-3dfa4bfb3a21\">here</a>.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 110249,
+      "postNumber": 5,
+      "createdAt": "2023-01-12T01:53:55.719Z",
+      "author": "thlee (Taeho Lee)",
+      "cookedHtml": "<p>As far as I know, ’ “”\" '(Tripple Quotation Mark) is GraphQL syntax which handling Special characters(ex: !, ?).</p>\n<p>I tried your apply but it doesn’t work. It works same as i question.</p>"
+    },
+    {
+      "id": 110265,
+      "postNumber": 6,
+      "createdAt": "2023-01-12T06:27:07.210Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>I am not sure where you are testing the example I sent but it looks like you might have a typo somewhere because as you can see in this Postman screenshot, it works:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/8/8c00524b3703385f427b1c48bbaafb7d5dd14ea1.png\" title=\"Screen Shot 2023-01-12 at 10.20.58\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/8/8c00524b3703385f427b1c48bbaafb7d5dd14ea1_2_690x407.png\" alt=\"Screen Shot 2023-01-12 at 10.20.58\" width=\"690\" height=\"407\" /><div class=\"meta\">\n<span class=\"filename\">Screen Shot 2023-01-12 at 10.20.58</span><span class=\"informations\">1546×913 77.7 KB</span>\n</div></a></div><p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/557c893ce196af684de5c0712c065ba06268e2b5.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/557c893ce196af684de5c0712c065ba06268e2b5_2_690x31.png\" alt=\"image\" width=\"690\" height=\"31\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1640×76 4.41 KB</span>\n</div></a></div><p></p>\n<p>In our API, there is no need for triple quotes. As you can see in my example, I am not using them and special characters are being sent without any issues. At least not when using Postman or our API Playground directly. If you use some language that requires some other syntax in your script, that should be checked with the documentation for that language.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 122153,
+      "postNumber": 8,
+      "createdAt": "2023-03-30T22:57:12.762Z",
+      "author": "thlee (Taeho Lee)",
+      "cookedHtml": "<p>This Issue has occurred in column which type is long-text.</p>\n<p>Is there use different text converting logic?</p>\n<p>Please check it.</p>"
+    },
+    {
+      "id": 122438,
+      "postNumber": 9,
+      "createdAt": "2023-04-03T03:45:03.823Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking <a href=\"https://monday.slack.com/archives/C018J3C259C/p1680504287367559\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 122485,
+      "postNumber": 10,
+      "createdAt": "2023-04-03T08:03:08.741Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/thlee\">@thlee</a>,</p>\n<p>The long text column has a sanitization mechanism that will not allow you to use that syntax.</p>\n<p>As of today, there is no way of working around this for this column type.</p>\n<p>Let me know if you have any other questions!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 122589,
+      "postNumber": 11,
+      "createdAt": "2023-04-04T02:40:04.806Z",
+      "author": "thlee (Taeho Lee)",
+      "cookedHtml": "<p>I wonder if you have any plans to fix this issue.</p>"
+    },
+    {
+      "id": 122604,
+      "postNumber": 12,
+      "createdAt": "2023-04-04T05:23:37.998Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/thlee\">@thlee</a>,</p>\n<p>This is not a bug but rather a decision on how to handle sanitization for this column type.</p>\n<p>This is not likely to change in the near future.</p>\n<p>Having said that, I will share your feedback as a request for our team to take another look to see if it can be changed in the future.</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 122605,
+      "postNumber": 13,
+      "createdAt": "2023-04-04T05:26:13.306Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/4254571709\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    }
+  ]
+}

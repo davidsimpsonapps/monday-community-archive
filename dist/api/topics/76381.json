@@ -1,0 +1,32 @@
+{
+  "id": 76381,
+  "title": "How to avoid webhooks routine an infinite loop in make.com",
+  "slug": "how-to-avoid-webhooks-routine-an-infinite-loop-in-make-com",
+  "categoryId": 80,
+  "tagIds": [
+    5
+  ],
+  "createdAt": "2024-01-29T05:41:21.144Z",
+  "lastPostedAt": "2024-01-31T05:25:46.338Z",
+  "postsCount": 2,
+  "excerpt": "Hello, i have webhooks routine in make.com that is triggered on item status changed. But routine itself makes infinite loop because purpose of routine is to change item status. \nThat is the best way to avoid this? \nI mad&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 502,
+  "posts": [
+    {
+      "id": 164591,
+      "postNumber": 1,
+      "createdAt": "2024-01-29T05:41:21.213Z",
+      "author": "OndrejSibrina (Ondřej Šibřina)",
+      "cookedHtml": "<p>Hello, i have webhooks routine in <a href=\"http://make.com\" rel=\"noopener nofollow ugc\">make.com</a> that is triggered on item status changed. But routine itself makes infinite loop because purpose of routine is to change item status.</p>\n<p>That is the best way to avoid this?</p>\n<p>I made up solution to have extra “routine state” column in item but i don’t like this solution.</p>"
+    },
+    {
+      "id": 165062,
+      "postNumber": 2,
+      "createdAt": "2024-01-31T05:25:46.338Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>One solution I’ve used, is if the user whose token is used for <a href=\"http://make.com\">make.com</a> is a dedicated account for automations and not one used for regular operations you can filter incoming webhooks for that user id and ignore them.</p>\n<p>You could also use a data store module to store a value with a key that is a hash of item_id, user_id (the token user), column_id, previous_column_value (the value before your first change), and column_value (value after) along with a timestamp. Then when receiving events you get that same data in the webhook and can retrieve the record based on that, check the timestamp (that its recent and not 4 hours ago) and then delete the record and stop processing (if there is no record, or its old, you’d proceed with processing)</p>\n<p>You’d also need a scenario that gets any records and checks for old ones, at the end of the day or such, to prevent your data store from filling up.</p>\n<p>Thats the general gist of it, the exact implementation is up to you. But basically you don’t stop retriggering but you do stop making further changes which prevents an infinite loop.</p>"
+    }
+  ]
+}

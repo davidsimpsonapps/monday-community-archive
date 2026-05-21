@@ -1,0 +1,46 @@
+{
+  "id": 32099,
+  "title": "Parse activity_logs Response using C#",
+  "slug": "parse-activity-logs-response-using-c",
+  "categoryId": 8,
+  "tagIds": [
+    129
+  ],
+  "createdAt": "2022-02-23T23:46:16.269Z",
+  "lastPostedAt": "2022-02-24T12:41:35.687Z",
+  "postsCount": 4,
+  "excerpt": "Does anyone have an example on how to parse the following response using C#? \nI was able to just Json \nMy end goal is to get the json string into a list to create a file with. \nThank you for any assistance! \n{\n  &quot;activit&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 5034,
+  "posts": [
+    {
+      "id": 78147,
+      "postNumber": 1,
+      "createdAt": "2022-02-23T23:46:16.366Z",
+      "author": "Meneghini (Meneghini)",
+      "cookedHtml": "<p>Does anyone have an example on how to parse the following response using C#?<br />\nI was able to just Json<br />\nMy end goal is to get the json string into a list to create a file with.</p>\n<p>Thank you for any assistance!</p>\n<pre><code class=\"lang-auto\">{\n  \"activity_logs\": [\n    {\n      \"data\": \"{\\\"board_id\\\":2165785546,\\\"group_id\\\":\\\"new_group2051\\\",\\\"is_top_group\\\":false,\\\"pulse_id\\\":2165787062,\\\"pulse_name\\\":\\\"Tyler\\\",\\\"column_id\\\":\\\"email_address\\\",\\\"column_type\\\":\\\"email\\\",\\\"column_title\\\":\\\"Email Address\\\",\\\"value\\\":{\\\"column_settings\\\":{\\\"includePulseInSubject\\\":true,\\\"ccPulse\\\":true,\\\"bccList\\\":\\\"\\\"}},\\\"previous_value\\\":{\\\"email\\\":\\\"tyler@email.com\\\",\\\"text\\\":\\\"tyler@email.com\\\",\\\"changed_at\\\":\\\"2022-02-15T21:18:48.297Z\\\",\\\"column_settings\\\":{\\\"includePulseInSubject\\\":true,\\\"ccPulse\\\":true,\\\"bccList\\\":\\\"\\\"}},\\\"is_column_with_hide_permissions\\\":false,\\\"previous_textual_value\\\":\\\"tyler@email.com\\\"}\"\n    },\n    {\n      \"data\": \"{\\\"board_id\\\":2165785546,\\\"group_id\\\":\\\"new_group2051\\\",\\\"is_top_group\\\":false,\\\"pulse_id\\\":216578711,\\\"pulse_name\\\":\\\"Nicholas \\\",\\\"column_id\\\":\\\"email_address\\\",\\\"column_type\\\":\\\"email\\\",\\\"column_title\\\":\\\"Email Address\\\",\\\"value\\\":{\\\"column_settings\\\":{\\\"includePulseInSubject\\\":true,\\\"ccPulse\\\":true,\\\"bccList\\\":\\\"\\\"}},\\\"previous_value\\\":{\\\"email\\\":\\\"nicholas@email.com\\\",\\\"text\\\":\\\"nicholas@email.com\\\",\\\"changed_at\\\":\\\"2022-02-16T04:44:52.046Z\\\",\\\"column_settings\\\":{\\\"includePulseInSubject\\\":true,\\\"ccPulse\\\":true,\\\"bccList\\\":\\\"\\\"}},\\\"is_column_with_hide_permissions\\\":false,\\\"previous_textual_value\\\":\\\"nicholas@email.com\\\"}\"\n    },\n    {\n      \"data\": \"{\\\"board_id\\\":2165785546,\\\"group_id\\\":\\\"new_group2051\\\",\\\"is_top_group\\\":false,\\\"pulse_id\\\":216578711,\\\"pulse_name\\\":\\\"Nicholas \\\",\\\"column_id\\\":\\\"batch_5\\\",\\\"column_type\\\":\\\"text\\\",\\\"column_title\\\":\\\"Batch #\\\",\\\"value\\\":{\\\"value\\\":\\\"75\\\"},\\\"previous_value\\\":{\\\"value\\\":\\\"74\\\"},\\\"is_column_with_hide_permissions\\\":false}\"\n    },\n    {\n      \"data\": \"{\\\"board_id\\\":2165785546,\\\"group_id\\\":\\\"new_group2051\\\",\\\"pulse_id\\\":216578711,\\\"is_top_group\\\":false,\\\"value\\\":{\\\"name\\\":\\\"Nicholas \\\"},\\\"previous_value\\\":{\\\"name\\\":\\\"Nicholas \\\"},\\\"column_type\\\":\\\"name\\\",\\\"column_title\\\":\\\"Name\\\"}\"\n    }\n  ]\n}\n</code></pre>\n<p>using<br />\nJsonConvert.DeserializeObject on the values comes back with the error:<br />\n$exception  {“The best overloaded method match for ‘Newtonsoft.Json.JsonConvert.DeserializeObject(string)’ has some invalid arguments”} Microsoft.CSharp.RuntimeBinder.RuntimeBinderException</p>\n<p>Here is my ugly code. I’ve tried deserializing it into a class but it came back with errors. The class was hard to make with IContainers in IContainers.</p>\n<pre><code class=\"lang-auto\">var responseData = JObject.Parse(responseText).SelectToken(\"data\").SelectToken(\"boards\").SelectToken(\"activity_logs\");\ndynamic updatedRecords = JsonConvert.DeserializeObject(responseData.ToString());\n\nforeach (var record in updatedRecords)\n{\nList&lt;Dictionary&lt;string, string&gt;&gt; records = new List&lt;Dictionary&lt;string, string&gt;&gt;();\nDictionary&lt;string, string&gt; fields = new Dictionary&lt;string, string&gt;();\ndynamic updates = JsonConvert.DeserializeObject(JObject.Parse(record.ToString()).SelectToken(\"data\").ToString());\nforeach(var update in updates)\n{\n    switch (update.Name.ToString())\n    {\n        case \"column_id\":\n            fields.Add(update.Name.ToString(), update.Value.ToString());\n            break;\n        case \"pulse_name\":\n            fields.Add(update.Name.ToString(), update.Value.ToString());\n            break;\n        case \"value\":\n            dynamic values = JsonConvert.DeserializeObject(JObject.Parse(update.Value.ToString()));\n            if (update.Name.ToString().Contains(\"column_settings\"))\n            {\n                foreach (var value in values)\n                {\n                    dynamic columns = JsonConvert.DeserializeObject(JObject.Parse(value.Value.ToString()));\n                    foreach(var column in columns)\n                    {\n                        fields.Add($\"Value_{column.Name.ToString()}\", column.Value.ToString());\n                    }\n                                                \n                }\n            }\n            else\n            {\n                foreach (var value in values)\n                {\n                    fields.Add($\"Value_{value.Name.ToString()}\", value.Value.ToString());\n                }\n            }\n                                        \n            break;\n        case \"previous_value\":\n            dynamic prevValues = JsonConvert.DeserializeObject(JObject.Parse(update.Value.ToString()));\n            foreach (var prevalue in prevValues)\n            {\n                fields.Add($\"Prevalue_{prevalue.Name.ToString()}\", prevalue.Value.ToString());\n            }\n            break;\n        case \"previous_textual_value\":\n            fields.Add(update.Name.ToString(), update.Value.ToString());\n            break;\n    }\n}\nif (fields.Count &gt; 0)\n{\n    records.Add(fields);\n    fields.Clear();\n}\n}\n</code></pre>\n<p>I was able to get to the activity logs by the following code:</p>\n<pre><code class=\"lang-auto\">var response = await client.SendAsync(request);|\nstring responseText = await response.Content.ReadAsStringAsync();|\nvar responseData = JObject.Parse(responseText).SelectToken(data).SelectToken(boards).SelectToken(activity_logs);|\n</code></pre>"
+    },
+    {
+      "id": 78174,
+      "postNumber": 2,
+      "createdAt": "2022-02-24T07:22:09.415Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/meneghini\">@Meneghini</a> !</p>\n<p>Being transparent with you, I do not have experience using C#, but maybe <a href=\"https://community.monday.com/t/basic-c-api-v2-example/3419\">this post</a>, or some other posts about it in the community might be of use <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 78204,
+      "postNumber": 3,
+      "createdAt": "2022-02-24T12:41:35.687Z",
+      "author": "Meneghini (Meneghini)",
+      "cookedHtml": "<p>Figured out the issue. The Activity Logs come back with \\\" so the file contains \\\\\\\". I did a replace that took out the extra two slashes.  I then had to do a replace  “{ with {<br />\nand a replace }” with }<br />\nThis let me parse the data as Json and easily loop through the data.</p>\n<p>This was a tough thing to figure out.<br />\nHope this helps someone in the future.</p>"
+    },
+    {
+      "id": 78775,
+      "postNumber": 4,
+      "createdAt": "2022-03-03T12:41:59.213Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

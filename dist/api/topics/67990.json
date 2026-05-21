@@ -1,0 +1,41 @@
+{
+  "id": 67990,
+  "title": "Long_text encoding",
+  "slug": "long-text-encoding",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    351
+  ],
+  "createdAt": "2023-10-09T05:25:56.965Z",
+  "lastPostedAt": "2023-10-10T03:49:00.061Z",
+  "postsCount": 3,
+  "excerpt": "i am trying to integrate from our git into monday and need to transfer the git’s ticket description into a long_text column. \nas the description can include markdown, it will include hashes and other special characters t&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 565,
+  "posts": [
+    {
+      "id": 147490,
+      "postNumber": 1,
+      "createdAt": "2023-10-09T05:25:57.044Z",
+      "author": "panther (Philip S)",
+      "cookedHtml": "<p>i am trying to integrate from our git into monday and need to transfer the git’s ticket description into a long_text column.</p>\n<p>as the description can include markdown, it will include hashes and other special characters that seem to break the graphQL api (e.g. hashes are comments in graphql etc.)</p>\n<p>should be easy to fix if I knew the expected encoding for long_text api input strings. But could not find any.</p>\n<p>working in nodejs with raw data.</p>\n<p>First try (which works api wise but does not result in proper display of the texts):</p>\n<pre><code class=\"lang-js\">`\n ${mutationName} : change_multiple_column_values(\n            board_id: $boardid, item_id: 1273911846,\n            column_values: \"{ \n                \\\\\"name\\\\\":\\\\\"${gitlabIssue.title}\\\\\",\n                \\\\\"text\\\\\":\\\\\"${gitlabIssue.title}\\\\\",\n                \\\\\"long_text\\\\\":\\\\\"${encodeURIComponent(gitlabIssue.description)}\\\\\"        \n            }\"\n        )\n        {\n            id\n            name\n        }\n`\n</code></pre>\n<p>before I try all string encodings known to humankind: where did I miss it in the docs?</p>\n<p>cheers</p>"
+    },
+    {
+      "id": 147568,
+      "postNumber": 2,
+      "createdAt": "2023-10-09T16:50:04.341Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Its not an encoding issue.<code>column_values</code> is a JSON string, so you create your object for the value, then stringify it and use that resulting string.</p>\n<p>Additionally, I’d investigate GraphQL variables rather than string composition or template strings for the query. This lets you define variables in the query, and then pass a variables object in the graphql request - and the server takes care of substitution.</p>\n<p>You would put the stringified value of the object for the <code>column_values</code> in the variable.</p>\n<p>By using JSON.stringify rather than trying to create the JSON manually it will ensure everything is escaped as needed.</p>\n<pre><code class=\"lang-auto\">const columnValuesObject ={\n   name: gitlabIssue.title,\n   text: gitlabIssue.title,\n   long_text: gitlabIssue.description,\n};\n\n\nconst variables = {\n   boardId: \"1231352435423\",\n   itemId: \"123123245234\",\n   columnValues: JSON.stringify(columnValuesObject), //you could create columnValueObject within JSON.stringify()\n};\n\nconst query =  `${mutationName} : mutation($boardId: ID!, $itemId: ID!, $columnValues: JSON!) change_multiple_column_values(board_id: $boardid, item_id: $itemId, column_values: $columnValues) {\n      id\n      name\n }`;\nconst response = await monday.api(query, {variables});\n</code></pre>"
+    },
+    {
+      "id": 147648,
+      "postNumber": 3,
+      "createdAt": "2023-10-10T03:49:00.061Z",
+      "author": "panther (Philip S)",
+      "cookedHtml": "<p>thank you! That solves my issues.</p>\n<p>The fact that for mutations i have to send a json instead of using fieldnames is confusing me a lot.</p>"
+    }
+  ]
+}

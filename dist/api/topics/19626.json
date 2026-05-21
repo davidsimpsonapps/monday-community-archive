@@ -1,0 +1,79 @@
+{
+  "id": 19626,
+  "title": "Adding subscribers to items via API",
+  "slug": "adding-subscribers-to-items-via-api",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2021-05-04T08:27:59.122Z",
+  "lastPostedAt": "2021-05-12T08:27:08.302Z",
+  "postsCount": 8,
+  "excerpt": "Hi, I create items in Monday using the create_item GraphQL mutation but I can’t find a way to assign multiple users to the item.  Is that possible using the API?",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1573,
+  "posts": [
+    {
+      "id": 49810,
+      "postNumber": 1,
+      "createdAt": "2021-05-04T08:27:59.194Z",
+      "author": "colin_stewart (colin.stewart@tiapos.com)",
+      "cookedHtml": "<p>Hi, I create items in Monday using the create_item GraphQL mutation but I can’t find a way to assign multiple users to the item.  Is that possible using the API?</p>"
+    },
+    {
+      "id": 49882,
+      "postNumber": 2,
+      "createdAt": "2021-05-04T12:32:57.645Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 49883,
+      "postNumber": 3,
+      "createdAt": "2021-05-04T12:34:31.657Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/colin_stewart\">@colin_stewart</a>!</p>\n<p>Yes, this is absolutely possible. You can specify multiple user IDs in the <code>column_values</code> argument. The structure would look something like this:</p>\n<p><code>column_values: \"{\\\"people3\\\":\\\"12345, 23456, 34567\\\"}\"</code></p>\n<p>Try this out and let me know if you’re still running into trouble!</p>"
+    },
+    {
+      "id": 50015,
+      "postNumber": 4,
+      "createdAt": "2021-05-05T04:33:22.582Z",
+      "author": "colin_stewart (colin.stewart@tiapos.com)",
+      "cookedHtml": "<p>Thanks for that, how do you know the id of the column (in your example ‘people3’) or is it always called people3 ?<br />\nAlso, can I set the due date using the same method and how do I know the name of that column?<br />\nThanks</p>"
+    },
+    {
+      "id": 50030,
+      "postNumber": 5,
+      "createdAt": "2021-05-05T05:42:48.147Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/colin_stewart\">@colin_stewart</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>You can find the column IDs by using the API and querying the column IDs directly, or you can activate Developer’s mode. This will show you the column IDs when you open the column menu, like so:</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/f/feb593300154c23b9d7ed43089f4676012f58ef2.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/f/feb593300154c23b9d7ed43089f4676012f58ef2_2_690x213.png\" alt=\"image\" width=\"690\" height=\"213\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">742×230 13.2 KB</span>\n</div></a></div><p></p>\n<p>You can also find more info on this in the following article:</p>\n<p><a href=\"https://support.monday.com/hc/en-us/articles/360000225709-Where-to-find-board-item-and-column-IDs\" rel=\"noopener nofollow ugc\">Where to find board, item, and column IDs</a></p>\n<p>I hope this helps clarify <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 50046,
+      "postNumber": 6,
+      "createdAt": "2021-05-05T06:54:16.758Z",
+      "author": "colin_stewart (colin.stewart@tiapos.com)",
+      "cookedHtml": "<p>So as we are integrating with multiple Monday systems that belong to our customers, I have no way of accessing that information automatically, which seems very strange as we have already integrated our system with Asana, Trello and Clickup which all provide standard fields to pass the data to.<br />\nCan you suggest a way for us to assign this data?</p>"
+    },
+    {
+      "id": 50054,
+      "postNumber": 7,
+      "createdAt": "2021-05-05T08:10:37.602Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/colin_stewart\">@colin_stewart</a></p>\n<p>Thank you for circling back with me! All of the column IDs will be unique on a per board basis. This means that the same board can not have 2 Status columns, for example, with the id of “status”. One of them will be “status”, and the other will likely be “status_1”. Those are generated automatically by our platform and there isn’t a way to map your integrations to a pre-set list of IDs, since each board will have its own set of IDs. Does that make sense?</p>\n<p>If you have the board ID, you can get a list of columns with their IDs, type and title, as well as additional settings, by using a query like the below:</p>\n<pre><code class=\"lang-auto\">query {\n  boards (ids:1232810882) {\n    columns {\n      type\n      id\n      title\n      settings_str\n    }\n  }\n}\n</code></pre>\n<p>I hope this helps put things into context a bit further <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 50062,
+      "postNumber": 8,
+      "createdAt": "2021-05-05T08:26:43.341Z",
+      "author": "colin_stewart (colin.stewart@tiapos.com)",
+      "cookedHtml": "<p>Yes that makes sense.<br />\nI’ll just have to get our user to select the column from a list and then map the data to it.<br />\nThanks for your help.</p>"
+    },
+    {
+      "id": 51068,
+      "postNumber": 9,
+      "createdAt": "2021-05-12T08:27:08.302Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": 22021,
+  "title": "Mutation Update not working",
+  "slug": "mutation-update-not-working",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    13,
+    22,
+    94,
+    133,
+    351
+  ],
+  "createdAt": "2021-07-06T15:56:23.012Z",
+  "lastPostedAt": "2021-07-16T18:57:21.474Z",
+  "postsCount": 5,
+  "excerpt": "Hello, I Tested in playground one mutation for updated column in board , when i used graphql not working, my response request is undefined \nmutation {\nchange_simple_column_value (board_id: 1320360345, item_id: 1338898345&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2227,
+  "posts": [
+    {
+      "id": 57015,
+      "postNumber": 1,
+      "createdAt": "2021-07-06T15:56:23.140Z",
+      "author": "GabriellaSelbach (Gabriella Selbach Staniecki)",
+      "cookedHtml": "<p>Hello, I Tested in playground one mutation for updated column in board , when i used graphql not working, my response request is undefined</p>\n<pre><code class=\"lang-auto\">mutation {\nchange_simple_column_value (board_id: 1320360345, item_id: 1338898345, column_id: \"texto9\", value: \"dsfsdfsdfds\") {\nid\n}\n}\n</code></pre>\n<p><em>IDs Modificates</em></p>\n<p>GraphQl with node.js</p>\n<pre><code class=\"lang-auto\">query = mutation ($board_id: Int!, $column_id: String!, $item_id: Int!, $column_value: String!) {\n  change_simple_column_value (board_id: $board_id, column_id: $column_id, item_id: $item_id, column_value: $column_value) {\n    id\n  }\n}\n\n variables {\n  board_id: 1320360345,\n  column_id: 'texto9',\n  item_id: 1338898345,\n  column_value: 'oioioioiio'\n}\nthis.mondayApi.api(query, { variables });\n\n</code></pre>"
+    },
+    {
+      "id": 57064,
+      "postNumber": 2,
+      "createdAt": "2021-07-07T11:02:18.006Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 57065,
+      "postNumber": 3,
+      "createdAt": "2021-07-07T11:07:19.816Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/gabriellaselbach\">@GabriellaSelbach</a>!</p>\n<p>It sounds like the request is working in your GraphiQL environment (the Developer’s Playground), but not in your code in Node.js, is that right? Or is it not working in both?</p>\n<p>In order to pass variables, you will need to make sure to use the <code>JSON.stringify()</code> function so that the variables will be in the correct format.</p>\n<p>It should look something like this:<br />\n<img src=\"https://global.discourse-cdn.com/monday/original/2X/a/abcc5c2982619367a16e9c41a16bbc8858061c50.png\" alt=\"image\" width=\"553\" height=\"85\" /></p>\n<p>Do you mind giving this a try and letting me know if it works for you?</p>"
+    },
+    {
+      "id": 58052,
+      "postNumber": 4,
+      "createdAt": "2021-07-16T17:24:52.775Z",
+      "author": "GabriellaSelbach (Gabriella Selbach Staniecki)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/helen\">@Helen</a> !<br />\nThank your help.  In Playoud monday its working, in code nodejs the query direct in code without used graphql also working. Now when used query with graphql not working</p>\n<p>the query return error:</p>\n<pre><code class=\"lang-auto\">errors: [\n    {\n      message: \"Field 'change_simple_column_value' is missing required arguments: column_id, value\",\n      locations: [Array],\n      fields: [Array]\n    },\n    {\n      message: \"Field 'change_simple_column_value' doesn't accept argument 'column_values'\",\n      locations: [Array],\n      fields: [Array]\n    },\n    {\n      message: 'Variable $column_values is declared by  but not used',\n      locations: [Array],\n      fields: [Array]\n    }\n</code></pre>\n<p>],</p>\n<p>I tried to use function graphql:</p>\n<pre><code class=\"lang-auto\">updatedColum(body: UpdatedMultipleDTO) {\n    return {\n      operation: 'change_simple_column_value',\n      variables: {\n        board_id: {\n          value: this.config.boardFeedbackId,\n          required: true,\n          type: 'Int',\n        },\n        item_id: {\n          value: body.itemId,\n          required: true,\n          type: 'Int',\n        },\n        column_values: {\n          type: 'JSON',\n          value: JSON.stringify(body.newData),\n        },\n      },\n      fields: ['id'],\n    };\n  }\n\n</code></pre>\n<p>Here my query direct code, That working :<br />\n<code>mutation { change_multiple_column_values( board_id: 1320360890, item_id:1489846068, column_values: \"{\\\"status8\\\":\\\"0\\\",\\\"texto7\\\":\\\"gabriella staniecki\\\"}\" ) { id } }</code></p>\n<p>Here query using graqhql:</p>\n<pre><code class=\"lang-auto\">mutation ($board_id: Int!, $item_id: Int!, $column_values: JSON) {\n  change_simple_column_value (board_id: $board_id, item_id: $item_id, column_values: $column_values) {\n    id\n  }\n}\nvar {\n  board_id: 1320360890,\n  item_id: 1489846068,\n  column_values: '{\"status8\":\"0\",\"texto7\":\"gabriella staniecki\"}'\n}\n\n</code></pre>"
+    },
+    {
+      "id": 58058,
+      "postNumber": 5,
+      "createdAt": "2021-07-16T18:57:21.474Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/gabriellaselbach\">@GabriellaSelbach</a>!</p>\n<p>I see that within your code you’re actually using separate methods, both the <code>change_simple_column_value()</code> API method, as well as the <code>change_multiple_column_values()</code> API method.</p>\n<p>Because these two methods utilize different arguments, this could be why you’re seeing an error. While the <code>change_simple_column_value()</code> method utilizes these arguments:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/0df38fb1b74161316adb7764b82b50bffb51d309.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/0df38fb1b74161316adb7764b82b50bffb51d309_2_345x84.png\" alt=\"image\" width=\"345\" height=\"84\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1204×294 25.9 KB</span>\n</div></a></div><p></p>\n<p>The <code>change_multiple_column_values()</code> method utilizes these arguments:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c5591f5895714c4eabe8fe77541bd79051abbd4f.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c5591f5895714c4eabe8fe77541bd79051abbd4f_2_345x214.png\" alt=\"image\" width=\"345\" height=\"214\" /><div class=\"meta\">\n<span class=\"filename\">image</span><span class=\"informations\">1414×880 63.9 KB</span>\n</div></a></div><p></p>\n<p>Notice how the argument for <code>change_simple_column_value()</code> is “values,” while the argument for <code>change_multiple_column_values()</code> is “column_values.” This explains the error that you’re seeing that you’re missing required arguments in your method!</p>\n<p>In general, error messages are super helpful in letting you know what the issue with your code is!</p>"
+    },
+    {
+      "id": 58837,
+      "postNumber": 6,
+      "createdAt": "2021-07-23T18:58:14.296Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

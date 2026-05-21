@@ -1,0 +1,36 @@
+{
+  "id": 40110,
+  "title": "Add multiple mirrored items using Integromat/Make.com",
+  "slug": "add-multiple-mirrored-items-using-integromat-make-com",
+  "categoryId": 6,
+  "tagIds": [
+    5,
+    6,
+    47,
+    94,
+    103
+  ],
+  "createdAt": "2022-07-29T13:46:15.975Z",
+  "lastPostedAt": "2022-07-29T17:47:01.404Z",
+  "postsCount": 2,
+  "excerpt": "I have a board containing high-level goals, each of which may be linked to multiple tasks in another board. A mirror column contains the links to each task. Each task may only be linked to one goal, but each goal may hav&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1590,
+  "posts": [
+    {
+      "id": 93011,
+      "postNumber": 1,
+      "createdAt": "2022-07-29T13:46:16.058Z",
+      "author": "mikerandall (Mike Randall)",
+      "cookedHtml": "<p>I have a board containing high-level goals, each of which may be linked to multiple tasks in another board. A mirror column contains the links to each task. Each task may only be linked to one goal, but each goal may have many linked tasks.</p>\n<p>I am using <a href=\"http://make.com\" rel=\"noopener nofollow ugc\">make.com</a> to trigger when the tasks board is updated. A new task, linked to a goal, triggers to update the goal’s mirror column with a link to the task. However, when I map the ID of the new task to the goal’s mirror column, it overwrites the current content - therefore we end up with only one task (the most recently added one). I have tried adding ‘Parsed Value.Linked Pulse IDs<span class=\"chcklst-box fa fa-square-o fa-fw\"></span>:Linked Pulse IDs’ to the value to enter into the mirror column, but this has not worked.</p>\n<p>Is there a way to add items to a mirror column one at a time, whilst preserving the items already in that column?</p>"
+    },
+    {
+      "id": 93033,
+      "postNumber": 2,
+      "createdAt": "2022-07-29T17:47:01.404Z",
+      "author": "mikerandall (Mike Randall)",
+      "cookedHtml": "<p>Ok, I have been working on this a little, and I think I understand that I should use the GraphQL module to send a mutation. I have written the following:</p>\n<pre><code class=\"lang-auto\">mutation{\nchange_column_value(\nitem_id: {{1.mappable_column_values.connect_boards.linkedPulseIds[].linkedPulseId}}, \ncolumn_id: \"connect_boards4\", \nboard_id: 2747663520, \nvalue:{{if(6.parsed_value.linkedPulseIds[].linkedPulseId + \"=\"\"\"\"\"; \"{\"\"item_ids\"\":[\" + 1.id + \"]}\"; \"{\"\"item_ids\"\":[\" + 6.parsed_value.linkedPulseIds[].linkedPulseId + \",\" + 1.id + \"]}\")}}, \ncreate_labels_if_missing: true\n) {\nid}\n}\n</code></pre>\n<p>However on run I get</p>\n<pre><code class=\"lang-auto\">The operation failed with an error. [200] [{\"message\":\"Parse error on \\\"item_ids\\\" (STRING) at [6, 8]\",\"locations\":[{\"line\":6,\"column\":8}]}]\n</code></pre>\n<p>I assume that there is something wrong with the JSON formatting of ‘item_ids’, but what I have there matches the examples in documentation.</p>"
+    }
+  ]
+}

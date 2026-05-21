@@ -1,0 +1,131 @@
+{
+  "id": 27892,
+  "title": "How to easily truncate board's data?",
+  "slug": "how-to-easily-truncate-boards-data",
+  "categoryId": 58,
+  "tagIds": [
+    22,
+    94
+  ],
+  "createdAt": "2021-11-26T10:07:01.798Z",
+  "lastPostedAt": "2021-12-20T08:53:09.282Z",
+  "postsCount": 16,
+  "excerpt": "Hi everyone ! \nI use Monday’s boards to store some aggregated data from our CRM to take advantage of the different and powerful tools provided here. \nFor one of my boards, I would like to use it as a container, keeping a&hellip;",
+  "solvedPostId": null,
+  "likeCount": 5,
+  "views": 4057,
+  "posts": [
+    {
+      "id": 69809,
+      "postNumber": 1,
+      "createdAt": "2021-11-26T10:07:01.886Z",
+      "author": "pczeryba (Pierre CZERYBA)",
+      "cookedHtml": "<p>Hi everyone !<br />\nI use Monday’s boards to store some aggregated data from our CRM to take advantage of the different and powerful tools provided here.<br />\nFor one of my boards, I would like to use it as a container, keeping all its structure in terms of columns and automations but… I want to clear its data every day to replace its content by some new and fresh data.<br />\nToday, in order to do so, I didn’t find anything else than using the “delete_item()” function applied line by line, which… works in instance but it’s long, sometimes network saturation avoids a full clear and honestly, I expected a proper API method to “truncate” all the items of my board, at once.<br />\nSo, this is my question : Is there a good way to easily truncate/empty a board without deleting it given that I want to keep my columns and automations ?<br />\nThanks in advance.<br />\nPierre.</p>"
+    },
+    {
+      "id": 69810,
+      "postNumber": 2,
+      "createdAt": "2021-11-26T10:15:35.113Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/pczeryba\">@pczeryba</a>,</p>\n<p>Are you looking to use the API or an app to achieve this. If you want to use the API, you can use the duplicate board and specify only the <code>duplicate_board_with_structure</code> argument. You can find that <a href=\"https://developer.monday.com/api-reference/docs/boards#arguments-for-duplicate-a-board\" rel=\"noopener nofollow ugc\">here</a>. If you are looking to use an app, you can use the <a href=\"https://monday.com/marketplace/130\" rel=\"noopener nofollow ugc\">Duplicates and Uniques</a> app and create a template which will delete your items in your board and set it to run everyday through an integration. Additionally, for your use case, you might want to check out the <a href=\"https://community.monday.com/t/duplicates-and-uniques-find-any-duplicate-item-in-your-board-and-perform-action-on-them/20106/2\">merge</a> functionality of the Duplicates and Uniques app. It may be great for this particular use case.  Hope this helps.</p>"
+    },
+    {
+      "id": 69824,
+      "postNumber": 3,
+      "createdAt": "2021-11-26T11:39:45.460Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/pczeryba\">@pczeryba</a></p>\n<p>Using the API, the approach that I would take would be to use the delete_group(). You just need to make sure to create the new group before you delete the old one. Every board must always have at least one group.</p>\n<p>Jim - <a href=\"https://www.youtube.com/c/TheMondayMan?sub_confirmation=1\">Subscribe to The Monday Man</a><br />\nWatch Our Latest Video: <a href=\"https://youtu.be/WgjpoHPcjFk\">Get Rid of Subitems</a></p>"
+    },
+    {
+      "id": 69830,
+      "postNumber": 4,
+      "createdAt": "2021-11-26T12:27:02.693Z",
+      "author": "pczeryba (Pierre CZERYBA)",
+      "cookedHtml": "<p>Hi Kolaai !<br />\nThanks for your reply.<br />\nI don’t want to duplicate because it would imply that the board would have a different ID every single day… and I’ll need it to stay in time to do others operations on that board or use some of its columns in others boards as views.</p>"
+    },
+    {
+      "id": 69835,
+      "postNumber": 5,
+      "createdAt": "2021-11-26T13:35:42.071Z",
+      "author": "pczeryba (Pierre CZERYBA)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> !<br />\nThanks for your suggestion !<br />\nDeleting groups sounds very interesting…<br />\nSo, it would delete all the items of a group at once, without touching the board’s structure.<br />\nI’ll just have to keep in mind to always keep at least one so, I’ll delete a group to remove its items and then I’ll re-create the “same” Group, empty, right after.<br />\nI’l try that, thanks !</p>"
+    },
+    {
+      "id": 69840,
+      "postNumber": 6,
+      "createdAt": "2021-11-26T14:54:26.589Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>One thing to remember if you delete a group with the API. Although the groups and its items are not visible anymore the API still returns the “deleted” items when you do a query.</p>"
+    },
+    {
+      "id": 69841,
+      "postNumber": 7,
+      "createdAt": "2021-11-26T14:56:55.702Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/pczeryba\">@pczeryba</a></p>\n<p>Groups have IDs. They can all have the same name. The sequence that I would recommend would be:</p>\n<ol>\n<li>get board’s group(s).</li>\n<li>create new group.</li>\n<li>delete previously collected group(s).</li>\n</ol>\n<p>Easy-Peasy.</p>"
+    },
+    {
+      "id": 69842,
+      "postNumber": 8,
+      "createdAt": "2021-11-26T14:59:16.204Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Are you saying that the items in the deleted groups still show as active from the API?</p>\n<p>… just tested it. boards(){items()} does not return the deleted items for me.</p>"
+    },
+    {
+      "id": 69845,
+      "postNumber": 9,
+      "createdAt": "2021-11-26T15:14:27.001Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <span class=\"mention\">@jim</span> that’s new to me. A few month ago it indeed returned the items (I believe as inactive) but is that has changed you are all fine by deleting the groups.</p>"
+    },
+    {
+      "id": 69850,
+      "postNumber": 10,
+      "createdAt": "2021-11-26T18:24:57.655Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Did a little more testing… I thought that we used to be able to request deleted/archived items. But I was not able to get it to work… except when specifying the deleted items by ID. And then when read they returned with a state = “active”. Weird.</p>"
+    },
+    {
+      "id": 69893,
+      "postNumber": 11,
+      "createdAt": "2021-11-28T14:00:43.830Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/pczeryba\">@pczeryba</a>!</p>\n<p>What <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a>  suggests about deleting the groups, and also the order of the steps he suggested looks like a great way of doing this!</p>\n<p>Thank you <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=10\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" /> !</p>"
+    },
+    {
+      "id": 71061,
+      "postNumber": 12,
+      "createdAt": "2021-12-10T06:48:09.018Z",
+      "author": "pczeryba (Pierre CZERYBA)",
+      "cookedHtml": "<p>Hi Guys !<br />\nThanks for all your answers.<br />\nI’ve tested your suggestion so now I start by getting the existing groups from my board and parse them to create on the fly new groups with the same “title”.<br />\nIt works well and deletes all the existing items, that’s cool !<br />\nBut what about automations used on those groups ? I have a message saying that the existing automations are now desactivated (but in fact they are deleted) since the group they were attached to has been deleted… which sounds normal and logical you’ll say… but is there way to “keep” my automations to use them with my brand new created groups ?<br />\nBy the way, I didn’t see anything about automations in the API…<br />\nThanks in advance.</p>\n<p>Pierre.</p>"
+    },
+    {
+      "id": 71062,
+      "postNumber": 13,
+      "createdAt": "2021-12-10T07:00:25.434Z",
+      "author": "pczeryba (Pierre CZERYBA)",
+      "cookedHtml": "<p>Oooh… I’m re-creating my automations since they have been deleted by deleting their group and now in the Automation window, I see my new but also my deleted groups…???<br />\nThe only way I found to distinguish them is to change the Group color using different colors… but the deleted groups shouldn’t be visible anymore, unless it’s related to the 30 days data conservation…</p>\n<p>Before :<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/03949af5e5bfde0c1e209d0ccf5a397ceaf363c6.png\" title=\"Monday_Automation_DeletedGroupsDisplayed\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/03949af5e5bfde0c1e209d0ccf5a397ceaf363c6_2_690x274.png\" alt=\"Monday_Automation_DeletedGroupsDisplayed\" width=\"690\" height=\"274\" /><div class=\"meta\">\n<span class=\"filename\">Monday_Automation_DeletedGroupsDisplayed</span><span class=\"informations\">1612×642 34.6 KB</span>\n</div></a></div><p></p>\n<p>After :<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/1d7b534469c6be98582acfd0e85a305e1f3b892c.png\" title=\"Monday_Automation_ChangeGroupsColors\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/1/1d7b534469c6be98582acfd0e85a305e1f3b892c_2_690x213.png\" alt=\"Monday_Automation_ChangeGroupsColors\" width=\"690\" height=\"213\" /><div class=\"meta\">\n<span class=\"filename\">Monday_Automation_ChangeGroupsColors</span><span class=\"informations\">1896×588 36.6 KB</span>\n</div></a></div><p></p>"
+    },
+    {
+      "id": 71229,
+      "postNumber": 14,
+      "createdAt": "2021-12-12T13:59:27.465Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/pczeryba\">@pczeryba</a>!</p>\n<p>Regarding your last comment, I have shared this with our R&amp;D team so they can take a look. If you want, we can continue this via email if you send us one at <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> mentioning this community post as a reference.</p>\n<p>Looking forward to hearing from you!</p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 71309,
+      "postNumber": 15,
+      "createdAt": "2021-12-13T11:40:51.326Z",
+      "author": "pczeryba (Pierre CZERYBA)",
+      "cookedHtml": "<p>Hi Matias !<br />\nOk, I’ll describe that in an email for the support.<br />\nHave a great day !<br />\nPierre.</p>"
+    },
+    {
+      "id": 71944,
+      "postNumber": 16,
+      "createdAt": "2021-12-20T08:53:09.282Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/pczeryba\">@pczeryba</a>!</p>\n<p>Our team looked into this and you should not see this issue any longer <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=10\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" /></p>\n<p>Cheers,<br />\n-Matias</p>"
+    }
+  ]
+}

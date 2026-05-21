@@ -1,0 +1,76 @@
+{
+  "id": 117819,
+  "title": "Copy an item to another board using mutation duplicate_item",
+  "slug": "copy-an-item-to-another-board-using-mutation-duplicate-item",
+  "categoryId": 98,
+  "tagIds": [
+    6,
+    22,
+    94
+  ],
+  "createdAt": "2025-07-19T14:31:26.099Z",
+  "lastPostedAt": "2025-07-28T13:58:34.140Z",
+  "postsCount": 8,
+  "excerpt": "Hi everyone, \nI’m building an app that involves copying items from one board to another using the Monday.com API. I’ve been experimenting with the duplicate_item mutation, and while it seems to support cross-board duplic&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 47,
+  "posts": [
+    {
+      "id": 234836,
+      "postNumber": 1,
+      "createdAt": "2025-07-19T14:31:26.193Z",
+      "author": "shadab (Shadab)",
+      "cookedHtml": "<p>Hi everyone,</p>\n<p>I’m building an app that involves copying items from one board to another using the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API. I’ve been experimenting with the <code>duplicate_item</code> mutation, and while it seems to support cross-board duplication (even though this isn’t clearly documented), I’m running into an issue:</p>\n<blockquote>\n<p>The main item gets successfully copied to the target board, <strong>but the subitems do not</strong>.</p>\n</blockquote>\n<p>Has anyone else experienced this?</p>\n<ul>\n<li>Is this expected behavior?</li>\n<li>Is there a recommended way to include subitems during cross-board duplication?</li>\n<li>Any official word on whether <code>duplicate_item</code> is intended to support this use case?</li>\n</ul>\n<p>Appreciate any insight or confirmation from others in the community or the Monday team.</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 234968,
+      "postNumber": 2,
+      "createdAt": "2025-07-21T11:55:44.819Z",
+      "author": "DavidCarroll (David Carroll)",
+      "cookedHtml": "<p>Hey, I ran into this too while building a content ops tool for our casino team using <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> – looks like duplicate_item skips subitems when copying across boards since subitems live on a separate internal board. What worked for me was grabbing the subitems with a query and recreating them manually with create_subitem after the main item gets duplicated. Not super elegant but gets the job done. Would love an official fix though – anyone from the team got insight?</p>"
+    },
+    {
+      "id": 235012,
+      "postNumber": 3,
+      "createdAt": "2025-07-21T15:56:48.542Z",
+      "author": "shadab (Shadab)",
+      "cookedHtml": "<p>Yeah I am doing the same as well <a class=\"mention\" href=\"/u/davidcarroll\">@DavidCarroll</a> .</p>\n<p>Earlier I was duplicating an item in the current board with duplicate_item mutation and then moving it to the target board. But it’s not reliable as sometimes the sub items doesn’t get created and item move gets done.</p>"
+    },
+    {
+      "id": 235350,
+      "postNumber": 4,
+      "createdAt": "2025-07-25T15:20:02.292Z",
+      "author": "gweisenb (Guy Weisenbach)",
+      "cookedHtml": "<p>Stay away from that mutation for cross-board duplication!!! We had been using it for a few years and it worked great. Unfortunately in an API update last fall, Monday figured out cross-board was possible and that it shouldn’t have been allowed. They “fixed” it and completely broke a mission-critical communication tool on our end.</p>\n<p>We now do a same board duplication and then move it to the new board. It is not nearly as elegant and we run into issues with one operation not releasing the lock on the item before the next operation tries to grab the item. We’ve had to build in a 5 second delay to keep the race condition from happening.</p>\n<p>So, do a lot of testing.</p>"
+    },
+    {
+      "id": 235352,
+      "postNumber": 5,
+      "createdAt": "2025-07-25T15:59:02.146Z",
+      "author": "shadab (Shadab)",
+      "cookedHtml": "<p>This is a bummer, thanks for letting me know this.<br />\nI already did the implimentation depending the mutation duplicate_item to duplicate it in another board. Seems like will have to revert it then.</p>"
+    },
+    {
+      "id": 235356,
+      "postNumber": 6,
+      "createdAt": "2025-07-25T16:11:54.853Z",
+      "author": "gweisenb (Guy Weisenbach)",
+      "cookedHtml": "<p>I’m glad I saw your post and was able to save you some pain.</p>\n<p>Guy</p>"
+    },
+    {
+      "id": 235617,
+      "postNumber": 7,
+      "createdAt": "2025-07-28T13:19:27.485Z",
+      "author": "DavidCarroll (David Carroll)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/s/e68b1a/48.png\" class=\"avatar\" /> Shadab:</div>\n<blockquote>\n<p>Earlier I was duplicating an item in the current board with duplicate_item mutation and then moving it to the target board. But it’s not reliable as sometimes the sub items doesn’t get created and item move gets done.</p>\n</blockquote>\n</aside>\n<p>And now you have found a better solution? it would be interesting for future experience <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=14\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 235643,
+      "postNumber": 8,
+      "createdAt": "2025-07-28T13:58:34.140Z",
+      "author": "shadab (Shadab)",
+      "cookedHtml": "<p>TBH it’s just a hack and not really a better solution. But atleast it’s not reliable and won’t break in production.</p>\n<p>The current approach of duplicating in the same board and moving to the target board is quite clankly specially if you need sub items and updates copy as well.</p>"
+    }
+  ]
+}

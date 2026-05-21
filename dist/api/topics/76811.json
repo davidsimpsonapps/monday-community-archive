@@ -1,0 +1,132 @@
+{
+  "id": 76811,
+  "title": "Has anyone been able to use the add_file_to_column to upload files?",
+  "slug": "has-anyone-been-able-to-use-the-add-file-to-column-to-upload-files",
+  "categoryId": 8,
+  "tagIds": [
+    41,
+    94,
+    351
+  ],
+  "createdAt": "2024-02-01T16:19:40.098Z",
+  "lastPostedAt": "2024-07-24T17:26:37.535Z",
+  "postsCount": 15,
+  "excerpt": "Hello! \n3 days ago my tool was working perfectly, when I uploaded the image to it, it used my own API that is connected to Monday, to send the image to a Monday table. It fetches automatically the ID of the table, and th&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 956,
+  "posts": [
+    {
+      "id": 165425,
+      "postNumber": 1,
+      "createdAt": "2024-02-01T16:19:40.186Z",
+      "author": "imjoaofernandes (João Fernandes)",
+      "cookedHtml": "<p>Hello!<br />\n3 days ago my tool was working perfectly, when I uploaded the image to it, it used my own API that is connected to Monday, to send the image to a Monday table. It fetches automatically the ID of the table, and the ID of the column is always the same. I am running it like this, on my API:</p>\n<pre><code class=\"lang-auto\">app.post('/upload-file', upload.single('file'), async (req, res) =&gt; {\n    if (!req.file) {\n        return res.status(400).send('No file uploaded.');\n    }\n\n    // Extract partId from the query string\n    const partId = req.query.peca; // This is the board / table ID, it is available on the URL\n    if (!partId) {\n        return res.status(400).send('Part ID is missing.');\n    }\n\n    const formData = new FormData();\n\n    // GraphQL mutation with a variable for the file\n    const mutation = `\n        mutation ($file: File!) {\n            add_file_to_column (item_id: ${partId}, column_id: \"arquivos\", file: $file) {\n                id\n            }\n        }\n    `;\n\n    // Append the mutation and the file to the formData\n    formData.append('query', mutation);\n    formData.append('variables[file]', fs.createReadStream(req.file.path), {\n        filename: req.file.originalname,\n        contentType: req.file.mimetype,\n    });\n\n    try {\n        const response = await fetch('https://api.monday.com/v2/file', {\n            method: 'POST',\n            body: formData,\n            headers: {\n                ...formData.getHeaders(),\n                'Authorization': 'MONDAY_API_KEY',\n                'API-Version': '2023-10'\n            },\n        });\n\n        const result = await response.json();\n        if (result.data) {\n            logWithTimestamp('File uploaded successfully to Monday.com', result);\n            res.send('File uploaded successfully');\n        } else {\n            logWithTimestamp('Error uploading file to Monday.com', JSON.stringify(result.errors));\n            res.status(500).send('Error uploading file to Monday.com');\n        }\n    } catch (error) {\n        logWithTimestamp('Error in file upload', error.message); // Log the error message\n        res.status(500).send('Error in file upload');\n    } finally {\n        fs.unlink(req.file.path, (err) =&gt; {\n            if (err) logWithTimestamp('Error deleting file:', err);\n        });\n    }\n});\n</code></pre>\n<p>It stopped working from a day to the other, did something change? Am I doing something wrong? It always returns “Unsupported query” now…</p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 165430,
+      "postNumber": 2,
+      "createdAt": "2024-02-01T16:53:34.968Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>My guess here is that you built this some time ago and are using a version of the api which has been withdrawn.</p>\n<p>I think you can ask for an extension of the old version of the api on your account while you update the code to the new version.</p>"
+    },
+    {
+      "id": 165431,
+      "postNumber": 3,
+      "createdAt": "2024-02-01T16:56:54.382Z",
+      "author": "imjoaofernandes (João Fernandes)",
+      "cookedHtml": "<p>Hello David, thank you very much for your answer, means a lot.</p>\n<p>Makes a lot of sense, but even if I remove the version from there (like the Postman call from the Postman collection), it still has the same output, with or without version <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>\n<p>Thank you!</p>"
+    },
+    {
+      "id": 165458,
+      "postNumber": 4,
+      "createdAt": "2024-02-01T19:08:57.448Z",
+      "author": "imjoaofernandes (João Fernandes)",
+      "cookedHtml": "<p>It’s weird because there is another user here with problems using add_file_to_column… It was working just perfectly a few days ago, and suddenly, it stopped working… I really really would appreciate any help, and wouldn’t mind sharing more details if needed, after hours and hours and hours of debugging, I really don’t know what to do anymore.</p>\n<p>Already created sample Node.js scripts to try to query it, making it every way possible, and everytime I just keep getting 400 Unsupported Query… <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 165726,
+      "postNumber": 5,
+      "createdAt": "2024-02-04T11:07:46.333Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/imjoaofernandes\">@imjoaofernandes</a>,</p>\n<p>This is the script I use for uploading files. Perhaps it is of use:</p>\n<pre><code class=\"lang-auto\">import fs from 'fs';\nimport fetch from 'node-fetch';\n\n// adapted from: https://gist.github.com/tanaikech/40c9284e91d209356395b43022ffc5cc\n\n// set filename\nvar upfile = 'images.png';\n\n// set auth token and query\nvar API_KEY = \"MYAPITOKENHERE\"\nvar query = 'mutation ($file: File!) { add_file_to_column (file: $file, item_id: 11111111, column_id: \"files\") { id } }';\n\n// set URL and boundary\nvar url = \"https://api.monday.com/v2/file\";\nvar boundary = \"xxxxxxxxxx\";\nvar data = \"\";\n\nfs.readFile(upfile, function(err, content){\n\n    // simple catch error\n    if(err){\n        console.error(err);\n    }\n\n    // construct query part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"query\\\"; \\r\\n\";\n    data += \"Content-Type:application/json\\r\\n\\r\\n\";\n    data += \"\\r\\n\" + query + \"\\r\\n\";\n\n    // construct file part\n    data += \"--\" + boundary + \"\\r\\n\";\n    data += \"Content-Disposition: form-data; name=\\\"variables[file]\\\"; filename=\\\"\" + upfile + \"\\\"\\r\\n\";\n    data += \"Content-Type:application/octet-stream\\r\\n\\r\\n\";\n    var payload = Buffer.concat([\n            Buffer.from(data, \"utf8\"),\n            new Buffer.from(content, 'binary'),\n            Buffer.from(\"\\r\\n--\" + boundary + \"--\\r\\n\", \"utf8\"),\n    ]);\n\n    // construct request options\n    var options = {\n        method: 'post',\n        headers: {\n          \"Content-Type\": \"multipart/form-data; boundary=\" + boundary,\n          \"Authorization\" : \"MYAPITOKENHERE\"\n        },\n        body: payload,\n    };\n\n    // make request\n    fetch(url, options)\n      .then(res =&gt; res.json())\n      .then(json =&gt; console.log(json));\n});\n</code></pre>\n<p>If you still have issues, please contact us via this <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">form</a> and our team will take a look into it!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 175533,
+      "postNumber": 6,
+      "createdAt": "2024-03-28T09:07:56.879Z",
+      "author": "Bolt (DevTech Snake)",
+      "cookedHtml": "<p>Hi, Martias<br />\nI tried your code, but it’s still returning error.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/b/4b4d5fac911d1a22f339358aa56f2c89e6611269.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/b/4b4d5fac911d1a22f339358aa56f2c89e6611269_2_690x330.png\" alt=\"image\" width=\"690\" height=\"330\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1919×920 19.4 KB</span></div></a></div><br />\nThis is Error displayed as an HTML file.<p></p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/7/b7fb4fd78aa07bdc8426488f931062eccf0774fd.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/b/7/b7fb4fd78aa07bdc8426488f931062eccf0774fd.png\" alt=\"image\" width=\"690\" height=\"410\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">894×532 63.1 KB</span></div></a></div><br />\nThis is error.<p></p>\n<p>please teach me how to upload file.<br />\nThank you.</p>"
+    },
+    {
+      "id": 175550,
+      "postNumber": 7,
+      "createdAt": "2024-03-28T10:08:51.641Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>What messages do you see in the html returned?</p>\n<p>Perhaps there is a clue in the returned html.</p>"
+    },
+    {
+      "id": 175932,
+      "postNumber": 8,
+      "createdAt": "2024-03-31T07:15:43.001Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>That is odd <a class=\"mention\" href=\"/u/bolt\">@Bolt</a>,</p>\n<p>What happens if you use this cURL (changing the relevant information for your, obviously):</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/file/' \\\n--header 'Authorization: APITOKENHERE' \\\n--header 'API-version: 2023-10' \\\n--form 'query=\"mutation add_file($file: File!) {add_file_to_column (item_id: ITEMIDHERE, column_id:\\\"files\\\" file: $file) {id}}\n\"' \\\n--form 'map=\"{\\\"image\\\":\\\"variables.file\\\"}\n\"' \\\n--form 'image=@\"/Users/matias/Downloads/myfile.png\"'\n</code></pre>"
+    },
+    {
+      "id": 175944,
+      "postNumber": 9,
+      "createdAt": "2024-03-31T09:04:17.994Z",
+      "author": "Bolt (DevTech Snake)",
+      "cookedHtml": "<p>Thank you for your reply, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a></p>\n<p>I just used your command, it works,<br />\nbut is that okay if I should remove the api-version?</p>"
+    },
+    {
+      "id": 175959,
+      "postNumber": 10,
+      "createdAt": "2024-03-31T10:07:44.912Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/bolt\">@Bolt</a>,</p>\n<p>Yes! You can. No need for it actually.</p>"
+    },
+    {
+      "id": 175993,
+      "postNumber": 11,
+      "createdAt": "2024-03-31T19:39:13.196Z",
+      "author": "Bolt (DevTech Snake)",
+      "cookedHtml": "<p>Thanks, <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a><br />\nThen how does it work when your api version is upgraded?<br />\nMaybe I should upgrade my command?</p>"
+    },
+    {
+      "id": 176066,
+      "postNumber": 12,
+      "createdAt": "2024-04-01T09:48:31.326Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/bolt\">@Bolt</a>,</p>\n<p>I am not sure I understand the question. The API version in this case is irrelevant since the same mutation works for all present API versions and it works with the 2024-01 (current version)<img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 176096,
+      "postNumber": 13,
+      "createdAt": "2024-04-01T11:23:00.375Z",
+      "author": "Bolt (DevTech Snake)",
+      "cookedHtml": "<p>Really thank you for your kindness reply.<br />\nOnce the api version is upgraded and if I have a problem with my query, I will ask you again.<br />\nThank you</p>"
+    },
+    {
+      "id": 176401,
+      "postNumber": 14,
+      "createdAt": "2024-04-02T10:08:11.755Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/bolt\">@Bolt</a>,</p>\n<p>You can avoid having issues with the new versions by checking our release notes <a href=\"https://developer.monday.com/api-reference/docs/release-notes\">here</a> <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 194696,
+      "postNumber": 15,
+      "createdAt": "2024-07-24T17:26:37.535Z",
+      "author": "omarHab (Omar)",
+      "cookedHtml": "<p>This worked for me. Thank you!<br />\nMonday should link to your example.</p>"
+    },
+    {
+      "id": 195186,
+      "postNumber": 16,
+      "createdAt": "2024-07-28T10:54:53.190Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "id": 63940,
+  "title": "Sub Items and API",
+  "slug": "sub-items-and-api",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    187
+  ],
+  "createdAt": "2023-08-17T16:15:50.321Z",
+  "lastPostedAt": "2023-08-25T12:46:24.832Z",
+  "postsCount": 13,
+  "excerpt": "Hi there, \nI’m working on a python script with the following goal:  organization and tracking of property leases, their tenants, and the corresponding rent schedules. The script automates the creation and management of i&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 759,
+  "posts": [
+    {
+      "id": 139701,
+      "postNumber": 1,
+      "createdAt": "2023-08-17T16:15:50.404Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<p>Hi there,<br />\nI’m working on a python script with the following goal:  organization and tracking of property leases, their tenants, and the corresponding rent schedules. The script automates the creation and management of items and subitems in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>, reflecting lease and rent-related information in a structured manner. It provides a way to easily keep track of lease details, tenant information, and rent payment schedules within the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> platform.</p>\n<p>I’ve got the main item creation down with the following  structure<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/9/09712aeed76250c6ffabd4ead9a6798318a84d0f.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/9/09712aeed76250c6ffabd4ead9a6798318a84d0f_2_690x86.png\" alt=\"image\" width=\"690\" height=\"86\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">977×123 12.9 KB</span></div></a></div><p></p>\n<p>the script creates items and prevents duplicate items from being created on subsequent run throughs of the script.<br />\nThe Sub items are also being created however I’m having a difficult time preventing duplicate sub items from being created each time the script is run. Another aspect it updating existing sub items if changes are found<br />\nThis is the sub item structure<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/3/d3bbb1ac9cb192037c5f8c4ca78fb959527e0089.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/3/d3bbb1ac9cb192037c5f8c4ca78fb959527e0089_2_690x54.png\" alt=\"image\" width=\"690\" height=\"54\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1124×88 13.4 KB</span></div></a></div><p></p>\n<p>I’ve got variables set up for item column mapping and subitem column mapping which are working</p>\n<p>I have a function to check the column values of my sub items which works correctly<br />\ndef get_subitem_column_values(parent_item_id):<br />\nquery = f’‘’<br />\n{{<br />\nitems(ids: {parent_item_id}) {{<br />\nsubitems {{<br />\nid<br />\ncolumn_values(ids: [“dropdown”, “numbers”, “date0”, “formula”, “text0”, “date6”]) {{<br />\nid<br />\ntitle<br />\nvalue<br />\n}}<br />\n}}<br />\n}}<br />\n}}<br />\n‘’’<br />\nI’ve got a function for creating or updating sub items, checking the value in the ChargeID (text0) column for a unique identifier<br />\ndef create_or_update_subitem(parent_item_id, sub_item_data):<br />\nexisting_subitem_id = get_subitem_id_by_charge_id(parent_item_id, sub_item_data[‘ChargeID’])</p>\n<pre><code>monday_api_url = \"https://api.monday.com/v2\"\nheaders = {\n    \"Authorization\": M_API_KEY,\n    \"Content-Type\": \"application/json\"\n}\n\ncolumn_values = ', '.join(\n    [f'\\\\\"{SUBITEM_COLUMN_MAPPING[key]}\\\\\": \\\\\"{value}\\\\\"' for key, value in sub_item_data.items() if\n     value is not None])\n\nif existing_subitem_id:\n    # Update existing subitem columns if needed\n    query = f\"\"\"\n        mutation {{\n            change_multiple_column_values(item_id: {existing_subitem_id}, board_id: {BOARD_ID}, column_values: {{ {column_values} }}) {{\n                id\n            }}\n        }}\n    \"\"\"\nelse:\n    # Create new subitem\n    query = f\"\"\"\n        mutation {{\n            create_subitem(parent_item_id: {parent_item_id}, item_name: \"{sub_item_data['Name']}\", column_values: \"{{ {column_values} }}\") {{\n                id\n            }}\n        }}\n    \"\"\"\n\ndata = {\"query\": query}\n\nresponse = requests.post(monday_api_url, json=data, headers=headers)\n\nif response.status_code == 200:\n    response_json = response.json()\n    sub_item_id = response_json.get(\"data\", {}).get(\"create_subitem\", {}).get(\"id\")\n    if sub_item_id:\n        return sub_item_id\n    else:\n        print(\"Failed to get the ID of the created sub-item.\")\n        print(\"Response content:\")\n        print(response.content)\n        return None\nelse:\n    print(f\"Failed to create or update sub-item. Status code: {response.status_code}\")\n    print(\"Response content:\")\n    print(response.content)\n    return None\n</code></pre>\n<p>Everything has come together pretty easily except for this last part that will prevent duplicate sub items from being created and updating existing sub items  if anything needs to be updated</p>\n<p>Any help or a point in the right direction would be extremely appreciated.<br />\nThank you</p>"
+    },
+    {
+      "id": 139925,
+      "postNumber": 2,
+      "createdAt": "2023-08-20T05:31:19.250Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/casecrs\">@Casecrs</a>,</p>\n<p>I do not have experience with Python, but which step of the process for preventing duplicates for subitems is failing? Are you not getting the data from the subitems? Are you getting the data but there is an error in it? Which piece of information are you trying to get and not getting?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 140038,
+      "postNumber": 3,
+      "createdAt": "2023-08-21T07:34:01.194Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/matias.monday/48/9227_2.png\" class=\"avatar\" /> Matias:</div>\n<blockquote>\n<p>I do not have experience with Python, but which step of the process for preventing duplicates for subitems is failing? Are you not getting the data from the subitems? Are you getting the data but there is an error in it? Which piece of information are you trying to get and not getting?</p>\n<p>Looking forward to</p>\n</blockquote>\n</aside>\n<p>It appears that the step responsible for comparing the data and identifying existing subitems using their shared identifier (ChargeID) might be encountering some issues. This could potentially arise from inconsistencies between the two datasets or a potential error in the comparison logic itself.</p>\n<p>This is a sample of what’s being pulled from an existing sub item in the Board. attempting to use the ChargeID as the check to both prevent duplicates .</p>\n<p>{‘data’: {‘items’: [{‘subitems’: [{‘id’: ‘5007886819’, ‘column_values’: [{‘id’: ‘dropdown’, ‘title’: ‘Rent Status’, ‘value’: ‘{“ids”:[3],“override_all_ids”:true}’}, {‘id’: ‘numbers’, ‘title’: ‘Rent Amount’, ‘value’: ‘“100000.0”’}, {‘id’: ‘date0’, ‘title’: ‘End Date’, ‘value’: None}, {‘id’: ‘formula’, ‘title’: ‘Projected Rent Increase @ 2.5%’, ‘value’: None}, {‘id’: ‘text0’, ‘title’: ‘ChargeID’, ‘value’: ‘“2962”’}, {‘id’: ‘date6’, ‘title’: ‘StartDate’, ‘value’: ‘{“date”:“2023-09-01”,“time”:null}’}]}</p>\n<p>as far as I can tell I’m getting every piece of data I need, the correct data is being used when creating sub items, existing sub item data is being pulled, containing all the info required. I’m now leaning more toward a logic issue rather than being unable to get information from Monday.</p>"
+    },
+    {
+      "id": 140051,
+      "postNumber": 4,
+      "createdAt": "2023-08-21T09:44:17.994Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/casecrs\">@Casecrs</a>,</p>\n<p>If all the needed information is retrieved correctly, then it looks like the issue might lie in the script as you mention.</p>\n<p>If you can’t find the source of the issue, you can send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> and we will do our best to help you with it <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 140059,
+      "postNumber": 5,
+      "createdAt": "2023-08-21T10:38:10.833Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<p>Thanks Matias,<br />\nI’ve reached out via email.</p>"
+    },
+    {
+      "id": 140065,
+      "postNumber": 6,
+      "createdAt": "2023-08-21T11:57:00.203Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Fantastic <a class=\"mention\" href=\"/u/casecrs\">@Casecrs</a>,</p>\n<p>Our team will take a look into this <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 140106,
+      "postNumber": 7,
+      "createdAt": "2023-08-21T15:45:07.488Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<p>Looks like I’ve made some progress and have a working way to prevent duplicate sub items from being created.<br />\nNow the issue lies in updating existing sub items and I’m getting a parse error from my query</p>\n<p>Mutation Query:<br />\nmutation {<br />\nchange_multiple_column_values(item_id: *********, board_id: **********, column_values: {“date0”: null}) {<br />\nid<br />\n}<br />\n}</p>\n<p>Response: {‘errors’: [{‘message’: ‘Parse error on “date0” (STRING) at [3, 106]’, ‘locations’: [{‘line’: 3, ‘column’: 106}]}], ‘account_id’: ********}</p>\n<p>I’m hesitant to blame the query  as I know items are created correctly and the End Date column is populated with the correct date for newly created items but when trying to update sub items we run into this issue.</p>"
+    },
+    {
+      "id": 140180,
+      "postNumber": 8,
+      "createdAt": "2023-08-22T04:12:32.073Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/casecrs\">@Casecrs</a>,</p>\n<p>Can you please try a mutation like this one:</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_multiple_column_values(\n    item_id: 11111111\n    board_id: 2222222\n    column_values: \"{\\\"date0\\\" : null}\"\n  ) {\n    id\n  }\n}\n</code></pre>\n<p>Let me know how that goes!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 140664,
+      "postNumber": 9,
+      "createdAt": "2023-08-24T14:11:32.981Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<p>Hi,<br />\nI tried using this format and it wasn’t successful but from there I believe I’ve moved a step closer to getting this.</p>\n<p>I’ve formatted  a query and am getting this response<br />\nmutation {<br />\nchange_column_value(<br />\nitem_id: 5023970068,<br />\nboard_id: 4867329591,<br />\ncolumn_id: “date0”,<br />\nvalue: “2023-08-20”<br />\n) {<br />\nid<br />\n}<br />\n}</p>\n<p>Mutation Response:<br />\n{‘error_message’: “809: unexpected token at ‘-08-20’”, ‘status_code’: 500}</p>\n<p>I think if I can figure out why it’s not responding with the full end date and correct that issue I should be good to go</p>"
+    },
+    {
+      "id": 140667,
+      "postNumber": 10,
+      "createdAt": "2023-08-24T14:33:03.778Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/casecrs\">@Casecrs</a>,</p>\n<p>The change_column_value mutation requires JSON in the value argument. You can replace your IDs in the mutation below and give it a try!</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value(item_id: 9876543210,board_id: 1234567890,column_id: \"date0\",value: \"{\\\"date\\\" : \\\"2023-08-20\\\"}\") {\n    id\n  } \n}\n</code></pre>\n<p>Alternatively, you can use a string to update the date with the change_simple_column_value mutation for the date column (see <a href=\"https://developer.monday.com/api-reference/docs/date#simple-strings\">here</a>)</p>\n<p>Hope this helps! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 140668,
+      "postNumber": 11,
+      "createdAt": "2023-08-24T14:35:48.112Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<p>Thanks Rachel,<br />\nI actually just got it working by changing my query from the last post to change_simple_column_value. It is now updating the end date as expected.</p>"
+    },
+    {
+      "id": 140669,
+      "postNumber": 12,
+      "createdAt": "2023-08-24T14:43:02.247Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Great to hear! Let us know if you have any other questions.</p>"
+    },
+    {
+      "id": 140779,
+      "postNumber": 13,
+      "createdAt": "2023-08-25T12:46:24.832Z",
+      "author": "Casecrs (Casey Saunders)",
+      "cookedHtml": "<p>I now have a script that successfully does the following,<br />\npulls required information from Buildium<br />\nformats the information from Buildium into Items and Sub items in Monday<br />\ndoesn’t create duplicates when run more than once and if changes are found between Buildium information and Monday information it updates the Monday information with the new info pulled from Buildium.</p>\n<p>Thanks so much for the help Matias and Rachel.</p>"
+    },
+    {
+      "id": 141851,
+      "postNumber": 14,
+      "createdAt": "2023-09-04T11:16:45.644Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": 77936,
+  "title": "Where to store webhook id for custom trigger when working with monday code",
+  "slug": "where-to-store-webhook-id-for-custom-trigger-when-working-with-monday-code",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-02-12T15:02:07.215Z",
+  "lastPostedAt": "2024-02-13T09:50:43.814Z",
+  "postsCount": 2,
+  "excerpt": "Hello Team, \nI am planning to build an app with integration feature. For my feature I need to build a custom trigger. Generally developer would need to store webhook id for subscribe event to a external db, so how can we&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 185,
+  "posts": [
+    {
+      "id": 167384,
+      "postNumber": 1,
+      "createdAt": "2024-02-12T15:02:07.287Z",
+      "author": "YashGarg (Yash Garg)",
+      "cookedHtml": "<p>Hello Team,</p>\n<p>I am planning to build an app with integration feature. For my feature I need to build a custom trigger. Generally developer would need to store webhook id for subscribe event to a external db, so how can we manage that when working/deploying solely on monday code?</p>\n<p>Thanks<br />\nYash Garg</p>"
+    },
+    {
+      "id": 167502,
+      "postNumber": 2,
+      "createdAt": "2024-02-13T09:50:43.814Z",
+      "author": "0xm3t1 (Flynn .Is)",
+      "cookedHtml": "<p>One easy way is to use Monday Code SecureStorage, or Monday Code Storage with { shared: false } for added security and control.<br />\nThis lets you store the webhook data needed for your event subscriptions right within Monday Code, so you don’t need to worry about managing an external database.</p>\n<p>Remember to store your webhookUrl so you can trigger your custom action whenever needed.</p>\n<p>// Exemple of subscription request handler</p>\n<pre><code class=\"lang-auto\">import { Storage } from '@mondaycom/apps-sdk';\nimport jwt from 'jsonwebtoken';\n\n\nasync (req, res) =&gt; {\n  const authorization = req.headers.authorization ?? req.query?.token;\n  const { shortLivedToken } = await jwt.verify(authorization, MONDAY_SIGNING_SECRET);\n\n  const { webhookUrl, integrationId, inputFields } = req.body.payload;\n\n  const storage = new Storage(shortLivedToken);\n  const KEY = // create your key from  inputFields / integrationId\n  await storage.set(`trigger_${KEY}`, JSON.stringify({ webhookUrl }), {shared: false});\n\n  return res.status(200).send();\n};\n</code></pre>\n<p>Best,</p>"
+    },
+    {
+      "id": 167863,
+      "postNumber": 3,
+      "createdAt": "2024-02-14T13:59:21.601Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

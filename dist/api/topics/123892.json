@@ -1,0 +1,34 @@
+{
+  "id": 123892,
+  "title": "Best architectural approach for logging WhatsApp Cloud API conversations in monday CRM?",
+  "slug": "best-architectural-approach-for-logging-whatsapp-cloud-api-conversations-in-monday-crm",
+  "categoryId": 80,
+  "tagIds": [
+    5,
+    6,
+    94
+  ],
+  "createdAt": "2026-02-23T19:00:13.019Z",
+  "lastPostedAt": "2026-02-23T20:41:17.148Z",
+  "postsCount": 2,
+  "excerpt": "Hi all, \nI’m building a WhatsApp Cloud API integration and want to log inbound and outbound WhatsApp messages against contacts in monday CRM. \nI initially explored using the Emails &amp; Activities timeline but wasn’t sure w&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 9,
+  "posts": [
+    {
+      "id": 246386,
+      "postNumber": 1,
+      "createdAt": "2026-02-23T19:00:13.096Z",
+      "author": "JEAutomations (Jordan )",
+      "cookedHtml": "<p>Hi all,</p>\n<p>I’m building a WhatsApp Cloud API integration and want to log inbound and outbound WhatsApp messages against contacts in monday CRM.</p>\n<p>I initially explored using the Emails &amp; Activities timeline but wasn’t sure whether that’s the intended or supported approach for external messaging platforms.</p>\n<p>At a high level, what’s considered best practice for handling WhatsApp-style conversations in monday?</p>\n<p>Should this be done via timeline items, updates, subitems, or a dedicated board?</p>\n<p>Just looking for guidance on the most scalable and supported architecture.</p>\n<p>Thanks.</p>"
+    },
+    {
+      "id": 246411,
+      "postNumber": 2,
+      "createdAt": "2026-02-23T20:41:17.148Z",
+      "author": "drtanvisachar (Dr. Tanvi Sachar- Certified Monday.com Partner)",
+      "cookedHtml": "<p>Hey there!<br />\nFor WhatsApp-style conversations, the most scalable pattern I’ve seen is to treat messaging as its own data model, then link it back to Contacts (and optionally Deals).<br />\nA practical setup looks like this:<br />\nOption A (most scalable)<br />\nUse a dedicated “Conversations” board.<br />\nEach item is one WhatsApp thread (usually Contact + phone number, or Contact + Deal).<br />\nConnect it to the Contact item using a Connect Boards column.<br />\nStore high-level fields on the conversation item like channel, owner, status, last message time, last message preview.<br />\nThen store the individual messages either:<br />\nAs subitems on the conversation item (one subitem per message, with direction, timestamp, sender, message type, body, attachment URL), or<br />\nExternally (database/log tool) and only write summaries + last message back to monday, if you expect very high volume.<br />\nOption B (simplest inside the CRM UI)<br />\nLog messages as Updates on the Contact item.<br />\nThis keeps everything visible where reps already work, but it can get noisy fast if you’re logging every single message.<br />\nA common compromise is one update per “session” (for example, bundle messages into one update every X minutes, or one update per day per contact) and include a link to the full thread elsewhere.<br />\nWhy I’d avoid relying on Email &amp; Activities as the core store<br />\nIt can work for lightweight logging, but if you’re building a full WhatsApp integration, you’ll usually want more structure than a timeline entry gives you (threading, last message, assignment, SLA, message metadata, attachments, etc.).<br />\nIf you want one clear recommendation<br />\nStart with a Conversations board + subitems for messages, connected back to Contacts.<br />\nIt stays organized, it scales better than dumping everything into Contact updates, and you can still mirror “last message” and “last activity date” onto the Contact for visibility.<br />\nIf you share expected volume (messages per day, number of active threads), I can suggest whether subitems are fine or if you’ll be happier storing the message log externally and syncing only summaries into monday.</p>\n<p>If you’d like hands-on help or want us to walk through this live, you can book a 1:1 paid 60-minute strategy session with our team here:<br />\n<img src=\"https://emoji.discourse-cdn.com/apple/backhand_index_pointing_right.png?v=15\" title=\":backhand_index_pointing_right:\" class=\"emoji\" alt=\":backhand_index_pointing_right:\" width=\"20\" height=\"20\" />  <a href=\"https://calendly.com/tuesdaywizard/1hourstrategy\">Calendly</a></p>"
+    }
+  ]
+}

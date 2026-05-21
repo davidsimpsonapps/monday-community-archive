@@ -1,0 +1,51 @@
+{
+  "id": 115760,
+  "title": "Add ability to detect when Item View is deleted",
+  "slug": "add-ability-to-detect-when-item-view-is-deleted",
+  "categoryId": 7,
+  "tagIds": [
+    6,
+    94,
+    144,
+    351,
+    414,
+    482
+  ],
+  "createdAt": "2025-06-06T11:33:56.794Z",
+  "lastPostedAt": "2025-07-16T12:20:52.528Z",
+  "postsCount": 4,
+  "excerpt": "Hi, \nWe have a monday.com app with a custom Item View. Based on certain configuration changes, we dynamically create a webhook tied to that instance. When the Item View is no longer in use (e.g., deleted or removed from &hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 32,
+  "posts": [
+    {
+      "id": 231483,
+      "postNumber": 1,
+      "createdAt": "2025-06-06T11:33:56.886Z",
+      "author": "Ravi (Tamang)",
+      "cookedHtml": "<p>Hi,</p>\n<p>We have a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> app with a custom Item View. Based on certain configuration changes, we dynamically create a webhook tied to that instance. When the Item View is no longer in use (e.g., deleted or removed from the item), we want to clean up the associated webhook and other related data.</p>\n<p>However, we haven’t found a way to detect when an Item View is deleted or removed. There doesn’t seem to be a webhook event for this scenario.</p>\n<p>Polling isn’t feasible either, since there’s no API query to list or check Item Views per item. If there were a query similar to <a href=\"https://developer.monday.com/api-reference/reference/board-views\" rel=\"noopener nofollow ugc\"><code>board_views</code></a>, we could at least poll at regular intervals.</p>\n<p>Is there any known workaround or recommended pattern for handling this situation?</p>\n<p>Any guidance or suggestions would be greatly appreciated.</p>\n<p>Thanks in advance!</p>"
+    },
+    {
+      "id": 233702,
+      "postNumber": 2,
+      "createdAt": "2025-07-07T05:13:03.371Z",
+      "author": "ram_perel (Ram Perel)",
+      "cookedHtml": "<p>I think this can be relevant for almost every feature in the marketplace. Dashboard widget, object, item view, column and more</p>"
+    },
+    {
+      "id": 233910,
+      "postNumber": 4,
+      "createdAt": "2025-07-08T12:27:39.756Z",
+      "author": "DanielHai (Daniel Hai)",
+      "cookedHtml": "<p>Hi All</p>\n<p>I am trying to better understand your usecase.</p>\n<p>Would something like this that can get the boards permissions for the current user answer do everything that you need?</p>\n<h3><a name=\"p-233910-proposed-solution-get_my_board_permissions-api-1\" class=\"anchor\" href=\"#p-233910-proposed-solution-get_my_board_permissions-api-1\"></a><img src=\"https://emoji.discourse-cdn.com/apple/white_check_mark.png?v=15\" title=\":white_check_mark:\" class=\"emoji\" alt=\":white_check_mark:\" width=\"20\" height=\"20\" /> <strong>Proposed Solution: <code>get_my_board_permissions</code> API</strong></h3>\n<p>Introduce a <strong>GraphQL API</strong> query that returns a list of permissions the current user has on a specified board, indicating whether each is allowed or not.</p>\n<h4><a name=\"p-233910-example-request-2\" class=\"anchor\" href=\"#p-233910-example-request-2\"></a><img src=\"https://emoji.discourse-cdn.com/apple/blue_book.png?v=15\" title=\":blue_book:\" class=\"emoji\" alt=\":blue_book:\" width=\"20\" height=\"20\" /> Example Request</h4>\n<pre><code class=\"lang-auto\">query {\n  get_my_board_permissions(board_id: 118607524) {\n    permissions {\n      permission_name\n      is_allowed\n    }\n  }\n}\n</code></pre>\n<h4><a name=\"p-233910-example-response-3\" class=\"anchor\" href=\"#p-233910-example-response-3\"></a><img src=\"https://emoji.discourse-cdn.com/apple/inbox_tray.png?v=15\" title=\":inbox_tray:\" class=\"emoji\" alt=\":inbox_tray:\" width=\"20\" height=\"20\" /> Example Response</h4>\n<pre><code class=\"lang-auto\">{\n  \"data\": {\n    \"get_my_board_permissions\": {\n      \"permissions\": [\n        { \"permission_name\": \"create_item\", \"is_allowed\": true },\n        { \"permission_name\": \"view_item\", \"is_allowed\": true },\n        { \"permission_name\": \"edit_item\", \"is_allowed\": true },\n        { \"permission_name\": \"move_item_within_group\", \"is_allowed\": true },\n        { \"permission_name\": \"move_item_across_groups\", \"is_allowed\": true },\n        { \"permission_name\": \"move_pulses\", \"is_allowed\": true }\n      ]\n    }\n  }\n}\n``\n\n### 🔐 **Dynamic Permission Evaluation**\n\n* Permissions are **calculated in real-time** based on the user's actual role and context:\n* Includes **workspace restrictions**, **guest/viewer roles**, or **higher-level account settings**.</code></pre>"
+    },
+    {
+      "id": 234551,
+      "postNumber": 5,
+      "createdAt": "2025-07-16T12:20:52.528Z",
+      "author": "Ravi (Tamang)",
+      "cookedHtml": "<p>Hi,<br />\nWhat we are looking for is a bit different and is related to views rather than permissions.<br />\nWe can get the list of BoardViews using the board graphql query</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: [9032093030]) {\n    id\n    name\n    views {\n      id\n    }\n  }\n}\n</code></pre>\n<p>We are looking to query ItemViews instead.<br />\nSomething like</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: [9032093030]) {\n    id\n    name\n    item_views {\n      id\n    }\n  }\n}\n</code></pre>"
+    }
+  ]
+}

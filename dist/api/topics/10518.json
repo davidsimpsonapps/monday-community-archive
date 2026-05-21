@@ -1,0 +1,89 @@
+{
+  "id": 10518,
+  "title": "Integromat TEXT update when update value is empty",
+  "slug": "integromat-text-update-when-update-value-is-empty",
+  "categoryId": 80,
+  "tagIds": [
+    5,
+    47
+  ],
+  "createdAt": "2020-08-26T00:20:11.426Z",
+  "lastPostedAt": "2021-02-25T14:45:48.630Z",
+  "postsCount": 9,
+  "excerpt": "I’m using Integromat to Create, Read, Update, and Delete items across boards. \nMostly this is working well. \nHowever, where an item includes a Text column, Integromat does not delete its value when attempting to overwrit&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 7897,
+  "posts": [
+    {
+      "id": 26657,
+      "postNumber": 1,
+      "createdAt": "2020-08-26T00:20:11.494Z",
+      "author": "snicho (Stephen Nicholson)",
+      "cookedHtml": "<p>I’m using Integromat to Create, Read, Update, and Delete items across boards.</p>\n<p>Mostly this is working well.</p>\n<p>However, where an item includes a Text column, Integromat does not delete its value when attempting to overwrite it with <em>empty</em>.</p>\n<p>eg.<br />\nBoard ‘A’ has various columns including a text column with an item containing a text value of “xxxxx”<br />\nBoard ‘B’ has a corresponding item that includes a text column with no value</p>\n<p>When reading the item the item from Board B, the column value shows as being <em>empty</em>.</p>\n<p>In the Integromat recipe, I can update various column values that are populated, but a text value that is empty does not overwrite an existing text value on board A.</p>\n<p>Any suggestions on how this can be achieved?</p>"
+    },
+    {
+      "id": 26682,
+      "postNumber": 2,
+      "createdAt": "2020-08-26T07:44:34.224Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>This should work without any issues. I would start by looking input bundles of the update module. Compare an operation that worked with one that didn’t.</p>\n<p>They should look something like this:</p>\n<pre><code>[\n{\n    \"itemId\": \"123456789\",\n    \"boardId\": \"987654321\",\n    \"columnValuesToChange\": [\n        {\n            \"columnId\": \"text\",\n            \"columnValue\": null\n        }\n    ]\n}\n]</code></pre>"
+    },
+    {
+      "id": 26685,
+      "postNumber": 3,
+      "createdAt": "2020-08-26T08:11:57.143Z",
+      "author": "snicho (Stephen Nicholson)",
+      "cookedHtml": "<p>Thanks Jim.</p>\n<p>It appears to only be an issue for columns that are type Text.  Long Text column types overwrite fine with blank values.</p>\n<p>I’ve think that I’ve finally sorted out a workaround by using the <em>ifempty</em> function in Integromat along with the Text Parser module to replace quote characters.</p>\n<p>However, I’m sure that there is a neater way of achieving this result.  For now I’ll have to run with this fix until I have some more time, maybe in the coming week.</p>"
+    },
+    {
+      "id": 26730,
+      "postNumber": 4,
+      "createdAt": "2020-08-26T13:05:38.545Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey there <a class=\"mention\" href=\"/u/snicho\">@snicho</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>I’m glad <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> was able to help you out here, he’s awesome on many levels <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>This does seem a little odd to me and I would love to understand the end goal here. Just to confirm my understanding, is this what you are trying to accomplish:</p>\n<p>If Board B item’s text column has no value (empty), then clear the relevant item’s Text column on Board A? I’d love to try playing around with that a little further to see if there are any other solutions to achieve this effect, but I do think using the <em>ifempty</em> feature on Integromat would be your best bet here.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 26731,
+      "postNumber": 5,
+      "createdAt": "2020-08-26T13:05:47.444Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 26940,
+      "postNumber": 6,
+      "createdAt": "2020-08-27T20:22:47.617Z",
+      "author": "snicho (Stephen Nicholson)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a></p>\n<p>Yes, that’s exactly what I am doing.</p>\n<p>When a value in a text column exists in both boards, I can readily update that value.</p>\n<p>However, if the updating value on Board B is blank (empty/null), then it doesn’t clear the existing value on Board A.</p>\n<p>The workaround that I’ve put in place for now is to use the ifempty in Integromat to check if the value is empty, and if so, replace it with a hyphen.  That way I’m never trying to write null values.</p>\n<p>It’s not ideal, but it is workable.</p>"
+    },
+    {
+      "id": 26982,
+      "postNumber": 7,
+      "createdAt": "2020-08-28T08:40:32.528Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p>I finally got a chance to test this.</p>\n<p>Try using a formula in this format (like you are doing) in the Value of the column that your are updating:</p>\n<pre><code>ifempty(1.mappable_column_values.text; \"\")\n</code></pre>\n<p>Basically, just use empty quotes in place of the hyphen.</p>\n<p>I’m surprised that I haven’t run into this issue before.</p>"
+    },
+    {
+      "id": 26992,
+      "postNumber": 8,
+      "createdAt": "2020-08-28T11:30:53.118Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a></p>\n<p>Wow, that’s a very interesting solution! Actually, this is very similar to how you’d create IF formulas in <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> for empty values as well in some cases <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /> What a cool catch.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 27049,
+      "postNumber": 9,
+      "createdAt": "2020-08-28T21:05:51.309Z",
+      "author": "snicho (Stephen Nicholson)",
+      "cookedHtml": "<p>Thanks Jim.</p>\n<p>That worked.</p>\n<p>I’m sure that I tried that previously and ended up with something like nullxxxxxxnull</p>\n<p>However, that’s working fine now.  Thanks!</p>"
+    },
+    {
+      "id": 42572,
+      "postNumber": 10,
+      "createdAt": "2021-02-25T14:45:48.630Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

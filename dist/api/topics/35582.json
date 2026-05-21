@@ -1,0 +1,75 @@
+{
+  "id": 35582,
+  "title": "Query complexity issue for retrieving all the subitems of particular item of the particular group of particular board",
+  "slug": "query-complexity-issue-for-retrieving-all-the-subitems-of-particular-item-of-the-particular-group-of-particular-board",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2022-05-02T09:21:41.470Z",
+  "lastPostedAt": "2022-06-30T06:03:04.422Z",
+  "postsCount": 8,
+  "excerpt": "We are trying to retrieve items and subitems with hierarchy and it is failing with query complexity issue. \nThe query is as below:\n{ \nboards(ids: xxxx) { \nid \nname \ngroups(ids: xxxx)  { \nid \ntitle \nitems(ids: xxxx)  { \ni&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1828,
+  "posts": [
+    {
+      "id": 84637,
+      "postNumber": 1,
+      "createdAt": "2022-05-02T09:21:41.552Z",
+      "author": "prasmadd (prasmadd)",
+      "cookedHtml": "<h1><a name=\"p-84637-we-are-trying-to-retrieve-items-and-subitems-with-hierarchy-and-it-is-failing-with-query-complexity-issue-the-query-is-as-below-1\" class=\"anchor\" href=\"#p-84637-we-are-trying-to-retrieve-items-and-subitems-with-hierarchy-and-it-is-failing-with-query-complexity-issue-the-query-is-as-below-1\"></a>We are trying to retrieve items and subitems with hierarchy and it is failing with query complexity issue.<br />\nThe query is as below:</h1>\n<h1><a name=\"p-84637-boardsids-xxxx-id-name-groupsids-xxxx-id-title-itemsids-xxxx-id-name-subitemsids-xxxx-id-name-2\" class=\"anchor\" href=\"#p-84637-boardsids-xxxx-id-name-groupsids-xxxx-id-title-itemsids-xxxx-id-name-subitemsids-xxxx-id-name-2\"></a>{<br />\nboards(ids: xxxx) {<br />\nid<br />\nname<br />\ngroups(ids: xxxx)  {<br />\nid<br />\ntitle<br />\nitems(ids: xxxx)  {<br />\nid<br />\nname<br />\nsubitems(ids: xxxx)  {<br />\nid<br />\nname<br />\n}<br />\n}<br />\n}<br />\n}<br />\n}</h1>\n<h1><a name=\"p-84637-getting-below-error-3\" class=\"anchor\" href=\"#p-84637-getting-below-error-3\"></a>Getting below error:</h1>\n<h1><a name=\"p-84637-errors-message-query-has-complexity-of-2001200120022-which-exceeds-max-complexity-of-5000000-account_id-11771408-4\" class=\"anchor\" href=\"#p-84637-errors-message-query-has-complexity-of-2001200120022-which-exceeds-max-complexity-of-5000000-account_id-11771408-4\"></a>{<br />\n“errors”: [<br />\n{<br />\n“message”: “Query has complexity of 2001200120022, which exceeds max complexity of 5000000”<br />\n}<br />\n],<br />\n“account_id”: 11771408<br />\n}</h1>\n<p>Currently the instance is having sample data with less than 100 items including all the workspaces.</p>\n<p>How we can avoid the issue with query complexity to retrieve the same data as above.</p>\n<p>Regards,<br />\nPrashanth</p>"
+    },
+    {
+      "id": 84660,
+      "postNumber": 3,
+      "createdAt": "2022-05-02T11:58:03.899Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/prasmadd\">@prasmadd</a></p>\n<p>You don’t need the boards or groups queries for the item. Also, the id’s of the subitems are unnecessary unless you are only wanting a specific list.</p>\n<p>If you need the board and group info, nest the “subqueries” inside the item:</p>\n<pre><code class=\"lang-auto\">  items(ids: 123456789) {\n    board {\n      id\n      name\n    }\n    group {\n      id\n      title\n    }\n    name\n    subitems {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\nWatch Our Latest Video:  <a href=\"https://youtu.be/1_bHboEBQkU\">The ITEM ID column</a><br />\nContact me directly here: <a href=\"https://themondayman.com/contact/\">Contact – The Monday Man</a></p>"
+    },
+    {
+      "id": 89525,
+      "postNumber": 4,
+      "createdAt": "2022-06-24T01:28:13.759Z",
+      "author": "Yash (Yash Chaudhari)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> - Thank you for the inputs.</p>\n<p>We are facing same issue with another query mentioned below:</p>\n<p><strong>Query:</strong></p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890]) {\n    groups {\n      archived\n      color\n      deleted\n      id\n      items {\n        created_at\n        creator_id\n        email\n        id\n        name\n        updated_at\n      }\n      position\n      title\n    }\n  }\n}\n</code></pre>\n<p><strong>Error:</strong></p>\n<pre><code class=\"lang-auto\">{\n  \"errors\": [\n    {\n      \"message\": \"Query has complexity of 6016020, which exceeds max complexity of 5000000\"\n    }\n  ],\n  \"account_id\": xxxxxx\n}\n</code></pre>\n<p>We tried few things and could see when we remove any two fields from query it works. In this case we removed <strong>creator_id</strong> and <strong>email</strong> , sharing working query below:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890]) {\n    groups {\n      archived\n      color\n      deleted\n      id\n      items {\n        created_at\n        id\n        name\n        updated_at\n      }\n      position\n      title\n    }\n  }\n}\n</code></pre>\n<p>Could you please help us know what factors we should consider to know while developing the nested queries.</p>\n<p>It would be great help if you can point us to any documentation which will help us understand queries formation better.</p>"
+    },
+    {
+      "id": 89561,
+      "postNumber": 5,
+      "createdAt": "2022-06-24T08:32:26.620Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/yash\">@Yash</a></p>\n<p>It would not be exactly the same. But I suspect that by moving the group portion from outside the items to inside that would solve the issue.</p>\n<p>With regard to documentation, maybe <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> could help here.</p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a><br />\n<strong><a href=\"https://themondayman.com/custom/\">We Create Custom Solutions</a></strong><br />\n<strong><a href=\"https://themondayman.com/tutorial/\">Schedule a 1-on-1 Tutorial Session</a></strong></p>"
+    },
+    {
+      "id": 89641,
+      "postNumber": 6,
+      "createdAt": "2022-06-26T09:21:46.178Z",
+      "author": "Yash (Yash Chaudhari)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/jcorrell\">@JCorrell</a> .</p>\n<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> - Could you please help us on this. Thank you in advance !!!</p>"
+    },
+    {
+      "id": 89644,
+      "postNumber": 7,
+      "createdAt": "2022-06-26T09:50:37.235Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/yash\">@Yash</a>!</p>\n<p>What Jim says makes sense.</p>\n<p>You could use something like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [1234567890]) {\n    items {\n      created_at\n      creator_id\n      email\n      id\n      name\n      updated_at\n      group {\n        archived\n        color\n        deleted\n        id\n        position\n        title\n      }\n    }\n  }\n}\n</code></pre>\n<p>What do you think?</p>"
+    },
+    {
+      "id": 89974,
+      "postNumber": 8,
+      "createdAt": "2022-06-29T07:22:54.133Z",
+      "author": "Yash (Yash Chaudhari)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> The query what we use is to return groups under board. So we provide board id and expect groups.<br />\nNow regarding the items inside groups, we fetch all the details of  groups including complex details. We were trying to understand why it gave us error when we provided more than 4 fields in items.</p>"
+    },
+    {
+      "id": 90059,
+      "postNumber": 9,
+      "createdAt": "2022-06-30T06:03:04.422Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/yash\">@Yash</a>!</p>\n<p>The issue with that is that the more nested the query, the greater the complexity points usage.</p>\n<p>So you might need to either use this other approach and then do some sorting on your end, or maybe do multiple queries.</p>\n<p>The more fields you add into the items, the higher your complexity points usage will be.</p>"
+    }
+  ]
+}

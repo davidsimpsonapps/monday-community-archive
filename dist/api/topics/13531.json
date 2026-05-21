@@ -1,0 +1,74 @@
+{
+  "id": 13531,
+  "title": "Unable to get formula column values via API",
+  "slug": "unable-to-get-formula-column-values-via-api",
+  "categoryId": 58,
+  "tagIds": [
+    276
+  ],
+  "createdAt": "2020-11-23T06:07:03.832Z",
+  "lastPostedAt": "2024-12-15T08:18:44.570Z",
+  "postsCount": 7,
+  "excerpt": "Hi All \nI am working on building a small monday.com app and trying to retrieve formula column values through API. I get ‘null’ as the value for all formula type columns. \nQuestions, \n\nIs it possible to get formula type c&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 4780,
+  "posts": [
+    {
+      "id": 34345,
+      "postNumber": 1,
+      "createdAt": "2020-11-23T06:07:03.973Z",
+      "author": "dinithij (Din Jaz)",
+      "cookedHtml": "<p>Hi All</p>\n<p>I am working on building a small <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> app and trying to retrieve formula column values through API. I get ‘null’ as the value for all formula type columns.</p>\n<p>Questions,</p>\n<ol>\n<li>Is it possible to get formula type column values via API?</li>\n<li>If it is not possible, Is there any way I can get the used formula,  for me to do the calculation on client side?</li>\n</ol>\n<p>Thanks<br />\nDinithi</p>"
+    },
+    {
+      "id": 34375,
+      "postNumber": 2,
+      "createdAt": "2020-11-23T12:20:41.916Z",
+      "author": "PolishedGeek (Polished Geek | Platinum Partner)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dinithij\">@dinithij</a> - The API will not give you dynamic results for things like formula and progress columns. You’ll need to pull in the column settings and generate the values on your end from what you find in the settings.</p>\n<p>We built an app that uses both formula and progress columns to prioritize cards on a board view, and <a class=\"mention\" href=\"/u/spunkie\">@Spunkie</a> may be able to add more context as well. It will take more coding on your end to reproduce the dynamic functionality.</p>\n<p>Perhaps if we’re lucky the next version of the API will include dynamic values.</p>"
+    },
+    {
+      "id": 34640,
+      "postNumber": 3,
+      "createdAt": "2020-11-26T13:19:03.402Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dinithij\">@dinithij</a> - you can also check out this post for a discussion on how to do this:</p><aside class=\"quote quote-modified\">\n  <div class=\"title\">\n    <div class=\"quote-controls\"></div>\n    <img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/dipro/48/223_2.png\" class=\"avatar\" />\n    <a href=\"https://community.monday.com/t/mutation-create-column-for-a-formula-type-column/949/8\">Mutation: create_column for a 'formula' type column</a> <a class=\"badge-category__wrapper \" href=\"/c/developers/8\"><span class=\"badge-category \"><span class=\"badge-category__name\">monday Apps &amp; Developers</span></span></a>\n  </div>\n  <blockquote>\n    Hey everyone! Just wanted to follow up on this – <a class=\"mention\" href=\"/u/polishedgeek\">@PolishedGeek</a> is right! \nWhile our API does not support reading the calculated value of a formula column, you can use the settings_str field to get the config of the formula column. \nThis config contains the raw formula. Since the formula is almost identical to the Excel syntax, you should be able to pipe this into a formula parser of your choice. \nHere’s a simple example of the process: \n\nGet all the column values from the board\nGet the formula i…\n  </blockquote>\n</aside>\n"
+    },
+    {
+      "id": 52851,
+      "postNumber": 4,
+      "createdAt": "2021-05-27T10:57:54.424Z",
+      "author": "azmat (azmatullah)",
+      "cookedHtml": "<p>we can create subitem colmn by API??</p>"
+    },
+    {
+      "id": 52852,
+      "postNumber": 5,
+      "createdAt": "2021-05-27T11:00:51.170Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/azmat\">@azmat</a></p>\n<p>Thanks for asking! At this time, you will not be able to create sub-item columns via the API, just like with Connect Board columns.</p>\n<p>I would recommend raising this question as a separate topic in the future, as your query doesn’t quite seem to be related to the main topic of the discussion here. I hope that makes sense <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 213855,
+      "postNumber": 6,
+      "createdAt": "2024-12-13T13:30:52.328Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Reading the formula column is now supported via the API!</p>\n<p>You can get the calculated value by querying the <code>display_value</code>  field on the FormulaValue type. This field is available on API version 2025-01 and later.</p>\n<p>Here’s an example:</p>\n<pre><code class=\"lang-gql\">query {\n  boards (ids:116807194) {\n    items_page (limit:50) {\n      items {\n        id\n        column_values (ids:[\"mins\"]) {\n          ...on FormulaValue {\n            display_value\n          }\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>Note that querying this field does have rate limits as it’s a computationally intensive request:</p>\n<ul>\n<li>Up to 10,000 formula values per minute</li>\n<li>Maximum of five formula columns in one request</li>\n<li>Does not support formulas with mirror columns</li>\n</ul>"
+    },
+    {
+      "id": 213994,
+      "postNumber": 7,
+      "createdAt": "2024-12-15T08:18:44.570Z",
+      "author": "hellotimi (David Kalu (Formula Pro - Use formula column results in automations!))",
+      "cookedHtml": "<p><strong>Formula PRO</strong> on the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> marketplace is fully integrated with this new API to elevate your native formula columns. It supports all native formula functions, so you won’t need to learn new syntax to use <strong>Formula PRO</strong>.</p>\n<p>Unlock powerful capabilities with <strong>Formula PRO</strong>, including projecting results from native formula columns to other columns (even those not supported by the native monday formula column), as well as to mirror columns and subitems.</p>\n<p>Plus, <strong>Formula PRO</strong> comes with 40 automation recipes, with new ones added every two weeks.</p>\n<p><a href=\"https://monday.com/marketplace/listing/10000685/formula-pro\" rel=\"noopener nofollow ugc\"><img src=\"https://emoji.discourse-cdn.com/apple/rocket.png?v=12\" title=\":rocket:\" class=\"emoji\" alt=\":rocket:\" width=\"20\" height=\"20\" /> <strong>Formula PRO</strong>: Advanced Automations for native monday formula columns, Mirror Columns &amp; Subitems!</a></p>"
+    },
+    {
+      "id": 214116,
+      "postNumber": 8,
+      "createdAt": "2024-12-16T05:45:53.131Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

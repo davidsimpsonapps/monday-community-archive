@@ -1,0 +1,41 @@
+{
+  "id": 72428,
+  "title": "List dimension mismatch on variable $id and argument item_id ([ID!] / ID)",
+  "slug": "list-dimension-mismatch-on-variable-id-and-argument-item-id-id-id",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2023-12-06T18:34:15.628Z",
+  "lastPostedAt": "2023-12-07T10:37:54.760Z",
+  "postsCount": 3,
+  "excerpt": "I’m trying to run this code to update column values on an existing item by its ID, but I’m getting this error: \nList dimension mismatch on variable $id and argument item_id ([ID!] / ID) \nMy ID is an INT so not sure what &hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 406,
+  "posts": [
+    {
+      "id": 156568,
+      "postNumber": 1,
+      "createdAt": "2023-12-06T18:34:15.702Z",
+      "author": "adouglas_ivet (Alex Douglas)",
+      "cookedHtml": "<p>I’m trying to run this code to update column values on an existing item by its ID, but I’m getting this error:</p>\n<p>List dimension mismatch on variable $id and argument item_id ([ID!] / ID)</p>\n<p>My ID is an INT so not sure what I’m doing wrong here.</p>\n<pre><code> $id = 5543373657\n $new_service_level = \"Digital\";\n $new_monthly_rate = \"$250\";\n\n $query = 'mutation ($id: [ID!], $columnVals: JSON!) { change_multiple_column_values (board_id:XXXXXXX, item_id:$id, column_values:$columnVals) { id } }';\n\n$vars = [\n  'id' =&gt; $id,\n  'columnVals' =&gt; json_encode([\n\t'status' =&gt; ['label' =&gt; $new_service_level], //Service Level\n\t'text17' =&gt; $new_monthly_rate //Monthly Bill Rate\n])];\n\n $data = @file_get_contents($apiUrl, false, stream_context_create([\n 'http' =&gt; [\n 'method' =&gt; 'POST',\n 'header' =&gt; $headers,\n 'content' =&gt; json_encode(['query' =&gt; $query, 'variables' =&gt; $vars]),\n ]\n]));\n\n$tempContents = json_decode($data, true);\n</code></pre>"
+    },
+    {
+      "id": 156574,
+      "postNumber": 2,
+      "createdAt": "2023-12-06T18:46:35.959Z",
+      "author": "adouglas_ivet (Alex Douglas)",
+      "cookedHtml": "<p>I fixed this by changing my code to:</p>\n<pre><code class=\"lang-auto\">$query = 'mutation ($id: ID!, $columnVals: JSON!) { change_multiple_column_values (board_id:XXXXXXX, item_id:$id, column_values:$columnVals) { id } }';\n</code></pre>"
+    },
+    {
+      "id": 156687,
+      "postNumber": 4,
+      "createdAt": "2023-12-07T10:37:54.760Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/adouglas_ivet\">@adouglas_ivet</a> I am glad you found the source of the issue <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

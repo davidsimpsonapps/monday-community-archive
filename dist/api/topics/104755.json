@@ -1,0 +1,73 @@
+{
+  "id": 104755,
+  "title": "Query was working but now is failing after changing zero javascript code 400 ERR_BAD_REQUEST on items_page_by_column_values query",
+  "slug": "query-was-working-but-now-is-failing-after-changing-zero-javascript-code-400-err-bad-request-on-items-page-by-column-values-query",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    165,
+    166,
+    167,
+    351,
+    466
+  ],
+  "createdAt": "2024-12-04T20:51:07.723Z",
+  "lastPostedAt": "2024-12-08T06:32:22.653Z",
+  "postsCount": 7,
+  "excerpt": "Hey ya’ll. I’m feeling quite confused here. So, I’m currently working on a node.js server to interact with a monday.com board. Everything has been going smoothly so far and I’ve written several queries to both get and wr&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 36,
+  "posts": [
+    {
+      "id": 212839,
+      "postNumber": 1,
+      "createdAt": "2024-12-04T20:51:07.808Z",
+      "author": "austin.gould (Austin Gould)",
+      "cookedHtml": "<p>Hey ya’ll. I’m feeling quite confused here. So, I’m currently working on a node.js server to interact with a <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> board. Everything has been going smoothly so far and I’ve written several queries to both get and write data.</p>\n<p>I didn’t touch the project for about a week and then when I came back to it, today, one of my get queries is failing with a 400 status and code ‘ERR_BAD_REQUEST’. However, my write queries are all still working flawlessly. No code has been changed on my end.</p>\n<p>Here is my query in string version:</p>\n<pre><code class=\"lang-auto\">  const query = ` query {\n      items_page_by_column_values (board_id: ${BOARD_ID}, columns: [{column_id: \"${EMAIL_COL_ID}\", column_values: [\"${email}\"]}]) {\n        items {\n          id\n          name\n          column_values {\n            id\n            value\n          }\n        }\n      }\n    }`;\n</code></pre>\n<p>Here is what is being logged after passing in the variables:</p>\n<pre><code class=\"lang-auto\">query:  query { items_page_by_column_values (board_id: 7412528409, columns: [{column_id: \"text1__1\", column_values: [\"fakeEmail@email.com\"]}]) { items { id name column_values { id value }}}}\n\n</code></pre>\n<p>Here is the javascript code to make the request:</p>\n<pre><code class=\"lang-auto\">const response = await axios.get(`${process.env.MONDAY_API_URL}`, {\n      headers: {\n        Authorization: `Bearer ${process.env.MONDAY_API_TOKEN}`,\n      },\n      data: {\n        query: query,\n      },\n    });\n</code></pre>\n<p>And here is what is being logged after the error response:</p>\n<pre><code class=\"lang-auto\">AxiosError: Request failed with status code 400\n\n code: 'ERR_BAD_REQUEST',\nheaders: Object [AxiosHeaders] {\n      Accept: 'application/json, text/plain, */*',\n      'Content-Type': 'application/json',\n      Authorization: 'Bearer redactedToken',\n      'User-Agent': 'axios/1.7.7',\n      'Content-Length': '203',\n      'Accept-Encoding': 'gzip, compress, deflate, br'\n    },\n    data: '{\"query\":\"query { items_page_by_column_values (board_id: 7412528409, columns: [{column_id: \\\\\"text1__1\\\\\", column_values: [\\\\\"fakeEmail@email.com\\\\\"]}]) { items { id name column_values { id value }}}}\"}',\n    method: 'get',\n    url: 'https://api.monday.com/v2'\n  },\n\n</code></pre>\n<p>Any guidance would be much appreciated. Again, my other queries are working and this one has broken without me touching it or any code related to it.</p>"
+    },
+    {
+      "id": 212914,
+      "postNumber": 2,
+      "createdAt": "2024-12-05T15:50:38.700Z",
+      "author": "austin.gould (Austin Gould)",
+      "cookedHtml": "<p>I was able to find the solution after discovering the more verbose error messages in the error object. At <code>error?.response?.data?.errors</code>. I saw a message saying I was passing no query in the <em>params</em>. I then changed the query to be passed in the params object and also had to include a header of <code>\"Content-Type\": \"application/json\"</code>.</p>\n<p>That resolved all my errors and my query is now working again. I’m still confused as to why this broke without me changing any code. I saw there was a coming <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> API update and some changes in late November but non of the changes seemed to apply to my query.</p>"
+    },
+    {
+      "id": 212915,
+      "postNumber": 3,
+      "createdAt": "2024-12-05T15:50:41.089Z",
+      "author": "EduardoCoelho (Personal | Eduardo Coelho)",
+      "cookedHtml": "<p>I’m having the same problem here, a query similar to yours is not working anymore and I didin’t change anything on my query/code…</p>"
+    },
+    {
+      "id": 212916,
+      "postNumber": 4,
+      "createdAt": "2024-12-05T15:50:43.921Z",
+      "author": "matt_w (Matthew Waller)",
+      "cookedHtml": "<p>Hi. I have just started getting the same errors without making any changes to my code.</p>\n<p>I’ve discovered 2 things that fixed the error for me:</p>\n<ol>\n<li>In the header specify the previous API version:         ‘API-Version’ : ‘2024-07’,</li>\n</ol>\n<p>or</p>\n<ol>\n<li>Replacing GET requests with POST requests (apparently the prefered method for GQL queries is POST even when they don’t change data).</li>\n</ol>"
+    },
+    {
+      "id": 212923,
+      "postNumber": 5,
+      "createdAt": "2024-12-05T16:16:21.603Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi all!</p>\n<p>I have a few recommendations that should help:</p>\n<ol>\n<li>Check out our <a href=\"https://www.npmjs.com/package/@mondaydotcomorg/api\">API SDK</a>! This is a great tool that can make your life much easier <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=12\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" width=\"20\" height=\"20\" /></li>\n<li>Otherwise, be sure to pass the <code>API-Version</code> header in your queries.</li>\n<li>As Matthew mention, change from GET to POST requests.</li>\n</ol>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 212926,
+      "postNumber": 6,
+      "createdAt": "2024-12-05T16:23:08.160Z",
+      "author": "austin.gould (Austin Gould)",
+      "cookedHtml": "<p>Here’s the code that fixed the error.</p>\n<p>Before:</p>\n<pre><code class=\"lang-auto\"> const response = await axios.get(`${process.env.MONDAY_API_URL}`, {\n      headers: {\n        Authorization: `Bearer ${process.env.MONDAY_API_TOKEN}`,\n      },\n      data: {\n        query: query,\n      },\n    });\n</code></pre>\n<p>After:</p>\n<pre><code class=\"lang-auto\"> const response = await axios.get(`${process.env.MONDAY_API_URL}`, {\n      headers: {\n        Authorization: `Bearer ${process.env.MONDAY_API_TOKEN}`,\n        \"Content-Type\": \"application/json\",\n      },\n      params: {\n        query: query,\n      },\n    });\n</code></pre>"
+    },
+    {
+      "id": 213151,
+      "postNumber": 7,
+      "createdAt": "2024-12-08T06:32:22.653Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/austin.gould\">@austin.gould</a> for sharing this!</p>"
+    }
+  ]
+}

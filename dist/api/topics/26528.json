@@ -1,0 +1,35 @@
+{
+  "id": 26528,
+  "title": "Backtourl pass token for dynamic multi auth",
+  "slug": "backtourl-pass-token-for-dynamic-multi-auth",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    159,
+    208,
+    351
+  ],
+  "createdAt": "2021-10-26T10:30:34.223Z",
+  "lastPostedAt": "2021-10-26T11:47:53.678Z",
+  "postsCount": 2,
+  "excerpt": "Hello All, \nMy team is working hard to integrate a new multi auth system into our 3rd party integration for phoneburner.com . This would allow for users to select what phoneburner account they would like a given integrat&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1356,
+  "posts": [
+    {
+      "id": 67002,
+      "postNumber": 1,
+      "createdAt": "2021-10-26T10:30:34.315Z",
+      "author": "mclaughlin5360 (Mitch McLaughlin)",
+      "cookedHtml": "<p>Hello All,</p>\n<p>My team is working hard to integrate a new multi auth system into our 3rd party integration for <a href=\"http://phoneburner.com\" rel=\"noopener nofollow ugc\">phoneburner.com</a> . This would allow for users to select what phoneburner account they would like a given integration to be bound to. The flow is as follows.</p>\n<p>Upon Selection of a new integration our app does a lookup in our database based on <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> token (account ID and User ID). After this lookup the user is redirected to an external react page in witch the current auths (Lookup values) are displayed / option to add new accounts. After the user selects an account from the list of auths they are redirected to the back url to complete the integration.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/0/03bed26f0d6fe11bac16de98f7f8932c8a43066e.png\" title=\"Screen_Shot_2021-10-26_at_9.28.23_AM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/0/03bed26f0d6fe11bac16de98f7f8932c8a43066e_2_690x466.png\" alt=\"Screen_Shot_2021-10-26_at_9.28.23_AM\" width=\"690\" height=\"466\" /><div class=\"meta\">\n<span class=\"filename\">Screen_Shot_2021-10-26_at_9.28.23_AM</span><span class=\"informations\">903×610 39.7 KB</span>\n</div></a></div><p></p>\n<p>The issue we are facing is once this user is sent to the backurl, to complete the integration, we are not able to send the selected account through the url. We need to pass something from the external page back to the integration button as upon completing the integration it will add a webhook in our database. We need a way to tie this webhook to the phoneburner account they selected on the external page.</p>\n<p>If anyone has figured out a fix or has any ideas for this please let me know!</p>"
+    },
+    {
+      "id": 67017,
+      "postNumber": 2,
+      "createdAt": "2021-10-26T11:47:53.678Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/mclaughlin5360\">@mclaughlin5360</a>!</p>\n<p>Can you explain a bit more about what data your app needs from the user before they set up the integration?</p>\n<p>Also, are you using a custom action/trigger in your integration recipe?</p>\n<p>I assume you need to 1) get user credentials, and 2) subscribe to webhooks. I’d suggest getting the credentials in the auth step, but subscribing to the webhooks in your trigger or action.</p>\n<p>Here’s a typical auth flow that an integration would implement:</p>\n<ol>\n<li>User clicks recipe</li>\n<li>User is redirected to login page for app</li>\n<li>User selects credentials</li>\n<li>Server stores these credentials against their user ID (so the same user uses the same credentials each time)</li>\n<li>User redirects to backToUrl</li>\n</ol>\n<p>Now, if you need to subscribe to some webhooks, it sounds like your recipe goes from PhoneBurner &gt; <a href=\"http://Monday.com\">Monday.com</a>. In this case, I assume you are building a custom trigger. I would recommend subscribing to the webhooks only after your trigger subscribe URL is called (ie, not in the authorization step).</p>\n<p>In this explanation I made a couple of assumptions about your current app’s design. Let me know if they’re incorrect, or I missed anything!</p>"
+    }
+  ]
+}

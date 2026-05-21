@@ -1,0 +1,105 @@
+{
+  "id": 18996,
+  "title": "API query in custom action behaves different depending on trigger",
+  "slug": "api-query-in-custom-action-behaves-different-depending-on-trigger",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    94,
+    208,
+    351
+  ],
+  "createdAt": "2021-04-18T18:59:19.719Z",
+  "lastPostedAt": "2021-05-03T18:40:40.573Z",
+  "postsCount": 11,
+  "excerpt": "Hi, \nI currently work on an integration that uses the API v2 to get some item fields in a custom action. But the query returns different response depending on the trigger that is used. If I use a trigger that directly ca&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 1362,
+  "posts": [
+    {
+      "id": 48129,
+      "postNumber": 1,
+      "createdAt": "2021-04-18T18:59:19.801Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I currently work on an integration that uses the API v2 to get some item fields in a custom action. But the query returns different response depending on the trigger that is used. If I use a trigger that directly calls the action, like ‘when status changes’ or ‘when an update is created’, then the query with the provided itemId is successful. But when a time trigger, like ‘scheduled trigger’ or ‘when date has passed’ fires and calls the same action, then the query with a valid itemId fails with message ‘Variable itemId of type Int! was provided invalid value’.<br />\nAny ideas what is going wrong here?</p>\n<p>Thanks, Marcus</p>"
+    },
+    {
+      "id": 48130,
+      "postNumber": 2,
+      "createdAt": "2021-04-18T19:08:04.211Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi Marcus, <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a></p>\n<p>I made it a habit to <strong>always</strong> parse id’s to an Int before calling the monday API functions. Would that solve your issue?</p>"
+    },
+    {
+      "id": 48192,
+      "postNumber": 4,
+      "createdAt": "2021-04-19T12:52:52.139Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a>!</p>\n<p>In addition, I would check the post body and see what formatting the itemId is returned as.</p>\n<p>If you want to provide a screenshot, I’m happy to compare and see if I can reproduce.</p>\n<p>Thanks</p>"
+    },
+    {
+      "id": 48350,
+      "postNumber": 5,
+      "createdAt": "2021-04-20T17:19:14.414Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi.<br />\n<a class=\"mention\" href=\"/u/helen\">@Helen</a> and <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> thanks for your hints. And yes, Bas, you are totally right. After I parse the itemId to an int and provide it then to the monday API function, it works for both cases (direct and time based triggers). It is still curious why there is a difference when I use the itemId without parsing (the integration runs as a node.js application), but I think it is hard to find out.<br />\nThanks again and CU, Marcus</p>"
+    },
+    {
+      "id": 48353,
+      "postNumber": 6,
+      "createdAt": "2021-04-20T18:01:50.831Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a> , Marcus,</p>\n<p>It depends how you declare variable in nodeJS. If you don’t declare the variable returned by the API the variable will be of the type returned (which is always as string). Therefore you need to parseInt all boardId, ItemId, personId, TeamId and others. I agree it would be nice if the API allows strings as it also returns strings <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> .</p>"
+    },
+    {
+      "id": 48490,
+      "postNumber": 7,
+      "createdAt": "2021-04-21T17:30:35.084Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>With some further logging of the integration I observed that the payload contains different types for the itemId depending on the performed trigger. As mentioned in my initial post, e.g. the triggers ‘when status changes’ or ‘when an update is created’ provides the itemId as number/integer, and the triggers like ‘scheduled trigger’ or ‘when date has passed’ send the itemId as string. That’s why I stumbled upon, because I did no cast the itemId when using the monday API functions and was wondering about the different behavior. <a class=\"mention\" href=\"/u/helen\">@Helen</a> maybe you want to take that with you if it makes sense to unify the types of ids in the payload for all kind of triggers.</p>"
+    },
+    {
+      "id": 48763,
+      "postNumber": 10,
+      "createdAt": "2021-04-23T13:13:47.034Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/nyxophyl\">@nyxophyl</a>!</p>\n<p>I actually just tested this out and I was able to get the itemId returned as a string when using the “When status changes” trigger. Maybe you’re seeing a different result based on how you’re getting the response?</p>"
+    },
+    {
+      "id": 48786,
+      "postNumber": 11,
+      "createdAt": "2021-04-24T04:46:30.538Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/helen\">@Helen</a><br />\nfor all recipes I built, I did the same: each of the used trigger have the itemId as output field and I just uses this as the trigger output field key for the itemId field in my custom action. Did you try the same? Could it be that we see different versions of the triggers?</p>"
+    },
+    {
+      "id": 48943,
+      "postNumber": 12,
+      "createdAt": "2021-04-26T14:03:19.500Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": "<p>Hmm I don’t think we would be seeing different versions of the triggers.</p>\n<p>If you want to write into <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a>, I’m happy to troubleshoot this as a bug with you and see if we need to get our developers involved!</p>\n<p>Thanks~</p>"
+    },
+    {
+      "id": 48944,
+      "postNumber": 13,
+      "createdAt": "2021-04-26T14:03:32.895Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 48963,
+      "postNumber": 14,
+      "createdAt": "2021-04-26T18:40:01.226Z",
+      "author": "nyxophyl (Marcus Stöckel)",
+      "cookedHtml": "<p>I sent an email to appsupport and also mentioned this thread. Looking forward to their opinion.</p>"
+    },
+    {
+      "id": 49759,
+      "postNumber": 15,
+      "createdAt": "2021-05-03T18:40:40.573Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

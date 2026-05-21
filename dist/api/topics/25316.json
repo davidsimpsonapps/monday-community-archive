@@ -1,0 +1,72 @@
+{
+  "id": 25316,
+  "title": "Change_multiple_column_values call returning 200 but not updating Item",
+  "slug": "change-multiple-column-values-call-returning-200-but-not-updating-item",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    6,
+    13,
+    94,
+    152,
+    351
+  ],
+  "createdAt": "2021-09-24T16:06:55.428Z",
+  "lastPostedAt": "2021-10-04T06:34:00.367Z",
+  "postsCount": 7,
+  "excerpt": "Hi, \nI’m trying to use the monday API to update an item based on an update to a GitHub issue (i.e. if a label is added to a GitHub issue, add it to list of labels in its corresponding Monday item). \nI’m getting a 200 fro&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 1664,
+  "posts": [
+    {
+      "id": 64550,
+      "postNumber": 1,
+      "createdAt": "2021-09-24T16:06:55.511Z",
+      "author": "akumar195 (Abhi Kumar)",
+      "cookedHtml": "<p>Hi,</p>\n<p>I’m trying to use the monday API to update an item based on an update to a GitHub issue (i.e. if a label is added to a GitHub issue, add it to list of labels in its corresponding Monday item).<br />\nI’m getting a 200 from the call, but I’m not seeing the changes reflected in Monday.<br />\nThe fetch call:</p>\n<pre><code class=\"lang-auto\">const targetBoardId = 111111;\nconst targetItemId = 22222;\nconst updateItemResp = await fetch('https://&lt;enterprise_domain&gt;.monday.com/v2', {\n  method: 'post',\n  headers: {\n    'Content-Type': 'application/json',\n    Authorization: shortLivedToken // This is all within an integration recipe, so grabbing auth from there\n  },\n  body: JSON.stringify({\n    query: 'mutation ($targetBoardId:Int!, $targetItemId:Int!, $newColumnValues:JSON!) { change_multiple_column_values(item_id: $targetItemId, board_id: $targetBoardId, column_values: $newColumnValues) { id } }',\n    variables: JSON.stringify({\n      targetBoardId, \n      targetItemId,\n      newColumnValues: JSON.stringify(columnValues),\n    }),\n  }),\n}).then((res) =&gt; {\n  console.log(res);\n  return res;\n})\n.catch((err) =&gt; {\n  console.log(err);\n});\n</code></pre>\n<p>For reference here is an example of what I’m passing as <code>columnValues</code>:</p>\n<pre><code class=\"lang-auto\">{\n  status: 'Open',\n  dropdown2: 'bug,duplicate,good first issue',\n  link: 'https://www.github.com/user/example-repo/issues/7 Test Issue #7',\n  date: null,\n  numbers: 7,\n  dropdown: 'Feature',\n  people_1: '1234567,1234568'\n}\n</code></pre>\n<p>When I try the same mutation in the playground I’m able to successfully update and see the changes reflected in the Monday item, but not so through my Monday app. Any suggestions?<br />\nFYI I’m building my app following the example from this repo: <a href=\"https://github.com/mondaycom/welcome-apps/tree/master/apps/github-node\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">welcome-apps/apps/github-node at master · mondaycom/welcome-apps · GitHub</a><br />\nThanks!</p>"
+    },
+    {
+      "id": 64555,
+      "postNumber": 2,
+      "createdAt": "2021-09-24T16:56:16.904Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/akumar195\">@akumar195</a><br />\nAs long as there are no protocol errors you will always receive a 200 return value. You have to inspect the respons if it contains errors. See also <a href=\"https://api.developer.monday.com/docs/errors\">https://api.developer.monday.com/docs/errors</a>.</p>"
+    },
+    {
+      "id": 64559,
+      "postNumber": 3,
+      "createdAt": "2021-09-24T17:16:29.869Z",
+      "author": "akumar195 (Abhi Kumar)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> thank you for replying so quickly!<br />\nI was taking a look at the response by logging it to the console within the then() function but it wasn’t too helpful:</p>\n<pre><code class=\"lang-plaintext\">  size: 0,\n  timeout: 0,\n  [Symbol(Body internals)]: {\n    body: Gunzip {\n      _writeState: [Uint32Array],\n      _readableState: [ReadableState],\n      readable: true,\n      _events: [Object: null prototype],\n      _eventsCount: 6,\n      _maxListeners: undefined,\n      _writableState: [WritableState],\n      writable: true,\n      allowHalfOpen: true,\n      _transformState: [Object],\n      _hadError: false,\n      bytesWritten: 0,\n      _handle: [Zlib],\n      _outBuffer: &lt;Buffer 7b 22 64 61 74 61 22 3a 7b 22 63 68 61 6e 67 65 5f 6d 75 6c 74 69 70 6c 65 5f 63 6f 6c 75 6d 6e 5f 76 61 6c 75 65 73 22 3a 7b 22 69 64 22 3a 22 31 37 ... 16334 more bytes&gt;,\n      _outOffset: 0,\n      _chunkSize: 16384,\n      _defaultFlushFlag: 2,\n      _finishFlushFlag: 2,\n      _defaultFullFlushFlag: 3,\n      _info: undefined,\n      _maxOutputLength: 2147483647,\n      _level: -1,\n      _strategy: 0,\n      [Symbol(kCapture)]: false\n    },\n    disturbed: false,\n    error: null\n  },\n  [Symbol(Response internals)]: {\n    url: 'https://&lt;enterprise_domain&gt;.monday.com/v2',\n    status: 200,\n    statusText: 'OK',\n    headers: Headers { [Symbol(map)]: [Object: null prototype] },\n    counter: 0\n  }\n}\n</code></pre>\n<p>I also tried using the <code>monday-sdk-js</code> npm package from the dependencies in the repo I linked. The method below threw a little bit more informative error but wasn’t too helpful either. Seems I’m just formatting the body incorrectly but not exactly sure what the issue is.<br />\nThe code:</p>\n<pre><code class=\"lang-auto\">      mondaySdk = require('monday-sdk-js');\n      const mondayService = mondaySdk();\n      mondayService.setToken(shortLivedToken);\n      const updateItemResponse = await mondayService\n        .api(\n          `mutation {\n            change_multiple_column_values(item_id: ${targetItemId}, board_id: ${targetBoardId}, column_values: ${JSON.stringify(JSON.stringify(columnValues))}) \n            // Serialize columnValues twice since it seems in the documentation/repo the API is expecting a JSON string with the quotation marks escaped (\\\"key\\\":  \\\"value\\\"... ) \n            { id }\n          }`\n        )\n        .then((res) =&gt; {\n          console.log(res);\n        })\n        .catch((err) =&gt; {\n          console.log(res.status);\n          console.log(err);\n        });\n    }\n</code></pre>\n<p>And the error:</p>\n<pre><code class=\"lang-auto\">{\n  errors: [\n    {\n      message: 'Parse error on \"status\" (STRING) at [2, 102]',\n      locations: [Array]\n    }\n  ],\n  account_id: 8885037\n}\n</code></pre>\n<p>For this sdk method I followed the example as best I could here: <a href=\"https://github.com/mondaycom/monday-sdk-js#mondayapiquery-options--\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - mondaycom/monday-sdk-js: Node.js and JavaScript SDK for developing over the monday.com platform</a></p>"
+    },
+    {
+      "id": 64560,
+      "postNumber": 4,
+      "createdAt": "2021-09-24T17:43:55.308Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/akumar195\">@akumar195</a>,<br />\nUsing the sdk, there is no need to stringify the column values twice. That may be the reason for the error.<br />\nTry this</p>\n<pre><code class=\"lang-auto\">const updateItemResponse = await mondayService\n        .api(\n          `mutation {\n            change_multiple_column_values(item_id: ${targetItemId}, board_id: ${targetBoardId}, column_values: ${JSON.stringify(columnValues)}) \n            // Serialize columnValues twice since it seems in the documentation/repo the API is expecting a JSON string with the quotation marks escaped (\\\"key\\\":  \\\"value\\\"... ) \n            { id }\n          }`\n        )\n</code></pre>\n<p>Or even better, you can try this</p>\n<pre><code class=\"lang-auto\">const variables = {\n    boardId: +targetBoardId\n    itemId: +targetItemId,\n    columnValues: JSON.stringify(columnValues),\n  };\nconst updateItemResponse = await mondayService\n        .api(\n          `mutation change_multiple_column_values($boardId: Int!, $itemId: Int!, $columnValues: JSON!) {\n    change_multiple_column_values(board_id: $boardId, item_id: $itemId, column_values: $columnValues) {\n      id\n    }\n  }\n    `,\n    { variables }\n        )\n</code></pre>"
+    },
+    {
+      "id": 64561,
+      "postNumber": 5,
+      "createdAt": "2021-09-24T18:21:51.993Z",
+      "author": "akumar195 (Abhi Kumar)",
+      "cookedHtml": "<p>Your second example worked! I had tried every manner of serializing the columnValues object (once, twice, no serialization) but seems beyond that the way I was calling the mutation function was incorrect as well…<br />\nThank you for the help!</p>"
+    },
+    {
+      "id": 64661,
+      "postNumber": 6,
+      "createdAt": "2021-09-27T06:33:53.484Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/akumar195\">@akumar195</a>,</p>\n<p>I’m glad that our amazing community experts <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> and <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> were able to help you find the solution here <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> That’s amazing!</p>\n<p>Thanks so much for your help here, I really appreciate it.’</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 65190,
+      "postNumber": 7,
+      "createdAt": "2021-10-04T06:34:00.367Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

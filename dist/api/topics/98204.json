@@ -1,0 +1,44 @@
+{
+  "id": 98204,
+  "title": "Using next_items_page in Azure data factory",
+  "slug": "using-next-items-page-in-azure-data-factory",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    351,
+    418
+  ],
+  "createdAt": "2024-09-23T15:11:54.751Z",
+  "lastPostedAt": "2024-10-16T15:07:09.478Z",
+  "postsCount": 2,
+  "excerpt": "I can do an initial query of our board &amp; items but I am having trouble using the built in pagination in Azure data factory.  The issue is that this API works differently than most and I have to do a different query and s&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 29,
+  "posts": [
+    {
+      "id": 202134,
+      "postNumber": 1,
+      "createdAt": "2024-09-23T15:11:54.826Z",
+      "author": "amient (Andrea M)",
+      "cookedHtml": "<p>I can do an initial query of our board &amp; items but I am having trouble using the built in pagination in Azure data factory.  The issue is that this API works differently than most and I have to do a different query and specify a value for the cursor rather than simply an absolute URL for the next page.  Can anyone show me how to do this?</p>"
+    },
+    {
+      "id": 202405,
+      "postNumber": 2,
+      "createdAt": "2024-09-25T12:13:51.437Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    },
+    {
+      "id": 205918,
+      "postNumber": 3,
+      "createdAt": "2024-10-16T15:07:09.478Z",
+      "author": "denlunev (Denis Lunev)",
+      "cookedHtml": "<p>here’s a quick approach:</p>\n<p>Initial setup: Use a Copy Data activity to call the API.</p>\n<p>Custom pagination: Instead of the usual URL for the next page, use the cursor-based pagination.</p>\n<ul>\n<li>\n<p>In your dataset, set up the initial query (e.g., fetch items from a board).</p>\n</li>\n<li>\n<p>In the request body, add the cursor like this:</p>\n</li>\n</ul>\n<pre><code class=\"lang-auto\">\n{\n\n\"query\": \"query { boards { items { id name } pageInfo { hasNextPage endCursor } } }\"\n\n}\n\n</code></pre>\n<p>Pagination settings:</p>\n<ul>\n<li>\n<p>Go to Source settings in your Copy Data activity.</p>\n</li>\n<li>\n<p>Under pagination, set the Next Page Token as $.data.pageInfo.endCursor and Has More Pages as $.data.pageInfo.hasNextPage == true.</p>\n</li>\n</ul>\n<p>Dynamic cursor: Use <code>@{activity('YourCopyActivity').output.paging.endCursor}</code> to move to the next page.</p>"
+    }
+  ]
+}

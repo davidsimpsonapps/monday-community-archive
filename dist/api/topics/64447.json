@@ -1,0 +1,62 @@
+{
+  "id": 64447,
+  "title": "Timout in api request using api-version 10/2023",
+  "slug": "timout-in-api-request-using-api-version-10-2023",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351,
+    406
+  ],
+  "createdAt": "2023-08-25T06:03:31.417Z",
+  "lastPostedAt": "2023-09-06T07:44:23.217Z",
+  "postsCount": 6,
+  "excerpt": "Hi everybody, i wanted to share a problem i’m experiencing in the last couple of days after switching to the new 10-2023 API version. \nI had no problems using the new items_page query with most of the company tables, but&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 458,
+  "posts": [
+    {
+      "id": 140733,
+      "postNumber": 1,
+      "createdAt": "2023-08-25T06:03:31.497Z",
+      "author": "Cheyenne (Cheyenne)",
+      "cookedHtml": "<p>Hi everybody, i wanted to share a problem i’m experiencing in the last couple of days after switching to the new 10-2023 API version.<br />\nI had no problems using the new items_page query with most of the company tables, but as i got to the last one(400 items) i get, both inside the playground and the actual program, this error: “errors”: [<br />\n{<br />\n“message”: “JSON.parse: unexpected character at line 1 column 1 of the JSON data”,<br />\n“stack”: “”<br />\n}<br />\n]<br />\nwhich i’m sure is due to a timeout in Monday’s server since the call takes more than a minute and the error disappears if i use a 10 items limit in the item_page node.<br />\nThis is the call i’m making:<br />\nquery{<br />\nboards(ids: #){groups(ids:“#”) {<br />\nitems_page(limit:25) {<br />\ncursor,<br />\nitems {<br />\nname,id,column_values(ids:[<br />\n#,#,#, etc<br />\n]) {<br />\ntext,value,column{title}<br />\n}<br />\n}<br />\nwhere the ids i ask for inside column values are 13.<br />\nThe complexity is around 10000 so again, it shouldn’t timeout. Also note it’s not a slow connection problem since i have the same issue when running the code on a vps. This kind of request takes seconds in the stable version so i must have overlooked something in this query.<br />\nThank you in advance for any insight into this matter</p>"
+    },
+    {
+      "id": 140825,
+      "postNumber": 2,
+      "createdAt": "2023-08-25T18:06:38.582Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/cheyenne\">@Cheyenne</a>,</p>\n<p>Welcome to the community! <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=12\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" width=\"20\" height=\"20\" /></p>\n<p>You mentioned that the query runs successfully when using <code>limit:10</code>. Is the query you posted the exact one you’re using when it runs successfully? I ask because this error typically is related to some kind of issue with the format of a query.</p>\n<p>I copied and pasted your query and noticed a few missing curly brackets at the end of the query. I also got an error until I added the missing curly brackets, and then it ran successfully. Note that my query is slightly different based on my board/columns, but it still has a complexity right around 10,000.</p>\n<pre><code class=\"lang-auto\">query {\n  boards(ids: 1234567890) {\n    groups (ids:\"topics\") {\n      items_page (limit:25) {\n        cursor,\n        items {\n          name,\n          id,\n          column_values (ids:[\"numbers\"]) {\n            text,\n            value,\n            column {\n              title\n            }\n          }\n        }\n      }\n    }\n  }\n  complexity {\n    query\n    after\n  }\n}\n</code></pre>\n<p>If the issue persists after reviewing the format, could you please send a screenshot of the issue?</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 140859,
+      "postNumber": 3,
+      "createdAt": "2023-08-26T00:38:24.408Z",
+      "author": "Cheyenne (Cheyenne)",
+      "cookedHtml": "<p>Hi, thank you for your answer. I just forgot to double-check the query i’ve sent in my previous message but of course the real one i’m using is correct(otherwise there would be no way for it to work if i just changed the limit right?).<br />\nSince you asked, this is the message i get after 1 minute of processing in the playground:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/2/f289729ab8d424320091e417b91336ed02a0e288.png\" title=\"ScreenCommunity\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/2/f289729ab8d424320091e417b91336ed02a0e288_2_690x336.png\" alt=\"ScreenCommunity\" width=\"690\" height=\"336\" /><div class=\"meta\"><span class=\"filename\">ScreenCommunity</span><span class=\"informations\">1881×918 111 KB</span></div></a></div>.<br />\nIn the playground the query works after 22 seconds if i set a 25 items_page limit but in the actual code it takes more than a minute so i get that error.<p></p>"
+    },
+    {
+      "id": 140914,
+      "postNumber": 4,
+      "createdAt": "2023-08-27T05:07:04.119Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/cheyenne\">@Cheyenne</a> would you be able to please send this over to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so we can take a closer look to it and open a report if necessary?</p>\n<p>Looking forward to hearing from you via email!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 142115,
+      "postNumber": 5,
+      "createdAt": "2023-09-06T07:09:32.524Z",
+      "author": "Cheyenne (Cheyenne)",
+      "cookedHtml": "<p>Good morning everyone. I’d like to share with you the developments of our issue.<br />\nAs per your request, i’ve sent a mail to support asking for help, but i didn’t receive any useful fix. Then, suddenly, without any change in our code, the query has started working as expected a couple of days ago. It is my belief that there was some problem inside of the Monday api code that was successfully tackled by your engineers.<br />\nI will therefore mark this thread as closed.<br />\nThanks again to anyone involved</p>"
+    },
+    {
+      "id": 142123,
+      "postNumber": 6,
+      "createdAt": "2023-09-06T07:44:23.217Z",
+      "author": "TomFri (Tom Fridman)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/cheyenne\">@Cheyenne</a><br />\nThank you for letting us know! and Sorry for the time you were waiting <img src=\"https://emoji.discourse-cdn.com/apple/cherry_blossom.png?v=12\" title=\":cherry_blossom:\" class=\"emoji\" alt=\":cherry_blossom:\" width=\"20\" height=\"20\" /></p>"
+    }
+  ]
+}

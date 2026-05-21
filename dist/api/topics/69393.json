@@ -1,0 +1,33 @@
+{
+  "id": 69393,
+  "title": "deprecatedField warning, first column values not returned in API-returned results",
+  "slug": "deprecatedfield-warning-first-column-values-not-returned-in-api-returned-results",
+  "categoryId": 6,
+  "tagIds": [
+    22,
+    94
+  ],
+  "createdAt": "2023-10-27T09:31:18.926Z",
+  "lastPostedAt": "2023-10-27T11:49:46.684Z",
+  "postsCount": 2,
+  "excerpt": "Could the “deprecatedField” warning at the end of the following api querry result be the reason for no values being returned for the first column? How can this be fixed? \n{&#39;data&#39;: {&#39;boards&#39;: [{&#39;columns&#39;: [{&#39;id&#39;: &#39;name&#39;, &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 618,
+  "posts": [
+    {
+      "id": 150271,
+      "postNumber": 1,
+      "createdAt": "2023-10-27T09:31:19.000Z",
+      "author": "charter (charter wolf)",
+      "cookedHtml": "<p>Could the “deprecatedField” warning at the end of the following api querry result be the reason for no values being returned for the first column? How can this be fixed?</p>\n<pre><code class=\"lang-auto\">{'data': {'boards': [{'columns': [{'id': 'name', 'title': 'Column1'}, {'id': 'text', 'title': 'Column2'}, {'id': 'text', 'title': 'Column3'}], 'items': [{'column_values': [{'text': 'Example text 2'}, {'text': 'Example text 3'}]}]}]}, 'extensions': {'warnings': [{'message': 'Replaced by Board.items_page in 2023-10', 'locations': [{'line': 8, 'column': 5}], 'path': ['query', 'boards', 'items'], 'extensions': {'code': 'deprecatedField', 'typeName': 'Board', 'fieldName': 'items'}}]}, 'account_id': 123} \n</code></pre>"
+    },
+    {
+      "id": 150288,
+      "postNumber": 2,
+      "createdAt": "2023-10-27T11:49:46.684Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/charter\">@charter</a></p>\n<p>Welcome to the community! Without the original query it is hard to tell what the reason is. In general: the leftmost column (called <code>name</code>) requires a different approach. If your goal is to retrieve all values on the board (all columns / all items) you should specify the <code>name</code> field along with the <code>column_values</code> field, like this:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: [123456789]) {\n    items_page {\n      items {\n        name\n        column_values {\n          value\n        }\n      }\n    }\n  }\n}\n</code></pre>\n<p>This one is using the 2023-10 version of the API. Therefore (see your original warning) you need to include the <code>items_page</code> field. If you have more that 100 items on your board you need to retrieve the <code>cursor</code> field and loop until you received all items. See: <a href=\"https://developer.monday.com/api-reference/docs/items_page#cursor-based-pagination-using-next_items_page\" class=\"inline-onebox\">Items page</a></p>"
+    }
+  ]
+}

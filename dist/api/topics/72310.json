@@ -1,0 +1,63 @@
+{
+  "id": 72310,
+  "title": "Powershell to create an item",
+  "slug": "powershell-to-create-an-item",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    94,
+    107,
+    351
+  ],
+  "createdAt": "2023-12-05T16:55:03.205Z",
+  "lastPostedAt": "2023-12-07T10:35:36.124Z",
+  "postsCount": 6,
+  "excerpt": "New to Monday.com, and I’m trying to use the API to create an item. I’ve tried with SQL server and PowerShell and always get a 500 error back. \nI’ve read, and tried the code from this post: \nUsing PowerShell to create an&hellip;",
+  "solvedPostId": null,
+  "likeCount": 4,
+  "views": 604,
+  "posts": [
+    {
+      "id": 156351,
+      "postNumber": 1,
+      "createdAt": "2023-12-05T16:55:03.295Z",
+      "author": "Rich (Rich)",
+      "cookedHtml": "<p>New to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>, and I’m trying to use the API to create an item. I’ve tried with SQL server and PowerShell and always get a 500 error back.<br />\nI’ve read, and tried the code from this post:<br />\n<a href=\"https://community.monday.com/t/using-powershell-to-create-an-item-in-monday-com/37312\" class=\"inline-onebox\">Using PowerShell to create an item in Monday.com?</a><br />\nwith no luck. I’ve tried and re-tried using different formatting, but I’m sure the issue is with $query below (tried with escaping the quotes etc.).</p>\n<p>$apiKey = “xxxxx”<br />\n$boardId = “1234567890”</p>\n<h1><a name=\"p-156351-set-the-header-with-your-api-key-1\" class=\"anchor\" href=\"#p-156351-set-the-header-with-your-api-key-1\"></a>Set the header with your API key</h1>\n<p>$headers = @{<br />\n“Authorization” = $apiKey<br />\n“Content-Type” = “application/json”<br />\n}</p>\n<h1><a name=\"p-156351-define-the-query-to-create-an-item-2\" class=\"anchor\" href=\"#p-156351-define-the-query-to-create-an-item-2\"></a>Define the query to create an item</h1>\n<p>$query = \"<br />\nmutation{<br />\ncreateItem1: create_item (board_id: 1234567890, item_name:““Test Item 1\"”) {<br />\nid<br />\nname<br />\n}<br />\n}”</p>\n<h1><a name=\"p-156351-execute-the-request-3\" class=\"anchor\" href=\"#p-156351-execute-the-request-3\"></a>Execute the request</h1>\n<p>$response = Invoke-RestMethod -Uri ‘<a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a>’ -Method Post -Headers $headers -Body $query</p>\n<p>Any  help would be appreciated. This seems like it should be pretty easy, but I cannot get it to work and the error isn’t much help. I can query the board (return data) so I know the authentication works, and inserting using the API playground works so I think the query (mutation) is right (have tried adding “query:” before mutation as well). But I can’t get anything other 500 back.</p>"
+    },
+    {
+      "id": 156365,
+      "postNumber": 2,
+      "createdAt": "2023-12-05T17:31:22.425Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>you need to serialize the body to JSON using ConvertTo-Json, the body should be an object like:</p>\n<p>$body = {query: $query}</p>\n<p>My powershell is very rusty I should say - so its possible (likely) that Invoke-RestMethod serializes the body so no specific steps are required.</p>"
+    },
+    {
+      "id": 156413,
+      "postNumber": 3,
+      "createdAt": "2023-12-05T21:45:18.388Z",
+      "author": "Rich (Rich)",
+      "cookedHtml": "<p>Thanks. I tried with/without ConvertTo-Json:</p>\n<p>$body = {query: $query | ConvertTo-Json}</p>\n<p>$response = Invoke-RestMethod -Uri ‘<a href=\"https://api.monday.com/v2/\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2/</a>’ -Method Post -Headers $headers -Body ($body)</p>\n<p>with<br />\n$query=<br />\nmutation {<br />\ncreate_item(<br />\nboard_id: “123456789”<br />\nitem_name: “New Item 123”<br />\ncolumn_values: “{“text”:“This is a new item”}”<br />\n) {<br />\nid<br />\n}<br />\n}</p>\n<p>I can copy/paste the $query text into the playground and it works, but always get:<br />\nInvoke-RestMethod : The remote server returned an error: (500) Internal Server Error.</p>"
+    },
+    {
+      "id": 156465,
+      "postNumber": 4,
+      "createdAt": "2023-12-06T07:56:30.823Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/rich\">@Rich</a> and welcome to the community!</p>\n<p>I hope you like it here <img src=\"https://emoji.discourse-cdn.com/apple/muscle.png?v=12\" title=\":muscle:\" class=\"emoji\" alt=\":muscle:\" width=\"20\" height=\"20\" /></p>\n<p>I do not have experience with that language, but this might be related to escaping outer quotes. Here is a cURL example you can use (if you want, you can import it to Postman, and then “translate” it to the language you want.</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/' \\\n--header 'Content-Type: application/json' \\\n--header 'API-Version: 2023-10' \\\n--header 'Authorization: APITOKENHERE' \\\n--data '{\"query\":\"mutation { create_item( board_id: 1234567890 item_name: \\\"New Item 123\\\" column_values: \\\"{\\\\\\\"text\\\\\\\":\\\\\\\"This is a new item\\\\\\\"}\\\") {id}}\"\n}'\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 156533,
+      "postNumber": 5,
+      "createdAt": "2023-12-06T14:34:59.113Z",
+      "author": "Rich (Rich)",
+      "cookedHtml": "<p>Thanks - using postman helped, it was related to escaping quotes. I have a proof of concept working, though automating the whole process may take a lot of work.<br />\nThanks for help.</p>"
+    },
+    {
+      "id": 156685,
+      "postNumber": 6,
+      "createdAt": "2023-12-07T10:35:36.124Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again <a class=\"mention\" href=\"/u/rich\">@Rich</a>, happy to help!!</p>"
+    }
+  ]
+}

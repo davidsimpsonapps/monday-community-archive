@@ -1,0 +1,41 @@
+{
+  "id": 10049,
+  "title": "Custom field type - workaround to make them more dynamic",
+  "slug": "custom-field-type-workaround-to-make-them-more-dynamic",
+  "categoryId": 8,
+  "tagIds": [
+    6,
+    208,
+    351
+  ],
+  "createdAt": "2020-08-13T15:42:36.959Z",
+  "lastPostedAt": "2021-02-25T14:24:18.354Z",
+  "postsCount": 3,
+  "excerpt": "Hi there, \nThere are cases when you want to populate the custom field type (list - dropdown) dynamically. In my case I populate them from a database. Unfortunately the URL specified to get the list does not support query&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2284,
+  "posts": [
+    {
+      "id": 25408,
+      "postNumber": 1,
+      "createdAt": "2020-08-13T15:42:37.034Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>Hi there,</p>\n<p>There are cases when you want to populate the custom field type (list - dropdown) dynamically. In my case I populate them from a database. Unfortunately the URL specified to get the list does not support queryvars, so I came up with a workaround. Feel free to use it and enhance it (but please share enhancements).</p>\n<p>I use different routes in nodeJS that ends in my case with a fieldtype, like:</p>\n<blockquote>\n<p>router.post(“/master-detail/cf-column/timerange”, authenticationMiddleware, masterDetailController.cfTemplateColumns);</p>\n<p>router.post(“/master-detail/cf-column/numeric”, authenticationMiddleware, masterDetailController.cfTemplateColumns);</p>\n<p>router.post(“/master-detail/cf-column/color”, authenticationMiddleware, masterDetailController.cfTemplateColumns);</p>\n</blockquote>\n<p>As you see the routes calls the same function (cfTemplateColumns). Inside this function I use the aud in the req.session to extract the last part of the URL and pass it to my SQL function inside masterDetailService.GetTemplateColumns.</p>\n<blockquote>\n<p>async function cfTemplateColumns(req, res) {<br />\ntry {<br />\nconst { authorization } = req.headers;<br />\nif (!authorization &amp;&amp; req.query) authorization = req.query.token;<br />\nconst { accountId, userId, aud, exp, iat } = jwt.verify(authorization, process.env.MONDAY_SIGNING_SECRET);<br />\nreq.session = { accountId, userId, aud, exp, iat };<br />\n} catch (err) {<br />\nres.status(401).json({ error: “not authenticated” });<br />\n}<br />\n//Use the aud field in the req.sessions as the last part contains the column type<br />\nconst columnType = req.session.aud.split(“/”).pop();<br />\ncolumnList = await masterDetailService.GetTemplateColumns(req.session.accountId, columnType);<br />\nreturn res.status(200).send(columnList);<br />\n}</p>\n</blockquote>\n<p>Have fun with it.</p>"
+    },
+    {
+      "id": 25507,
+      "postNumber": 2,
+      "createdAt": "2020-08-14T12:07:23.439Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> does it again! <img src=\"https://emoji.discourse-cdn.com/apple/dark_sunglasses.png?v=9\" title=\":dark_sunglasses:\" class=\"emoji\" alt=\":dark_sunglasses:\" /></p>\n<p>Thanks so much for sharing this workaround with the community! I really appreciate the help you’ve been providing all around the community and this is just another gem you’ve shared. Thanks for your continued effort in making this work for everyone - it’s much appreciated, trust me! <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 42294,
+      "postNumber": 3,
+      "createdAt": "2021-02-25T14:24:18.354Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

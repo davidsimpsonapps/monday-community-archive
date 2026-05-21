@@ -1,0 +1,46 @@
+{
+  "id": 32603,
+  "title": "Stale and/or unexpected values for ratings that have had their maximum rating modified without additional intervention",
+  "slug": "stale-and-or-unexpected-values-for-ratings-that-have-had-their-maximum-rating-modified-without-additional-intervention",
+  "categoryId": 8,
+  "tagIds": [
+    94
+  ],
+  "createdAt": "2022-03-06T06:00:03.280Z",
+  "lastPostedAt": "2022-03-07T07:33:02.482Z",
+  "postsCount": 3,
+  "excerpt": "Suppose I have a rating column with a maximum rating of 4. Let’s query the column and its value. \nquery {\n  boards {\n    columns (ids: &quot;rating&quot;) {\n      id\n      title\n      type\n      settings_str\n    }\n    \n    items {&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1166,
+  "posts": [
+    {
+      "id": 78973,
+      "postNumber": 1,
+      "createdAt": "2022-03-06T06:00:03.360Z",
+      "author": "riosd (Danny)",
+      "cookedHtml": "<p>Suppose I have a rating column with a maximum rating of 4. Let’s query the column and its value.</p>\n<pre><code class=\"lang-json\">query {\n  boards {\n    columns (ids: \"rating\") {\n      id\n      title\n      type\n      settings_str\n    }\n    \n    items {\n      id\n      column_values {\n        title\n        type\n        value\n      }\n    }\n  }\n}\n</code></pre>\n<p>We would then get a response like</p>\n<pre><code class=\"lang-json\">{\n  \"boards\":[\n    {\n      \"columns\":[\n        {\n          \"id\":\"rating\",\n          \"title\":\"Rating\",\n          \"type\":\"rating\",\n          \"settings_str\":\"{\\\"limit\\\":4}\"\n        }\n      ],\n      \"items\":[\n        {\n          \"id\":\"2379332173\",\n          \"column_values\":[\n            {\n              \"title\":\"Rating\",\n              \"type\":\"rating\",\n              \"value\":\"{\\\"rating\\\":4,\\\"changed_at\\\":\\\"2022-03-06T07:37:27.144Z\\\"}\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n</code></pre>\n<p>So far, so good. We’ve got a <code>limit</code> of 4 and our current rating is 4, the maximum rating.</p>\n<p>However, what if we change the column’s settings such that the maximum rating is now 3? Once we do, the rating is now 3 stars or hearts automatically since that’s the new max and we can’t possibly exceed the max. Okay, that’s expected and everything persists in the UI on refresh.</p>\n<p>But, what does the same query give us as a response now?</p>\n<pre><code class=\"lang-json\">{\n  \"boards\":[\n    {\n      \"columns\":[\n        {\n          \"id\":\"rating\",\n          \"title\":\"Rating\",\n          \"type\":\"rating\",\n          \"settings_str\":\"{\\\"limit\\\":3}\"\n        }\n      ],\n      \"items\":[\n        {\n          \"id\":\"2379332173\",\n          \"column_values\":[\n            {\n              \"title\":\"Rating\",\n              \"type\":\"rating\",\n              \"value\":\"{\\\"rating\\\":4,\\\"changed_at\\\":\\\"2022-03-06T07:37:27.144Z\\\"}\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}\n</code></pre>\n<p>Hm. We know the rating is 3 stars or hearts per our UI and the <code>settings_str</code> confirms that the <code>limit</code> is 3, yet the <code>value</code> is 4. It looks like the backend wants to hold onto our old rating. Indeed, if we modify the column’s settings such that we have a max of 4 or 5, the rating is indeed 4 again without actually modifying the rating. The rating does indeed update in the API once you actually update the rating (UI, API).</p>\n<p>Perhaps there’s an argument for this behavior in terms of retention, but it’s still unexpected to see a rating of 4 when the possible ratings might only be 1, 2 or 3.</p>\n<p>Is this intended behavior going forward? While it likely doesn’t come up too frequently, it would be quite confusing when it does, especially as developers and users are often not the same.</p>\n<p><code>settings_str</code> doesn’t have <code>changed_at</code> like the column’s <code>value</code>, so we can’t see if the rating exceeds the current max and then determine if the settings were changed after that rating was applied.</p>"
+    },
+    {
+      "id": 78990,
+      "postNumber": 2,
+      "createdAt": "2022-03-06T10:41:00.383Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Asking here <a href=\"https://monday.slack.com/archives/C01141M8AAC/p1646563134711659\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 79036,
+      "postNumber": 3,
+      "createdAt": "2022-03-07T07:33:02.482Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/riosd\">@riosd</a>!</p>\n<p>This is expected behaviour as of today. Changing the settings does not change the actual values.</p>\n<p>Having said that, I have shared this with our team so they can review it and take it into account for possible future changes <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 79760,
+      "postNumber": 4,
+      "createdAt": "2022-03-14T07:33:46.208Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "id": 21103,
+  "title": "Working with API v2 and VBA",
+  "slug": "working-with-api-v2-and-vba",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2021-06-09T22:04:33.307Z",
+  "lastPostedAt": "2021-06-18T08:17:49.376Z",
+  "postsCount": 10,
+  "excerpt": "Hello, first time here! I’m starting to figure out how to update and get information from Monday boards on a Excel sheet using VBA. Checking out the API documentation, my first attempt was to retrieve the name of a speci&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 3213,
+  "posts": [
+    {
+      "id": 54263,
+      "postNumber": 1,
+      "createdAt": "2021-06-09T22:04:33.446Z",
+      "author": "vprado (Vitor Zwecker do Prado Ribeiro)",
+      "cookedHtml": "<p>Hello, first time here! I’m starting to figure out how to update and get information from Monday boards on a Excel sheet using VBA. Checking out the API documentation, my first attempt was to retrieve the name of a specific board, but the name won’t appear on the response text from the html.</p>\n<p>This is what I have so far:</p>\n<pre><code class=\"lang-auto\">Public Pass As Variant\n\nSub monday()\n Dim monday As New MSXML2.ServerXMLHTTP60\n Dim response As Variant\n Dim status As Variant\n Dim query As String\n \n query = \" { \"\"query\"\" : \"\"{boards(ids: xxxxx){views{name}}}\"\"} \"\n \n    With monday\n        .Open \"POST\", myurl , False\n        .SetRequestHeader \"Content-Type\", \"application/json\"\n        .SetRequestHeader \"Accept\", \"application/json\"\n        .SetRequestHeader \"Authorization\", mytoken\n        .Send query\n        response = .ResponseText\n        status = .status &amp; \" | \" &amp; .StatusText\n\n        MsgBox response\n        MsgBox status\n        \n   \n    End With\nEnd Sub\n</code></pre>\n<p>For the response text I’m getting: {“data”:{“boards”:[{“views”:<span class=\"chcklst-box fa fa-square-o fa-fw\"></span>}]},“account_id”:xxxxxxx}<br />\nFor the status and status text: 200 | OK</p>\n<p>I thought the board name would show on the response text. Am I parsing something wrong?</p>"
+    },
+    {
+      "id": 54270,
+      "postNumber": 2,
+      "createdAt": "2021-06-10T02:19:51.395Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>Hello,<br />\nI am not familiar with VBA but I think that, the reason why you are not seeing the board name is because you didn’t specify it in the query. You queried for only the views name. You can try this</p>\n<pre><code class=\"lang-auto\">query = \" { \"\"query\"\" : \"\"{boards(ids: xxxxx){name views{name}}}\"\"} \"\n</code></pre>"
+    },
+    {
+      "id": 54302,
+      "postNumber": 4,
+      "createdAt": "2021-06-10T06:49:25.126Z",
+      "author": "vprado (Vitor Zwecker do Prado Ribeiro)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> ! It worked out, I see what I missed here. Guess I’ll study the documentation further.</p>\n<p>Thanks a lot!</p>"
+    },
+    {
+      "id": 54303,
+      "postNumber": 5,
+      "createdAt": "2021-06-10T06:50:24.804Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>You are welcome. Glad to have helped.</p>"
+    },
+    {
+      "id": 54304,
+      "postNumber": 6,
+      "createdAt": "2021-06-10T07:06:55.996Z",
+      "author": "vprado (Vitor Zwecker do Prado Ribeiro)",
+      "cookedHtml": "<p>Is it possible to to the other way around? To find the Id having the boards name?</p>"
+    },
+    {
+      "id": 54305,
+      "postNumber": 7,
+      "createdAt": "2021-06-10T07:09:41.901Z",
+      "author": "kolaai (alfred)",
+      "cookedHtml": "<p>I don’t think that is possible. Looking at the documentation, the arguments for Board doesn’t include ‘name’.<br />\n<a href=\"https://monday.com/developers/v2#queries-section-boards\" class=\"onebox\" target=\"_blank\" rel=\"noopener nofollow ugc\">https://monday.com/developers/v2#queries-section-boards</a></p>"
+    },
+    {
+      "id": 54308,
+      "postNumber": 8,
+      "createdAt": "2021-06-10T07:41:37.803Z",
+      "author": "vprado (Vitor Zwecker do Prado Ribeiro)",
+      "cookedHtml": "<p>Actually I’ve worked it around, by searching first for all boards Ids and respective names, then searching for the specific board name on the response string and from there finding the specific Id. Thanks again!</p>"
+    },
+    {
+      "id": 54356,
+      "postNumber": 9,
+      "createdAt": "2021-06-10T12:42:10.387Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>That’s amazing <a class=\"mention\" href=\"/u/vprado\">@vprado</a>! If you get a chance, could you share the code that worked?</p>"
+    },
+    {
+      "id": 54357,
+      "postNumber": 10,
+      "createdAt": "2021-06-10T12:42:44.896Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 54453,
+      "postNumber": 11,
+      "createdAt": "2021-06-11T08:17:42.758Z",
+      "author": "vprado (Vitor Zwecker do Prado Ribeiro)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/dipro\">@dipro</a>! Actually I’ve asked two questions on the same topic, guess this is not the right way. For my first question, <a class=\"mention\" href=\"/u/kolaai\">@kolaai</a> got the solution, all I had to do was to set my query as he suggested:</p>\n<pre><code class=\"lang-auto\">query = \" { \"\"query\"\" : \"\"{boards(ids: xxxxx){name views{name}}}\"\"} \"\n</code></pre>\n<p>For my second question, the work around is on the following code, let me know if I should open another topic for this one.  So, what I wanted to do was to find the board id having the board name. Since I couldn’t do this natively, I’ve searched for all boards ids and names using the query:</p>\n<pre><code class=\"lang-auto\"> query = \" { \"\"query\"\" : \"\"{boards(){name id}}\"\"} \n</code></pre>\n<p>Then, I used a couple of VBA functions to identify the board name within the html response text, and find the respective following id. I was able to do that noticing the pattern on the response text:<br />\n{“name”:“MyBoardName”,“id”:“xxxxxxxxxx”}</p>\n<p>The working code is:</p>\n<pre><code class=\"lang-auto\">Public Pass As Variant\n\nSub monday()\n Dim monday As New MSXML2.ServerXMLHTTP60\n Dim response As Variant\n Dim status As Variant\n Dim query As String\n Dim boardname as variant\n Dim id as String\n \n query = \" { \"\"query\"\" : \"\"{boards(){name id}}\"\"} \"\n\n boardname = Chr(34) &amp; \"MyBoardName\" &amp; Chr(34) \n\n    With monday\n        .Open \"POST\", myurl , False\n        .SetRequestHeader \"Content-Type\", \"application/json\"\n        .SetRequestHeader \"Accept\", \"application/json\"\n        .SetRequestHeader \"Authorization\", mytoken\n        .Send query\n        response = .ResponseText\n        status = .status &amp; \" | \" &amp; .StatusText\n    End With\n\nid = Mid(response, InStr(response, boardname) + Len(boardname) + 7, InStr(InStr(response, boardname) + Len(boardname) + 7, response, Chr(34)) - (InStr(response, boardname) + Len(boardname) + 7))\n\nEnd Sub\n</code></pre>\n<p>I’m now having some trouble parsing mutation, but I’ll deal with it in a new topic.</p>"
+    },
+    {
+      "id": 55146,
+      "postNumber": 12,
+      "createdAt": "2021-06-18T08:17:49.376Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    },
+    {
+      "id": 99240,
+      "postNumber": 13,
+      "createdAt": "2022-10-01T20:34:51.092Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    }
+  ]
+}

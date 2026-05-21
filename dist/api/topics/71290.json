@@ -1,0 +1,97 @@
+{
+  "id": 71290,
+  "title": "ColumnID auto-naming from title instead of column type",
+  "slug": "columnid-auto-naming-from-title-instead-of-column-type",
+  "categoryId": 58,
+  "tagIds": [
+    94,
+    292,
+    406
+  ],
+  "createdAt": "2023-11-22T03:28:58.291Z",
+  "lastPostedAt": "2024-05-28T07:24:34.181Z",
+  "postsCount": 9,
+  "excerpt": "Up until API v2023-07, I have used the column title in my queries, since they are meaningful and representative of their actual data. In API v2023-10, column titles have been relegated out and are now only available via &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 434,
+  "posts": [
+    {
+      "id": 154225,
+      "postNumber": 1,
+      "createdAt": "2023-11-22T03:28:58.376Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Up until API v2023-07, I have used the column <code>title</code> in my queries, since they are meaningful and representative of their actual data. In API v2023-10, column titles have been relegated out and are now only available via sub-query of <code>column { title }</code>. (Except not really, because this exhausts the query depth: <code>\"Query has depth of 7, which exceeds max depth of 6\"...</code>)</p>\n<p>The recommendation from support was to use <code>columnID</code> instead. The problem is, <code>columnID</code> is generated randomly when users create a column via the UI. The only way to have meaningful columnIDs is to create board columns via the API.</p>\n<p>So instead of having readable entities in my JSON payload, to work with in our scripts, we are now stuck with <code>[\"text2\", \"text7\", \"creation_log\", \"item_id5\", \"text5\", \"dropdown1\", \"text31\", \"status2\"]</code> and so on.</p>\n<p>I’m currently rebuilding this particular board using the API, column by column, in order to rework my Python scripts to accommodate using <code>columnID</code> instead of <code>title</code>. I am not sure why column titles had to disappear in this way, but in any case, <strong>we now have a really legitimate need for the ability to change column IDs</strong>… except, we all know that changing field names in the database is not going to be feasible. So,</p>\n<p>When I create a column via API with the below mutation, I get a shiny new column titled “Invoice Number” with a lovely columnID- <code>invoice_number</code>:</p>\n<pre><code class=\"lang-auto\">mutation{\n  create_column(board_id: 0123456789, title:\"Invoice Number\", column_type:text) {\n    id\n    title\n  }\n}\n</code></pre>\n<p>But I didn’t specify that column ID, it was generated based off the title! <strong>SO, my feature request is to simply have the UI work the same way.</strong> If there is already (for example) a <code>text</code> field on that board called “Note”, then sure, give it a <code>columID</code> of <code>note1</code>, or <code>note2</code> etc. <em>We can live with that.</em> But otherwise, I can’t imagine it would be difficult to adjust the default <code>columnID</code> naming to base off of the user-supplied title, rather than a random number appended to the column type, like text31.</p>\n<p>As it stands moving forward, here is what we are facing: users will create and setup new boards via the UI. Then they’ll come and ask for some special (API-requiring) use of that board data. At this point we will either have to</p>\n<ul>\n<li>\n<p>a) live with the meaningless IDs in our code, or</p>\n</li>\n<li>\n<p>b) rebuild the entire column structure via API to produce meaningful column IDs that aren’t a nightmare to reference in the query payload.</p>\n</li>\n</ul>\n<p>I suppose option C is to build users an external tool for column creation and bypass the Monday UI altogether, but that’s of course not a direction anyone wants to  go.</p>\n<p>Thanks for considering!</p>"
+    },
+    {
+      "id": 154359,
+      "postNumber": 2,
+      "createdAt": "2023-11-22T15:41:39.154Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>I’m a little confused, why does the exact column ID even matter? I’ve never encountered a circumstance I need to make any logic choices based on the column ID (unless what I’m building is board specific, and not intended to be reusable or scale). If your recipe is configured with fields or mapping, then the key of the field should be the determinant factor of what to do with the column ID, not the value of the ID.</p>\n<p>If you have a UI app then you would have a configuration step where you map columns for a purpose or such, and store that mapping in the storage.</p>\n<p>If your app creates columns on a board for specific use, then just save the arbitrary ID in the storage (or your database) along with what role the that column serves within your application.</p>\n<p>To me this sounds less like a monday issue and more like a lack of proper abstraction in your app. My two cents.</p>"
+    },
+    {
+      "id": 154361,
+      "postNumber": 3,
+      "createdAt": "2023-11-22T15:43:42.693Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Why the extra step of mapping?</p>"
+    },
+    {
+      "id": 154364,
+      "postNumber": 4,
+      "createdAt": "2023-11-22T15:50:04.273Z",
+      "author": "anon29275264 (anon29275264)",
+      "cookedHtml": "<p>Mapping, or a field to select a column for an automation, etc. Otherwise everything is baked into your code, its brittle in some fashion around IDs in general.</p>\n<p>These techniques provide some form of abstraction that can be modified without code changes - simply by editing a recipe, or adjusting something in the app UI. (again I don’t know exactly what your app does, nor the scope - so I am somewhat limited).</p>"
+    },
+    {
+      "id": 154372,
+      "postNumber": 5,
+      "createdAt": "2023-11-22T16:00:10.491Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>I can appreciate your view from app best practices. I’m not an app developer though, I use Monday for our business. Scripts are usually board and use-case specific. I don’t need layers of abstraction (or exhaustive error-handling, and so on)- these are superfluous and just extra work for me.</p>\n<p>So for my usage of Monday (and possibly others like me) this change seems arbitrary on the back end and easy to make, and would make the scripts shorter and more maintainable.</p>"
+    },
+    {
+      "id": 154550,
+      "postNumber": 6,
+      "createdAt": "2023-11-23T12:35:40.917Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/jsararas\">@jsararas</a>,</p>\n<p>I have shared this request with the team <img src=\"https://emoji.discourse-cdn.com/apple/grin.png?v=12\" title=\":grin:\" class=\"emoji\" alt=\":grin:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 154551,
+      "postNumber": 7,
+      "createdAt": "2023-11-23T12:35:49.055Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Request <a href=\"https://monday.monday.com/boards/2444564946/pulses/5562437865\" class=\"inline-onebox\">monday.com: Where Teams Get Work Done</a></p>"
+    },
+    {
+      "id": 154590,
+      "postNumber": 8,
+      "createdAt": "2023-11-23T18:27:29.185Z",
+      "author": "jsararas (Jeff)",
+      "cookedHtml": "<p>Much appreciated <a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> thanks!</p>"
+    },
+    {
+      "id": 154758,
+      "postNumber": 9,
+      "createdAt": "2023-11-26T13:40:48.889Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/jsararas\">@jsararas</a> !</p>"
+    },
+    {
+      "id": 186041,
+      "postNumber": 10,
+      "createdAt": "2024-05-28T07:24:34.181Z",
+      "author": "Michael-PT (Michael Albers)",
+      "cookedHtml": "<p>For us the column ID matters because we use Emails &amp; Activities app with extensive use of templates. In the templates you refer to the column IDs and this means we need an email template for each board. However, some emails that we send from different boards are the same on multiple boards, so 1 template should be enough.</p>\n<p>I don’t develop and don’t plan too because the lack of time. I just use <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> to streamline our workload and contact with clients. It would be best if we just could alter the colum ID, so no matter what board, we could use the same column ID for columns with the same data.</p>"
+    },
+    {
+      "id": 186056,
+      "postNumber": 11,
+      "createdAt": "2024-05-28T08:22:39.100Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>exclude_reply_from_sla</p>"
+    }
+  ]
+}

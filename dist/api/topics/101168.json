@@ -1,0 +1,78 @@
+{
+  "id": 101168,
+  "title": "Documentation issue: Add file to the file column",
+  "slug": "documentation-issue-add-file-to-the-file-column",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    165,
+    166,
+    167,
+    203
+  ],
+  "createdAt": "2024-10-22T12:42:23.412Z",
+  "lastPostedAt": "2024-10-30T13:05:19.310Z",
+  "postsCount": 8,
+  "excerpt": "Hey ! \nI wanted to point out an issue in the Assets upload api documentation that I’ve encountered while building an integration. \nSpecifically in this section \nIn the graphQL and curl example, it is mentioned to use “fi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 58,
+  "posts": [
+    {
+      "id": 206680,
+      "postNumber": 1,
+      "createdAt": "2024-10-22T12:42:23.506Z",
+      "author": "sylvainb (sylvain)",
+      "cookedHtml": "<p>Hey !<br />\nI wanted to point out an issue in the Assets upload api documentation that I’ve encountered while building an integration.<br />\nSpecifically in this <a href=\"https://developer.monday.com/api-reference/reference/assets-1#add-file-to-the-file-column\" rel=\"noopener nofollow ugc\">section</a></p>\n<p>In the graphQL and curl example, it is mentioned to use “files” for the <em>column_id</em><br />\nHowever using this column_id will result in a 500 error</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/file' \\\n--header 'Authorization: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \\\n--header 'API-version: 2023-10' \\\n--form 'query=\"mutation ($file: File!) {\n add_file_to_column (file: $file, item_id: 7655999011, column_id: \\\"files\\\") {id}}\"' \\\n--form 'map=\"{\\\"image\\\":\\\"variables.file\\\"}\n\"' \\\n--form 'image=@\"/Users/sylvainb/downloads/large-marc.jpeg\"'\n</code></pre>\n<p><code>{\"status_code\":500,\"error_message\":\"Internal server error\",\"error_code\":\"INTERNAL_SERVER_ERROR\"}%</code><br />\nDespite that error code, the file is still being uploaded to the file, however on top of throwing an error in my code, it prevents me from getting the id of the asset that was uploaded.</p>\n<p>In order to circumvent this issue, I inspected the network calls of the webapp and realized that it was using the “files__1” for the column_id.<br />\nThis solution was successfull:</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/file' \\\n--header 'Authorization:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \\\n--header 'API-version: 2023-10' \\\n--form 'query=\"mutation ($file: File!) {\n add_file_to_column (file: $file, item_id: 7655999011, column_id: \\\"files__1\\\") {id}}\"' \\\n--form 'map=\"{\\\"image\\\":\\\"variables.file\\\"}\n\"' \\\n--form 'image=@\"/Users/sylvainb/downloads/large-marc.jpeg\"'\n</code></pre>\n<p><code>{\"data\":{\"add_file_to_column\":{\"id\":\"1735828653\"}},\"account_id\":6498124}%</code></p>\n<p>Later i found out that this column_id was mentioned in the python example of the doc <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /><br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/d/2/d2de3d4d6d22c867a7e63677ee3b9747c1647911.png\" title=\"Screenshot 2024-10-21 at 1.26.21 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/d/2/d2de3d4d6d22c867a7e63677ee3b9747c1647911_2_690x456.png\" alt=\"Screenshot 2024-10-21 at 1.26.21 PM\" width=\"690\" height=\"456\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-10-21 at 1.26.21 PM</span><span class=\"informations\">1596×1056 72.4 KB</span></div></a></div><p></p>\n<p>Thank you !</p>\n<p>PS:  The <a href=\"https://www.postman.com/matiasdavidson/monday-com-queries-and-mutations/request/v5qayji/upload-a-file-to-a-files-column?tab=body\" rel=\"noopener nofollow ugc\">postman template</a> also has this error.</p>"
+    },
+    {
+      "id": 206682,
+      "postNumber": 2,
+      "createdAt": "2024-10-22T12:45:59.178Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sylvainb\">@sylvainb</a>,</p>\n<p>Welcome to the community!</p>\n<p>Thanks for reaching out. Column IDs are unique to each board, so the example column ID may not be the same as the column ID you have on your board.</p>\n<p>Let us know if you have any questions!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 206695,
+      "postNumber": 3,
+      "createdAt": "2024-10-22T13:49:51.172Z",
+      "author": "sylvainb (sylvain)",
+      "cookedHtml": "<p>Hey rachel !<br />\nI’m sorry but what you are saying does not seem to be true.<br />\nWhen you create a whole new board and add a “file” column</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/0/9/09e5254c0c895571e15c9bb406e9bd9cb6f07300.jpeg\" title=\"Screenshot 2024-10-22 at 12.36.01 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/0/9/09e5254c0c895571e15c9bb406e9bd9cb6f07300_2_690x384.jpeg\" alt=\"Screenshot 2024-10-22 at 12.36.01 PM\" width=\"690\" height=\"384\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-10-22 at 12.36.01 PM</span><span class=\"informations\">1327×739 120 KB</span></div></a></div><p></p>\n<p>Its id is by default files__1<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/4/8/48fc1bde5538926580af8aabd1ea3f5fc9947d8b.png\" title=\"Screenshot 2024-10-22 at 12.37.28 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/4/8/48fc1bde5538926580af8aabd1ea3f5fc9947d8b_2_690x463.png\" alt=\"Screenshot 2024-10-22 at 12.37.28 PM\" width=\"690\" height=\"463\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-10-22 at 12.37.28 PM</span><span class=\"informations\">1601×1075 101 KB</span></div></a></div><p></p>\n<p>It also doesn’t change the fact that an upload using the “files” column_id, why I assume corresponds to the file gallery of an item is successfull while returning a 500 error !</p>\n<p>Thanks <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 206705,
+      "postNumber": 4,
+      "createdAt": "2024-10-22T14:46:58.320Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/sylvainb\">@sylvainb</a>!</p>\n<p>The column ID is a unique identifier for a specific column on a specific board.</p>\n<p>Before updating any column (files or otherwise), you need to first look up the ID of the column you’re trying to update, and then tell the API the ID of that column.</p>\n<p>Here’s how:</p>\n<h3><a name=\"p-206705-looking-up-column-id-in-the-web-platform-1\" class=\"anchor\" href=\"#p-206705-looking-up-column-id-in-the-web-platform-1\"></a>Looking up column ID in the web platform</h3>\n<ol>\n<li>\n<p>Click your avatar menu &gt; Developers</p>\n</li>\n<li>\n<p>Select “monday.labs”:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/e/1e4ff93d6dfd84b854a4dacb97beea631ef8079d.png\" title=\"Open monday.labs\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/e/1e4ff93d6dfd84b854a4dacb97beea631ef8079d_2_430x500.png\" alt=\"Open monday.labs\" width=\"430\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Open monday.labs</span><span class=\"informations\">483×561 45.2 KB</span></div></a></div><p></p>\n</li>\n<li>\n<p>Activate “Developer mode”</p>\n</li>\n<li>\n<p>The column ID will be displayed when you click the three-dot menu on a column:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/9/799aa909c2af3027549e8b19c7410a0d6c32ab62.png\" title=\"column ID\"><img src=\"https://global.discourse-cdn.com/monday/original/3X/7/9/799aa909c2af3027549e8b19c7410a0d6c32ab62.png\" alt=\"column ID\" width=\"446\" height=\"275\" /><div class=\"meta\"><span class=\"filename\">column ID</span><span class=\"informations\">446×275 20.9 KB</span></div></a></div><p></p>\n</li>\n</ol>\n<h3><a name=\"p-206705-looking-up-column-id-in-the-api-2\" class=\"anchor\" href=\"#p-206705-looking-up-column-id-in-the-api-2\"></a>Looking up column ID in the API</h3>\n<p>You can also make an API query to get the ID of the files column.</p>\n<p>Here’s one that returns only the file columns on the board:</p>\n<pre><code class=\"lang-gql\">query {\n  boards(ids:4580008543) {\n    columns (types:file) {\n      title\n      id\n      type\n    }\n  }\n}\n</code></pre>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/7/d/7dbf59d2441386575a0efd6d76fdd9291c55fa6e.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/7/d/7dbf59d2441386575a0efd6d76fdd9291c55fa6e_2_690x376.png\" alt=\"image\" width=\"690\" height=\"376\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">880×480 33 KB</span></div></a></div><p></p>\n<h3><a name=\"p-206705-ps-a-note-on-uniqueness-3\" class=\"anchor\" href=\"#p-206705-ps-a-note-on-uniqueness-3\"></a>PS: A note on uniqueness</h3>\n<p>There could be a misunderstanding in the idea of uniqueness, too.</p>\n<p>When we say column IDs are unique per board, we mean that all columns on one board will have different IDs.</p>\n<p>But multiple boards could have a Files column with the same ID (they probably will).</p>\n<p>Hope that helps!</p>"
+    },
+    {
+      "id": 206736,
+      "postNumber": 5,
+      "createdAt": "2024-10-22T16:41:49.405Z",
+      "author": "sylvainb (sylvain)",
+      "cookedHtml": "<p>Thank you <a class=\"mention\" href=\"/u/dipro\">@dipro</a> , this is very clear ! I feel like this could defenitly be a nice addition to your documentation.</p>\n<p>I’m wondering is there any way to satisfy my initial intention, which is to upload a file to the gallery via the api ?<br />\nSimilar to what happens when clicking on  the Add file button on that screen:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/b/0/b0042d9e583d11d746702ef9ef0372edd0cf2416.png\" title=\"Screenshot 2024-10-22 at 2.15.18 PM\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/b/0/b0042d9e583d11d746702ef9ef0372edd0cf2416_2_535x500.png\" alt=\"Screenshot 2024-10-22 at 2.15.18 PM\" width=\"535\" height=\"500\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-10-22 at 2.15.18 PM</span><span class=\"informations\">701×654 42.7 KB</span></div></a></div><p></p>\n<p>When i make the following call with the “wrong” column_id, I can see the file being uploaded in the gallery but the response doesn’t allow me to retrieve the asset id :</p>\n<p>Request:</p>\n<pre><code class=\"lang-auto\">curl --location 'https://api.monday.com/v2/file' \\\n--header 'Authorization: xxxxxxxxxxxxxxxxx' \\\n--header 'API-version: 2023-10' \\\n--form 'query=\"mutation ($file: File!) {\n add_file_to_column (file: $file, item_id: 7689043434, column_id: \\\"files\\\") {id}}\"' \\\n--form 'map=\"{\\\"image\\\":\\\"variables.file\\\"}\n\"' \\\n--form 'image=@\"/Users/sylvainb/downloads/large-marc.jpeg\"'\n</code></pre>\n<p>Response:</p>\n<pre><code class=\"lang-auto\">{\"status_code\":500,\"error_message\":\"Internal server error\",\"error_code\":\"INTERNAL_SERVER_ERROR\"}%\n</code></pre>\n<p>Thank you <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 206859,
+      "postNumber": 6,
+      "createdAt": "2024-10-23T04:20:33.972Z",
+      "author": "dvdsmpsn (David @ David Simpson Apps)",
+      "cookedHtml": "<p>This suggests that the upload and attachment to the column is actually a 2 step process.</p>\n<p>Step 1: upload the file — this is successful, so the file is attached to the item in the gallery.</p>\n<p>Step 2: link the file in the gallery to the column — you’ve provided an invalid column id, so this part throws an error.</p>\n<p>Perhaps this should happen in a single transaction and roll back if either step fails. Or perhaps it’s good that mdc holds onto the file in the first step. <img src=\"https://emoji.discourse-cdn.com/apple/man_shrugging.png?v=12\" title=\":man_shrugging:\" class=\"emoji\" alt=\":man_shrugging:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 207059,
+      "postNumber": 7,
+      "createdAt": "2024-10-24T14:24:28.074Z",
+      "author": "sylvainb (sylvain)",
+      "cookedHtml": "<p>Thank you for your intervention <a class=\"mention\" href=\"/u/dvdsmpsn\">@dvdsmpsn</a> but that doesn’t really answer my interrogations <img src=\"https://emoji.discourse-cdn.com/apple/person_shrugging.png?v=12\" title=\":person_shrugging:\" class=\"emoji\" alt=\":person_shrugging:\" width=\"20\" height=\"20\" /></p>\n<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> <a class=\"mention\" href=\"/u/rachelatmonday\">@rachelatmonday</a> I may have been too verbose, let me rephrase:</p>\n<ul>\n<li>Using the api, is it possible to upload a file directly to the gallery without relying on a column ?</li>\n<li>When following the documentation and using the “files” column_id, it will upload the file to the gallery but return an error. What is wrong here ? The file being uploaded despite the error ? Or the fact that an error is returned ? Both are very confusing for an api consumer’s perspective.</li>\n</ul>\n<p>Thanks again.</p>"
+    },
+    {
+      "id": 207876,
+      "postNumber": 8,
+      "createdAt": "2024-10-30T13:05:19.310Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/sylvainb\">@sylvainb</a>,</p>\n<p>Can you open a support ticket <a href=\"https://support.monday.com/hc/en-us/requests/new?ticket_form_id=13855862562962\">here</a> so our team can take a look at your specific query and try to find out the issue?</p>\n<p>Best,<br />\nRachel</p>"
+    }
+  ]
+}

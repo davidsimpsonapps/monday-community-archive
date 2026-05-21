@@ -1,0 +1,47 @@
+{
+  "id": 88176,
+  "title": "TooManyConcurrent RequestsException error while changing item group",
+  "slug": "toomanyconcurrent-requestsexception-error-while-changing-item-group",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    351
+  ],
+  "createdAt": "2024-05-27T03:10:49.166Z",
+  "lastPostedAt": "2024-05-28T03:44:05.881Z",
+  "postsCount": 3,
+  "excerpt": "I see this error while trying to move item to different group. When it says TooManyConcurrentRequestsException, does this mean too many concurrent requests to this account’s group from different apps/automations -or- too&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 150,
+  "posts": [
+    {
+      "id": 185874,
+      "postNumber": 1,
+      "createdAt": "2024-05-27T03:10:49.233Z",
+      "author": "YashGarg (Yash Garg)",
+      "cookedHtml": "<p>I see this error while trying to move item to different group. When it says TooManyConcurrentRequestsException, does this mean too many concurrent requests to this account’s group from different apps/automations -or- too many concurrent requests from my app to this account -or- too many concurrent requests from my app to monday servers</p>\n<p>Error: Failed to lock item id for graphql mutation at<br />\nresponse: {<br />\nerror_message: ‘Failed to lock item id for graphql mutation’,<br />\nerror_code: ‘TooManyConcurrentRequestsException’,<br />\nerror_data: { item_id: 6685454974, tag: ‘graphql_item_locking_service’ },<br />\nstatus_code: 429,<br />\naccount_id: 20739305<br />\n}</p>\n<p>And is this retriable error (assuming I use exponential backoff based retries) ? I suppose it should be but still want to know more context about this error</p>\n<p>Also is there a general/specific error codes listed anywhere for all the APIs ?</p>"
+    },
+    {
+      "id": 185878,
+      "postNumber": 2,
+      "createdAt": "2024-05-27T04:21:29.806Z",
+      "author": "apsimos (Zeitnot)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/yashgarg\">@YashGarg</a>,</p>\n<p>This is typical a retriable http request since there is 429 status code IMO. But beforehand, you should inject the following query to your mutation in order to get some information regarding rate limits. Having exponential backoff strategy is good idea but obeying the <code>reset_in_x_seconds</code> value is better I think.</p>\n<pre><code class=\"lang-auto\">            complexity {\n                before\n                query\n                after\n                reset_in_x_seconds\n            } \n</code></pre>\n<p>Regards</p>"
+    },
+    {
+      "id": 185905,
+      "postNumber": 3,
+      "createdAt": "2024-05-27T09:14:30.469Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Checking here <a href=\"https://monday.slack.com/archives/C05FKB3C9QR/p1716812059402329\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 185990,
+      "postNumber": 4,
+      "createdAt": "2024-05-28T03:44:05.881Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/yashgarg\">@YashGarg</a>,</p>\n<p>This error appears when a specific item is being updated at once from multiple sources (the change in the group is consider \"updating the item).</p>\n<p>Would you be able to check on your end if you are updating the same item at once from different places?</p>"
+    }
+  ]
+}

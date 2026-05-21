@@ -1,0 +1,76 @@
+{
+  "id": 37539,
+  "title": "Adding Google Docs To Files Column from Drive/Integromat",
+  "slug": "adding-google-docs-to-files-column-from-drive-integromat",
+  "categoryId": 6,
+  "tagIds": [
+    5,
+    47,
+    242
+  ],
+  "createdAt": "2022-06-09T15:49:26.946Z",
+  "lastPostedAt": "2024-08-14T09:48:05.588Z",
+  "postsCount": 8,
+  "excerpt": "In Monday files column I am able to add a Google Doc from Google Drive that I can subsequently edit by clicking on the created Drive icon in the files column which opens a net browser tab with the Google doc open for edi&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 3711,
+  "posts": [
+    {
+      "id": 88122,
+      "postNumber": 1,
+      "createdAt": "2022-06-09T15:49:27.022Z",
+      "author": "tmadonia (Tom Madonia)",
+      "cookedHtml": "<p>In Monday files column I am able to add a Google Doc from Google Drive that I can subsequently edit by clicking on the created Drive icon in the files column which opens a net browser tab with the Google doc open for editing.<br />\n.<br />\nI am using Integromat(Make) to add these files through an integration. When uploading the files in a scenario, attaching them to the files column, the icon is that of a W doc. When clicking on this a Monday doc viewer window opens which does not allow editing of the file.</p>\n<p>Does anyone know how I should be uploading the file in Integromat to retain the link to the document in drive and the ability to edit it with a single click in Monday?</p>"
+    },
+    {
+      "id": 89946,
+      "postNumber": 2,
+      "createdAt": "2022-06-28T18:33:59.300Z",
+      "author": "dschnurbusch (Dan Schnurbusch)",
+      "cookedHtml": "<p>I’m trying to do the same thing, I think. I’d like to have Make/Integromat create a Google Doc and attach the Google Doc to the files column in the correct format, but I’m coming up short.</p>"
+    },
+    {
+      "id": 92971,
+      "postNumber": 3,
+      "createdAt": "2022-07-29T08:42:11.839Z",
+      "author": "JCorrell (Jim - The Monday Man)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/tmadonia\">@tmadonia</a> <a class=\"mention\" href=\"/u/dschnurbusch\">@dschnurbusch</a></p>\n<p>Converting the Google doc to Word, PDF, text, etc. and uploading that to monday is easy. But obviously not the save as linking to the live doc.</p>\n<p>This can be tricky. Adding files via link using the API is not exactly officially supported. But it is possible.</p>\n<p>Basically, you will need to get/create the appropriate share link. Then update the file column using a direct call to the monday API (you can use the Execute a GraphQL Query module).</p>\n<hr />\n<p>Jim - <a href=\"https://www.youtube.com/TheMondayMan?sub_confirmation=1\">The Monday Man (YouTube Channel)</a>  <strong>Our latest vid:</strong> <a href=\"https://youtu.be/EqBfC3Z_IhE\">Reading REALLY Large monday Boards</a><br />\n<strong><a href=\"https://themondayman.com/make/\">What is Make &amp; How can it help you with monday?</a></strong><br />\n<strong><a href=\"https://themondayman.com/custom/\">We Create Custom Solutions - Your Make or Ours</a></strong><br />\n<strong><a href=\"https://themondayman.com/tutorial/\">Schedule a 1-on-1 Tutorial Session (for monday, Make or “Rocket Science”)</a></strong></p>"
+    },
+    {
+      "id": 167663,
+      "postNumber": 4,
+      "createdAt": "2024-02-13T22:40:06.468Z",
+      "author": "paulmatsushima (Paul Matsushima)",
+      "cookedHtml": "<p>Hi all. I figured out how to use the GraphQL query module to do this.</p>\n<p>First, here’s a helpful Youtube video to understand how the “Execute a GraphQL Query module” works: <a href=\"https://www.youtube.com/watch?v=CxnjxhagQbQ\" rel=\"noopener nofollow ugc\">https://www.youtube.com/watch?v=CxnjxhagQbQ</a>. They help you understand the commands.</p>\n<p>Next, this post on the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> forum has the answer: <a href=\"https://community.monday.com/t/easier-way-to-add-link-to-file-type-column/43452\" class=\"inline-onebox\">Easier way to add link to file type column</a>. The answer is embedded in Petr Hnilica’s first code block:</p>\n<pre><code class=\"lang-auto\">mutation {change_column_value(board_id: xx6299899, item_id: xx27523227, \n  column_id: \"files\", value: \"{\\\"files\\\":[{\\\"name\\\":\\\"link1\\\",\\\"fileType\\\":\\\"LINK\\\",\\\"linkToFile\\\":\\\"https://www.partyzan-adventure.cz/kontakt/\\\"}]}\") {id}}\n</code></pre>\n<p>To get yours to work, swap out the following:</p>\n<ul>\n<li>board_id: with your board ID</li>\n<li>item_id: with the item you want to update</li>\n<li>“link1” : with the name of your file</li>\n<li><a href=\"https://www.partyzan-adventure.cz/kontakt/\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">Průvodce, Alpský vůdce - kontakt</a> : with the link to your file (mine is hosted on Google drive)</li>\n</ul>\n<p>See below for my full scenario for taking a file stored on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>, renaming it, uploading it to Google Drive, then reuploading the G.Drive file back to the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> file column.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/f/3/f3487a6abdd416d1ccdc2dddf97e668db17a8582.png\" title=\"Screenshot 2024-02-13 at 16.38.33\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/f/3/f3487a6abdd416d1ccdc2dddf97e668db17a8582_2_690x268.png\" alt=\"Screenshot 2024-02-13 at 16.38.33\" width=\"690\" height=\"268\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-02-13 at 16.38.33</span><span class=\"informations\">2678×1042 174 KB</span></div></a></div><p></p>\n<p>And here’s what the GraphQL module looks like:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/3/d/3df56b37b0762b950143acf56e9c20bec6ee2c9a.jpeg\" title=\"Screenshot 2024-02-13 at 16.39.42\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/3/d/3df56b37b0762b950143acf56e9c20bec6ee2c9a_2_690x372.jpeg\" alt=\"Screenshot 2024-02-13 at 16.39.42\" width=\"690\" height=\"372\" /><div class=\"meta\"><span class=\"filename\">Screenshot 2024-02-13 at 16.39.42</span><span class=\"informations\">2590×1398 286 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 169680,
+      "postNumber": 5,
+      "createdAt": "2024-02-23T20:31:32.901Z",
+      "author": "ruebixcube (Kyle)",
+      "cookedHtml": "<p>Amazing solution Paul - Thanks! Do you know if this approach would be possible to add the file to an Update instead of the files column?</p>"
+    },
+    {
+      "id": 170027,
+      "postNumber": 6,
+      "createdAt": "2024-02-26T15:34:11.295Z",
+      "author": "paulmatsushima (Paul Matsushima)",
+      "cookedHtml": "<p>Unfortunately I haven’t tried that. An alternative solution is you could grab the “share file link” from Google Drive and use the “create an update” module and just post the link as an update. The item’s update would at least have a link to the file, rather than the file itself.</p>"
+    },
+    {
+      "id": 170045,
+      "postNumber": 7,
+      "createdAt": "2024-02-26T16:09:58.308Z",
+      "author": "ruebixcube (Kyle)",
+      "cookedHtml": "<p>Yup - That’s what I’m doing currently and it’s a decent solve for the time being! Will play around more and see if I can get the actual file posted.</p>"
+    },
+    {
+      "id": 197327,
+      "postNumber": 8,
+      "createdAt": "2024-08-14T09:48:05.588Z",
+      "author": "RotemWolf (Rotem Wolf)",
+      "cookedHtml": "<p>After hours of searching, I found that your post was the closest thing to the solution I needed! Thank you!</p>\n<p>Have you tried performing this task with multiple files? For example, if there are three files in a column, can everything be replaced with links? I am encountering issues when trying to insert a list of files into the code, as it gets failed. Similarly, when I try to upload files one by one using an Iterator, each upload replaces the previous file.</p>"
+    }
+  ]
+}

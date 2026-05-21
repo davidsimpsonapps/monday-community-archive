@@ -1,0 +1,69 @@
+{
+  "id": 26791,
+  "title": "Activity logs API only shows today's activities",
+  "slug": "activity-logs-api-only-shows-todays-activities",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    129,
+    351
+  ],
+  "createdAt": "2021-11-01T15:57:16.578Z",
+  "lastPostedAt": "2021-11-11T22:39:33.563Z",
+  "postsCount": 6,
+  "excerpt": "Hello, everyone, I was playing around with the activity_logs request in the API, but for some reason, it appears to return activity logs from today. I tried to set the “from” and “to” parameters to contain a wider time r&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 3004,
+  "posts": [
+    {
+      "id": 67497,
+      "postNumber": 1,
+      "createdAt": "2021-11-01T15:57:16.668Z",
+      "author": "Ferapagar (Fernando)",
+      "cookedHtml": "<p>Hello, everyone, I was playing around with the activity_logs request in the API, but for some reason, it appears to return activity logs from today. I tried to set the <strong>“from” and “to” parameters</strong> to contain a wider time range, but it never returns logs <strong>else than today</strong>.</p>\n<p>Does anybody else have the same issue and/or know how it could be fixed?</p>\n<p>I was attempting to build a simple dashboard widget that would tell me which days I’ve been active, but as no activity logs from previous are shown through the API (<strong>it does show them when looking manually on the board’s activity log</strong>), I really don’t know how to retrieve that info.</p>\n<p>Thanks in advance!<br />\nFernando</p>"
+    },
+    {
+      "id": 67526,
+      "postNumber": 2,
+      "createdAt": "2021-11-01T17:45:36.896Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ferapagar\">@Ferapagar</a>!</p>\n<p>The activity logs object should be able to return all activity logs on the board. Can you please share the exact query you’re sending (with the wider timerange) so we can take a look?</p>\n<p>I just tried this query on a board and it returned all the logs before Oct 20th:</p>\n<pre><code class=\"lang-auto\">{\n  boards (ids:1810493195) {\n    activity_logs (to:\"2021-10-20\") {\n      id\n      created_at\n    }\n  }\n}\n</code></pre>"
+    },
+    {
+      "id": 67645,
+      "postNumber": 3,
+      "createdAt": "2021-11-02T15:28:44.506Z",
+      "author": "Ferapagar (Fernando)",
+      "cookedHtml": "<p>Hi, <a class=\"mention\" href=\"/u/dipro\">@dipro</a>!</p>\n<p>This is the query I was using:</p>\n<pre><code class=\"lang-auto\">query{\n  boards (ids:[\"ids here\"]){\n\n  activity_logs(user_ids:\"my id\" to:\"2021-08-29\"){\n      data\n      entity\n      created_at\n    }\n   \n  } \n}\n</code></pre>\n<p>It’s just so strange that I tell it to only pull updates <strong>before</strong> august 29th and it still outputs today’s logs, three days <strong>after</strong> august 29</p>"
+    },
+    {
+      "id": 67647,
+      "postNumber": 4,
+      "createdAt": "2021-11-02T15:43:37.882Z",
+      "author": "Ferapagar (Fernando)",
+      "cookedHtml": "<p>Hey, I just realized the problem:<br />\nI was using the monday API through javascript, and tried to parse the integers from created_at using the Date() object built into the browser.<br />\nIt turns out that the number needs to be first divided by 10,000, or else it will see the input as incorrect and return the current date.</p>\n<p>Thank you so much for your support anyways</p>\n<p>PS: Why would it be 10,000? From other APIs and native date functions, problems usually arise from counting (or not) the milliseconds. But this would mean to scale by 1,000, right?</p>"
+    },
+    {
+      "id": 67712,
+      "postNumber": 5,
+      "createdAt": "2021-11-02T20:27:34.807Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Honestly, I have no idea why these timestamps are in 17 digit format. It’s technically “the number of 100 nanoseconds from Jan 1, 1970”</p>\n<p>I asked in ask-insights, in case they have any…insights <a href=\"https://monday.slack.com/archives/CTH46N4RL/p1635891966041300\" class=\"inline-onebox\">Slack</a></p>"
+    },
+    {
+      "id": 67939,
+      "postNumber": 6,
+      "createdAt": "2021-11-04T22:39:02.342Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ferapagar\">@Ferapagar</a> – so glad you figured it out!</p>\n<p>I’m not sure if there’s a specific rationale behind the level of precision of these timestamps.</p>"
+    },
+    {
+      "id": 68595,
+      "postNumber": 7,
+      "createdAt": "2021-11-11T22:39:33.563Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

@@ -1,0 +1,251 @@
+{
+  "id": 5444,
+  "title": "[RELEASED] Sub-item API support",
+  "slug": "released-sub-item-api-support",
+  "categoryId": 58,
+  "tagIds": [
+    5,
+    94,
+    276
+  ],
+  "createdAt": "2020-03-10T10:59:35.460Z",
+  "lastPostedAt": "2021-02-22T15:48:16.993Z",
+  "postsCount": 33,
+  "excerpt": "Great job on sub-items! This could be hot feature for sure. \nPlease let us know if they are currently supported by API and if so there documentation available. If there is no API support ATM please let us know when it is&hellip;",
+  "solvedPostId": null,
+  "likeCount": 14,
+  "views": 12890,
+  "posts": [
+    {
+      "id": 13686,
+      "postNumber": 1,
+      "createdAt": "2020-03-10T10:59:35.574Z",
+      "author": "IlyaK (Ilya Kochetov)",
+      "cookedHtml": "<p>Great job on sub-items! This could be hot feature for sure.<br />\nPlease let us know if they are currently supported by API and if so there documentation available. If there is no API support ATM please let us know when it is planned.</p>"
+    },
+    {
+      "id": 13724,
+      "postNumber": 2,
+      "createdAt": "2020-03-10T15:04:30.648Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/ilyak\">@IlyaK</a>!</p>\n<p>At the moment subitems are not fully supported by our API. However, each subitem is simply an item on a different board, so you should be able to do many of the current operations via the API with subitems.</p>\n<p>The subitem column is a link to item column, and each subitem on a board is pulled from another board. Does that make sense?</p>"
+    },
+    {
+      "id": 13730,
+      "postNumber": 3,
+      "createdAt": "2020-03-10T15:43:53.648Z",
+      "author": "IlyaK (Ilya Kochetov)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a>, thank you very much for your quick response! it does make sense.<br />\nI’ve been able to get a list of sub-items, sub-item ID and its column values, that is fine.<br />\nWhat I would like to be able to do is to have a way to add sub-item via API, that would make them very usable.</p>"
+    },
+    {
+      "id": 13733,
+      "postNumber": 4,
+      "createdAt": "2020-03-10T16:29:25.470Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>For sure! Adding support for the link to item column would be helpful, and is on our roadmap.</p>"
+    },
+    {
+      "id": 14757,
+      "postNumber": 5,
+      "createdAt": "2020-03-25T21:10:43.246Z",
+      "author": "davidslee-sme (David Lee)",
+      "cookedHtml": "<p>Hello.  I am still having a hard time extracting subitems as i dont follow the above post.<br />\nI am trying to get subitems as though they are items using.  Is this possible?   I am basically looking at monday for content programming</p>\n<p>query {<br />\nitems_by_column_values (board_id: xxxxxx, column_id: “date”, column_value: “03-25-2020”)<br />\n{<br />\nid<br />\nname<br />\n}<br />\n}</p>"
+    },
+    {
+      "id": 14845,
+      "postNumber": 6,
+      "createdAt": "2020-03-26T22:57:43.486Z",
+      "author": "Johnathon (Johnathon Pasley)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> I was able to find the board id for the sub-items board and add a item directly there, but it doesn’t seem to be updating the parent board. Known issue ?</p>"
+    },
+    {
+      "id": 14916,
+      "postNumber": 7,
+      "createdAt": "2020-03-28T06:40:13.514Z",
+      "author": "IlyaK (Ilya Kochetov)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/jonathon\">@jonathon</a>, I have a feeling that the item in the sub-items board is linked to the main board by the mechanism that is used in the ‘link’ column.<br />\nSo when you create it it appears on the sub-items board but it does not have any relationship to the main board item and it has no fields you could fill for this link to happen. Linking is done via main board ‘subitems’ column, which is basically a multi-item link.<br />\nHowever currently the API does not support updating this column type, so you’re stuck.<br />\nWould be great for <a class=\"mention\" href=\"/u/dipro\">@dipro</a> to confirm or deny this as it is purely guesswork on my part</p>"
+    },
+    {
+      "id": 19089,
+      "postNumber": 8,
+      "createdAt": "2020-06-02T14:51:48.248Z",
+      "author": "vivimonday (Vincent Laugier)",
+      "cookedHtml": "<p>I have tried to reproduce with the API the equivalent of a subitem created using the UI…almost there I think…but not quite.</p>\n<p>First, I retrieved the list of the subitems of an item with the following:</p>\n<pre><code class=\"lang-auto\">query {\n    items (ids: [571529684]) {\n    name\n    column_values (ids: \"subitems\"){\n            id\n            value\n        }\n    }\n}\n</code></pre>\n<p>which returns:</p>\n<pre><code class=\"lang-auto\">{\n    \"data\": {\n        \"items\": [\n            {\n                \"name\": \"42751 (GREETING LIFE CO., LTD)\",\n                \"column_values\": [\n                    {\n                        \"id\": \"subitems\",\n                        \"value\": \"{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":573197006},{\\\"linkedPulseId\\\":573198135},{\\\"linkedPulseId\\\":590011632}]}\"\n                    }\n                ]\n            }\n        ]\n    },\n    \"account_id\": 9999999\n}\n</code></pre>\n<p>I checked the details of one  of the subitem (573197006) with the following :</p>\n<pre><code class=\"lang-auto\">query {\n    items (ids: [573197006]) {\n    name\n    board {\n        id\n    }\n    group {\n        id\n    }\n    column_values {\n            id\n            value\n        }\n    }\n}\n</code></pre>\n<p>which returns:</p>\n<pre><code class=\"lang-auto\">{\n    \"data\": {\n        \"items\": [\n            {\n                \"name\": \"highlighter (mild liner)\",\n                \"board\": {\n                    \"id\": \"573187617\"\n                },\n                \"group\": {\n                    \"id\": \"subitems_of_571529684\"\n                },\n                \"column_values\": [\n                    {\n                        \"id\": \"files\",\n                        \"value\": \"{\\\"files\\\":[{\\\"fileType\\\":\\\"ASSET\\\",\\\"assetId\\\":82157211,\\\"name\\\":\\\"42751_mildliner.JPG\\\",\\\"isImage\\\":\\\"true\\\"}]}\"\n                    },\n                    {\n                        \"id\": \"status\",\n                        \"value\": \"{\\\"index\\\":9,\\\"post_id\\\":null,\\\"changed_at\\\":\\\"2020-05-20T01:25:09.435Z\\\"}\"\n                    }\n                ]\n            }\n        ]\n    },\n    \"account_id\": 9999999\n}\n</code></pre>\n<p>I created an new item in the same board and group as the existing subitem</p>\n<pre><code class=\"lang-auto\">mutation {\n    create_item (board_id: 573187617, \n                 group_id: \"subitems_of_571529684\", \n                 item_name: \" sunglasses test vince\") {\n        id\n    }\n}\n</code></pre>\n<p>which returns:</p>\n<pre><code class=\"lang-auto\">{\n    \"data\": {\n        \"create_item\": {\n            \"id\": \"590092649\"\n        }\n    },\n    \"account_id\": 9999999\n}\n</code></pre>\n<p>At this point I was hopping that the subitem would have appeared in the UI, but that wasn’t the case.</p>\n<p>I tried to force it by updating the value of the column “subitems” in the parent item with the following (where 590092649 is the ID of the newly created subitem):</p>\n<pre><code class=\"lang-auto\">mutation {\n    change_column_value (board_id: 562486190, \n                         item_id: 571529684, \n                         column_id: \"subitems\", \n                         value: \"{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":573197006},{\\\"linkedPulseId\\\":573198135},{\\\"linkedPulseId\\\":590011632}]},{\\\"linkedPulseId\\\":590092649}]}\") {\n            id\n    }\n}\n</code></pre>\n<p>I get a 500 internal server error with an HTML error page containing “We’re currently experiencing some technical issues which our developers are working hard to resolve.”</p>"
+    },
+    {
+      "id": 20010,
+      "postNumber": 9,
+      "createdAt": "2020-06-12T17:36:21.260Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p>Thanks for the detailed walkthrough of what you’ve tried Vivi! At the moment creating new subitems are not supported by our API, but we’re working on it.</p>\n<p>The subitems column is just a link to item column, so you can use it to query and update the data on existing subitems. That said, this isn’t a fully documented feature so it may not work the way you expect just yet.</p>\n<p>Watch this space; I’ll update when this is possible!</p>"
+    },
+    {
+      "id": 20027,
+      "postNumber": 10,
+      "createdAt": "2020-06-13T04:39:54.548Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p>Instead of adding a new thread, I wanted to add to this one.</p>\n<p>Subitems are key to me getting on the Monday bandwagon. They are often required in the business cases I handle, and can save tons of visible boards, making user navigation feasible for larger use cases.</p>\n<p>I know that the APIs for subitems aren’t supported, but I am in a place where I’d like to understand more about the structure for them so I can understand if a problem I’m experiencing is due to my oversight or something that isn’t fully built. I think on the dev side of the world we understand that things aren’t always stable, but knowing where they are today and the direction they are heading can help us plan out approaches.</p>\n<p>Basic subitem creations seem to work perfectly through the API, except one interesting glitch. This is similar to the above, and I am curious if the additional motions I’ve managed are due the short time since the OP.</p>\n<p>These are the steps I’ve taken, and the outcome:</p>\n<p>1: Activate subitems<br />\n2: Create parent board and necessary columns<br />\n3: Create subitems on board, add necessary columns and a few subitems.<br />\n4: Query board list, return IDs<br />\n5: Query items in each board<br />\n6. Create group on subitem board, if it doesn’t exists (subitems_of_ParentPulseIdHere)<br />\n7: Create item on Subitem board under that group, data return provides<br />\n8: Just as above, push item into main pulse’s subitem object<br />\n**Note: I had to do the following. IDs are made up for this post. I’m pushing from SQL.</p>\n<blockquote>\n<p>I was able to use<br />\n{“query”:“mutation{change_column_value(item_id: 654987321, board_id:321987654, column_id:\"subitems\", value: \"{\\\\\\“linkedPulseIds\\\\\\”:[{\\\\\\“linkedPulseId\\\\\\”:123456789},\\\\\\“linkedPulseId\\\\\\”:987654321}]}\"){id}}”}<br />\nand<br />\n{“query”:“mutation{change_column_value(item_id: 654987321, board_id:321987654, column_id:\"subitems\", value: \"{\\\\\\“item_ids\\\\\\”:[123456789,987654321]}\"){id}}”}</p>\n</blockquote>\n<p>9 Query item column values to ensure desired effect, then check the screen.</p>\n<p>Viola! With the board open, the subitems populate immediately. I can interact with them, and everything is as expected…until I refresh the page.<br />\nAs soon as the page it refreshed all pulses created via API disappear from view, but still show in queries.</p>\n<p>By calling the API twice more with the page open (once with an empty linked string to clear the links, and then with the full statement) the items will show back up on the page. However, as before, once the page is reloaded the API created subitems no longer show.</p>\n<p>–Querying the parent board still shows expected nesting within subitem object under all circumstances<br />\n–Querying child/subitem board shows expected items, marked active.<br />\n–Cross referencing data between manual and API subitems hasn’t shown a redflag that I can find.</p>\n<p>Reference:</p>\n<div class=\"md-table\">\n<table>\n<thead>\n<tr>\n<th>board_Id</th>\n<th>Item_ID</th>\n<th>group_id</th>\n<th>name</th>\n<th>subitems</th>\n<th>status</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>601229627</td>\n<td>601381253</td>\n<td>topics</td>\n<td>Unknown</td>\n<td>{“linkedPulseIds”:[{“linkedPulseId”:605081179},{“linkedPulseId”:605085259},{“linkedPulseId”:605093289},{“linkedPulseId”:605119841}]}</td>\n<td>Hold</td>\n</tr>\n</tbody>\n</table>\n</div><p>Only two of those four are displaying when the page is loaded, but this is part of the query return.<br />\nIt seems I’m missing a value somewhere, and I need help understanding what that value is and how to work past it, or if it is even visible at this time. I have thousands of subitems that I need to create and automate, and doing so manually isn’t an option. This is a make it or break it for including additional workflows and customers.</p>"
+    },
+    {
+      "id": 20063,
+      "postNumber": 11,
+      "createdAt": "2020-06-14T02:02:39.693Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p><strong>Another update</strong></p>\n<p>Little more digging on this:</p>\n<p>When subitems are requested by the interface, all are returned from the sub item board:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/d/d409909371020d4960678562632dfd96ee3f893e.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/d/d409909371020d4960678562632dfd96ee3f893e.png\" alt=\"image\" width=\"690\" height=\"153\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1017×226 18.9 KB</span></div></a></div><p></p>\n<p>One the board dataset, the counts are also correct for the groups related to each pulse:<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/c/c157c930a7525e297bf2b0ce4c4881070e1ff646.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/c/c157c930a7525e297bf2b0ce4c4881070e1ff646_2_690x261.png\" alt=\"image\" width=\"690\" height=\"261\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1157×439 47.1 KB</span></div></a></div><p></p>\n<p>However, on the final visual board, the count references only the actual pulses attached. There’s a key called new_infra, set to yes. The only items visible are those on this portion, with the new_infra key.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/1/1943144fe6d0a89bd86485d055ba4f23fec70439.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/original/2X/1/1943144fe6d0a89bd86485d055ba4f23fec70439.png\" alt=\"image\" width=\"690\" height=\"131\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">778×148 8.8 KB</span></div></a></div><p></p>\n<p>After some testing, I’m confident that there is an additional value inside of the subitems column “value” field that isn’t displayed. Here’s why</p>\n<ol>\n<li>Manually create subitem. It is visible initially after reloading the page.</li>\n<li>API: change parent pulse subitem “value” field to {“linkedPulseIds”:[TypeNothingHere]}, manually created subitem is no longer visible.</li>\n<li>API: change parent pulse subitem “value” field to {“linkedPulseIds”:[{“linkedPulseId”:123456789}]} or {“item_ids”:[123456789]}, manually created subitem is now visible again, even after refresh.</li>\n<li>API: change parent pulse subitem “value” field to {}, manually created subitem is no longer visible.</li>\n<li>API: change parent pulse subitem “value” field to {“linkedPulseIds”:[{“linkedPulseId”:123456789}]} or {“item_ids”:[123456789]}, and manually created subitem fails to stay visible after refresh. Query returns {“linkedPulseIds”:[{“linkedPulseId”:123456789}]} in “value” field.</li>\n</ol>\n<p>The API has accepted additional value pairs in the subitem “value” field without returning any errors, and while still populating the linkedPulseIds pairs correctly. I haven’t managed any combination of using “new_infra” that makes the columns visible. I am not sure if these are being stripped by the endpoint, or if they are just displaying. Somewhere not visible to us inside of the subitem column “value” field is the value pair that helps make a subitem visible. I’m hoping Monday will tell us what that pair is, how it is structures, and allow it through the API.</p>"
+    },
+    {
+      "id": 20558,
+      "postNumber": 12,
+      "createdAt": "2020-06-21T15:45:39.260Z",
+      "author": "VladMonday (Vlad Mystetskyi)",
+      "cookedHtml": "<p>I’m happy to announce, that we just release a “create_subitem” mutation! <img src=\"https://emoji.discourse-cdn.com/apple/partying_face.png?v=12\" title=\":partying_face:\" class=\"emoji\" alt=\":partying_face:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/partying_face.png?v=12\" title=\":partying_face:\" class=\"emoji\" alt=\":partying_face:\" width=\"20\" height=\"20\" /> <img src=\"https://emoji.discourse-cdn.com/apple/partying_face.png?v=12\" title=\":partying_face:\" class=\"emoji\" alt=\":partying_face:\" width=\"20\" height=\"20\" /><br />\nYou can check it in our documentation: <a href=\"https://monday.com/developers/v2#mutations-section-subitems-create\">https://monday.com/developers/v2#mutations-section-subitems-create</a></p>\n<p><strong>Moderator edit:</strong> We found some issues with the API call and have rolled back the feature. We will update you when it’s back online!</p>"
+    },
+    {
+      "id": 20677,
+      "postNumber": 13,
+      "createdAt": "2020-06-23T15:36:07.986Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/vladmonday\">@VladMonday</a> earlier this morning I was able to see the documentation. This afternoon I’ve set time to test, but the documentation isn’t showing. What happened?</p>"
+    },
+    {
+      "id": 20709,
+      "postNumber": 14,
+      "createdAt": "2020-06-23T18:13:49.074Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p>This is no longer visible.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/5/5cee9830c534306080881223df4f57a975eb42b7.png\" title=\"image\" rel=\"nofollow noopener\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/5/5cee9830c534306080881223df4f57a975eb42b7_2_690x352.png\" alt=\"image\" width=\"690\" height=\"352\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1538×786 55.9 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 20869,
+      "postNumber": 15,
+      "createdAt": "2020-06-25T08:57:32.497Z",
+      "author": "IlyaK (Ilya Kochetov)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/morhriveion\">@morhriveion</a>, as I understand there was some kind of data quality issue which prevented new mutation from workin properly in some circumstances and so it was removed until the issue will be fixed. I hope someone from Monday team will be able to give more detailed update.<br />\nI received an automated email from <a class=\"mention\" href=\"/u/dipro\">@dipro</a> regarding this some time ago.</p>"
+    },
+    {
+      "id": 20875,
+      "postNumber": 16,
+      "createdAt": "2020-06-25T11:20:06.229Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/morhriveion\">@morhriveion</a> – yes, as Ilya mentioned we had to roll back this mutation to prevent other issues. We are working on bringing it back online as soon as we can! We’ll update when this is done.</p>"
+    },
+    {
+      "id": 20898,
+      "postNumber": 17,
+      "createdAt": "2020-06-25T17:28:36.565Z",
+      "author": "amitozalvo (Amit Ozalvo)",
+      "cookedHtml": "<p><strong>Note that using the API to query subitems through the column value will not 100% work for every item. For a few items I receive less subitems than there actually are</strong></p>"
+    },
+    {
+      "id": 20953,
+      "postNumber": 18,
+      "createdAt": "2020-06-26T10:26:40.582Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/amitozalvo\">@amitozalvo</a> will you share your query?</p>"
+    },
+    {
+      "id": 20994,
+      "postNumber": 19,
+      "createdAt": "2020-06-26T18:30:18.286Z",
+      "author": "amitozalvo (Amit Ozalvo)",
+      "cookedHtml": "<p><strong>Request</strong></p>\n<pre><code>query {\n  boards (ids: [${boardId}]) {\n    \tcolumns{\n        title,\n        id\n      }\n      items(ids: [${itemId}]) {\n        column_values {\n          value,\n          type,\n          id\n        }\n      }\n    }\n}\n</code></pre>\n<p><strong>Response</strong></p>\n<pre><code>{\n  \"data\": {\n    \"boards\": [\n      {\n       \"items\": [\n          \"column_values\": [\n              {\n                \"value\": \"{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX}]}\",\n                \"type\": \"subtasks\",\n                \"id\": \"subitems\"\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  },\n  \"account_id\": XXXXXXXX\n}\n</code></pre>\n<p>This query yielded 19 subitems, while there are actually 25 in the board.<br />\nI wrote to the support, hoping they will fix this ASAP.<br />\nI’ll post an update when they do.</p>\n<p><em>I have edited the response to only show the relevant data. Also, IDs have been replaced with XXXXXXXX</em></p>"
+    },
+    {
+      "id": 21209,
+      "postNumber": 20,
+      "createdAt": "2020-06-30T11:38:29.904Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/amitozalvo\">@amitozalvo</a> interesting…are you filtering by pulse ID during your query? If yes, did you try using the item root and calling board/id inside of it without a filter to see what was returned?</p>\n<blockquote>\n<p>{<br />\nitems (ids: [xxxxx,xxxxx,xxxxx]) {<br />\nboard {<br />\nid<br />\nname<br />\n}<br />\n, id<br />\n, name<br />\n, column_values {<br />\nvalue<br />\n, type<br />\n, id<br />\n}<br />\n}<br />\n}</p>\n</blockquote>\n<p>I’ve been trying to get an understanding for Monday’s development on this so I can plan accordingly, but they aren’t really discussing.</p>"
+    },
+    {
+      "id": 21241,
+      "postNumber": 21,
+      "createdAt": "2020-06-30T15:36:17.257Z",
+      "author": "amitozalvo (Amit Ozalvo)",
+      "cookedHtml": "<p>Just tried it, didn’t work either</p>"
+    },
+    {
+      "id": 21245,
+      "postNumber": 22,
+      "createdAt": "2020-06-30T16:38:20.051Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p>I think I misunderstood your initial response.<br />\nYou aren’t seeing the linked pulses inside of the “linkedpulseids” field value, correct?</p>\n<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/9fc29f/48.png\" class=\"avatar\" /> amitozalvo:</div>\n<blockquote>\n<pre><code class=\"lang-auto\">\"value\": \"{\\\"linkedPulseIds\\\":[{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX},{\\\"linkedPulseId\\\":XXXXXXXX}]}\",\n                \n</code></pre>\n</blockquote>\n</aside>\n<p>I also have experienced the same when creating a new subitem via API. I can query the “Subitems of” board, and return all items created. However, not all are visible on the parent item. Support explained that any subitem visibility through API was incidental. I asked for visibility showing the rest of what exists in the value field you copied above, because if your clear it (set it to {}) and then repopulate it with the exact same text the subitems will no longer be visible. There’s something else in or attached to that value that Monday won’t show us, and is keeping subitems from working smoothly.</p>\n<p>I was working through spoofing subitem creation when API support was announced. Now that subitem support has been withdrawn it appears I will be back on that. The package sent at creation through the GUI seems simple enough to replicate.</p>\n<p><a class=\"mention\" href=\"/u/dipro\">@dipro</a> I’m hoping you have some good news soon.</p>"
+    },
+    {
+      "id": 21313,
+      "postNumber": 23,
+      "createdAt": "2020-07-01T07:07:44.227Z",
+      "author": "amitozalvo (Amit Ozalvo)",
+      "cookedHtml": "<p>Now I’m not sure I understand you…<br />\nI see 25 out of 26 pulse ids. Means there’s one subitem missing when I’m trying to fetch subitem ids from the API</p>"
+    },
+    {
+      "id": 21436,
+      "postNumber": 24,
+      "createdAt": "2020-07-02T08:37:33.688Z",
+      "author": "morhriveion (Robert Hollon)",
+      "cookedHtml": "<p>Are you trying to fetch using the board ID of the parent board, and finding the subitem IDs from the linkedPulseIds field or using the board ID of the subitem board? The default pulse/item limit (unless you declare a different limit) is 25.</p>"
+    },
+    {
+      "id": 21578,
+      "postNumber": 25,
+      "createdAt": "2020-07-06T09:13:12.066Z",
+      "author": "n.thijssen (Nick Thijssen)",
+      "cookedHtml": "<p>Am i correct in assuming create_subitem has been enabled again? I can see it in the docs.</p>"
+    },
+    {
+      "id": 21579,
+      "postNumber": 26,
+      "createdAt": "2020-07-06T09:24:28.902Z",
+      "author": "n.thijssen (Nick Thijssen)",
+      "cookedHtml": "<p>and i tried creating a sub item and it worked <img src=\"https://emoji.discourse-cdn.com/apple/smiley.png?v=9\" title=\":smiley:\" class=\"emoji\" alt=\":smiley:\" /></p>"
+    },
+    {
+      "id": 21741,
+      "postNumber": 27,
+      "createdAt": "2020-07-07T09:35:49.697Z",
+      "author": "n.thijssen (Nick Thijssen)",
+      "cookedHtml": "<p>tried deleting the same item and the board threw an error and created a ghost item. not ready for prime time then. shame. Whats the ETA?</p>"
+    },
+    {
+      "id": 22438,
+      "postNumber": 28,
+      "createdAt": "2020-07-13T12:23:11.384Z",
+      "author": "amitozalvo (Amit Ozalvo)",
+      "cookedHtml": "<p>I also get 5 instead of 6 subitems. It’s not about the limits</p>"
+    },
+    {
+      "id": 31341,
+      "postNumber": 29,
+      "createdAt": "2020-10-17T14:51:02.603Z",
+      "author": "eddyirwan (Eddy Irwan)",
+      "cookedHtml": "<p>Can we change the  value of the subitem. if we want to change value in item, can we use using</p>\n<blockquote>\n<p>change_multiple_column_values .</p>\n</blockquote>"
+    },
+    {
+      "id": 31361,
+      "postNumber": 30,
+      "createdAt": "2020-10-18T13:10:39.393Z",
+      "author": "TMNXT-Dev (Ilja Zweigert)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/eddyirwan\">@eddyirwan</a>,</p>\n<p>as far as I know, not yet.</p>\n<p>Greetings</p>"
+    },
+    {
+      "id": 31443,
+      "postNumber": 31,
+      "createdAt": "2020-10-19T16:37:05.299Z",
+      "author": "dsilva (Daniel Silva)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/eddyirwan\">@eddyirwan</a> - not just yet. It’s something we’re hoping to support in the future though.</p>\n<p>We did recently add support for <a href=\"https://monday.com/developers/v2#mutations-section-subitems-create\" rel=\"noopener nofollow ugc\">creating subitems through a mutation</a> on the API as a first step. We’ll be sure to post here on the community once we have more news to report on this.</p>\n<p>-Daniel</p>"
+    },
+    {
+      "id": 37936,
+      "postNumber": 32,
+      "createdAt": "2021-01-16T21:34:27.170Z",
+      "author": "zonajustin (Justin)",
+      "cookedHtml": "<p>Hello, is there an update on the ability to change subitem columns via api?</p>"
+    },
+    {
+      "id": 41634,
+      "postNumber": 33,
+      "createdAt": "2021-02-22T15:48:16.993Z",
+      "author": "Helen (Helen)",
+      "cookedHtml": ""
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": 37393,
+  "title": "Stopping a webhook temporarily for an API create or update transaction",
+  "slug": "stopping-a-webhook-temporarily-for-an-api-create-or-update-transaction",
+  "categoryId": 8,
+  "tagIds": [],
+  "createdAt": "2022-06-07T14:08:26.673Z",
+  "lastPostedAt": "2022-06-07T15:36:54.935Z",
+  "postsCount": 2,
+  "excerpt": "I’m wondering if there is a way to stop a webhook from executing when doing an API mutation to create or update a record.  I have a web application that manages database records. The records are similar to Monday.com boa&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 917,
+  "posts": [
+    {
+      "id": 87845,
+      "postNumber": 1,
+      "createdAt": "2022-06-07T14:08:26.744Z",
+      "author": "dborgnino (Damon)",
+      "cookedHtml": "<p>I’m wondering if there is a way to stop a webhook from executing when doing an API mutation to create or update a record.  I have a web application that manages database records. The records are similar to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> boards where there are “items” and “subitems”.  Currently, when a user uses the web application to create or update records (items or subitems), the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> API is used to create and update record on a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> board.  I also have webhooks that push changes from <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> to the web application. So, when an item or subitem is updated on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>, the changes are pushed to corresponding records on the web application. So if users  make changes on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> they also appear in the web application and if users make changes on the web application, they also appear on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a>.</p>\n<p>However, this creates a situation where if a user makes a change on the web application, it get’s pushed via the API to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> and then webhooks on <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> are executed to push the same change back to the web application.  So the web application is updated twice. In other words, a user makes a change to the web application. The web application pushes the change to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> via the API. Then <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> webhooks send the change back to the  web application where it is updated again. While it works fine, it’s redundant to update the web application twice.</p>\n<p>Is there a way when making an API mutation to create or update to stop the webhook from firing? In other words, I only want the webhook to execute when a change is made directly on the Monday board (not via an API call).</p>"
+    },
+    {
+      "id": 87855,
+      "postNumber": 2,
+      "createdAt": "2022-06-07T15:36:54.935Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/dborgnino\">@dborgnino</a></p>\n<p>Welcome to the community. There is no API mutation to stop or pause a webhook, you can only create and delete them. This could be a workaround if the transaction rate is really low, in that case you can delete the webhook and add it back again later. Not the best solution I guess <img src=\"https://emoji.discourse-cdn.com/apple/frowning.png?v=12\" title=\":frowning:\" class=\"emoji\" alt=\":frowning:\" width=\"20\" height=\"20\" /></p>\n<p>Another approach is to inspect the userId of the event. If you create a dedicated user for the integration on you monday board that user will be in the event for any changes made by that integration. If the event contains another userId you can be sure that the change was initiated by a real user and not the app. For this you need the ability to inspect the webhook on the receiving side (your database?). If that is not a possibility you could write a simple app that acts as “the man in the middle” where the only task for that app is to forward event from monday ONLY if they are not initiated by the integration.</p>\n<p>Hope that helps a bit.</p>"
+    }
+  ]
+}

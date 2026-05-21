@@ -1,0 +1,72 @@
+{
+  "id": 98172,
+  "title": "Search on Phone column is not giving results",
+  "slug": "search-on-phone-column-is-not-giving-results",
+  "categoryId": 8,
+  "tagIds": [
+    94,
+    107,
+    165,
+    166,
+    167,
+    351
+  ],
+  "createdAt": "2024-09-23T11:38:10.129Z",
+  "lastPostedAt": "2024-09-26T08:52:05.191Z",
+  "postsCount": 7,
+  "excerpt": "I have a Clients board with Mobile (phone column). I use API to search the board and get the matching client id. \nPlease see the Clients board with values in the attached screenshot. \n  \nI use this query for search. \nque&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 26,
+  "posts": [
+    {
+      "id": 202083,
+      "postNumber": 1,
+      "createdAt": "2024-09-23T11:38:10.211Z",
+      "author": "arunicbe (Arun)",
+      "cookedHtml": "<p>I have a Clients board with Mobile (phone column). I use API to search the board and get the matching client id.</p>\n<p>Please see the Clients board with values in the attached screenshot.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/9/b/9b424265033ba8b465974b110eaa355bd9580731.png\" title=\"test\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/9/b/9b424265033ba8b465974b110eaa355bd9580731_2_690x160.png\" alt=\"test\" width=\"690\" height=\"160\" /><div class=\"meta\"><span class=\"filename\">test</span><span class=\"informations\">1427×332 38.8 KB</span></div></a></div><p></p>\n<p>I use this query for search.</p>\n<p>query { boards (ids: 1917599964) {<br />\nitems_page (query_params: {rules: [{column_id: “mobile”, compare_value: [“+912222333345”]}]}) {<br />\ncursor<br />\nitems {<br />\nid<br />\nname  \t<br />\n}<br />\n}<br />\n}<br />\n}</p>\n<p>I get this result even thourh there is row in the board with matching mobile number value.</p>\n<p>{“data”:{“boards”:[{“items_page”:{“cursor”:null,“items”:<span class=\"chcklst-box fa fa-square-o fa-fw\"></span>}}]},“account_id”:25600960}</p>\n<p>Need help to fix this.</p>"
+    },
+    {
+      "id": 202096,
+      "postNumber": 2,
+      "createdAt": "2024-09-23T12:50:14.339Z",
+      "author": "rachelatmonday (Rachel)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/arunicbe\">@arunicbe</a>,</p>\n<p>Welcome to the community!</p>\n<p>You’re missing the <code>operator</code> argument in your query (see more <a href=\"https://developer.monday.com/api-reference/reference/phone#filter-by-the-phone-column\">here</a>). Since you’re filtering by the phone number as a string, you would use <code>contains_text</code>.</p>\n<p>I added the operator and <strong>removed the + sign</strong> from the phone number string, and it successfully returned the items for me.</p>\n<p>Here’s the updated query:</p>\n<pre><code class=\"lang-auto\">query { boards (ids: 1917599964) {\nitems_page (query_params: {rules: [{column_id: \"mobile\", compare_value: [\"912222333345\"], operator:contains_text}]}) {\ncursor\nitems {\nid\nname\n}\n}\n}\n}\n</code></pre>\n<p>Let us know if you have other questions!</p>\n<p>Best,<br />\nRachel</p>"
+    },
+    {
+      "id": 202187,
+      "postNumber": 3,
+      "createdAt": "2024-09-24T00:15:21.748Z",
+      "author": "arunicbe (Arun)",
+      "cookedHtml": "<p>I just copied the query in my code. Now it is giving just null as result.</p>"
+    },
+    {
+      "id": 202256,
+      "postNumber": 4,
+      "createdAt": "2024-09-24T09:34:32.599Z",
+      "author": "arunicbe (Arun)",
+      "cookedHtml": "<p>I am using PHP to call the api. My full code is below:</p>\n&lt;?php\n$token = 'xxx';\n$apiUrl = 'https://api.monday.com/v2';\n$headers = ['Content-Type: application/json', 'Authorization: ' . $token];\n\n\t$query =\t'query { boards (ids: 1917599964) { ' .\n\t\t' items_page (query_params: {rules: [{column_id: \"mobile\", compare_value: [\"912222333345\"], operator:contains_text}]}) { ' .\n\t\t' cursor ' .\n\t\t' items { ' .\n\t\t' id ' .\n\t\t' name ' .\n\t\t' } ' .\n\t\t' } ' .\n\t\t' } ' .\n\t\t' } ' ;\n  \n$data = @file_get_contents($apiUrl, false, stream_context_create([\n 'http' =&gt; [\n  'method' =&gt; 'POST',\n  'header' =&gt; $headers,\n  'content' =&gt; json_encode(['query' =&gt; $query]),\n ]\n]));\n$responseContent = json_decode($data, true);\n\necho json_encode($responseContent);\n?&gt;\n<p>Upon investigation,  I found PHP showing warning like this.<br />\nWarning: file_get_contents(<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>): Failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found</p>\n<p>However, another api call I have is working fine.</p>"
+    },
+    {
+      "id": 202370,
+      "postNumber": 5,
+      "createdAt": "2024-09-25T04:17:39.658Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello there <a class=\"mention\" href=\"/u/arunicbe\">@arunicbe</a>,</p>\n<p>Our logs appear to indicate that the column you are trying to use (of ID “mobile”) is not being found.</p>\n<p>You can check the IDs of your board with a query like this one:</p>\n<pre><code class=\"lang-auto\">{\n  boards(ids: 1234567890) {\n    columns {\n      id\n      title\n    }\n  }\n}\n</code></pre>\n<p>Also, I recommend using something like this instead of your query:</p>\n<pre><code class=\"lang-auto\">{\n  items_page_by_column_values(\n    limit: 50\n    board_id: 1234567890\n    columns: [{column_id: \"phone__1\", column_values: [\"9720531111111\"]}]\n  ) {\n    cursor\n    items {\n      id\n      name\n    }\n  }\n}\n</code></pre>\n<p>I hope that helps!</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 202424,
+      "postNumber": 6,
+      "createdAt": "2024-09-25T13:54:02.242Z",
+      "author": "arunicbe (Arun)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://avatars.discourse-cdn.com/v4/letter/a/c2a13f/48.png\" class=\"avatar\" /> Arun:</div>\n<blockquote>\n<p>912222333345</p>\n</blockquote>\n</aside>\n<p>Both working. Thanks for your help.</p>"
+    },
+    {
+      "id": 202590,
+      "postNumber": 7,
+      "createdAt": "2024-09-26T08:52:05.191Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Happy to help <a class=\"mention\" href=\"/u/arunicbe\">@arunicbe</a> !!!</p>"
+    }
+  ]
+}

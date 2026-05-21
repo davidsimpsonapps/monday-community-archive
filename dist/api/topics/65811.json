@@ -1,0 +1,47 @@
+{
+  "id": 65811,
+  "title": "Merge Duplicate People",
+  "slug": "merge-duplicate-people",
+  "categoryId": 7,
+  "tagIds": [
+    120,
+    340
+  ],
+  "createdAt": "2023-09-13T02:55:54.446Z",
+  "lastPostedAt": "2026-01-19T05:27:00.042Z",
+  "postsCount": 4,
+  "excerpt": "This feature would be for any company that, for whatever reason, may have found themselves in a situation where a person using their Monday account has been added as a user more than once. \nI am requesting this feature b&hellip;",
+  "solvedPostId": null,
+  "likeCount": 2,
+  "views": 1333,
+  "posts": [
+    {
+      "id": 143269,
+      "postNumber": 1,
+      "createdAt": "2023-09-13T02:55:54.514Z",
+      "author": "KatieC (Katie Claessens)",
+      "cookedHtml": "<p>This feature would be for any company that, for whatever reason, may have found themselves in a situation where a person using their Monday account has been added as a user more than once.</p>\n<p>I am requesting this feature because this happened to us. There were two user profiles for the same person because they somehow got added with their maiden name, got married and changed their name and when someone went to assign something to them, their new name wasn’t listed, so they invited this person using their new married name. That made it so that some items were getting assigned to the maiden name profile and some items were getting assigned to the married name profile.</p>\n<p>Once we realized this, we looked for a feature that might allow us to take both profiles and merge them into one person so that anything each profile had to do with was all in one place. I spoke to a support pro at Monday who assured me that this feature does not yet exist. She showed me how to go about manually reassigning everything, which we will tediously accomplish, knowing it’s our only option, but this is what causes me to suggest a “Merge Duplicate People” feature here today.  Hope to see it on the list of coming update.  Thanks!!</p>"
+    },
+    {
+      "id": 182655,
+      "postNumber": 2,
+      "createdAt": "2024-05-07T18:39:03.449Z",
+      "author": "Otto_Maitre (Otto Maître)",
+      "cookedHtml": "<p>This is a significant need for my company, which has rebranded and thus transitioned Monday domains from <strong><a href=\"http://old-name.monday.com\" rel=\"noopener nofollow ugc\">old-name.monday.com</a></strong> to <strong><a href=\"http://new-name.monday.com\" rel=\"noopener nofollow ugc\">new-name.monday.com</a></strong>.  This caused every license like <strong><a href=\"mailto:user@old-name.com\">user@old-name.com</a></strong> to become a <strong>Guest</strong> account, and <strong>Member</strong> invitations were sent out to their new <strong><a href=\"mailto:user@new-name.com\">user@new-name.com</a></strong> emails.  So now we have duplicate licenses for many people, with activity on both the old and new licenses.</p>\n<p>As such, we cannot simply update the email addresses for the old licenses, because they will clash with the addresses for the new licenses.  Neither can we delete one license or the other, because they both have tasks assigned.</p>"
+    },
+    {
+      "id": 244339,
+      "postNumber": 3,
+      "createdAt": "2026-01-19T05:26:42.853Z",
+      "author": "NikosBosse (Nikos Bosse)",
+      "cookedHtml": "<p>It’s not in monday, but you you could easily solve your problem by using <a href=\"http://everyrow.io/dedupe\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">everyrow Session - Overview</a>. On the website, you can upload a csv file and deduplicate entries using AI. You only need to explain in plain language what constitutes a duplicate.</p>\n<p>Shortly after, you’ll see a screen with duplicates clustered together and a suggestion for which data to keep.</p>\n<p>You can also use the python sdk at <a href=\"https://github.com/futuresearch/everyrow-sdk/\" class=\"inline-onebox\" rel=\"noopener nofollow ugc\">GitHub - futuresearch/everyrow-sdk: SDK for everyrow.io: intelligent data utilities</a> if that’s helpful.</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/8/e8aacbf3595394e0993aefb520fed4a9ced76005.png\" title=\"image\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/8/e8aacbf3595394e0993aefb520fed4a9ced76005_2_689x462.png\" alt=\"image\" width=\"689\" height=\"462\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">2462×1650 408 KB</span></div></a></div><p></p>"
+    },
+    {
+      "id": 244340,
+      "postNumber": 4,
+      "createdAt": "2026-01-19T05:27:00.042Z",
+      "author": "rafaelpoyiadzi (Rafael Poyiadzi)",
+      "cookedHtml": "<pre><code class=\"lang-auto\">One approach for this problem is to use LLMs. At [everyrow.io](https://everyrow.io) we have developed a deduplication algorithm that uses LLMs, allowing us to do semantic matching rather than just string matching. It catches exactly the kind of cases you're describing - like recognising that \"Jane Smith\" (maiden name) and \"Jane Johnson\" (married name) are the same person when other context clues match.\n\nHere's an example on 200 user records:\n\n**Before (raw user data):**\n| name | email | department |\n|------|-------|------------|\n| A. Butoi | alexandra.butoi@company.com | Engineering |\n| Alexandra Butoi | alex.butoi@company.com | Engineering |\n| Jane Smith | jane.s@company.com | Marketing |\n| Jane Johnson | jane.johnson@company.com | Marketing |\n| T. Gupta | tejus.g@company.com | Sales |\n| Tejus Gupta | tejusg@company.com | Sales |\n\n**After (duplicates identified):**\n| name | selected | equivalence_class |\n|------|----------|-------------------|\n| A. Butoi | False | Alexandra Butoi |\n| Alexandra Butoi | ✓ True | Alexandra Butoi |\n| Jane Smith | False | Jane Johnson |\n| Jane Johnson | ✓ True | Jane Johnson |\n| T. Gupta | False | Tejus Gupta |\n| Tejus Gupta | ✓ True | Tejus Gupta |\n\nThe code:\n\n```python\nfrom everyrow import create_client, create_session\nfrom everyrow.ops import dedupe\nimport pandas as pd\n\nasync def find_duplicate_users():\n    df = pd.read_csv(\"users.csv\")\n    \n    async with create_client() as client:\n        async with create_session(client, name=\"Monday User Dedupe\") as session:\n            result = await dedupe(\n                session=session,\n                input=df,\n                equivalence_relation=\"\"\"\n                Two rows are duplicates if they represent the same person.\n                Consider:\n                - Name changes (maiden name → married name)\n                - Name abbreviations (J. Smith = John Smith)\n                - Similar email patterns for the same person\n                - Same department/role context\n                \"\"\",\n            )\n            return result.data\n```\n\n**Results:**\n- Input: 200 rows\n- Unique users found: 156 (identified 44 duplicate profiles)\n- Row accuracy: **98%**\n- Cost: **$0.42**\n- Time: **90 seconds**\n\nWhat it catches:\n- Name abbreviations: \"A. Butoi\" ↔ \"Alexandra Butoi\"\n- Name changes: maiden name ↔ married name (when email/context matches)\n- Typos: \"Namoi Saphra\" ↔ \"Naomi Saphra\"\n- 95% accuracy on \"distractors\" (same first name, different person)\n\nThe output gives you grouped duplicates with a recommended \"keep\" profile, so you know exactly which assignments need to be consolidated.\n\nFull session with AI reasoning: https://everyrow.io/sessions/807c86d8-7ec9-462b-9eea-3b8fc1084512/public\n\nLink to the SDK: https://github.com/futuresearch/everyrow-sdk\nOn pypi: https://pypi.org/project/everyrow/\n\n</code></pre>"
+    }
+  ]
+}

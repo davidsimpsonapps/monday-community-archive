@@ -1,0 +1,71 @@
+{
+  "id": 9402,
+  "title": "Using the API to create a pulse with JIRA ticket details from a JIRA state change",
+  "slug": "using-the-api-to-create-a-pulse-with-jira-ticket-details-from-a-jira-state-change",
+  "categoryId": 58,
+  "tagIds": [
+    55,
+    94,
+    105,
+    203,
+    234
+  ],
+  "createdAt": "2020-07-25T09:35:39.614Z",
+  "lastPostedAt": "2023-01-22T11:42:31.123Z",
+  "postsCount": 7,
+  "excerpt": "Hi all, \nThis has been a real struggle to get done but with help from this community and others I’ve done it and wanted to share (plus ask for alternative/better methods). \nGoal: Make creating release notes a less manual&hellip;",
+  "solvedPostId": null,
+  "likeCount": 3,
+  "views": 5333,
+  "posts": [
+    {
+      "id": 23636,
+      "postNumber": 1,
+      "createdAt": "2020-07-25T09:35:39.685Z",
+      "author": "simonWT (Simon Burnett)",
+      "cookedHtml": "<p>Hi all,</p>\n<p>This has been a real struggle to get done but with help from this community and others I’ve done it and wanted to share (plus ask for alternative/better methods).</p>\n<p><strong>Goal</strong>: Make creating release notes a less manual task<br />\n<strong>Environment</strong>: JIRA Cloud for day to day development workflow, Monday for housing release notes (among loads of other uses).<br />\n<strong>Constraints</strong>: JIRA not available to whole business (license costs) but Monday is.</p>\n<p><strong>Summary</strong>:<br />\nThere is a JIRA integration but it didn’t quite do what i wanted. So, I set up a Post Function from JIRA that ran a ScriptRunner script (JIRA add on) to fire a Create_Item mutation,  with Column_Values, on a particular board then updated that item using Create Update to add the JIRA ticket description as an pulse update (as i prefer this to adding a large amount of text to a column field).</p>\n<p>Here’s my ScriptRunner script so someone else might find it useful:</p>\n<pre><code>import groovy.json.JsonSlurper\n\ndef apiToken = '&lt;YOUR API TOKEN HERE&gt;'\ndef slurper = new JsonSlurper()\n\ndef issueKey = issue.key\ndef issueSummary = issue.fields.summary\ndef issueType = issue.fields.issuetype\ndef issueDescription = issue.fields.description\ndef todaysDate = new Date().format( 'yyyy-MM-dd' )\ndef jiraURL = \"&lt;YOUR JIRA URL HERE&gt;\"\n\n\n\ndef msg1 = [\n        query : 'mutation{create_item (board_id: &lt;TARGET BOARD&gt;,group_id:\"&lt;TARGET GROUP&gt;\",item_name: \"' + issueSummary + '\"' +\n        ',column_values:\"{'+\n        '\\\\\\\"text1\\\\\\\":\\\\\\\"'+issueKey+'\\\\\\\"'+\n        ',\\\\\\\"link\\\\\\\":{\\\\\\\"url\\\\\\\":\\\\\\\"'+ jiraURL + issueKey +'\\\\\\\",\\\\\\\"text\\\\\\\":\\\\\\\"'+issueKey+'\\\\\\\"}'+\n        ',\\\\\\\"date\\\\\\\":{\\\\\\\"date\\\\\\\":\\\\\\\"'+todaysDate+'\\\\\\\"}'+\n        '}\") {id}}' \n]\n\n\nHttpResponse&lt;String&gt; jsonResp = post('https://api.monday.com/v2')\n        .header('Content-Type', 'application/json')\n        .header('Authorization', \"${apiToken}\")\n        .body(msg1)\n        .asString()\n\n\ndef result = slurper.parseText(jsonResp.body)\nInteger iid = result[\"data\"][\"create_item\"][\"id\"] as Integer\n\ndef msg2 = [\n        query : 'mutation{create_update (item_id: '+iid+', body: \"'+issueDescription+'\") {id}}' \n]\n\npost('https://api.monday.com/v2')\n        .header('Content-Type', 'application/json')\n        .header('Authorization', \"${apiToken}\")\n        .body(msg2)\n        .asString()\n</code></pre>\n<p>So now, when a ticket moves into the appropriate state, a monday pulse is created with the core data and the description field in the JIRA ticket gets added.</p>\n<p>I’m sure we will change this to make improvements but at the moment i’m just pleased it’s working!</p>\n<p>I hope someone else finds this useful and if there’s any questions then i can go into more detail about the JIRA part. Or, if anyone has ideas to improve it then i’ll gladly take those too <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=12\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers<br />\nSimon</p>"
+    },
+    {
+      "id": 23992,
+      "postNumber": 2,
+      "createdAt": "2020-07-29T12:35:31.625Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/simonwt\">@simonWT</a> <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" /></p>\n<p>Thank you SO much for sharing this and I am sorry it took us so long to respond! An amazing effort like this definitely should be noticed <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I really appreciate you giving back to the community like this! I’ll also share this solution with our product team - perhaps we can work on implementing this kind of integration in our native Jira integrations.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 24062,
+      "postNumber": 3,
+      "createdAt": "2020-07-30T05:35:09.604Z",
+      "author": "simonWT (Simon Burnett)",
+      "cookedHtml": "<p>Hi Alex <img src=\"https://emoji.discourse-cdn.com/apple/wave.png?v=9\" title=\":wave:\" class=\"emoji\" alt=\":wave:\" />, thanks for the note, very kind of you <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>If I make any drastic changes i’ll post the results (i can seem some result parsing inefficiency that i’ll tackle)</p>\n<p>Cheers<br />\nSimon</p>"
+    },
+    {
+      "id": 24302,
+      "postNumber": 4,
+      "createdAt": "2020-08-01T05:59:41.802Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/simonwt\">@simonWT</a></p>\n<p>That’s awesome, thank you so much <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=9\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Have an awesome day.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 31060,
+      "postNumber": 5,
+      "createdAt": "2020-10-13T18:26:19.933Z",
+      "author": "mliang (Mike Liang)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/simonwt\">@simonWT</a><br />\nThanks for this script to create the connection between Jira and Monday.<br />\nI was tasked with updating the status of the JIRA ticket to monday along with the jira issue id and epic link. Tried using 3rd party tools but wasn’t working completely.</p>\n<p>I am trying to run the script in JIRA however, I am getting an error below pointing to the jsonResp*<br />\nCan you also provide more information or if you have done any updates since to make this script run? Is there an import that I’m missing?</p>\n<p>The script could not be compiled:<br />\norg.codehaus.groovy.control.MultipleCompilationErrorsException: startup failed:<br />\nScript123.groovy: 25: unable to resolve class HttpResponse<br />\n@ line 25, column 22.<br />\nHttpResponse jsonResp = post(‘<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>’)</p>\n<p>For group_id, Monday does have data for board and item id. However I can’t find the group id, can you provide how you would find it?</p>\n<p>Thanks!</p>"
+    },
+    {
+      "id": 31207,
+      "postNumber": 6,
+      "createdAt": "2020-10-15T08:20:20.354Z",
+      "author": "simonWT (Simon Burnett)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/mliang\">@mliang</a><br />\nMy script is sitting in a Post Function on a transition and the only “import” i’ve had to add is the JSON one. Is yours in a PF too?</p>\n<p>I can see you haven’t got the &lt; String &gt; type part so maybe try adding that in?</p>\n<p>Cheers<br />\nS</p>"
+    },
+    {
+      "id": 111701,
+      "postNumber": 7,
+      "createdAt": "2023-01-22T11:42:31.123Z",
+      "author": "Sri (Sri)",
+      "cookedHtml": "<p>Thank you, Simon. My business need is to copy/sync the comments between Jira issue and <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> item. Can you help me how to achieve this?</p>"
+    }
+  ]
+}

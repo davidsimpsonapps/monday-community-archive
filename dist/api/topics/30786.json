@@ -1,0 +1,83 @@
+{
+  "id": 30786,
+  "title": "How can I map to exact Status values?",
+  "slug": "how-can-i-map-to-exact-status-values",
+  "categoryId": 8,
+  "tagIds": [
+    5,
+    208,
+    351
+  ],
+  "createdAt": "2022-01-31T15:46:03.885Z",
+  "lastPostedAt": "2022-02-20T11:15:21.219Z",
+  "postsCount": 9,
+  "excerpt": "Use case: Our platform has 4 fixed states for action item and when we syncing changes from our side to Monday it works well because Status column can support any values even when they are not created. \nProblem: users wan&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 2665,
+  "posts": [
+    {
+      "id": 75575,
+      "postNumber": 1,
+      "createdAt": "2022-01-31T15:46:03.975Z",
+      "author": "Severyn (Severyn Vehera)",
+      "cookedHtml": "<p>Use case: Our platform has 4 <strong>fixed</strong> states for action item and when we syncing changes from our side to Monday it works well because Status column can support any values even when they are not created.</p>\n<p>Problem: users want to have them mapped to specific status values in the Monday. e.g. “Paused” in our platform would be equal to “Stuck” in Monday etc. Does Monday provides such possibilities? Also we are considering to sync changes from Monday to our platform and it will be the same issue.</p>"
+    },
+    {
+      "id": 75845,
+      "postNumber": 2,
+      "createdAt": "2022-02-02T08:08:19.943Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/severyn\">@Severyn</a>,</p>\n<p>Do you want to keep your original labels in Monday and then create the new ones or do you only want to “pair” the new labels with the existing labels so that whenever someone (for example) creates an item with a “paused” label, it transforms into a “stuck” label?</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" /></p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 76411,
+      "postNumber": 3,
+      "createdAt": "2022-02-07T14:33:41.372Z",
+      "author": "Severyn (Severyn Vehera)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> the second one  - whenever someone (for example) creates an item with a “paused” label, it transforms into a “stuck” label</p>"
+    },
+    {
+      "id": 76480,
+      "postNumber": 4,
+      "createdAt": "2022-02-08T07:45:48.917Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello again,</p>\n<p>Matias here!</p>\n<p>You would have to do that on your end. You would need to create an app with an integration feature that populates or updates the values in that status column and on your server, you would need to “transform” the coming statuses into the ones that are present in the board, and then send the board’s status to the column.</p>\n<p>Hope this helps!</p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 76834,
+      "postNumber": 5,
+      "createdAt": "2022-02-10T14:49:07.825Z",
+      "author": "Severyn (Severyn Vehera)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> I have an idea how to implement this but it feels <strong>wrong</strong>.</p>\n<p>I want to create a “<strong>configuration</strong>” recipe that in trigger part of recipe will have allow user to select specific “Status” column and select mappings for each status from our platform. The action part of recipe will do nothing because I am only interested to save data that user provided in a trigger part on the server and later use it when creating items on the related board.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/2X/2/2622e02581ca3488a3bfe379d72d03b776f116de.png\" title=\"ConfigurationTrigger\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/2X/2/2622e02581ca3488a3bfe379d72d03b776f116de_2_690x294.png\" alt=\"ConfigurationTrigger\" width=\"690\" height=\"294\" /><div class=\"meta\">\n<span class=\"filename\">ConfigurationTrigger</span><span class=\"informations\">1855×791 44.5 KB</span>\n</div></a></div><p></p>\n<p>The subscribe URL for trigger will be like : “<strong>addStatusMapping</strong>”  and unsubscribe url will be “<strong>removeStatusMapping</strong>” and I am not going to call webhookUrl that will be in payload for subscribe URL I only interested in the input fields for the status mapping.</p>\n<p>I understand that trigger and action are not supposed do to this job but I do not see any other way.<br />\n<a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> Please let me know what do you think about this.</p>"
+    },
+    {
+      "id": 76914,
+      "postNumber": 6,
+      "createdAt": "2022-02-11T04:16:54.027Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/severyn\">@Severyn</a>!</p>\n<p>Oh! In that case you will most likely want to use <a href=\"https://apps.developer.monday.com/docs/dynamic-mapping\">item mapping</a>.</p>\n<p>You would need to create a <a href=\"https://apps.developer.monday.com/docs/custom-fields\">custom field</a> of the type “dynamic mapping” that in this case would be an entity of your platform, and in it you would pass the different fields you have on your end with the type of each one.</p>\n<p>You would need to use in your custom trigger, your custom field and the item ID as output fields and then in your action you would need to have that custom field and the item ID from the trigger, and the board ID from the context.</p>\n<p>Then when the user adds the recipe to the board you would get your webhook URL, but you would not get the fields selected by the user. This information will be passed to you when you call your webhook URL (passing the information of this custom field (an object with <code>field ID: value</code>)). Then your action’s run URL would get the mapping in an object with: <code>monday's column ID: value from custom field</code>.</p>\n<p>If you only need to create the items (and not update them), you could also build this using a built-in action that supports item mapping (create an item on this board).</p>\n<p>Does this make sense?</p>\n<p>Cheers,<br />\nMatias</p>"
+    },
+    {
+      "id": 76931,
+      "postNumber": 7,
+      "createdAt": "2022-02-11T08:15:16.270Z",
+      "author": "Severyn (Severyn Vehera)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/matias.monday\">@Matias.Monday</a> AFAIK item mapping allows only to map fields from external platform to columns but it doesn’t allow to map to <strong>column values</strong>.<br />\nWe already using it and defined 4 fields that mapped form our platform: Description, Created Date, Due date and <strong>Status</strong>.  Status from our platform can only have 4 static values (Approved, In Progress, Paused and Resolved) but Status column on Monday can have arbitrary value. We want to allow users define how status column values will be mapped.</p>\n<p>We want to update item with future changes from our platform</p>"
+    },
+    {
+      "id": 77079,
+      "postNumber": 8,
+      "createdAt": "2022-02-13T11:15:18.397Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Hello <a class=\"mention\" href=\"/u/severyn\">@Severyn</a>!</p>\n<p>I would like to take a closer look into this if that is OK with you.</p>\n<p>Could you send us an email to <a href=\"mailto:appsupport@monday.com\">appsupport@monday.com</a> so we can work in a solution together? Please mention this post in your email.</p>\n<p>Looking forward to hearing from you <img src=\"https://emoji.discourse-cdn.com/apple/slightly_smiling_face.png?v=12\" title=\":slightly_smiling_face:\" class=\"emoji\" alt=\":slightly_smiling_face:\" width=\"20\" height=\"20\" /></p>\n<p>Cheers,<br />\n-Matias</p>"
+    },
+    {
+      "id": 77800,
+      "postNumber": 9,
+      "createdAt": "2022-02-20T11:15:21.219Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}

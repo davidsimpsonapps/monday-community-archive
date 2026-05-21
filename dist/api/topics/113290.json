@@ -1,0 +1,54 @@
+{
+  "id": 113290,
+  "title": "How to obtain signin secret from user?",
+  "slug": "how-to-obtain-signin-secret-from-user",
+  "categoryId": 8,
+  "tagIds": [
+    208,
+    351
+  ],
+  "createdAt": "2025-04-17T02:02:12.774Z",
+  "lastPostedAt": "2025-04-22T05:22:50.339Z",
+  "postsCount": 5,
+  "excerpt": "Hi @basdebruin , \nI hope you’re doing well. \nI’m new to monday.com and currently working on a quickstart-fullstack-react-node app. I’m facing a couple of challenges related to authentication and integration setup, and I &hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 22,
+  "posts": [
+    {
+      "id": 227195,
+      "postNumber": 1,
+      "createdAt": "2025-04-17T02:02:12.869Z",
+      "author": "Kithi (Arokiya Kithiyon)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> ,</p>\n<p>I hope you’re doing well.</p>\n<p>I’m new to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> and currently working on a <code>quickstart-fullstack-react-node</code> app. I’m facing a couple of challenges related to <strong>authentication and integration setup</strong>, and I would appreciate your guidance.</p>\n<h3><a name=\"p-227195-h-1-app-signing-secret-for-authentication-1\" class=\"anchor\" href=\"#p-227195-h-1-app-signing-secret-for-authentication-1\"></a>1. App Signing Secret for Authentication</h3>\n<p>To verify incoming requests from <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> to my backend, I understand that I need to use the app’s <strong>signing secret</strong>. However, I’m unsure about:</p>\n<ul>\n<li>\n<p>How to <strong>obtain the signing secret</strong> for each user or account using the app.</p>\n</li>\n<li>\n<p>How to <strong>securely store this secret</strong> in my backend—ideally in the <code>.env</code> file—and whether it changes per user or remains static for the app.</p>\n</li>\n</ul>\n<h3><a name=\"p-227195-h-2-custom-trigger-and-custom-action-integration-2\" class=\"anchor\" href=\"#p-227195-h-2-custom-trigger-and-custom-action-integration-2\"></a>2. Custom Trigger and Custom Action Integration</h3>\n<p>I’ve built a <strong>custom trigger</strong> and a <strong>custom action</strong> in my <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> app. Here’s how the flow is set up:</p>\n<ul>\n<li>When an event occurs in my external system, it sends a payload to our <strong>middleware</strong> through a webhook.</li>\n<li>The middleware processes this data and then forwards it to the <strong>webhook URL</strong> provided by the <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> custom trigger.</li>\n<li>This is supposed to trigger the <strong>custom action</strong>, which will then make an <strong>API request to <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a></strong> (e.g., to update a board or item).</li>\n</ul>\n<p>However, when the middleware makes a request to the custom action’s webhook URL, I’m getting an <strong>“authentication failed”</strong> error.</p>\n<h3><a name=\"p-227195-what-ive-tried-3\" class=\"anchor\" href=\"#p-227195-what-ive-tried-3\"></a>What I’ve Tried</h3>\n<ul>\n<li>I tried using the <strong>signing secret</strong> in the request header to authorize the request to the webhook URL.</li>\n<li>I also verified that the payload structure matches the expected format for the custom trigger.</li>\n<li>Despite this, the request fails with an authentication error, and I’m unsure whether I’m missing a specific header, token, or step in the flow.</li>\n</ul>\n<h3><a name=\"p-227195-questions-4\" class=\"anchor\" href=\"#p-227195-questions-4\"></a>Questions</h3>\n<ul>\n<li>How should I <strong>correctly authorize</strong> a request to the webhook URL obtained from a custom trigger?</li>\n<li>Should I use a <strong>short-lived token</strong> instead of the signing secret?</li>\n<li>Is there any example or documentation you can point me to that explains how the authentication for custom actions should work, especially when sending data from an external system?</li>\n</ul>\n<p>Thank you so much for your help and guidance. I’m really excited to continue building on <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> and hope to resolve these issues soon.</p>\n<p>Thanks,<br />\nKithiyon</p>"
+    },
+    {
+      "id": 227244,
+      "postNumber": 2,
+      "createdAt": "2025-04-17T12:53:40.541Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>hi <a class=\"mention\" href=\"/u/kithi\">@Kithi</a></p>\n<p>Not sure this is the exact answer you are after. If you use seamless authentication monday will send you an encrypted shortLivedToken when posting to your app’s action endpoint. The header contains the authorization which can be used to:</p>\n<ol>\n<li>verify the post is signed correctly</li>\n<li>retrieve the shortLivedToken</li>\n</ol>\n<p>For (1) you probably want to add some middleware in your routes, like:</p>\n<pre><code class=\"lang-auto\">router.post(\"/app-end-point/recipeaction\", authenticationMiddleware.authMonday, autoIdColumnController.recipeAction);\n</code></pre>\n<p>In this case the middleware  (authenticationMiddleware.authMonday) verifies the post with:</p>\n<pre><code class=\"lang-auto\">async function authMonday(req, res, next) {\n\n  try {\n    let { authorization } = req.headers;\n    let { challenge } = req.body;\n    //The challenge from the webhook is not signed\n    if (challenge) return next();\n    if (!authorization &amp;&amp; req.query) {\n      authorization = req.query.shortLivedToken;\n    }\n    const { accountId, userId, backToUrl } = jwt.verify(authorization, mySigningSecret);\n    req.session = { accountId, userId, backToUrl };\n    next();\n  } catch (err) {\n    res.status(401).json({ error: \"not authenticated\" });\n  }\n}\n</code></pre>\n<p>The variable mySigningSecret can be found on your app’s page in the Developers section.<br />\n</p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/e/4/e46166c6c8fa32fdc9315dd63bd175c73143f818.png\" title=\"image\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/e/4/e46166c6c8fa32fdc9315dd63bd175c73143f818_2_690x67.png\" alt=\"image\" width=\"690\" height=\"67\" /><div class=\"meta\"><span class=\"filename\">image</span><span class=\"informations\">1375×134 7.87 KB</span></div></a></div><p></p>\n<p>For (2) your action endpoint can do something like this:</p>\n<pre><code class=\"lang-auto\">const { accountId, userId, aud, exp, iat, shortLivedToken } = jwt.verify(authorization, mySigningSecret);\n</code></pre>\n<p>to obtain the shortLivedToken. This token can be used in all monday API calls.</p>\n<p>In general the .env file is not the best place to store secrets, just Google “is nodejs .env file safe for secrets”</p>"
+    },
+    {
+      "id": 227297,
+      "postNumber": 3,
+      "createdAt": "2025-04-18T03:40:39.648Z",
+      "author": "Kithi (Arokiya Kithiyon)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p><strong>1. How to handle signing secret for production users?</strong></p>\n<p>I understand that I need the <strong>signing secret</strong> to retrieve the short-lived token from a <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> request.</p>\n<p>For testing, I manually copied the signing secret from my developer account and added it to my Node.js <code>.env</code> file. However, when our app goes live, how should I obtain the signing secret for each user?</p>\n<ul>\n<li>Should I ask the user to enter it manually via the UI?</li>\n<li>Or is there an official method or workaround provided by the <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> platform to access it securely?</li>\n</ul>\n<hr />\n<p><strong>2. Unauthorized error while forwarding Twilio webhook payload</strong></p>\n<p>I have a <strong>custom trigger</strong> in my <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> app, which provides a <code>webhookUrl</code>.<br />\nSeparately, I’ve created a <strong>webhook in Twilio</strong>, with its callback URL pointing to our own middleware endpoint.</p>\n<p>Here’s the flow:</p>\n<ol>\n<li>Twilio sends the payload to our middleware.</li>\n<li>Our middleware processes it.</li>\n<li>We forward the payload to <a href=\"http://Monday.com\" rel=\"noopener nofollow ugc\">Monday.com</a> using the <code>webhookUrl</code> received from the custom trigger.</li>\n</ol>\n<p>However, when sending this request to the <code>webhookUrl</code>, I get an <strong>“Unauthorized”</strong> error.<br />\nI’m using my <strong>Monday API token</strong> to make the request.</p>\n<p>Is there something I’m missing regarding authentication when calling the <code>webhookUrl</code> from a backend service?</p>\n<p></p><div class=\"lightbox-wrapper\"><a class=\"lightbox\" href=\"https://global.discourse-cdn.com/monday/original/3X/1/8/1845d3f481d742d63132ce2acb8d4a0232e97f4c.png\" title=\"middleware_code\" rel=\"noopener nofollow ugc\"><img src=\"https://global.discourse-cdn.com/monday/optimized/3X/1/8/1845d3f481d742d63132ce2acb8d4a0232e97f4c_2_690x265.png\" alt=\"middleware_code\" width=\"690\" height=\"265\" /><div class=\"meta\"><span class=\"filename\">middleware_code</span><span class=\"informations\">4220×1622 360 KB</span></div></a></div><p></p>\n<p>Any help or guidance would be greatly appreciated!<br />\nThanks in advance <img src=\"https://emoji.discourse-cdn.com/apple/folded_hands.png?v=14\" title=\":folded_hands:\" class=\"emoji\" alt=\":folded_hands:\" width=\"20\" height=\"20\" /></p>"
+    },
+    {
+      "id": 227326,
+      "postNumber": 4,
+      "createdAt": "2025-04-18T04:08:57.577Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>The signing secret is for the app, it is not per user. You should store it in a safe place where you retrieve it through NodeJS code.</p>\n<p>The webhook in monday send a post to the endpoint when the criteria is met (e.g. wehn a new item is created send a webhook). You can’t post to that webhook from an outside app.</p>"
+    },
+    {
+      "id": 227476,
+      "postNumber": 5,
+      "createdAt": "2025-04-22T05:22:50.339Z",
+      "author": "Kithi (Arokiya Kithiyon)",
+      "cookedHtml": "<p>Hi <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a></p>\n<p>Thank you. If I had any doubt, I would ask here.</p>"
+    }
+  ]
+}

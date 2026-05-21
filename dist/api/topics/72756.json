@@ -1,0 +1,42 @@
+{
+  "id": 72756,
+  "title": "Help needed with new API queries for Power BI reports",
+  "slug": "help-needed-with-new-api-queries-for-power-bi-reports",
+  "categoryId": 8,
+  "tagIds": [
+    127,
+    203,
+    406,
+    460
+  ],
+  "createdAt": "2023-12-11T08:37:07.478Z",
+  "lastPostedAt": "2023-12-11T13:15:53.678Z",
+  "postsCount": 2,
+  "excerpt": "Hi - over several weeks I have tried to update the 2 lovely all-purpose queries I have been using for all of my PowerBI reports against monday.com. I am now pulling the last of my hairs out… I am not an expert query writ&hellip;",
+  "solvedPostId": null,
+  "likeCount": 0,
+  "views": 1048,
+  "posts": [
+    {
+      "id": 157217,
+      "postNumber": 1,
+      "createdAt": "2023-12-11T08:37:07.629Z",
+      "author": "Demmo (Graeme Dempsey)",
+      "cookedHtml": "<p>Hi - over several weeks I have tried to update the 2 lovely all-purpose queries I have been using for all of my PowerBI reports against <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a>. I am now pulling the last of my hairs out… I am not an expert query writer and am just getting frustrated now!  I had 1 query for all items in a selected board and 1 query for all sub-items (and then related them in Power BI). I just need all-purpose queries that will handle 500-1000 items, give me the contents of the subitem column and give me MirrorValue and BoardRelationValue data… I need the whole query, not just the GraphQL - so that I can drop into a Power BI dataflow.</p>\n<p>THIS WAS MY ITEMS QUERY…<br />\nlet<br />\nKey = “”,<br />\nBoard = “”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) { items { id, name, updated_at, group { title }, columns: column_values { title, text } } } }””}”)<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, {“ID”, “Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\n#“Monday” = Table.FromRecords(Table.TransformRows(Data, each<br />\nList.Accumulate([Columns], [<br />\nID = [ID],<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[title], current[text]) )<br />\n))<br />\nin<br />\n#“Monday”</p>\n<p>THIS WAS MY SUBITEMS QUERY…<br />\nlet<br />\nKey = “”,<br />\nBoard = “”,<br />\nSource = Web.Contents(<br />\n“<a href=\"https://api.monday.com/v2\" rel=\"noopener nofollow ugc\">https://api.monday.com/v2</a>”,<br />\n[<br />\nHeaders=[<br />\n#“Method”=“POST”,<br />\n#“Content-Type”=“application/json”,<br />\n#“Authorization”=“Bearer \" &amp; Key<br />\n],<br />\nContent=Text.ToBinary(”{““query””: ““query { boards(ids: \" &amp; Board &amp; “) { items {parent_item {id}, id, name, updated_at, group { title }, columns: column_values { title, text } } } }””}”)<br />\n]<br />\n),<br />\nData = Table.FromList(Json.Document(Source)[data][boards]{0}[items], Record.FieldValues, { “ParentItem”, “ID”, “Title”, “UpdatedAt”, “Group”, “Columns”}),<br />\nMonday = Table.FromRecords(Table.TransformRows(Data, each<br />\nList.Accumulate([Columns], [<br />\nParent = [ParentItem],<br />\nID = [ID],<br />\nTitle = [Title],<br />\nUpdateDate = [UpdatedAt],<br />\nGroup = [Group][title]<br />\n], (state, current) =&gt; Record.AddField(state, current[title], current[text]) )<br />\n))<br />\nin<br />\n#“Monday”</p>"
+    },
+    {
+      "id": 157261,
+      "postNumber": 2,
+      "createdAt": "2023-12-11T12:48:12.693Z",
+      "author": "Matias.Monday (Matias)",
+      "cookedHtml": "<p>Joseph is replying to this one.</p>"
+    },
+    {
+      "id": 157273,
+      "postNumber": 3,
+      "createdAt": "2023-12-11T13:15:53.678Z",
+      "author": "regnidem (Mike)",
+      "cookedHtml": "<p>You might want to check out <a href=\"https://community.monday.com/t/using-power-bi-to-retrieve-boards-using-cursor-based-pagination/70535\">this post</a> about the new API and pagination requirements for Power BI.  It, and the linked github page in that post, have been very helpful to me.</p>\n<p>Side note, I am also incredibly frustrated at this API change.  It broke literal weeks worth of work and I’m still in the process of redoing everything.  I don’t know who at Monday I could even talk to, but if someone from the company reads this: the change is dumb and ill concieived and incredibly inconvenient and if I had any say in what tools my company used, I would drop <a href=\"http://monday.com\" rel=\"noopener nofollow ugc\">monday.com</a> out of spite just for the amount of work I’m redoing.</p>"
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "id": 25014,
+  "title": "Mutate tag with json",
+  "slug": "mutate-tag-with-json",
+  "categoryId": 8,
+  "tagIds": [
+    13,
+    94,
+    114,
+    351
+  ],
+  "createdAt": "2021-09-17T18:56:46.746Z",
+  "lastPostedAt": "2021-09-30T06:09:16.244Z",
+  "postsCount": 13,
+  "excerpt": "I can’t figure out how to structure my json obj to update/create a tag based on the GraphQL documentation… \nshow: {\n   tag_name: showAbbr\n},\n\nshow is the column id, showAbbr is a string",
+  "solvedPostId": null,
+  "likeCount": 1,
+  "views": 2823,
+  "posts": [
+    {
+      "id": 63895,
+      "postNumber": 1,
+      "createdAt": "2021-09-17T18:56:46.821Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p>I can’t figure out how to structure my json obj to update/create a tag based on the GraphQL documentation…</p>\n<pre><code class=\"lang-auto\">show: {\n   tag_name: showAbbr\n},\n</code></pre>\n<p>show is the column id, showAbbr is a string</p>"
+    },
+    {
+      "id": 63905,
+      "postNumber": 2,
+      "createdAt": "2021-09-18T05:06:54.603Z",
+      "author": "basdebruin (Bas de Bruin)",
+      "cookedHtml": "<p>See <a href=\"https://developer.monday.com/api-reference/docs/tags-queries#create-or-get-a-tag\" class=\"inline-onebox\">Tags</a></p>\n<p>The create_or_get_tag is defining the tag on the board, if you want to set the flag to an item you should use the change_column_value mutation.</p>"
+    },
+    {
+      "id": 63968,
+      "postNumber": 3,
+      "createdAt": "2021-09-20T05:00:47.480Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p>As <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a> said, you need to create or retrieve an existing tag using the following mutation:</p>\n<pre><code class=\"lang-auto\">mutation {\n  create_or_get_tag (tag_name: \"my_tag\") {\n    id\n  }\n}\n</code></pre>\n<p>Then proceed with the regular mutation</p>\n<pre><code class=\"lang-auto\">mutation {\n  change_column_value (board_id: 123, item_id: 456 column_id: \"tags\", value: \"{\\\"tags\\\" : {\\\"tag_ids\\\" : [789,123]}}\") {\n    id\n  }\n}\n</code></pre>\n<p>Just to let you know that there are currently a couple of bugs when you assign tags to an item thru API:</p>\n<ol>\n<li>The new tag, if not already shown by another item, doesn’t appear. You need to refresh the page to see it;</li>\n<li>Tags created thru API don’t appear in the dropdown list.</li>\n</ol>\n<p>Monday devs (<a class=\"mention\" href=\"/u/dipro\">@dipro</a>) are already aware of the problem.</p>"
+    },
+    {
+      "id": 63972,
+      "postNumber": 4,
+      "createdAt": "2021-09-20T08:21:58.933Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p>Hey <a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a>,</p>\n<p>Thanks for reaching out! I believe we’ve also just been able to respond to this via email.</p>\n<p>I really appreciate your help here, <a class=\"mention\" href=\"/u/rob\">@rob</a>  and <a class=\"mention\" href=\"/u/basdebruin\">@basdebruin</a>! Thanks so much for sharing your insights here.</p>\n<p>Please let us know if the suggestions above help, Shawn <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /> We’d be glad to hear back from you.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64018,
+      "postNumber": 5,
+      "createdAt": "2021-09-20T15:09:30.099Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rob\">@rob</a> , <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a><br />\nHow does this look in Json format? If I’m sending variables to the mutation…</p>\n<pre><code class=\"lang-auto\">show: {\n    create_or_get_tag: {\n        tag_name: showAbbr\n    }\n}\n</code></pre>"
+    },
+    {
+      "id": 64044,
+      "postNumber": 6,
+      "createdAt": "2021-09-21T04:52:27.687Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a> JSON syntax is not correct.<br />\nIn addition, <code>tag_name</code> must me an attribute of <code>create_or_get_tag</code> options.</p>\n<p>Here’s official documentation on how to create or get an existing tag:<br />\n<a href=\"https://developer.monday.com/api-reference/docs/tags-queries#create-or-get-a-tag\">https://developer.monday.com/api-reference/docs/tags-queries#create-or-get-a-tag</a></p>\n<p>Once you get the tag ID, use it to assign a tag to an item:<br />\n<a href=\"https://developer.monday.com/api-reference/docs/tags\">https://developer.monday.com/api-reference/docs/tags</a></p>"
+    },
+    {
+      "id": 64045,
+      "postNumber": 7,
+      "createdAt": "2021-09-21T05:00:54.499Z",
+      "author": "rob (Roberto Tremonti)",
+      "cookedHtml": "<aside class=\"quote no-group\">\n<div class=\"title\">\n<div class=\"quote-controls\"></div>\n<img alt=\"\" width=\"24\" height=\"24\" src=\"https://sea1.discourse-cdn.com/monday/user_avatar/community.monday.com/rob/48/33058_2.png\" class=\"avatar\" /> rob:</div>\n<blockquote>\n<p>JSON syntax is not correct.</p>\n</blockquote>\n</aside>\n<ol>\n<li>I mean that if <code>showAbbr</code> is a string it must be wrapped inside double quotes. I don’t know if it’s something you do later in your code;</li>\n<li>You don’t need to use semicolon before curly braces;</li>\n<li><code>show</code> is not correct. You need to use <code>mutation</code>.<br />\nJust follow documentation or <a href=\"https://community.monday.com/t/mutate-tag-with-json/25014/3\">my examples</a> to get a valid code.</li>\n</ol>"
+    },
+    {
+      "id": 64049,
+      "postNumber": 8,
+      "createdAt": "2021-09-21T05:56:20.058Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rob\">@rob</a></p>\n<p>Thanks for adding onto this thread with more info <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>Here’s a Postman example that might help shed more light on this too:</p>\n<pre><code class=\"lang-auto\">{\"query\":\"mutation {create_or_get_tag (board_id:yourBoardId, tag_name: \\\"your Tag Name\\\") {id}}\"}\n</code></pre>\n<p>You can omit the Board ID field if you are creating a tag on a Main Board in your account. <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>I hope this helps.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64093,
+      "postNumber": 9,
+      "createdAt": "2021-09-21T13:00:34.308Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/rob\">@rob</a> <a class=\"mention\" href=\"/u/alexsavchuk\">@AlexSavchuk</a><br />\nOkay, here’s more of my code. What am I missing? I don’t know what the json syntax should be.</p>\n<pre><code class=\"lang-auto\">const variables = ({\n    boardId : suptBoardId,\n    groupId: \"topics\",\n    itemName : showAbbr + '_' + element,\n    columnValues: JSON.stringify({\n      text9: requestorName,\n      text0: email,\n      show: {\n        create_or_get_tag: {\n            tag_name: showAbbr\n        }\n      },\n    })\n  });\n\n  const query = `mutation create_item ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) { \n    create_item (\n      board_id: $boardId,\n      group_id: $groupId,\n      item_name: $itemName, \n      column_values: $columnValues\n    ) \n    { \n      id\n      name\n      column_values {\n        id\n        title\n        value\n        text\n      }\n      creator {\n        id\n        name\n        teams {\n          id\n          name\n        }\n      }\n      board {\n        id\n        name\n        groups {\n          title\n          color\n          position\n        }\n      } \n    } \n  }`;\n</code></pre>"
+    },
+    {
+      "id": 64178,
+      "postNumber": 10,
+      "createdAt": "2021-09-21T23:49:18.474Z",
+      "author": "dipro (Dipro Bhowmik)",
+      "cookedHtml": ""
+    },
+    {
+      "id": 64210,
+      "postNumber": 11,
+      "createdAt": "2021-09-22T05:20:28.488Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Thank you for circling back with me and sharing your code with us! I think I see what might be going astray here.</p>\n<p>You will not be able to use “create_or_get_a_tag” as part of a “create_item” mutation. Those will need to be 2 separate calls, as mentioned earlier in the thread.</p>\n<ol>\n<li>First, you will need to use the <code>create_or_get_a_tag</code> mutation to get the Tag ID. This is where you can use the Postman example shared earlier, or examples from our documentation.</li>\n<li>Then, you can use the ID from the response to create an item with the Tag ID.</li>\n</ol>\n<p>It seems like currently you are trying to use both the <code>create_item</code> and <code>create_or_get_a_tag</code> mutations at once within the same API request, which isn’t possible at this time.</p>\n<p>Does this help clarify? Please let me know.</p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64283,
+      "postNumber": 12,
+      "createdAt": "2021-09-22T13:46:30.560Z",
+      "author": "ShawnBaden (shawn baden)",
+      "cookedHtml": "<p>Thank you for the clarification.</p>\n<p>This doesn’t seem very logical. Everything else seems to be divided into query or mutation while tags seem to do both. Makes for more work and more complicated code.</p>"
+    },
+    {
+      "id": 64351,
+      "postNumber": 13,
+      "createdAt": "2021-09-23T06:09:07.466Z",
+      "author": "AlexSavchuk (Alex Savchuk)",
+      "cookedHtml": "<p><a class=\"mention\" href=\"/u/shawnbaden\">@ShawnBaden</a></p>\n<p>Thank you for your feedback. Since Tags can be both Public (exist on all Main Boards within your account) and Private (exist only within the Shareable/Private board they’re a part of), that does add an extra layer of complexity to using this feature via the API.</p>\n<p>Either way, I’m glad to hear this makes a bit more sense now. Thank you for sticking with us to find the solution <img src=\"https://emoji.discourse-cdn.com/apple/slight_smile.png?v=10\" title=\":slight_smile:\" class=\"emoji\" alt=\":slight_smile:\" /></p>\n<p>-Alex</p>"
+    },
+    {
+      "id": 64976,
+      "postNumber": 14,
+      "createdAt": "2021-09-30T06:09:16.244Z",
+      "author": "system (system)",
+      "cookedHtml": "<p>This topic was automatically closed 7 days after the last reply. New replies are no longer allowed.</p>"
+    }
+  ]
+}
