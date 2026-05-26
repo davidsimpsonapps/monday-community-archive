@@ -20,3 +20,19 @@ then open http://localhost:8080/
 Using pages for the frontend, and r2 for `/api/*`
 
 https://monday-community-archive.pages.dev/
+
+### Deployment
+
+**API changes**
+
+These are hosted on Cloudflare R2 because pages does not support > 20,000 files
+
+```
+rclone sync dist/api/ r2:monday-community-archive-api/api/
+```
+
+**Front end**
+
+```
+npm run deploy
+```
