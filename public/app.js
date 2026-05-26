@@ -66,7 +66,11 @@ function formatShortDate(iso) {
   if (!iso) return "";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  return d.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 const PAGE_SIZE = 50;
@@ -81,8 +85,8 @@ let archiveMeta = null;
 // The index is built in-browser from search-docs.json on first search.
 // search-index.json is NOT used — at 41MB it exceeds static host limits.
 // Building from 12MB search-docs.json takes ~1-2s and is then cached in memory.
-let searchIndex = null;   // lunr.Index instance, built on first search
-let searchDocs  = null;   // id → doc store object
+let searchIndex = null; // lunr.Index instance, built on first search
+let searchDocs = null; // id → doc store object
 let searchReady = false;
 let searchLoading = false;
 
@@ -90,9 +94,12 @@ async function ensureSearchIndex() {
   if (searchReady) return true;
   if (searchLoading) {
     // Already in flight — wait for it
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       const check = setInterval(() => {
-        if (!searchLoading) { clearInterval(check); resolve(); }
+        if (!searchLoading) {
+          clearInterval(check);
+          resolve();
+        }
       }, 50);
     });
     return searchReady;
@@ -100,22 +107,22 @@ async function ensureSearchIndex() {
   searchLoading = true;
   try {
     // Load the doc store (titles, excerpts, authors, metadata)
-    searchDocs = await fetch("/api/search-docs.json").then(r => r.json());
+    searchDocs = await fetch("/api/search-docs.json").then((r) => r.json());
 
     // Build the Lunr index in-browser from the doc store
     // This takes ~1-2s for 24k docs — happens once per session
     searchIndex = lunr(function () {
       this.ref("id");
-      this.field("title",   { boost: 10 });
-      this.field("excerpt", { boost: 3  });
-      this.field("author",  { boost: 5  });
+      this.field("title", { boost: 10 });
+      this.field("excerpt", { boost: 3 });
+      this.field("author", { boost: 5 });
 
-      Object.values(searchDocs).forEach(doc => {
+      Object.values(searchDocs).forEach((doc) => {
         this.add({
-          id:      String(doc.id),
-          title:   doc.title   || "",
+          id: String(doc.id),
+          title: doc.title || "",
           excerpt: doc.excerpt || "",
-          author:  doc.author  || "",
+          author: doc.author || "",
         });
       });
     });
@@ -169,7 +176,11 @@ function wireTopicShareActions(topicId, slug) {
   }
   if (tabBtn) {
     tabBtn.onclick = () => {
-      window.open(topicShareUrl(topicId, slug), "_blank", "noopener,noreferrer");
+      window.open(
+        topicShareUrl(topicId, slug),
+        "_blank",
+        "noopener,noreferrer",
+      );
     };
   }
 }
@@ -208,7 +219,8 @@ function parseHash() {
       return {
         type: "topic",
         id: second,
-        postNumber: Number.isFinite(postNumber) && postNumber > 0 ? postNumber : null,
+        postNumber:
+          Number.isFinite(postNumber) && postNumber > 0 ? postNumber : null,
       };
     }
     // seg[1] is a slug — last numeric segment is the topic id
@@ -236,7 +248,8 @@ function routeToHash(route) {
   if (route.type === "home") return "#/";
   if (route.type === "category") return `#/c/${route.id}`;
   if (route.type === "topic") return `#/t/${route.id}`;
-  if (route.type === "search") return `#/search?q=${encodeURIComponent(route.q)}`;
+  if (route.type === "search")
+    return `#/search?q=${encodeURIComponent(route.q)}`;
   return "#/";
 }
 
@@ -257,14 +270,18 @@ async function applyRoute(route) {
     return;
   }
   if (route.type === "category") {
-    const btn = document.querySelector(`#category-nav button[data-category-id="${route.id}"]`);
+    const btn = document.querySelector(
+      `#category-nav button[data-category-id="${route.id}"]`,
+    );
     await openCategory(route.id, btn);
     document.title = `${categoryName(route.id)} — ${BASE_TITLE}`;
     return;
   }
   if (route.type === "topicSlug") {
     try {
-      const t = await api(`/api/topics/by-slug/${encodeURIComponent(route.slug)}.json`);
+      const t = await api(
+        `/api/topics/by-slug/${encodeURIComponent(route.slug)}.json`,
+      );
       const slugSeg = encodeURIComponent(t.slug);
       history.replaceState(
         null,
@@ -315,7 +332,9 @@ function applyFooterFromMeta() {
       ? base
       : `${base} Exported ${when.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.`;
     el.textContent =
-      meta.topicCount != null ? `${line} (${Number(meta.topicCount).toLocaleString()} topics in export.)` : line;
+      meta.topicCount != null
+        ? `${line} (${Number(meta.topicCount).toLocaleString()} topics in export.)`
+        : line;
   } else {
     el.textContent = base;
   }
@@ -349,22 +368,21 @@ async function loadFeatured() {
   }
 }
 
-
 async function loadCategories() {
   categories = await api("/api/categories.json");
   const nav = $("category-nav");
   nav.innerHTML = "";
   if (!categories.length) {
     nav.innerHTML =
-      "<p class=\"nav-empty\">No categories. If you expected data: run <code>etl/npm run export</code>, copy <code>etl/out</code> to <code>app/data/archive</code>, set <code>ARCHIVE_DATA_DIR</code>, or load MongoDB + object storage (see README).</p>";
+      '<p class="nav-empty">No categories. If you expected data: run <code>etl/npm run export</code>, copy <code>etl/out</code> to <code>app/data/archive</code>, set <code>ARCHIVE_DATA_DIR</code>, or load MongoDB + object storage (see README).</p>';
     $("panel-home").innerHTML =
-      "<p>No archive data loaded. The API returned zero categories.</p><p class=\"meta\">Local: ensure the server resolves <code>app/data/archive/manifests/categories.json</code> (run <code>npm run dev</code> from the <code>app</code> folder, or set <code>ARCHIVE_DATA_DIR</code> to your export).</p>";
+      '<p>No archive data loaded. The API returned zero categories.</p><p class="meta">Local: ensure the server resolves <code>app/data/archive/manifests/categories.json</code> (run <code>npm run dev</code> from the <code>app</code> folder, or set <code>ARCHIVE_DATA_DIR</code> to your export).</p>';
     return;
   }
   const homeBtn = document.createElement("button");
   homeBtn.type = "button";
   homeBtn.dataset.categoryId = "home";
-  homeBtn.className = "nav-home";
+  homeBtn.className = ""; //"nav-home";
   homeBtn.textContent = "Home";
   homeBtn.addEventListener("click", () => navigate({ type: "home" }));
   nav.appendChild(homeBtn);
@@ -381,7 +399,9 @@ async function loadCategories() {
         count != null
           ? `${esc(c.name)}<span class="nav-cat-count">${count.toLocaleString()}</span>`
           : esc(c.name);
-      btn.addEventListener("click", () => navigate({ type: "category", id: c.id }));
+      btn.addEventListener("click", () =>
+        navigate({ type: "category", id: c.id }),
+      );
       nav.appendChild(btn);
     });
 }
@@ -406,9 +426,13 @@ function buildTopicRowButton(t) {
   const excerptTail = (t.excerpt || "").length > 180 ? "…" : "";
   const posts = typeof t.postsCount === "number" ? t.postsCount : null;
   const dateStr = formatShortDate(t.lastPostedAt || t.bumpedAt || t.createdAt);
-  const solved = t.solvedPostId ? `<span class="solved-pill">Solved</span>` : "";
-  const likes = typeof t.likeCount === "number" && t.likeCount > 0
-    ? `<span class="likes-pill">\u2665 ${t.likeCount.toLocaleString()}</span>` : "";
+  const solved = t.solvedPostId
+    ? `<span class="solved-pill">Solved</span>`
+    : "";
+  const likes =
+    typeof t.likeCount === "number" && t.likeCount > 0
+      ? `<span class="likes-pill">\u2665 ${t.likeCount.toLocaleString()}</span>`
+      : "";
   b.innerHTML = `
     <span class="topic-row-main">
       <span class="topic-row-title">${esc(t.title)}</span>
@@ -442,9 +466,11 @@ function updateCategoryPagingUi() {
     emptyDiv.className = "category-empty";
     emptyDiv.innerHTML = `<p>No threads in this category.</p><p>Try <button type="button" class="link-btn" id="empty-search-link">searching</button> or pick another category from the sidebar.</p>`;
     meta.after(emptyDiv);
-    emptyDiv.querySelector("#empty-search-link")?.addEventListener("click", () => {
-      $("search-input")?.focus();
-    });
+    emptyDiv
+      .querySelector("#empty-search-link")
+      ?.addEventListener("click", () => {
+        $("search-input")?.focus();
+      });
     btn.classList.add("hidden");
     return;
   }
@@ -459,7 +485,9 @@ function updateCategoryPagingUi() {
 async function fetchCategoryPage(categoryId) {
   const { offset } = categoryPaging;
   // Flat static file — query params encoded into filename by scraper
-  return api(`/api/categories/${categoryId}/topics__offset_${offset}__limit_${PAGE_SIZE}.json`);
+  return api(
+    `/api/categories/${categoryId}/topics__offset_${offset}__limit_${PAGE_SIZE}.json`,
+  );
 }
 
 async function openCategory(id, _navBtn) {
@@ -476,7 +504,8 @@ async function openCategory(id, _navBtn) {
   const loading = $("category-loading");
   setLoadingVisible(loading, true);
   $("load-more-topics").onclick = async () => {
-    if (categoryPaging.loading || categoryPaging.offset >= categoryPaging.total) return;
+    if (categoryPaging.loading || categoryPaging.offset >= categoryPaging.total)
+      return;
     await loadNextTopicPage(id);
   };
   try {
@@ -518,7 +547,9 @@ function renderTopicBreadcrumbs(topicTitle, categoryId) {
     const catBtn = document.createElement("button");
     catBtn.type = "button";
     catBtn.textContent = categoryName(categoryId);
-    catBtn.addEventListener("click", () => navigate({ type: "category", id: categoryId }));
+    catBtn.addEventListener("click", () =>
+      navigate({ type: "category", id: categoryId }),
+    );
     liCat.appendChild(catBtn);
     ol.appendChild(liCat);
   }
@@ -526,7 +557,8 @@ function renderTopicBreadcrumbs(topicTitle, categoryId) {
   const liCur = document.createElement("li");
   const span = document.createElement("span");
   span.setAttribute("aria-current", "page");
-  span.textContent = topicTitle.length > 60 ? `${topicTitle.slice(0, 57)}…` : topicTitle;
+  span.textContent =
+    topicTitle.length > 60 ? `${topicTitle.slice(0, 57)}…` : topicTitle;
   liCur.appendChild(span);
   ol.appendChild(liCur);
 
@@ -549,7 +581,9 @@ async function openTopic(id, prefetched = null, scrollToPost = null) {
   const back = $("back-to-category");
   const backCatId = activeCategoryId;
   back.textContent =
-    backCatId != null ? `← Back to ${categoryName(backCatId)}` : "← Back to home";
+    backCatId != null
+      ? `← Back to ${categoryName(backCatId)}`
+      : "← Back to home";
   back.onclick = () => {
     if (backCatId != null) {
       navigate({ type: "category", id: backCatId });
@@ -597,7 +631,9 @@ async function openTopic(id, prefetched = null, scrollToPost = null) {
 
     // Scroll to specific post if requested (e.g. from a /#/t/92034/2 link)
     if (scrollToPost != null) {
-      const target = postsEl.querySelector(`[data-post-number="${scrollToPost}"]`);
+      const target = postsEl.querySelector(
+        `[data-post-number="${scrollToPost}"]`,
+      );
       if (target) {
         // Small delay lets the browser finish painting before scrolling
         requestAnimationFrame(() => {
@@ -611,7 +647,7 @@ async function openTopic(id, prefetched = null, scrollToPost = null) {
     console.error(err);
     hideTopicShareActions();
     postsEl.innerHTML =
-      "<p class=\"meta\">This thread could not be loaded. It may be missing from the archive.</p>";
+      '<p class="meta">This thread could not be loaded. It may be missing from the archive.</p>';
     $("topic-title").textContent = "Not found";
     document.title = `Not found — ${BASE_TITLE}`;
     renderTopicBreadcrumbs("Error", null);
@@ -626,9 +662,9 @@ async function openTopic(id, prefetched = null, scrollToPost = null) {
 async function runSearch(q) {
   showPanel("search");
   setActiveNav(null);
-  const ul      = $("search-results");
-  const empty   = $("search-empty");
-  const meta    = $("search-query-meta");
+  const ul = $("search-results");
+  const empty = $("search-empty");
+  const meta = $("search-query-meta");
   const loading = $("search-loading");
   const heading = $("search-results-heading");
 
@@ -656,7 +692,7 @@ async function runSearch(q) {
       hits = searchIndex.search(q);
     } catch {
       const terms = q.trim().split(/\s+/).filter(Boolean);
-      const fuzzyQuery = terms.map(t => `${t}~1`).join(" ");
+      const fuzzyQuery = terms.map((t) => `${t}~1`).join(" ");
       try {
         hits = searchIndex.search(fuzzyQuery);
       } catch {
@@ -666,12 +702,13 @@ async function runSearch(q) {
 
     // Lunr returns results sorted by score — cap at SEARCH_LIMIT
     const topHits = hits.slice(0, SEARCH_LIMIT);
-    const results = topHits.map(h => searchDocs[h.ref]).filter(Boolean);
+    const results = topHits.map((h) => searchDocs[h.ref]).filter(Boolean);
 
     const n = results.length;
-    meta.textContent = n === 0
-      ? "No threads matched."
-      : `${n.toLocaleString()} ${n === 1 ? "thread" : "threads"} found`;
+    meta.textContent =
+      n === 0
+        ? "No threads matched."
+        : `${n.toLocaleString()} ${n === 1 ? "thread" : "threads"} found`;
 
     if (!results.length) {
       empty.classList.remove("hidden");
@@ -752,5 +789,6 @@ Promise.all([loadCategories(), loadArchiveMeta(), loadFeatured()])
   })
   .catch((err) => {
     console.error(err);
-    $("content").innerHTML = `<p class="meta">Failed to load archive. Check server logs and configuration.</p><pre>${esc(String(err))}</pre>`;
+    $("content").innerHTML =
+      `<p class="meta">Failed to load archive. Check server logs and configuration.</p><pre>${esc(String(err))}</pre>`;
   });
