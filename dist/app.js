@@ -322,21 +322,14 @@ async function loadArchiveMeta() {
 }
 
 function applyFooterFromMeta() {
-  const el = $("footer-line");
+  const el = $("post-count");
   if (!el) return;
-  const base = "Read-only snapshot — not the live community.";
   const meta = archiveMeta;
   if (meta?.exportedAt) {
-    const when = new Date(meta.exportedAt);
-    const line = Number.isNaN(when.getTime())
-      ? base
-      : `${base} Exported ${when.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.`;
     el.textContent =
       meta.topicCount != null
-        ? `${line} (${Number(meta.topicCount).toLocaleString()} topics in export.)`
-        : line;
-  } else {
-    el.textContent = base;
+        ? `${Number(meta.topicCount).toLocaleString()}`
+        : "";
   }
 }
 
